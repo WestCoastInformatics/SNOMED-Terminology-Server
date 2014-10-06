@@ -28,14 +28,6 @@ import org.ihtsdo.otf.mapping.rf2.SimpleRefSetMember;
 public interface ContentService extends RootService {
 
 	/**
-	 * Closes the manager associated with service.y
-	 * 
-	 * @throws Exception
-	 *             the exception
-	 */
-	public void close() throws Exception;
-
-	/**
 	 * Returns the concept.
 	 * 
 	 * @param conceptId
@@ -586,26 +578,6 @@ public interface ContentService extends RootService {
 			throws Exception;
 
 	/**
-	 * Gets the transaction per operation.
-	 * 
-	 * @return the transaction per operation
-	 * @throws Exception
-	 *             the exception
-	 */
-	public boolean getTransactionPerOperation() throws Exception;
-
-	/**
-	 * Sets the transaction per operation.
-	 * 
-	 * @param transactionPerOperation
-	 *            the transaction per operation
-	 * @throws Exception
-	 *             the exception
-	 */
-	public void setTransactionPerOperation(boolean transactionPerOperation)
-			throws Exception;
-
-	/**
 	 * Gets the tree positions with all descendants fully rendered.
 	 * 
 	 * @param terminologyId
@@ -722,7 +694,6 @@ public interface ContentService extends RootService {
 	 * Compute tree position concept information.
 	 *
 	 * @param tpList the tp list
-	 * @return the tree position list
 	 * @throws Exception the exception
 	 */
 	public void computeTreePositionInformation(TreePositionList tpList) throws Exception;

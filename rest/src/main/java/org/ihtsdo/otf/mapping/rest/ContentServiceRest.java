@@ -50,6 +50,7 @@ public class ContentServiceRest extends RootServiceRest {
 
 	/**
 	 * Instantiates an empty {@link ContentServiceRest}.
+	 * @throws Exception 
 	 */
 	public ContentServiceRest() throws Exception {
 		securityService = new SecurityServiceJpa();
@@ -341,6 +342,15 @@ public class ContentServiceRest extends RootServiceRest {
 		}
 	}
 	
+	/**
+	 * Find delta concepts for terminology.
+	 *
+	 * @param terminology the terminology
+	 * @param terminologyVersion the terminology version
+	 * @param authToken the auth token
+	 * @param pfsParameter the pfs parameter
+	 * @return the search result list
+	 */
 	@POST
 	@Path("/terminology/id/{terminology}/{version}/delta")
 	@ApiOperation(value = "Returns a list of the most recently edited concepts", notes = "For a given terminology and version, returns the set of concepts last modified in the database", response = Concept.class)

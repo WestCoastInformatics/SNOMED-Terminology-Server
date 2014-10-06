@@ -12,8 +12,7 @@ import javax.xml.bind.annotation.XmlRootElement;
  * JAXB enabled implementation of {@link UserList}.
  */
 @XmlRootElement(name = "userList")
-public class UserListJpa extends AbstractResultList<User> implements
-    UserList {
+public class UserListJpa extends AbstractResultList<User> implements UserList {
 
   /** The users. */
   private List<User> users = new ArrayList<>();
@@ -24,9 +23,9 @@ public class UserListJpa extends AbstractResultList<User> implements
   public UserListJpa() {
     // do nothing
   }
-  
+
   public UserListJpa(List<User> users) {
-	  this.users = users;
+    this.users = users;
   }
 
   /*
@@ -44,8 +43,7 @@ public class UserListJpa extends AbstractResultList<User> implements
   /*
    * (non-Javadoc)
    * 
-   * @see
-   * org.ihtsdo.otf.ping.helpers.MapUserList#removeMapUser(org.ihtsdo.otf
+   * @see org.ihtsdo.otf.ping.helpers.MapUserList#removeMapUser(org.ihtsdo.otf
    * .mapping.model.MapUser)
    */
   @Override

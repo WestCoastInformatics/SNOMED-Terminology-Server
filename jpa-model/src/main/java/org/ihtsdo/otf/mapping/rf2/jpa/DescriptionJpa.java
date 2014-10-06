@@ -28,11 +28,12 @@ import org.ihtsdo.otf.mapping.rf2.LanguageRefSetMember;
  * Concrete implementation of {@link Description} for use with JPA.
  */
 @Entity
-//@UniqueConstraint here is being used to create an index, not to enforce uniqueness
+// @UniqueConstraint here is being used to create an index, not to enforce
+// uniqueness
 @Table(name = "descriptions", uniqueConstraints = @UniqueConstraint(columnNames = {
     "terminologyId", "terminology", "terminologyVersion"
 }))
-//@Audited
+// @Audited
 @XmlRootElement(name = "description")
 public class DescriptionJpa extends AbstractComponent implements Description {
 
@@ -59,7 +60,7 @@ public class DescriptionJpa extends AbstractComponent implements Description {
 
   /** The language RefSet members */
   @OneToMany(mappedBy = "description", cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true, targetEntity = LanguageRefSetMemberJpa.class)
- // @IndexedEmbedded(targetElement = LanguageRefSetMemberJpa.class) PG
+  // @IndexedEmbedded(targetElement = LanguageRefSetMemberJpa.class) PG
   private Set<LanguageRefSetMember> languageRefSetMembers = new HashSet<>();
 
   /**

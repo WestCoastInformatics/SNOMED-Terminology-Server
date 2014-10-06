@@ -93,7 +93,7 @@ public class TerminologyRemoverMojo extends AbstractMojo {
       String configFileName = System.getProperty("run.config");
       getLog().info("  run.config = " + configFileName);
       Properties config = new Properties();
-      FileReader in = new FileReader(new File(configFileName)); 
+      FileReader in = new FileReader(new File(configFileName));
       config.load(in);
       in.close();
       getLog().info("  properties = " + config);

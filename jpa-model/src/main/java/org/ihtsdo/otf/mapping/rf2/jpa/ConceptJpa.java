@@ -32,11 +32,12 @@ import org.ihtsdo.otf.mapping.rf2.SimpleRefSetMember;
  * Concrete implementation of {@link Concept} for use with JPA.
  */
 @Entity
-//@UniqueConstraint here is being used to create an index, not to enforce uniqueness
+// @UniqueConstraint here is being used to create an index, not to enforce
+// uniqueness
 @Table(name = "concepts", uniqueConstraints = @UniqueConstraint(columnNames = {
     "terminologyId", "terminology", "terminologyVersion"
 }))
-//@Audited
+// @Audited
 @Indexed
 @XmlRootElement(name = "concept")
 public class ConceptJpa extends AbstractComponent implements Concept {
@@ -47,7 +48,8 @@ public class ConceptJpa extends AbstractComponent implements Concept {
 
   /** The descriptions. */
   @OneToMany(mappedBy = "concept", cascade = CascadeType.ALL, orphanRemoval = true, targetEntity = DescriptionJpa.class)
-  @IndexedEmbedded(targetElement = DescriptionJpa.class) //PG
+  @IndexedEmbedded(targetElement = DescriptionJpa.class)
+  // PG
   private Set<Description> descriptions = new HashSet<>();
 
   /** The relationships. */
@@ -363,32 +365,32 @@ public class ConceptJpa extends AbstractComponent implements Concept {
     AttributeValueRefSetMember attributeValueRefSetMember) {
     this.attributeValueRefSetMembers.remove(attributeValueRefSetMember);
   }
-  
+
   /**
    * Override get effective time to allow indexing
    */
   @Field(index = Index.YES, analyze = Analyze.NO, store = Store.YES)
   @Override
   public Date getEffectiveTime() {
-	  return super.getEffectiveTime();
+    return super.getEffectiveTime();
   }
-  
+
   /**
    * Override get effective time to allow indexing
    */
   @Field(index = Index.YES, analyze = Analyze.NO, store = Store.YES)
   @Override
   public String getTerminology() {
-	  return super.getTerminology();
+    return super.getTerminology();
   }
-  
+
   /**
    * Override get effective time to allow indexing
    */
   @Field(index = Index.YES, analyze = Analyze.NO, store = Store.YES)
   @Override
   public String getTerminologyVersion() {
-	  return super.getTerminologyVersion();
+    return super.getTerminologyVersion();
   }
 
   /**

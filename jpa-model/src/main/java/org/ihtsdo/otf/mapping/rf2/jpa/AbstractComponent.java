@@ -20,7 +20,7 @@ import org.ihtsdo.otf.mapping.rf2.Component;
 /**
  * Abstract implementation of {@link Component} for use with JPA.
  */
-//@Audited
+// @Audited
 @MappedSuperclass
 public abstract class AbstractComponent implements Component {
 
@@ -53,8 +53,11 @@ public abstract class AbstractComponent implements Component {
   @Column(nullable = false)
   private String terminologyVersion;
 
-  /** Generalized field for any additional value that needs to be attached to a component */
-  @Column(nullable = true, length=4000)
+  /**
+   * Generalized field for any additional value that needs to be attached to a
+   * component
+   */
+  @Column(nullable = true, length = 4000)
   private String label;
 
   /**

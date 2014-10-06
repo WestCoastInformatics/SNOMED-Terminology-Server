@@ -78,6 +78,7 @@ import org.xml.sax.helpers.DefaultHandler;
  */
 public class TerminologyClamlLoaderMojo extends AbstractMojo {
 
+  /**  The date format. */
   final SimpleDateFormat dt = new SimpleDateFormat("yyyymmdd");
 
   /**
@@ -123,6 +124,7 @@ public class TerminologyClamlLoaderMojo extends AbstractMojo {
    * Executes the plugin.
    * @throws MojoExecutionException the mojo execution exception
    */
+  @SuppressWarnings("null")
   @Override
   public void execute() throws MojoExecutionException {
     getLog().info("Starting loading " + terminology + " data ...");
@@ -137,9 +139,9 @@ public class TerminologyClamlLoaderMojo extends AbstractMojo {
       String configFileName = System.getProperty("run.config");
       getLog().info("  run.config = " + configFileName);
       Properties config = new Properties();
-      in = new FileReader(new File(configFileName)); 
+      in = new FileReader(new File(configFileName));
       config.load(in);
-      in.close(); 
+      in.close();
       getLog().info("  properties = " + config);
       EntityManagerFactory emFactory =
           Persistence.createEntityManagerFactory("MappingServiceDS", config);
@@ -156,7 +158,6 @@ public class TerminologyClamlLoaderMojo extends AbstractMojo {
 
       // open input file and get effective time and version
       findVersion(inputFile);
-
 
       // create Metadata
       getLog().info("  Create metadata classes");
@@ -310,15 +311,13 @@ public class TerminologyClamlLoaderMojo extends AbstractMojo {
      * modifier map to determine the code extensions and template concepts
      * associated with it.
      */
-    Map<String, List<String>> classToModifierMap =
-        new HashMap<>();
+    Map<String, List<String>> classToModifierMap = new HashMap<>();
 
     /**
      * This is a code => modifier map. If a code is modified but also blocked by
      * an entry in here, do not make children from the template classes.
      */
-    Map<String, List<String>> classToExcludedModifierMap =
-        new HashMap<>();
+    Map<String, List<String>> classToExcludedModifierMap = new HashMap<>();
 
     /**
      * The rels map for holding data for relationships that will be built after
@@ -339,8 +338,7 @@ public class TerminologyClamlLoaderMojo extends AbstractMojo {
     int relIdCounter = 100;
 
     /** The modifier map. */
-    Map<String, Map<String, Concept>> modifierMap =
-        new HashMap<>();
+    Map<String, Map<String, Concept>> modifierMap = new HashMap<>();
 
     /**
      * Tag stack.
@@ -689,8 +687,7 @@ public class TerminologyClamlLoaderMojo extends AbstractMojo {
         // ModifierClass's code (e.g. ".1" => template concept)
         // Add that to the overall map for the corresponding modifier
         if (qName.equalsIgnoreCase("modifierclass")) {
-          Map<String, Concept> modifierCodeToClassMap =
-              new HashMap<>();
+          Map<String, Concept> modifierCodeToClassMap = new HashMap<>();
           if (modifierMap.containsKey(modifier)) {
             modifierCodeToClassMap = modifierMap.get(modifier);
           }
@@ -953,10 +950,8 @@ public class TerminologyClamlLoaderMojo extends AbstractMojo {
       // Determine if "code" or any of its ancestor codes have modifiers
       // that are not blocked by excluded modifiers
       String cmpCode = codeToModify;
-      Map<String, String> modifiersToMatchedCodeMap =
-          new HashMap<>();
-      Map<String, String> excludedModifiersToMatchedCodeMap =
-          new HashMap<>();
+      Map<String, String> modifiersToMatchedCodeMap = new HashMap<>();
+      Map<String, String> excludedModifiersToMatchedCodeMap = new HashMap<>();
       while (cmpCode.length() > 2) {
         getLog().info("    Determine if " + cmpCode + " has modifiers");
 
@@ -1321,11 +1316,12 @@ public class TerminologyClamlLoaderMojo extends AbstractMojo {
           && !parentCodeHasChildrenMap.containsKey(cmpCode))
         return true;
 
-      /** Based on NIN feedback - don't have 5th digits in these cases
-      // Override excludes for the code list above for S20V01T_5
-      if (overrideCodes.contains(cmpCode) && modifier.equals("S20V01T_5"))
-        return true;
-      **/
+      /**
+       * Based on NIN feedback - don't have 5th digits in these cases //
+       * Override excludes for the code list above for S20V01T_5 if
+       * (overrideCodes.contains(cmpCode) && modifier.equals("S20V01T_5"))
+       * return true;
+       **/
       return false;
     }
 

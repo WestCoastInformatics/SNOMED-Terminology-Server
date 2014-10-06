@@ -17,11 +17,12 @@ import org.ihtsdo.otf.mapping.rf2.Relationship;
  * Concrete implementation of {@link Relationship} for use with JPA.
  */
 @Entity
-//@UniqueConstraint here is being used to create an index, not to enforce uniqueness
+// @UniqueConstraint here is being used to create an index, not to enforce
+// uniqueness
 @Table(name = "relationships", uniqueConstraints = @UniqueConstraint(columnNames = {
     "terminologyId", "terminology", "terminologyVersion"
 }))
-//@Audited
+// @Audited
 @XmlRootElement(name = "relationship")
 public class RelationshipJpa extends AbstractComponent implements Relationship {
 

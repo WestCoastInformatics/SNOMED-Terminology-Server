@@ -9,14 +9,6 @@ import java.util.Map;
 public interface MetadataService extends RootService {
 
 	/**
-	 * Close the service.
-	 * 
-	 * @throws Exception
-	 *             the exception
-	 */
-	public void close() throws Exception;
-
-	/**
 	 * Returns the terminologies.
 	 * 
 	 * @return the terminologies

@@ -145,11 +145,14 @@ public class RootServiceRest {
 						+ ". Please contact the administrator.").build());
 	}
 
+	  
 	/**
-	 * Send user error email.
+	 * Sends email.
 	 *
-	 * @param userError
-	 *            the user error
+	 * @param subject the subject
+	 * @param recipients the recipients
+	 * @param body the body
+	 * @param details the details
 	 */
 	public void sendEmail(String subject, User[] recipients, String body,
 			Properties details) {

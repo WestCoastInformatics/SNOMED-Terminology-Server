@@ -214,5 +214,5 @@ public interface Concept extends Component {
    */
   public void removeAttributeValueRefSetMember(
     AttributeValueRefSetMember attributeValueRefSetMember);
-  
+
 }

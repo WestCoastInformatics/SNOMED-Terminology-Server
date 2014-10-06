@@ -39,6 +39,11 @@ public class MetadataServiceRest extends RootServiceRest {
 	/**  The security service. */
 	private SecurityService securityService;
 	
+	/**
+	 * Instantiates an empty {@link MetadataServiceRest}.
+	 *
+	 * @throws Exception the exception
+	 */
 	public MetadataServiceRest() throws Exception {
 		securityService = new SecurityServiceJpa();
 	}

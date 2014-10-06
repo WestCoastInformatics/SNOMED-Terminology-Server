@@ -63,7 +63,7 @@
       </dependency>
       <dependency>
         <groupId>org.ihtsdo.otf.term-server</groupId>
-        <artifactId>term-server-parents</artifactId>
+        <artifactId>term-server-services</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>

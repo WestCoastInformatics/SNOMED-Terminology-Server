@@ -455,7 +455,9 @@ public class ClamlMetadataServiceJpaHelper extends RootServiceJpa implements
    * @param terminology the terminology
    * @param version the version
    * @return the descendant map
+   * @throws Exception 
    */
+  @SuppressWarnings("static-method")
   private Map<String, String> getDescendantMap(ContentService contentService,
     String terminologyId, String terminology, String version) throws Exception {
     Map<String, String> map = new HashMap<>();

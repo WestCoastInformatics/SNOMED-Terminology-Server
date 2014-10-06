@@ -228,7 +228,9 @@ public class FileSorter {
    * Splits a file given a line comparator.
    * 
    * @param inputFile the String giving the path to the file to be split
+   * @param dir the directory
    * @param comparator the comparator function by which to compare lines
+   * @param segmentSize the segment size
    * @return a String list of the split filenames
    * @throws Exception the exception
    */
@@ -238,8 +240,8 @@ public class FileSorter {
     int currentSize = 0; // counter for current file size
     String line; // current file line
     List<String> lines = new ArrayList<>(10000); // set of lines to be
-                                                       // sorted via
-                                                       // Collections.sort
+                                                 // sorted via
+                                                 // Collections.sort
     List<String> splitFiles = new ArrayList<>();
 
     // open file
@@ -280,6 +282,7 @@ public class FileSorter {
    * 
    * @param lines the lines
    * @param fileIn the file_in
+   * @param outputDir 
    * @return the string
    * @throws IOException Signals that an I/O exception has occurred.
    */

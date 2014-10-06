@@ -1,12 +1,11 @@
 package org.ihtsdo.otf.mapping.services;
 
-import org.ihtsdo.otf.mapping.helpers.User;
-import org.ihtsdo.otf.mapping.helpers.UserList;
-import org.ihtsdo.otf.mapping.helpers.UserRole;
 
 // TODO: Auto-generated Javadoc
 /**
  * The Interface RootService. Manages Factory and lucene field names
+ *
+ * @author ${author}
  */
 public interface RootService {
 
@@ -38,44 +37,37 @@ public interface RootService {
 	 * Gets the transaction per operation.
 	 *
 	 * @return the transaction per operation
+	 * @throws Exception the exception
 	 */
 	public boolean getTransactionPerOperation() throws Exception;
 
 	/**
 	 * Sets the transaction per operation.
 	 *
-	 * @param transactionPerOperation
-	 *            the new transaction per operation
+	 * @param transactionPerOperation            the new transaction per operation
+	 * @throws Exception the exception
 	 */
 	public void setTransactionPerOperation(boolean transactionPerOperation)
 			throws Exception;
 
 	/**
 	 * Commit.
+	 *
+	 * @throws Exception the exception
 	 */
 	public void commit() throws Exception;
 
 	/**
 	 * Begin transaction.
+	 *
+	 * @throws Exception the exception
 	 */
 	public void beginTransaction() throws Exception;
 
 	/**
-	 * Closes the manager
+	 * Closes the manager.
+	 *
+	 * @throws Exception the exception
 	 */
 	public void close() throws Exception;
-
-	/**
-	 * Get User
-	 */
-	public User getUser(String username) throws Exception;
-
-	// TODO
-	public UserList getUsers();
-
-	public User addUser(User user);
-	public User removeUser(String id);
-	public User updateUser(User user);
-
-	public UserRole getUserRoleForProject(String username, Long projectId);
 }

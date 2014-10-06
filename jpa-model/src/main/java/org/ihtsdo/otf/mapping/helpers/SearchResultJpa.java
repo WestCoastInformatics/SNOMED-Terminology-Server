@@ -3,8 +3,6 @@ package org.ihtsdo.otf.mapping.helpers;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.ihtsdo.otf.mapping.helpers.SearchResult;
-
 /**
  * The search result for the Jpa package
  * @author Patrick
@@ -172,10 +170,10 @@ public class SearchResultJpa implements SearchResult {
   }
 
   @Override
-public String toString() {
-	return "SearchResultJpa [id=" + id + ", terminologyId=" + terminologyId
-			+ ", terminology=" + terminology + ", terminologyVersion="
-			+ terminologyVersion + ", value=" + value + "]";
-}
+  public String toString() {
+    return "SearchResultJpa [id=" + id + ", terminologyId=" + terminologyId
+        + ", terminology=" + terminology + ", terminologyVersion="
+        + terminologyVersion + ", value=" + value + "]";
+  }
 
 }

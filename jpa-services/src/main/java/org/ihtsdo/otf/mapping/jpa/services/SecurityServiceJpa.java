@@ -19,7 +19,6 @@ import org.ihtsdo.otf.mapping.helpers.User;
 import org.ihtsdo.otf.mapping.helpers.UserJpa;
 import org.ihtsdo.otf.mapping.helpers.UserList;
 import org.ihtsdo.otf.mapping.helpers.UserRole;
-import org.ihtsdo.otf.mapping.services.RootService;
 import org.ihtsdo.otf.mapping.services.SecurityService;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -30,8 +29,11 @@ import com.sun.jersey.api.representation.Form;
 
 /**
  * Reference implementation of the {@link SecurityService}.
+ *
+ * @author ${author}
  */
-public class SecurityServiceJpa extends RootServiceJpa implements SecurityService {
+public class SecurityServiceJpa extends RootServiceJpa implements
+    SecurityService {
 
   /** The token username . */
   private static Map<String, String> tokenUsername = new HashMap<>();
@@ -41,20 +43,23 @@ public class SecurityServiceJpa extends RootServiceJpa implements SecurityServic
 
   /**
    * Instantiates an empty {@link SecurityServiceJpa}.
+   *
+   * @throws Exception the exception
    */
   public SecurityServiceJpa() throws Exception {
     super();
   }
 
+  /* (non-Javadoc)
+   * @see org.ihtsdo.otf.mapping.services.SecurityService#authenticate(java.lang.String, java.lang.String)
+   */
   @SuppressWarnings("unchecked")
   @Override
   public String authenticate(String username, String password) throws Exception {
     if (username == null)
-      throw new LocalException(
-          "Invalid username: null");
+      throw new LocalException("Invalid username: null");
     if (password == null)
-      throw new LocalException(
-          "Invalid password: null");
+      throw new LocalException("Invalid password: null");
 
     // read ihtsdo security url and active status from config file
     String configFileName = System.getProperty("run.config");
@@ -71,9 +76,7 @@ public class SecurityServiceJpa extends RootServiceJpa implements SecurityServic
     // if ihtsdo security is off, use username as token
     if (!ihtsdoSecurityActivated || username.equals("guest")) {
       tokenUsername.put(username, username);
-      RootService rootService = new RootServiceJpa();
-      rootService.getUser(username);
-      return username;
+      return getUser(username).getUserName();
     }
 
     // set up request to be posted to ihtsdo security service
@@ -96,7 +99,8 @@ public class SecurityServiceJpa extends RootServiceJpa implements SecurityServic
       resultString = response.getEntity(String.class);
       Logger.getLogger(this.getClass()).info(resultString);
     } else {
-    	// TODO Differentiate error messages with NO RESPONE and Authentication Failed (Check text)
+      // TODO Differentiate error messages with NO RESPONE and Authentication
+      // Failed (Check text)
       Logger.getLogger(this.getClass()).info("ERROR! " + response.getStatus());
       resultString = response.getEntity(String.class);
       Logger.getLogger(this.getClass()).info(resultString);
@@ -104,23 +108,24 @@ public class SecurityServiceJpa extends RootServiceJpa implements SecurityServic
     }
 
     /*
-     * Synchronize the information sent back from ITHSDO with the User
-     * object. Add a new  user if there isn't one matching the username If
-     * there is, load and update that  user and save the changes
+     * Synchronize the information sent back from ITHSDO with the User object.
+     * Add a new user if there isn't one matching the username If there is, load
+     * and update that user and save the changes
      */
     String ihtsdoUserName = "";
     String ihtsdoEmail = "";
     String ihtsdoGivenName = "";
     String ihtsdoSurname = "";
 
-    // converting json to 
+    // converting json to
     byte[] Data = resultString.getBytes();
-    Map<String, Map<String, String>> json =
-        new HashMap<>();
+    Map<String, Map<String, String>> json = new HashMap<>();
 
     // parse username from json object
     ObjectMapper objectMapper = new ObjectMapper();
-    json = (Map<String, Map<String, String>>) objectMapper.readValue(Data, Hash.class);
+    json =
+        (Map<String, Map<String, String>>) objectMapper.readValue(Data,
+            Hash.class);
     for (Entry<String, Map<String, String>> entrySet : json.entrySet()) {
       if (entrySet.getKey().equals("user")) {
         Map<String, String> inner = entrySet.getValue();
@@ -138,8 +143,7 @@ public class SecurityServiceJpa extends RootServiceJpa implements SecurityServic
       }
     }
     // check if ihtsdo user matches one of our Users
-    RootService rootService = new RootServiceJpa();
-    UserList userList = rootService.getUsers();
+    UserList userList = getUsers();
     User userFound = null;
     for (User user : userList.getUsers()) {
       if (user.getUserName().equals(ihtsdoUserName)) {
@@ -152,7 +156,7 @@ public class SecurityServiceJpa extends RootServiceJpa implements SecurityServic
       userFound.setEmail(ihtsdoEmail);
       userFound.setName(ihtsdoGivenName + " " + ihtsdoSurname);
       userFound.setUserName(ihtsdoUserName);
-      rootService.updateUser(userFound);
+      updateUser(userFound);
       // if User not found, create one for our use
     } else {
       User newUser = new UserJpa();
@@ -160,9 +164,8 @@ public class SecurityServiceJpa extends RootServiceJpa implements SecurityServic
       newUser.setUserName(ihtsdoUserName);
       newUser.setEmail(ihtsdoEmail);
       newUser.setApplicationRole(UserRole.VIEWER);
-      rootService.addUser(newUser);
+      addUser(newUser);
     }
-    rootService.close();
 
     // Generate application-managed token
     String token = UUID.randomUUID().toString();
@@ -177,8 +180,7 @@ public class SecurityServiceJpa extends RootServiceJpa implements SecurityServic
   /*
    * (non-Javadoc)
    * 
-   * @see
-   * org.ihtsdo.otf.ping.services.SecurityService#getUsernameForToken(java
+   * @see org.ihtsdo.otf.ping.services.SecurityService#getUsernameForToken(java
    * .lang.String)
    */
   @Override
@@ -199,13 +201,11 @@ public class SecurityServiceJpa extends RootServiceJpa implements SecurityServic
   /*
    * (non-Javadoc)
    * 
-   * @see
-   * org.ihtsdo.otf.ping.services.SecurityService#authorizeToken(java.lang
+   * @see org.ihtsdo.otf.ping.services.SecurityService#authorizeToken(java.lang
    * .String)
    */
   @Override
-  public UserRole getApplicationRoleForToken(String authToken)
-    throws Exception {
+  public UserRole getApplicationRoleForToken(String authToken) throws Exception {
 
     if (authToken == null)
       throw new LocalException(
@@ -213,11 +213,66 @@ public class SecurityServiceJpa extends RootServiceJpa implements SecurityServic
     String parsedToken = authToken.replace("\"", "");
 
     String username = getUsernameForToken(parsedToken);
-    RootService rootService = new RootServiceJpa();
-    User user = rootService.getUser(username.toLowerCase());
-    rootService.close();
 
-    return user.getApplicationRole();
+    return getUser(username.toLowerCase()).getApplicationRole();
+  }
+
+  /* (non-Javadoc)
+   * @see org.ihtsdo.otf.mapping.services.SecurityService#getUser(java.lang.String)
+   */
+  @Override
+  public User getUser(String username) throws Exception {
+    // TODO Auto-generated method stub
+    return null;
+  }
+
+
+  /* (non-Javadoc)
+   * @see org.ihtsdo.otf.mapping.services.SecurityService#addUser(org.ihtsdo.otf.mapping.helpers.User)
+   */
+  @Override
+  public User addUser(User user) {
+    // TODO Auto-generated method stub
+    return null;
+  }
+
+
+  /* (non-Javadoc)
+   * @see org.ihtsdo.otf.mapping.services.SecurityService#removeUser(java.lang.String)
+   */
+  @Override
+  public User removeUser(String id) {
+    // TODO Auto-generated method stub
+    return null;
+  }
+
+
+  /* (non-Javadoc)
+   * @see org.ihtsdo.otf.mapping.services.SecurityService#updateUser(org.ihtsdo.otf.mapping.helpers.User)
+   */
+  @Override
+  public User updateUser(User user) {
+    // TODO Auto-generated method stub
+    return null;
+  }
+
+
+  /* (non-Javadoc)
+   * @see org.ihtsdo.otf.mapping.services.SecurityService#getUserRoleForProject(java.lang.String, java.lang.Long)
+   */
+  @Override
+  public UserRole getUserRoleForProject(String username, Long projectId) {
+    // TODO Auto-generated method stub
+    return null;
+  }
+
+  /* (non-Javadoc)
+   * @see org.ihtsdo.otf.mapping.services.SecurityService#getUsers()
+   */
+  @Override
+  public UserList getUsers() {
+    // TODO Auto-generated method stub
+    return null;
   }
 
 }

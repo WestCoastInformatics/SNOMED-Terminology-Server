@@ -7,35 +7,32 @@ import java.util.List;
  */
 public interface UserList extends ResultList<User> {
 
-	/**
-	 * Adds the user.
-	 * 
-	 * @param User
-	 *            the user
-	 */
-	public void addUser(User user);
+  /**
+   * Adds the user.
+   * 
+   * @param user the user
+   */
+  public void addUser(User user);
 
-	/**
-	 * Removes the user.
-	 * 
-	 * @param User
-	 *            the user
-	 */
-	public void removeUser(User user);
+  /**
+   * Removes the user.
+   * 
+   * @param user the user
+   */
+  public void removeUser(User user);
 
-	/**
-	 * Sets the users.
-	 * 
-	 * @param Users
-	 *            the new users
-	 */
-	public void setUsers(List<User> users);
+  /**
+   * Sets the users.
+   * 
+   * @param users the new users
+   */
+  public void setUsers(List<User> users);
 
-	/**
-	 * Gets the users.
-	 * 
-	 * @return the users
-	 */
-	public List<User> getUsers();
+  /**
+   * Gets the users.
+   * 
+   * @return the users
+   */
+  public List<User> getUsers();
 
 }

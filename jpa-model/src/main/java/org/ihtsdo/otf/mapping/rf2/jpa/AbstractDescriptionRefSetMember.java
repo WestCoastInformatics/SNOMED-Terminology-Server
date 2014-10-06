@@ -13,7 +13,7 @@ import org.ihtsdo.otf.mapping.rf2.DescriptionRefSetMember;
  * Abstract implementation of {@link DescriptionRefSetMember}.
  */
 @MappedSuperclass
-//@Audited
+// @Audited
 public abstract class AbstractDescriptionRefSetMember extends
     AbstractRefSetMember implements DescriptionRefSetMember {
 

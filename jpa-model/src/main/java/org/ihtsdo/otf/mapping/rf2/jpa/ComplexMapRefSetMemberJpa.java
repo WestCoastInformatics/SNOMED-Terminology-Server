@@ -11,7 +11,7 @@ import org.ihtsdo.otf.mapping.rf2.ComplexMapRefSetMember;
  */
 @Entity
 @Table(name = "complex_map_refset_members")
-//@Audited
+// @Audited
 public class ComplexMapRefSetMemberJpa extends AbstractConceptRefSetMember
     implements ComplexMapRefSetMember {
 
