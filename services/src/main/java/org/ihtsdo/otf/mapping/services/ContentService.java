@@ -19,7 +19,6 @@ import org.ihtsdo.otf.mapping.rf2.Relationship;
 import org.ihtsdo.otf.mapping.rf2.SimpleMapRefSetMember;
 import org.ihtsdo.otf.mapping.rf2.SimpleRefSetMember;
 
-// TODO: Auto-generated Javadoc
 /**
  * The interface for the content service.
  * 
@@ -36,7 +35,7 @@ public interface ContentService extends RootService {
 	 * @throws Exception
 	 *             if anything goes wrong
 	 */
-	public Concept getConcept(Long conceptId) throws Exception;
+	public Concept getConcept(String conceptId) throws Exception;
 
 	/**
 	 * Returns the concept matching the specified parameters.
@@ -83,7 +82,7 @@ public interface ContentService extends RootService {
 	 * @throws Exception
 	 *             the exception
 	 */
-	public void removeConcept(Long id) throws Exception;
+	public void removeConcept(String id) throws Exception;
 
 	/**
 	 * Returns the description.
@@ -94,7 +93,7 @@ public interface ContentService extends RootService {
 	 * @throws Exception
 	 *             if anything goes wrong
 	 */
-	public Description getDescription(Long id) throws Exception;
+	public Description getDescription(String id) throws Exception;
 
 	/**
 	 * Returns the description matching the specified parameters.
@@ -141,7 +140,7 @@ public interface ContentService extends RootService {
 	 * @throws Exception
 	 *             the exception
 	 */
-	public void removeDescription(Long id) throws Exception;
+	public void removeDescription(String id) throws Exception;
 
 	/**
 	 * Returns the relationship.
@@ -152,7 +151,7 @@ public interface ContentService extends RootService {
 	 * @throws Exception
 	 *             if anything goes wrong
 	 */
-	public Relationship getRelationship(Long relationshipId) throws Exception;
+	public Relationship getRelationship(String relationshipId) throws Exception;
 
 	/**
 	 * Returns the relationship matching the specified parameters.
@@ -200,7 +199,7 @@ public interface ContentService extends RootService {
 	 * @throws Exception
 	 *             the exception
 	 */
-	public void removeRelationship(Long id) throws Exception;
+	public void removeRelationship(String id) throws Exception;
 
 	/**
 	 * Returns the languageRefSetMember.
@@ -212,7 +211,7 @@ public interface ContentService extends RootService {
 	 *             if anything goes wrong
 	 */
 	public LanguageRefSetMember getLanguageRefSetMember(
-			Long languageRefSetMemberId) throws Exception;
+			String languageRefSetMemberId) throws Exception;
 
 	/**
 	 * Returns the languageRefSetMember matching the specified parameters.
@@ -261,7 +260,7 @@ public interface ContentService extends RootService {
 	 * @throws Exception
 	 *             the exception
 	 */
-	public void removeLanguageRefSetMember(Long id) throws Exception;
+	public void removeLanguageRefSetMember(String id) throws Exception;
 
 	/**
 	 * Returns the attributeValueRefSetMember.
@@ -273,7 +272,7 @@ public interface ContentService extends RootService {
 	 *             if anything goes wrong
 	 */
 	public AttributeValueRefSetMember getAttributeValueRefSetMember(
-			Long attributeValueRefSetMemberId) throws Exception;
+			String attributeValueRefSetMemberId) throws Exception;
 
 	/**
 	 * Returns the attributeValueRefSetMember matching the specified parameters.
@@ -325,7 +324,7 @@ public interface ContentService extends RootService {
 	 * @throws Exception
 	 *             the exception
 	 */
-	public void removeAttributeValueRefSetMember(Long id) throws Exception;
+	public void removeAttributeValueRefSetMember(String id) throws Exception;
 
 	/**
 	 * Returns the complexMapRefSetMember.
@@ -337,7 +336,7 @@ public interface ContentService extends RootService {
 	 *             if anything goes wrong
 	 */
 	public ComplexMapRefSetMember getComplexMapRefSetMember(
-			Long complexMapRefSetMemberId) throws Exception;
+			String complexMapRefSetMemberId) throws Exception;
 
 	/**
 	 * Returns the complexMapRefSetMember matching the specified parameters.
@@ -387,7 +386,7 @@ public interface ContentService extends RootService {
 	 * @throws Exception
 	 *             the exception
 	 */
-	public void removeComplexMapRefSetMember(Long id) throws Exception;
+	public void removeComplexMapRefSetMember(String id) throws Exception;
 
 	/**
 	 * Returns the simpleMapRefSetMember.
@@ -399,7 +398,7 @@ public interface ContentService extends RootService {
 	 *             if anything goes wrong
 	 */
 	public SimpleMapRefSetMember getSimpleMapRefSetMember(
-			Long simpleMapRefSetMemberId) throws Exception;
+			String simpleMapRefSetMemberId) throws Exception;
 
 	/**
 	 * Returns the simpleMapRefSetMember matching the specified parameters.
@@ -448,7 +447,7 @@ public interface ContentService extends RootService {
 	 * @throws Exception
 	 *             the exception
 	 */
-	public void removeSimpleMapRefSetMember(Long id) throws Exception;
+	public void removeSimpleMapRefSetMember(String id) throws Exception;
 
 	/**
 	 * Returns the simpleRefSetMember.
@@ -459,7 +458,7 @@ public interface ContentService extends RootService {
 	 * @throws Exception
 	 *             if anything goes wrong
 	 */
-	public SimpleRefSetMember getSimpleRefSetMember(Long simpleRefSetMemberId)
+	public SimpleRefSetMember getSimpleRefSetMember(String simpleRefSetMemberId)
 			throws Exception;
 
 	/**
@@ -509,7 +508,7 @@ public interface ContentService extends RootService {
 	 * @throws Exception
 	 *             the exception
 	 */
-	public void removeSimpleRefSetMember(Long id) throws Exception;
+	public void removeSimpleRefSetMember(String id) throws Exception;
 
 	/**
 	 * Returns the concept search results matching the query. Results can be
@@ -707,7 +706,7 @@ public interface ContentService extends RootService {
 	 * @return the relationship id
 	 * @throws Exception the exception
 	 */
-	public Long getRelationshipId(String terminologyId, String terminology,
+	public String getRelationshipId(String terminologyId, String terminology,
 			String terminologyVersion) throws Exception;
 
 	/**
@@ -755,7 +754,7 @@ public interface ContentService extends RootService {
 	 * @param id the id
 	 * @throws Exception the exception
 	 */
-	public void removeTreePosition(Long id) throws Exception;
+	public void removeTreePosition(String id) throws Exception;
 
 
 	/**

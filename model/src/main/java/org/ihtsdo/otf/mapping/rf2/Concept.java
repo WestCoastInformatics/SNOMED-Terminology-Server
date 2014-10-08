@@ -12,14 +12,14 @@ public interface Concept extends Component {
    * 
    * @return definitionStatusId the definition status id
    */
-  public Long getDefinitionStatusId();
+  public String getDefinitionStatusId();
 
   /**
    * Sets the definition status id.
    * 
    * @param definitionStatusId the definition status id
    */
-  public void setDefinitionStatusId(Long definitionStatusId);
+  public void setDefinitionStatusId(String definitionStatusId);
 
   /**
    * Returns the descriptions.

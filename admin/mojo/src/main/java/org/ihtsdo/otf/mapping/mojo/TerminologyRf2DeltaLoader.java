@@ -306,60 +306,7 @@ public class TerminologyRf2DeltaLoader extends AbstractMojo {
       computeDefaultPreferredNames();
       contentService.commit();
       getLog().info("  Done.");
-      /*
-       * 
-       * PG 07/26 THIS SECTION COMMENTED OUT UNTIL TREE POSITION DELETION CAN BE
-       * PROPERLY MANAGED WITH INDEX ISSUES. SEE MAP-373
-       * 
-       * // recreating tree positions -- first instantiate new service
-       * contentService.close(); ContentService contentService = new
-       * ContentServiceJpa();
-       * 
-       * getLog().info("Remove tree positions for " + terminology + ", " +
-       * terminologyVersion); contentService.clearTreePositions(terminology,
-       * terminologyVersion);
-       * 
-       * getLog().info("Start creating tree positions.");
-       * 
-       * MetadataServiceJpa metadataService = new MetadataServiceJpa();
-       * 
-       * 
-       * // first get isaRelType from metadata Map<String, String>
-       * hierRelTypeMap = metadataService
-       * .getHierarchicalRelationshipTypes(terminology, terminologyVersion);
-       * String isaRelType = hierRelTypeMap.keySet().iterator().next()
-       * .toString(); metadataService.close();
-       * 
-       * // Walk up tree to the root // ASSUMPTION: single root String conceptId
-       * = isaRelType; String rootId = null; OUTER: while (true) {
-       * getLog().info("  Walk up tree from " + conceptId); Concept c =
-       * contentService.getConcept(conceptId, terminology, terminologyVersion);
-       * for (Relationship r : c.getRelationships()) { if (r.isActive() &&
-       * r.getTypeId().equals(Long.valueOf(isaRelType))) { conceptId =
-       * r.getDestinationConcept() .getTerminologyId(); continue OUTER; } }
-       * rootId = conceptId; break; }
-       * getLog().info("  Compute tree from rootId " + conceptId);
-       * contentService.computeTreePositions(terminology, terminologyVersion,
-       * isaRelType, rootId);
-       * 
-       * contentService.close();
-       * 
-       * getLog().info("done ...");
-       * 
-       * // recompute workflow for any projects with this as source terminology
-       * MappingService mappingService = new MappingServiceJpa();
-       * WorkflowService workflowService = new WorkflowServiceJpa();
-       * 
-       * // cycle over projects for (MapProject mp :
-       * mappingService.getMapProjects().getIterable()) { if
-       * (mp.getSourceTerminology().equals(terminology) &&
-       * mp.getSourceTerminologyVersion().equals(terminologyVersion)) {
-       * 
-       * getLog().info("Clearing workflow for map project " + mp.getName());
-       * workflowService.clearWorkflowForMapProject(mp);
-       * getLog().info("Computing workflow for map project " + mp.getName());
-       * workflowService.computeWorkflow(mp); } }
-       */
+
       getLog().info("");
       getLog().info("==================================");
       getLog().info("Delta load completed successfully!");
@@ -612,8 +559,8 @@ public class TerminologyRf2DeltaLoader extends AbstractMojo {
         concept.setTerminologyId(fields[0]);
         concept.setEffectiveTime(deltaLoaderStartDate);
         concept.setActive(fields[2].equals("1") ? true : false);
-        concept.setModuleId(Long.valueOf(fields[3]));
-        concept.setDefinitionStatusId(Long.valueOf(fields[4]));
+        concept.setModuleId(fields[3]);
+        concept.setDefinitionStatusId(fields[4]);
         concept.setTerminology(terminology);
         concept.setTerminologyVersion(terminologyVersion);
         concept.setDefaultPreferredName("TBD");
@@ -717,12 +664,12 @@ public class TerminologyRf2DeltaLoader extends AbstractMojo {
           description.setTerminologyId(fields[0]);
           description.setEffectiveTime(deltaLoaderStartDate);
           description.setActive(fields[2].equals("1") ? true : false);
-          description.setModuleId(Long.valueOf(fields[3]));
+          description.setModuleId(fields[3]);
 
           description.setLanguageCode(fields[5]);
-          description.setTypeId(Long.valueOf(fields[6]));
+          description.setTypeId(fields[6]);
           description.setTerm(fields[7]);
-          description.setCaseSignificanceId(Long.valueOf(fields[8]));
+          description.setCaseSignificanceId(fields[8]);
           description.setTerminology(terminology);
           description.setTerminologyVersion(terminologyVersion);
 
@@ -854,11 +801,11 @@ public class TerminologyRf2DeltaLoader extends AbstractMojo {
           languageRefSetMember.setTerminologyId(fields[0]);
           languageRefSetMember.setEffectiveTime(deltaLoaderStartDate);
           languageRefSetMember.setActive(fields[2].equals("1") ? true : false);
-          languageRefSetMember.setModuleId(Long.valueOf(fields[3]));
+          languageRefSetMember.setModuleId(fields[3]);
           languageRefSetMember.setRefSetId(fields[4]);
 
           // Language unique attributes
-          languageRefSetMember.setAcceptabilityId(Long.valueOf(fields[6]));
+          languageRefSetMember.setAcceptabilityId(fields[6]);
 
           // Terminology attributes
           languageRefSetMember.setTerminology(terminology);
@@ -998,14 +945,14 @@ public class TerminologyRf2DeltaLoader extends AbstractMojo {
           relationship.setTerminologyId(fields[0]);
           relationship.setEffectiveTime(deltaLoaderStartDate);
           relationship.setActive(fields[2].equals("1") ? true : false); // active
-          relationship.setModuleId(Long.valueOf(fields[3])); // moduleId
+          relationship.setModuleId(fields[3]); // moduleId
 
           relationship.setRelationshipGroup(Integer.valueOf(fields[6])); // relationshipGroup
-          relationship.setTypeId(Long.valueOf(fields[7])); // typeId
-          relationship.setCharacteristicTypeId(Long.valueOf(fields[8])); // characteristicTypeId
+          relationship.setTypeId(fields[7]); // typeId
+          relationship.setCharacteristicTypeId(fields[8]); // characteristicTypeId
           relationship.setTerminology(terminology);
           relationship.setTerminologyVersion(terminologyVersion);
-          relationship.setModifierId(Long.valueOf(fields[9]));
+          relationship.setModifierId(fields[9]);
 
           relationship.setSourceConcept(sourceConcept);
           relationship.setDestinationConcept(destinationConcept);

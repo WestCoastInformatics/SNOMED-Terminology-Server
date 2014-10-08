@@ -4,64 +4,71 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
 /**
- * The search result for the Jpa package
- * @author Patrick
- * 
+ * JPA enabled implementation of a {@link SearchResult}.
  */
 @XmlRootElement(name = "searchResult")
 public class SearchResultJpa implements SearchResult {
 
-  private Long id;
+  /**  The id. */
+  private String id;
 
+  /**  The terminology id. */
   private String terminologyId;
 
+  /**  The terminology. */
   private String terminology;
 
+  /**  The terminology version. */
   private String terminologyVersion;
 
+  /**  The value. */
   private String value;
 
   /**
-   * Default constructor
+   * Default constructor.
    */
   public SearchResultJpa() {
     // left empty
   }
 
   /**
-   * Constructor
+   * Constructor.
+   *
    * @param id the id
    * @param terminologyId the terminologyId
    * @param value the value
    */
-  public SearchResultJpa(Long id, String terminologyId, String value) {
+  public SearchResultJpa(String id, String terminologyId, String value) {
     this.id = id;
     this.terminologyId = terminologyId;
     this.value = value;
   }
 
   /**
-   * Returns the id
+   * Returns the id.
+   *
    * @return the id
    */
   @Override
   @XmlElement(name = "id")
-  public Long getId() {
+  public String getId() {
     return this.id;
   }
 
   /**
-   * Sets the id
+   * Sets the id.
+   *
    * @param id the id
    */
   @Override
-  public void setId(Long id) {
+  public void setId(String id) {
     this.id = id;
 
   }
 
   /**
-   * Returns the id
+   * Returns the id.
+   *
    * @return the id
    */
   @Override
@@ -71,7 +78,8 @@ public class SearchResultJpa implements SearchResult {
   }
 
   /**
-   * Sets the id
+   * Sets the id.
+   *
    * @param terminologyId the id
    */
   @Override
@@ -80,28 +88,41 @@ public class SearchResultJpa implements SearchResult {
 
   }
 
+  /* (non-Javadoc)
+   * @see org.ihtsdo.otf.mapping.helpers.SearchResult#getTerminology()
+   */
   @Override
   public String getTerminology() {
     return this.terminology;
   }
 
+  /* (non-Javadoc)
+   * @see org.ihtsdo.otf.mapping.helpers.SearchResult#setTerminology(java.lang.String)
+   */
   @Override
   public void setTerminology(String terminology) {
     this.terminology = terminology;
   }
 
+  /* (non-Javadoc)
+   * @see org.ihtsdo.otf.mapping.helpers.SearchResult#getTerminologyVersion()
+   */
   @Override
   public String getTerminologyVersion() {
     return this.terminologyVersion;
   }
 
+  /* (non-Javadoc)
+   * @see org.ihtsdo.otf.mapping.helpers.SearchResult#setTerminologyVersion(java.lang.String)
+   */
   @Override
   public void setTerminologyVersion(String terminologyVersion) {
     this.terminologyVersion = terminologyVersion;
   }
 
   /**
-   * Gets the value
+   * Gets the value.
+   *
    * @return the value
    */
   @Override
@@ -111,7 +132,8 @@ public class SearchResultJpa implements SearchResult {
   }
 
   /**
-   * Sets the value
+   * Sets the value.
+   *
    * @param value the value
    */
   @Override
@@ -120,6 +142,9 @@ public class SearchResultJpa implements SearchResult {
 
   }
 
+  /* (non-Javadoc)
+   * @see java.lang.Object#hashCode()
+   */
   @Override
   public int hashCode() {
     final int prime = 31;
@@ -137,6 +162,9 @@ public class SearchResultJpa implements SearchResult {
     return result;
   }
 
+  /* (non-Javadoc)
+   * @see java.lang.Object#equals(java.lang.Object)
+   */
   @Override
   public boolean equals(Object obj) {
     if (this == obj)
@@ -169,11 +197,15 @@ public class SearchResultJpa implements SearchResult {
     return true;
   }
 
+  /* (non-Javadoc)
+   * @see java.lang.Object#toString()
+   */
   @Override
   public String toString() {
     return "SearchResultJpa [id=" + id + ", terminologyId=" + terminologyId
         + ", terminology=" + terminology + ", terminologyVersion="
         + terminologyVersion + ", value=" + value + "]";
   }
+
 
 }

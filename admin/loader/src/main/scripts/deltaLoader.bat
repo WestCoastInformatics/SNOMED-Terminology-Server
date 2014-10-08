@@ -42,18 +42,6 @@ call %MVN_HOME%/bin/mvn -PSNOMEDCT-treepos -Drun.config=%OTF_MAPPING_CONFIG% ins
 IF %ERRORLEVEL% NEQ 0 (set error=1
 goto trailer)
 
-echo     Clear workflow for ICD10 and ICD9CM ...%date% %time%
-cd %OTF_MAPPING_HOME%/admin/remover
-call %MVN_HOME%/bin/mvn -PClearWorkflow -Drun.config=%OTF_MAPPING_CONFIG% -Drefset.id=447563008,447562003 install >> deltaLoader.log
-IF %ERRORLEVEL% NEQ 0 (set error=1
-goto trailer)
-
-echo     Compute workflow for ICD10 and ICD9CM ...%date% %time%
-cd %OTF_MAPPING_HOME%/admin/loader
-call %MVN_HOME%/bin/mvn -PComputeWorkflow -Drun.config=%OTF_MAPPING_CONFIG% -Drefset.id=447563008,447562003 install >> deltaLoader.log
-IF %ERRORLEVEL% NEQ 0 (set error=1
-goto trailer)
-
 :trailer
 echo ------------------------------------------------
 IF %error% NEQ 0 (

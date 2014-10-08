@@ -597,10 +597,10 @@ public class TerminologyClamlLoaderMojo extends AbstractMojo {
             concept.setTerminologyId(code);
             concept.setEffectiveTime(dt.parse(effectiveTime));
             concept.setActive(true);
-            concept.setModuleId(new Long(conceptMap.get("defaultModule")
-                .getTerminologyId()));
-            concept.setDefinitionStatusId(new Long(conceptMap.get(
-                "defaultDefinitionStatus").getTerminologyId()));
+            concept.setModuleId(conceptMap.get("defaultModule")
+                .getTerminologyId());
+            concept.setDefinitionStatusId(conceptMap.get(
+                "defaultDefinitionStatus").getTerminologyId());
             concept.setTerminology(terminology);
             concept.setTerminologyVersion(terminologyVersion);
             concept.setDefaultPreferredName(labelChars.toString());
@@ -618,22 +618,22 @@ public class TerminologyClamlLoaderMojo extends AbstractMojo {
           desc.setTerminologyId(rubricId);
           desc.setEffectiveTime(dt.parse(effectiveTime));
           desc.setActive(true);
-          desc.setModuleId(new Long(conceptMap.get("defaultModule")
-              .getTerminologyId()));
+          desc.setModuleId(conceptMap.get("defaultModule")
+              .getTerminologyId());
           desc.setTerminology(terminology);
           desc.setTerminologyVersion(terminologyVersion);
           desc.setTerm(labelChars.toString());
           desc.setConcept(concept);
-          desc.setCaseSignificanceId(new Long(conceptMap.get(
-              "defaultCaseSignificance").getTerminologyId()));
+          desc.setCaseSignificanceId(conceptMap.get(
+              "defaultCaseSignificance").getTerminologyId());
           desc.setLanguageCode("en");
           getLog().info(
               "  Add Description for class " + code + " - " + rubricKind
                   + " - "
                   + (desc.getTerm().replaceAll("\r", "").replaceAll("\n", "")));
           if (conceptMap.containsKey(rubricKind))
-            desc.setTypeId(new Long(conceptMap.get(rubricKind)
-                .getTerminologyId()));
+            desc.setTypeId(conceptMap.get(rubricKind)
+                .getTerminologyId());
           else {
             throw new IllegalStateException("rubricKind not in metadata "
                 + rubricKind);
@@ -736,8 +736,8 @@ public class TerminologyClamlLoaderMojo extends AbstractMojo {
             refSetMember.setConcept(concept);
             refSetMember.setActive(true);
             refSetMember.setEffectiveTime(dt.parse(effectiveTime));
-            refSetMember.setModuleId(new Long(conceptMap.get("defaultModule")
-                .getTerminologyId()));
+            refSetMember.setModuleId(conceptMap.get("defaultModule")
+                .getTerminologyId());
             refSetMember.setTerminology(terminology);
             refSetMember.setTerminologyId(new Integer(refSetMemberCounter++)
                 .toString());
@@ -853,21 +853,21 @@ public class TerminologyClamlLoaderMojo extends AbstractMojo {
               }
               relationship.setEffectiveTime(dt.parse(effectiveTime));
               relationship.setActive(true);
-              relationship.setModuleId(new Long(conceptMap.get("defaultModule")
-                  .getTerminologyId()));
+              relationship.setModuleId(conceptMap.get("defaultModule")
+                  .getTerminologyId());
               relationship.setTerminology(terminology);
               relationship.setTerminologyVersion(terminologyVersion);
-              relationship.setCharacteristicTypeId(new Long(conceptMap.get(
-                  "defaultCharacteristicType").getTerminologyId()));
-              relationship.setModifierId(new Long(conceptMap.get(
-                  "defaultModifier").getTerminologyId()));
+              relationship.setCharacteristicTypeId(conceptMap.get(
+                  "defaultCharacteristicType").getTerminologyId());
+              relationship.setModifierId(conceptMap.get(
+                  "defaultModifier").getTerminologyId());
               relationship.setDestinationConcept(conceptMap.get(parentCode));
               relationship.setSourceConcept(childConcept);
               if (!conceptMap.containsKey(type))
                 throw new IllegalStateException("type not in conceptMap "
                     + type);
-              relationship.setTypeId(new Long(conceptMap.get(type)
-                  .getTerminologyId()));
+              relationship.setTypeId(conceptMap.get(type)
+                  .getTerminologyId());
               relationship.setRelationshipGroup(new Integer(0));
               relationship.setLabel(label);
               Set<Relationship> rels = new HashSet<>();
@@ -905,10 +905,10 @@ public class TerminologyClamlLoaderMojo extends AbstractMojo {
         concept.setTerminologyId(modifier + modifierCode);
         concept.setEffectiveTime(dt.parse(effectiveTime));
         concept.setActive(true);
-        concept.setModuleId(new Long(conceptMap.get("defaultModule")
-            .getTerminologyId()));
-        concept.setDefinitionStatusId(new Long(conceptMap.get(
-            "defaultDefinitionStatus").getTerminologyId()));
+        concept.setModuleId(conceptMap.get("defaultModule")
+            .getTerminologyId());
+        concept.setDefinitionStatusId(conceptMap.get(
+            "defaultDefinitionStatus").getTerminologyId());
         concept.setTerminology(terminology);
         concept.setTerminologyVersion(terminologyVersion);
         concept.setDefaultPreferredName(labelChars.toString());
@@ -925,16 +925,16 @@ public class TerminologyClamlLoaderMojo extends AbstractMojo {
       desc.setTerminologyId(rubricId);
       desc.setEffectiveTime(dt.parse(effectiveTime));
       desc.setActive(true);
-      desc.setModuleId(new Long(conceptMap.get("defaultModule")
-          .getTerminologyId()));
+      desc.setModuleId(conceptMap.get("defaultModule")
+          .getTerminologyId());
       desc.setTerminology(terminology);
       desc.setTerminologyVersion(terminologyVersion);
       desc.setTerm(chars.toString());
       desc.setConcept(concept);
-      desc.setCaseSignificanceId(new Long(conceptMap.get(
-          "defaultCaseSignificance").getTerminologyId()));
+      desc.setCaseSignificanceId(conceptMap.get(
+          "defaultCaseSignificance").getTerminologyId());
       desc.setLanguageCode("en");
-      desc.setTypeId(new Long(conceptMap.get(rubricKind).getTerminologyId()));
+      desc.setTypeId(conceptMap.get(rubricKind).getTerminologyId());
 
       concept.addDescription(desc);
     }

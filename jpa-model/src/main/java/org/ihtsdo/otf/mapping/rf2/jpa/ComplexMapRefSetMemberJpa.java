@@ -49,7 +49,7 @@ public class ComplexMapRefSetMemberJpa extends AbstractConceptRefSetMember
 
   /** the correlation id */
   @Column(nullable = false)
-  private Long mapRelationId;
+  private String mapRelationId;
 
   /**
    * returns the mapBlock
@@ -201,7 +201,7 @@ public class ComplexMapRefSetMemberJpa extends AbstractConceptRefSetMember
    * @return the correlation id
    */
   @Override
-  public Long getMapRelationId() {
+  public String getMapRelationId() {
     return this.mapRelationId;
   }
 
@@ -210,7 +210,7 @@ public class ComplexMapRefSetMemberJpa extends AbstractConceptRefSetMember
    * @param mapRelationId the correlation id
    */
   @Override
-  public void setMapRelationId(Long mapRelationId) {
+  public void setMapRelationId(String mapRelationId) {
     this.mapRelationId = mapRelationId;
   }
 

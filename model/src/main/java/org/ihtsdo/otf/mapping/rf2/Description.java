@@ -30,14 +30,14 @@ public interface Description extends Component {
    * 
    * @return the type id
    */
-  public Long getTypeId();
+  public String getTypeId();
 
   /**
    * Sets the type id.
    * 
    * @param typeId the type id
    */
-  public void setTypeId(Long typeId);
+  public void setTypeId(String typeId);
 
   /**
    * Returns the term.
@@ -58,14 +58,14 @@ public interface Description extends Component {
    * 
    * @return the case significance id
    */
-  public Long getCaseSignificanceId();
+  public String getCaseSignificanceId();
 
   /**
    * Sets the case significance id.
    * 
    * @param caseSignificanceId the case significance id
    */
-  public void setCaseSignificanceId(Long caseSignificanceId);
+  public void setCaseSignificanceId(String caseSignificanceId);
 
   /**
    * Returns the concept.

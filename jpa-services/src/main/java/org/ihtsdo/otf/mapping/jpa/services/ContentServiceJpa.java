@@ -185,10 +185,10 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
    * (non-Javadoc)
    * 
    * @see
-   * org.ihtsdo.otf.mapping.services.ContentService#getConcept(java.lang.Long)
+   * org.ihtsdo.otf.mapping.services.ContentService#getConcept(java.lang.String)
    */
   @Override
-  public Concept getConcept(Long id) throws Exception {
+  public Concept getConcept(String id) throws Exception {
     Concept c = manager.find(ConceptJpa.class, id);
     return c;
   }
@@ -290,10 +290,10 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
   }
 
   /* (non-Javadoc)
-   * @see org.ihtsdo.otf.mapping.services.ContentService#removeTreePosition(java.lang.Long)
+   * @see org.ihtsdo.otf.mapping.services.ContentService#removeTreePosition(java.lang.String)
    */
   @Override
-  public void removeTreePosition(Long id) throws Exception {
+  public void removeTreePosition(String id) throws Exception {
 
     tx = manager.getTransaction();
 
@@ -322,10 +322,10 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
   }
 
   /* (non-Javadoc)
-   * @see org.ihtsdo.otf.mapping.services.ContentService#removeConcept(java.lang.Long)
+   * @see org.ihtsdo.otf.mapping.services.ContentService#removeConcept(java.lang.String)
    */
   @Override
-  public void removeConcept(Long id) throws Exception {
+  public void removeConcept(String id) throws Exception {
 
     tx = manager.getTransaction();
 
@@ -358,10 +358,10 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
    * 
    * @see
    * org.ihtsdo.otf.mapping.services.ContentService#getDescription(java.lang
-   * .Long)
+   * .String)
    */
   @Override
-  public Description getDescription(Long id) throws Exception {
+  public Description getDescription(String id) throws Exception {
     Description c = manager.find(DescriptionJpa.class, id);
     return c;
   }
@@ -431,10 +431,10 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
   }
 
   /* (non-Javadoc)
-   * @see org.ihtsdo.otf.mapping.services.ContentService#removeDescription(java.lang.Long)
+   * @see org.ihtsdo.otf.mapping.services.ContentService#removeDescription(java.lang.String)
    */
   @Override
-  public void removeDescription(Long id) throws Exception {
+  public void removeDescription(String id) throws Exception {
 
     tx = manager.getTransaction();
 
@@ -467,10 +467,10 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
    * 
    * @see
    * org.ihtsdo.otf.mapping.services.ContentService#getRelationship(java.lang
-   * .Long)
+   * .String)
    */
   @Override
-  public Relationship getRelationship(Long id) throws Exception {
+  public Relationship getRelationship(String id) throws Exception {
     Relationship c = manager.find(RelationshipJpa.class, id);
     return c;
   }
@@ -479,7 +479,7 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
    * @see org.ihtsdo.otf.mapping.services.ContentService#getRelationshipId(java.lang.String, java.lang.String, java.lang.String)
    */
   @Override
-  public Long getRelationshipId(String terminologyId, String terminology,
+  public String getRelationshipId(String terminologyId, String terminology,
     String terminologyVersion) throws Exception {
     javax.persistence.Query query =
         manager
@@ -490,7 +490,7 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
             .setParameter("terminologyVersion", terminologyVersion);
 
     try {
-      Long relationshipId = (Long) query.getSingleResult();
+      String relationshipId = (String) query.getSingleResult();
       return relationshipId;
     } catch (NoResultException e) {
       Logger.getLogger(ContentServiceJpa.class).info(
@@ -573,10 +573,10 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
   }
 
   /* (non-Javadoc)
-   * @see org.ihtsdo.otf.mapping.services.ContentService#removeRelationship(java.lang.Long)
+   * @see org.ihtsdo.otf.mapping.services.ContentService#removeRelationship(java.lang.String)
    */
   @Override
-  public void removeRelationship(Long id) throws Exception {
+  public void removeRelationship(String id) throws Exception {
 
     tx = manager.getTransaction();
 
@@ -609,10 +609,10 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
    * 
    * @see
    * org.ihtsdo.otf.mapping.services.ContentService#getAttributeValueRefSetMember
-   * (java.lang.Long)
+   * (java.lang.String)
    */
   @Override
-  public AttributeValueRefSetMember getAttributeValueRefSetMember(Long id)
+  public AttributeValueRefSetMember getAttributeValueRefSetMember(String id)
     throws Exception {
     AttributeValueRefSetMember c =
         manager.find(AttributeValueRefSetMemberJpa.class, id);
@@ -688,10 +688,10 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
   }
 
   /* (non-Javadoc)
-   * @see org.ihtsdo.otf.mapping.services.ContentService#removeAttributeValueRefSetMember(java.lang.Long)
+   * @see org.ihtsdo.otf.mapping.services.ContentService#removeAttributeValueRefSetMember(java.lang.String)
    */
   @Override
-  public void removeAttributeValueRefSetMember(Long id) throws Exception {
+  public void removeAttributeValueRefSetMember(String id) throws Exception {
 
     tx = manager.getTransaction();
 
@@ -725,10 +725,10 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
    * 
    * @see
    * org.ihtsdo.otf.mapping.services.ContentService#getComplexMapRefSetMember
-   * (java.lang.Long)
+   * (java.lang.String)
    */
   @Override
-  public ComplexMapRefSetMember getComplexMapRefSetMember(Long id)
+  public ComplexMapRefSetMember getComplexMapRefSetMember(String id)
     throws Exception {
     ComplexMapRefSetMember c =
         manager.find(ComplexMapRefSetMemberJpa.class, id);
@@ -803,10 +803,10 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
   }
 
   /* (non-Javadoc)
-   * @see org.ihtsdo.otf.mapping.services.ContentService#removeComplexMapRefSetMember(java.lang.Long)
+   * @see org.ihtsdo.otf.mapping.services.ContentService#removeComplexMapRefSetMember(java.lang.String)
    */
   @Override
-  public void removeComplexMapRefSetMember(Long id) throws Exception {
+  public void removeComplexMapRefSetMember(String id) throws Exception {
 
     tx = manager.getTransaction();
 
@@ -839,10 +839,10 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
    * (non-Javadoc)
    * 
    * @see org.ihtsdo.otf.mapping.services.ContentService#getLanguageRefSetMember
-   * (java.lang.Long)
+   * (java.lang.String)
    */
   @Override
-  public LanguageRefSetMember getLanguageRefSetMember(Long id) throws Exception {
+  public LanguageRefSetMember getLanguageRefSetMember(String id) throws Exception {
     LanguageRefSetMember c = manager.find(LanguageRefSetMemberJpa.class, id);
     return c;
   }
@@ -914,10 +914,10 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
   }
 
   /* (non-Javadoc)
-   * @see org.ihtsdo.otf.mapping.services.ContentService#removeLanguageRefSetMember(java.lang.Long)
+   * @see org.ihtsdo.otf.mapping.services.ContentService#removeLanguageRefSetMember(java.lang.String)
    */
   @Override
-  public void removeLanguageRefSetMember(Long id) throws Exception {
+  public void removeLanguageRefSetMember(String id) throws Exception {
 
     tx = manager.getTransaction();
 
@@ -950,10 +950,10 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
    * 
    * @see
    * org.ihtsdo.otf.mapping.services.ContentService#getSimpleMapRefSetMember
-   * (java.lang.Long)
+   * (java.lang.String)
    */
   @Override
-  public SimpleMapRefSetMember getSimpleMapRefSetMember(Long id)
+  public SimpleMapRefSetMember getSimpleMapRefSetMember(String id)
     throws Exception {
     SimpleMapRefSetMember c = manager.find(SimpleMapRefSetMemberJpa.class, id);
     return c;
@@ -1026,10 +1026,10 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
   }
 
   /* (non-Javadoc)
-   * @see org.ihtsdo.otf.mapping.services.ContentService#removeSimpleMapRefSetMember(java.lang.Long)
+   * @see org.ihtsdo.otf.mapping.services.ContentService#removeSimpleMapRefSetMember(java.lang.String)
    */
   @Override
-  public void removeSimpleMapRefSetMember(Long id) throws Exception {
+  public void removeSimpleMapRefSetMember(String id) throws Exception {
 
     tx = manager.getTransaction();
 
@@ -1061,10 +1061,10 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
    * (non-Javadoc)
    * 
    * @see org.ihtsdo.otf.mapping.services.ContentService#getSimpleRefSetMember(
-   * java.lang.Long)
+   * java.lang.String)
    */
   @Override
-  public SimpleRefSetMember getSimpleRefSetMember(Long id) throws Exception {
+  public SimpleRefSetMember getSimpleRefSetMember(String id) throws Exception {
     SimpleRefSetMember c = manager.find(SimpleRefSetMemberJpa.class, id);
     return c;
   }
@@ -1136,10 +1136,10 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
   }
 
   /* (non-Javadoc)
-   * @see org.ihtsdo.otf.mapping.services.ContentService#removeSimpleRefSetMember(java.lang.Long)
+   * @see org.ihtsdo.otf.mapping.services.ContentService#removeSimpleRefSetMember(java.lang.String)
    */
   @Override
-  public void removeSimpleRefSetMember(Long id) throws Exception {
+  public void removeSimpleRefSetMember(String id) throws Exception {
 
     tx = manager.getTransaction();
 
@@ -1269,7 +1269,7 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
    * 
    * @see
    * org.ihtsdo.otf.mapping.services.ContentService#getDescendants(java.lang
-   * .String, java.lang.String, java.lang.String, java.lang.Long)
+   * .String, java.lang.String, java.lang.String, java.lang.String)
    */
   @SuppressWarnings("unchecked")
   @Override
@@ -1496,11 +1496,11 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
    * @throws Exception the exception
    */
   @SuppressWarnings("unused")
-  private Set<Long> computeTreePositionsHelper(Concept concept, String typeId,
+  private Set<String> computeTreePositionsHelper(Concept concept, String typeId,
     String ancestorPath, int computeTreePositionCommitCt,
     EntityTransaction computeTreePositionTransaction) throws Exception {
 
-    Set<Long> descConceptIds = new HashSet<>();
+    Set<String> descConceptIds = new HashSet<>();
 
     // if concept is active
     if (concept.isActive()) {
@@ -1534,7 +1534,7 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
               + "~" + concept.getTerminologyId());
 
       // construct the list of terminology ids representing valid children
-      Set<Long> childrenConceptIds = new HashSet<>();
+      Set<String> childrenConceptIds = new HashSet<>();
 
       // cycle over all relationships
       for (Relationship rel : concept.getInverseRelationships()) {
@@ -1567,7 +1567,7 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
       // iterate over the child terminology ids
       // this iteration is entirely local and depends on no managed
       // objects
-      for (Long childConceptId : childrenConceptIds) {
+      for (String childConceptId : childrenConceptIds) {
 
         // call helper function on child concept
         // add the results to the local descendant set

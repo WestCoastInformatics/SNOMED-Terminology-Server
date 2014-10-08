@@ -41,7 +41,7 @@ public class TreePositionJpa implements TreePosition {
   /** The id. */
   @Id
   @GeneratedValue
-  private Long id;
+  private String id;
 
   /** The ancestor path. */
 
@@ -68,6 +68,8 @@ public class TreePositionJpa implements TreePosition {
   @Transient
   private boolean valid;
 
+
+  /**  The desc groups. */
   @Transient
   private List<TreePositionDescriptionGroup> descGroups = new ArrayList<>();
 
@@ -111,7 +113,7 @@ public class TreePositionJpa implements TreePosition {
    */
   @Override
   @XmlTransient
-  public Long getId() {
+  public String getId() {
     return this.id;
   }
 
@@ -119,7 +121,7 @@ public class TreePositionJpa implements TreePosition {
    * {@inheritDoc}
    */
   @Override
-  public void setId(Long id) {
+  public void setId(String id) {
     this.id = id;
   }
 

@@ -20,7 +20,7 @@ public class LanguageRefSetMemberJpa extends AbstractDescriptionRefSetMember
 
   /** the acceptability id */
   @Column(nullable = false)
-  private Long acceptabilityId;
+  private String acceptabilityId;
 
   /**
    * returns the acceptability id
@@ -28,7 +28,7 @@ public class LanguageRefSetMemberJpa extends AbstractDescriptionRefSetMember
    * @return the acceptability id
    */
   @Override
-  public Long getAcceptabilityId() {
+  public String getAcceptabilityId() {
     return this.acceptabilityId;
   }
 
@@ -38,7 +38,7 @@ public class LanguageRefSetMemberJpa extends AbstractDescriptionRefSetMember
    * @param acceptabilityId the acceptability id
    */
   @Override
-  public void setAcceptabilityId(Long acceptabilityId) {
+  public void setAcceptabilityId(String acceptabilityId) {
     this.acceptabilityId = acceptabilityId;
 
   }

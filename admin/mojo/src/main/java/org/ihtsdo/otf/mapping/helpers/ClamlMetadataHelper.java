@@ -112,15 +112,16 @@ public class ClamlMetadataHelper {
     Concept defaultDefinitionStatusConcept =
         createNewActiveConcept("" + metadataCounter++, terminology,
             terminologyVersion, "Default definition status", effectiveTime);
-    defaultDefinitionStatusConcept.setDefinitionStatusId(Long
-        .valueOf(defaultDefinitionStatusConcept.getTerminologyId()));
+    defaultDefinitionStatusConcept
+        .setDefinitionStatusId(defaultDefinitionStatusConcept
+            .getTerminologyId());
     conceptMap.put("defaultDefinitionStatus", defaultDefinitionStatusConcept);
 
     Concept defaultModuleConcept =
         createNewActiveConcept("" + metadataCounter++, terminology,
             terminologyVersion, "Default module", effectiveTime);
-    defaultModuleConcept.setModuleId(new Long(defaultModuleConcept
-        .getTerminologyId()));
+    defaultModuleConcept.setModuleId(defaultModuleConcept
+        .getTerminologyId());
     conceptMap.put("defaultModule", defaultModuleConcept);
 
     Concept defaultCaseSignificanceConcept =
@@ -157,30 +158,30 @@ public class ClamlMetadataHelper {
     // i.e. because "defaultModule" didn't exist when
     // "defaultDefinitionStatus" was created
     //
-    defaultDefinitionStatusConcept.setModuleId(new Long(conceptMap.get(
-        "defaultModule").getTerminologyId()));
+    defaultDefinitionStatusConcept.setModuleId(conceptMap.get(
+        "defaultModule").getTerminologyId());
     for (Description desc : defaultDefinitionStatusConcept.getDescriptions()) {
-      desc.setModuleId(new Long(conceptMap.get("defaultModule")
-          .getTerminologyId()));
-      desc.setCaseSignificanceId(new Long(conceptMap.get(
-          "defaultCaseSignificance").getTerminologyId()));
-      desc.setTypeId(new Long(conceptMap.get("preferred").getTerminologyId()));
+      desc.setModuleId(conceptMap.get("defaultModule")
+          .getTerminologyId());
+      desc.setCaseSignificanceId(conceptMap.get(
+          "defaultCaseSignificance").getTerminologyId());
+      desc.setTypeId(conceptMap.get("preferred").getTerminologyId());
     }
     for (Description desc : defaultModuleConcept.getDescriptions()) {
-      desc.setModuleId(new Long(conceptMap.get("defaultModule")
-          .getTerminologyId()));
-      desc.setCaseSignificanceId(new Long(conceptMap.get(
-          "defaultCaseSignificance").getTerminologyId()));
-      desc.setTypeId(new Long(conceptMap.get("preferred").getTerminologyId()));
+      desc.setModuleId(conceptMap.get("defaultModule")
+          .getTerminologyId());
+      desc.setCaseSignificanceId(conceptMap.get(
+          "defaultCaseSignificance").getTerminologyId());
+      desc.setTypeId(conceptMap.get("preferred").getTerminologyId());
     }
     for (Description desc : defaultCaseSignificanceConcept.getDescriptions()) {
-      desc.setCaseSignificanceId(new Long(conceptMap.get(
-          "defaultCaseSignificance").getTerminologyId()));
-      desc.setTypeId(new Long(conceptMap.get("preferred").getTerminologyId()));
+      desc.setCaseSignificanceId(conceptMap.get(
+          "defaultCaseSignificance").getTerminologyId());
+      desc.setTypeId(conceptMap.get("preferred").getTerminologyId());
     }
 
     for (Description desc : preferredConcept.getDescriptions()) {
-      desc.setTypeId(new Long(conceptMap.get("preferred").getTerminologyId()));
+      desc.setTypeId(conceptMap.get("preferred").getTerminologyId());
     }
 
     //
@@ -533,12 +534,12 @@ public class ClamlMetadataHelper {
     concept.setActive(true);
     // default definition status
     if (conceptMap.containsKey("defaultDefinitionStatus"))
-      concept.setDefinitionStatusId(new Long(conceptMap.get(
-          "defaultDefinitionStatus").getTerminologyId()));
+      concept.setDefinitionStatusId(conceptMap.get(
+          "defaultDefinitionStatus").getTerminologyId());
     // default module
     if (conceptMap.containsKey("defaultModule"))
-      concept.setModuleId(new Long(conceptMap.get("defaultModule")
-          .getTerminologyId()));
+      concept.setModuleId(conceptMap.get("defaultModule")
+          .getTerminologyId());
 
     // Create a preferred name description
     Description desc = new DescriptionJpa();
@@ -547,20 +548,20 @@ public class ClamlMetadataHelper {
     desc.setActive(true);
     // default module
     if (conceptMap.containsKey("defaultModule"))
-      desc.setModuleId(new Long(conceptMap.get("defaultModule")
-          .getTerminologyId()));
+      desc.setModuleId(conceptMap.get("defaultModule")
+          .getTerminologyId());
     desc.setTerminology(terminology);
     desc.setTerminologyVersion(terminologyVersion);
     desc.setTerm(defaultPreferredName);
     desc.setConcept(concept);
     // default case significance
     if (conceptMap.containsKey("defaultCaseSignificance"))
-      desc.setCaseSignificanceId(new Long(conceptMap.get(
-          "defaultCaseSignificance").getTerminologyId()));
+      desc.setCaseSignificanceId(conceptMap.get(
+          "defaultCaseSignificance").getTerminologyId());
     desc.setLanguageCode("en");
     // preferred description type
     if (conceptMap.containsKey("preferred"))
-      desc.setTypeId(new Long(conceptMap.get("preferred").getTerminologyId()));
+      desc.setTypeId(conceptMap.get("preferred").getTerminologyId());
 
     concept.addDescription(desc);
 
@@ -588,20 +589,20 @@ public class ClamlMetadataHelper {
     relationship.setTerminologyId(terminologyId);
     relationship.setEffectiveTime(dt.parse(effectiveTime));
     relationship.setActive(true);
-    relationship.setModuleId(new Long(conceptMap.get("defaultModule")
-        .getTerminologyId()));
+    relationship.setModuleId(conceptMap.get("defaultModule")
+        .getTerminologyId());
     relationship.setTerminology(terminology);
     relationship.setTerminologyVersion(terminologyVersion);
     // default characteristic type
-    relationship.setCharacteristicTypeId(new Long(conceptMap.get(
-        "defaultCharacteristicType").getTerminologyId()));
+    relationship.setCharacteristicTypeId(conceptMap.get(
+        "defaultCharacteristicType").getTerminologyId());
     // default modifier
-    relationship.setModifierId(new Long(conceptMap.get("defaultModifier")
-        .getTerminologyId()));
+    relationship.setModifierId(conceptMap.get("defaultModifier")
+        .getTerminologyId());
     relationship.setDestinationConcept(parentConcept);
     relationship.setSourceConcept(childConcept);
     // default "isa" type
-    relationship.setTypeId(new Long(conceptMap.get("isa").getTerminologyId()));
+    relationship.setTypeId(conceptMap.get("isa").getTerminologyId());
     Set<Relationship> rels = new HashSet<>();
     rels.add(relationship);
     childConcept.setRelationships(rels);

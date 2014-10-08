@@ -16,14 +16,14 @@ public interface TreePosition {
    * 
    * @return the id
    */
-  public Long getId();
+  public String getId();
 
   /**
    * Lists the id.
    * 
    * @param id the id
    */
-  public void setId(Long id);
+  public void setId(String id);
 
   /**
    * Returns the terminology.

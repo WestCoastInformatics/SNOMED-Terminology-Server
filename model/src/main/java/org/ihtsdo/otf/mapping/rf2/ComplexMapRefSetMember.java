@@ -114,12 +114,12 @@ public interface ComplexMapRefSetMember extends ConceptRefSetMember {
    * @return the mapRelationId
    * 
    */
-  public Long getMapRelationId();
+  public String getMapRelationId();
 
   /**
    * sets the mapRelationId
    * @param mapRelationId the mapRelationId
    */
-  public void setMapRelationId(Long mapRelationId);
+  public void setMapRelationId(String mapRelationId);
 
 }

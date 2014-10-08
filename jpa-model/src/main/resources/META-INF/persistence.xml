@@ -22,17 +22,5 @@
     <class>org.ihtsdo.otf.mapping.rf2.jpa.SimpleMapRefSetMemberJpa</class>
     <class>org.ihtsdo.otf.mapping.rf2.jpa.SimpleRefSetMemberJpa</class>
     <class>org.ihtsdo.otf.mapping.rf2.jpa.TreePositionJpa</class>
-    <class>org.ihtsdo.otf.mapping.jpa.MapProjectJpa</class>
-    <class>org.ihtsdo.otf.mapping.jpa.MapUserJpa</class>
-    <class>org.ihtsdo.otf.mapping.jpa.MapEntryJpa</class>
-    <class>org.ihtsdo.otf.mapping.jpa.MapNoteJpa</class>
-    <class>org.ihtsdo.otf.mapping.jpa.MapRecordJpa</class>
-    <class>org.ihtsdo.otf.mapping.jpa.MapAdviceJpa</class>
-    <class>org.ihtsdo.otf.mapping.jpa.MapRelationJpa</class>
-    <class>org.ihtsdo.otf.mapping.jpa.MapPrincipleJpa</class>
-    <class>org.ihtsdo.otf.mapping.jpa.MapAgeRangeJpa</class>
-    <class>org.ihtsdo.otf.mapping.jpa.MapUserPreferencesJpa</class>
-    <class>org.ihtsdo.otf.mapping.workflow.TrackingRecordJpa</class>
-    <class>org.ihtsdo.otf.mapping.reports.MapReportSpecialistOutputJpa</class>
   </persistence-unit>
 </persistence>

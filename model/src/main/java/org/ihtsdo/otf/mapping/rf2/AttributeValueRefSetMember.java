@@ -10,11 +10,11 @@ public interface AttributeValueRefSetMember extends ConceptRefSetMember {
    * @return the value id
    * 
    */
-  public Long getValueId();
+  public String getValueId();
 
   /**
    * sets the value id
    * @param valueId the value id
    */
-  public void setValueId(long valueId);
+  public void setValueId(String valueId);
 }

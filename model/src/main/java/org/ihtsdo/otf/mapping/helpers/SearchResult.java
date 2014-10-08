@@ -10,12 +10,12 @@ public interface SearchResult {
   /**
    * @return the id
    */
-  public Long getId();
+  public String getId();
 
   /**
    * @param id the id to set
    */
-  public void setId(Long id);
+  public void setId(String id);
 
   /**
    * @return the terminologyId

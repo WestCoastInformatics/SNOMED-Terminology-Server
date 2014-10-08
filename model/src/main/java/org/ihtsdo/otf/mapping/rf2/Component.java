@@ -12,14 +12,14 @@ public interface Component {
    * 
    * @return the id
    */
-  public Long getId();
+  public String getId();
 
   /**
    * Sets the id.
    * 
    * @param id the id
    */
-  public void setId(Long id);
+  public void setId(String id);
 
   /**
    * Returns the terminology.
@@ -68,14 +68,14 @@ public interface Component {
    * 
    * @return the module id
    */
-  public Long getModuleId();
+  public String getModuleId();
 
   /**
    * Sets the module id.
    * 
    * @param moduleId the module id
    */
-  public void setModuleId(Long moduleId);
+  public void setModuleId(String moduleId);
 
   /**
    * Returns the terminology version.

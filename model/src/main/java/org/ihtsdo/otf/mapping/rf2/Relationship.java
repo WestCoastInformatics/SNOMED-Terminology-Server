@@ -10,42 +10,42 @@ public interface Relationship extends Component {
    * 
    * @return the type id
    */
-  public Long getTypeId();
+  public String getTypeId();
 
   /**
    * Sets the type id.
    * 
    * @param typeId the type id
    */
-  public void setTypeId(Long typeId);
+  public void setTypeId(String typeId);
 
   /**
    * Returns the characteristic type id.
    * 
    * @return the characteristic type id
    */
-  public Long getCharacteristicTypeId();
+  public String getCharacteristicTypeId();
 
   /**
    * Sets the characteristic type id.
    * 
    * @param characteristicTypeId the characteristic type id
    */
-  public void setCharacteristicTypeId(Long characteristicTypeId);
+  public void setCharacteristicTypeId(String characteristicTypeId);
 
   /**
    * Returns the modifier id.
    * 
    * @return the modifier id
    */
-  public Long getModifierId();
+  public String getModifierId();
 
   /**
    * Sets the modifier id.
    * 
    * @param modifierId the modifier id
    */
-  public void setModifierId(Long modifierId);
+  public void setModifierId(String modifierId);
 
   /**
    * Returns the source concept.

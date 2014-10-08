@@ -10,11 +10,11 @@ public interface LanguageRefSetMember extends DescriptionRefSetMember {
    * @return the acceptability id
    * 
    */
-  public Long getAcceptabilityId();
+  public String getAcceptabilityId();
 
   /**
    * sets the acceptabilityId
    * @param acceptabilityId the acceptability id
    */
-  public void setAcceptabilityId(Long acceptabilityId);
+  public void setAcceptabilityId(String acceptabilityId);
 }

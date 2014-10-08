@@ -81,11 +81,7 @@ public class LuceneReindexMojo extends AbstractMojo {
     // if no parameter specified, re-index all objects
     if (indexedObjects == null) {
       objectsToReindex.add("ConceptJpa");
-      objectsToReindex.add("MapProjectJpa");
-      objectsToReindex.add("MapRecordJpa");
       objectsToReindex.add("TreePositionJpa");
-      objectsToReindex.add("TrackingRecordJpa");
-      objectsToReindex.add("FeedbackConversationJpa");
 
       // otherwise, construct set of indexed objects
     } else {

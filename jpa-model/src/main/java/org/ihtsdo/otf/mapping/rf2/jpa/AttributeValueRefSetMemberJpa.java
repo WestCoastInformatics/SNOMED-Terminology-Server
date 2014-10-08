@@ -17,13 +17,13 @@ public class AttributeValueRefSetMemberJpa extends AbstractConceptRefSetMember
 
   /** The value id */
   @Column(nullable = false)
-  private Long valueId;
+  private String valueId;
 
   /**
    * {@inheritDoc}
    */
   @Override
-  public Long getValueId() {
+  public String getValueId() {
     return this.valueId;
   }
 
@@ -31,7 +31,7 @@ public class AttributeValueRefSetMemberJpa extends AbstractConceptRefSetMember
    * {@inheritDoc}
    */
   @Override
-  public void setValueId(long valueId) {
+  public void setValueId(String valueId) {
     this.valueId = valueId;
   }
 

@@ -4,8 +4,8 @@
 #
 hibernate.dialect=org.hibernate.dialect.MySQLDialect
 javax.persistence.jdbc.driver=com.mysql.jdbc.Driver
-# For testing use mappingservicedbtest
-javax.persistence.jdbc.url=jdbc:mysql://127.0.0.1:3306/mappingservicedb
+# For testing use tsdbtest
+javax.persistence.jdbc.url=jdbc:mysql://127.0.0.1:3306/tsdb
 javax.persistence.jdbc.user=root
 javax.persistence.jdbc.password=EDIT_THIS
 
@@ -17,9 +17,9 @@ hibernate.format_sql=true
 hibernate.use_sql_comments=true
 
 #
-# Lucene index base (default is ${user.home}/mapping/lucene/indexes
+# Lucene index base
 #
-hibernate.search.default.indexBase=EDIT_THIS/mapping/lucene/indexes
+hibernate.search.default.indexBase=EDIT_THIS/indexes
 hibernate.search.lucene_version=LUCENE_36
 hibernate.search.default.directory_provider=filesystem
 
@@ -43,49 +43,9 @@ loader.defaultPreferredNames.refSetId=900000000000509007
 loader.defaultPreferredNames.acceptabilityId=900000000000548007
 
 #
-# ICPC data location
-#
-loader.ICPC.input.data=C:/data/icpc-2.xml
-
-#
-# ICPC Map Records data
-#
-loader.complexmap.input.data=C:/data/der2_iisssccRefset_ExtendedMapSnapshotMini_INT_20140131.txt
-
-#
-# ICD9CM data location
-#
-loader.ICD9CM.input.data=C:/data/icd9cm-2013.xml
-
-#
-# ICD10 data location
-#
-loader.ICD10.input.data=C:/data/icd10-2010.xml
-
-#
-# Map Notes data location
-#
-loader.mapnotes.input.data=C:/data/der2_sRefset_MapNotesSnapshotMini_INT_20140131.txt
-
-#
-# Input directory for data to import
-#
-import.input.dir=C:/data/ihtsdo-project-data
-
-#
-# Destination directory for exported data
-#
-export.output.dir=C:/data/ihtsdo-project-data
-
-#
 # Webapp base URL (currently unused)
 #
 base.url=
-
-#
-# Directory for mapping personnel handbooks and other documents
-#
-map.principle.source.document.dir=C:/data/doc
 
 #
 # URL for security service

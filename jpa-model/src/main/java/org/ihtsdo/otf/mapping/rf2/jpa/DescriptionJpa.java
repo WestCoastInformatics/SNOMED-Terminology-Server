@@ -43,7 +43,7 @@ public class DescriptionJpa extends AbstractComponent implements Description {
 
   /** The typeId. */
   @Column(nullable = false)
-  private Long typeId;
+  private String typeId;
 
   /** The term. */
   @Column(nullable = false, length = 4000)
@@ -51,7 +51,7 @@ public class DescriptionJpa extends AbstractComponent implements Description {
 
   /** The case significance id. */
   @Column(nullable = false)
-  private Long caseSignificanceId;
+  private String caseSignificanceId;
 
   /** The concept. */
   @ManyToOne(targetEntity = ConceptJpa.class, optional = false)
@@ -75,7 +75,7 @@ public class DescriptionJpa extends AbstractComponent implements Description {
    * 
    * @param type the type
    */
-  public DescriptionJpa(Long type) {
+  public DescriptionJpa(String type) {
     this.typeId = type;
   }
 
@@ -106,7 +106,7 @@ public class DescriptionJpa extends AbstractComponent implements Description {
    */
   @Override
   @Field(index = Index.YES, analyze = Analyze.NO, store = Store.NO)
-  public Long getTypeId() {
+  public String getTypeId() {
     return typeId;
   }
 
@@ -116,7 +116,7 @@ public class DescriptionJpa extends AbstractComponent implements Description {
    * @param type the type
    */
   @Override
-  public void setTypeId(Long type) {
+  public void setTypeId(String type) {
     this.typeId = type;
   }
 
@@ -147,7 +147,7 @@ public class DescriptionJpa extends AbstractComponent implements Description {
    * @return the case significance id
    */
   @Override
-  public Long getCaseSignificanceId() {
+  public String getCaseSignificanceId() {
     return caseSignificanceId;
   }
 
@@ -157,7 +157,7 @@ public class DescriptionJpa extends AbstractComponent implements Description {
    * @param caseSignificanceId the case significance id
    */
   @Override
-  public void setCaseSignificanceId(Long caseSignificanceId) {
+  public void setCaseSignificanceId(String caseSignificanceId) {
     this.caseSignificanceId = caseSignificanceId;
   }
 

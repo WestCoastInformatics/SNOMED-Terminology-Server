@@ -44,7 +44,7 @@ public class ConceptJpa extends AbstractComponent implements Concept {
 
   /** The definition status id. */
   @Column(nullable = false)
-  private Long definitionStatusId;
+  private String definitionStatusId;
 
   /** The descriptions. */
   @OneToMany(mappedBy = "concept", cascade = CascadeType.ALL, orphanRemoval = true, targetEntity = DescriptionJpa.class)
@@ -88,7 +88,7 @@ public class ConceptJpa extends AbstractComponent implements Concept {
    * @return the definition status id
    */
   @Override
-  public Long getDefinitionStatusId() {
+  public String getDefinitionStatusId() {
     return definitionStatusId;
   }
 
@@ -98,7 +98,7 @@ public class ConceptJpa extends AbstractComponent implements Concept {
    * @param definitionStatusId the definition status id
    */
   @Override
-  public void setDefinitionStatusId(Long definitionStatusId) {
+  public void setDefinitionStatusId(String definitionStatusId) {
     this.definitionStatusId = definitionStatusId;
   }
 

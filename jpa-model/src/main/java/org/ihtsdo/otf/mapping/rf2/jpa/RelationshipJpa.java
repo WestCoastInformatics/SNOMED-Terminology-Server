@@ -37,15 +37,15 @@ public class RelationshipJpa extends AbstractComponent implements Relationship {
 
   /** The type id. */
   @Column(nullable = false)
-  private Long typeId;
+  private String typeId;
 
   /** The characteristic type id. */
   @Column(nullable = false)
-  private Long characteristicTypeId;
+  private String characteristicTypeId;
 
   /** The modifier id. */
   @Column(nullable = false)
-  private Long modifierId;
+  private String modifierId;
 
   /** The relationship group. */
   @Column(nullable = true)
@@ -57,7 +57,7 @@ public class RelationshipJpa extends AbstractComponent implements Relationship {
    * @return the type id
    */
   @Override
-  public Long getTypeId() {
+  public String getTypeId() {
     return typeId;
   }
 
@@ -67,7 +67,7 @@ public class RelationshipJpa extends AbstractComponent implements Relationship {
    * @param typeId the type id
    */
   @Override
-  public void setTypeId(Long typeId) {
+  public void setTypeId(String typeId) {
     this.typeId = typeId;
   }
 
@@ -77,7 +77,7 @@ public class RelationshipJpa extends AbstractComponent implements Relationship {
    * @return the characteristic type id
    */
   @Override
-  public Long getCharacteristicTypeId() {
+  public String getCharacteristicTypeId() {
     return characteristicTypeId;
   }
 
@@ -87,7 +87,7 @@ public class RelationshipJpa extends AbstractComponent implements Relationship {
    * @param characteristicTypeId the characteristic type id
    */
   @Override
-  public void setCharacteristicTypeId(Long characteristicTypeId) {
+  public void setCharacteristicTypeId(String characteristicTypeId) {
     this.characteristicTypeId = characteristicTypeId;
   }
 
@@ -97,7 +97,7 @@ public class RelationshipJpa extends AbstractComponent implements Relationship {
    * @return the modifier id
    */
   @Override
-  public Long getModifierId() {
+  public String getModifierId() {
     return modifierId;
   }
 
@@ -107,7 +107,7 @@ public class RelationshipJpa extends AbstractComponent implements Relationship {
    * @param modifierId the modifier id
    */
   @Override
-  public void setModifierId(Long modifierId) {
+  public void setModifierId(String modifierId) {
     this.modifierId = modifierId;
   }
 
@@ -132,7 +132,11 @@ public class RelationshipJpa extends AbstractComponent implements Relationship {
     this.sourceConcept = sourceConcept;
   }
 
-  /** For serialization */
+  /**
+   *  For serialization .
+   *
+   * @return the source concept id
+   */
   @XmlElement
   private String getSourceConceptId() {
     return sourceConcept.getTerminologyId();
@@ -159,7 +163,11 @@ public class RelationshipJpa extends AbstractComponent implements Relationship {
     this.destinationConcept = destinationConcept;
   }
 
-  /** For serialization */
+  /**
+   *  For serialization.
+   *
+   * @return the destination concept id
+   */
   @XmlElement
   private String getDestinationConceptId() {
     return destinationConcept.getTerminologyId();

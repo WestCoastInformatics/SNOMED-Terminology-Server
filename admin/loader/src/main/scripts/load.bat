@@ -8,9 +8,9 @@ REM
 REM
 REM Set environment variables at system level
 REM
-REM set MVN_HOME=C:/apache-maven-3.0.5
-REM set OTF_MAPPING_HOME="C:/OTF-Mapping-Service"
-REM set OTF_MAPPING_CONFIG="C:/data/config.properties.dev"
+REM set MVN_HOME=C:/apache-maven-3.2.1
+REM set SERVER_HOME="C:/SNOMED-Terminology-Server"
+REM set SERVER_CONFIG="C:/data/config.properties"
 REM
 
 echo ------------------------------------------------
@@ -18,85 +18,29 @@ echo Starting ...%date% %time%
 echo ------------------------------------------------
 if DEFINED MVN_HOME (echo MVN_HOME  = %MVN_HOME%) else (echo MVN_HOME must be defined
 goto trailer)
-if DEFINED OTF_MAPPING_HOME (echo OTF_MAPPING_HOME = %OTF_MAPPING_HOME%) else (echo OTF_MAPPING_HOME must be defined
+if DEFINED SERVER_HOME (echo SERVER_HOME = %SERVER_HOME%) else (echo SERVER_HOME must be defined
 goto trailer)
-if DEFINED OTF_MAPPING_CONFIG (echo OTF_MAPPING_CONFIG = %OTF_MAPPING_CONFIG%) else (echo OTF_MAPPING_CONFIG must be defined
+if DEFINED SERVER_CONFIG (echo SERVER_CONFIG = %SERVER_CONFIG%) else (echo SERVER_CONFIG must be defined
 goto trailer)
 set error=0
 
 echo     Run updatedb with hibernate.hbm2ddl.auto = create ...%date% %time%
-cd %OTF_MAPPING_HOME%/admin/updatedb
-call %MVN_HOME%/bin/mvn -Drun.config=%OTF_MAPPING_CONFIG% -Dhibernate.hbm2ddl.auto=create install 1> mvn.log
+cd %SERVER_HOME%/admin/updatedb
+call %MVN_HOME%/bin/mvn -Drun.config=%SERVER_CONFIG% -Dhibernate.hbm2ddl.auto=create install 1> mvn.log
 IF %ERRORLEVEL% NEQ 0 (set error=1
 goto trailer)
 del /Q mvn.log
 
 echo     Clear indexes ...%date% %time%
-cd %OTF_MAPPING_HOME%/admin/lucene
-call %MVN_HOME%/bin/mvn -Drun.config=%OTF_MAPPING_CONFIG% install 1> mvn.log
+cd %SERVER_HOME%/admin/lucene
+call %MVN_HOME%/bin/mvn -Drun.config=%SERVER_CONFIG% install 1> mvn.log
 IF %ERRORLEVEL% NEQ 0 (set error=1
 goto trailer)
 del /Q mvn.log
 
 echo     Load SNOMEDCT ...%date% %time%
-cd %OTF_MAPPING_HOME%/admin/loader
-call %MVN_HOME%/bin/mvn -PSNOMEDCT -Drun.config=%OTF_MAPPING_CONFIG% install 1> mvn.log
-IF %ERRORLEVEL% NEQ 0 (set error=1
-goto trailer)
-del /Q mvn.log
-
-echo     Load ICPC ...%date% %time%
-cd %OTF_MAPPING_HOME%/admin/loader
-call %MVN_HOME%/bin/mvn -PICPC -Drun.config=%OTF_MAPPING_CONFIG% install 1> mvn.log
-IF %ERRORLEVEL% NEQ 0 (set error=1
-goto trailer)
-del /Q mvn.log
-echo     Load ICD10 ...%date% %time%
-
-cd %OTF_MAPPING_HOME%/admin/loader
-call %MVN_HOME%/bin/mvn -PICD10 -Drun.config=%OTF_MAPPING_CONFIG% install 1> mvn.log
-IF %ERRORLEVEL% NEQ 0 (set error=1
-goto trailer)
-del /Q mvn.log
-
-echo     Load ICD9CM ...%date% %time%
-cd %OTF_MAPPING_HOME%/admin/loader
-call %MVN_HOME%/bin/mvn -PICD9CM -Drun.config=%OTF_MAPPING_CONFIG% install 1> mvn.log
-IF %ERRORLEVEL% NEQ 0 (set error=1
-goto trailer)
-del /Q mvn.log
-
-echo     Import project data ...%date% %time%
-cd %OTF_MAPPING_HOME%/admin/import
-call %MVN_HOME%/bin/mvn -Drun.config=%OTF_MAPPING_CONFIG% install 1> mvn.log
-IF %ERRORLEVEL% NEQ 0 (set error=1
-goto trailer)
-del /Q mvn.log
-
-echo     Create ICD10 and ICD9CM map records ...%date% %time%
-cd %OTF_MAPPING_HOME%/admin/loader
-call %MVN_HOME%/bin/mvn -PCreateMapRecords -Drun.config=%OTF_MAPPING_CONFIG% -Drefset.id=447562003,447563008 install 1> mvn.log
-IF %ERRORLEVEL% NEQ 0 (set error=1
-goto trailer)
-del /Q mvn.log
-
-echo     Load ICPC maps from file ...%date% %time%
-cd %OTF_MAPPING_HOME%/admin/loader
-call %MVN_HOME%/bin/mvn -PMapRecords -Drun.config=%OTF_MAPPING_CONFIG% install 1> mvn.log
-IF %ERRORLEVEL% NEQ 0 (set error=1
-goto trailer)
-del /Q mvn.log
-
-echo     Load map notes from file ...%date% %time%
-cd %OTF_MAPPING_HOME%/admin/loader
-call %MVN_HOME%/bin/mvn -PMapNotes -Drun.config=%OTF_MAPPING_CONFIG% install 1> mvn.log
-IF %ERRORLEVEL% NEQ 0 (set error=1
-goto trailer)
-del /Q mvn.log
-
-echo     Compute workflow ...%date% %time%
-cd %OTF_MAPPING_HOME%/admin/loader
-call %MVN_HOME%/bin/mvn -PComputeWorkflow -Drun.config=%OTF_MAPPING_CONFIG% -Drefset.id=447563008,447562003 install 1> mvn.log
+cd %SERVER_HOME%/admin/loader
+call %MVN_HOME%/bin/mvn -PSNOMEDCT -Drun.config=%SERVER_CONFIG% install 1> mvn.log
 IF %ERRORLEVEL% NEQ 0 (set error=1
 goto trailer)
 del /Q mvn.log

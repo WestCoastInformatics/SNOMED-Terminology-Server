@@ -27,7 +27,7 @@ public abstract class AbstractComponent implements Component {
   /** The id. */
   @Id
   @GeneratedValue
-  private Long id;
+  private String id;
 
   /** The effective time. */
   @Temporal(TemporalType.TIMESTAMP)
@@ -39,7 +39,7 @@ public abstract class AbstractComponent implements Component {
 
   /** The module id. */
   @Column(nullable = false)
-  private Long moduleId;
+  private String moduleId;
 
   /** The terminology. */
   @Column(nullable = false)
@@ -65,7 +65,7 @@ public abstract class AbstractComponent implements Component {
    */
   @Override
   @XmlTransient
-  public Long getId() {
+  public String getId() {
     return this.id;
   }
 
@@ -73,7 +73,7 @@ public abstract class AbstractComponent implements Component {
    * {@inheritDoc}
    */
   @Override
-  public void setId(Long id) {
+  public void setId(String id) {
     this.id = id;
   }
 
@@ -113,7 +113,7 @@ public abstract class AbstractComponent implements Component {
    * {@inheritDoc}
    */
   @Override
-  public Long getModuleId() {
+  public String getModuleId() {
     return moduleId;
   }
 
@@ -121,7 +121,7 @@ public abstract class AbstractComponent implements Component {
    * {@inheritDoc}
    */
   @Override
-  public void setModuleId(Long moduleId) {
+  public void setModuleId(String moduleId) {
     this.moduleId = moduleId;
   }
 
