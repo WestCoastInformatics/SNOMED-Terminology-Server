@@ -18,7 +18,7 @@ import org.ihtsdo.otf.mapping.helpers.ConceptList;
 import org.ihtsdo.otf.mapping.helpers.DescriptionList;
 import org.ihtsdo.otf.mapping.helpers.LanguageRefSetMemberList;
 import org.ihtsdo.otf.mapping.helpers.RelationshipList;
-import org.ihtsdo.otf.mapping.jpa.services.ContentServiceJpa;
+import org.ihtsdo.otf.mapping.jpa.services.HistoryServiceJpa;
 import org.ihtsdo.otf.mapping.rf2.Concept;
 import org.ihtsdo.otf.mapping.rf2.Description;
 import org.ihtsdo.otf.mapping.rf2.LanguageRefSetMember;
@@ -27,7 +27,7 @@ import org.ihtsdo.otf.mapping.rf2.jpa.ConceptJpa;
 import org.ihtsdo.otf.mapping.rf2.jpa.DescriptionJpa;
 import org.ihtsdo.otf.mapping.rf2.jpa.LanguageRefSetMemberJpa;
 import org.ihtsdo.otf.mapping.rf2.jpa.RelationshipJpa;
-import org.ihtsdo.otf.mapping.services.ContentService;
+import org.ihtsdo.otf.mapping.services.HistoryService;
 
 /**
  * Goal which loads an RF2 Delta of SNOMED CT data
@@ -117,7 +117,7 @@ public class TerminologyRf2DeltaLoader extends AbstractMojo {
   private Date deltaLoaderStartDate = new Date();
 
   /** Content and Mapping Services. */
-  private ContentService contentService = null;
+  private HistoryService historyService = null;
 
   /**
    * The cache of objects in this delta file. Unsure if speed or memory will be
@@ -173,7 +173,7 @@ public class TerminologyRf2DeltaLoader extends AbstractMojo {
           "Retrieving all concepts for " + terminology + " "
               + terminologyVersion);
       ConceptList conceptList =
-          contentService.getAllConcepts(terminology, terminologyVersion);
+          historyService.getAllConcepts(terminology, terminologyVersion);
       getLog().info("  " + conceptList.getCount() + " concepts retrieved");
 
       for (Concept c : conceptList.getConcepts()) {
@@ -185,13 +185,13 @@ public class TerminologyRf2DeltaLoader extends AbstractMojo {
       // precache the ids of all existing objects other than concepts
       // THIS IS FOR DEBUG/QUALITY ASSURANCE
       existingDescriptionIds =
-          contentService.getAllDescriptionTerminologyIds(terminology,
+          historyService.getAllDescriptionTerminologyIds(terminology,
               terminologyVersion);
       existingLanguageRefSetMemberIds =
-          contentService.getAllLanguageRefSetMemberTerminologyIds(terminology,
+          historyService.getAllLanguageRefSetMemberTerminologyIds(terminology,
               terminologyVersion);
       existingRelationshipIds =
-          contentService.getAllRelationshipTerminologyIds(terminology,
+          historyService.getAllRelationshipTerminologyIds(terminology,
               terminologyVersion);
 
       getLog().info(
@@ -249,7 +249,7 @@ public class TerminologyRf2DeltaLoader extends AbstractMojo {
 
       // commit the content changes
       getLog().info("Committing...");
-      contentService.commit();
+      historyService.commit();
       getLog().info("  Done.");
 
       getLog()
@@ -257,16 +257,16 @@ public class TerminologyRf2DeltaLoader extends AbstractMojo {
               "Checking database contents against number of previously modified objects");
 
       ConceptList modifiedConcepts =
-          contentService.getConceptsModifiedSinceDate(terminology,
+          historyService.getConceptsModifiedSinceDate(terminology,
               deltaLoaderStartDate, null);
       RelationshipList modifiedRelationships =
-          contentService.getRelationshipsModifiedSinceDate(terminology,
+          historyService.getRelationshipsModifiedSinceDate(terminology,
               deltaLoaderStartDate);
       DescriptionList modifiedDescriptions =
-          contentService.getDescriptionsModifiedSinceDate(terminology,
+          historyService.getDescriptionsModifiedSinceDate(terminology,
               deltaLoaderStartDate);
       LanguageRefSetMemberList modifiedLanguageRefSetMembers =
-          contentService.getLanguageRefSetMembersModifiedSinceDate(terminology,
+          historyService.getLanguageRefSetMembersModifiedSinceDate(terminology,
               deltaLoaderStartDate);
 
       getLog().info(
@@ -299,12 +299,12 @@ public class TerminologyRf2DeltaLoader extends AbstractMojo {
       // open a new content service to clear the manager, want the state
       // of the database
       // not persisted objects hanging around
-      contentService.close();
-      contentService = new ContentServiceJpa();
-      contentService.setTransactionPerOperation(false);
-      contentService.beginTransaction();
+      historyService.close();
+      historyService = new HistoryServiceJpa();
+      historyService.setTransactionPerOperation(false);
+      historyService.beginTransaction();
       computeDefaultPreferredNames();
-      contentService.commit();
+      historyService.commit();
       getLog().info("  Done.");
 
       getLog().info("");
@@ -335,13 +335,13 @@ public class TerminologyRf2DeltaLoader extends AbstractMojo {
     getLog().info("  properties = " + config);
 
     // instantiate the services
-    contentService = new ContentServiceJpa();
+    historyService = new HistoryServiceJpa();
 
     // set the transaction per operation on the service managers
-    contentService.setTransactionPerOperation(false);
+    historyService.setTransactionPerOperation(false);
 
     // initialize the transactions
-    contentService.beginTransaction();
+    historyService.beginTransaction();
 
     // set the delta file directory=
     deltaDir =
@@ -566,9 +566,9 @@ public class TerminologyRf2DeltaLoader extends AbstractMojo {
         concept.setDefaultPreferredName("TBD");
 
         if (concept.getId() == null) {
-          contentService.addConcept(concept);
+          historyService.addConcept(concept);
         } else {
-          contentService.updateConcept(concept);
+          historyService.updateConcept(concept);
         }
 
         cacheConcept(concept);
@@ -624,7 +624,7 @@ public class TerminologyRf2DeltaLoader extends AbstractMojo {
         } else {
           // retrieve concept
           concept =
-              contentService.getConcept(fields[4], terminology,
+              historyService.getConcept(fields[4], terminology,
                   terminologyVersion);
         }
 
@@ -678,9 +678,9 @@ public class TerminologyRf2DeltaLoader extends AbstractMojo {
 
           // if new description, add it, otherwise update
           if (description.getId() == null) {
-            contentService.addDescription(description);
+            historyService.addDescription(description);
           } else {
-            contentService.updateDescription(description);
+            historyService.updateDescription(description);
           }
 
         } else {
@@ -737,7 +737,7 @@ public class TerminologyRf2DeltaLoader extends AbstractMojo {
               "  Description " + fields[5]
                   + " is not in cache, retrieving from database");
           description =
-              contentService.getDescription(fields[5], terminology,
+              historyService.getDescription(fields[5], terminology,
                   terminologyVersion);
         }
 
@@ -754,7 +754,7 @@ public class TerminologyRf2DeltaLoader extends AbstractMojo {
               "  Concept " + conceptId
                   + " is not in cache, retrieving from database");
           concept =
-              contentService.getConcept(conceptId, terminology,
+              historyService.getConcept(conceptId, terminology,
                   terminologyVersion);
         }
 
@@ -814,9 +814,9 @@ public class TerminologyRf2DeltaLoader extends AbstractMojo {
           cacheLanguageRefSetMember(languageRefSetMember);
 
           if (languageRefSetMember.getId() == null) {
-            contentService.addLanguageRefSetMember(languageRefSetMember);
+            historyService.addLanguageRefSetMember(languageRefSetMember);
           } else {
-            contentService.updateLanguageRefSetMember(languageRefSetMember);
+            historyService.updateLanguageRefSetMember(languageRefSetMember);
           }
 
         } else {
@@ -889,7 +889,7 @@ public class TerminologyRf2DeltaLoader extends AbstractMojo {
           sourceConcept = existingConceptCache.get(fields[4]);
         } else {
           sourceConcept =
-              contentService.getConcept(fields[4], terminology,
+              historyService.getConcept(fields[4], terminology,
                   terminologyVersion);
         }
 
@@ -899,7 +899,7 @@ public class TerminologyRf2DeltaLoader extends AbstractMojo {
           destinationConcept = existingConceptCache.get(fields[5]);
         } else {
           destinationConcept =
-              contentService.getConcept(fields[5], terminology,
+              historyService.getConcept(fields[5], terminology,
                   terminologyVersion);
 
         }
@@ -962,9 +962,9 @@ public class TerminologyRf2DeltaLoader extends AbstractMojo {
 
           // if new relationship, add it, otherwise update existing
           if (relationship.getId() == null) {
-            contentService.addRelationship(relationship);
+            historyService.addRelationship(relationship);
           } else {
-            contentService.updateRelationship(relationship);
+            historyService.updateRelationship(relationship);
           }
 
         } else {
@@ -1010,7 +1010,7 @@ public class TerminologyRf2DeltaLoader extends AbstractMojo {
 
     getLog().info("Checking database against calculated modifications");
     ConceptList modifiedConcepts =
-        contentService.getConceptsModifiedSinceDate(terminology,
+        historyService.getConceptsModifiedSinceDate(terminology,
             deltaLoaderStartDate, null);
 
     getLog().info(

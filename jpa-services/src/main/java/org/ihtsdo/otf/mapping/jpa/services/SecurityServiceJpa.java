@@ -41,6 +41,9 @@ public class SecurityServiceJpa extends RootServiceJpa implements
   /** The token login time . */
   private static Map<String, Date> tokenLogin = new HashMap<>();
 
+  /** config properties */
+  private Properties config = null;
+
   /**
    * Instantiates an empty {@link SecurityServiceJpa}.
    *
@@ -50,8 +53,12 @@ public class SecurityServiceJpa extends RootServiceJpa implements
     super();
   }
 
-  /* (non-Javadoc)
-   * @see org.ihtsdo.otf.mapping.services.SecurityService#authenticate(java.lang.String, java.lang.String)
+  /*
+   * (non-Javadoc)
+   * 
+   * @see
+   * org.ihtsdo.otf.mapping.services.SecurityService#authenticate(java.lang.
+   * String, java.lang.String)
    */
   @SuppressWarnings("unchecked")
   @Override
@@ -62,16 +69,19 @@ public class SecurityServiceJpa extends RootServiceJpa implements
       throw new LocalException("Invalid password: null");
 
     // read ihtsdo security url and active status from config file
-    String configFileName = System.getProperty("run.config");
-    Logger.getLogger(this.getClass()).info("  run.config = " + configFileName);
+    if (config == null) {
+      String configFileName = System.getProperty("run.config");
+      Logger.getLogger(this.getClass())
+          .info("  run.config = " + configFileName);
 
-    Properties config = new Properties();
-    FileReader in = new FileReader(new File(configFileName));
-    config.load(in);
+      config = new Properties();
+      FileReader in = new FileReader(new File(configFileName));
+      config.load(in);
+      in.close();
+    }
     String ihtsdoSecurityUrl = config.getProperty("ihtsdo.security.url");
     boolean ihtsdoSecurityActivated =
         new Boolean(config.getProperty("ihtsdo.security.activated"));
-    in.close();
 
     // if ihtsdo security is off, use username as token
     if (!ihtsdoSecurityActivated || username.equals("guest")) {
@@ -185,6 +195,7 @@ public class SecurityServiceJpa extends RootServiceJpa implements
    */
   @Override
   public String getUsernameForToken(String authToken) throws Exception {
+    // use guest user for null auth token
     if (authToken == null)
       throw new LocalException(
           "Attempt to access a service without an authorization token, the user is likely not logged in.");
@@ -217,8 +228,11 @@ public class SecurityServiceJpa extends RootServiceJpa implements
     return getUser(username.toLowerCase()).getApplicationRole();
   }
 
-  /* (non-Javadoc)
-   * @see org.ihtsdo.otf.mapping.services.SecurityService#getUser(java.lang.String)
+  /*
+   * (non-Javadoc)
+   * 
+   * @see
+   * org.ihtsdo.otf.mapping.services.SecurityService#getUser(java.lang.String)
    */
   @Override
   public User getUser(String username) throws Exception {
@@ -226,9 +240,12 @@ public class SecurityServiceJpa extends RootServiceJpa implements
     return null;
   }
 
-
-  /* (non-Javadoc)
-   * @see org.ihtsdo.otf.mapping.services.SecurityService#addUser(org.ihtsdo.otf.mapping.helpers.User)
+  /*
+   * (non-Javadoc)
+   * 
+   * @see
+   * org.ihtsdo.otf.mapping.services.SecurityService#addUser(org.ihtsdo.otf.
+   * mapping.helpers.User)
    */
   @Override
   public User addUser(User user) {
@@ -236,9 +253,12 @@ public class SecurityServiceJpa extends RootServiceJpa implements
     return null;
   }
 
-
-  /* (non-Javadoc)
-   * @see org.ihtsdo.otf.mapping.services.SecurityService#removeUser(java.lang.String)
+  /*
+   * (non-Javadoc)
+   * 
+   * @see
+   * org.ihtsdo.otf.mapping.services.SecurityService#removeUser(java.lang.String
+   * )
    */
   @Override
   public User removeUser(String id) {
@@ -246,9 +266,12 @@ public class SecurityServiceJpa extends RootServiceJpa implements
     return null;
   }
 
-
-  /* (non-Javadoc)
-   * @see org.ihtsdo.otf.mapping.services.SecurityService#updateUser(org.ihtsdo.otf.mapping.helpers.User)
+  /*
+   * (non-Javadoc)
+   * 
+   * @see
+   * org.ihtsdo.otf.mapping.services.SecurityService#updateUser(org.ihtsdo.otf
+   * .mapping.helpers.User)
    */
   @Override
   public User updateUser(User user) {
@@ -256,9 +279,12 @@ public class SecurityServiceJpa extends RootServiceJpa implements
     return null;
   }
 
-
-  /* (non-Javadoc)
-   * @see org.ihtsdo.otf.mapping.services.SecurityService#getUserRoleForProject(java.lang.String, java.lang.Long)
+  /*
+   * (non-Javadoc)
+   * 
+   * @see
+   * org.ihtsdo.otf.mapping.services.SecurityService#getUserRoleForProject(java
+   * .lang.String, java.lang.Long)
    */
   @Override
   public UserRole getUserRoleForProject(String username, Long projectId) {
@@ -266,7 +292,9 @@ public class SecurityServiceJpa extends RootServiceJpa implements
     return null;
   }
 
-  /* (non-Javadoc)
+  /*
+   * (non-Javadoc)
+   * 
    * @see org.ihtsdo.otf.mapping.services.SecurityService#getUsers()
    */
   @Override
