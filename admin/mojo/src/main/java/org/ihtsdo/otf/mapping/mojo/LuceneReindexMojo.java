@@ -80,7 +80,6 @@ public class LuceneReindexMojo extends AbstractMojo {
     // if no parameter specified, re-index all objects
     if (indexedObjects == null) {
       objectsToReindex.add("ConceptJpa");
-      objectsToReindex.add("TreePositionJpa");
 
       // otherwise, construct set of indexed objects
     } else {
