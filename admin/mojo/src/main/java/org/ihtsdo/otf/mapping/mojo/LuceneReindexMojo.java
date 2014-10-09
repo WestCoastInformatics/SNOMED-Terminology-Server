@@ -17,7 +17,6 @@ import org.hibernate.CacheMode;
 import org.hibernate.search.jpa.FullTextEntityManager;
 import org.hibernate.search.jpa.Search;
 import org.ihtsdo.otf.mapping.rf2.jpa.ConceptJpa;
-import org.ihtsdo.otf.mapping.rf2.jpa.TreePositionJpa;
 
 /**
  * Goal which makes lucene indexes based on hibernate-search annotations.
@@ -109,7 +108,7 @@ public class LuceneReindexMojo extends AbstractMojo {
       getLog().info("  properties = " + config);
 
       EntityManagerFactory factory =
-          Persistence.createEntityManagerFactory("MappingServiceDS", config);
+          Persistence.createEntityManagerFactory("TermServiceDS", config);
 
       manager = factory.createEntityManager();
 
@@ -130,19 +129,6 @@ public class LuceneReindexMojo extends AbstractMojo {
             .startAndWait();
 
         objectsToReindex.remove("ConceptJpa");
-      }
-
-      // Tree Positions
-      if (objectsToReindex.contains("TreePositionJpa")) {
-        getLog().info("  Creating indexes for TreePositionJpa");
-        fullTextEntityManager.purgeAll(TreePositionJpa.class);
-        fullTextEntityManager.flushToIndexes();
-        fullTextEntityManager.createIndexer(TreePositionJpa.class)
-            .batchSizeToLoadObjects(100).cacheMode(CacheMode.NORMAL)
-            .threadsToLoadObjects(4).threadsForSubsequentFetching(8)
-            .startAndWait();
-
-        objectsToReindex.remove("TreePositionJpa");
       }
 
       if (objectsToReindex.size() != 0) {

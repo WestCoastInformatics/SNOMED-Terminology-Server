@@ -11,6 +11,7 @@ import javax.persistence.TemporalType;
 import javax.xml.bind.annotation.XmlID;
 import javax.xml.bind.annotation.XmlTransient;
 
+import org.hibernate.envers.Audited;
 import org.hibernate.search.annotations.Analyze;
 import org.hibernate.search.annotations.Field;
 import org.hibernate.search.annotations.Index;
@@ -20,14 +21,14 @@ import org.ihtsdo.otf.mapping.rf2.Component;
 /**
  * Abstract implementation of {@link Component} for use with JPA.
  */
-// @Audited
+@Audited
 @MappedSuperclass
 public abstract class AbstractComponent implements Component {
 
   /** The id. */
   @Id
   @GeneratedValue
-  private String id;
+  private Long id;
 
   /** The effective time. */
   @Temporal(TemporalType.TIMESTAMP)
@@ -65,7 +66,7 @@ public abstract class AbstractComponent implements Component {
    */
   @Override
   @XmlTransient
-  public String getId() {
+  public Long getId() {
     return this.id;
   }
 
@@ -73,7 +74,7 @@ public abstract class AbstractComponent implements Component {
    * {@inheritDoc}
    */
   @Override
-  public void setId(String id) {
+  public void setId(Long id) {
     this.id = id;
   }
 

@@ -83,7 +83,7 @@ public class RootServiceJpa implements RootService {
       in.close();
       Logger.getLogger(this.getClass()).info("  properties = " + config);
       factory =
-          Persistence.createEntityManagerFactory("MappingServiceDS", config);
+          Persistence.createEntityManagerFactory("TermServiceDS", config);
     }
 
     // if the field names have not been set, initialize

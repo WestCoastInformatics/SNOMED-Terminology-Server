@@ -5,13 +5,14 @@ import javax.persistence.Entity;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
+import org.hibernate.envers.Audited;
 import org.ihtsdo.otf.mapping.rf2.LanguageRefSetMember;
 
 /**
  * Concrete implementation of {@link LanguageRefSetMember}.
  */
 @Entity
-// @Audited
+@Audited
 @Table(name = "language_refset_members", uniqueConstraints = @UniqueConstraint(columnNames = {
     "terminologyId", "terminology", "terminologyVersion"
 }))

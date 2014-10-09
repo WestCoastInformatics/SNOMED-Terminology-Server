@@ -9,6 +9,7 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.xml.bind.annotation.XmlID;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 
 import org.hibernate.envers.Audited;
 import org.hibernate.search.annotations.Analyze;
@@ -31,7 +32,7 @@ public class UserJpa implements User {
   /** The id. */
   @Id
   @GeneratedValue
-  private String id;
+  private Long id;
 
   /** The user name. */
   @Column(nullable = false, unique = true, length = 25)
@@ -65,7 +66,7 @@ public class UserJpa implements User {
    * @param email the email
    * @param applicationRole the application role
    */
-  public UserJpa(String id, String userName, String name, String email,
+  public UserJpa(long id, String userName, String name, String email,
       UserRole applicationRole) {
     super();
     this.id = id;
@@ -95,8 +96,9 @@ public class UserJpa implements User {
    * @return the id
    */
   @Override
-  public String getId() {
-    return this.id;
+  @XmlTransient
+  public Long getId() {
+    return id;
   }
 
   /**
@@ -107,7 +109,7 @@ public class UserJpa implements User {
   @XmlID
   @Override
   public String getObjectId() {
-    return id;
+    return id.toString();
   }
 
   /*

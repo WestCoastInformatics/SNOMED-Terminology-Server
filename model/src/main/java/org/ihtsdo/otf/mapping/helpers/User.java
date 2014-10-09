@@ -2,8 +2,6 @@ package org.ihtsdo.otf.mapping.helpers;
 
 /**
  * Represents a user TODO: fix!.
- *
- * @author ${author}
  */
 public interface User {
 
@@ -12,7 +10,7 @@ public interface User {
    *
    * @return the id
    */
-  public String getId();
+  public Long getId();
 
   /**
    * Returns the name.

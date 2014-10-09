@@ -24,6 +24,11 @@ public class UserListJpa extends AbstractResultList<User> implements UserList {
     // do nothing
   }
 
+  /**
+   * Instantiates a {@link UserListJpa} from the specified parameters.
+   *
+   * @param users the users
+   */
   public UserListJpa(List<User> users) {
     this.users = users;
   }

@@ -82,12 +82,33 @@ public class TerminologyRf2SnapshotLoaderMojo extends AbstractMojo {
   private final SimpleDateFormat dt = new SimpleDateFormat("yyyymmdd");
 
   /* buffered readers for sorted files. */
-  private BufferedReader conceptsByConcept, descriptionsByDescription,
-      relationshipsBySourceConcept, languageRefsetsByDescription,
-      attributeRefsetsByDescription, simpleRefsetsByConcept,
-      simpleMapRefsetsByConcept, complexMapRefsetsByConcept,
-      extendedMapRefsetsByConcept;
-
+  /**  The concepts by concept. */
+  private BufferedReader conceptsByConcept;
+  
+  /**  The descriptions by description. */
+  private BufferedReader descriptionsByDescription;
+  
+  /**  The relationships by source concept. */
+  private BufferedReader relationshipsBySourceConcept;
+  
+  /**  The language refsets by description. */
+  private BufferedReader languageRefsetsByDescription;
+  
+  /**  The attribute refsets by description. */
+  private BufferedReader attributeRefsetsByDescription;
+  
+  /**  The simple refsets by concept. */
+  private BufferedReader simpleRefsetsByConcept;
+  
+  /**  The simple map refsets by concept. */
+  private BufferedReader simpleMapRefsetsByConcept;
+  
+  /**  The complex map refsets by concept. */
+  private BufferedReader complexMapRefsetsByConcept;
+  
+  /**  The extended map refsets by concept. */
+  private BufferedReader extendedMapRefsetsByConcept;
+  
   /** The version. */
   private String version = null;
 
@@ -104,7 +125,7 @@ public class TerminologyRf2SnapshotLoaderMojo extends AbstractMojo {
   private Map<String, Concept> conceptCache = new HashMap<>(); // used to
 
   /** hash set for storing default preferred names. */
-  Map<String, String> defaultPreferredNames = new HashMap<>();
+  Map<Long, String> defaultPreferredNames = new HashMap<>();
 
   /** counter for objects created, reset in each load section */
   int objectCt; //
@@ -351,9 +372,8 @@ public class TerminologyRf2SnapshotLoaderMojo extends AbstractMojo {
           rootId = conceptId;
           break;
         }
-        getLog().info("  Compute tree from rootId " + conceptId);
-        contentService.computeTreePositions(terminology, version, isaRelType,
-            rootId);
+        getLog().info("  Compute transitive closure from rootId " + rootId);
+        contentService.computeTransitiveClosure(rootId, terminology, version);
 
         contentService.close();
 
@@ -377,7 +397,9 @@ public class TerminologyRf2SnapshotLoaderMojo extends AbstractMojo {
 
   /**
    * Opens sorted data files.
-   * @param outputDir
+   *
+   * @param outputDir the output dir
+   * @throws IOException Signals that an I/O exception has occurred.
    */
   private void openSortedFileReaders(File outputDir) throws IOException {
     File conceptsByConceptsFile =
@@ -449,7 +471,8 @@ public class TerminologyRf2SnapshotLoaderMojo extends AbstractMojo {
   // Used for debugging/efficiency monitoring
   /**
    * Returns the elapsed time.
-   * 
+   *
+   * @param time the time
    * @return the elapsed time
    */
   @SuppressWarnings("boxing")
@@ -459,7 +482,8 @@ public class TerminologyRf2SnapshotLoaderMojo extends AbstractMojo {
 
   /**
    * Returns the total elapsed time str.
-   * 
+   *
+   * @param time the time
    * @return the total elapsed time str
    */
   @SuppressWarnings("boxing")
@@ -501,9 +525,12 @@ public class TerminologyRf2SnapshotLoaderMojo extends AbstractMojo {
 
   /**
    * Sorts all files by concept or referencedComponentId.
-   * 
+   *
+   * @param coreInputDir the core input dir
+   * @param outputDir the output dir
    * @throws Exception the exception
    */
+  @SuppressWarnings("null")
   private void sortRf2Files(File coreInputDir, File outputDir) throws Exception {
 
     // Check expectations and pre-conditions
@@ -918,6 +945,7 @@ public class TerminologyRf2SnapshotLoaderMojo extends AbstractMojo {
    * @return the sorted {@link File}
    * @throws IOException Signals that an I/O exception has occurred.
    */
+  @SuppressWarnings("null")
   private File mergeSortedFiles(File files1, File files2,
     Comparator<String> comp, File dir, String headerLine) throws IOException {
 
@@ -981,10 +1009,11 @@ public class TerminologyRf2SnapshotLoaderMojo extends AbstractMojo {
 
   /**
    * Returns the concept.
-   * 
+   *
    * @param terminologyId the terminology id
    * @param terminology the terminology
    * @param terminologyVersion the terminology version
+   * @param contentService the content service
    * @return the concept
    * @throws Exception the exception
    */
@@ -1061,6 +1090,7 @@ public class TerminologyRf2SnapshotLoaderMojo extends AbstractMojo {
 
     // begin transaction
     ContentService contentService = new ContentServiceJpa();
+    contentService.setTransactionPerOperation(false);
     contentService.beginTransaction();
 
     while ((line = conceptsByConcept.readLine()) != null) {
@@ -1122,6 +1152,7 @@ public class TerminologyRf2SnapshotLoaderMojo extends AbstractMojo {
 
     // begin transaction
     ContentService contentService = new ContentServiceJpa();
+    contentService.setTransactionPerOperation(false);
     contentService.beginTransaction();
 
     while ((line = relationshipsBySourceConcept.readLine()) != null) {
@@ -1205,6 +1236,7 @@ public class TerminologyRf2SnapshotLoaderMojo extends AbstractMojo {
 
     // begin transaction
     ContentService contentService = new ContentServiceJpa();
+    contentService.setTransactionPerOperation(false);
     contentService.beginTransaction();
 
     // load and persist first description
@@ -1316,6 +1348,7 @@ public class TerminologyRf2SnapshotLoaderMojo extends AbstractMojo {
 
     // Begin transaction
     ContentService contentService = new ContentServiceJpa();
+    contentService.setTransactionPerOperation(false);
     contentService.beginTransaction();
 
     Iterator<Concept> conceptIterator = conceptCache.values().iterator();
@@ -1360,6 +1393,7 @@ public class TerminologyRf2SnapshotLoaderMojo extends AbstractMojo {
 
   /**
    * Returns the next description.
+   * @param contentService 
    * 
    * @return the next description
    * @throws Exception the exception
@@ -1482,6 +1516,7 @@ public class TerminologyRf2SnapshotLoaderMojo extends AbstractMojo {
 
     // begin transaction
     ContentService contentService = new ContentServiceJpa();
+    contentService.setTransactionPerOperation(false);
     contentService.beginTransaction();
 
     while ((line = attributeRefsetsByDescription.readLine()) != null) {
@@ -1559,6 +1594,7 @@ public class TerminologyRf2SnapshotLoaderMojo extends AbstractMojo {
 
     // begin transaction
     ContentService contentService = new ContentServiceJpa();
+    contentService.setTransactionPerOperation(false);
     contentService.beginTransaction();
 
     while ((line = simpleRefsetsByConcept.readLine()) != null) {
@@ -1629,6 +1665,7 @@ public class TerminologyRf2SnapshotLoaderMojo extends AbstractMojo {
 
     // begin transaction
     ContentService contentService = new ContentServiceJpa();
+    contentService.setTransactionPerOperation(false);
     contentService.beginTransaction();
 
     while ((line = simpleMapRefsetsByConcept.readLine()) != null) {
@@ -1701,6 +1738,7 @@ public class TerminologyRf2SnapshotLoaderMojo extends AbstractMojo {
 
     // begin transaction
     ContentService contentService = new ContentServiceJpa();
+    contentService.setTransactionPerOperation(false);
     contentService.beginTransaction();
 
     while ((line = complexMapRefsetsByConcept.readLine()) != null) {
@@ -1788,6 +1826,7 @@ public class TerminologyRf2SnapshotLoaderMojo extends AbstractMojo {
 
     // begin transaction
     ContentService contentService = new ContentServiceJpa();
+    contentService.setTransactionPerOperation(false);
     contentService.beginTransaction();
 
     while ((line = extendedMapRefsetsByConcept.readLine()) != null) {

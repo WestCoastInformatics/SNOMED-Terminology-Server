@@ -5,6 +5,7 @@ import javax.persistence.MappedSuperclass;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlTransient;
 
+import org.hibernate.envers.Audited;
 import org.hibernate.search.annotations.ContainedIn;
 import org.ihtsdo.otf.mapping.rf2.Description;
 import org.ihtsdo.otf.mapping.rf2.DescriptionRefSetMember;
@@ -13,10 +14,11 @@ import org.ihtsdo.otf.mapping.rf2.DescriptionRefSetMember;
  * Abstract implementation of {@link DescriptionRefSetMember}.
  */
 @MappedSuperclass
-// @Audited
+@Audited
 public abstract class AbstractDescriptionRefSetMember extends
     AbstractRefSetMember implements DescriptionRefSetMember {
 
+  /**  The description. */
   @ManyToOne(targetEntity = DescriptionJpa.class, optional = false)
   // NOTE: this may apply only to LanguageRefSetMember given how
   // description uses @IndexedEmbedded

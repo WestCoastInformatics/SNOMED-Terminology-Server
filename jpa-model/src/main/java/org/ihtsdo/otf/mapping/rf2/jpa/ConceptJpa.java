@@ -14,6 +14,7 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
+import org.hibernate.envers.Audited;
 import org.hibernate.search.annotations.Analyze;
 import org.hibernate.search.annotations.Field;
 import org.hibernate.search.annotations.Index;
@@ -37,7 +38,7 @@ import org.ihtsdo.otf.mapping.rf2.SimpleRefSetMember;
 @Table(name = "concepts", uniqueConstraints = @UniqueConstraint(columnNames = {
     "terminologyId", "terminology", "terminologyVersion"
 }))
-// @Audited
+@Audited
 @Indexed
 @XmlRootElement(name = "concept")
 public class ConceptJpa extends AbstractComponent implements Concept {

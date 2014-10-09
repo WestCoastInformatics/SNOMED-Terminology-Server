@@ -18,7 +18,6 @@ package org.ihtsdo.otf.mapping.mojo;
 
 import java.io.File;
 import java.io.FileReader;
-import java.util.List;
 import java.util.Properties;
 
 import javax.persistence.EntityManager;
@@ -98,7 +97,7 @@ public class TerminologyRemoverMojo extends AbstractMojo {
       in.close();
       getLog().info("  properties = " + config);
       EntityManagerFactory factory =
-          Persistence.createEntityManagerFactory("MappingServiceDS", config);
+          Persistence.createEntityManagerFactory("TermServiceDS", config);
       EntityManager manager = factory.createEntityManager();
 
       EntityTransaction tx = manager.getTransaction();
@@ -106,7 +105,6 @@ public class TerminologyRemoverMojo extends AbstractMojo {
         // remove Tree Positions
         // first get all versions for this terminology
         MetadataService metadataService = new MetadataServiceJpa();
-        List<String> versions = metadataService.getVersions(terminology);
         metadataService.close();
 
         // truncate all the tables that we are going to use first
@@ -175,13 +173,13 @@ public class TerminologyRemoverMojo extends AbstractMojo {
 
         ContentService contentService = new ContentServiceJpa();
 
-        getLog().info("Start removing tree positions from " + terminology);
-        for (String version : versions) {
-          getLog().info(" version = " + version);
-          contentService.clearTreePositions(terminology, version);
-        }
-        contentService.close();
+        // TODO: compute transitive closure
+        //getLog().info("Start computing transitive closure");
+        // contentService.clearTransitiveClosure();
+        // contentService.computeTransitiveClosure();
 
+        
+        contentService.close();
         getLog().info("done ...");
 
       } catch (Exception e) {

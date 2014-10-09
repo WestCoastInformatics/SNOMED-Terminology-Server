@@ -3,13 +3,14 @@ package org.ihtsdo.otf.mapping.rf2.jpa;
 import javax.persistence.Column;
 import javax.persistence.MappedSuperclass;
 
+import org.hibernate.envers.Audited;
 import org.ihtsdo.otf.mapping.rf2.RefSetMember;
 
 /**
  * Abstract implementation of {@link RefSetMember} for use with JPA
  */
 @MappedSuperclass
-// @Audited
+@Audited
 public abstract class AbstractRefSetMember extends AbstractComponent implements
     RefSetMember {
 

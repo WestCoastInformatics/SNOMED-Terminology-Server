@@ -10,7 +10,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 public class SearchResultJpa implements SearchResult {
 
   /**  The id. */
-  private String id;
+  private Long id;
 
   /**  The terminology id. */
   private String terminologyId;
@@ -38,7 +38,7 @@ public class SearchResultJpa implements SearchResult {
    * @param terminologyId the terminologyId
    * @param value the value
    */
-  public SearchResultJpa(String id, String terminologyId, String value) {
+  public SearchResultJpa(Long id, String terminologyId, String value) {
     this.id = id;
     this.terminologyId = terminologyId;
     this.value = value;
@@ -51,7 +51,7 @@ public class SearchResultJpa implements SearchResult {
    */
   @Override
   @XmlElement(name = "id")
-  public String getId() {
+  public Long getId() {
     return this.id;
   }
 
@@ -61,7 +61,7 @@ public class SearchResultJpa implements SearchResult {
    * @param id the id
    */
   @Override
-  public void setId(String id) {
+  public void setId(Long id) {
     this.id = id;
 
   }

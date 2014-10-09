@@ -4,7 +4,7 @@
   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xsi:schemaLocation="http://java.sun.com/xml/ns/persistence http://java.sun.com/xml/ns/persistence/persistence_2_0.xsd">
   <!-- use transaction-type RESOURCE_LOCAL because we do not have a container -->
-  <persistence-unit name="MappingServiceDS" transaction-type="RESOURCE_LOCAL">
+  <persistence-unit name="TermServiceDS" transaction-type="RESOURCE_LOCAL">
 
     <!-- JPA persistence provider. -->
     <provider>org.hibernate.ejb.HibernatePersistence</provider>
@@ -21,6 +21,7 @@
     <class>org.ihtsdo.otf.mapping.rf2.jpa.LanguageRefSetMemberJpa</class>
     <class>org.ihtsdo.otf.mapping.rf2.jpa.SimpleMapRefSetMemberJpa</class>
     <class>org.ihtsdo.otf.mapping.rf2.jpa.SimpleRefSetMemberJpa</class>
-    <class>org.ihtsdo.otf.mapping.rf2.jpa.TreePositionJpa</class>
+    <class>org.ihtsdo.otf.mapping.rf2.jpa.TransitiveRelationshipJpa</class>
+    <class>org.ihtsdo.otf.mapping.helpers.UserJpa</class>
   </persistence-unit>
 </persistence>

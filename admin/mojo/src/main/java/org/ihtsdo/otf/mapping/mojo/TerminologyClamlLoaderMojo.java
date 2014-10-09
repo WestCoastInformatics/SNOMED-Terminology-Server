@@ -21,10 +21,6 @@ import java.util.Properties;
 import java.util.Set;
 import java.util.Stack;
 
-import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
-import javax.persistence.EntityTransaction;
-import javax.persistence.Persistence;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 
@@ -79,7 +75,7 @@ import org.xml.sax.helpers.DefaultHandler;
 public class TerminologyClamlLoaderMojo extends AbstractMojo {
 
   /**  The date format. */
-  final SimpleDateFormat dt = new SimpleDateFormat("yyyymmdd");
+  final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyymmdd");
 
   /**
    * Name of terminology to be loaded.
@@ -98,15 +94,15 @@ public class TerminologyClamlLoaderMojo extends AbstractMojo {
   /** The terminology version. */
   String terminologyVersion;
 
-  /** The manager - class variable because of SAX parser. */
-  EntityManager manager;
-
   /** The concept map. */
   Map<String, Concept> conceptMap;
 
   /** The roots. */
   List<String> roots = null;
 
+  /**  The content service. */
+  ContentService contentService;
+  
   /**
    * child to parent code map NOTE: this assumes a single superclass
    **/
@@ -143,10 +139,10 @@ public class TerminologyClamlLoaderMojo extends AbstractMojo {
       config.load(in);
       in.close();
       getLog().info("  properties = " + config);
-      EntityManagerFactory emFactory =
-          Persistence.createEntityManagerFactory("MappingServiceDS", config);
-      manager = emFactory.createEntityManager();
-
+      contentService = new ContentServiceJpa();
+      contentService.setTransactionPerOperation(false);
+      contentService.beginTransaction();
+      
       // set the input directory
       String inputFile =
           config.getProperty("loader." + terminology + ".input.data");
@@ -163,7 +159,7 @@ public class TerminologyClamlLoaderMojo extends AbstractMojo {
       getLog().info("  Create metadata classes");
       helper =
           new ClamlMetadataHelper(terminology, terminologyVersion,
-              effectiveTime, manager);
+              effectiveTime, contentService);
       conceptMap = helper.createMetadata();
 
       childToParentCodeMap = new HashMap<>();
@@ -175,9 +171,6 @@ public class TerminologyClamlLoaderMojo extends AbstractMojo {
       SAXParser saxParser = factory.newSAXParser();
       DefaultHandler handler = new LocalHandler();
 
-      EntityTransaction tx = manager.getTransaction();
-      tx.begin();
-
       // Open XML and begin parsing
       File file = new File(inputFile);
       fis = new FileInputStream(file);
@@ -187,7 +180,7 @@ public class TerminologyClamlLoaderMojo extends AbstractMojo {
       is.setEncoding("UTF-8");
       saxParser.parse(is, handler);
 
-      tx.commit();
+      contentService.commit();
 
       // creating tree positions
       // first get isaRelType from metadata
@@ -198,12 +191,11 @@ public class TerminologyClamlLoaderMojo extends AbstractMojo {
       String isaRelType = hierRelTypeMap.keySet().iterator().next().toString();
       metadataService.close();
 
-      ContentService contentService = new ContentServiceJpa();
-      getLog().info("Start creating tree positions.");
-      for (String root : roots) {
-        contentService.computeTreePositions(terminology, terminologyVersion,
-            isaRelType, root);
-      }
+      // Let service begin its own transaction
+      getLog().info("Start computing transtive closure");
+      // TODO: transitive closure
+      
+      
       contentService.close();
 
       getLog().info("done ...");
@@ -595,7 +587,7 @@ public class TerminologyClamlLoaderMojo extends AbstractMojo {
           // For the first label in the code, create the concept
           if (!conceptMap.containsKey(code)) {
             concept.setTerminologyId(code);
-            concept.setEffectiveTime(dt.parse(effectiveTime));
+            concept.setEffectiveTime(dateFormat.parse(effectiveTime));
             concept.setActive(true);
             concept.setModuleId(conceptMap.get("defaultModule")
                 .getTerminologyId());
@@ -609,14 +601,14 @@ public class TerminologyClamlLoaderMojo extends AbstractMojo {
                     + concept.getDefaultPreferredName());
             // Persist now, but commit at the end after all descriptions are
             // added
-            manager.persist(concept);
+            contentService.addConcept(concept);
             conceptMap.put(code, concept);
           }
 
           // Add description to concept for this rubric
           Description desc = new DescriptionJpa();
           desc.setTerminologyId(rubricId);
-          desc.setEffectiveTime(dt.parse(effectiveTime));
+          desc.setEffectiveTime(dateFormat.parse(effectiveTime));
           desc.setActive(true);
           desc.setModuleId(conceptMap.get("defaultModule")
               .getTerminologyId());
@@ -735,7 +727,7 @@ public class TerminologyClamlLoaderMojo extends AbstractMojo {
             SimpleRefSetMember refSetMember = new SimpleRefSetMemberJpa();
             refSetMember.setConcept(concept);
             refSetMember.setActive(true);
-            refSetMember.setEffectiveTime(dt.parse(effectiveTime));
+            refSetMember.setEffectiveTime(dateFormat.parse(effectiveTime));
             refSetMember.setModuleId(conceptMap.get("defaultModule")
                 .getTerminologyId());
             refSetMember.setTerminology(terminology);
@@ -851,7 +843,7 @@ public class TerminologyClamlLoaderMojo extends AbstractMojo {
                 relationship.setTerminologyId(new Integer(relIdCounter++)
                     .toString());
               }
-              relationship.setEffectiveTime(dt.parse(effectiveTime));
+              relationship.setEffectiveTime(dateFormat.parse(effectiveTime));
               relationship.setActive(true);
               relationship.setModuleId(conceptMap.get("defaultModule")
                   .getTerminologyId());
@@ -885,7 +877,6 @@ public class TerminologyClamlLoaderMojo extends AbstractMojo {
             }
           }
         }
-        manager.close();
 
       } catch (ParseException e) {
         throw new SAXException(e);
@@ -903,7 +894,7 @@ public class TerminologyClamlLoaderMojo extends AbstractMojo {
       String code = modifier + modifierCode;
       if (!conceptMap.containsKey(code)) {
         concept.setTerminologyId(modifier + modifierCode);
-        concept.setEffectiveTime(dt.parse(effectiveTime));
+        concept.setEffectiveTime(dateFormat.parse(effectiveTime));
         concept.setActive(true);
         concept.setModuleId(conceptMap.get("defaultModule")
             .getTerminologyId());
@@ -923,7 +914,7 @@ public class TerminologyClamlLoaderMojo extends AbstractMojo {
       // add description to concept
       Description desc = new DescriptionJpa();
       desc.setTerminologyId(rubricId);
-      desc.setEffectiveTime(dt.parse(effectiveTime));
+      desc.setEffectiveTime(dateFormat.parse(effectiveTime));
       desc.setActive(true);
       desc.setModuleId(conceptMap.get("defaultModule")
           .getTerminologyId());
@@ -1372,7 +1363,7 @@ public class TerminologyClamlLoaderMojo extends AbstractMojo {
             + childConcept.getTerminologyId() + " already in map");
 
       conceptMap.put(childConcept.getTerminologyId(), childConcept);
-      manager.persist(childConcept);
+      contentService.addConcept(childConcept);
       // add relationship
       helper.createIsaRelationship(parentConcept, childConcept, ("" + relId),
           terminology, terminologyVersion, effectiveTime);
