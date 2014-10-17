@@ -34,6 +34,10 @@ public abstract class AbstractComponent implements Component {
   @Temporal(TemporalType.TIMESTAMP)
   private Date effectiveTime;
 
+  /** The last modified. */
+  @Temporal(TemporalType.TIMESTAMP)
+  private Date lastModified;
+
   /** The active. */
   @Column(nullable = false)
   private boolean active;
@@ -92,6 +96,16 @@ public abstract class AbstractComponent implements Component {
   @Override
   public void setEffectiveTime(Date effectiveTime) {
     this.effectiveTime = effectiveTime;
+  }
+
+  @Override
+  public Date getLastModified() {
+    return lastModified;
+  }
+
+  @Override
+  public void setLastModified(Date lastModified) {
+    this.lastModified = lastModified;
   }
 
   /**

@@ -4,33 +4,22 @@ import java.io.File;
 import java.io.FileReader;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Properties;
 import java.util.UUID;
 
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response.Status.Family;
-
 import org.apache.log4j.Logger;
-import org.apache.solr.common.util.Hash;
 import org.ihtsdo.otf.mapping.helpers.LocalException;
 import org.ihtsdo.otf.mapping.helpers.User;
 import org.ihtsdo.otf.mapping.helpers.UserJpa;
 import org.ihtsdo.otf.mapping.helpers.UserList;
+import org.ihtsdo.otf.mapping.helpers.UserListJpa;
 import org.ihtsdo.otf.mapping.helpers.UserRole;
 import org.ihtsdo.otf.mapping.services.SecurityService;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.sun.jersey.api.client.Client;
-import com.sun.jersey.api.client.ClientResponse;
-import com.sun.jersey.api.client.WebResource;
-import com.sun.jersey.api.representation.Form;
-
 /**
  * Reference implementation of the {@link SecurityService}.
- *
- * @author ${author}
  */
 public class SecurityServiceJpa extends RootServiceJpa implements
     SecurityService {
@@ -43,6 +32,12 @@ public class SecurityServiceJpa extends RootServiceJpa implements
 
   /** config properties */
   private Properties config = null;
+
+  /** The handler. */
+  private SecurityServiceHandler handler = null;
+
+  /** The handler properties. */
+  private Properties handlerProperties = new Properties();
 
   /**
    * Instantiates an empty {@link SecurityServiceJpa}.
@@ -60,9 +55,9 @@ public class SecurityServiceJpa extends RootServiceJpa implements
    * org.ihtsdo.otf.mapping.services.SecurityService#authenticate(java.lang.
    * String, java.lang.String)
    */
-  @SuppressWarnings("unchecked")
   @Override
   public String authenticate(String username, String password) throws Exception {
+    // Check username and password are not null
     if (username == null)
       throw new LocalException("Invalid username: null");
     if (password == null)
@@ -79,110 +74,72 @@ public class SecurityServiceJpa extends RootServiceJpa implements
       config.load(in);
       in.close();
     }
-    String ihtsdoSecurityUrl = config.getProperty("ihtsdo.security.url");
-    boolean ihtsdoSecurityActivated =
-        new Boolean(config.getProperty("ihtsdo.security.activated"));
 
-    // if ihtsdo security is off, use username as token
-    if (!ihtsdoSecurityActivated || username.equals("guest")) {
+    if (handler == null) {
+
+      String handlerName = config.getProperty("security.handler");
+      String handlerClass = config.getProperty("security.handler.");
+
+      handlerProperties = new Properties();
+      handler =
+          (SecurityServiceHandler) Class.forName(handlerClass).newInstance();
+      for (Object key : config.keySet()) {
+        if (key.toString().startsWith("security.handler." + handlerName + ".")) {
+          String shortKey =
+              key.toString().substring(
+                  ("security.handler." + handlerName + ".").length());
+          handlerProperties.put(shortKey, config.getProperty(key.toString()));
+        }
+      }
+    }
+    boolean securityActivated =
+        new Boolean(config.getProperty("security.activated"));
+
+    // if security is off, use username as token
+    if (!securityActivated || username.equals("guest")) {
       tokenUsername.put(username, username);
       return getUser(username).getUserName();
     }
 
-    // set up request to be posted to ihtsdo security service
-    Form form = new Form();
-    form.add("username", username);
-    form.add("password", password);
-    form.add("queryName", "getUserByNameAuth");
+    //
+    // Call the security service
+    //
+    User authUser = handler.authenticate(username, password, handlerProperties);
 
-    Client client = Client.create();
-    WebResource resource = client.resource(ihtsdoSecurityUrl);
-
-    resource.type(MediaType.APPLICATION_FORM_URLENCODED_TYPE);
-
-    ClientResponse response = resource.post(ClientResponse.class, form);
-
-    String resultString = "";
-    if (response.getClientResponseStatus().getFamily() == Family.SUCCESSFUL) {
-      Logger.getLogger(this.getClass())
-          .info("Success! " + response.getStatus());
-      resultString = response.getEntity(String.class);
-      Logger.getLogger(this.getClass()).info(resultString);
-    } else {
-      // TODO Differentiate error messages with NO RESPONE and Authentication
-      // Failed (Check text)
-      Logger.getLogger(this.getClass()).info("ERROR! " + response.getStatus());
-      resultString = response.getEntity(String.class);
-      Logger.getLogger(this.getClass()).info(resultString);
-      throw new LocalException("Incorrect user name or password.");
-    }
-
-    /*
-     * Synchronize the information sent back from ITHSDO with the User object.
-     * Add a new user if there isn't one matching the username If there is, load
-     * and update that user and save the changes
-     */
-    String ihtsdoUserName = "";
-    String ihtsdoEmail = "";
-    String ihtsdoGivenName = "";
-    String ihtsdoSurname = "";
-
-    // converting json to
-    byte[] Data = resultString.getBytes();
-    Map<String, Map<String, String>> json = new HashMap<>();
-
-    // parse username from json object
-    ObjectMapper objectMapper = new ObjectMapper();
-    json =
-        (Map<String, Map<String, String>>) objectMapper.readValue(Data,
-            Hash.class);
-    for (Entry<String, Map<String, String>> entrySet : json.entrySet()) {
-      if (entrySet.getKey().equals("user")) {
-        Map<String, String> inner = entrySet.getValue();
-        for (Entry<String, String> innerEntrySet : inner.entrySet()) {
-          if (innerEntrySet.getKey().equals("name")) {
-            ihtsdoUserName = innerEntrySet.getValue();
-          } else if (innerEntrySet.getKey().equals("email")) {
-            ihtsdoEmail = innerEntrySet.getValue();
-          } else if (innerEntrySet.getKey().equals("givenName")) {
-            ihtsdoGivenName = innerEntrySet.getValue();
-          } else if (innerEntrySet.getKey().equals("surname")) {
-            ihtsdoSurname = innerEntrySet.getValue();
-          }
-        }
-      }
-    }
-    // check if ihtsdo user matches one of our Users
+    // check if authenticated user matches one of our users
     UserList userList = getUsers();
     User userFound = null;
     for (User user : userList.getUsers()) {
-      if (user.getUserName().equals(ihtsdoUserName)) {
+      if (user.getUserName().equals(authUser.getUserName())) {
         userFound = user;
         break;
       }
     }
-    // if User was found, update to match ihtsdo settings
+
+    // if user was found, update to match settings
     if (userFound != null) {
-      userFound.setEmail(ihtsdoEmail);
-      userFound.setName(ihtsdoGivenName + " " + ihtsdoSurname);
-      userFound.setUserName(ihtsdoUserName);
+      userFound.setEmail(authUser.getEmail());
+      userFound.setName(authUser.getName());
+      userFound.setUserName(authUser.getUserName());
       updateUser(userFound);
-      // if User not found, create one for our use
-    } else {
+
+    }
+    // if User not found, create one for our use
+    else {
       User newUser = new UserJpa();
-      newUser.setName(ihtsdoGivenName + " " + ihtsdoSurname);
-      newUser.setUserName(ihtsdoUserName);
-      newUser.setEmail(ihtsdoEmail);
+      newUser.setEmail(authUser.getEmail());
+      newUser.setName(authUser.getName());
+      newUser.setUserName(authUser.getUserName());
       newUser.setApplicationRole(UserRole.VIEWER);
       addUser(newUser);
     }
 
     // Generate application-managed token
     String token = UUID.randomUUID().toString();
-    tokenUsername.put(token, ihtsdoUserName);
+    tokenUsername.put(token, authUser.getUserName());
     tokenLogin.put(token, new Date());
 
-    Logger.getLogger(this.getClass()).info("User = " + resultString);
+    Logger.getLogger(this.getClass()).info("User = " + authUser.getUserName());
 
     return token;
   }
@@ -199,14 +156,20 @@ public class SecurityServiceJpa extends RootServiceJpa implements
     if (authToken == null)
       throw new LocalException(
           "Attempt to access a service without an authorization token, the user is likely not logged in.");
+
     String parsedToken = authToken.replace("\"", "");
     if (tokenUsername.containsKey(parsedToken)) {
       String username = tokenUsername.get(parsedToken);
       Logger.getLogger(this.getClass()).info(
           "User = " + username + " Token = " + parsedToken);
+      if (tokenLogin.get(username).before(new Date())) {
+        throw new LocalException("AuthToken has expired");
+      }
       return username;
-    } else
+
+    } else {
       throw new LocalException("AuthToken does not have a valid username.");
+    }
   }
 
   /*
@@ -232,12 +195,29 @@ public class SecurityServiceJpa extends RootServiceJpa implements
    * (non-Javadoc)
    * 
    * @see
+   * org.ihtsdo.otf.mapping.services.SecurityService#getUser(java.lang.Long)
+   */
+  @Override
+  public User getUser(Long id) throws Exception {
+    javax.persistence.Query query =
+        manager.createQuery("select u from UserJpa u where id = :id");
+    query.setParameter("id", id);
+    return (User) query.getSingleResult();
+  }
+
+  /*
+   * (non-Javadoc)
+   * 
+   * @see
    * org.ihtsdo.otf.mapping.services.SecurityService#getUser(java.lang.String)
    */
   @Override
   public User getUser(String username) throws Exception {
-    // TODO Auto-generated method stub
-    return null;
+    javax.persistence.Query query =
+        manager
+            .createQuery("select u from UserJpa u where userName = :userName");
+    query.setParameter("userName", username);
+    return (User) query.getSingleResult();
   }
 
   /*
@@ -249,8 +229,15 @@ public class SecurityServiceJpa extends RootServiceJpa implements
    */
   @Override
   public User addUser(User user) {
-    // TODO Auto-generated method stub
-    return null;
+    if (getTransactionPerOperation()) {
+      tx = manager.getTransaction();
+      tx.begin();
+      manager.persist(user);
+      tx.commit();
+    } else {
+      manager.persist(user);
+    }
+    return user;
   }
 
   /*
@@ -261,9 +248,27 @@ public class SecurityServiceJpa extends RootServiceJpa implements
    * )
    */
   @Override
-  public User removeUser(String id) {
-    // TODO Auto-generated method stub
-    return null;
+  public void removeUser(String id) {
+    tx = manager.getTransaction();
+    // retrieve this user
+    User mu = manager.find(UserJpa.class, id);
+    if (getTransactionPerOperation()) {
+      tx.begin();
+      if (manager.contains(mu)) {
+        manager.remove(mu);
+      } else {
+        manager.remove(manager.merge(mu));
+      }
+      tx.commit();
+
+    } else {
+      if (manager.contains(mu)) {
+        manager.remove(mu);
+      } else {
+        manager.remove(manager.merge(mu));
+      }
+    }
+
   }
 
   /*
@@ -274,22 +279,15 @@ public class SecurityServiceJpa extends RootServiceJpa implements
    * .mapping.helpers.User)
    */
   @Override
-  public User updateUser(User user) {
-    // TODO Auto-generated method stub
-    return null;
-  }
-
-  /*
-   * (non-Javadoc)
-   * 
-   * @see
-   * org.ihtsdo.otf.mapping.services.SecurityService#getUserRoleForProject(java
-   * .lang.String, java.lang.Long)
-   */
-  @Override
-  public UserRole getUserRoleForProject(String username, Long projectId) {
-    // TODO Auto-generated method stub
-    return null;
+  public void updateUser(User user) {
+    if (getTransactionPerOperation()) {
+      tx = manager.getTransaction();
+      tx.begin();
+      manager.merge(user);
+      tx.commit();
+    } else {
+      manager.merge(user);
+    }
   }
 
   /*
@@ -297,10 +295,16 @@ public class SecurityServiceJpa extends RootServiceJpa implements
    * 
    * @see org.ihtsdo.otf.mapping.services.SecurityService#getUsers()
    */
+  @SuppressWarnings("unchecked")
   @Override
   public UserList getUsers() {
-    // TODO Auto-generated method stub
-    return null;
+    javax.persistence.Query query =
+        manager.createQuery("select u from UserJpa u");
+    List<User> m = query.getResultList();
+    UserListJpa mapUserList = new UserListJpa();
+    mapUserList.setUsers(m);
+    mapUserList.setTotalCount(m.size());
+    return mapUserList;
   }
 
 }

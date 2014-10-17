@@ -29,7 +29,6 @@ import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.ihtsdo.otf.mapping.helpers.ClamlMetadataHelper;
 import org.ihtsdo.otf.mapping.jpa.services.ContentServiceJpa;
-import org.ihtsdo.otf.mapping.jpa.services.MetadataServiceJpa;
 import org.ihtsdo.otf.mapping.rf2.Concept;
 import org.ihtsdo.otf.mapping.rf2.Description;
 import org.ihtsdo.otf.mapping.rf2.Relationship;
@@ -39,7 +38,6 @@ import org.ihtsdo.otf.mapping.rf2.jpa.DescriptionJpa;
 import org.ihtsdo.otf.mapping.rf2.jpa.RelationshipJpa;
 import org.ihtsdo.otf.mapping.rf2.jpa.SimpleRefSetMemberJpa;
 import org.ihtsdo.otf.mapping.services.ContentService;
-import org.ihtsdo.otf.mapping.services.MetadataService;
 import org.xml.sax.Attributes;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
@@ -182,19 +180,12 @@ public class TerminologyClamlLoaderMojo extends AbstractMojo {
 
       contentService.commit();
 
-      // creating tree positions
-      // first get isaRelType from metadata
-      MetadataService metadataService = new MetadataServiceJpa();
-      Map<String, String> hierRelTypeMap =
-          metadataService.getHierarchicalRelationshipTypes(terminology,
-              terminologyVersion);
-      String isaRelType = hierRelTypeMap.keySet().iterator().next().toString();
-      metadataService.close();
-
       // Let service begin its own transaction
       getLog().info("Start computing transtive closure");
-      // TODO: transitive closure
-      
+      contentService.clearTransitiveClosure(terminology, terminologyVersion);
+      for (String root : roots) {
+        contentService.computeTransitiveClosure(root, terminology, terminologyVersion);
+      }
       
       contentService.close();
 

@@ -44,7 +44,16 @@ public interface SecurityService extends RootService {
   
 
   /**
-   * Get user.
+   * Get user by id.
+   *
+   * @param username the username
+   * @return the user
+   * @throws Exception the exception
+   */
+  public User getUser(Long id) throws Exception;
+
+  /**
+   * Get user by user.
    *
    * @param username the username
    * @return the user
@@ -73,7 +82,7 @@ public interface SecurityService extends RootService {
    * @param id the id
    * @return the user
    */
-  public User removeUser(String id);
+  public void removeUser(String id);
   
   /**
    * Update user.
@@ -81,15 +90,6 @@ public interface SecurityService extends RootService {
    * @param user the user
    * @return the user
    */
-  public User updateUser(User user);
+  public void updateUser(User user);
 
-  /**
-   * Returns the user role for project.
-   *
-   * @param username the username
-   * @param projectId the project id
-   * @return the user role for project
-   */
-  public UserRole getUserRoleForProject(String username, Long projectId);
-  
 }

@@ -345,6 +345,7 @@ public class TerminologyRf2SnapshotLoaderMojo extends AbstractMojo {
         // creating tree positions
         // first get isaRelType from metadata
         MetadataService metadataService = new MetadataServiceJpa();
+        String version = metadataService.getLatestVersion(terminology);
         Map<String, String> hierRelTypeMap =
             metadataService.getHierarchicalRelationshipTypes(terminology,
                 version);
@@ -372,7 +373,8 @@ public class TerminologyRf2SnapshotLoaderMojo extends AbstractMojo {
           rootId = conceptId;
           break;
         }
-        getLog().info("  Compute transitive closure from rootId " + rootId);
+        getLog().info("  Compute transitive closure from rootId " + rootId +
+            " for " + terminology + ", " + version);
         contentService.computeTransitiveClosure(rootId, terminology, version);
 
         contentService.close();

@@ -72,7 +72,6 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
    * 
    * @see org.ihtsdo.otf.mapping.services.ContentService#close()
    */
-
   @SuppressWarnings("unchecked")
   @Override
   public ConceptList getConcepts() throws Exception {
@@ -1631,7 +1630,7 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
         tr.setModuleId("");
         tr.setTerminologyId("");
         tr.setTerminology(terminology);
-        tr.setTerminology(terminologyVersion);
+        tr.setTerminologyVersion(terminologyVersion);
         addTransitiveRelationship(tr);
       }
       Logger.getLogger(this.getClass())

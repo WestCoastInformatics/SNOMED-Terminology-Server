@@ -50,8 +50,12 @@ base.url=
 #
 # URL for security service
 #
-ihtsdo.security.activated=false
-ihtsdo.security.url=https://usermanagement.ihtsdotools.org/security-web/query/
+security.activated=false
+security.handler=DEFAULT
+security.handler.DEFAULT.class=org.ihtsdo.otf.mapping.jpa.services.helpers.DefaultSecurityServiceHandler
+security.handler.DEFAULT.url=https://usermanagement.ihtsdotools.org/security-web/query/
+#security.handler.IHTSDO.class=org.ihtsdo.otf.mapping.jpa.services.helpers.IHTSDOSecurityServiceHandler
+#security.handler.IHTSDO.url=https://usermanagement.ihtsdotools.org/security-web/query/
 
 #
 # Exception processing emails

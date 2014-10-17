@@ -22,8 +22,6 @@
     <module>lucene</module>
     <module>loader</module>
     <module>remover</module>
-    <module>export</module>
-    <module>import</module>
     <module>qa</module>
     <module>release</module>
   </modules>

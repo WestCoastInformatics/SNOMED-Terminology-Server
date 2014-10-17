@@ -534,7 +534,7 @@ public interface ContentService extends RootService {
 
   /**
    * Compute transitive closure.
-   *
+   * @param root node
    * @param terminology the terminology
    * @param terminologyVersion the terminology version
    * @throws Exception the exception

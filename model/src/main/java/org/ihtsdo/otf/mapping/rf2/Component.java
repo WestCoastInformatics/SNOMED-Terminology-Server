@@ -50,6 +50,20 @@ public interface Component {
   public void setEffectiveTime(Date effectiveTime);
 
   /**
+   * Returns the last modified.
+   * 
+   * @return the last modified
+   */
+  public Date getLastModified();
+
+  /**
+   * Sets the last modified.
+   * 
+   * @param lastModified the last modified
+   */
+  public void setLastModified(Date lastModified);
+
+  /**
    * Indicates whether or not active is the case.
    * 
    * @return <code>true</code> if so, <code>false</code> otherwise
