@@ -1,6 +1,5 @@
-package org.ihtsdo.otf.mapping.jpa.services.helpers;
+package org.ihtsdo.otf.mapping.services.helpers;
 
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -10,14 +9,10 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response.Status.Family;
 
 import org.apache.log4j.Logger;
-import org.apache.solr.common.util.Hash;
 import org.ihtsdo.otf.mapping.helpers.LocalException;
 import org.ihtsdo.otf.mapping.helpers.User;
-import org.ihtsdo.otf.mapping.helpers.UserJpa;
-import org.ihtsdo.otf.mapping.jpa.services.SecurityServiceHandler;
+import org.ihtsdo.otf.mapping.services.SecurityServiceHandler;
 
-import com.fasterxml.jackson.core.JsonParseException;
-import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sun.jersey.api.client.Client;
 import com.sun.jersey.api.client.ClientResponse;
@@ -29,15 +24,11 @@ import com.sun.jersey.api.representation.Form;
  */
 public class IhtsdoSecurityServiceHandler implements SecurityServiceHandler {
 
-  @SuppressWarnings("unchecked")
   @Override
+  @SuppressWarnings("unchecked")
   public User authenticate(String username, String password,
-    Properties properties) throws LocalException, JsonParseException,
-    JsonMappingException, IOException {
-    // TODO: put this into an IhtsdoSecurityServiceHandler and wire
-    // this to the config so that it can be injected (lazy init, only once)
-    // set up request to be posted to ihtsdo security service
-    // the handler should return a User object (not JPA).
+    Properties properties) throws Exception {
+
     Form form = new Form();
     form.add("username", username);
     form.add("password", password);
@@ -73,14 +64,12 @@ public class IhtsdoSecurityServiceHandler implements SecurityServiceHandler {
     String authSurname = "";
 
     // converting json to
-    byte[] Data = resultString.getBytes();
+    byte[] data = resultString.getBytes();
     Map<String, Map<String, String>> json = new HashMap<>();
 
     // parse username from json object
     ObjectMapper objectMapper = new ObjectMapper();
-    json =
-        (Map<String, Map<String, String>>) objectMapper.readValue(Data,
-            Hash.class);
+    json = objectMapper.readValue(data, HashMap.class);
     for (Entry<String, Map<String, String>> entrySet : json.entrySet()) {
       if (entrySet.getKey().equals("user")) {
         Map<String, String> inner = entrySet.getValue();
@@ -98,7 +87,7 @@ public class IhtsdoSecurityServiceHandler implements SecurityServiceHandler {
       }
     }
 
-    User returnUser = new UserJpa();
+    User returnUser = new UserImpl();
     returnUser.setName(authGivenName + " " + authSurname);
     returnUser.setEmail(authEmail);
     returnUser.setUserName(authUserName);

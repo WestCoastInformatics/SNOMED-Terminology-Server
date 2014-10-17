@@ -1,28 +1,24 @@
-package org.ihtsdo.otf.mapping.jpa.services.helpers;
+package org.ihtsdo.otf.mapping.services.helpers;
 
-import java.io.IOException;
 import java.util.Properties;
 
-import org.ihtsdo.otf.mapping.helpers.LocalException;
 import org.ihtsdo.otf.mapping.helpers.User;
-import org.ihtsdo.otf.mapping.helpers.UserJpa;
 import org.ihtsdo.otf.mapping.helpers.UserRole;
-import org.ihtsdo.otf.mapping.jpa.services.SecurityServiceHandler;
-
-import com.fasterxml.jackson.core.JsonParseException;
-import com.fasterxml.jackson.databind.JsonMappingException;
+import org.ihtsdo.otf.mapping.services.SecurityServiceHandler;
 
 /**
  * Implements a security handler that authorizes via IHTSDO authentication.
  */
 public class DefaultSecurityServiceHandler implements SecurityServiceHandler {
 
+  /* (non-Javadoc)
+   * @see org.ihtsdo.otf.mapping.services.SecurityServiceHandler#authenticate(java.lang.String, java.lang.String, java.util.Properties)
+   */
   @Override
   public User authenticate(String username, String password,
-    Properties properties) throws LocalException, JsonParseException,
-    JsonMappingException, IOException {
+    Properties properties) throws Exception {
 
-    User user = new UserJpa();
+    User user = new UserImpl();
     user.setUserName("guest");
     user.setName("Guest");
     user.setApplicationRole(UserRole.VIEWER);

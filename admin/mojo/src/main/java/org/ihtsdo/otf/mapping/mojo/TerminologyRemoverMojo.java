@@ -28,9 +28,7 @@ import javax.persistence.Query;
 
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoFailureException;
-import org.ihtsdo.otf.mapping.jpa.services.ContentServiceJpa;
 import org.ihtsdo.otf.mapping.jpa.services.MetadataServiceJpa;
-import org.ihtsdo.otf.mapping.services.ContentService;
 import org.ihtsdo.otf.mapping.services.MetadataService;
 
 /**
@@ -169,17 +167,15 @@ public class TerminologyRemoverMojo extends AbstractMojo {
         deleteRecords = query.executeUpdate();
         getLog().info("    concept records deleted: " + deleteRecords);
 
+        query =
+            manager
+                .createQuery("DELETE From TransitiveRelationshipJpa c where terminology = :terminology");
+        query.setParameter("terminology", terminology);
+        deleteRecords = query.executeUpdate();
+        getLog().info("    transitive relationships records deleted: " + deleteRecords);
+
         tx.commit();
 
-        ContentService contentService = new ContentServiceJpa();
-
-        // TODO: compute transitive closure
-        //getLog().info("Start computing transitive closure");
-        // contentService.clearTransitiveClosure();
-        // contentService.computeTransitiveClosure();
-
-        
-        contentService.close();
         getLog().info("done ...");
 
       } catch (Exception e) {

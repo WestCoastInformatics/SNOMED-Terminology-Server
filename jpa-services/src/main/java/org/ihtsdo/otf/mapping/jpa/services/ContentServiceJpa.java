@@ -1680,8 +1680,8 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
       descendants.add(chd);
       Set<String> grandChildren = getDescendants(chd, seen, parChd);
       // add all recursively gathered descendants at this level
-      for (String grandChidl : grandChildren) {
-        descendants.add(grandChidl);
+      for (String grandChild : grandChildren) {
+        descendants.add(grandChild);
       }
     }
 

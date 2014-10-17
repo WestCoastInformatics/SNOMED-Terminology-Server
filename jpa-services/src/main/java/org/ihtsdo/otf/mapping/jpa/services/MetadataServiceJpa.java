@@ -1,10 +1,15 @@
 package org.ihtsdo.otf.mapping.jpa.services;
 
+import java.io.File;
+import java.io.FileReader;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 
+import org.apache.log4j.Logger;
 import org.ihtsdo.otf.mapping.services.MetadataService;
+import org.ihtsdo.otf.mapping.services.helpers.ConfigUtility;
 
 /**
  * Reference implementation of {@link MetadataService}
@@ -13,7 +18,7 @@ public class MetadataServiceJpa extends RootServiceJpa implements
     MetadataService {
 
   /** The helper map. */
-  private Map<String, MetadataService> helperMap = null;
+  private static Map<String, MetadataService> helperMap = null;
 
   /**
    * Instantiates an empty {@link MetadataServiceJpa}.
@@ -22,11 +27,26 @@ public class MetadataServiceJpa extends RootServiceJpa implements
   public MetadataServiceJpa() throws Exception {
     super();
 
-    helperMap = new HashMap<>();
-    helperMap.put("SNOMEDCT", new SnomedMetadataServiceJpaHelper());
-    helperMap.put("ICD10", new ClamlMetadataServiceJpaHelper());
-    helperMap.put("ICD9CM", new ClamlMetadataServiceJpaHelper());
-    helperMap.put("ICPC", new ClamlMetadataServiceJpaHelper());
+    if (helperMap == null) {
+      helperMap = new HashMap<>();
+      String configFileName = System.getProperty("run.config");
+      Logger.getLogger(this.getClass())
+          .info("  run.config = " + configFileName);
+      Properties config = new Properties();
+      FileReader in = new FileReader(new File(configFileName));
+      config.load(in);
+      in.close();
+      for (String handler : config.getProperty("metadata.service.handlers")
+          .split(",")) {
+        // Add handlers to map
+        helperMap.put(
+            handler,
+            (MetadataService) ConfigUtility.newHandlerInstance(
+                handler,
+                config.getProperty("metadata.service.handler." + handler
+                    + ".class"), MetadataService.class));
+      }
+    }
   }
 
   /*

@@ -39,14 +39,12 @@ public interface SecurityService extends RootService {
    * @return the application role
    * @throws Exception the exception
    */
-  public UserRole getApplicationRoleForToken(String authToken)
-    throws Exception;
-  
+  public UserRole getApplicationRoleForToken(String authToken) throws Exception;
 
   /**
    * Get user by id.
+   * @param id the id
    *
-   * @param username the username
    * @return the user
    * @throws Exception the exception
    */
@@ -75,20 +73,18 @@ public interface SecurityService extends RootService {
    * @return the user
    */
   public User addUser(User user);
-  
+
   /**
    * Removes the user.
    *
    * @param id the id
-   * @return the user
    */
   public void removeUser(String id);
-  
+
   /**
    * Update user.
    *
    * @param user the user
-   * @return the user
    */
   public void updateUser(User user);
 

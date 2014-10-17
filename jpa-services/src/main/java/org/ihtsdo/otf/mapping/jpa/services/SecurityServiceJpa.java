@@ -17,6 +17,8 @@ import org.ihtsdo.otf.mapping.helpers.UserList;
 import org.ihtsdo.otf.mapping.helpers.UserListJpa;
 import org.ihtsdo.otf.mapping.helpers.UserRole;
 import org.ihtsdo.otf.mapping.services.SecurityService;
+import org.ihtsdo.otf.mapping.services.SecurityServiceHandler;
+import org.ihtsdo.otf.mapping.services.helpers.ConfigUtility;
 
 /**
  * Reference implementation of the {@link SecurityService}.
@@ -31,13 +33,13 @@ public class SecurityServiceJpa extends RootServiceJpa implements
   private static Map<String, Date> tokenLogin = new HashMap<>();
 
   /** config properties */
-  private Properties config = null;
+  private static Properties config = null;
 
   /** The handler. */
-  private SecurityServiceHandler handler = null;
+  private static SecurityServiceHandler handler = null;
 
   /** The handler properties. */
-  private Properties handlerProperties = new Properties();
+  private static Properties handlerProperties = new Properties();
 
   /**
    * Instantiates an empty {@link SecurityServiceJpa}.
@@ -46,6 +48,9 @@ public class SecurityServiceJpa extends RootServiceJpa implements
    */
   public SecurityServiceJpa() throws Exception {
     super();
+    // Configure default security for guest user
+    tokenUsername.put("guest", "guest");
+    tokenLogin.put("guest", null);
   }
 
   /*
@@ -82,7 +87,8 @@ public class SecurityServiceJpa extends RootServiceJpa implements
 
       handlerProperties = new Properties();
       handler =
-          (SecurityServiceHandler) Class.forName(handlerClass).newInstance();
+          (SecurityServiceHandler) ConfigUtility.newHandlerInstance(
+              handlerName, handlerClass, SecurityServiceHandler.class);
       for (Object key : config.keySet()) {
         if (key.toString().startsWith("security.handler." + handlerName + ".")) {
           String shortKey =
@@ -91,14 +97,6 @@ public class SecurityServiceJpa extends RootServiceJpa implements
           handlerProperties.put(shortKey, config.getProperty(key.toString()));
         }
       }
-    }
-    boolean securityActivated =
-        new Boolean(config.getProperty("security.activated"));
-
-    // if security is off, use username as token
-    if (!securityActivated || username.equals("guest")) {
-      tokenUsername.put(username, username);
-      return getUser(username).getUserName();
     }
 
     //
@@ -162,7 +160,8 @@ public class SecurityServiceJpa extends RootServiceJpa implements
       String username = tokenUsername.get(parsedToken);
       Logger.getLogger(this.getClass()).info(
           "User = " + username + " Token = " + parsedToken);
-      if (tokenLogin.get(username).before(new Date())) {
+      if (tokenLogin.get(username) != null
+          && tokenLogin.get(username).before(new Date())) {
         throw new LocalException("AuthToken has expired");
       }
       return username;

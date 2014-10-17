@@ -69,7 +69,7 @@ public class ContentServiceRest extends RootServiceRest {
       MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML
   })
   public Concept getConcept(
-    @ApiParam(value = "Concept terminology id, e.g. 22298006", required = true) @PathParam("terminologyId") String terminologyId,
+    @ApiParam(value = "Concept terminology id, e.g. 102751005", required = true) @PathParam("terminologyId") String terminologyId,
     @ApiParam(value = "Concept terminology name, e.g. SNOMEDCT", required = true) @PathParam("terminology") String terminology,
     @ApiParam(value = "Concept terminology version, e.g. 20140731", required = true) @PathParam("version") String terminologyVersion,
     @ApiParam(value = "Authorization token", required = true) @HeaderParam("Authorization") String authToken) {
@@ -169,7 +169,7 @@ public class ContentServiceRest extends RootServiceRest {
       MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML
   })
   public SearchResultList findDescendantConcepts(
-    @ApiParam(value = "Concept terminology id, e.g. 22298006", required = true) @PathParam("terminologyId") String terminologyId,
+    @ApiParam(value = "Concept terminology id, e.g. 102751005", required = true) @PathParam("terminologyId") String terminologyId,
     @ApiParam(value = "Concept terminology name, e.g. SNOMEDCT", required = true) @PathParam("terminology") String terminology,
     @ApiParam(value = "Concept terminology version, e.g. 20140731", required = true) @PathParam("version") String terminologyVersion,
     @ApiParam(value = "Authorization token", required = true) @HeaderParam("Authorization") String authToken) {
@@ -221,7 +221,7 @@ public class ContentServiceRest extends RootServiceRest {
       MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML
   })
   public SearchResultList findChildConcepts(
-    @ApiParam(value = "Concept terminology id, e.g. 22298006", required = true) @PathParam("terminologyId") String id,
+    @ApiParam(value = "Concept terminology id, e.g. 102751005", required = true) @PathParam("terminologyId") String id,
     @ApiParam(value = "Concept terminology name, e.g. SNOMEDCT", required = true) @PathParam("terminology") String terminology,
     @ApiParam(value = "Concept terminology version, e.g. 20140731", required = true) @PathParam("version") String terminologyVersion,
     @ApiParam(value = "Authorization token", required = true) @HeaderParam("Authorization") String authToken) {

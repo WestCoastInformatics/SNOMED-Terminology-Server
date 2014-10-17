@@ -19,6 +19,7 @@ import org.ihtsdo.otf.mapping.helpers.DescriptionList;
 import org.ihtsdo.otf.mapping.helpers.LanguageRefSetMemberList;
 import org.ihtsdo.otf.mapping.helpers.RelationshipList;
 import org.ihtsdo.otf.mapping.jpa.services.HistoryServiceJpa;
+import org.ihtsdo.otf.mapping.jpa.services.MetadataServiceJpa;
 import org.ihtsdo.otf.mapping.rf2.Concept;
 import org.ihtsdo.otf.mapping.rf2.Description;
 import org.ihtsdo.otf.mapping.rf2.LanguageRefSetMember;
@@ -28,6 +29,9 @@ import org.ihtsdo.otf.mapping.rf2.jpa.DescriptionJpa;
 import org.ihtsdo.otf.mapping.rf2.jpa.LanguageRefSetMemberJpa;
 import org.ihtsdo.otf.mapping.rf2.jpa.RelationshipJpa;
 import org.ihtsdo.otf.mapping.services.HistoryService;
+import org.ihtsdo.otf.mapping.services.MetadataService;
+
+// TODO determine how effectiveTime works
 
 /**
  * Goal which loads an RF2 Delta of SNOMED CT data
@@ -208,12 +212,6 @@ public class TerminologyRf2DeltaLoader extends AbstractMojo {
       // load new data
       loadDelta();
 
-      // check for objects that have changed
-      // TODO checkForUpdates()
-
-      // remove retired data
-      // TODO retireData();
-
       // compute the number of modified objects of each type
       getLog().info("Computing number of modified objects...");
       int nConceptsUpdated = 0;
@@ -365,14 +363,15 @@ public class TerminologyRf2DeltaLoader extends AbstractMojo {
       throw new MojoFailureException(
           "Terminology filenames do not match pattern 'sct2_(ComponentName)_INT_(Date).txt");
     }
-    terminologyVersion =
-        fileName.substring(fileName.length() - 12, fileName.length() - 4);
 
-    // TODO Override terminology version at this time, check with Brian
-    // the delta file uses terminologyVersion = "20150131", which does not
-    // match loaded data
-    terminologyVersion = "20140731";
-
+    // Set terminology version based on the filename
+    //    int index = fileName.indexOf(".txt");
+    //    terminologyVersion = fileName.substring(index - 8, index);
+    // Actually, set based on the metadata
+    MetadataService metadataService = new MetadataServiceJpa();
+    terminologyVersion = metadataService.getLatestVersion(terminology);
+    metadataService.close();
+    
     // set the parameters for determining defaultPreferredNames
     dpnTypeId =
         Long.valueOf(config.getProperty("loader.defaultPreferredNames.typeId"));

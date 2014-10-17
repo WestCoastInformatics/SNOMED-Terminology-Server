@@ -17,12 +17,44 @@
   <!-- Declare Project Dependency Versions -->
   <dependencies>
 
+    <dependency>
+      <groupId>com.sun.jersey</groupId>
+      <artifactId>jersey-core</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>com.sun.jersey</groupId>
+      <artifactId>jersey-client</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>com.fasterxml.jackson.core</groupId>
+      <artifactId>jackson-core</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>com.fasterxml.jackson.module</groupId>
+      <artifactId>jackson-module-jaxb-annotations</artifactId>
+    </dependency>
+
+  
     <!-- Model interfaces. -->
     <dependency>
       <groupId>org.ihtsdo.otf.term-server</groupId>
       <artifactId>term-server-model</artifactId>
     </dependency>
 
+    <!-- Logging -->
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-log4j12</artifactId>
+      <version>${slf4j.log4j12.version}</version>
+    </dependency>
+
+    <!-- Mail -->
+    <dependency>
+      <groupId>com.sun.mail</groupId>
+      <artifactId>javax.mail</artifactId>
+    </dependency>
+
   </dependencies>
+
 
 </project>
