@@ -1,13 +1,10 @@
 package org.ihtsdo.otf.mapping.jpa.services;
 
-import java.io.File;
-import java.io.FileReader;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
-import org.apache.log4j.Logger;
 import org.ihtsdo.otf.mapping.services.MetadataService;
 import org.ihtsdo.otf.mapping.services.helpers.ConfigUtility;
 
@@ -29,13 +26,7 @@ public class MetadataServiceJpa extends RootServiceJpa implements
 
     if (helperMap == null) {
       helperMap = new HashMap<>();
-      String configFileName = System.getProperty("run.config");
-      Logger.getLogger(this.getClass())
-          .info("  run.config = " + configFileName);
-      Properties config = new Properties();
-      FileReader in = new FileReader(new File(configFileName));
-      config.load(in);
-      in.close();
+      Properties config = ConfigUtility.getConfigProperties();
       for (String handler : config.getProperty("metadata.service.handlers")
           .split(",")) {
         // Add handlers to map

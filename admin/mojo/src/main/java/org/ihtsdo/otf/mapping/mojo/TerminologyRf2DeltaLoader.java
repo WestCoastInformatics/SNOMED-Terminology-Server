@@ -18,6 +18,7 @@ import org.ihtsdo.otf.mapping.helpers.ConceptList;
 import org.ihtsdo.otf.mapping.helpers.DescriptionList;
 import org.ihtsdo.otf.mapping.helpers.LanguageRefSetMemberList;
 import org.ihtsdo.otf.mapping.helpers.RelationshipList;
+import org.ihtsdo.otf.mapping.jpa.services.ContentServiceJpa;
 import org.ihtsdo.otf.mapping.jpa.services.HistoryServiceJpa;
 import org.ihtsdo.otf.mapping.jpa.services.MetadataServiceJpa;
 import org.ihtsdo.otf.mapping.rf2.Concept;
@@ -28,10 +29,10 @@ import org.ihtsdo.otf.mapping.rf2.jpa.ConceptJpa;
 import org.ihtsdo.otf.mapping.rf2.jpa.DescriptionJpa;
 import org.ihtsdo.otf.mapping.rf2.jpa.LanguageRefSetMemberJpa;
 import org.ihtsdo.otf.mapping.rf2.jpa.RelationshipJpa;
+import org.ihtsdo.otf.mapping.services.ContentService;
 import org.ihtsdo.otf.mapping.services.HistoryService;
 import org.ihtsdo.otf.mapping.services.MetadataService;
-
-// TODO determine how effectiveTime works
+import org.ihtsdo.otf.mapping.services.helpers.ConfigUtility;
 
 /**
  * Goal which loads an RF2 Delta of SNOMED CT data
@@ -111,8 +112,8 @@ public class TerminologyRf2DeltaLoader extends AbstractMojo {
   /** The log ct. */
   private int logCt = 2000;
 
-  /** The ft. */
-  SimpleDateFormat ft = new SimpleDateFormat("hh:mm:ss a"); // for
+  /** The date format. */
+  SimpleDateFormat ft = new SimpleDateFormat("hh:mm:ss a");
 
   /** The start time. */
   long startTime;
@@ -305,6 +306,48 @@ public class TerminologyRf2DeltaLoader extends AbstractMojo {
       historyService.commit();
       getLog().info("  Done.");
 
+      //
+      // Compute transitive closure
+      //
+      MetadataService metadataService = new MetadataServiceJpa();
+      String version = metadataService.getLatestVersion(terminology);
+      Map<String, String> hierRelTypeMap =
+          metadataService.getHierarchicalRelationshipTypes(terminology,
+              version);
+      String isaRelType =
+          hierRelTypeMap.keySet().iterator().next().toString();
+      metadataService.close();
+      ContentService contentService = new ContentServiceJpa();
+      // Walk up tree to the root
+      // ASSUMPTION: single root
+      String conceptId = isaRelType;
+      String rootId = null;
+      OUTER: while (true) {
+        getLog().info("  Walk up tree from " + conceptId);
+        Concept c =
+            contentService.getConcept(conceptId, terminology, version);
+        getLog().info("    concept = " + c.getTerminologyId());
+        getLog().info("    concept.rels.ct = " + c.getRelationships().size());
+        getLog().info("    isaRelType = " + isaRelType);
+        for (Relationship r : c.getRelationships()) {
+          getLog().info(
+              "      rel = " + r.getTerminologyId() + ", " + r.isActive()
+                  + ", " + r.getTypeId());
+          if (r.isActive() && r.getTypeId().equals(isaRelType)) {
+            conceptId = r.getDestinationConcept().getTerminologyId();
+            continue OUTER;
+          }
+        }
+        rootId = conceptId;
+        break;
+      }
+      getLog().info(
+          "  Compute transitive closure from rootId " + rootId + " for "
+              + terminology + ", " + version);
+      contentService.computeTransitiveClosure(rootId, terminology, version);
+      contentService.close();      
+      
+      
       getLog().info("");
       getLog().info("==================================");
       getLog().info("Delta load completed successfully!");
@@ -324,13 +367,7 @@ public class TerminologyRf2DeltaLoader extends AbstractMojo {
   private void instantiateGlobalVars() throws Exception {
 
     // create Entity Manager
-    String configFileName = System.getProperty("run.config");
-    getLog().info("  run.config = " + configFileName);
-    Properties config = new Properties();
-    FileReader in = new FileReader(new File(configFileName));
-    config.load(in);
-    in.close();
-    getLog().info("  properties = " + config);
+    Properties config = ConfigUtility.getConfigProperties();
 
     // instantiate the services
     historyService = new HistoryServiceJpa();
@@ -469,6 +506,9 @@ public class TerminologyRf2DeltaLoader extends AbstractMojo {
           "  Running total of concepts modified: " + conceptCache.size());
     }
 
+    //
+    // DO NOT process STATED relationships
+    //
     /*
      * // load relationships if (statedRelationshipReader != null) {
      * getLog().info("Loading Stated Relationships..."); startTime =
@@ -505,6 +545,7 @@ public class TerminologyRf2DeltaLoader extends AbstractMojo {
           "  Running total of concepts modified: " + conceptCache.size());
     }
 
+    // load langauge refset entries
     if (languageReader != null) {
       getLog().info("Loading Language Ref Sets...");
       startTime = System.nanoTime();
@@ -1155,16 +1196,11 @@ public class TerminologyRf2DeltaLoader extends AbstractMojo {
    * @param d the d
    */
   private void cacheDescription(Description d) {
-
     if (!descriptionCache.containsKey(d.getTerminologyId())) {
-
       d.setEffectiveTime(this.deltaLoaderStartDate);
-
       for (LanguageRefSetMember l : d.getLanguageRefSetMembers()) {
-
         languageRefSetMemberCache.put(l.getTerminologyId(), l);
       }
-
       descriptionCache.put(d.getTerminologyId(), d);
     }
   }
@@ -1175,7 +1211,6 @@ public class TerminologyRf2DeltaLoader extends AbstractMojo {
    * @param l the l
    */
   private void cacheLanguageRefSetMember(LanguageRefSetMember l) {
-
     l.setEffectiveTime(this.deltaLoaderStartDate);
     languageRefSetMemberCache.put(l.getTerminologyId(), l);
 

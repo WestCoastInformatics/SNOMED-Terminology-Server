@@ -17,6 +17,7 @@ import org.hibernate.CacheMode;
 import org.hibernate.search.jpa.FullTextEntityManager;
 import org.hibernate.search.jpa.Search;
 import org.ihtsdo.otf.mapping.rf2.jpa.ConceptJpa;
+import org.ihtsdo.otf.mapping.services.helpers.ConfigUtility;
 
 /**
  * Goal which makes lucene indexes based on hibernate-search annotations.
@@ -98,13 +99,7 @@ public class LuceneReindexMojo extends AbstractMojo {
     }
 
     try {
-      String configFileName = System.getProperty("run.config");
-      getLog().info("  run.config = " + configFileName);
-      Properties config = new Properties();
-      FileReader in = new FileReader(new File(configFileName));
-      config.load(in);
-      in.close();
-      getLog().info("  properties = " + config);
+      Properties config = ConfigUtility.getConfigProperties();
 
       EntityManagerFactory factory =
           Persistence.createEntityManagerFactory("TermServiceDS", config);

@@ -47,6 +47,14 @@ if ($status != 0) then
     exit 1
 endif
 
+echo "    Load ICD9CM ...`/bin/date`"
+cd $SERVER_HOME/admin/loader
+mvn -PICD9CM -Drun.config=$SERVER_CONFIG install >&! mvn.log
+if ($status != 0) then
+    echo "ERROR loading ICD9CM"
+    cat mvn.log
+    exit 1
+endif
 
 echo "------------------------------------------------"
 echo "Finished ...`/bin/date`"

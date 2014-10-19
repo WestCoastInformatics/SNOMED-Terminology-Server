@@ -5,42 +5,49 @@
 hibernate.dialect=org.hibernate.dialect.MySQLDialect
 javax.persistence.jdbc.driver=com.mysql.jdbc.Driver
 # For testing use tsdbtest
-javax.persistence.jdbc.url=jdbc:mysql://127.0.0.1:3306/tsdb?autoReconnect=true
-javax.persistence.jdbc.user=otf
+javax.persistence.jdbc.url=jdbc:mysql://127.0.0.1:3306/tsdb
+javax.persistence.jdbc.user=root
 javax.persistence.jdbc.password=EDIT_THIS
 
 #
-# JPA debugging settings
+# JPA settings
 #
 hibernate.show_sql=false
 hibernate.format_sql=true
 hibernate.use_sql_comments=true
+hibernate.jdbc.batch_size=500
+hibernate.jdbc.default_batch_fetch_size=500
 
 #
-# Lucene index base (default is ${user.home}/indexes
+# Lucene index base
 #
 hibernate.search.default.indexBase=EDIT_THIS/indexes
 hibernate.search.lucene_version=LUCENE_36
 hibernate.search.default.directory_provider=filesystem
 
 #
-# Optimizations
+# Metadata Service Settings (one for each "terminology")
 #
-hibernate.jdbc.batch_size=500
-hibernate.jdbc.default_batch_fetch_size=500
-
+metadata.service.handlers=SNOMEDCT,ICD9CM
+metadata.service.handler.SNOMEDCT.class=org.ihtsdo.otf.mapping.jpa.services.SnomedMetadataServiceJpaHelper
+metadata.service.handler.ICD9CM.class=org.ihtsdo.otf.mapping.jpa.services.ClamlMetadataServiceJpaHelper
 
 #
 # SNOMEDCT data location
 #
-loader.SNOMEDCT.input.data=/home/ihtsdo/data/snomedct-20140131-snapshot
-loader.SNOMEDCT.delta.data=/home/ihtsdo/data/snomedct-dailybuild-snapshot
+loader.SNOMEDCT.input.data=C:/data/snomedct-20140731-mini
+loader.SNOMEDCT.delta.data=C:/data/snomed-dailybuild-mini
 # SNOMED CT RF2 SCTID for "Synonym"
 loader.defaultPreferredNames.typeId=900000000000013009
 # SNOMED CT RF2 SCTID for the US English language refset
 loader.defaultPreferredNames.refSetId=900000000000509007
 # SNOMED CT RF2 SCTID for "Preferred"
 loader.defaultPreferredNames.acceptabilityId=900000000000548007
+
+#
+# ICD9CM data location
+#
+loader.ICD9CM.input.data=C:/data/icd9cm-2013.xml
 
 #
 # Webapp base URL (currently unused)
@@ -50,7 +57,6 @@ base.url=
 #
 # URL for security service
 #
-security.activated=false
 security.handler=DEFAULT
 security.handler.DEFAULT.class=org.ihtsdo.otf.mapping.jpa.services.helpers.DefaultSecurityServiceHandler
 security.handler.DEFAULT.url=https://usermanagement.ihtsdotools.org/security-web/query/

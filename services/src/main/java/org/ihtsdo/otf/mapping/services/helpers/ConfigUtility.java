@@ -46,7 +46,7 @@ public class ConfigUtility {
   public static Object newHandlerInstance(String handler, String handlerClass,
     Class<?> type) throws Exception {
     if (handlerClass == null) {
-      throw new Exception("Handler class " + handler + " is not defied");
+      throw new Exception("Handler class " + handlerClass + " is not defined");
     }
     Class<?> toInstantiate = Class.forName(handlerClass);
     if (toInstantiate == null) {
@@ -63,7 +63,7 @@ public class ConfigUtility {
           + ", check for default constructor.");
     }
     if (type.isAssignableFrom(o.getClass())) {
-      return toInstantiate;
+      return o;
     }
     throw new Exception("Handler is not assignable from " + type.getName());
   }

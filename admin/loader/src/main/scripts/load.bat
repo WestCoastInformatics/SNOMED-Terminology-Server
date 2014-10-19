@@ -45,6 +45,13 @@ IF %ERRORLEVEL% NEQ 0 (set error=1
 goto trailer)
 del /Q mvn.log
 
+echo     Load ICD9CM ...%date% %time%
+cd %SERVER_HOME%/admin/loader
+call %MVN_HOME%/bin/mvn -PICD9CM -Drun.config=%SERVER_CONFIG% install 1> mvn.log
+IF %ERRORLEVEL% NEQ 0 (set error=1
+goto trailer)
+del /Q mvn.log
+
 :trailer
 echo ------------------------------------------------
 IF %error% NEQ 0 (

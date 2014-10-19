@@ -26,16 +26,16 @@ hibernate.search.lucene_version=LUCENE_36
 hibernate.search.default.directory_provider=filesystem
 
 #
-# Metadata Service Settings
+# Metadata Service Settings (one for each "terminology")
 #
-metadata.service.handlers=SNOMED,ICD10
-metadata.service.SNOMED.class=org.ihtsdo.otf.mapping.jpa.services.SnomedMetadataServiceJpaHelper
-metadata.service.ICD10.class=org.ihtsdo.otf.mapping.jpa.services.ClamlMetadataServiceJpaHelper
+metadata.service.handlers=SNOMEDCT,ICD9CM
+metadata.service.handler.SNOMEDCT.class=org.ihtsdo.otf.mapping.jpa.services.SnomedMetadataServiceJpaHelper
+metadata.service.handler.ICD9CM.class=org.ihtsdo.otf.mapping.jpa.services.ClamlMetadataServiceJpaHelper
 
 #
 # SNOMEDCT data location
 #
-loader.SNOMEDCT.input.data=C:/data/snomedct-20140131-mini
+loader.SNOMEDCT.input.data=C:/data/snomedct-20140731-mini
 loader.SNOMEDCT.delta.data=C:/data/snomed-dailybuild-mini
 # SNOMED CT RF2 SCTID for "Synonym"
 loader.defaultPreferredNames.typeId=900000000000013009
@@ -43,6 +43,11 @@ loader.defaultPreferredNames.typeId=900000000000013009
 loader.defaultPreferredNames.refSetId=900000000000509007
 # SNOMED CT RF2 SCTID for "Preferred"
 loader.defaultPreferredNames.acceptabilityId=900000000000548007
+
+#
+# ICD9CM data location
+#
+loader.ICD9CM.input.data=C:/data/icd9cm-2013.xml
 
 #
 # Webapp base URL (currently unused)

@@ -1523,12 +1523,10 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
 
       this.beginTransaction();
       for (TransitiveRelationship tr : transitiveRels) {
+        results++;
         removeTransitiveRelationship(tr.getId());
       }
       this.commit();
-
-      results += commitSize;
-
       Logger.getLogger(this.getClass()).info(
           "  " + results + " transitive closure rels deleted");
     }
@@ -1604,26 +1602,45 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
       children.add(chd);
       ct++;
     }
-    Logger.getLogger(this.getClass()).info("      ct = " + ct);
+    Logger.getLogger(this.getClass()).info("    ct = " + ct);
 
+    // cache concepts
+    Logger.getLogger(this.getClass()).info(
+        "  Cache concepts ... " + new Date());
+    query =
+        manager
+            .createQuery(
+                "select c.id, c.terminologyId, c.terminology, c.terminologyVersion from ConceptJpa c");
+
+    @SuppressWarnings("unchecked")
+    List<Object[]> results = query.getResultList();
+    Map<String,Long> conceptCache = new HashMap<>();
+    ct = 0;
+    for (Object[] result : results) {
+      final String key = result[1].toString() + result[2] + result[3];
+      conceptCache.put(key, (Long)result[0]);
+      ct++;
+    }
+    Logger.getLogger(this.getClass()).info("    ct = " + ct);
     //
     // Create transitive closure rels
     //
     Logger.getLogger(this.getClass()).info(
-        "    Create transitive closure rels... " + new Date());
+        "  Create transitive closure rels... " + new Date());
     ct = 0;
     beginTransaction();
     for (String code : parChd.keySet()) {
-      Logger.getLogger(this.getClass()).debug("      compute for " + code);
       if (rootId.equals(code)) {
         continue;
       }
       ct++;
       Set<String> descs = getDescendants(code, new HashSet<String>(), parChd);
       for (String desc : descs) {
-        TransitiveRelationship tr = new TransitiveRelationshipJpa();
-        tr.setSuperTypeConcept(getConcept(code, terminology, terminologyVersion));
-        tr.setSubTypeConcept(getConcept(desc, terminology, terminologyVersion));
+        final TransitiveRelationship tr = new TransitiveRelationshipJpa();
+        final String superKey = code+terminology+terminologyVersion;
+        final String subKey = desc+terminology+terminologyVersion;
+        tr.setSuperTypeConcept(getConcept(conceptCache.get(superKey)));
+        tr.setSubTypeConcept(getConcept(conceptCache.get(subKey)));
         tr.setActive(true);
         tr.setEffectiveTime(new Date());
         tr.setLabel("");
@@ -1633,9 +1650,7 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
         tr.setTerminologyVersion(terminologyVersion);
         addTransitiveRelationship(tr);
       }
-      Logger.getLogger(this.getClass())
-          .debug("      desc ct = " + descs.size());
-      if (ct % 10000 == 0) {
+      if (ct % 500 == 0) {
         Logger.getLogger(this.getClass()).info(
             "      " + ct + " codes processed ..." + new Date());
         commit();
@@ -1660,6 +1675,7 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
    */
   public Set<String> getDescendants(String par, Set<String> seen,
     Map<String, Set<String>> parChd) {
+    Logger.getLogger(this.getClass()).debug("  Get descendants for " + par);
     // if we've seen this node already, children are accounted for - bail
     if (seen.contains(par)) {
       return new HashSet<>();
@@ -1673,17 +1689,13 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
     if (children == null || children.isEmpty()) {
       return new HashSet<>();
     }
-
     // Iterate through children, mark as descendant and recursively call
     Set<String> descendants = new HashSet<>();
     for (String chd : children) {
       descendants.add(chd);
-      Set<String> grandChildren = getDescendants(chd, seen, parChd);
-      // add all recursively gathered descendants at this level
-      for (String grandChild : grandChildren) {
-        descendants.add(grandChild);
-      }
+      descendants.addAll(getDescendants(chd, seen, parChd));
     }
+    Logger.getLogger(this.getClass()).debug("    descCt = " + descendants.size());
 
     return descendants;
   }

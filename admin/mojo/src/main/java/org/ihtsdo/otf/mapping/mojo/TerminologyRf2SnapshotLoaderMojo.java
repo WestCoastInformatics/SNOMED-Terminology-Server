@@ -39,6 +39,7 @@ import org.ihtsdo.otf.mapping.rf2.jpa.SimpleMapRefSetMemberJpa;
 import org.ihtsdo.otf.mapping.rf2.jpa.SimpleRefSetMemberJpa;
 import org.ihtsdo.otf.mapping.services.ContentService;
 import org.ihtsdo.otf.mapping.services.MetadataService;
+import org.ihtsdo.otf.mapping.services.helpers.ConfigUtility;
 
 import com.google.common.io.Files;
 
@@ -81,34 +82,33 @@ public class TerminologyRf2SnapshotLoaderMojo extends AbstractMojo {
   /** The date format. */
   private final SimpleDateFormat dt = new SimpleDateFormat("yyyymmdd");
 
-  /* buffered readers for sorted files. */
-  /**  The concepts by concept. */
+  /** The concepts by concept. */
   private BufferedReader conceptsByConcept;
-  
-  /**  The descriptions by description. */
+
+  /** The descriptions by description. */
   private BufferedReader descriptionsByDescription;
-  
-  /**  The relationships by source concept. */
+
+  /** The relationships by source concept. */
   private BufferedReader relationshipsBySourceConcept;
-  
-  /**  The language refsets by description. */
+
+  /** The language refsets by description. */
   private BufferedReader languageRefsetsByDescription;
-  
-  /**  The attribute refsets by description. */
+
+  /** The attribute refsets by description. */
   private BufferedReader attributeRefsetsByDescription;
-  
-  /**  The simple refsets by concept. */
+
+  /** The simple refsets by concept. */
   private BufferedReader simpleRefsetsByConcept;
-  
-  /**  The simple map refsets by concept. */
+
+  /** The simple map refsets by concept. */
   private BufferedReader simpleMapRefsetsByConcept;
-  
-  /**  The complex map refsets by concept. */
+
+  /** The complex map refsets by concept. */
   private BufferedReader complexMapRefsetsByConcept;
-  
-  /**  The extended map refsets by concept. */
+
+  /** The extended map refsets by concept. */
   private BufferedReader extendedMapRefsetsByConcept;
-  
+
   /** The version. */
   private String version = null;
 
@@ -131,7 +131,7 @@ public class TerminologyRf2SnapshotLoaderMojo extends AbstractMojo {
   int objectCt; //
 
   /** the number of objects to create before committing. */
-  int commitCt = 200;
+  int commitCt = 500;
 
   /**
    * Instantiates a {@link TerminologyRf2SnapshotLoaderMojo} from the specified
@@ -147,7 +147,6 @@ public class TerminologyRf2SnapshotLoaderMojo extends AbstractMojo {
    * 
    * @see org.apache.maven.plugin.Mojo#execute()
    */
-  @SuppressWarnings("resource")
   @Override
   public void execute() throws MojoFailureException {
     getLog().info("Starting loading RF2 data ...");
@@ -158,14 +157,8 @@ public class TerminologyRf2SnapshotLoaderMojo extends AbstractMojo {
       long startTimeOrig = System.nanoTime();
 
       // create Entity Manager
-      String configFileName = System.getProperty("run.config");
-      getLog().info("  run.config = " + configFileName);
-      Properties config = new Properties();
-      FileReader in = new FileReader(new File(configFileName));
-      config.load(in);
-      in.close();
-      getLog().info("  properties = " + config);
-
+      Properties config = ConfigUtility.getConfigProperties();
+     
       // set the input directory
       String coreInputDirString =
           config.getProperty("loader." + terminology + ".input.data");
@@ -185,9 +178,7 @@ public class TerminologyRf2SnapshotLoaderMojo extends AbstractMojo {
           Long.valueOf(config
               .getProperty("loader.defaultPreferredNames.acceptabilityId"));
 
-      //
-      // Determine version
-      //
+      // Determine version from filename
       File coreConceptInputFile = null;
       File coreTerminologyInputDir = new File(coreInputDir, "/Terminology/");
       for (File f : coreTerminologyInputDir.listFiles()) {
@@ -342,8 +333,7 @@ public class TerminologyRf2SnapshotLoaderMojo extends AbstractMojo {
         conceptCache.clear();
         closeAllSortedFiles();
 
-        // creating tree positions
-        // first get isaRelType from metadata
+        // Compute transitive closure
         MetadataService metadataService = new MetadataServiceJpa();
         String version = metadataService.getLatestVersion(terminology);
         Map<String, String> hierRelTypeMap =
@@ -352,10 +342,7 @@ public class TerminologyRf2SnapshotLoaderMojo extends AbstractMojo {
         String isaRelType =
             hierRelTypeMap.keySet().iterator().next().toString();
         metadataService.close();
-
         ContentService contentService = new ContentServiceJpa();
-        getLog().info("Start creating tree positions.");
-
         // Walk up tree to the root
         // ASSUMPTION: single root
         String conceptId = isaRelType;
@@ -364,8 +351,14 @@ public class TerminologyRf2SnapshotLoaderMojo extends AbstractMojo {
           getLog().info("  Walk up tree from " + conceptId);
           Concept c =
               contentService.getConcept(conceptId, terminology, version);
+          getLog().info("    concept = " + c.getTerminologyId());
+          getLog().info("    concept.rels.ct = " + c.getRelationships().size());
+          getLog().info("    isaRelType = " + isaRelType);
           for (Relationship r : c.getRelationships()) {
-            if (r.isActive() && r.getTypeId().equals(Long.valueOf(isaRelType))) {
+            getLog().info(
+                "      rel = " + r.getTerminologyId() + ", " + r.isActive()
+                    + ", " + r.getTypeId());
+            if (r.isActive() && r.getTypeId().equals(isaRelType)) {
               conceptId = r.getDestinationConcept().getTerminologyId();
               continue OUTER;
             }
@@ -373,10 +366,10 @@ public class TerminologyRf2SnapshotLoaderMojo extends AbstractMojo {
           rootId = conceptId;
           break;
         }
-        getLog().info("  Compute transitive closure from rootId " + rootId +
-            " for " + terminology + ", " + version);
+        getLog().info(
+            "  Compute transitive closure from rootId " + rootId + " for "
+                + terminology + ", " + version);
         contentService.computeTransitiveClosure(rootId, terminology, version);
-
         contentService.close();
 
         // Final logging messages
@@ -1121,6 +1114,7 @@ public class TerminologyRf2SnapshotLoaderMojo extends AbstractMojo {
 
         // regularly commit at intervals
         if (++objectCt % commitCt == 0) {
+          getLog().info("  commit = " + objectCt);
           contentService.commit();
           contentService.beginTransaction();
         }
@@ -1190,6 +1184,7 @@ public class TerminologyRf2SnapshotLoaderMojo extends AbstractMojo {
 
           // regularly commit at intervals
           if (++objectCt % commitCt == 0) {
+            getLog().info("  commit = " + objectCt);
             contentService.commit();
             contentService.beginTransaction();
           }
@@ -1318,6 +1313,7 @@ public class TerminologyRf2SnapshotLoaderMojo extends AbstractMojo {
 
       // regularly commit at intervals
       if (descCt % commitCt == 0) {
+        getLog().info("  commit = " + descCt);
         contentService.commit();
         contentService.beginTransaction();
       }
@@ -1376,6 +1372,7 @@ public class TerminologyRf2SnapshotLoaderMojo extends AbstractMojo {
       }
 
       if (++objectCt % commitCt == 0) {
+        getLog().info("  commit = " + objectCt);
         contentService.commit();
         contentService.beginTransaction();
       }
@@ -1395,7 +1392,7 @@ public class TerminologyRf2SnapshotLoaderMojo extends AbstractMojo {
 
   /**
    * Returns the next description.
-   * @param contentService 
+   * @param contentService
    * 
    * @return the next description
    * @throws Exception the exception
@@ -1559,6 +1556,7 @@ public class TerminologyRf2SnapshotLoaderMojo extends AbstractMojo {
 
           // regularly commit at intervals
           if (++objectCt % commitCt == 0) {
+            getLog().info("  commit = " + objectCt);
             contentService.commit();
             contentService.beginTransaction();
           }
@@ -1632,6 +1630,7 @@ public class TerminologyRf2SnapshotLoaderMojo extends AbstractMojo {
 
           // regularly commit at intervals
           if (++objectCt % commitCt == 0) {
+            getLog().info("  commit = " + objectCt);
             contentService.commit();
             contentService.beginTransaction();
           }
@@ -1704,6 +1703,7 @@ public class TerminologyRf2SnapshotLoaderMojo extends AbstractMojo {
 
           // regularly commit at intervals
           if (++objectCt % commitCt == 0) {
+            getLog().info("  commit = " + objectCt);
             contentService.commit();
             contentService.beginTransaction();
           }
@@ -1719,7 +1719,7 @@ public class TerminologyRf2SnapshotLoaderMojo extends AbstractMojo {
     // commit any remaining objects
     contentService.commit();
     contentService.close();
-    
+
     // print memory information
     Runtime runtime = Runtime.getRuntime();
     getLog().info("MEMORY USAGE:");
@@ -1788,6 +1788,7 @@ public class TerminologyRf2SnapshotLoaderMojo extends AbstractMojo {
 
           // regularly commit at intervals
           if (++objectCt % commitCt == 0) {
+            getLog().info("  commit = " + objectCt);
             contentService.commit();
             contentService.beginTransaction();
           }
@@ -1876,6 +1877,7 @@ public class TerminologyRf2SnapshotLoaderMojo extends AbstractMojo {
 
           // regularly commit at intervals
           if (++objectCt % commitCt == 0) {
+            getLog().info("  commit = " + objectCt);
             contentService.commit();
             contentService.beginTransaction();
           }

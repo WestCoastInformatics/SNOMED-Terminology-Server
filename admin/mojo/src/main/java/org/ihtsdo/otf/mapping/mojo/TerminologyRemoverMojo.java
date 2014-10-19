@@ -16,8 +16,6 @@
  */
 package org.ihtsdo.otf.mapping.mojo;
 
-import java.io.File;
-import java.io.FileReader;
 import java.util.Properties;
 
 import javax.persistence.EntityManager;
@@ -30,6 +28,7 @@ import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoFailureException;
 import org.ihtsdo.otf.mapping.jpa.services.MetadataServiceJpa;
 import org.ihtsdo.otf.mapping.services.MetadataService;
+import org.ihtsdo.otf.mapping.services.helpers.ConfigUtility;
 
 /**
  * Goal which removes a terminology from a database.
@@ -87,26 +86,22 @@ public class TerminologyRemoverMojo extends AbstractMojo {
 
     try {
       // create Entity Manager
-      String configFileName = System.getProperty("run.config");
-      getLog().info("  run.config = " + configFileName);
-      Properties config = new Properties();
-      FileReader in = new FileReader(new File(configFileName));
-      config.load(in);
-      in.close();
+      Properties config = ConfigUtility.getConfigProperties();
       getLog().info("  properties = " + config);
       EntityManagerFactory factory =
           Persistence.createEntityManagerFactory("TermServiceDS", config);
       EntityManager manager = factory.createEntityManager();
 
       EntityTransaction tx = manager.getTransaction();
+      tx.begin();
       try {
+        // truncate all the tables that we are going to use first
+
         // remove Tree Positions
         // first get all versions for this terminology
         MetadataService metadataService = new MetadataServiceJpa();
         metadataService.close();
 
-        // truncate all the tables that we are going to use first
-        tx.begin();
 
         // truncate RefSets
         Query query =
@@ -162,17 +157,16 @@ public class TerminologyRemoverMojo extends AbstractMojo {
         getLog().info("    relationship records deleted: " + deleteRecords);
         query =
             manager
-                .createQuery("DELETE From ConceptJpa c where terminology = :terminology");
-        query.setParameter("terminology", terminology);
-        deleteRecords = query.executeUpdate();
-        getLog().info("    concept records deleted: " + deleteRecords);
-
-        query =
-            manager
                 .createQuery("DELETE From TransitiveRelationshipJpa c where terminology = :terminology");
         query.setParameter("terminology", terminology);
         deleteRecords = query.executeUpdate();
         getLog().info("    transitive relationships records deleted: " + deleteRecords);
+        query =
+            manager
+                .createQuery("DELETE From ConceptJpa c where terminology = :terminology");
+        query.setParameter("terminology", terminology);
+        deleteRecords = query.executeUpdate();
+        getLog().info("    concept records deleted: " + deleteRecords);
 
         tx.commit();
 
