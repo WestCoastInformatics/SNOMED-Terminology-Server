@@ -6,7 +6,7 @@ import java.util.Set;
 import javax.xml.bind.annotation.XmlRootElement;
 
 /**
- * The Class ValidationResultJpa.
+ * JPA enabled implementation of {@link ValidationResult}.
  */
 @XmlRootElement
 public class ValidationResultJpa implements ValidationResult {

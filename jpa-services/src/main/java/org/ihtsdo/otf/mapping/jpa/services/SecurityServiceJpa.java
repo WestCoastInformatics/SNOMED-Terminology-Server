@@ -5,7 +5,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
-import java.util.UUID;
 
 import org.apache.log4j.Logger;
 import org.ihtsdo.otf.mapping.helpers.LocalException;
@@ -116,7 +115,7 @@ public class SecurityServiceJpa extends RootServiceJpa implements
     }
 
     // Generate application-managed token
-    String token = UUID.randomUUID().toString();
+    String token = handler.computeTokenForUser(username);
     tokenUsernameMap.put(token, authUser.getUserName());
     tokenTimeoutMap.put(token, new Date());
 

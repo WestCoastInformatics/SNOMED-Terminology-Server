@@ -4,8 +4,6 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 /**
  * The Jpa implementation of the paging/filtering/sorting object
- * @author Patrick
- * 
  */
 @XmlRootElement
 public class PfsParameterJpa implements PfsParameter {

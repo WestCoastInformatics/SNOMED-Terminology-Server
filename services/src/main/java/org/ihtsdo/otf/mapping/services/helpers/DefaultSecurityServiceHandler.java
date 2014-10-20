@@ -34,9 +34,18 @@ public class DefaultSecurityServiceHandler implements SecurityServiceHandler {
   @Override
   public boolean timeoutUser(String user) {
     if (user.equals("guest")) {
-      return true;
+      return false;
     }
-    return false;
+    return true;
+  }
+
+  /**
+   * Use the username as a token.
+   * @see org.ihtsdo.otf.mapping.services.SecurityServiceHandler#computeTokenForUser(java.lang.String)
+   */
+  @Override
+  public String computeTokenForUser(String user) {
+    return user;
   }
 
 }

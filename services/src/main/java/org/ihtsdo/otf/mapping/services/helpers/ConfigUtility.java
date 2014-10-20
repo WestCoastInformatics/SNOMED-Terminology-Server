@@ -43,6 +43,9 @@ public class ConfigUtility {
   /** The config. */
   public static Properties config = null;
 
+  /** The test config. */
+  public static Properties testConfig = null;
+
   /** The transformer for DOM -> XML. */
   private static Transformer transformer;
 
@@ -79,6 +82,26 @@ public class ConfigUtility {
       Logger.getLogger(ConfigUtility.class).info("  properties = " + config);
     }
     return config;
+  }
+
+  /**
+   * Returns the config properties.
+   * @return the config properties
+   *
+   * @throws Exception the exception
+   */
+  public static Properties getTestConfigProperties() throws Exception {
+    if (testConfig == null) {
+      String configFileName = System.getProperty("run.config.test");
+      Logger.getLogger(ConfigUtility.class.getName()).info(
+          "  run.config.test = " + configFileName);
+      testConfig = new Properties();
+      FileReader in = new FileReader(new File(configFileName));
+      testConfig.load(in);
+      in.close();
+      Logger.getLogger(ConfigUtility.class).info("  properties = " + config);
+    }
+    return testConfig;
   }
 
   /**

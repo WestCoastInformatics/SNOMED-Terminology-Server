@@ -20,7 +20,7 @@ import org.hibernate.search.annotations.Store;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 /**
- * The Class UserJpa.
+ * JPA enabled implementation of {@link User}.
  */
 @Entity
 @Table(name = "users")

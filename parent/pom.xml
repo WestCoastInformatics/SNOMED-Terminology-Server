@@ -50,7 +50,7 @@
 
   <dependencyManagement>
     <dependencies>
-      <!-- Model interfaces. -->
+      <!-- Term server dependencies. -->
       <dependency>
         <groupId>org.ihtsdo.otf.term-server</groupId>
         <artifactId>term-server-model</artifactId>
@@ -71,6 +71,12 @@
         <artifactId>term-server-jpa-services</artifactId>
         <version>${project.version}</version>
       </dependency>
+      <dependency>
+        <groupId>org.ihtsdo.otf.term-server</groupId>
+        <artifactId>term-server-rest-client</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+
       <!-- JPA dependencies -->
       <dependency>
         <groupId>org.hibernate.javax.persistence</groupId>

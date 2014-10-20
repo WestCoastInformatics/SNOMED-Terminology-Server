@@ -785,14 +785,4 @@ public class ContentClientJpa extends RootClientJpa implements ContentService {
 
   }
   
-  public static void main(String[] argv) {
-    try {
-      ContentClientJpa client = new ContentClientJpa(ConfigUtility.getConfigProperties());
-      Concept c = client.getConcept("10013000", "SNOMEDCT", "20140731");
-      System.out.println("c.name = " + c.getDefaultPreferredName());
-    } catch (Exception e) {
-      e.printStackTrace();
-    }
-  }
-
 }

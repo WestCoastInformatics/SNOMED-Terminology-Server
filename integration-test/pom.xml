@@ -17,10 +17,10 @@
   <!-- Declare Project Dependency Versions -->
   <dependencies>
 
-    <!-- Model interfaces. -->
+    <!-- Term server dependencies -->
     <dependency>
       <groupId>org.ihtsdo.otf.term-server</groupId>
-      <artifactId>term-server-model</artifactId>
+      <artifactId>term-server-rest-client</artifactId>
     </dependency>
 
     <dependency>

@@ -16,9 +16,7 @@ import org.ihtsdo.otf.mapping.rf2.SimpleRefSetMember;
 import org.ihtsdo.otf.mapping.rf2.TransitiveRelationship;
 
 /**
- * The interface for the content service.
- * 
- * @author ${author}
+ * Generically represents a service for accessing content.
  */
 public interface ContentService extends RootService {
 

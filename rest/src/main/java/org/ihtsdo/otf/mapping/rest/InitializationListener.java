@@ -38,7 +38,7 @@ public class InitializationListener implements AbstractResourceModelListener {
   @Override
   public void onLoaded(AbstractResourceModelContext modelContext) {
     // Set up a timer task to run at 2AM every day
-    TimerTask task = new ComputeCompareFinishedRecordsTask();
+    TimerTask task = new SampleTask();
     timer = new Timer();
     Calendar today = Calendar.getInstance();
     today.set(Calendar.HOUR_OF_DAY, 2);
@@ -62,11 +62,9 @@ public class InitializationListener implements AbstractResourceModelListener {
   }
 
   /**
-   * The Class ComputeCompareFinishedRecordsTask.
-   * 
-   * @author ${author}
+   * A sample task.
    */
-  class ComputeCompareFinishedRecordsTask extends TimerTask {
+  class SampleTask extends TimerTask {
 
     /*
      * (non-Javadoc)

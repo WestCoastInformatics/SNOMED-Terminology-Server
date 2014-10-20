@@ -2,6 +2,7 @@ package org.ihtsdo.otf.mapping.services.helpers;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 import java.util.Map.Entry;
 import java.util.Properties;
 
@@ -101,6 +102,16 @@ public class IhtsdoSecurityServiceHandler implements SecurityServiceHandler {
   @Override
   public boolean timeoutUser(String user) {
     return true;
+  }
+
+  /**
+   * Compute token as a random UUID.
+   * @see org.ihtsdo.otf.mapping.services.SecurityServiceHandler#computeTokenForUser(java.lang.String)
+   */
+  @Override
+  public String computeTokenForUser(String user) {
+    String token = UUID.randomUUID().toString();
+    return token;
   }
 
 }

@@ -1,13 +1,8 @@
 package org.ihtsdo.otf.mapping.mojo;
 
-import java.io.File;
-import java.io.FileReader;
-import java.util.Properties;
-
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoFailureException;
 import org.ihtsdo.otf.mapping.jpa.services.RootServiceJpa;
-import org.ihtsdo.otf.mapping.services.helpers.ConfigUtility;
 
 /**
  * Goal which updates the db to sync it with the model via JPA.

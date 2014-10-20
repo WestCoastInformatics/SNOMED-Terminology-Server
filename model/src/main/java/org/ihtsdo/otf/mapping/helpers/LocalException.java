@@ -2,7 +2,8 @@ package org.ihtsdo.otf.mapping.helpers;
 
 
 /**
- * The Class LocalException.
+ * Represents a known exception with a user-friendly error
+ * message that is handled differently by error handlers.
  */
 @SuppressWarnings("serial")
 public class LocalException extends Exception {

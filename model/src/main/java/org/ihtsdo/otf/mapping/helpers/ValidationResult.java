@@ -3,7 +3,8 @@ package org.ihtsdo.otf.mapping.helpers;
 import java.util.Set;
 
 /**
- * The Interface ValidationResult.
+ * Generically represents a validation result, either an error
+ * or a warning.
  */
 public interface ValidationResult {
 

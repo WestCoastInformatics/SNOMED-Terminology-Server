@@ -45,8 +45,8 @@ public class SecurityServiceRest extends RootServiceRest {
   })
   @ApiOperation(value = "Authenticate a user.", notes = "Performs authentication on specified username and password and returns a token upon successful authentication. Throws 401 error if not.", response = String.class)
   public String authenticate(
-    @ApiParam(value = "Username", required = true) @PathParam("username") String username,
-    @ApiParam(value = "Password, as string post data", required = true) String password) {
+    @ApiParam(value = "Username, e.g. 'guest'", required = true) @PathParam("username") String username,
+    @ApiParam(value = "Password, as string post data, e.g. 'guest'", required = true) String password) {
 
     Logger.getLogger(SecurityServiceRest.class)
         .info(

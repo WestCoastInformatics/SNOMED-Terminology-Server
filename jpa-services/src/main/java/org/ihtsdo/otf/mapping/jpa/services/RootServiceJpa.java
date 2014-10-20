@@ -1,7 +1,5 @@
 package org.ihtsdo.otf.mapping.jpa.services;
 
-import java.io.File;
-import java.io.FileReader;
 import java.util.HashSet;
 import java.util.Properties;
 import java.util.Set;
