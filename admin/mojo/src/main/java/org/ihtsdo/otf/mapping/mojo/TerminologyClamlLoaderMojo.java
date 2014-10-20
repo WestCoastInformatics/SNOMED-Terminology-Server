@@ -127,7 +127,6 @@ public class TerminologyClamlLoaderMojo extends AbstractMojo {
     FileInputStream fis = null;
     InputStream inputStream = null;
     Reader reader = null;
-    FileReader in = null;
     try {
 
       // create Entity manager
@@ -203,11 +202,6 @@ public class TerminologyClamlLoaderMojo extends AbstractMojo {
       }
       try {
         reader.close();
-      } catch (IOException e) {
-        // do nothing
-      }
-      try {
-        in.close();
       } catch (IOException e) {
         // do nothing
       }
