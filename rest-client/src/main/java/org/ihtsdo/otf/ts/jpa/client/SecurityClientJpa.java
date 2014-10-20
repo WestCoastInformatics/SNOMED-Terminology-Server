@@ -48,7 +48,7 @@ public class SecurityClientJpa implements SecurityServiceRest {
       throw new Exception(resultString);
     }
     // return auth token
-    return resultString;
+    return resultString.replaceAll("\"","");
   }
 
 }

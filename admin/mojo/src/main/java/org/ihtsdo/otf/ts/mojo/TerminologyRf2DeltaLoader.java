@@ -95,19 +95,19 @@ public class TerminologyRf2DeltaLoader extends AbstractMojo {
   /** File readers. */
   private BufferedReader conceptReader;
 
-  /**  The description reader. */
+  /** The description reader. */
   private BufferedReader descriptionReader;
 
-  /**  The text definition reader. */
+  /** The text definition reader. */
   private BufferedReader textDefinitionReader;
 
-  /**  The relationship reader. */
+  /** The relationship reader. */
   private BufferedReader relationshipReader;
 
-  /**  The language reader. */
+  /** The language reader. */
   private BufferedReader languageReader;
 
-  /**  progress tracking variables. */
+  /** progress tracking variables. */
   private int objectCt;
 
   /** The log ct. */
@@ -119,7 +119,7 @@ public class TerminologyRf2DeltaLoader extends AbstractMojo {
   /** The start time. */
   long startTime;
 
-  /**  The time at which drip feed was started. */
+  /** The time at which drip feed was started. */
   private Date deltaLoaderStartDate = new Date();
 
   /** Content and Mapping Services. */
@@ -133,30 +133,30 @@ public class TerminologyRf2DeltaLoader extends AbstractMojo {
    * */
   private Map<String, Concept> existingConceptCache = new HashMap<>();
 
-  /**  The concept cache. */
+  /** The concept cache. */
   private Map<String, Concept> conceptCache = new HashMap<>();
 
-  /**  The description cache. */
+  /** The description cache. */
   private Map<String, Description> descriptionCache = new HashMap<>();
 
-  /**  The relationship cache. */
+  /** The relationship cache. */
   private Map<String, Relationship> relationshipCache = new HashMap<>();
 
-  /**  The language ref set member cache. */
+  /** The language ref set member cache. */
   private Map<String, LanguageRefSetMember> languageRefSetMemberCache =
       new HashMap<>();
 
-  /**  The language by description cache. */
+  /** The language by description cache. */
   private Map<String, List<LanguageRefSetMember>> languageByDescriptionCache =
       new HashMap<>();
 
-  /**  The existing description ids. */
+  /** The existing description ids. */
   private Set<String> existingDescriptionIds = new HashSet<>();
 
-  /**  The existing relationship ids. */
+  /** The existing relationship ids. */
   private Set<String> existingRelationshipIds = new HashSet<>();
 
-  /**  The existing language ref set member ids. */
+  /** The existing language ref set member ids. */
   private Set<String> existingLanguageRefSetMemberIds = new HashSet<>();
 
   /*
@@ -313,10 +313,9 @@ public class TerminologyRf2DeltaLoader extends AbstractMojo {
       MetadataService metadataService = new MetadataServiceJpa();
       String version = metadataService.getLatestVersion(terminology);
       Map<String, String> hierRelTypeMap =
-          metadataService.getHierarchicalRelationshipTypes(terminology,
-              version);
-      String isaRelType =
-          hierRelTypeMap.keySet().iterator().next().toString();
+          metadataService
+              .getHierarchicalRelationshipTypes(terminology, version);
+      String isaRelType = hierRelTypeMap.keySet().iterator().next().toString();
       metadataService.close();
       ContentService contentService = new ContentServiceJpa();
       // Walk up tree to the root
@@ -326,7 +325,7 @@ public class TerminologyRf2DeltaLoader extends AbstractMojo {
       OUTER: while (true) {
         getLog().info("  Walk up tree from " + conceptId);
         Concept c =
-            contentService.getConcept(conceptId, terminology, version);
+            contentService.getSingleConcept(conceptId, terminology, version);
         getLog().info("    concept = " + c.getTerminologyId());
         getLog().info("    concept.rels.ct = " + c.getRelationships().size());
         getLog().info("    isaRelType = " + isaRelType);
@@ -342,7 +341,7 @@ public class TerminologyRf2DeltaLoader extends AbstractMojo {
         rootId = conceptId;
         break;
       }
-      contentService.close();      
+      contentService.close();
 
       getLog().info(
           "  Compute transitive closure from rootId " + rootId + " for "
@@ -354,7 +353,7 @@ public class TerminologyRf2DeltaLoader extends AbstractMojo {
       algo.reset();
       algo.compute();
       algo.close();
-      
+
       getLog().info("");
       getLog().info("==================================");
       getLog().info("Delta load completed successfully!");
@@ -409,13 +408,13 @@ public class TerminologyRf2DeltaLoader extends AbstractMojo {
     }
 
     // Set terminology version based on the filename
-    //    int index = fileName.indexOf(".txt");
-    //    terminologyVersion = fileName.substring(index - 8, index);
+    // int index = fileName.indexOf(".txt");
+    // terminologyVersion = fileName.substring(index - 8, index);
     // Actually, set based on the metadata
     MetadataService metadataService = new MetadataServiceJpa();
     terminologyVersion = metadataService.getLatestVersion(terminology);
     metadataService.close();
-    
+
     // set the parameters for determining defaultPreferredNames
     dpnTypeId =
         Long.valueOf(config.getProperty("loader.defaultPreferredNames.typeId"));
@@ -671,7 +670,7 @@ public class TerminologyRf2DeltaLoader extends AbstractMojo {
         } else {
           // retrieve concept
           concept =
-              historyService.getConcept(fields[4], terminology,
+              historyService.getSingleConcept(fields[4], terminology,
                   terminologyVersion);
         }
 
@@ -783,9 +782,14 @@ public class TerminologyRf2DeltaLoader extends AbstractMojo {
           getLog().info(
               "  Description " + fields[5]
                   + " is not in cache, retrieving from database");
-          description =
+          DescriptionList dl =
               historyService.getDescription(fields[5], terminology,
                   terminologyVersion);
+          if (dl.getTotalCount() != 1) {
+            throw new Exception("Unexpected number of descriptions: "
+                + dl.getTotalCount());
+          }
+          description = dl.getDescriptions().get(0);
         }
 
         // get the concept
@@ -801,7 +805,7 @@ public class TerminologyRf2DeltaLoader extends AbstractMojo {
               "  Concept " + conceptId
                   + " is not in cache, retrieving from database");
           concept =
-              historyService.getConcept(conceptId, terminology,
+              historyService.getSingleConcept(conceptId, terminology,
                   terminologyVersion);
         }
 
@@ -936,7 +940,7 @@ public class TerminologyRf2DeltaLoader extends AbstractMojo {
           sourceConcept = existingConceptCache.get(fields[4]);
         } else {
           sourceConcept =
-              historyService.getConcept(fields[4], terminology,
+              historyService.getSingleConcept(fields[4], terminology,
                   terminologyVersion);
         }
 
@@ -946,9 +950,8 @@ public class TerminologyRf2DeltaLoader extends AbstractMojo {
           destinationConcept = existingConceptCache.get(fields[5]);
         } else {
           destinationConcept =
-              historyService.getConcept(fields[5], terminology,
+              historyService.getSingleConcept(fields[5], terminology,
                   terminologyVersion);
-
         }
 
         if (sourceConcept != null && destinationConcept != null) {

@@ -190,10 +190,10 @@ public class MetadataServiceRestImpl extends RootServiceRestImpl implements
                 .build());
 
       MetadataService metadataService = new MetadataServiceJpa();
-      Map<String, String> terminologyVersionMap =
+      Map<String, String> versionMap =
           metadataService.getTerminologyLatestVersions();
       KeyValuePairList keyValuePairList = new KeyValuePairList();
-      for (Map.Entry<String, String> termVersionPair : terminologyVersionMap
+      for (Map.Entry<String, String> termVersionPair : versionMap
           .entrySet()) {
         keyValuePairList.addKeyValuePair(new KeyValuePair(termVersionPair
             .getKey(), termVersionPair.getValue()));

@@ -39,7 +39,8 @@ import com.wordnik.swagger.annotations.ApiParam;
 @Produces({
     MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML
 })
-public class HistoryServiceRestImpl extends RootServiceRestImpl implements HistoryServiceRest {
+public class HistoryServiceRestImpl extends RootServiceRestImpl implements
+    HistoryServiceRest {
 
   /** The security service. */
   private SecurityService securityService;
@@ -52,9 +53,13 @@ public class HistoryServiceRestImpl extends RootServiceRestImpl implements Histo
     securityService = new SecurityServiceJpa();
   }
 
-
-  /* (non-Javadoc)
-   * @see org.ihtsdo.otf.mapping.rest.HistoryServiceRest#findDeltaConceptsForTerminology(java.lang.String, java.lang.String, java.lang.String, org.ihtsdo.otf.mapping.helpers.PfsParameter)
+  /*
+   * (non-Javadoc)
+   * 
+   * @see
+   * org.ihtsdo.otf.mapping.rest.HistoryServiceRest#findDeltaConceptsForTerminology
+   * (java.lang.String, java.lang.String, java.lang.String,
+   * org.ihtsdo.otf.mapping.helpers.PfsParameter)
    */
   @Override
   @POST
@@ -65,13 +70,13 @@ public class HistoryServiceRestImpl extends RootServiceRestImpl implements Histo
   })
   public SearchResultList findDeltaConceptsForTerminology(
     @ApiParam(value = "Concept terminology name, e.g. SNOMEDCT", required = true) @PathParam("terminology") String terminology,
-    @ApiParam(value = "Concept terminology version, e.g. 20140731", required = true) @PathParam("version") String terminologyVersion,
+    @ApiParam(value = "Concept terminology version, e.g. 20140731", required = true) @PathParam("version") String version,
     @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken,
     @ApiParam(value = "Paging/filtering/sorting parameter object", required = true) PfsParameter pfsParameter) {
 
     Logger.getLogger(HistoryServiceRestImpl.class).info(
         "RESTful call (History): /terminology/id/" + terminology + "/"
-            + terminologyVersion + "/delta");
+            + version + "/delta");
 
     try {
       // authorize call

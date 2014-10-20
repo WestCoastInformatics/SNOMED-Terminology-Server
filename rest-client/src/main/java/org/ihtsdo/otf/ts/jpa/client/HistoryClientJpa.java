@@ -28,7 +28,7 @@ public class HistoryClientJpa implements HistoryServiceRest {
    */
   @Override
   public SearchResultList findDeltaConceptsForTerminology(String terminology,
-    String terminologyVersion, String authToken, PfsParameter pfsParameter)
+    String version, String authToken, PfsParameter pfsParameter)
     throws Exception {
     // TODO Auto-generated method stub
     return null;

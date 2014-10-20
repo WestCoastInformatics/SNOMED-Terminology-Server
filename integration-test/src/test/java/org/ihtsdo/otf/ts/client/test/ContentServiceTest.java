@@ -26,7 +26,7 @@ public class ContentServiceTest {
   public void setup() throws Exception {
     client = new ContentClientJpa(ConfigUtility.getTestConfigProperties());
     SecurityClientJpa securityClient = new SecurityClientJpa(ConfigUtility.getTestConfigProperties());
-    String authToken = securityClient.authenticate("guest", "guest");
+    authToken = securityClient.authenticate("guest", "guest");
   }
 
   /**
@@ -34,8 +34,8 @@ public class ContentServiceTest {
    * @throws Exception 
    */
   @Test
-  public void testGetConcept() throws Exception {
-    Concept c = client.getConcept("10013000", "SNOMEDCT", "20140731", authToken);
+  public void testGetSingleConcept() throws Exception {
+    Concept c = client.getSingleConcept("10013000", "SNOMEDCT", "20140731", authToken);
     System.out.println("c.name = " + c.getDefaultPreferredName());
   }
 

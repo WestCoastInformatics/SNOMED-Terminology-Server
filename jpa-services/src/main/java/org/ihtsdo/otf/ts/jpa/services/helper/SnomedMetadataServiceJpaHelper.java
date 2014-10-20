@@ -411,7 +411,7 @@ public class SnomedMetadataServiceJpaHelper extends RootServiceJpa implements
     // find all active descendants
     ContentService contentService = new ContentServiceJpa();
     Concept isaRel =
-        contentService.getConcept(isaRelationshipType + "", terminology,
+        contentService.getSingleConcept(isaRelationshipType + "", terminology,
             version);
     map.put(new String(isaRel.getTerminologyId()),
         isaRel.getDefaultPreferredName());
@@ -522,7 +522,7 @@ public class SnomedMetadataServiceJpaHelper extends RootServiceJpa implements
     String terminologyId, String terminology, String terminologyVersion,
     String typeId) throws Exception {
     Concept concept =
-        contentService.getConcept(terminologyId, terminology,
+        contentService.getSingleConcept(terminologyId, terminology,
             terminologyVersion);
     return GraphHelper.getDescendantConcepts(concept, typeId);
 

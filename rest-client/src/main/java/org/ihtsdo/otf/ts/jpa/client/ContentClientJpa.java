@@ -6,10 +6,10 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response.Status.Family;
 
 import org.apache.log4j.Logger;
+import org.ihtsdo.otf.ts.helpers.ConceptList;
 import org.ihtsdo.otf.ts.helpers.SearchResultList;
 import org.ihtsdo.otf.ts.rest.ContentServiceRest;
 import org.ihtsdo.otf.ts.rf2.Concept;
-import org.ihtsdo.otf.ts.rf2.jpa.ConceptJpa;
 import org.ihtsdo.otf.ts.services.helpers.ConfigUtility;
 
 import com.sun.jersey.api.client.Client;
@@ -37,12 +37,37 @@ public class ContentClientJpa implements ContentServiceRest {
    * @see org.ihtsdo.otf.mapping.rest.ContentServiceRest#getConcept(java.lang.String, java.lang.String, java.lang.String, java.lang.String)
    */
   @Override
-  public Concept getConcept(String terminologyId, String terminology,
-    String terminologyVersion, String authToken) throws Exception {
+  public ConceptList getConcepts(String terminologyId, String terminology,
+    String version, String authToken) throws Exception {
     Client client = Client.create();
     WebResource resource =
         client.resource(config.getProperty("base.url") + "/concept/"
-            + terminology + "/" + terminologyVersion + "/" + terminologyId);
+            + terminology + "/" + version + "/" + terminologyId);
+    resource.accept(MediaType.APPLICATION_JSON);
+    resource.setProperty("Authorization", authToken);
+    ClientResponse response = resource.get(ClientResponse.class);
+    String resultString = response.getEntity(String.class);
+    Logger.getLogger(this.getClass()).info("status: " + response.getStatus());
+    if (response.getClientResponseStatus().getFamily() == Family.SUCCESSFUL) {
+      Logger.getLogger(this.getClass()).info(resultString);
+    } else {
+      throw new Exception(resultString);
+    }
+
+    // converting to object
+    ConceptList c =
+        (ConceptList) ConfigUtility.getGraphForString(resultString,
+            ConceptList.class);
+    return c;
+  }
+
+  @Override
+  public Concept getSingleConcept(String terminologyId, String terminology,
+    String version, String authToken) throws Exception {
+    Client client = Client.create();
+    WebResource resource =
+        client.resource(config.getProperty("base.url") + "/concept/"
+            + terminology + "/" + version + "/" + terminologyId);
     resource.accept(MediaType.APPLICATION_JSON);
     resource.setProperty("Authorization", authToken);
     ClientResponse response = resource.get(ClientResponse.class);
@@ -57,30 +82,15 @@ public class ContentClientJpa implements ContentServiceRest {
     // converting to object
     Concept c =
         (Concept) ConfigUtility.getGraphForString(resultString,
-            ConceptJpa.class);
+            Concept.class);
     return c;
-  }
-
+  }  
   /* (non-Javadoc)
    * @see org.ihtsdo.otf.mapping.rest.ContentServiceRest#findConceptsForQuery(java.lang.String, java.lang.String, java.lang.String, java.lang.String)
    */
   @Override
   public SearchResultList findConceptsForQuery(String terminology,
-    String terminologyVersion, String searchString, String authToken) {
-    // TODO Auto-generated method stub
-    return null;
-  }
-
-  @Override
-  public SearchResultList findDescendantConcepts(String terminologyId,
-    String terminology, String terminologyVersion, String authToken) {
-    // TODO Auto-generated method stub
-    return null;
-  }
-
-  @Override
-  public SearchResultList findChildConcepts(String terminologyId,
-    String terminology, String terminologyVersion, String authToken) {
+    String version, String searchString, String authToken) {
     // TODO Auto-generated method stub
     return null;
   }

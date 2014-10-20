@@ -159,7 +159,7 @@ public class TerminologyRf2SnapshotLoaderMojo extends AbstractMojo {
 
       // create Entity Manager
       Properties config = ConfigUtility.getConfigProperties();
-     
+
       // set the input directory
       String coreInputDirString =
           config.getProperty("loader." + terminology + ".input.data");
@@ -336,7 +336,8 @@ public class TerminologyRf2SnapshotLoaderMojo extends AbstractMojo {
 
         // Compute transitive closure
         MetadataService metadataService = new MetadataServiceJpa();
-        String terminologyVersion = metadataService.getLatestVersion(terminology);
+        String terminologyVersion =
+            metadataService.getLatestVersion(terminology);
         Map<String, String> hierRelTypeMap =
             metadataService.getHierarchicalRelationshipTypes(terminology,
                 terminologyVersion);
@@ -351,7 +352,8 @@ public class TerminologyRf2SnapshotLoaderMojo extends AbstractMojo {
         OUTER: while (true) {
           getLog().info("  Walk up tree from " + conceptId);
           Concept c =
-              contentService.getConcept(conceptId, terminology, terminologyVersion);
+              contentService.getSingleConcept(conceptId, terminology,
+                  terminologyVersion);
           getLog().info("    concept = " + c.getTerminologyId());
           getLog().info("    concept.rels.ct = " + c.getRelationships().size());
           getLog().info("    isaRelType = " + isaRelType);
@@ -378,8 +380,8 @@ public class TerminologyRf2SnapshotLoaderMojo extends AbstractMojo {
         algo.reset();
         algo.setRootId(rootId);
         algo.compute();
-        algo.close();        
-        
+        algo.close();
+
         // Final logging messages
         getLog().info(
             "    Total elapsed time for run: "
@@ -1031,7 +1033,7 @@ public class TerminologyRf2SnapshotLoaderMojo extends AbstractMojo {
     }
     try {
       Concept c =
-          contentService.getConcept(terminologyId, terminology,
+          contentService.getSingleConcept(terminologyId, terminology,
               terminologyVersion);
       conceptCache.put(terminologyId + terminology + terminologyVersion, c);
       return c;

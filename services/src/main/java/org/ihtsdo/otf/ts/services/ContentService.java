@@ -3,6 +3,7 @@ package org.ihtsdo.otf.ts.services;
 import java.util.Set;
 
 import org.ihtsdo.otf.ts.helpers.ConceptList;
+import org.ihtsdo.otf.ts.helpers.DescriptionList;
 import org.ihtsdo.otf.ts.helpers.PfsParameter;
 import org.ihtsdo.otf.ts.helpers.SearchResultList;
 import org.ihtsdo.otf.ts.rf2.AttributeValueRefSetMember;
@@ -31,6 +32,8 @@ public interface ContentService extends RootService {
 
   /**
    * Returns the concept matching the specified parameters.
+   * May return more than one concept if there are multiple entries
+   * with the same id, terminology, and version.
    * 
    * @param terminologyId the concept id
    * @param terminology the terminology
@@ -38,7 +41,20 @@ public interface ContentService extends RootService {
    * @return the concept
    * @throws Exception if anything goes wrong
    */
-  public Concept getConcept(String terminologyId, String terminology,
+  public ConceptList getConcept(String terminologyId, String terminology,
+    String terminologyVersion) throws Exception;
+
+  /**
+   * Returns the single concept for the specified parameters.  If there
+   * are more than one it throws an exception.
+   *
+   * @param terminologyId the terminology id
+   * @param terminology the terminology
+   * @param terminologyVersion the terminology version
+   * @return the single concept
+   * @throws Exception if there are more than one matching concepts.
+   */
+  public Concept getSingleConcept(String terminologyId, String terminology,
     String terminologyVersion) throws Exception;
 
   /**
@@ -84,7 +100,20 @@ public interface ContentService extends RootService {
    * @return the description
    * @throws Exception if anything goes wrong
    */
-  public Description getDescription(String terminologyId, String terminology,
+  public DescriptionList getDescription(String terminologyId, String terminology,
+    String terminologyVersion) throws Exception;
+
+  /**
+   * Returns the single description for the specified parameters.  If there
+   * are more than one it throws an exception.
+   *
+   * @param terminologyId the terminology id
+   * @param terminology the terminology
+   * @param terminologyVersion the terminology version
+   * @return the single concept
+   * @throws Exception if there are more than one matching concepts.
+   */
+  public Description getSingleDescription(String terminologyId, String terminology,
     String terminologyVersion) throws Exception;
 
   /**

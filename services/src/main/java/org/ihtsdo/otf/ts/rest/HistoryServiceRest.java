@@ -11,7 +11,7 @@ public interface HistoryServiceRest {
    * Finds the concepts that have changed since some point in time.
    *
    * @param terminology the terminology
-   * @param terminologyVersion the terminology version
+   * @param version the terminology version
    * @param authToken the auth token
    * @param pfsParameter the pfs parameter
    * @return the search result list
@@ -19,7 +19,7 @@ public interface HistoryServiceRest {
    */
 
   public SearchResultList findDeltaConceptsForTerminology(String terminology,
-    String terminologyVersion, String authToken, PfsParameter pfsParameter)
+    String version, String authToken, PfsParameter pfsParameter)
     throws Exception;
 
 }
