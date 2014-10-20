@@ -2,11 +2,10 @@ package org.ihtsdo.otf.ts.jpa.client;
 
 import java.util.Properties;
 
-import org.ihtsdo.otf.mapping.helpers.PfsParameter;
-import org.ihtsdo.otf.mapping.helpers.SearchResultList;
-import org.ihtsdo.otf.mapping.rest.HistoryServiceRest;
+import org.ihtsdo.otf.ts.helpers.PfsParameter;
+import org.ihtsdo.otf.ts.helpers.SearchResultList;
+import org.ihtsdo.otf.ts.rest.HistoryServiceRest;
 
-// TODO: Auto-generated Javadoc
 /**
  * A client for connecting to a security  REST service.
  */

@@ -1,9 +1,9 @@
 package org.ihtsdo.otf.ts.client.test;
 
-import org.ihtsdo.otf.mapping.rf2.Concept;
-import org.ihtsdo.otf.mapping.services.helpers.ConfigUtility;
 import org.ihtsdo.otf.ts.jpa.client.ContentClientJpa;
 import org.ihtsdo.otf.ts.jpa.client.SecurityClientJpa;
+import org.ihtsdo.otf.ts.rf2.Concept;
+import org.ihtsdo.otf.ts.services.helpers.ConfigUtility;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;

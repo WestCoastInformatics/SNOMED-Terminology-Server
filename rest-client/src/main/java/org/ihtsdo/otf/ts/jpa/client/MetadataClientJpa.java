@@ -2,11 +2,10 @@ package org.ihtsdo.otf.ts.jpa.client;
 
 import java.util.Properties;
 
-import org.ihtsdo.otf.mapping.helpers.KeyValuePairList;
-import org.ihtsdo.otf.mapping.helpers.KeyValuePairLists;
-import org.ihtsdo.otf.mapping.rest.MetadataServiceRest;
+import org.ihtsdo.otf.ts.helpers.KeyValuePairList;
+import org.ihtsdo.otf.ts.helpers.KeyValuePairLists;
+import org.ihtsdo.otf.ts.rest.MetadataServiceRest;
 
-// TODO: Auto-generated Javadoc
 /**
  * A client for connecting to a security  REST service.
  */

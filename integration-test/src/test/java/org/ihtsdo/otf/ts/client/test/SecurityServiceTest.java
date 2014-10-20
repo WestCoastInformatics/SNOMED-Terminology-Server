@@ -2,9 +2,9 @@ package org.ihtsdo.otf.ts.client.test;
 
 import static org.junit.Assert.assertEquals;
 
-import org.ihtsdo.otf.mapping.services.helpers.ConfigUtility;
-import org.ihtsdo.otf.mapping.services.helpers.DefaultSecurityServiceHandler;
 import org.ihtsdo.otf.ts.jpa.client.SecurityClientJpa;
+import org.ihtsdo.otf.ts.services.helpers.ConfigUtility;
+import org.ihtsdo.otf.ts.services.helpers.DefaultSecurityServiceHandler;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
