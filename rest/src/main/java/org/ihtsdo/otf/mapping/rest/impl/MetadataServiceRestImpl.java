@@ -1,4 +1,4 @@
-package org.ihtsdo.otf.mapping.rest;
+package org.ihtsdo.otf.mapping.rest.impl;
 
 import java.util.List;
 import java.util.Map;
@@ -13,12 +13,13 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import org.apache.log4j.Logger;
-import org.ihtsdo.otf.mapping.dto.KeyValuePair;
-import org.ihtsdo.otf.mapping.dto.KeyValuePairList;
-import org.ihtsdo.otf.mapping.dto.KeyValuePairLists;
+import org.ihtsdo.otf.mapping.helpers.KeyValuePair;
+import org.ihtsdo.otf.mapping.helpers.KeyValuePairList;
+import org.ihtsdo.otf.mapping.helpers.KeyValuePairLists;
 import org.ihtsdo.otf.mapping.helpers.UserRole;
 import org.ihtsdo.otf.mapping.jpa.services.MetadataServiceJpa;
 import org.ihtsdo.otf.mapping.jpa.services.SecurityServiceJpa;
+import org.ihtsdo.otf.mapping.rest.MetadataServiceRest;
 import org.ihtsdo.otf.mapping.services.MetadataService;
 import org.ihtsdo.otf.mapping.services.SecurityService;
 
@@ -26,6 +27,7 @@ import com.wordnik.swagger.annotations.Api;
 import com.wordnik.swagger.annotations.ApiOperation;
 import com.wordnik.swagger.annotations.ApiParam;
 
+// TODO: Auto-generated Javadoc
 /**
  * Metadata Services REST package.
  */
@@ -34,28 +36,29 @@ import com.wordnik.swagger.annotations.ApiParam;
 @Produces({
     MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML
 })
-public class MetadataServiceRest extends RootServiceRest {
+public class MetadataServiceRestImpl extends RootServiceRestImpl implements
+    MetadataServiceRest {
 
   /** The security service. */
   private SecurityService securityService;
 
   /**
-   * Instantiates an empty {@link MetadataServiceRest}.
+   * Instantiates an empty {@link MetadataServiceRestImpl}.
    *
    * @throws Exception the exception
    */
-  public MetadataServiceRest() throws Exception {
+  public MetadataServiceRestImpl() throws Exception {
     securityService = new SecurityServiceJpa();
   }
 
-  /**
-   * Returns all metadata for a terminology and version
+  /*
+   * (non-Javadoc)
    * 
-   * @param terminology the terminology
-   * @param version the version
-   * @param authToken
-   * @return the all metadata
+   * @see
+   * org.ihtsdo.otf.mapping.rest.MetadataServiceRest#getMetadata(java.lang.String
+   * , java.lang.String, java.lang.String)
    */
+  @Override
   @GET
   @Path("/metadata/terminology/id/{terminology}/{version}")
   @ApiOperation(value = "Get metadata for terminology and version.", notes = "Gets the key-value pairs representing all metadata for a particular terminology and version.", response = KeyValuePairLists.class)
@@ -65,9 +68,9 @@ public class MetadataServiceRest extends RootServiceRest {
   public KeyValuePairLists getMetadata(
     @ApiParam(value = "Terminology name, e.g. SNOMEDCT", required = true) @PathParam("terminology") String terminology,
     @ApiParam(value = "Terminology version, e.g. 20140731", required = true) @PathParam("version") String version,
-    @ApiParam(value = "Authorization token", required = true) @HeaderParam("Authorization") String authToken) {
+    @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken) {
 
-    Logger.getLogger(MetadataServiceRest.class).info(
+    Logger.getLogger(MetadataServiceRestImpl.class).info(
         "RESTful call (Metadata): /metadata/" + terminology + "/" + version);
 
     String user = "";
@@ -110,13 +113,14 @@ public class MetadataServiceRest extends RootServiceRest {
     }
   }
 
-  /**
-   * Returns all metadata for the latest version.
+  /*
+   * (non-Javadoc)
    * 
-   * @param terminology the terminology
-   * @param authToken
-   * @return the metadata
+   * @see
+   * org.ihtsdo.otf.mapping.rest.MetadataServiceRest#getAllMetadata(java.lang
+   * .String, java.lang.String)
    */
+  @Override
   @GET
   @Path("/metadata/terminology/id/{terminology}/latest")
   @ApiOperation(value = "Get all metadata for the the latest version of a terminology.", notes = "Returns all metadata for the latest version of a specified terminology.", response = KeyValuePairLists.class)
@@ -125,9 +129,9 @@ public class MetadataServiceRest extends RootServiceRest {
   })
   public KeyValuePairLists getAllMetadata(
     @ApiParam(value = "Terminology name, e.g. SNOMEDCT", required = true) @PathParam("terminology") String terminology,
-    @ApiParam(value = "Authorization token", required = true) @HeaderParam("Authorization") String authToken) {
+    @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken) {
 
-    Logger.getLogger(MetadataServiceRest.class).info(
+    Logger.getLogger(MetadataServiceRestImpl.class).info(
         "RESTful call (Metadata): /all/" + terminology);
 
     String user = "";
@@ -153,12 +157,13 @@ public class MetadataServiceRest extends RootServiceRest {
     }
   }
 
-  /**
-   * Returns all terminologies with only their latest version
-   * @param authToken
+  /*
+   * (non-Javadoc)
    * 
-   * @return the all terminologies latest versions
+   * @see org.ihtsdo.otf.mapping.rest.MetadataServiceRest#
+   * getAllTerminologiesLatestVersions(java.lang.String)
    */
+  @Override
   @GET
   @Path("/terminology/terminologies/latest")
   @ApiOperation(value = "Get all terminologies and their latest versions.", notes = "Gets the list of terminologies and their latest versions.", response = KeyValuePairList.class)
@@ -166,9 +171,9 @@ public class MetadataServiceRest extends RootServiceRest {
       MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML
   })
   public KeyValuePairList getAllTerminologiesLatestVersions(
-    @ApiParam(value = "Authorization token", required = true) @HeaderParam("Authorization") String authToken) {
+    @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken) {
 
-    Logger.getLogger(MetadataServiceRest.class).info(
+    Logger.getLogger(MetadataServiceRestImpl.class).info(
         "RESTful call (Metadata): /terminologies/latest/");
 
     String user = "";
@@ -203,12 +208,14 @@ public class MetadataServiceRest extends RootServiceRest {
     }
   }
 
-  /**
-   * Returns all terminologies and all versions
-   * @param authToken
+  /*
+   * (non-Javadoc)
    * 
-   * @return all terminologies and versions
+   * @see
+   * org.ihtsdo.otf.mapping.rest.MetadataServiceRest#getAllTerminologiesVersions
+   * (java.lang.String)
    */
+  @Override
   @GET
   @Path("/terminology/terminologies")
   @ApiOperation(value = "Get all terminologies and all their versions", notes = "Gets the list of all terminologies and all of their versions", response = KeyValuePairList.class)
@@ -216,9 +223,9 @@ public class MetadataServiceRest extends RootServiceRest {
       MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML
   })
   public KeyValuePairLists getAllTerminologiesVersions(
-    @ApiParam(value = "Authorization token", required = true) @HeaderParam("Authorization") String authToken) {
+    @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken) {
 
-    Logger.getLogger(MetadataServiceRest.class).info(
+    Logger.getLogger(MetadataServiceRestImpl.class).info(
         "RESTful call (Metadata): /terminologies");
 
     String user = "";

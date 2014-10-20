@@ -1,4 +1,4 @@
-package org.ihtsdo.otf.mapping.rest;
+package org.ihtsdo.otf.mapping.rest.impl;
 
 import java.util.Calendar;
 import java.util.Timer;

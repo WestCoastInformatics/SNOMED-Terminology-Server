@@ -1,4 +1,4 @@
-package org.ihtsdo.otf.mapping.rest;
+package org.ihtsdo.otf.mapping.rest.impl;
 
 import javax.ws.rs.HeaderParam;
 import javax.ws.rs.POST;
@@ -11,7 +11,7 @@ import javax.ws.rs.core.Response;
 
 import org.apache.log4j.Logger;
 import org.ihtsdo.otf.mapping.helpers.ConceptList;
-import org.ihtsdo.otf.mapping.helpers.PfsParameterJpa;
+import org.ihtsdo.otf.mapping.helpers.PfsParameter;
 import org.ihtsdo.otf.mapping.helpers.SearchResult;
 import org.ihtsdo.otf.mapping.helpers.SearchResultJpa;
 import org.ihtsdo.otf.mapping.helpers.SearchResultList;
@@ -19,6 +19,7 @@ import org.ihtsdo.otf.mapping.helpers.SearchResultListJpa;
 import org.ihtsdo.otf.mapping.helpers.UserRole;
 import org.ihtsdo.otf.mapping.jpa.services.HistoryServiceJpa;
 import org.ihtsdo.otf.mapping.jpa.services.SecurityServiceJpa;
+import org.ihtsdo.otf.mapping.rest.HistoryServiceRest;
 import org.ihtsdo.otf.mapping.rf2.Concept;
 import org.ihtsdo.otf.mapping.rf2.Description;
 import org.ihtsdo.otf.mapping.rf2.LanguageRefSetMember;
@@ -38,28 +39,24 @@ import com.wordnik.swagger.annotations.ApiParam;
 @Produces({
     MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML
 })
-public class HistoryServiceRest extends RootServiceRest {
+public class HistoryServiceRestImpl extends RootServiceRestImpl implements HistoryServiceRest {
 
   /** The security service. */
   private SecurityService securityService;
 
   /**
-   * Instantiates an empty {@link HistoryServiceRest}.
+   * Instantiates an empty {@link HistoryServiceRestImpl}.
    * @throws Exception
    */
-  public HistoryServiceRest() throws Exception {
+  public HistoryServiceRestImpl() throws Exception {
     securityService = new SecurityServiceJpa();
   }
 
-  /**
-   * Finds the concepts that have changed since some point in time.
-   *
-   * @param terminology the terminology
-   * @param terminologyVersion the terminology version
-   * @param authToken the auth token
-   * @param pfsParameter the pfs parameter
-   * @return the search result list
+
+  /* (non-Javadoc)
+   * @see org.ihtsdo.otf.mapping.rest.HistoryServiceRest#findDeltaConceptsForTerminology(java.lang.String, java.lang.String, java.lang.String, org.ihtsdo.otf.mapping.helpers.PfsParameter)
    */
+  @Override
   @POST
   @Path("/delta/{terminology}/{version}")
   @ApiOperation(value = "Gets the most recently edited concepts", notes = "Gets a list of search results for concepts changed since the last delta run.", response = Concept.class)
@@ -69,10 +66,10 @@ public class HistoryServiceRest extends RootServiceRest {
   public SearchResultList findDeltaConceptsForTerminology(
     @ApiParam(value = "Concept terminology name, e.g. SNOMEDCT", required = true) @PathParam("terminology") String terminology,
     @ApiParam(value = "Concept terminology version, e.g. 20140731", required = true) @PathParam("version") String terminologyVersion,
-    @ApiParam(value = "Authorization token", required = true) @HeaderParam("Authorization") String authToken,
-    @ApiParam(value = "Paging/filtering/sorting parameter object", required = true) PfsParameterJpa pfsParameter) {
+    @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken,
+    @ApiParam(value = "Paging/filtering/sorting parameter object", required = true) PfsParameter pfsParameter) {
 
-    Logger.getLogger(HistoryServiceRest.class).info(
+    Logger.getLogger(HistoryServiceRestImpl.class).info(
         "RESTful call (History): /terminology/id/" + terminology + "/"
             + terminologyVersion + "/delta");
 

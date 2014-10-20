@@ -19,6 +19,7 @@ import javax.persistence.NoResultException;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoFailureException;
 import org.ihtsdo.otf.mapping.helpers.FileSorter;
+import org.ihtsdo.otf.mapping.jpa.algo.TransitiveClosureAlgorithm;
 import org.ihtsdo.otf.mapping.jpa.services.ContentServiceJpa;
 import org.ihtsdo.otf.mapping.jpa.services.MetadataServiceJpa;
 import org.ihtsdo.otf.mapping.rf2.AttributeValueRefSetMember;
@@ -335,10 +336,10 @@ public class TerminologyRf2SnapshotLoaderMojo extends AbstractMojo {
 
         // Compute transitive closure
         MetadataService metadataService = new MetadataServiceJpa();
-        String version = metadataService.getLatestVersion(terminology);
+        String terminologyVersion = metadataService.getLatestVersion(terminology);
         Map<String, String> hierRelTypeMap =
             metadataService.getHierarchicalRelationshipTypes(terminology,
-                version);
+                terminologyVersion);
         String isaRelType =
             hierRelTypeMap.keySet().iterator().next().toString();
         metadataService.close();
@@ -350,7 +351,7 @@ public class TerminologyRf2SnapshotLoaderMojo extends AbstractMojo {
         OUTER: while (true) {
           getLog().info("  Walk up tree from " + conceptId);
           Concept c =
-              contentService.getConcept(conceptId, terminology, version);
+              contentService.getConcept(conceptId, terminology, terminologyVersion);
           getLog().info("    concept = " + c.getTerminologyId());
           getLog().info("    concept.rels.ct = " + c.getRelationships().size());
           getLog().info("    isaRelType = " + isaRelType);
@@ -366,12 +367,19 @@ public class TerminologyRf2SnapshotLoaderMojo extends AbstractMojo {
           rootId = conceptId;
           break;
         }
-        getLog().info(
-            "  Compute transitive closure from rootId " + rootId + " for "
-                + terminology + ", " + version);
-        contentService.computeTransitiveClosure(rootId, terminology, version);
         contentService.close();
 
+        getLog().info(
+            "  Compute transitive closure from rootId " + rootId + " for "
+                + terminology + ", " + terminologyVersion);
+        TransitiveClosureAlgorithm algo = new TransitiveClosureAlgorithm();
+        algo.setTerminology(terminology);
+        algo.setTerminologyVersion(terminologyVersion);
+        algo.reset();
+        algo.setRootId(rootId);
+        algo.compute();
+        algo.close();        
+        
         // Final logging messages
         getLog().info(
             "    Total elapsed time for run: "

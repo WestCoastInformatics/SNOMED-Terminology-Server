@@ -1,4 +1,4 @@
-package org.ihtsdo.otf.mapping.rest;
+package org.ihtsdo.otf.mapping.rest.impl;
 
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
@@ -8,12 +8,12 @@ import org.ihtsdo.otf.mapping.services.helpers.ExceptionHandler;
 /**
  * Top level class for all REST services.
  */
-public class RootServiceRest {
+public class RootServiceRestImpl {
 
   /**
-   * Instantiates an empty {@link RootServiceRest}.
+   * Instantiates an empty {@link RootServiceRestImpl}.
    */
-  public RootServiceRest() {
+  public RootServiceRestImpl() {
     // do nothing
   }
 

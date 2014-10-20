@@ -1,4 +1,4 @@
-package org.ihtsdo.otf.mapping.jpa.services;
+package org.ihtsdo.otf.mapping.jpa.services.helper;
 
 import java.util.HashMap;
 import java.util.List;
@@ -7,6 +7,8 @@ import java.util.Set;
 
 import org.apache.log4j.Logger;
 import org.ihtsdo.otf.mapping.helpers.GraphHelper;
+import org.ihtsdo.otf.mapping.jpa.services.ContentServiceJpa;
+import org.ihtsdo.otf.mapping.jpa.services.RootServiceJpa;
 import org.ihtsdo.otf.mapping.rf2.Concept;
 import org.ihtsdo.otf.mapping.services.ContentService;
 import org.ihtsdo.otf.mapping.services.MetadataService;

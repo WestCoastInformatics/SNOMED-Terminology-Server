@@ -19,6 +19,7 @@ import org.hibernate.envers.Audited;
 import org.hibernate.search.annotations.Analyze;
 import org.hibernate.search.annotations.ContainedIn;
 import org.hibernate.search.annotations.Field;
+import org.hibernate.search.annotations.Fields;
 import org.hibernate.search.annotations.Index;
 import org.hibernate.search.annotations.Store;
 import org.ihtsdo.otf.mapping.rf2.Concept;
@@ -48,6 +49,9 @@ public class DescriptionJpa extends AbstractComponent implements Description {
 
   /** The term. */
   @Column(nullable = false, length = 4000)
+  @Fields({
+      @Field, @Field(name = "all", analyze = Analyze.YES, store = Store.NO)
+  })
   private String term;
 
   /** The case significance id. */

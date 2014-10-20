@@ -18,15 +18,11 @@ package org.ihtsdo.otf.mapping.mojo;
 
 import java.util.Properties;
 
-import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
-import javax.persistence.EntityTransaction;
-import javax.persistence.Persistence;
-import javax.persistence.Query;
-
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoFailureException;
+import org.ihtsdo.otf.mapping.jpa.services.ContentServiceJpa;
 import org.ihtsdo.otf.mapping.jpa.services.MetadataServiceJpa;
+import org.ihtsdo.otf.mapping.services.ContentService;
 import org.ihtsdo.otf.mapping.services.MetadataService;
 import org.ihtsdo.otf.mapping.services.helpers.ConfigUtility;
 
@@ -83,104 +79,13 @@ public class TerminologyRemoverMojo extends AbstractMojo {
   @Override
   public void execute() throws MojoFailureException {
     getLog().info("Starting removing " + terminology + " data ...");
-
     try {
-      // create Entity Manager
-      Properties config = ConfigUtility.getConfigProperties();
-      getLog().info("  properties = " + config);
-      EntityManagerFactory factory =
-          Persistence.createEntityManagerFactory("TermServiceDS", config);
-      EntityManager manager = factory.createEntityManager();
-
-      EntityTransaction tx = manager.getTransaction();
-      tx.begin();
-      try {
-        // truncate all the tables that we are going to use first
-
-        // remove Tree Positions
-        // first get all versions for this terminology
-        MetadataService metadataService = new MetadataServiceJpa();
-        metadataService.close();
-
-
-        // truncate RefSets
-        Query query =
-            manager
-                .createQuery("DELETE From SimpleRefSetMemberJpa rs where terminology = :terminology");
-        query.setParameter("terminology", terminology);
-        int deleteRecords = query.executeUpdate();
-        getLog().info("    simple_ref_set records deleted: " + deleteRecords);
-
-        query =
-            manager
-                .createQuery("DELETE From SimpleMapRefSetMemberJpa rs where terminology = :terminology");
-        query.setParameter("terminology", terminology);
-        deleteRecords = query.executeUpdate();
-        getLog().info(
-            "    simple_map_ref_set records deleted: " + deleteRecords);
-
-        query =
-            manager
-                .createQuery("DELETE From ComplexMapRefSetMemberJpa rs where terminology = :terminology");
-        query.setParameter("terminology", terminology);
-        deleteRecords = query.executeUpdate();
-        getLog().info(
-            "    complex_map_ref_set records deleted: " + deleteRecords);
-
-        query =
-            manager
-                .createQuery("DELETE From AttributeValueRefSetMemberJpa rs where terminology = :terminology");
-        query.setParameter("terminology", terminology);
-        deleteRecords = query.executeUpdate();
-        getLog().info(
-            "    attribute_value_ref_set records deleted: " + deleteRecords);
-
-        query =
-            manager
-                .createQuery("DELETE From LanguageRefSetMemberJpa rs where terminology = :terminology");
-        query.setParameter("terminology", terminology);
-        deleteRecords = query.executeUpdate();
-        getLog().info("    language_ref_set records deleted: " + deleteRecords);
-
-        // Truncate Terminology Elements
-        query =
-            manager
-                .createQuery("DELETE From DescriptionJpa d where terminology = :terminology");
-        query.setParameter("terminology", terminology);
-        deleteRecords = query.executeUpdate();
-        getLog().info("    description records deleted: " + deleteRecords);
-        query =
-            manager
-                .createQuery("DELETE From RelationshipJpa r where terminology = :terminology");
-        query.setParameter("terminology", terminology);
-        deleteRecords = query.executeUpdate();
-        getLog().info("    relationship records deleted: " + deleteRecords);
-        query =
-            manager
-                .createQuery("DELETE From TransitiveRelationshipJpa c where terminology = :terminology");
-        query.setParameter("terminology", terminology);
-        deleteRecords = query.executeUpdate();
-        getLog().info("    transitive relationships records deleted: " + deleteRecords);
-        query =
-            manager
-                .createQuery("DELETE From ConceptJpa c where terminology = :terminology");
-        query.setParameter("terminology", terminology);
-        deleteRecords = query.executeUpdate();
-        getLog().info("    concept records deleted: " + deleteRecords);
-
-        tx.commit();
-
-        getLog().info("done ...");
-
-      } catch (Exception e) {
-        tx.rollback();
-        throw e;
-      }
-
-      // Clean-up
-      manager.close();
-      factory.close();
-
+      MetadataService metadataService = new MetadataServiceJpa();
+      String terminologyVersion = metadataService.getLatestVersion(terminology);
+      metadataService.close();
+      ContentService contentService = new ContentServiceJpa();
+      contentService.clearConcepts(terminology, terminologyVersion);
+      contentService.close();
     } catch (Throwable e) {
       e.printStackTrace();
       throw new MojoFailureException("Unexpected exception:", e);

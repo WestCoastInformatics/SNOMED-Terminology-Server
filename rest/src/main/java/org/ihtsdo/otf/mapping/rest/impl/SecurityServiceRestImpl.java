@@ -1,4 +1,4 @@
-package org.ihtsdo.otf.mapping.rest;
+package org.ihtsdo.otf.mapping.rest.impl;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.POST;
@@ -12,6 +12,7 @@ import javax.ws.rs.core.Response;
 import org.apache.log4j.Logger;
 import org.ihtsdo.otf.mapping.helpers.LocalException;
 import org.ihtsdo.otf.mapping.jpa.services.SecurityServiceJpa;
+import org.ihtsdo.otf.mapping.rest.SecurityServiceRest;
 import org.ihtsdo.otf.mapping.services.SecurityService;
 
 import com.wordnik.swagger.annotations.Api;
@@ -26,7 +27,8 @@ import com.wordnik.swagger.annotations.ApiParam;
 @Produces({
     MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML
 })
-public class SecurityServiceRest extends RootServiceRest {
+public class SecurityServiceRestImpl extends RootServiceRestImpl implements
+    SecurityServiceRest {
 
   /**
    * Authenticate.
@@ -35,6 +37,7 @@ public class SecurityServiceRest extends RootServiceRest {
    * @param password the password
    * @return the string
    */
+  @Override
   @POST
   @Path("/authenticate/{username}")
   @Consumes({
@@ -48,7 +51,7 @@ public class SecurityServiceRest extends RootServiceRest {
     @ApiParam(value = "Username, e.g. 'guest'", required = true) @PathParam("username") String username,
     @ApiParam(value = "Password, as string post data, e.g. 'guest'", required = true) String password) {
 
-    Logger.getLogger(SecurityServiceRest.class)
+    Logger.getLogger(SecurityServiceRestImpl.class)
         .info(
             "RESTful call (Authentication): /authentication for user = "
                 + username);

@@ -1,4 +1,4 @@
-package org.ihtsdo.otf.mapping.rest;
+package org.ihtsdo.otf.mapping.rest.impl;
 
 import java.util.Map;
 
@@ -21,6 +21,7 @@ import org.ihtsdo.otf.mapping.helpers.UserRole;
 import org.ihtsdo.otf.mapping.jpa.services.ContentServiceJpa;
 import org.ihtsdo.otf.mapping.jpa.services.MetadataServiceJpa;
 import org.ihtsdo.otf.mapping.jpa.services.SecurityServiceJpa;
+import org.ihtsdo.otf.mapping.rest.ContentServiceRest;
 import org.ihtsdo.otf.mapping.rf2.Concept;
 import org.ihtsdo.otf.mapping.rf2.Description;
 import org.ihtsdo.otf.mapping.rf2.Relationship;
@@ -32,36 +33,38 @@ import com.wordnik.swagger.annotations.Api;
 import com.wordnik.swagger.annotations.ApiOperation;
 import com.wordnik.swagger.annotations.ApiParam;
 
+// TODO: Auto-generated Javadoc
 /**
- * REST implementation for content service
+ * REST implementation for content service.
  */
 @Path("/content")
 @Api(value = "/content", description = "Operations to retrieve RF2 content for a terminology.")
 @Produces({
     MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML
 })
-public class ContentServiceRest extends RootServiceRest {
+public class ContentServiceRestImpl extends RootServiceRestImpl implements
+    ContentServiceRest {
 
   /** The security service. */
   private SecurityService securityService;
 
   /**
-   * Instantiates an empty {@link ContentServiceRest}.
-   * @throws Exception
+   * Instantiates an empty {@link ContentServiceRestImpl}.
+   *
+   * @throws Exception the exception
    */
-  public ContentServiceRest() throws Exception {
+  public ContentServiceRestImpl() throws Exception {
     securityService = new SecurityServiceJpa();
   }
 
-  /**
-   * Returns the concept for id, terminology, and terminology version
+  /*
+   * (non-Javadoc)
    * 
-   * @param terminologyId the terminology id
-   * @param terminology the concept terminology
-   * @param terminologyVersion the terminology version
-   * @param authToken
-   * @return the concept
+   * @see
+   * org.ihtsdo.otf.mapping.rest.ContentServiceRest#getConcept(java.lang.String,
+   * java.lang.String, java.lang.String, java.lang.String)
    */
+  @Override
   @GET
   @Path("/concept/{terminology}/{version}/{terminologyId}")
   @ApiOperation(value = "Get concept by id, terminology, and version", notes = "Gets the concept for the specified parameters.", response = Concept.class)
@@ -72,9 +75,9 @@ public class ContentServiceRest extends RootServiceRest {
     @ApiParam(value = "Concept terminology id, e.g. 102751005", required = true) @PathParam("terminologyId") String terminologyId,
     @ApiParam(value = "Concept terminology name, e.g. SNOMEDCT", required = true) @PathParam("terminology") String terminology,
     @ApiParam(value = "Concept terminology version, e.g. 20140731", required = true) @PathParam("version") String terminologyVersion,
-    @ApiParam(value = "Authorization token", required = true) @HeaderParam("Authorization") String authToken) {
+    @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken) {
 
-    Logger.getLogger(ContentServiceRest.class).info(
+    Logger.getLogger(ContentServiceRestImpl.class).info(
         "RESTful call (Content): /concept/" + terminology + "/"
             + terminologyVersion + "/" + terminologyId);
 
@@ -111,21 +114,24 @@ public class ContentServiceRest extends RootServiceRest {
 
   }
 
-  /**
-   * Returns the concept for search string.
+  /*
+   * (non-Javadoc)
    * 
-   * @param searchString the lucene search string
-   * @param authToken
-   * @return the concept for id
+   * @see
+   * org.ihtsdo.otf.mapping.rest.ContentServiceRest#findConceptsForQuery(java
+   * .lang.String, java.lang.String, java.lang.String, java.lang.String)
    */
+  @Override
   @GET
-  @Path("/concept/query/{string}")
+  @Path("/concept/{terminology}/{version}/query/{string}")
   @ApiOperation(value = "Find concepts matching a search query.", notes = "Gets a list of search results that match the lucene query.", response = String.class)
   public SearchResultList findConceptsForQuery(
-    @ApiParam(value = "Query, e.g. 'heart attack'", required = true) @PathParam("string") String searchString,
-    @ApiParam(value = "Authorization token", required = true) @HeaderParam("Authorization") String authToken) {
+    @ApiParam(value = "Terminology, e.g. SNOMEDCT", required = true) @PathParam("string") String terminology,
+    @ApiParam(value = "Terminology version, e.g. 20140731", required = true) @PathParam("string") String terminologyVersion,
+    @ApiParam(value = "Query, e.g. 'sulfur'", required = true) @PathParam("string") String searchString,
+    @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken) {
 
-    Logger.getLogger(ContentServiceRest.class).info(
+    Logger.getLogger(ContentServiceRestImpl.class).info(
         "RESTful call (Content): /concept/query/" + searchString);
 
     try {
@@ -140,8 +146,11 @@ public class ContentServiceRest extends RootServiceRest {
                 .build());
 
       ContentService contentService = new ContentServiceJpa();
+      String filteredSearchString =
+          searchString + " terminology:" + terminology + " termionlogyVersion:"
+              + terminologyVersion;
       SearchResultList sr =
-          contentService.findConceptsForQuery(searchString,
+          contentService.findConceptsForQuery(filteredSearchString,
               new PfsParameterJpa());
       contentService.close();
       return sr;
@@ -152,16 +161,14 @@ public class ContentServiceRest extends RootServiceRest {
     }
   }
 
-  /**
-   * Returns the descendants of a concept as mapped by relationships and inverse
-   * relationships
+  /*
+   * (non-Javadoc)
    * 
-   * @param terminologyId the terminology id
-   * @param terminology the terminology
-   * @param terminologyVersion the terminology version
-   * @param authToken
-   * @return the search result list
+   * @see
+   * org.ihtsdo.otf.mapping.rest.ContentServiceRest#findDescendantConcepts(java
+   * .lang.String, java.lang.String, java.lang.String, java.lang.String)
    */
+  @Override
   @GET
   @Path("/concept/{terminology}/{version}/{terminologyId}/descendants")
   @ApiOperation(value = "Find concept descendants.", notes = "Gets a list of search results for each descendant concept.", response = Concept.class)
@@ -172,9 +179,9 @@ public class ContentServiceRest extends RootServiceRest {
     @ApiParam(value = "Concept terminology id, e.g. 102751005", required = true) @PathParam("terminologyId") String terminologyId,
     @ApiParam(value = "Concept terminology name, e.g. SNOMEDCT", required = true) @PathParam("terminology") String terminology,
     @ApiParam(value = "Concept terminology version, e.g. 20140731", required = true) @PathParam("version") String terminologyVersion,
-    @ApiParam(value = "Authorization token", required = true) @HeaderParam("Authorization") String authToken) {
+    @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken) {
 
-    Logger.getLogger(ContentServiceRest.class).info(
+    Logger.getLogger(ContentServiceRestImpl.class).info(
         "RESTful call (Content): /concept/" + terminology + "/"
             + terminologyVersion + "/" + terminologyId + "/descendants");
 
@@ -205,15 +212,14 @@ public class ContentServiceRest extends RootServiceRest {
     }
   }
 
-  /**
-   * Returns the immediate children of a concept given terminology information
+  /*
+   * (non-Javadoc)
    * 
-   * @param id the terminology id
-   * @param terminology the terminology
-   * @param terminologyVersion the terminology version
-   * @param authToken
-   * @return the search result list
+   * @see
+   * org.ihtsdo.otf.mapping.rest.ContentServiceRest#findChildConcepts(java.lang
+   * .String, java.lang.String, java.lang.String, java.lang.String)
    */
+  @Override
   @GET
   @Path("/concept/{terminology}/{version}/{terminologyId}/children")
   @ApiOperation(value = "Find concept children.", notes = "Gets a list of search results for each child concept.", response = Concept.class)
@@ -224,9 +230,9 @@ public class ContentServiceRest extends RootServiceRest {
     @ApiParam(value = "Concept terminology id, e.g. 102751005", required = true) @PathParam("terminologyId") String id,
     @ApiParam(value = "Concept terminology name, e.g. SNOMEDCT", required = true) @PathParam("terminology") String terminology,
     @ApiParam(value = "Concept terminology version, e.g. 20140731", required = true) @PathParam("version") String terminologyVersion,
-    @ApiParam(value = "Authorization token", required = true) @HeaderParam("Authorization") String authToken) {
+    @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken) {
 
-    Logger.getLogger(ContentServiceRest.class).info(
+    Logger.getLogger(ContentServiceRestImpl.class).info(
         "RESTful call (Content): /concept/" + terminology + "/"
             + terminologyVersion + "/" + id.toString() + "/descendants");
 

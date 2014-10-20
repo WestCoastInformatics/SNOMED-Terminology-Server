@@ -108,8 +108,6 @@ public class LuceneReindexMojo extends AbstractMojo {
       FullTextEntityManager fullTextEntityManager =
           Search.getFullTextEntityManager(manager);
 
-      fullTextEntityManager.setProperty("Version", Version.LUCENE_36);
-
       // Concepts
       if (objectsToReindex.contains("ConceptJpa")) {
         getLog().info("  Creating indexes for ConceptJpa");

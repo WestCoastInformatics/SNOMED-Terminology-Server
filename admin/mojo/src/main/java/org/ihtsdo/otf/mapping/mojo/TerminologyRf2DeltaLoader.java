@@ -18,6 +18,7 @@ import org.ihtsdo.otf.mapping.helpers.ConceptList;
 import org.ihtsdo.otf.mapping.helpers.DescriptionList;
 import org.ihtsdo.otf.mapping.helpers.LanguageRefSetMemberList;
 import org.ihtsdo.otf.mapping.helpers.RelationshipList;
+import org.ihtsdo.otf.mapping.jpa.algo.TransitiveClosureAlgorithm;
 import org.ihtsdo.otf.mapping.jpa.services.ContentServiceJpa;
 import org.ihtsdo.otf.mapping.jpa.services.HistoryServiceJpa;
 import org.ihtsdo.otf.mapping.jpa.services.MetadataServiceJpa;
@@ -341,12 +342,18 @@ public class TerminologyRf2DeltaLoader extends AbstractMojo {
         rootId = conceptId;
         break;
       }
+      contentService.close();      
+
       getLog().info(
           "  Compute transitive closure from rootId " + rootId + " for "
               + terminology + ", " + version);
-      contentService.computeTransitiveClosure(rootId, terminology, version);
-      contentService.close();      
-      
+      TransitiveClosureAlgorithm algo = new TransitiveClosureAlgorithm();
+      algo.setTerminology(terminology);
+      algo.setTerminologyVersion(terminologyVersion);
+      algo.setRootId(rootId);
+      algo.reset();
+      algo.compute();
+      algo.close();
       
       getLog().info("");
       getLog().info("==================================");

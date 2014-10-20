@@ -14,13 +14,23 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
+import org.apache.solr.analysis.LowerCaseFilterFactory;
+import org.apache.solr.analysis.NGramFilterFactory;
+import org.apache.solr.analysis.StandardFilterFactory;
+import org.apache.solr.analysis.StandardTokenizerFactory;
+import org.apache.solr.analysis.StopFilterFactory;
 import org.hibernate.envers.Audited;
 import org.hibernate.search.annotations.Analyze;
+import org.hibernate.search.annotations.AnalyzerDef;
 import org.hibernate.search.annotations.Field;
+import org.hibernate.search.annotations.Fields;
 import org.hibernate.search.annotations.Index;
 import org.hibernate.search.annotations.Indexed;
 import org.hibernate.search.annotations.IndexedEmbedded;
+import org.hibernate.search.annotations.Parameter;
 import org.hibernate.search.annotations.Store;
+import org.hibernate.search.annotations.TokenFilterDef;
+import org.hibernate.search.annotations.TokenizerDef;
 import org.ihtsdo.otf.mapping.rf2.AttributeValueRefSetMember;
 import org.ihtsdo.otf.mapping.rf2.ComplexMapRefSetMember;
 import org.ihtsdo.otf.mapping.rf2.Concept;
@@ -40,6 +50,13 @@ import org.ihtsdo.otf.mapping.rf2.SimpleRefSetMember;
 }))
 @Audited
 @Indexed
+@AnalyzerDef(name = "noStopWord",
+tokenizer = @TokenizerDef(factory = StandardTokenizerFactory.class ),
+filters = {
+  @TokenFilterDef(factory = StandardFilterFactory.class),
+  @TokenFilterDef(factory = LowerCaseFilterFactory.class)
+  }
+)
 @XmlRootElement(name = "concept")
 public class ConceptJpa extends AbstractComponent implements Concept {
 
@@ -81,6 +98,9 @@ public class ConceptJpa extends AbstractComponent implements Concept {
 
   /** The default preferred name. */
   @Column(nullable = false, length = 256)
+  @Fields({
+      @Field, @Field(name = "all", analyze = Analyze.YES, store = Store.NO)
+  })
   private String defaultPreferredName;
 
   /**

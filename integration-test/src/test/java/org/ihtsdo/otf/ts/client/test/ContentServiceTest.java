@@ -3,6 +3,7 @@ package org.ihtsdo.otf.ts.client.test;
 import org.ihtsdo.otf.mapping.rf2.Concept;
 import org.ihtsdo.otf.mapping.services.helpers.ConfigUtility;
 import org.ihtsdo.otf.ts.jpa.client.ContentClientJpa;
+import org.ihtsdo.otf.ts.jpa.client.SecurityClientJpa;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -15,6 +16,8 @@ public class ContentServiceTest {
   /** The client. */
   private ContentClientJpa client;
 
+  /** The auth token. */
+  private String authToken;
   /**
    * Setup.
    * @throws Exception
@@ -22,7 +25,8 @@ public class ContentServiceTest {
   @Before
   public void setup() throws Exception {
     client = new ContentClientJpa(ConfigUtility.getTestConfigProperties());
-
+    SecurityClientJpa securityClient = new SecurityClientJpa(ConfigUtility.getTestConfigProperties());
+    String authToken = securityClient.authenticate("guest", "guest");
   }
 
   /**
@@ -31,7 +35,7 @@ public class ContentServiceTest {
    */
   @Test
   public void testGetConcept() throws Exception {
-    Concept c = client.getConcept("10013000", "SNOMEDCT", "20140731");
+    Concept c = client.getConcept("10013000", "SNOMEDCT", "20140731", authToken);
     System.out.println("c.name = " + c.getDefaultPreferredName());
   }
 

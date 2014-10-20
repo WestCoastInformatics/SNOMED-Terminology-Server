@@ -461,18 +461,6 @@ public interface ContentService extends RootService {
     throws Exception;
 
   /**
-   * Gets the relationship id.
-   *
-   * @param terminologyId the terminology id
-   * @param terminology the terminology
-   * @param terminologyVersion the terminology version
-   * @return the relationship id
-   * @throws Exception the exception
-   */
-  public String getRelationshipId(String terminologyId, String terminology,
-    String terminologyVersion) throws Exception;
-
-  /**
    * Gets the all concepts.
    *
    * @param terminology the terminology
@@ -531,12 +519,10 @@ public interface ContentService extends RootService {
     String terminologyVersion) throws Exception;
 
   /**
-   * Compute transitive closure.
-   * @param root node
+   * Removes all concepts and connected data structures
+   *
    * @param terminology the terminology
    * @param terminologyVersion the terminology version
-   * @throws Exception the exception
    */
-  public void computeTransitiveClosure(String root, String terminology,
-    String terminologyVersion) throws Exception;
+  public void clearConcepts(String terminology, String terminologyVersion);
 }

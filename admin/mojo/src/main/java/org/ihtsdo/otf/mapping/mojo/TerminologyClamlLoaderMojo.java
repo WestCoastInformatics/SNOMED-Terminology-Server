@@ -28,6 +28,7 @@ import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.ihtsdo.otf.mapping.helpers.ClamlMetadataHelper;
+import org.ihtsdo.otf.mapping.jpa.algo.TransitiveClosureAlgorithm;
 import org.ihtsdo.otf.mapping.jpa.services.ContentServiceJpa;
 import org.ihtsdo.otf.mapping.rf2.Concept;
 import org.ihtsdo.otf.mapping.rf2.Description;
@@ -173,15 +174,19 @@ public class TerminologyClamlLoaderMojo extends AbstractMojo {
       saxParser.parse(is, handler);
 
       contentService.commit();
-
+      contentService.close();
+      
       // Let service begin its own transaction
       getLog().info("Start computing transtive closure");
-      contentService.clearTransitiveClosure(terminology, terminologyVersion);
-      for (String root : roots) {
-        contentService.computeTransitiveClosure(root, terminology, terminologyVersion);
+      TransitiveClosureAlgorithm algo = new TransitiveClosureAlgorithm();
+      algo.setTerminology(terminology);
+      algo.setTerminologyVersion(terminologyVersion);
+      algo.reset();
+      for (String rootId : roots) {
+        algo.setRootId(rootId);
+        algo.compute();
       }
-      
-      contentService.close();
+      algo.close();
 
       getLog().info("done ...");
 
