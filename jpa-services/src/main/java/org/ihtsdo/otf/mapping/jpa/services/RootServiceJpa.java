@@ -18,6 +18,7 @@ import org.apache.lucene.util.ReaderUtil;
 import org.hibernate.search.indexes.IndexReaderAccessor;
 import org.hibernate.search.jpa.FullTextEntityManager;
 import org.ihtsdo.otf.mapping.services.RootService;
+import org.ihtsdo.otf.mapping.services.helpers.ConfigUtility;
 
 /**
  * The root service for managing the entity manager factory and hibernate search
@@ -74,14 +75,7 @@ public class RootServiceJpa implements RootService {
 
       Logger.getLogger(this.getClass()).info(
           "Setting root service entity manager factory.");
-      String configFileName = System.getProperty("run.config");
-      Logger.getLogger(this.getClass())
-          .info("  run.config = " + configFileName);
-      Properties config = new Properties();
-      FileReader in = new FileReader(new File(configFileName));
-      config.load(in);
-      in.close();
-      Logger.getLogger(this.getClass()).info("  properties = " + config);
+      Properties config = ConfigUtility.getConfigProperties();
       factory =
           Persistence.createEntityManagerFactory("TermServiceDS", config);
     }

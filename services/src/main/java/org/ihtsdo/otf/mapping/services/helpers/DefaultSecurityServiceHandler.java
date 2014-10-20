@@ -27,4 +27,16 @@ public class DefaultSecurityServiceHandler implements SecurityServiceHandler {
     return user;
   }
 
+  /**
+   * Times out all users except "guest".
+   * @see org.ihtsdo.otf.mapping.services.SecurityServiceHandler#timeoutUser(java.lang.String)
+   */
+  @Override
+  public boolean timeoutUser(String user) {
+    if (user.equals("guest")) {
+      return true;
+    }
+    return false;
+  }
+
 }

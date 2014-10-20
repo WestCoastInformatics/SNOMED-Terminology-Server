@@ -94,4 +94,13 @@ public class IhtsdoSecurityServiceHandler implements SecurityServiceHandler {
     return returnUser;
   }
 
+  /**
+   * Always timeout user.
+   * @see org.ihtsdo.otf.mapping.services.SecurityServiceHandler#timeoutUser(java.lang.String)
+   */
+  @Override
+  public boolean timeoutUser(String user) {
+    return true;
+  }
+
 }

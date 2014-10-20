@@ -20,4 +20,12 @@ public interface SecurityServiceHandler {
    */
   public User authenticate(String user, String password, Properties properties) throws Exception;
 
+  
+  /**
+   * Indicates whether or not the user should be timed out.
+   *
+   * @param user the user
+   * @return true, if successful
+   */
+  public boolean timeoutUser(String user);
 }

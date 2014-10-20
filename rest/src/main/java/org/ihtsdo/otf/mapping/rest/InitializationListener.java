@@ -7,6 +7,9 @@ import java.util.TimerTask;
 import javax.ws.rs.ext.Provider;
 
 import org.apache.log4j.Logger;
+import org.ihtsdo.otf.mapping.jpa.services.SecurityServiceJpa;
+import org.ihtsdo.otf.mapping.services.SecurityService;
+import org.ihtsdo.otf.mapping.services.helpers.ExceptionHandler;
 
 import com.sun.jersey.api.model.AbstractResourceModelContext;
 import com.sun.jersey.api.model.AbstractResourceModelListener;
@@ -42,6 +45,20 @@ public class InitializationListener implements AbstractResourceModelListener {
     today.set(Calendar.MINUTE, 0);
     today.set(Calendar.SECOND, 0);
     timer.scheduleAtFixedRate(task, today.getTime(), 24 * 60 * 60 * 1000);
+    
+    // Cache the "guest" user.
+    SecurityService service;
+    try {
+      service = new SecurityServiceJpa();
+      service.authenticate("guest","guest");
+    } catch (Exception e) {
+      try {
+        ExceptionHandler.handleException(e, "Cacheing guest user info");
+      } catch (Exception e1) {
+        // do nothing
+        e1.printStackTrace();
+      }
+    }
   }
 
   /**

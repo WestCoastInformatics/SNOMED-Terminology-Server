@@ -58,9 +58,8 @@ base.url=
 # URL for security service
 #
 security.handler=DEFAULT
-security.handler.DEFAULT.class=org.ihtsdo.otf.mapping.jpa.services.helpers.DefaultSecurityServiceHandler
-security.handler.DEFAULT.url=https://usermanagement.ihtsdotools.org/security-web/query/
-#security.handler.IHTSDO.class=org.ihtsdo.otf.mapping.jpa.services.helpers.IHTSDOSecurityServiceHandler
+security.handler.DEFAULT.class=org.ihtsdo.otf.mapping.services.helpers.DefaultSecurityServiceHandler
+#security.handler.IHTSDO.class=org.ihtsdo.otf.mapping.services.helpers.IHTSDOSecurityServiceHandler
 #security.handler.IHTSDO.url=https://usermanagement.ihtsdotools.org/security-web/query/
 
 #

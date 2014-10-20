@@ -25,6 +25,7 @@
     <module>rest</module>
     <module>admin</module>
     <module>integration-test</module>
+    <module>rest-client</module>
   </modules>
 
   <distributionManagement>

@@ -1,7 +1,5 @@
 package org.ihtsdo.otf.mapping.jpa.services;
 
-import java.io.File;
-import java.io.FileReader;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -27,13 +25,10 @@ public class SecurityServiceJpa extends RootServiceJpa implements
     SecurityService {
 
   /** The token username . */
-  private static Map<String, String> tokenUsername = new HashMap<>();
+  private static Map<String, String> tokenUsernameMap = new HashMap<>();
 
   /** The token login time . */
-  private static Map<String, Date> tokenLogin = new HashMap<>();
-
-  /** config properties */
-  private static Properties config = null;
+  private static Map<String, Date> tokenTimeoutMap = new HashMap<>();
 
   /** The handler. */
   private static SecurityServiceHandler handler = null;
@@ -48,9 +43,6 @@ public class SecurityServiceJpa extends RootServiceJpa implements
    */
   public SecurityServiceJpa() throws Exception {
     super();
-    // Configure default security for guest user
-    tokenUsername.put("guest", "guest");
-    tokenLogin.put("guest", null);
   }
 
   /*
@@ -68,22 +60,13 @@ public class SecurityServiceJpa extends RootServiceJpa implements
     if (password == null)
       throw new LocalException("Invalid password: null");
 
-    // read ihtsdo security url and active status from config file
-    if (config == null) {
-      String configFileName = System.getProperty("run.config");
-      Logger.getLogger(this.getClass())
-          .info("  run.config = " + configFileName);
-
-      config = new Properties();
-      FileReader in = new FileReader(new File(configFileName));
-      config.load(in);
-      in.close();
-    }
+    Properties config = ConfigUtility.getConfigProperties();
 
     if (handler == null) {
 
       String handlerName = config.getProperty("security.handler");
-      String handlerClass = config.getProperty("security.handler.");
+      String handlerClass =
+          config.getProperty("security.handler." + handlerName + ".class");
 
       handlerProperties = new Properties();
       handler =
@@ -134,8 +117,8 @@ public class SecurityServiceJpa extends RootServiceJpa implements
 
     // Generate application-managed token
     String token = UUID.randomUUID().toString();
-    tokenUsername.put(token, authUser.getUserName());
-    tokenLogin.put(token, new Date());
+    tokenUsernameMap.put(token, authUser.getUserName());
+    tokenTimeoutMap.put(token, new Date());
 
     Logger.getLogger(this.getClass()).info("User = " + authUser.getUserName());
 
@@ -155,17 +138,27 @@ public class SecurityServiceJpa extends RootServiceJpa implements
       throw new LocalException(
           "Attempt to access a service without an authorization token, the user is likely not logged in.");
 
+    // Replace double quotes in auth token.
     String parsedToken = authToken.replace("\"", "");
-    if (tokenUsername.containsKey(parsedToken)) {
-      String username = tokenUsername.get(parsedToken);
+
+    // Check auth token against the username map
+    if (tokenUsernameMap.containsKey(parsedToken)) {
+      String username = tokenUsernameMap.get(parsedToken);
       Logger.getLogger(this.getClass()).info(
           "User = " + username + " Token = " + parsedToken);
-      if (tokenLogin.get(username) != null
-          && tokenLogin.get(username).before(new Date())) {
-        throw new LocalException("AuthToken has expired");
+
+      // Validate that the user has not time dout.
+      if (handler.timeoutUser(username)) {
+
+        if (tokenTimeoutMap.get(parsedToken) == null) {
+          throw new Exception("No login timeout set for authToken.");
+        }
+
+        if (tokenTimeoutMap.get(parsedToken).before(new Date())) {
+          throw new LocalException("AuthToken has expired");
+        }
       }
       return username;
-
     } else {
       throw new LocalException("AuthToken does not have a valid username.");
     }
@@ -180,13 +173,12 @@ public class SecurityServiceJpa extends RootServiceJpa implements
   @Override
   public UserRole getApplicationRoleForToken(String authToken) throws Exception {
 
-    if (authToken == null)
+    if (authToken == null) {
       throw new LocalException(
           "Attempt to access a service without an authorization token, the user is likely not logged in.");
+    }
     String parsedToken = authToken.replace("\"", "");
-
     String username = getUsernameForToken(parsedToken);
-
     return getUser(username.toLowerCase()).getApplicationRole();
   }
 
@@ -198,10 +190,7 @@ public class SecurityServiceJpa extends RootServiceJpa implements
    */
   @Override
   public User getUser(Long id) throws Exception {
-    javax.persistence.Query query =
-        manager.createQuery("select u from UserJpa u where id = :id");
-    query.setParameter("id", id);
-    return (User) query.getSingleResult();
+    return manager.find(UserJpa.class,  id);
   }
 
   /*
