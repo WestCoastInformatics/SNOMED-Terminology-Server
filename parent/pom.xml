@@ -4,15 +4,15 @@
   <modelVersion>4.0.0</modelVersion>
 
   <!-- Module Metadata -->
-  <!-- Parent is TBD <parent> <groupId>org.ihtsdo.otf</groupId> <artifactId>otf-parent</artifactId>
-  <version>1.0.0-SNAPSHOT</version> <relativePath/> </parent> -->
+  <!-- Parent is TBD <parent> <groupId>org.ihtsdo.otf</groupId> <artifactId>otf-parent</artifactId> 
+    <version>1.0.0-SNAPSHOT</version> <relativePath/> </parent> -->
 
   <groupId>org.ihtsdo.otf.term-server</groupId>
   <artifactId>term-server-parent</artifactId>
   <version>1.0.0-SNAPSHOT</version>
   <packaging>pom</packaging>
-  <name>IHTSDO Service Parent</name>
-  <description>Parent project for term-server service</description>
+  <name>Terminology server parent.</name>
+  <description>Parent project for terminology server. Used to define versions of third party modules</description>
 
   <properties>
     <!-- Set default maven settings -->
@@ -38,7 +38,7 @@
     <slf4j.log4j12.version>1.7.5</slf4j.log4j12.version>
     <maven.plugin.api.version>3.1.1</maven.plugin.api.version>
     <jersey.version>1.17.1</jersey.version>
-    
+
     <jettison.version>1.1</jettison.version>
     <jsr311-api.version>1.1.1</jsr311-api.version>
     <asm.version>3.1</asm.version>
@@ -165,7 +165,7 @@
         <groupId>com.sun.jersey.contribs</groupId>
         <artifactId>jersey-multipart</artifactId>
         <version>${jersey.version}</version>
-        </dependency>
+      </dependency>
       <dependency>
         <groupId>com.fasterxml.jackson.core</groupId>
         <artifactId>jackson-core</artifactId>
@@ -214,7 +214,7 @@
         <artifactId>javax.mail</artifactId>
         <version>${javax.mail.version}</version>
       </dependency>
-      
+
     </dependencies>
   </dependencyManagement>
 

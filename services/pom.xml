@@ -11,8 +11,8 @@
   </parent>
 
   <artifactId>term-server-services</artifactId>
-  <name>OTF RF2 ervices</name>
-  <description>Conceptual model of OTF RF2 term-server services</description>
+  <name>Terminology server APIs.</name>
+  <description>Conceptual model of RF2 terminology services.</description>
 
   <!-- Declare Project Dependency Versions -->
   <dependencies>

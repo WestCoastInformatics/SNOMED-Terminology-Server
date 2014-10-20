@@ -11,8 +11,8 @@
   </parent>
 
   <artifactId>term-server-jpa-model</artifactId>
-  <name>OTF RF2 Model JPA implementation</name>
-  <description>JPA implementation of model for OTF RF2 data objects</description>
+  <name>Terminology model JPA implementation.</name>
+  <description>JPA implementation of model for OTF RF2 data objects.</description>
 
   <!-- Declare Project Dependency Versions -->
   <dependencies>

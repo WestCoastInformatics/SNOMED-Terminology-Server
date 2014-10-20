@@ -11,7 +11,7 @@
   </parent>
 
   <artifactId>term-server-model</artifactId>
-  <name>OTF RF2 Model Interfaces</name>
-  <description>Conceptual model for OTF RF2 data objects</description>
+  <name>Terminology server domain model.</name>
+  <description>Conceptual model for RF2 data objects.</description>
 
 </project>

@@ -11,8 +11,8 @@
   </parent>
 
   <artifactId>term-server-admin-loader</artifactId>
-  <name>OTF RF2 Admin RF2 Loader</name>
-  <description>OTF RF2 Administrator Tool to Load RF2 data</description>
+  <name>Terminology server admin loader tool.</name>
+  <description>Used for loading terminologies, including SNOMED and ICD9CM.</description>
   <packaging>pom</packaging>
 
 

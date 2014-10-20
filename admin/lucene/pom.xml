@@ -11,8 +11,8 @@
   </parent>
 
   <artifactId>term-server-admin-lucene</artifactId>
-  <name>OTF RF2 Admin RF2 Lucene</name>
-  <description>OTF RF2 Administrator Tool to Make Lucene indexes</description>
+  <name>Terminology server admin reindexing tool.</name>
+  <description>Rebuilds Lucene indexes.</description>
   <packaging>pom</packaging>
 
 

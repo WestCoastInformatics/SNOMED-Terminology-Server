@@ -12,8 +12,8 @@
 
   <artifactId>term-server-admin</artifactId>
   <packaging>pom</packaging>
-  <name>OTF RF2 Admin</name>
-  <description>OTF RF2 Administrator Tools</description>
+  <name>Terminology server admin tools.</name>
+  <description>Tools for creating, loading, unloading, indexing, and other activities.</description>
 
   <!-- Sub-modules -->
   <modules>

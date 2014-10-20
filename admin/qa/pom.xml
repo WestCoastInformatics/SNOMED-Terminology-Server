@@ -11,8 +11,8 @@
 	</parent>
 
 	<artifactId>term-server-admin-qa</artifactId>
-	<name>OTF RF2 Admin Quality Assurance</name>
-	<description>OTF RF2 Administrator Tools to Run Quality Assurance Checks</description>
+	<name>Terminology server admin QA tool.</name>
+	<description>Used for performing system wide QA checks</description>
 	<packaging>pom</packaging>
 
 	<profiles>

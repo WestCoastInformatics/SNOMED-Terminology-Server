@@ -66,7 +66,7 @@ public class ContentServiceRestImpl extends RootServiceRestImpl implements
    */
   @Override
   @GET
-  @Path("/concept/{terminology}/{version}/{terminologyId}")
+  @Path("/concept/{terminology}/{terminologyVersion}/{terminologyId}")
   @ApiOperation(value = "Get concept by id, terminology, and version", notes = "Gets the concept for the specified parameters.", response = Concept.class)
   @Produces({
       MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML
@@ -74,7 +74,7 @@ public class ContentServiceRestImpl extends RootServiceRestImpl implements
   public Concept getConcept(
     @ApiParam(value = "Concept terminology id, e.g. 102751005", required = true) @PathParam("terminologyId") String terminologyId,
     @ApiParam(value = "Concept terminology name, e.g. SNOMEDCT", required = true) @PathParam("terminology") String terminology,
-    @ApiParam(value = "Concept terminology version, e.g. 20140731", required = true) @PathParam("version") String terminologyVersion,
+    @ApiParam(value = "Concept terminology version, e.g. 20140731", required = true) @PathParam("terminologyVersion") String terminologyVersion,
     @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken) {
 
     Logger.getLogger(ContentServiceRestImpl.class).info(
@@ -123,11 +123,11 @@ public class ContentServiceRestImpl extends RootServiceRestImpl implements
    */
   @Override
   @GET
-  @Path("/concept/{terminology}/{version}/query/{string}")
+  @Path("/concept/{terminology}/{terminologyVersion}/query/{string}")
   @ApiOperation(value = "Find concepts matching a search query.", notes = "Gets a list of search results that match the lucene query.", response = String.class)
   public SearchResultList findConceptsForQuery(
-    @ApiParam(value = "Terminology, e.g. SNOMEDCT", required = true) @PathParam("string") String terminology,
-    @ApiParam(value = "Terminology version, e.g. 20140731", required = true) @PathParam("string") String terminologyVersion,
+    @ApiParam(value = "Terminology, e.g. SNOMEDCT", required = true) @PathParam("terminology") String terminology,
+    @ApiParam(value = "Terminology version, e.g. 20140731", required = true) @PathParam("terminologyVersion") String terminologyVersion,
     @ApiParam(value = "Query, e.g. 'sulfur'", required = true) @PathParam("string") String searchString,
     @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken) {
 
@@ -170,7 +170,7 @@ public class ContentServiceRestImpl extends RootServiceRestImpl implements
    */
   @Override
   @GET
-  @Path("/concept/{terminology}/{version}/{terminologyId}/descendants")
+  @Path("/concept/{terminology}/{terminologyVersion}/{terminologyId}/descendants")
   @ApiOperation(value = "Find concept descendants.", notes = "Gets a list of search results for each descendant concept.", response = Concept.class)
   @Produces({
       MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML
@@ -178,7 +178,7 @@ public class ContentServiceRestImpl extends RootServiceRestImpl implements
   public SearchResultList findDescendantConcepts(
     @ApiParam(value = "Concept terminology id, e.g. 102751005", required = true) @PathParam("terminologyId") String terminologyId,
     @ApiParam(value = "Concept terminology name, e.g. SNOMEDCT", required = true) @PathParam("terminology") String terminology,
-    @ApiParam(value = "Concept terminology version, e.g. 20140731", required = true) @PathParam("version") String terminologyVersion,
+    @ApiParam(value = "Concept terminology version, e.g. 20140731", required = true) @PathParam("terminologyVersion") String terminologyVersion,
     @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken) {
 
     Logger.getLogger(ContentServiceRestImpl.class).info(
@@ -221,7 +221,7 @@ public class ContentServiceRestImpl extends RootServiceRestImpl implements
    */
   @Override
   @GET
-  @Path("/concept/{terminology}/{version}/{terminologyId}/children")
+  @Path("/concept/{terminology}/{terminologyVersion}/{terminologyId}/children")
   @ApiOperation(value = "Find concept children.", notes = "Gets a list of search results for each child concept.", response = Concept.class)
   @Produces({
       MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML
@@ -229,7 +229,7 @@ public class ContentServiceRestImpl extends RootServiceRestImpl implements
   public SearchResultList findChildConcepts(
     @ApiParam(value = "Concept terminology id, e.g. 102751005", required = true) @PathParam("terminologyId") String id,
     @ApiParam(value = "Concept terminology name, e.g. SNOMEDCT", required = true) @PathParam("terminology") String terminology,
-    @ApiParam(value = "Concept terminology version, e.g. 20140731", required = true) @PathParam("version") String terminologyVersion,
+    @ApiParam(value = "Concept terminology version, e.g. 20140731", required = true) @PathParam("terminologyVersion") String terminologyVersion,
     @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken) {
 
     Logger.getLogger(ContentServiceRestImpl.class).info(

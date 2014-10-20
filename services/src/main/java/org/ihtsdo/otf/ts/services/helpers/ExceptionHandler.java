@@ -107,7 +107,13 @@ public class ExceptionHandler {
       body.append(out.getBuffer());
       Logger.getLogger(ExceptionHandler.class).info(
           "Sending error email : " + props);
-      sendEmail(subject, from, recipients, body.toString(), props);
+      if (config.getProperty("mail.enabled") != null
+          && config.getProperty("mail.enabled").equals("true")) {
+        sendEmail(subject, from, recipients, body.toString(), props);
+      } else {
+        Logger.getLogger(ExceptionHandler.class).info(
+            "Sending mail is disabled.");
+      }
     } catch (Exception ex) {
       ex.printStackTrace();
       Logger.getLogger(ExceptionHandler.class).error(

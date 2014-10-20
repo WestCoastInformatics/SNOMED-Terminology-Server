@@ -13,7 +13,8 @@
 
   <artifactId>term-server-rest</artifactId>
   <packaging>war</packaging>
-  <name>OTF RF2 REST Services</name>
+  <name>Terminology server REST implementations.</name>
+  <description>Public facing API for rest services.</description>
 
   <properties>
     <execFinalName>exec-${project.build.finalName}.jar</execFinalName>
@@ -131,10 +132,10 @@
       <groupId>com.wordnik</groupId>
       <artifactId>swagger-jersey-jaxrs_2.10</artifactId>
     </dependency>
-      <dependency>
-        <groupId>com.sun.mail</groupId>
-        <artifactId>javax.mail</artifactId>
-      </dependency>
+    <dependency>
+      <groupId>com.sun.mail</groupId>
+      <artifactId>javax.mail</artifactId>
+    </dependency>
   </dependencies>
 
   <!-- Always build, use dev configuration by default -->

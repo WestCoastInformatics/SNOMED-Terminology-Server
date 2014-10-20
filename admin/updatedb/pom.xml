@@ -11,8 +11,8 @@
   </parent>
 
   <artifactId>term-server-admin-updatedb</artifactId>
-  <name>OTF RF2 Admin Update Db</name>
-  <description>OTF RF2 Administrator Tool to Update the Database</description>
+  <name>Terminology server admin db creator and updater tool.</name>
+  <description>Used to create the DB schema and update it when new code is deployed.</description>
   <packaging>pom</packaging>
 
   <profiles>

@@ -11,8 +11,8 @@
   </parent>
 
   <artifactId>term-server-config</artifactId>
-  <name>OTF RF2 Configuration</name>
-  <description>OTF RF2 configuration resources</description>
+  <name>Terminology server configuration project.</name>
+  <description>Sample data and template configuration files.</description>
 
   <!-- Declare Project Dependency Versions -->
   <dependencies>
