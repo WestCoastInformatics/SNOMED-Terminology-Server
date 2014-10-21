@@ -22,6 +22,17 @@ import org.ihtsdo.otf.ts.rf2.TransitiveRelationship;
 public interface ContentService extends RootService {
 
   /**
+   * Gets all concepts.
+   * @param terminology the terminology
+   * @param version the terminology version
+   * @param pfs the paging, filtering, sorting parameter
+   *
+   * @return the concepts
+   * @throws Exception the exception
+   */
+  public ConceptList getConcepts(String terminology, String version, PfsParameter pfs) throws Exception;
+
+  /**
    * Returns the concept.
    * 
    * @param conceptId the concept id
@@ -37,12 +48,12 @@ public interface ContentService extends RootService {
    * 
    * @param terminologyId the concept id
    * @param terminology the terminology
-   * @param terminologyVersion the terminologyVersion
+   * @param version the version
    * @return the concept
    * @throws Exception if anything goes wrong
    */
-  public ConceptList getConcept(String terminologyId, String terminology,
-    String terminologyVersion) throws Exception;
+  public ConceptList getConcepts(String terminologyId, String terminology,
+    String version) throws Exception;
 
   /**
    * Returns the single concept for the specified parameters.  If there
@@ -50,12 +61,12 @@ public interface ContentService extends RootService {
    *
    * @param terminologyId the terminology id
    * @param terminology the terminology
-   * @param terminologyVersion the terminology version
+   * @param version the terminology version
    * @return the single concept
    * @throws Exception if there are more than one matching concepts.
    */
   public Concept getSingleConcept(String terminologyId, String terminology,
-    String terminologyVersion) throws Exception;
+    String version) throws Exception;
 
   /**
    * Adds the concept.
@@ -96,12 +107,12 @@ public interface ContentService extends RootService {
    * 
    * @param terminologyId the description id
    * @param terminology the terminology
-   * @param terminologyVersion the terminologyVersion
+   * @param version the version
    * @return the description
    * @throws Exception if anything goes wrong
    */
-  public DescriptionList getDescription(String terminologyId, String terminology,
-    String terminologyVersion) throws Exception;
+  public DescriptionList getDescriptions(String terminologyId, String terminology,
+    String version) throws Exception;
 
   /**
    * Returns the single description for the specified parameters.  If there
@@ -109,12 +120,12 @@ public interface ContentService extends RootService {
    *
    * @param terminologyId the terminology id
    * @param terminology the terminology
-   * @param terminologyVersion the terminology version
+   * @param version the terminology version
    * @return the single concept
    * @throws Exception if there are more than one matching concepts.
    */
   public Description getSingleDescription(String terminologyId, String terminology,
-    String terminologyVersion) throws Exception;
+    String version) throws Exception;
 
   /**
    * Adds the description.
@@ -155,12 +166,12 @@ public interface ContentService extends RootService {
    * 
    * @param terminologyId the relationship id
    * @param terminology the terminology
-   * @param terminologyVersion the terminologyVersion
+   * @param version the version
    * @return the relationship
    * @throws Exception if anything goes wrong
    */
   public Relationship getRelationship(String terminologyId, String terminology,
-    String terminologyVersion) throws Exception;
+    String version) throws Exception;
 
   /**
    * Adds the relationship.
@@ -230,12 +241,12 @@ public interface ContentService extends RootService {
    * 
    * @param terminologyId the languageRefSetMember id
    * @param terminology the terminology
-   * @param terminologyVersion the terminologyVersion
+   * @param version the version
    * @return the languageRefSetMember
    * @throws Exception if anything goes wrong
    */
   public LanguageRefSetMember getLanguageRefSetMember(String terminologyId,
-    String terminology, String terminologyVersion) throws Exception;
+    String terminology, String version) throws Exception;
 
   /**
    * Adds the languageRefSetMember.
@@ -279,12 +290,12 @@ public interface ContentService extends RootService {
    * 
    * @param terminologyId the attributeValueRefSetMember id
    * @param terminology the terminology
-   * @param terminologyVersion the terminologyVersion
+   * @param version the version
    * @return the attributeValueRefSetMember
    * @throws Exception if anything goes wrong
    */
   public AttributeValueRefSetMember getAttributeValueRefSetMember(
-    String terminologyId, String terminology, String terminologyVersion)
+    String terminologyId, String terminology, String version)
     throws Exception;
 
   /**
@@ -329,12 +340,12 @@ public interface ContentService extends RootService {
    * 
    * @param terminologyId the complexMapRefSetMember id
    * @param terminology the terminology
-   * @param terminologyVersion the terminologyVersion
+   * @param version the version
    * @return the complexMapRefSetMember
    * @throws Exception if anything goes wrong
    */
   public ComplexMapRefSetMember getComplexMapRefSetMember(String terminologyId,
-    String terminology, String terminologyVersion) throws Exception;
+    String terminology, String version) throws Exception;
 
   /**
    * Adds the complexMapRefSetMember.
@@ -378,12 +389,12 @@ public interface ContentService extends RootService {
    * 
    * @param terminologyId the simpleMapRefSetMember id
    * @param terminology the terminology
-   * @param terminologyVersion the terminologyVersion
+   * @param version the version
    * @return the simpleMapRefSetMember
    * @throws Exception if anything goes wrong
    */
   public SimpleMapRefSetMember getSimpleMapRefSetMember(String terminologyId,
-    String terminology, String terminologyVersion) throws Exception;
+    String terminology, String version) throws Exception;
 
   /**
    * Adds the simpleMapRefSetMember.
@@ -427,12 +438,12 @@ public interface ContentService extends RootService {
    * 
    * @param terminologyId the simpleRefSetMember id
    * @param terminology the terminology
-   * @param terminologyVersion the terminologyVersion
+   * @param version the version
    * @return the simpleRefSetMember
    * @throws Exception if anything goes wrong
    */
   public SimpleRefSetMember getSimpleRefSetMember(String terminologyId,
-    String terminology, String terminologyVersion) throws Exception;
+    String terminology, String version) throws Exception;
 
   /**
    * Adds the simpleRefSetMember.
@@ -464,14 +475,15 @@ public interface ContentService extends RootService {
   /**
    * Returns the concept search results matching the query. Results can be
    * paged, filtered, and sorted.
-   * 
+   * @param terminology the terminology
+   * @param version the version
    * @param query the search string
-   * @param pfsParameter the paging, filtering, sorting parameter
+   * @param pfs the paging, filtering, sorting parameter
    * @return the search results for the search string
    * @throws Exception if anything goes wrong
    */
-  public SearchResultList findConceptsForQuery(String query,
-    PfsParameter pfsParameter) throws Exception;
+  public SearchResultList findConceptsForQuery(String terminology, String version, String query,
+    PfsParameter pfs) throws Exception;
 
   /**
    * Finds the descendants of a concept, subject to max results limitation in
@@ -479,79 +491,71 @@ public interface ContentService extends RootService {
    * 
    * @param terminologyId the terminology id
    * @param terminology the terminology
-   * @param terminologyVersion the terminology version
-   * @param pfsParameter the pfs parameter containing the max results
+   * @param version the terminology version
+   * @param pfs the pfs parameter containing the max results
    *          restriction
    * @return the set of concepts
    * @throws Exception the exception
    */
   public SearchResultList findDescendantConcepts(String terminologyId,
-    String terminology, String terminologyVersion, PfsParameter pfsParameter)
+    String terminology, String version, PfsParameter pfs)
     throws Exception;
 
   /**
    * Gets the all concepts.
    *
    * @param terminology the terminology
-   * @param terminologyVersion the terminology version
+   * @param version the terminology version
    * @return the all concepts
    */
   public ConceptList getAllConcepts(String terminology,
-    String terminologyVersion);
+    String version);
 
   /**
    * Gets the all relationship terminology ids.
    *
    * @param terminology the terminology
-   * @param terminologyVersion the terminology version
+   * @param version the terminology version
    * @return the all relationship terminology ids
    */
   public Set<String> getAllRelationshipTerminologyIds(String terminology,
-    String terminologyVersion);
+    String version);
 
   /**
    * Gets the all description terminology ids.
    *
    * @param terminology the terminology
-   * @param terminologyVersion the terminology version
+   * @param version the terminology version
    * @return the all description terminology ids
    */
   public Set<String> getAllDescriptionTerminologyIds(String terminology,
-    String terminologyVersion);
+    String version);
 
   /**
    * Gets the all language ref set member terminology ids.
    *
    * @param terminology the terminology
-   * @param terminologyVersion the terminology version
+   * @param version the terminology version
    * @return the all language ref set member terminology ids
    */
   public Set<String> getAllLanguageRefSetMemberTerminologyIds(
-    String terminology, String terminologyVersion);
-
-  /**
-   * Gets all concepts.
-   *
-   * @return the concepts
-   * @throws Exception the exception
-   */
-  public ConceptList getConcepts() throws Exception;
+    String terminology, String version);
 
   /**
    * Clear transitive closure.
    *
    * @param terminology the terminology
-   * @param terminologyVersion the terminology version
+   * @param version the terminology version
    * @throws Exception the exception
    */
   public void clearTransitiveClosure(String terminology,
-    String terminologyVersion) throws Exception;
+    String version) throws Exception;
 
   /**
    * Removes all concepts and connected data structures
    *
    * @param terminology the terminology
-   * @param terminologyVersion the terminology version
+   * @param version the terminology version
    */
-  public void clearConcepts(String terminology, String terminologyVersion);
+  public void clearConcepts(String terminology, String version);
 }

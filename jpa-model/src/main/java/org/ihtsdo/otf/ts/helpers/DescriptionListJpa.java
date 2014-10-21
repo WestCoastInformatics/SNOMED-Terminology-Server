@@ -7,9 +7,8 @@ import java.util.List;
 
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 
-import org.ihtsdo.otf.ts.helpers.AbstractResultList;
-import org.ihtsdo.otf.ts.helpers.DescriptionList;
 import org.ihtsdo.otf.ts.rf2.Description;
 import org.ihtsdo.otf.ts.rf2.jpa.DescriptionJpa;
 
@@ -115,6 +114,7 @@ public class DescriptionListJpa extends AbstractResultList<Description>
    * 
    * @see org.ihtsdo.otf.mapping.helpers.ResultList#getIterable()
    */
+  @XmlTransient
   @Override
   public Iterable<Description> getIterable() {
     return descriptions;

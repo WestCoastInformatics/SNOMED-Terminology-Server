@@ -9,9 +9,8 @@ import java.util.Set;
 
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 
-import org.ihtsdo.otf.ts.helpers.AbstractResultList;
-import org.ihtsdo.otf.ts.helpers.RelationshipList;
 import org.ihtsdo.otf.ts.rf2.Relationship;
 import org.ihtsdo.otf.ts.rf2.jpa.RelationshipJpa;
 
@@ -133,6 +132,7 @@ public class RelationshipListJpa extends AbstractResultList<Relationship>
    * 
    * @see org.ihtsdo.otf.mapping.helpers.ResultList#getIterable()
    */
+  @XmlTransient
   @Override
   public Iterable<Relationship> getIterable() {
     return relationships;

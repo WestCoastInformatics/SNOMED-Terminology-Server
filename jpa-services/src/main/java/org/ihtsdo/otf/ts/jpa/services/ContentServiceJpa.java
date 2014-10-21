@@ -67,22 +67,55 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
   /*
    * (non-Javadoc)
    * 
-   * @see org.ihtsdo.otf.mapping.services.ContentService#close()
+   * @see
+   * org.ihtsdo.otf.ts.services.ContentService#getConcepts(java.lang.String,
+   * java.lang.String, org.ihtsdo.otf.ts.helpers.PfsParameter)
    */
   @SuppressWarnings("unchecked")
   @Override
-  public ConceptList getConcepts() throws Exception {
+  public ConceptList getConcepts(String terminology, String version,
+    PfsParameter pfs) throws Exception {
     Logger.getLogger(ContentServiceJpa.class).debug(
-        "Content Service - get concepts");
+        "Content Service - get concepts " + terminology + "/" + version);
 
-    List<Concept> m = null;
-    javax.persistence.Query query =
-        manager.createQuery("select m from ConceptJpa m");
-    m = query.getResultList();
-    ConceptListJpa conceptList = new ConceptListJpa();
-    conceptList.setConcepts(m);
-    conceptList.setTotalCount(m.size());
-    return conceptList;
+    // Prepare results
+    ConceptList results = new ConceptListJpa();
+
+    // Prepare the query
+    StringBuilder finalQuery = new StringBuilder();
+    finalQuery.append("terminology:" + terminology + " AND terminologyVersion:"
+        + version);
+    if (pfs != null && pfs.getQueryRestriction() != null) {
+      finalQuery.append(" AND ");
+      finalQuery.append(pfs.getQueryRestriction());
+    }
+
+    // Prepare the query
+    FullTextEntityManager fullTextEntityManager =
+        Search.getFullTextEntityManager(manager);
+    SearchFactory searchFactory = fullTextEntityManager.getSearchFactory();
+    Query luceneQuery;
+    QueryParser queryParser =
+        new QueryParser(Version.LUCENE_36, "all",
+            searchFactory.getAnalyzer(ConceptJpa.class));
+    luceneQuery = queryParser.parse(finalQuery.toString());
+    FullTextQuery fullTextQuery =
+        fullTextEntityManager
+            .createFullTextQuery(luceneQuery, ConceptJpa.class);
+    results.setTotalCount(fullTextQuery.getResultSize());
+    // Apply paging and sorting parameters
+    applyPfsToLuceneQuery(ConceptJpa.class, fullTextQuery, pfs);
+
+    // execute the query
+    List<Concept> concepts = fullTextQuery.getResultList();
+    // construct the search results
+    for (Concept c : concepts) {
+      results.addConcept(c);
+    }
+    fullTextEntityManager.close();
+    // closing fullTextEntityManager closes manager as well, recreate
+    manager = factory.createEntityManager();
+    return results;
   }
 
   /*
@@ -104,7 +137,7 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
    */
   @SuppressWarnings("unchecked")
   @Override
-  public ConceptList getConcept(String terminologyId, String terminology,
+  public ConceptList getConcepts(String terminologyId, String terminology,
     String terminologyVersion) throws Exception {
     Logger.getLogger(ContentServiceJpa.class).debug(
         "Content Service - get concept " + terminologyId + "/" + terminology
@@ -148,10 +181,12 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
   public Concept getSingleConcept(String terminologyId, String terminology,
     String terminologyVersion) throws Exception {
     Logger.getLogger(ContentServiceJpa.class).debug(
-        "Content Service - get single concept " + terminologyId + "/" + terminology
-            + "/" + terminologyVersion);
-    ConceptList cl = getConcept(terminologyId, terminology, terminologyVersion);
-    if (cl == null) {
+        "Content Service - get single concept " + terminologyId + "/"
+            + terminology + "/" + terminologyVersion);
+    ConceptList cl = getConcepts(terminologyId, terminology, terminologyVersion);
+    if (cl == null || cl.getTotalCount() == 0) {
+      Logger.getLogger(ContentServiceJpa.class).debug(
+          "  empty concept ");
       return null;
     }
     if (cl.getTotalCount() > 1) {
@@ -298,7 +333,7 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
    */
   @SuppressWarnings("unchecked")
   @Override
-  public DescriptionList getDescription(String terminologyId,
+  public DescriptionList getDescriptions(String terminologyId,
     String terminology, String terminologyVersion) throws Exception {
     Logger.getLogger(ContentServiceJpa.class).debug(
         "Content Service - get description " + terminologyId + "/"
@@ -330,16 +365,21 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
     }
   }
 
-  /* (non-Javadoc)
-   * @see org.ihtsdo.otf.ts.services.ContentService#getSingleDescription(java.lang.String, java.lang.String, java.lang.String)
+  /*
+   * (non-Javadoc)
+   * 
+   * @see
+   * org.ihtsdo.otf.ts.services.ContentService#getSingleDescription(java.lang
+   * .String, java.lang.String, java.lang.String)
    */
   @Override
-  public Description getSingleDescription(String terminologyId, String terminology,
-    String terminologyVersion) throws Exception {
+  public Description getSingleDescription(String terminologyId,
+    String terminology, String terminologyVersion) throws Exception {
     Logger.getLogger(ContentServiceJpa.class).debug(
-        "Content Service - get single description " + terminologyId + "/" + terminology
-            + "/" + terminologyVersion);
-    DescriptionList cl = getDescription(terminologyId, terminology, terminologyVersion);
+        "Content Service - get single description " + terminologyId + "/"
+            + terminology + "/" + terminologyVersion);
+    DescriptionList cl =
+        getDescriptions(terminologyId, terminology, terminologyVersion);
     if (cl == null) {
       return null;
     }
@@ -1296,71 +1336,60 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
   /*
    * (non-Javadoc)
    * 
-   * @see org.ihtsdo.otf.mapping.services.ContentService#findConcepts(java.lang.
-   * String )
+   * @see
+   * org.ihtsdo.otf.ts.services.ContentService#findConceptsForQuery(java.lang
+   * .String, java.lang.String, java.lang.String,
+   * org.ihtsdo.otf.ts.helpers.PfsParameter)
    */
   @Override
-  public SearchResultList findConceptsForQuery(String searchString,
-    PfsParameter pfsParameter) throws Exception {
+  public SearchResultList findConceptsForQuery(String terminology,
+    String version, String searchString, PfsParameter pfs) throws Exception {
     Logger.getLogger(ContentServiceJpa.class).info(
-        "Content Service - find concepts " + searchString);
+        "Content Service - find concepts " + terminology + "/" + version + "/" + searchString);
+    if (pfs != null) {
+      Logger.getLogger(ContentServiceJpa.class).info(
+        "  pfs = " + pfs.toString());
+    }
 
+    // Prepare results
     SearchResultList results = new SearchResultListJpa();
 
+    // Prepare the query
+    StringBuilder finalQuery = new StringBuilder();
+    finalQuery.append(searchString);
+    finalQuery.append(" AND terminology:" + terminology
+        + " AND terminologyVersion:" + version);
+    if (pfs != null && pfs.getQueryRestriction() != null) {
+      finalQuery.append(" AND ");
+      finalQuery.append(pfs.getQueryRestriction());
+    }
+    Logger.getLogger(this.getClass()).info("query " + finalQuery);
+    // Prepare the query
     FullTextEntityManager fullTextEntityManager =
         Search.getFullTextEntityManager(manager);
     SearchFactory searchFactory = fullTextEntityManager.getSearchFactory();
     Query luceneQuery;
-
     try {
       QueryParser queryParser =
           new QueryParser(Version.LUCENE_36, "all",
               searchFactory.getAnalyzer(ConceptJpa.class));
-      luceneQuery = queryParser.parse(searchString);
-
+      luceneQuery = queryParser.parse(finalQuery.toString());
     } catch (ParseException e) {
       throw new LocalException(
           "The specified search terms cannot be parsed.  Please check syntax and try again.");
     }
-
     FullTextQuery fullTextQuery =
         fullTextEntityManager
             .createFullTextQuery(luceneQuery, ConceptJpa.class);
 
-    // set paging/filtering/sorting if indicated
-    if (pfsParameter != null) {
+    results.setTotalCount(fullTextQuery.getResultSize());
 
-      // if start index and max results are set, set paging
-      if (pfsParameter.getStartIndex() != -1
-          && pfsParameter.getMaxResults() != -1) {
-        fullTextQuery.setFirstResult(pfsParameter.getStartIndex());
-        fullTextQuery.setMaxResults(pfsParameter.getMaxResults());
-      }
-
-      // if sort field is specified, set sort key
-      if (pfsParameter.getSortField() != null
-          && !pfsParameter.getSortField().isEmpty()) {
-
-        // check that specified sort field exists on Concept and is
-        // a string
-        if (Concept.class.getDeclaredField(pfsParameter.getSortField())
-            .getType().equals(String.class)) {
-          fullTextQuery.setSort(new Sort(new SortField(pfsParameter
-              .getSortField(), SortField.STRING)));
-
-        } else {
-          throw new Exception(
-              "Concept query specified a field that does not exist or is not a string");
-        }
-
-      }
-
-    }
+    // Apply paging and sorting parameters
+    applyPfsToLuceneQuery(ConceptJpa.class, fullTextQuery, pfs);
 
     // execute the query
     @SuppressWarnings("unchecked")
     List<Concept> concepts = fullTextQuery.getResultList();
-
     // construct the search results
     for (Concept c : concepts) {
       SearchResult sr = new SearchResultJpa();
@@ -1371,9 +1400,7 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
       sr.setValue(c.getDefaultPreferredName());
       results.addSearchResult(sr);
     }
-
     fullTextEntityManager.close();
-
     // closing fullTextEntityManager closes manager as well, recreate
     manager = factory.createEntityManager();
 
@@ -1390,7 +1417,7 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
   @SuppressWarnings("unchecked")
   @Override
   public SearchResultList findDescendantConcepts(String terminologyId,
-    String terminology, String terminologyVersion, PfsParameter pfsParameter)
+    String terminology, String terminologyVersion, PfsParameter pfs)
     throws Exception {
     Logger.getLogger(ContentServiceJpa.class).debug(
         "Content Service - find descendants " + terminologyId + "/"
@@ -1416,13 +1443,12 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
     searchResultList.setTotalCount(descendants.size());
 
     // apply paging, and sorting if appropriate
-    if (pfsParameter != null
-        && (pfsParameter.getSortField() != null && !pfsParameter.getSortField()
-            .isEmpty())) {
+    if (pfs != null
+        && (pfs.getSortField() != null && !pfs.getSortField().isEmpty())) {
       // check that specified sort field exists on Concept and is
       // a string
       final Field sortField =
-          Concept.class.getDeclaredField(pfsParameter.getSortField());
+          Concept.class.getDeclaredField(pfs.getSortField());
       if (!sortField.getType().equals(String.class)) {
 
         throw new Exception(
@@ -1449,11 +1475,10 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
       // get the start and end indexes based on paging parameters
       int startIndex = 0;
       int toIndex = descendants.size();
-      if (pfsParameter != null) {
-        startIndex = pfsParameter.getStartIndex();
+      if (pfs != null) {
+        startIndex = pfs.getStartIndex();
         toIndex =
-            Math.min(descendants.size(),
-                startIndex + pfsParameter.getMaxResults());
+            Math.min(descendants.size(), startIndex + pfs.getMaxResults());
       }
 
       // construct the search results
@@ -1695,6 +1720,43 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
       tx.commit();
     }
 
+  }
+
+  /**
+   * Apply pfs to lucene query.
+   *
+   * @param clazz the clazz
+   * @param fullTextQuery the full text query
+   * @param pfs the pfs
+   * @throws Exception the exception
+   */
+  @SuppressWarnings("static-method")
+  private void applyPfsToLuceneQuery(Class<?> clazz,
+    FullTextQuery fullTextQuery, PfsParameter pfs) throws Exception {
+    // set paging/filtering/sorting if indicated
+    if (pfs != null) {
+      // if start index and max results are set, set paging
+      if (pfs.getStartIndex() != -1 && pfs.getMaxResults() != -1) {
+        fullTextQuery.setFirstResult(pfs.getStartIndex());
+        fullTextQuery.setMaxResults(pfs.getMaxResults());
+      }
+      // if sort field is specified, set sort key
+      if (pfs.getSortField() != null && !pfs.getSortField().isEmpty()) {
+
+        // check that specified sort field exists on Concept and is
+        // a string
+        if (clazz.getDeclaredField(pfs.getSortField()).getType()
+            .equals(String.class)) {
+          fullTextQuery.setSort(new Sort(new SortField(pfs.getSortField(),
+              SortField.STRING)));
+
+        } else {
+          throw new Exception(
+              clazz.getName()
+                  + " query specified a field that does not exist or is not a string");
+        }
+      }
+    }
   }
 
 }

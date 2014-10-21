@@ -16,15 +16,12 @@
  */
 package org.ihtsdo.otf.ts.mojo;
 
-import java.util.Properties;
-
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoFailureException;
 import org.ihtsdo.otf.ts.jpa.services.ContentServiceJpa;
 import org.ihtsdo.otf.ts.jpa.services.MetadataServiceJpa;
 import org.ihtsdo.otf.ts.services.ContentService;
 import org.ihtsdo.otf.ts.services.MetadataService;
-import org.ihtsdo.otf.ts.services.helpers.ConfigUtility;
 
 /**
  * Goal which removes a terminology from a database.

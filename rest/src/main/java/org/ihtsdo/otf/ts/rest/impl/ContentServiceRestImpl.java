@@ -2,6 +2,7 @@ package org.ihtsdo.otf.ts.rest.impl;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.HeaderParam;
+import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
@@ -84,14 +85,14 @@ public class ContentServiceRestImpl extends RootServiceRestImpl implements
 
       ContentService contentService = new ContentServiceJpa();
       ConceptList cl =
-          contentService.getConcept(terminologyId, terminology, version);
+          contentService.getConcepts(terminologyId, terminology, version);
 
       for (Concept c : cl.getIterable()) {
         if (c != null) {
           // Make sure to read descriptions and relationships (prevents
           // serialization error)
           for (Description d : c.getDescriptions()) {
-            d.getLanguageRefSetMembers();
+            d.getLanguageRefSetMembers().size();
           }
           for (Relationship r : c.getRelationships()) {
             r.getDestinationConcept();
@@ -147,7 +148,7 @@ public class ContentServiceRestImpl extends RootServiceRestImpl implements
         // Make sure to read descriptions and relationships (prevents
         // serialization error)
         for (Description d : c.getDescriptions()) {
-          d.getLanguageRefSetMembers();
+          d.getLanguageRefSetMembers().size();
         }
         for (Relationship r : c.getRelationships()) {
           r.getDestinationConcept();
@@ -171,13 +172,17 @@ public class ContentServiceRestImpl extends RootServiceRestImpl implements
    * .lang.String, java.lang.String, java.lang.String, java.lang.String)
    */
   @Override
-  @GET
-  @Path("/concept/{terminology}/{version}/query/{query}")
+  @POST
+  @Path("/concepts/{terminology}/{version}/query/{query}")
+  @Produces({
+      MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML
+  })
   @ApiOperation(value = "Find concepts matching a search query.", notes = "Gets a list of search results that match the lucene query.", response = String.class)
   public SearchResultList findConceptsForQuery(
     @ApiParam(value = "Terminology, e.g. SNOMEDCT", required = true) @PathParam("terminology") String terminology,
     @ApiParam(value = "Terminology version, e.g. 20140731", required = true) @PathParam("version") String version,
     @ApiParam(value = "Query, e.g. 'sulfur'", required = true) @PathParam("query") String query,
+    @ApiParam(value = "PFS Parameter, e.g. '{ \"startIndex\":\"1\", \"maxResults\":\"5\" }'", required = false) PfsParameterJpa pfs,
     @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken) {
 
     Logger.getLogger(ContentServiceRestImpl.class).info(
@@ -195,10 +200,8 @@ public class ContentServiceRestImpl extends RootServiceRestImpl implements
                 .build());
 
       ContentService contentService = new ContentServiceJpa();
-      String filteredSearchString =
-          query + " terminology:" + terminology + " version:" + version;
       SearchResultList sr =
-          contentService.findConceptsForQuery(filteredSearchString,
+          contentService.findConceptsForQuery(terminology, version, query,
               new PfsParameterJpa());
       contentService.close();
       return sr;

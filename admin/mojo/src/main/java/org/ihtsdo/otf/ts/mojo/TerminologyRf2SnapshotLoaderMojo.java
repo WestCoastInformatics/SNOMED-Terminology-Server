@@ -114,13 +114,13 @@ public class TerminologyRf2SnapshotLoaderMojo extends AbstractMojo {
   private String version = null;
 
   /** the defaultPreferredNames values. */
-  private Long dpnTypeId;
+  private String dpnTypeId;
 
   /** The dpn ref set id. */
-  private Long dpnRefSetId;
+  private String dpnRefSetId;
 
   /** The dpn acceptability id. */
-  private Long dpnAcceptabilityId;
+  private String dpnAcceptabilityId;
 
   /** hash sets for retrieving concepts. */
   private Map<String, Concept> conceptCache = new HashMap<>(); // used to
@@ -132,7 +132,7 @@ public class TerminologyRf2SnapshotLoaderMojo extends AbstractMojo {
   int objectCt; //
 
   /** the number of objects to create before committing. */
-  int commitCt = 500;
+  int commitCt = 1000;
 
   /**
    * Instantiates a {@link TerminologyRf2SnapshotLoaderMojo} from the specified
@@ -169,15 +169,10 @@ public class TerminologyRf2SnapshotLoaderMojo extends AbstractMojo {
             + ".input.data directory does not exist: " + coreInputDirString);
       }
       // set the parameters for determining defaultPreferredNames
-      dpnTypeId =
-          Long.valueOf(config
-              .getProperty("loader.defaultPreferredNames.typeId"));
-      dpnRefSetId =
-          Long.valueOf(config
-              .getProperty("loader.defaultPreferredNames.refSetId"));
+      dpnTypeId = config.getProperty("loader.defaultPreferredNames.typeId");
+      dpnRefSetId = config.getProperty("loader.defaultPreferredNames.refSetId");
       dpnAcceptabilityId =
-          Long.valueOf(config
-              .getProperty("loader.defaultPreferredNames.acceptabilityId"));
+          config.getProperty("loader.defaultPreferredNames.acceptabilityId");
 
       // Determine version from filename
       File coreConceptInputFile = null;
@@ -1285,7 +1280,7 @@ public class TerminologyRf2SnapshotLoaderMojo extends AbstractMojo {
         // check if this language refset and description form the
         // defaultPreferredName
         if (description.isActive() && description.getTypeId().equals(dpnTypeId)
-            && new Long(language.getRefSetId()).equals(dpnRefSetId)
+            && language.getRefSetId().equals(dpnRefSetId)
             && language.isActive()
             && language.getAcceptabilityId().equals(dpnAcceptabilityId)) {
 

@@ -7,10 +7,7 @@ import java.util.List;
 
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
-
-import org.ihtsdo.otf.ts.helpers.AbstractResultList;
-import org.ihtsdo.otf.ts.helpers.User;
-import org.ihtsdo.otf.ts.helpers.UserList;
+import javax.xml.bind.annotation.XmlTransient;
 
 /**
  * JAXB enabled implementation of {@link UserList}.
@@ -119,6 +116,7 @@ public class UserListJpa extends AbstractResultList<User> implements UserList {
    * 
    * @see org.ihtsdo.otf.mapping.helpers.ResultList#getIterable()
    */
+  @XmlTransient
   @Override
   public Iterable<User> getIterable() {
     return users;

@@ -7,9 +7,8 @@ import java.util.List;
 
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 
-import org.ihtsdo.otf.ts.helpers.AbstractResultList;
-import org.ihtsdo.otf.ts.helpers.LanguageRefSetMemberList;
 import org.ihtsdo.otf.ts.rf2.LanguageRefSetMember;
 import org.ihtsdo.otf.ts.rf2.jpa.LanguageRefSetMemberJpa;
 
@@ -118,6 +117,7 @@ public class LanguageRefSetMemberListJpa extends
    * 
    * @see org.ihtsdo.otf.mapping.helpers.ResultList#getIterable()
    */
+  @XmlTransient
   @Override
   public Iterable<LanguageRefSetMember> getIterable() {
     return languageRefSetMembers;
