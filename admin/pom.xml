@@ -23,6 +23,5 @@
     <module>loader</module>
     <module>remover</module>
     <module>qa</module>
-    <module>release</module>
   </modules>
 </project>
