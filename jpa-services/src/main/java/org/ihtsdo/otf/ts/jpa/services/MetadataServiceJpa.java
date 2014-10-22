@@ -27,15 +27,14 @@ public class MetadataServiceJpa extends RootServiceJpa implements
     if (helperMap == null) {
       helperMap = new HashMap<>();
       Properties config = ConfigUtility.getConfigProperties();
-      for (String handler : config.getProperty("metadata.service.handlers")
-          .split(",")) {
+      String key = "metadata.service.handler";
+      for (String handlerName : config.getProperty(key).split(",")) {
+
         // Add handlers to map
-        helperMap.put(
-            handler,
-            (MetadataService) ConfigUtility.newHandlerInstance(
-                handler,
-                config.getProperty("metadata.service.handler." + handler
-                    + ".class"), MetadataService.class));
+        MetadataService handlerService =
+            ConfigUtility.newStandardHandlerInstanceWithConfiguration(key,
+                handlerName, MetadataService.class);
+        helperMap.put(handlerName, handlerService);
       }
     }
   }
@@ -458,6 +457,14 @@ public class MetadataServiceJpa extends RootServiceJpa implements
 
     return resultMap;
 
+  }
+
+  /* (non-Javadoc)
+   * @see org.ihtsdo.otf.ts.helpers.Configurable#setProperties(java.util.Properties)
+   */
+  @Override
+  public void setProperties(Properties p) {
+    // do nothing
   }
 
 }

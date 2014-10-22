@@ -3,6 +3,7 @@ package org.ihtsdo.otf.ts.jpa.services.helper;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 import java.util.Set;
 
 import org.ihtsdo.otf.ts.helpers.GraphHelper;
@@ -481,5 +482,13 @@ public class ClamlMetadataServiceJpaHelper extends RootServiceJpa implements
     }
     contentService.close();
     return map;
+  }
+
+  /* (non-Javadoc)
+   * @see org.ihtsdo.otf.ts.helpers.Configurable#setProperties(java.util.Properties)
+   */
+  @Override
+  public void setProperties(Properties p) {
+    // do nothing    
   }
 }

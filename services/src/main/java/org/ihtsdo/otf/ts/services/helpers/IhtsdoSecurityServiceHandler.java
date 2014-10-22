@@ -25,10 +25,19 @@ import com.sun.jersey.api.representation.Form;
  */
 public class IhtsdoSecurityServiceHandler implements SecurityServiceHandler {
 
+  /**  The properties. */
+  private Properties properties;
+
+  /**
+   * Instantiates an empty {@link IhtsdoSecurityServiceHandler}.
+   */
+  public IhtsdoSecurityServiceHandler() {
+    // do nothing
+  }
+  
   @Override
   @SuppressWarnings("unchecked")
-  public User authenticate(String username, String password,
-    Properties properties) throws Exception {
+  public User authenticate(String username, String password) throws Exception {
 
     Form form = new Form();
     form.add("username", username);
@@ -112,6 +121,14 @@ public class IhtsdoSecurityServiceHandler implements SecurityServiceHandler {
   public String computeTokenForUser(String user) {
     String token = UUID.randomUUID().toString();
     return token;
+  }
+
+  /* (non-Javadoc)
+   * @see org.ihtsdo.otf.ts.helpers.Configurable#setProperties(java.util.Properties)
+   */
+  @Override
+  public void setProperties(Properties properties) {
+    //this.properties = properties;
   }
 
 }

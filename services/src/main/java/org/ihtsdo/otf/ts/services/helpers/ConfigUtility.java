@@ -31,6 +31,7 @@ import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
 
 import org.apache.log4j.Logger;
+import org.ihtsdo.otf.ts.helpers.Configurable;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.xml.sax.SAXException;
@@ -51,19 +52,19 @@ public class ConfigUtility {
 
   static {
     try {
-    TransformerFactory factory = TransformerFactory.newInstance();
+      TransformerFactory factory = TransformerFactory.newInstance();
       transformer = factory.newTransformer();
-    // Indent output.
-    transformer.setOutputProperty(OutputKeys.INDENT, "yes");
-    transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount",
-        "4");
-    // Skip XML declaration header.
-    transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
+      // Indent output.
+      transformer.setOutputProperty(OutputKeys.INDENT, "yes");
+      transformer.setOutputProperty(
+          "{http://xml.apache.org/xslt}indent-amount", "4");
+      // Skip XML declaration header.
+      transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
     } catch (TransformerConfigurationException e) {
       throw new RuntimeException(e);
     }
   }
-  
+
   /**
    * Returns the config properties.
    * @return the config properties
@@ -113,8 +114,8 @@ public class ConfigUtility {
    * @return the object
    * @throws Exception the exception
    */
-  public static Object newHandlerInstance(String handler, String handlerClass,
-    Class<?> type) throws Exception {
+  public static <T> T newHandlerInstance(String handler, String handlerClass,
+    Class<T> type) throws Exception {
     if (handlerClass == null) {
       throw new Exception("Handler class " + handlerClass + " is not defined");
     }
@@ -133,9 +134,53 @@ public class ConfigUtility {
           + ", check for default constructor.");
     }
     if (type.isAssignableFrom(o.getClass())) {
-      return o;
+      return (T) o;
     }
     throw new Exception("Handler is not assignable from " + type.getName());
+  }
+
+  /**
+   * Instantiates a handler using standard setup and configures it with
+   * properties.
+   *
+   * @param <T> the
+   * @param property the property
+   * @param handlerName the handler name
+   * @param type the type
+   * @return the t
+   * @throws Exception
+   */
+  public static <T extends Configurable> T newStandardHandlerInstanceWithConfiguration(
+    String property, String handlerName, Class<T> type) throws Exception {
+
+    // Instantiate the handler
+    // property = "metadata.service.handler" (e.g)
+    // handlerName = "SNOMED" (e.g.)
+    String classKey = property + "." + handlerName + ".class";
+    if (config.getProperty(classKey) == null) {
+      throw new Exception("Unexpected null classkey " + classKey);
+    }
+    String handlerClass = config.getProperty(classKey);
+    Logger.getLogger(ConfigUtility.class).info("Instantiate " + handlerClass);
+    T handler =
+        ConfigUtility.newHandlerInstance(handlerName, handlerClass, type);
+
+    // Look up and build properties
+    Properties handlerProperties = new Properties();
+    for (Object key : config.keySet()) {
+      // Find properties like "metadata.service.handler.SNOMED.class"
+      if (key.toString().startsWith(property + "." + handlerName + ".")) {
+        String shortKey =
+            key.toString().substring(
+                (property + "." + handlerName + ".").length());
+        Logger.getLogger(ConfigUtility.class).info(
+            " property " + shortKey + " = "
+                + config.getProperty(key.toString()));
+        handlerProperties.put(shortKey, config.getProperty(key.toString()));
+      }
+    }
+    handler.setProperties(handlerProperties);
+    return handler;
   }
 
   /**
@@ -210,8 +255,8 @@ public class ConfigUtility {
    * @throws SAXException the SAX exception
    * @throws IOException Signals that an I/O exception has occurred.
    */
-  public static Node getNodeForString(String xml) throws ParserConfigurationException,
-    SAXException, IOException {
+  public static Node getNodeForString(String xml)
+    throws ParserConfigurationException, SAXException, IOException {
 
     InputStream in =
         new ByteArrayInputStream(xml.getBytes(StandardCharsets.UTF_8));
@@ -232,8 +277,8 @@ public class ConfigUtility {
    * @throws SAXException the SAX exception
    * @throws IOException Signals that an I/O exception has occurred.
    */
-  public static Node getNodeForFile(File file) throws ParserConfigurationException,
-    SAXException, IOException {
+  public static Node getNodeForFile(File file)
+    throws ParserConfigurationException, SAXException, IOException {
     InputStream in = new FileInputStream(file);
     // Parse XML file.
     DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
@@ -318,5 +363,5 @@ public class ConfigUtility {
       throw new RuntimeException(e); // simple exception handling, please review
                                      // it
     }
-  }  
+  }
 }

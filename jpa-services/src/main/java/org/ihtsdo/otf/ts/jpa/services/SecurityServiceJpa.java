@@ -32,9 +32,6 @@ public class SecurityServiceJpa extends RootServiceJpa implements
   /** The handler. */
   private static SecurityServiceHandler handler = null;
 
-  /** The handler properties. */
-  private static Properties handlerProperties = new Properties();
-
   /**
    * Instantiates an empty {@link SecurityServiceJpa}.
    *
@@ -62,29 +59,16 @@ public class SecurityServiceJpa extends RootServiceJpa implements
     Properties config = ConfigUtility.getConfigProperties();
 
     if (handler == null) {
-
       String handlerName = config.getProperty("security.handler");
-      String handlerClass =
-          config.getProperty("security.handler." + handlerName + ".class");
-
-      handlerProperties = new Properties();
       handler =
-          (SecurityServiceHandler) ConfigUtility.newHandlerInstance(
-              handlerName, handlerClass, SecurityServiceHandler.class);
-      for (Object key : config.keySet()) {
-        if (key.toString().startsWith("security.handler." + handlerName + ".")) {
-          String shortKey =
-              key.toString().substring(
-                  ("security.handler." + handlerName + ".").length());
-          handlerProperties.put(shortKey, config.getProperty(key.toString()));
-        }
-      }
+          ConfigUtility.newStandardHandlerInstanceWithConfiguration(
+              "security.handler", handlerName, SecurityServiceHandler.class);
     }
 
     //
     // Call the security service
     //
-    User authUser = handler.authenticate(username, password, handlerProperties);
+    User authUser = handler.authenticate(username, password);
 
     // check if authenticated user matches one of our users
     UserList userList = getUsers();
@@ -189,7 +173,7 @@ public class SecurityServiceJpa extends RootServiceJpa implements
    */
   @Override
   public User getUser(Long id) throws Exception {
-    return manager.find(UserJpa.class,  id);
+    return manager.find(UserJpa.class, id);
   }
 
   /*

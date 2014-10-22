@@ -11,12 +11,14 @@ import org.ihtsdo.otf.ts.services.SecurityServiceHandler;
  */
 public class DefaultSecurityServiceHandler implements SecurityServiceHandler {
 
+  /**  The properties. */
+  //private Properties properties;
+  
   /* (non-Javadoc)
    * @see org.ihtsdo.otf.mapping.services.SecurityServiceHandler#authenticate(java.lang.String, java.lang.String, java.util.Properties)
    */
   @Override
-  public User authenticate(String username, String password,
-    Properties properties) throws Exception {
+  public User authenticate(String username, String password) throws Exception {
 
     User user = new UserImpl();
     user.setUserName("guest");
@@ -48,4 +50,11 @@ public class DefaultSecurityServiceHandler implements SecurityServiceHandler {
     return user;
   }
 
+  /* (non-Javadoc)
+   * @see org.ihtsdo.otf.ts.helpers.Configurable#setProperties(java.util.Properties)
+   */
+  @Override
+  public void setProperties(Properties properties) {
+    //this.properties = properties;
+  }
 }

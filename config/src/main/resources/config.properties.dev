@@ -28,9 +28,15 @@ hibernate.search.default.directory_provider=filesystem
 #
 # Metadata Service Settings (one for each "terminology")
 #
-metadata.service.handlers=SNOMEDCT,ICD9CM
+metadata.service.handler=SNOMEDCT,ICD9CM
 metadata.service.handler.SNOMEDCT.class=org.ihtsdo.otf.ts.jpa.services.helper.SnomedMetadataServiceJpaHelper
 metadata.service.handler.ICD9CM.class=org.ihtsdo.otf.ts.jpa.services.helper.ClamlMetadataServiceJpaHelper
+
+#
+# Validation Service Settings
+#
+validation.service.handler=SINGLE_FN_PT
+validation.service.handler.SINGLE_FN_PT.class=org.ihtsdo.otf.ts.services.validation.SinglePtFnCheck
 
 #
 # SNOMEDCT data location

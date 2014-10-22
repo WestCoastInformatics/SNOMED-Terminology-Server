@@ -95,7 +95,7 @@ public class ContentServiceRestImpl extends RootServiceRestImpl implements
             d.getLanguageRefSetMembers().size();
           }
           for (Relationship r : c.getRelationships()) {
-            r.getDestinationConcept();
+            r.getDestinationConcept().getDefaultPreferredName();
           }
         }
       }
@@ -151,7 +151,7 @@ public class ContentServiceRestImpl extends RootServiceRestImpl implements
           d.getLanguageRefSetMembers().size();
         }
         for (Relationship r : c.getRelationships()) {
-          r.getDestinationConcept();
+          r.getDestinationConcept().getDefaultPreferredName();
         }
       }
 

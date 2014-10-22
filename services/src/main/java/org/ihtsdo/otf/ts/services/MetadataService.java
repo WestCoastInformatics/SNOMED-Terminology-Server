@@ -3,10 +3,12 @@ package org.ihtsdo.otf.ts.services;
 import java.util.List;
 import java.util.Map;
 
+import org.ihtsdo.otf.ts.helpers.Configurable;
+
 /**
  * Services to retrieve metadata objects.
  */
-public interface MetadataService extends RootService {
+public interface MetadataService extends RootService, Configurable {
 
 	/**
 	 * Returns the terminologies.

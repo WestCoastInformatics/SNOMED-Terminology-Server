@@ -128,7 +128,8 @@ public class DescriptionJpa extends AbstractComponent implements Description {
   /**
    * Returns the term.
    * 
-   * @return the term
+   * @return
+   *  the term
    */
   @Override
   @Field(index = Index.YES, analyze = Analyze.YES, store = Store.NO)

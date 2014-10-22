@@ -30,7 +30,7 @@ public abstract class AbstractComponent implements Component {
   @GeneratedValue
   private Long id;
 
-  /** The effective time. */
+  /** The effective time. e.g. publication time. */
   @Temporal(TemporalType.TIMESTAMP)
   private Date effectiveTime;
 

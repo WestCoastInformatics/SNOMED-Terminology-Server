@@ -1,24 +1,22 @@
 package org.ihtsdo.otf.ts.services;
 
-import java.util.Properties;
-
+import org.ihtsdo.otf.ts.helpers.Configurable;
 import org.ihtsdo.otf.ts.helpers.User;
 
 /**
- * Genericall represents a handler that can authenticate a user.
+ * Generically represents a handler that can authenticate a user.
  */
-public interface SecurityServiceHandler {
+public interface SecurityServiceHandler extends Configurable {
 
   /**
    * Authenticate.
    *
    * @param user the user
    * @param password the password
-   * @param properties the properties
    * @return the user
    * @throws Exception 
    */
-  public User authenticate(String user, String password, Properties properties) throws Exception;
+  public User authenticate(String user, String password) throws Exception;
 
   
   /**

@@ -3,6 +3,7 @@ package org.ihtsdo.otf.ts.jpa.services.helper;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 import java.util.Set;
 
 import org.apache.log4j.Logger;
@@ -526,5 +527,13 @@ public class SnomedMetadataServiceJpaHelper extends RootServiceJpa implements
             terminologyVersion);
     return GraphHelper.getDescendantConcepts(concept, typeId);
 
+  }
+
+  /* (non-Javadoc)
+   * @see org.ihtsdo.otf.ts.helpers.Configurable#setProperties(java.util.Properties)
+   */
+  @Override
+  public void setProperties(Properties p) {
+    // do nothing
   }
 }
