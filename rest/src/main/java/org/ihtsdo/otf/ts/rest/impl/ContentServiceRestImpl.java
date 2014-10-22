@@ -222,8 +222,7 @@ public class ContentServiceRestImpl extends RootServiceRestImpl implements
 
       ContentService contentService = new ContentServiceJpa();
       SearchResultList sr =
-          contentService.findConceptsForQuery(terminology, version, query,
-              new PfsParameterJpa());
+          contentService.findConceptsForQuery(terminology, version, query, pfs);
       contentService.close();
       return sr;
 
