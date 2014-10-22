@@ -15,17 +15,17 @@ import com.sun.jersey.api.client.WebResource;
 /**
  * A client for connecting to a security  REST service.
  */
-public class SecurityClientJpa implements SecurityServiceRest {
+public class SecurityClientRest implements SecurityServiceRest {
 
   /** The config. */
   private Properties config = null;
 
   /**
-   * Instantiates a {@link ContentClientJpa} from the specified parameters.
+   * Instantiates a {@link ContentClientRest} from the specified parameters.
    *
    * @param config the config
    */
-  public SecurityClientJpa(Properties config) {
+  public SecurityClientRest(Properties config) {
     this.config = config;
   }
 

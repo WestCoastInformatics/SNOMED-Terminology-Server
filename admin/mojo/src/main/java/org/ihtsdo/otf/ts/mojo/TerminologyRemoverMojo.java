@@ -80,9 +80,12 @@ public class TerminologyRemoverMojo extends AbstractMojo {
       MetadataService metadataService = new MetadataServiceJpa();
       String terminologyVersion = metadataService.getLatestVersion(terminology);
       metadataService.close();
+      if (terminologyVersion != null) {
       ContentService contentService = new ContentServiceJpa();
       contentService.clearConcepts(terminology, terminologyVersion);
       contentService.close();
+      }
+      getLog().info("done ...");
     } catch (Throwable e) {
       e.printStackTrace();
       throw new MojoFailureException("Unexpected exception:", e);

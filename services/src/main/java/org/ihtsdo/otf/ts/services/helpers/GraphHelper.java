@@ -1,4 +1,4 @@
-package org.ihtsdo.otf.ts.helpers;
+package org.ihtsdo.otf.ts.services.helpers;
 
 import java.util.HashSet;
 import java.util.Iterator;

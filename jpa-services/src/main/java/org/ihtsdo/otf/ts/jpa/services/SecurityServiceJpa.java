@@ -14,7 +14,7 @@ import org.ihtsdo.otf.ts.helpers.UserList;
 import org.ihtsdo.otf.ts.helpers.UserListJpa;
 import org.ihtsdo.otf.ts.helpers.UserRole;
 import org.ihtsdo.otf.ts.services.SecurityService;
-import org.ihtsdo.otf.ts.services.SecurityServiceHandler;
+import org.ihtsdo.otf.ts.services.handlers.SecurityServiceHandler;
 import org.ihtsdo.otf.ts.services.helpers.ConfigUtility;
 
 /**

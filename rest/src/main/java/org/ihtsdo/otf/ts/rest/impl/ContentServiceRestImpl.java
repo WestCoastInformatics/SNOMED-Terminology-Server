@@ -1,5 +1,7 @@
 package org.ihtsdo.otf.ts.rest.impl;
 
+import java.util.Properties;
+
 import javax.ws.rs.GET;
 import javax.ws.rs.HeaderParam;
 import javax.ws.rs.POST;
@@ -23,6 +25,8 @@ import org.ihtsdo.otf.ts.rf2.Description;
 import org.ihtsdo.otf.ts.rf2.Relationship;
 import org.ihtsdo.otf.ts.services.ContentService;
 import org.ihtsdo.otf.ts.services.SecurityService;
+import org.ihtsdo.otf.ts.services.handlers.GraphResolutionHandler;
+import org.ihtsdo.otf.ts.services.helpers.ConfigUtility;
 
 import com.wordnik.swagger.annotations.Api;
 import com.wordnik.swagger.annotations.ApiOperation;
@@ -42,6 +46,9 @@ public class ContentServiceRestImpl extends RootServiceRestImpl implements
   /** The security service. */
   private SecurityService securityService;
 
+  /** The handler. */
+  private GraphResolutionHandler handler;
+
   /**
    * Instantiates an empty {@link ContentServiceRestImpl}.
    *
@@ -49,6 +56,20 @@ public class ContentServiceRestImpl extends RootServiceRestImpl implements
    */
   public ContentServiceRestImpl() throws Exception {
     securityService = new SecurityServiceJpa();
+
+    if (handler == null) {
+      Properties config = ConfigUtility.getConfigProperties();
+      String key = "graph.resolution.handler";
+      for (String handlerName : config.getProperty(key).split(",")) {
+
+        // Add handlers to map
+        handler =
+            ConfigUtility.newStandardHandlerInstanceWithConfiguration(key,
+                handlerName, GraphResolutionHandler.class);
+
+      }
+    }
+
   }
 
   /*

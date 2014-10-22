@@ -1,4 +1,4 @@
-package org.ihtsdo.otf.ts.services.helpers;
+package org.ihtsdo.otf.ts.services.handlers;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -12,7 +12,7 @@ import javax.ws.rs.core.Response.Status.Family;
 import org.apache.log4j.Logger;
 import org.ihtsdo.otf.ts.helpers.LocalException;
 import org.ihtsdo.otf.ts.helpers.User;
-import org.ihtsdo.otf.ts.services.SecurityServiceHandler;
+import org.ihtsdo.otf.ts.services.helpers.UserImpl;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sun.jersey.api.client.Client;
@@ -106,7 +106,7 @@ public class IhtsdoSecurityServiceHandler implements SecurityServiceHandler {
 
   /**
    * Always timeout user.
-   * @see org.ihtsdo.otf.ts.services.SecurityServiceHandler#timeoutUser(java.lang.String)
+   * @see org.ihtsdo.otf.ts.services.handlers.SecurityServiceHandler#timeoutUser(java.lang.String)
    */
   @Override
   public boolean timeoutUser(String user) {
@@ -115,7 +115,7 @@ public class IhtsdoSecurityServiceHandler implements SecurityServiceHandler {
 
   /**
    * Compute token as a random UUID.
-   * @see org.ihtsdo.otf.ts.services.SecurityServiceHandler#computeTokenForUser(java.lang.String)
+   * @see org.ihtsdo.otf.ts.services.handlers.SecurityServiceHandler#computeTokenForUser(java.lang.String)
    */
   @Override
   public String computeTokenForUser(String user) {

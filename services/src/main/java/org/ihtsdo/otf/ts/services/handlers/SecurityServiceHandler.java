@@ -1,4 +1,4 @@
-package org.ihtsdo.otf.ts.services;
+package org.ihtsdo.otf.ts.services.handlers;
 
 import org.ihtsdo.otf.ts.helpers.Configurable;
 import org.ihtsdo.otf.ts.helpers.User;

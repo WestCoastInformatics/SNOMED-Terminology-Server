@@ -9,8 +9,8 @@ import org.ihtsdo.otf.ts.helpers.ConceptList;
 import org.ihtsdo.otf.ts.helpers.PfsParameterJpa;
 import org.ihtsdo.otf.ts.helpers.SearchResult;
 import org.ihtsdo.otf.ts.helpers.SearchResultList;
-import org.ihtsdo.otf.ts.jpa.client.ContentClientJpa;
-import org.ihtsdo.otf.ts.jpa.client.SecurityClientJpa;
+import org.ihtsdo.otf.ts.jpa.client.ContentClientRest;
+import org.ihtsdo.otf.ts.jpa.client.SecurityClientRest;
 import org.ihtsdo.otf.ts.rf2.Concept;
 import org.ihtsdo.otf.ts.services.helpers.ConfigUtility;
 import org.junit.After;
@@ -23,7 +23,7 @@ import org.junit.Test;
 public class ContentServiceTest {
 
   /** The client. */
-  private static ContentClientJpa client;
+  private static ContentClientRest client;
 
   /** The auth token. */
   private static String authToken;
@@ -36,9 +36,9 @@ public class ContentServiceTest {
   @Before
   public void setup() throws Exception {
     if (client == null) {
-      client = new ContentClientJpa(ConfigUtility.getTestConfigProperties());
-      SecurityClientJpa securityClient =
-          new SecurityClientJpa(ConfigUtility.getTestConfigProperties());
+      client = new ContentClientRest(ConfigUtility.getTestConfigProperties());
+      SecurityClientRest securityClient =
+          new SecurityClientRest(ConfigUtility.getTestConfigProperties());
       authToken = securityClient.authenticate("guest", "guest");
     }
   }

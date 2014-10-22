@@ -1,10 +1,10 @@
-package org.ihtsdo.otf.ts.services.helpers;
+package org.ihtsdo.otf.ts.services.handlers;
 
 import java.util.Properties;
 
 import org.ihtsdo.otf.ts.helpers.User;
 import org.ihtsdo.otf.ts.helpers.UserRole;
-import org.ihtsdo.otf.ts.services.SecurityServiceHandler;
+import org.ihtsdo.otf.ts.services.helpers.UserImpl;
 
 /**
  * Implements a security handler that authorizes via IHTSDO authentication.
@@ -31,7 +31,7 @@ public class DefaultSecurityServiceHandler implements SecurityServiceHandler {
 
   /**
    * Times out all users except "guest".
-   * @see org.ihtsdo.otf.ts.services.SecurityServiceHandler#timeoutUser(java.lang.String)
+   * @see org.ihtsdo.otf.ts.services.handlers.SecurityServiceHandler#timeoutUser(java.lang.String)
    */
   @Override
   public boolean timeoutUser(String user) {
@@ -43,7 +43,7 @@ public class DefaultSecurityServiceHandler implements SecurityServiceHandler {
 
   /**
    * Use the username as a token.
-   * @see org.ihtsdo.otf.ts.services.SecurityServiceHandler#computeTokenForUser(java.lang.String)
+   * @see org.ihtsdo.otf.ts.services.handlers.SecurityServiceHandler#computeTokenForUser(java.lang.String)
    */
   @Override
   public String computeTokenForUser(String user) {

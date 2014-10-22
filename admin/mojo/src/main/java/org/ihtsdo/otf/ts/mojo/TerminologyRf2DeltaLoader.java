@@ -782,14 +782,9 @@ public class TerminologyRf2DeltaLoader extends AbstractMojo {
           getLog().info(
               "  Description " + fields[5]
                   + " is not in cache, retrieving from database");
-          DescriptionList dl =
-              historyService.getDescriptions(fields[5], terminology,
+          description =
+              historyService.getDescription(fields[5], terminology,
                   terminologyVersion);
-          if (dl.getTotalCount() != 1) {
-            throw new Exception("Unexpected number of descriptions: "
-                + dl.getTotalCount());
-          }
-          description = dl.getDescriptions().get(0);
         }
 
         // get the concept

@@ -7,12 +7,12 @@ import java.util.Properties;
 import java.util.Set;
 
 import org.apache.log4j.Logger;
-import org.ihtsdo.otf.ts.helpers.GraphHelper;
 import org.ihtsdo.otf.ts.jpa.services.ContentServiceJpa;
 import org.ihtsdo.otf.ts.jpa.services.RootServiceJpa;
 import org.ihtsdo.otf.ts.rf2.Concept;
 import org.ihtsdo.otf.ts.services.ContentService;
 import org.ihtsdo.otf.ts.services.MetadataService;
+import org.ihtsdo.otf.ts.services.helpers.GraphHelper;
 
 /**
  * Implementation of {@link MetadataService} for SNOMEDCT.

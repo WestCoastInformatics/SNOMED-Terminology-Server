@@ -9,17 +9,17 @@ import org.ihtsdo.otf.ts.rest.MetadataServiceRest;
 /**
  * A client for connecting to a security  REST service.
  */
-public class MetadataClientJpa implements MetadataServiceRest {
+public class MetadataClientRest implements MetadataServiceRest {
 
   /** The config. */
   private Properties config = null;
 
   /**
-   * Instantiates a {@link ContentClientJpa} from the specified parameters.
+   * Instantiates a {@link ContentClientRest} from the specified parameters.
    *
    * @param config the config
    */
-  public MetadataClientJpa(Properties config) {
+  public MetadataClientRest(Properties config) {
     this.config = config;
   }
 

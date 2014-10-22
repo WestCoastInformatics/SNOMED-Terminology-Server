@@ -429,8 +429,11 @@ public class MetadataServiceJpa extends RootServiceJpa implements
             .createQuery("SELECT max(c.terminologyVersion) from ConceptJpa c where terminology = :terminology");
 
     query.setParameter("terminology", terminology);
-    String version = query.getSingleResult().toString();
-    return version;
+    Object o = query.getSingleResult();
+    if (o == null) {
+      return null;
+    }
+    return o.toString();
 
   }
 

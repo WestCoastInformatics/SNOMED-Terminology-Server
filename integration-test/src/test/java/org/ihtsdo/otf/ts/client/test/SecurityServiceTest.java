@@ -2,9 +2,9 @@ package org.ihtsdo.otf.ts.client.test;
 
 import static org.junit.Assert.assertEquals;
 
-import org.ihtsdo.otf.ts.jpa.client.SecurityClientJpa;
+import org.ihtsdo.otf.ts.jpa.client.SecurityClientRest;
+import org.ihtsdo.otf.ts.services.handlers.DefaultSecurityServiceHandler;
 import org.ihtsdo.otf.ts.services.helpers.ConfigUtility;
-import org.ihtsdo.otf.ts.services.helpers.DefaultSecurityServiceHandler;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -15,7 +15,7 @@ import org.junit.Test;
 public class SecurityServiceTest {
 
   /** The client. */
-  private SecurityClientJpa client;
+  private SecurityClientRest client;
 
   /**
    * Setup.
@@ -23,7 +23,7 @@ public class SecurityServiceTest {
    */
   @Before
   public void setup() throws Exception {
-    client = new SecurityClientJpa(ConfigUtility.getTestConfigProperties());
+    client = new SecurityClientRest(ConfigUtility.getTestConfigProperties());
 
   }
 

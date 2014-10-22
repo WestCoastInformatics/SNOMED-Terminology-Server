@@ -23,17 +23,17 @@ import com.sun.jersey.api.client.WebResource;
 /**
  * A client for connecting to a content REST service.
  */
-public class ContentClientJpa implements ContentServiceRest {
+public class ContentClientRest implements ContentServiceRest {
 
   /** The config. */
   private Properties config = null;
 
   /**
-   * Instantiates a {@link ContentClientJpa} from the specified parameters.
+   * Instantiates a {@link ContentClientRest} from the specified parameters.
    *
    * @param config the config
    */
-  public ContentClientJpa(Properties config) {
+  public ContentClientRest(Properties config) {
     this.config = config;
   }
 

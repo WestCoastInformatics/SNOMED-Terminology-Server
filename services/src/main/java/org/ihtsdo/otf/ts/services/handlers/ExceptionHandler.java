@@ -1,4 +1,4 @@
-package org.ihtsdo.otf.ts.services.helpers;
+package org.ihtsdo.otf.ts.services.handlers;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
@@ -19,6 +19,7 @@ import javax.ws.rs.WebApplicationException;
 
 import org.apache.log4j.Logger;
 import org.ihtsdo.otf.ts.helpers.LocalException;
+import org.ihtsdo.otf.ts.services.helpers.ConfigUtility;
 
 /**
  * Handles exceptions.

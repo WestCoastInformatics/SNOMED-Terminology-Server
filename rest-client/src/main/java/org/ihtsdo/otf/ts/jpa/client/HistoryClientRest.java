@@ -9,17 +9,17 @@ import org.ihtsdo.otf.ts.rest.HistoryServiceRest;
 /**
  * A client for connecting to a security  REST service.
  */
-public class HistoryClientJpa implements HistoryServiceRest {
+public class HistoryClientRest implements HistoryServiceRest {
 
   /** The config. */
   private Properties config = null;
 
   /**
-   * Instantiates a {@link ContentClientJpa} from the specified parameters.
+   * Instantiates a {@link ContentClientRest} from the specified parameters.
    *
    * @param config the config
    */
-  public HistoryClientJpa(Properties config) {
+  public HistoryClientRest(Properties config) {
     this.config = config;
   }
 

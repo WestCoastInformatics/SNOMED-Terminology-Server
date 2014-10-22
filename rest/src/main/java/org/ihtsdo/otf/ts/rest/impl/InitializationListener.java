@@ -9,7 +9,7 @@ import javax.ws.rs.ext.Provider;
 import org.apache.log4j.Logger;
 import org.ihtsdo.otf.ts.jpa.services.SecurityServiceJpa;
 import org.ihtsdo.otf.ts.services.SecurityService;
-import org.ihtsdo.otf.ts.services.helpers.ExceptionHandler;
+import org.ihtsdo.otf.ts.services.handlers.ExceptionHandler;
 
 import com.sun.jersey.api.model.AbstractResourceModelContext;
 import com.sun.jersey.api.model.AbstractResourceModelListener;

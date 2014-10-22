@@ -22,8 +22,6 @@ import org.hibernate.search.jpa.FullTextQuery;
 import org.hibernate.search.jpa.Search;
 import org.ihtsdo.otf.ts.helpers.ConceptList;
 import org.ihtsdo.otf.ts.helpers.ConceptListJpa;
-import org.ihtsdo.otf.ts.helpers.DescriptionList;
-import org.ihtsdo.otf.ts.helpers.DescriptionListJpa;
 import org.ihtsdo.otf.ts.helpers.LocalException;
 import org.ihtsdo.otf.ts.helpers.PfsParameter;
 import org.ihtsdo.otf.ts.helpers.SearchResult;
@@ -331,9 +329,8 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
   /**
    * {@inheritDoc}
    */
-  @SuppressWarnings("unchecked")
   @Override
-  public DescriptionList getDescriptions(String terminologyId,
+  public Description getDescription(String terminologyId,
     String terminology, String terminologyVersion) throws Exception {
     Logger.getLogger(ContentServiceJpa.class).debug(
         "Content Service - get description " + terminologyId + "/"
@@ -350,11 +347,7 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
       query.setParameter("terminologyId", terminologyId);
       query.setParameter("terminology", terminology);
       query.setParameter("terminologyVersion", terminologyVersion);
-      List<Description> m = query.getResultList();
-      DescriptionListJpa descriptionList = new DescriptionListJpa();
-      descriptionList.setDescriptions(m);
-      descriptionList.setTotalCount(m.size());
-      return descriptionList;
+      return (Description) query.getSingleResult();
     } catch (NoResultException e) {
       Logger.getLogger(ContentServiceJpa.class).warn(
           "Could not retrieve description " + terminologyId
@@ -364,32 +357,6 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
 
     }
   }
-
-  /*
-   * (non-Javadoc)
-   * 
-   * @see
-   * org.ihtsdo.otf.ts.services.ContentService#getSingleDescription(java.lang
-   * .String, java.lang.String, java.lang.String)
-   */
-  @Override
-  public Description getSingleDescription(String terminologyId,
-    String terminology, String terminologyVersion) throws Exception {
-    Logger.getLogger(ContentServiceJpa.class).debug(
-        "Content Service - get single description " + terminologyId + "/"
-            + terminology + "/" + terminologyVersion);
-    DescriptionList cl =
-        getDescriptions(terminologyId, terminology, terminologyVersion);
-    if (cl == null) {
-      return null;
-    }
-    if (cl.getTotalCount() > 1) {
-      throw new Exception("Unexpected number of descriptions: "
-          + cl.getTotalCount());
-    }
-    return cl.getDescriptions().get(0);
-  }
-
   /*
    * (non-Javadoc)
    * 

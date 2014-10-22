@@ -35,8 +35,19 @@ metadata.service.handler.ICD9CM.class=org.ihtsdo.otf.ts.jpa.services.helper.Clam
 #
 # Validation Service Settings
 #
-validation.service.handler=SINGLE_FN_PT
-validation.service.handler.SINGLE_FN_PT.class=org.ihtsdo.otf.ts.services.validation.SinglePtFnCheck
+validation.service.handler=NEW_CONCEPT
+validation.service.handler.NEW_CONCEPT.class=org.ihtsdo.otf.ts.services.validation.NewConceptMinRequirementsCheck
+validation.service.handler.NEW_CONCEPT.isaRel=116680003
+validation.service.handler.NEW_CONCEPT.fnType=900000000000003001
+validation.service.handler.NEW_CONCEPT.ptType=900000000000013009
+validation.service.handler.NEW_CONCEPT.preferredId=900000000000548007
+validation.service.handler.NEW_CONCEPT.languageId=900000000000509007
+
+#
+# Graph Service Settings
+#
+graph.resolution.handler=DEFAULT
+graph.resolution.handler.DEFAULT.class=org.ihtsdo.otf.ts.services.handlers.DefaultGraphResolutionHandler
 
 #
 # SNOMEDCT data location
@@ -64,8 +75,8 @@ base.url=
 # URL for security service
 #
 security.handler=DEFAULT
-security.handler.DEFAULT.class=org.ihtsdo.otf.ts.services.helpers.DefaultSecurityServiceHandler
-#security.handler.IHTSDO.class=org.ihtsdo.otf.ts.services.helpers.IHTSDOSecurityServiceHandler
+security.handler.DEFAULT.class=org.ihtsdo.otf.ts.services.handlers.DefaultSecurityServiceHandler
+#security.handler.IHTSDO.class=org.ihtsdo.otf.ts.services.handlers.IHTSDOSecurityServiceHandler
 #security.handler.IHTSDO.url=https://usermanagement.ihtsdotools.org/security-web/query/
 
 #

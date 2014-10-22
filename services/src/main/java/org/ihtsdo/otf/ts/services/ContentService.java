@@ -3,7 +3,6 @@ package org.ihtsdo.otf.ts.services;
 import java.util.Set;
 
 import org.ihtsdo.otf.ts.helpers.ConceptList;
-import org.ihtsdo.otf.ts.helpers.DescriptionList;
 import org.ihtsdo.otf.ts.helpers.PfsParameter;
 import org.ihtsdo.otf.ts.helpers.SearchResultList;
 import org.ihtsdo.otf.ts.rf2.AttributeValueRefSetMember;
@@ -45,6 +44,7 @@ public interface ContentService extends RootService {
    * Returns the concept matching the specified parameters.
    * May return more than one concept if there are multiple entries
    * with the same id, terminology, and version.
+   * NOTE: this only applies to concept, not to other data types.
    * 
    * @param terminologyId the concept id
    * @param terminology the terminology
@@ -111,20 +111,7 @@ public interface ContentService extends RootService {
    * @return the description
    * @throws Exception if anything goes wrong
    */
-  public DescriptionList getDescriptions(String terminologyId, String terminology,
-    String version) throws Exception;
-
-  /**
-   * Returns the single description for the specified parameters.  If there
-   * are more than one it throws an exception.
-   *
-   * @param terminologyId the terminology id
-   * @param terminology the terminology
-   * @param version the terminology version
-   * @return the single concept
-   * @throws Exception if there are more than one matching concepts.
-   */
-  public Description getSingleDescription(String terminologyId, String terminology,
+  public Description getDescription(String terminologyId, String terminology,
     String version) throws Exception;
 
   /**

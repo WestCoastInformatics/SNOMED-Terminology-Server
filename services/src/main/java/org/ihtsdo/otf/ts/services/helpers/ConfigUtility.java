@@ -114,6 +114,7 @@ public class ConfigUtility {
    * @return the object
    * @throws Exception the exception
    */
+  @SuppressWarnings("unchecked")
   public static <T> T newHandlerInstance(String handler, String handlerClass,
     Class<T> type) throws Exception {
     if (handlerClass == null) {
