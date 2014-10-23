@@ -190,6 +190,8 @@ public class TransitiveClosureAlgorithm extends ContentServiceJpa implements
         tr.setSuperTypeConcept(getConcept(conceptCache.get(superKey)));
         tr.setSubTypeConcept(getConcept(conceptCache.get(subKey)));
         tr.setActive(true);
+        tr.setLastModified(new Date());
+        tr.setLastModifiedBy("admin");
         tr.setEffectiveTime(new Date());
         tr.setLabel("");
         tr.setModuleId("");

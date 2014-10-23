@@ -8,6 +8,20 @@ import java.util.Set;
 public interface Concept extends Component {
 
   /**
+   * Returns the workflow status.
+   * 
+   * @return the workflow status
+   */
+  public String getWorkflowStatus();
+
+  /**
+   * Sets the workflow status.
+   * 
+   * @param workflowStatus the workflow status
+   */
+  public void setWorkflowStatus(String workflowStatus);
+
+  /**
    * Returns the definition status id.
    * 
    * @return definitionStatusId the definition status id

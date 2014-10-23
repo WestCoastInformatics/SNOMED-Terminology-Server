@@ -489,6 +489,22 @@ public interface ContentService extends RootService {
     throws Exception;
 
   /**
+   * Finds the ancestor of a concept, subject to max results limitation in
+   * PFS parameters object.
+   * 
+   * @param terminologyId the terminology id
+   * @param terminology the terminology
+   * @param version the terminology version
+   * @param pfs the pfs parameter containing the max results
+   *          restriction
+   * @return the set of concepts
+   * @throws Exception the exception
+   */
+  public SearchResultList findAncestorConcepts(String terminologyId,
+    String terminology, String version, PfsParameter pfs)
+    throws Exception;
+
+  /**
    * Gets the all concepts.
    *
    * @param terminology the terminology

@@ -1103,6 +1103,8 @@ public class TerminologyRf2SnapshotLoaderMojo extends AbstractMojo {
         concept.setTerminologyId(fields[0]);
         concept.setEffectiveTime(dt.parse(fields[1]));
         concept.setActive(fields[2].equals("1") ? true : false);
+        concept.setLastModified(new Date());
+        concept.setLastModifiedBy("loader");
         concept.setModuleId(fields[3]);
         concept.setDefinitionStatusId(fields[4]);
         concept.setTerminology(terminology);
@@ -1165,6 +1167,8 @@ public class TerminologyRf2SnapshotLoaderMojo extends AbstractMojo {
         relationship.setTerminologyId(fields[0]);
         relationship.setEffectiveTime(dt.parse(fields[1]));
         relationship.setActive(fields[2].equals("1") ? true : false); // active
+        relationship.setLastModified(new Date());
+        relationship.setLastModifiedBy("loader");
         relationship.setModuleId(fields[3]); // moduleId
 
         relationship.setRelationshipGroup(Integer.valueOf(fields[6])); // relationshipGroup
@@ -1419,6 +1423,8 @@ public class TerminologyRf2SnapshotLoaderMojo extends AbstractMojo {
         description.setTerminologyId(fields[0]);
         description.setEffectiveTime(dt.parse(fields[1]));
         description.setActive(fields[2].equals("1") ? true : false);
+        description.setLastModified(new Date());
+        description.setLastModifiedBy("loader");
         description.setModuleId(fields[3]);
 
         description.setLanguageCode(fields[5]);
@@ -1459,8 +1465,8 @@ public class TerminologyRf2SnapshotLoaderMojo extends AbstractMojo {
   private LanguageRefSetMember getNextLanguage() throws Exception {
 
     String line, fields[];
-    LanguageRefSetMember languageRefSetMember = new LanguageRefSetMemberJpa();
-    languageRefSetMember.setTerminologyId("-1");
+    LanguageRefSetMember member = new LanguageRefSetMemberJpa();
+    member.setTerminologyId("-1");
 
     // if non-null
     if ((line = languageRefsetsByDescription.readLine()) != null) {
@@ -1472,27 +1478,29 @@ public class TerminologyRf2SnapshotLoaderMojo extends AbstractMojo {
       if (!fields[0].equals("id")) { // header line
 
         // Universal RefSet attributes
-        languageRefSetMember.setTerminologyId(fields[0]);
-        languageRefSetMember.setEffectiveTime(dt.parse(fields[1]));
-        languageRefSetMember.setActive(fields[2].equals("1") ? true : false);
-        languageRefSetMember.setModuleId(fields[3]);
-        languageRefSetMember.setRefSetId(fields[4]);
+        member.setTerminologyId(fields[0]);
+        member.setEffectiveTime(dt.parse(fields[1]));
+        member.setActive(fields[2].equals("1") ? true : false);
+        member.setLastModified(new Date());
+        member.setLastModifiedBy("loader");
+        member.setModuleId(fields[3]);
+        member.setRefSetId(fields[4]);
 
         // Language unique attributes
-        languageRefSetMember.setAcceptabilityId(fields[6]);
+        member.setAcceptabilityId(fields[6]);
 
         // Terminology attributes
-        languageRefSetMember.setTerminology(terminology);
-        languageRefSetMember.setTerminologyVersion(version);
+        member.setTerminology(terminology);
+        member.setTerminologyVersion(version);
 
         // Set a dummy description with terminology id only
         Description description = new DescriptionJpa();
         description.setTerminologyId(fields[5]);
-        languageRefSetMember.setDescription(description);
+        member.setDescription(description);
 
         // if header line, get next record
       } else {
-        languageRefSetMember = getNextLanguage();
+        member = getNextLanguage();
       }
 
       // if null, set a dummy description value to avoid null-pointer exceptions
@@ -1500,10 +1508,10 @@ public class TerminologyRf2SnapshotLoaderMojo extends AbstractMojo {
     } else {
       Description description = new DescriptionJpa();
       description.setTerminologyId("-1");
-      languageRefSetMember.setDescription(description);
+      member.setDescription(description);
     }
 
-    return languageRefSetMember;
+    return member;
   }
 
   /**
@@ -1527,37 +1535,39 @@ public class TerminologyRf2SnapshotLoaderMojo extends AbstractMojo {
 
       line = line.replace("\r", "");
       String fields[] = line.split("\t");
-      AttributeValueRefSetMember attributeValueRefSetMember =
+      AttributeValueRefSetMember member =
           new AttributeValueRefSetMemberJpa();
 
       if (!fields[0].equals("id")) { // header
 
         // Universal RefSet attributes
-        attributeValueRefSetMember.setTerminologyId(fields[0]);
-        attributeValueRefSetMember.setEffectiveTime(dt.parse(fields[1]));
-        attributeValueRefSetMember.setActive(fields[2].equals("1") ? true
+        member.setTerminologyId(fields[0]);
+        member.setEffectiveTime(dt.parse(fields[1]));
+        member.setActive(fields[2].equals("1") ? true
             : false);
-        attributeValueRefSetMember.setModuleId(fields[3]);
-        attributeValueRefSetMember.setRefSetId(fields[4]);
+        member.setLastModified(new Date());
+        member.setLastModifiedBy("loader");
+        member.setModuleId(fields[3]);
+        member.setRefSetId(fields[4]);
 
         // AttributeValueRefSetMember unique attributes
-        attributeValueRefSetMember.setValueId(fields[6]);
+        member.setValueId(fields[6]);
 
         // Terminology attributes
-        attributeValueRefSetMember.setTerminology(terminology);
-        attributeValueRefSetMember.setTerminologyVersion(version);
+        member.setTerminology(terminology);
+        member.setTerminologyVersion(version);
 
         // Retrieve concept -- firstToken is referencedComponentId
         Concept concept =
-            getConcept(fields[5], attributeValueRefSetMember.getTerminology(),
-                attributeValueRefSetMember.getTerminologyVersion(),
+            getConcept(fields[5], member.getTerminology(),
+                member.getTerminologyVersion(),
                 contentService);
 
         if (concept != null) {
 
-          attributeValueRefSetMember.setConcept(concept);
+          member.setConcept(concept);
           contentService
-              .addAttributeValueRefSetMember(attributeValueRefSetMember);
+              .addAttributeValueRefSetMember(member);
 
           // regularly commit at intervals
           if (++objectCt % commitCt == 0) {
@@ -1568,7 +1578,7 @@ public class TerminologyRf2SnapshotLoaderMojo extends AbstractMojo {
         } else {
           getLog().debug(
               "attributeValueRefSetMember "
-                  + attributeValueRefSetMember.getTerminologyId()
+                  + member.getTerminologyId()
                   + " references non-existent concept " + fields[5]);
         }
       }
@@ -1606,32 +1616,34 @@ public class TerminologyRf2SnapshotLoaderMojo extends AbstractMojo {
 
       line = line.replace("\r", "");
       String fields[] = line.split("\t");
-      SimpleRefSetMember simpleRefSetMember = new SimpleRefSetMemberJpa();
+      SimpleRefSetMember member = new SimpleRefSetMemberJpa();
 
       if (!fields[0].equals("id")) { // header
 
         // Universal RefSet attributes
-        simpleRefSetMember.setTerminologyId(fields[0]);
-        simpleRefSetMember.setEffectiveTime(dt.parse(fields[1]));
-        simpleRefSetMember.setActive(fields[2].equals("1") ? true : false);
-        simpleRefSetMember.setModuleId(fields[3]);
-        simpleRefSetMember.setRefSetId(fields[4]);
+        member.setTerminologyId(fields[0]);
+        member.setEffectiveTime(dt.parse(fields[1]));
+        member.setActive(fields[2].equals("1") ? true : false);
+        member.setLastModified(new Date());
+        member.setLastModifiedBy("loader");
+        member.setModuleId(fields[3]);
+        member.setRefSetId(fields[4]);
 
         // SimpleRefSetMember unique attributes
         // NONE
 
         // Terminology attributes
-        simpleRefSetMember.setTerminology(terminology);
-        simpleRefSetMember.setTerminologyVersion(version);
+        member.setTerminology(terminology);
+        member.setTerminologyVersion(version);
 
         // Retrieve Concept -- firstToken is referencedComonentId
         Concept concept =
-            getConcept(fields[5], simpleRefSetMember.getTerminology(),
-                simpleRefSetMember.getTerminologyVersion(), contentService);
+            getConcept(fields[5], member.getTerminology(),
+                member.getTerminologyVersion(), contentService);
 
         if (concept != null) {
-          simpleRefSetMember.setConcept(concept);
-          contentService.addSimpleRefSetMember(simpleRefSetMember);
+          member.setConcept(concept);
+          contentService.addSimpleRefSetMember(member);
 
           // regularly commit at intervals
           if (++objectCt % commitCt == 0) {
@@ -1641,7 +1653,7 @@ public class TerminologyRf2SnapshotLoaderMojo extends AbstractMojo {
           }
         } else {
           getLog().info(
-              "simpleRefSetMember " + simpleRefSetMember.getTerminologyId()
+              "simpleRefSetMember " + member.getTerminologyId()
                   + " references non-existent concept " + fields[5]);
         }
       }
@@ -1678,33 +1690,35 @@ public class TerminologyRf2SnapshotLoaderMojo extends AbstractMojo {
 
       line = line.replace("\r", "");
       String fields[] = line.split("\t");
-      SimpleMapRefSetMember simpleMapRefSetMember =
+      SimpleMapRefSetMember member =
           new SimpleMapRefSetMemberJpa();
 
       if (!fields[0].equals("id")) { // header
 
         // Universal RefSet attributes
-        simpleMapRefSetMember.setTerminologyId(fields[0]);
-        simpleMapRefSetMember.setEffectiveTime(dt.parse(fields[1]));
-        simpleMapRefSetMember.setActive(fields[2].equals("1") ? true : false);
-        simpleMapRefSetMember.setModuleId(fields[3]);
-        simpleMapRefSetMember.setRefSetId(fields[4]);
+        member.setTerminologyId(fields[0]);
+        member.setEffectiveTime(dt.parse(fields[1]));
+        member.setActive(fields[2].equals("1") ? true : false);
+        member.setLastModified(new Date());
+        member.setLastModifiedBy("loader");
+        member.setModuleId(fields[3]);
+        member.setRefSetId(fields[4]);
 
         // SimpleMap unique attributes
-        simpleMapRefSetMember.setMapTarget(fields[6]);
+        member.setMapTarget(fields[6]);
 
         // Terminology attributes
-        simpleMapRefSetMember.setTerminology(terminology);
-        simpleMapRefSetMember.setTerminologyVersion(version);
+        member.setTerminology(terminology);
+        member.setTerminologyVersion(version);
 
         // Retrieve concept -- firstToken is referencedComponentId
         Concept concept =
-            getConcept(fields[5], simpleMapRefSetMember.getTerminology(),
-                simpleMapRefSetMember.getTerminologyVersion(), contentService);
+            getConcept(fields[5], member.getTerminology(),
+                member.getTerminologyVersion(), contentService);
 
         if (concept != null) {
-          simpleMapRefSetMember.setConcept(concept);
-          contentService.addSimpleMapRefSetMember(simpleMapRefSetMember);
+          member.setConcept(concept);
+          contentService.addSimpleMapRefSetMember(member);
 
           // regularly commit at intervals
           if (++objectCt % commitCt == 0) {
@@ -1715,7 +1729,7 @@ public class TerminologyRf2SnapshotLoaderMojo extends AbstractMojo {
         } else {
           getLog().info(
               "simpleMapRefSetMember "
-                  + simpleMapRefSetMember.getTerminologyId()
+                  + member.getTerminologyId()
                   + " references non-existent concept " + fields[5]);
         }
       }
@@ -1752,44 +1766,46 @@ public class TerminologyRf2SnapshotLoaderMojo extends AbstractMojo {
 
       line = line.replace("\r", "");
       String fields[] = line.split("\t");
-      ComplexMapRefSetMember complexMapRefSetMember =
+      ComplexMapRefSetMember member =
           new ComplexMapRefSetMemberJpa();
 
       if (!fields[0].equals("id")) { // header
 
-        complexMapRefSetMember.setTerminologyId(fields[0]);
-        complexMapRefSetMember.setEffectiveTime(dt.parse(fields[1]));
-        complexMapRefSetMember.setActive(fields[2].equals("1") ? true : false);
-        complexMapRefSetMember.setModuleId(fields[3]);
-        complexMapRefSetMember.setRefSetId(fields[4]);
+        member.setTerminologyId(fields[0]);
+        member.setEffectiveTime(dt.parse(fields[1]));
+        member.setActive(fields[2].equals("1") ? true : false);
+        member.setLastModified(new Date());
+        member.setLastModifiedBy("loader");
+        member.setModuleId(fields[3]);
+        member.setRefSetId(fields[4]);
         // conceptId
 
         // ComplexMap unique attributes
-        complexMapRefSetMember.setMapGroup(Integer.parseInt(fields[6]));
-        complexMapRefSetMember.setMapPriority(Integer.parseInt(fields[7]));
-        complexMapRefSetMember.setMapRule(fields[8]);
-        complexMapRefSetMember.setMapAdvice(fields[9]);
-        complexMapRefSetMember.setMapTarget(fields[10]);
-        complexMapRefSetMember.setMapRelationId(fields[11]);
+        member.setMapGroup(Integer.parseInt(fields[6]));
+        member.setMapPriority(Integer.parseInt(fields[7]));
+        member.setMapRule(fields[8]);
+        member.setMapAdvice(fields[9]);
+        member.setMapTarget(fields[10]);
+        member.setMapRelationId(fields[11]);
 
         // ComplexMap unique attributes NOT set by file (mapBlock
         // elements)
-        complexMapRefSetMember.setMapBlock(0); // default value
-        complexMapRefSetMember.setMapBlockRule(null); // no default
-        complexMapRefSetMember.setMapBlockAdvice(null); // no default
+        member.setMapBlock(0); // default value
+        member.setMapBlockRule(null); // no default
+        member.setMapBlockAdvice(null); // no default
 
         // Terminology attributes
-        complexMapRefSetMember.setTerminology(terminology);
-        complexMapRefSetMember.setTerminologyVersion(version);
+        member.setTerminology(terminology);
+        member.setTerminologyVersion(version);
 
         // set Concept
         Concept concept =
-            getConcept(fields[5], complexMapRefSetMember.getTerminology(),
-                complexMapRefSetMember.getTerminologyVersion(), contentService);
+            getConcept(fields[5], member.getTerminology(),
+                member.getTerminologyVersion(), contentService);
 
         if (concept != null) {
-          complexMapRefSetMember.setConcept(concept);
-          contentService.addComplexMapRefSetMember(complexMapRefSetMember);
+          member.setConcept(concept);
+          contentService.addComplexMapRefSetMember(member);
 
           // regularly commit at intervals
           if (++objectCt % commitCt == 0) {
@@ -1800,7 +1816,7 @@ public class TerminologyRf2SnapshotLoaderMojo extends AbstractMojo {
         } else {
           getLog().info(
               "complexMapRefSetMember "
-                  + complexMapRefSetMember.getTerminologyId()
+                  + member.getTerminologyId()
                   + " references non-existent concept " + fields[5]);
         }
 
@@ -1841,44 +1857,46 @@ public class TerminologyRf2SnapshotLoaderMojo extends AbstractMojo {
 
       line = line.replace("\r", "");
       String fields[] = line.split("\t");
-      ComplexMapRefSetMember complexMapRefSetMember =
+      ComplexMapRefSetMember member =
           new ComplexMapRefSetMemberJpa();
 
       if (!fields[0].equals("id")) { // header
 
-        complexMapRefSetMember.setTerminologyId(fields[0]);
-        complexMapRefSetMember.setEffectiveTime(dt.parse(fields[1]));
-        complexMapRefSetMember.setActive(fields[2].equals("1") ? true : false);
-        complexMapRefSetMember.setModuleId(fields[3]);
-        complexMapRefSetMember.setRefSetId(fields[4]);
+        member.setTerminologyId(fields[0]);
+        member.setEffectiveTime(dt.parse(fields[1]));
+        member.setActive(fields[2].equals("1") ? true : false);
+        member.setLastModified(new Date());
+        member.setLastModifiedBy("loader");
+        member.setModuleId(fields[3]);
+        member.setRefSetId(fields[4]);
         // conceptId
 
         // ComplexMap unique attributes
-        complexMapRefSetMember.setMapGroup(Integer.parseInt(fields[6]));
-        complexMapRefSetMember.setMapPriority(Integer.parseInt(fields[7]));
-        complexMapRefSetMember.setMapRule(fields[8]);
-        complexMapRefSetMember.setMapAdvice(fields[9]);
-        complexMapRefSetMember.setMapTarget(fields[10]);
-        complexMapRefSetMember.setMapRelationId(fields[12]);
+        member.setMapGroup(Integer.parseInt(fields[6]));
+        member.setMapPriority(Integer.parseInt(fields[7]));
+        member.setMapRule(fields[8]);
+        member.setMapAdvice(fields[9]);
+        member.setMapTarget(fields[10]);
+        member.setMapRelationId(fields[12]);
 
         // ComplexMap unique attributes NOT set by file (mapBlock
         // elements)
-        complexMapRefSetMember.setMapBlock(1); // default value
-        complexMapRefSetMember.setMapBlockRule(null); // no default
-        complexMapRefSetMember.setMapBlockAdvice(null); // no default
+        member.setMapBlock(1); // default value
+        member.setMapBlockRule(null); // no default
+        member.setMapBlockAdvice(null); // no default
 
         // Terminology attributes
-        complexMapRefSetMember.setTerminology(terminology);
-        complexMapRefSetMember.setTerminologyVersion(version);
+        member.setTerminology(terminology);
+        member.setTerminologyVersion(version);
 
         // set Concept
         Concept concept =
-            getConcept(fields[5], complexMapRefSetMember.getTerminology(),
-                complexMapRefSetMember.getTerminologyVersion(), contentService);
+            getConcept(fields[5], member.getTerminology(),
+                member.getTerminologyVersion(), contentService);
 
         if (concept != null) {
-          complexMapRefSetMember.setConcept(concept);
-          contentService.addComplexMapRefSetMember(complexMapRefSetMember);
+          member.setConcept(concept);
+          contentService.addComplexMapRefSetMember(member);
 
           // regularly commit at intervals
           if (++objectCt % commitCt == 0) {
@@ -1889,7 +1907,7 @@ public class TerminologyRf2SnapshotLoaderMojo extends AbstractMojo {
         } else {
           getLog().info(
               "complexMapRefSetMember "
-                  + complexMapRefSetMember.getTerminologyId()
+                  + member.getTerminologyId()
                   + " references non-existent concept " + fields[5]);
         }
 

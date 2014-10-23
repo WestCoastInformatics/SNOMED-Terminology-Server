@@ -13,6 +13,7 @@ import java.io.Reader;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -572,6 +573,8 @@ public class TerminologyClamlLoaderMojo extends AbstractMojo {
             concept.setTerminologyId(code);
             concept.setEffectiveTime(dateFormat.parse(effectiveTime));
             concept.setActive(true);
+            concept.setLastModified(new Date());
+            concept.setLastModifiedBy("loader");
             concept.setModuleId(conceptMap.get("defaultModule")
                 .getTerminologyId());
             concept.setDefinitionStatusId(conceptMap.get(
@@ -593,6 +596,8 @@ public class TerminologyClamlLoaderMojo extends AbstractMojo {
           desc.setTerminologyId(rubricId);
           desc.setEffectiveTime(dateFormat.parse(effectiveTime));
           desc.setActive(true);
+          desc.setLastModified(new Date());
+          desc.setLastModifiedBy("loader");
           desc.setModuleId(conceptMap.get("defaultModule")
               .getTerminologyId());
           desc.setTerminology(terminology);
@@ -707,19 +712,21 @@ public class TerminologyClamlLoaderMojo extends AbstractMojo {
           // Record class level dagger/asterisk info as refset member
           if (classUsage != null) {
             getLog().info("  Class " + code + " has usage " + classUsage);
-            SimpleRefSetMember refSetMember = new SimpleRefSetMemberJpa();
-            refSetMember.setConcept(concept);
-            refSetMember.setActive(true);
-            refSetMember.setEffectiveTime(dateFormat.parse(effectiveTime));
-            refSetMember.setModuleId(conceptMap.get("defaultModule")
+            SimpleRefSetMember member = new SimpleRefSetMemberJpa();
+            member.setConcept(concept);
+            member.setActive(true);
+            member.setLastModified(new Date());
+            member.setLastModifiedBy("loader");
+            member.setEffectiveTime(dateFormat.parse(effectiveTime));
+            member.setModuleId(conceptMap.get("defaultModule")
                 .getTerminologyId());
-            refSetMember.setTerminology(terminology);
-            refSetMember.setTerminologyId(new Integer(refSetMemberCounter++)
+            member.setTerminology(terminology);
+            member.setTerminologyId(new Integer(refSetMemberCounter++)
                 .toString());
-            refSetMember.setTerminologyVersion(terminologyVersion);
-            refSetMember.setRefSetId(conceptMap.get(classUsage)
+            member.setTerminologyVersion(terminologyVersion);
+            member.setRefSetId(conceptMap.get(classUsage)
                 .getTerminologyId());
-            concept.addSimpleRefSetMember(refSetMember);
+            concept.addSimpleRefSetMember(member);
           }
 
           // reset variables at the end of each
@@ -828,6 +835,9 @@ public class TerminologyClamlLoaderMojo extends AbstractMojo {
               }
               relationship.setEffectiveTime(dateFormat.parse(effectiveTime));
               relationship.setActive(true);
+              relationship.setLastModified(new Date());
+              relationship.setLastModifiedBy("loader");
+
               relationship.setModuleId(conceptMap.get("defaultModule")
                   .getTerminologyId());
               relationship.setTerminology(terminology);
@@ -879,6 +889,8 @@ public class TerminologyClamlLoaderMojo extends AbstractMojo {
         concept.setTerminologyId(modifier + modifierCode);
         concept.setEffectiveTime(dateFormat.parse(effectiveTime));
         concept.setActive(true);
+        concept.setLastModified(new Date());
+        concept.setLastModifiedBy("loader");
         concept.setModuleId(conceptMap.get("defaultModule")
             .getTerminologyId());
         concept.setDefinitionStatusId(conceptMap.get(
@@ -899,6 +911,8 @@ public class TerminologyClamlLoaderMojo extends AbstractMojo {
       desc.setTerminologyId(rubricId);
       desc.setEffectiveTime(dateFormat.parse(effectiveTime));
       desc.setActive(true);
+      desc.setLastModified(new Date());
+      desc.setLastModifiedBy("loader");
       desc.setModuleId(conceptMap.get("defaultModule")
           .getTerminologyId());
       desc.setTerminology(terminology);

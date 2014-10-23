@@ -62,12 +62,9 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
     super();
   }
 
-  /*
-   * (non-Javadoc)
-   * 
-   * @see
-   * org.ihtsdo.otf.ts.services.ContentService#getConcepts(java.lang.String,
-   * java.lang.String, org.ihtsdo.otf.ts.helpers.PfsParameter)
+
+  /* (non-Javadoc)
+   * @see org.ihtsdo.otf.ts.services.ContentService#getConcepts(java.lang.String, java.lang.String, org.ihtsdo.otf.ts.helpers.PfsParameter)
    */
   @SuppressWarnings("unchecked")
   @Override
@@ -181,10 +178,10 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
     Logger.getLogger(ContentServiceJpa.class).debug(
         "Content Service - get single concept " + terminologyId + "/"
             + terminology + "/" + terminologyVersion);
-    ConceptList cl = getConcepts(terminologyId, terminology, terminologyVersion);
+    ConceptList cl =
+        getConcepts(terminologyId, terminology, terminologyVersion);
     if (cl == null || cl.getTotalCount() == 0) {
-      Logger.getLogger(ContentServiceJpa.class).debug(
-          "  empty concept ");
+      Logger.getLogger(ContentServiceJpa.class).debug("  empty concept ");
       return null;
     }
     if (cl.getTotalCount() > 1) {
@@ -330,8 +327,8 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
    * {@inheritDoc}
    */
   @Override
-  public Description getDescription(String terminologyId,
-    String terminology, String terminologyVersion) throws Exception {
+  public Description getDescription(String terminologyId, String terminology,
+    String terminologyVersion) throws Exception {
     Logger.getLogger(ContentServiceJpa.class).debug(
         "Content Service - get description " + terminologyId + "/"
             + terminology + "/" + terminologyVersion);
@@ -357,6 +354,7 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
 
     }
   }
+
   /*
    * (non-Javadoc)
    * 
@@ -1312,10 +1310,11 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
   public SearchResultList findConceptsForQuery(String terminology,
     String version, String searchString, PfsParameter pfs) throws Exception {
     Logger.getLogger(ContentServiceJpa.class).info(
-        "Content Service - find concepts " + terminology + "/" + version + "/" + searchString);
+        "Content Service - find concepts " + terminology + "/" + version + "/"
+            + searchString);
     if (pfs != null) {
       Logger.getLogger(ContentServiceJpa.class).info(
-        "  pfs = " + pfs.toString());
+          "  pfs = " + pfs.toString());
     }
 
     // Prepare results
@@ -1390,8 +1389,12 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
         "Content Service - find descendants " + terminologyId + "/"
             + terminology + "/" + terminologyVersion);
 
+    if (pfs  != null && pfs.getQueryRestriction() != null) {
+      throw new IllegalArgumentException(
+          "Query restriction is not implemented for this call: "
+              + pfs.getQueryRestriction());
+    }
     SearchResultList searchResultList = new SearchResultListJpa();
-
     javax.persistence.Query query =
         manager
             .createQuery("select sub from TransitiveRelationshipJpa tr, ConceptJpa super, ConceptJpa sub "
@@ -1410,60 +1413,92 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
     searchResultList.setTotalCount(descendants.size());
 
     // apply paging, and sorting if appropriate
-    if (pfs != null
-        && (pfs.getSortField() != null && !pfs.getSortField().isEmpty())) {
-      // check that specified sort field exists on Concept and is
-      // a string
-      final Field sortField =
-          Concept.class.getDeclaredField(pfs.getSortField());
-      if (!sortField.getType().equals(String.class)) {
-
-        throw new Exception(
-            "findDescendantConcepts error:  Referenced sort field is not of type String");
-      }
-      // allow the field to access the Concept values
-      sortField.setAccessible(true);
-
-      // sort the list - UNTESTED
-      Collections.sort(descendants, new Comparator<Concept>() {
-        @Override
-        public int compare(Concept c1, Concept c2) {
-
-          // if an exception is returned, simply pass equality
-          try {
-            return ((String) sortField.get(c1)).compareTo((String) sortField
-                .get(c2));
-          } catch (Exception e) {
-            return 0;
-          }
-        }
-      });
-
-      // get the start and end indexes based on paging parameters
-      int startIndex = 0;
-      int toIndex = descendants.size();
-      if (pfs != null) {
-        startIndex = pfs.getStartIndex();
-        toIndex =
-            Math.min(descendants.size(), startIndex + pfs.getMaxResults());
-      }
-
-      // construct the search results
-      for (Concept c : descendants.subList(startIndex, toIndex)) {
-        SearchResult searchResult = new SearchResultJpa();
-        searchResult.setId(c.getId());
-        searchResult.setTerminologyId(c.getTerminologyId());
-        searchResult.setTerminology(c.getTerminology());
-        searchResult.setTerminologyVersion(c.getTerminologyVersion());
-        searchResult.setValue(c.getDefaultPreferredName());
-        searchResultList.addSearchResult(searchResult);
-      }
+    Comparator<Concept> comp = getPfsComparator(Concept.class, pfs);
+    if (comp != null) {
+      Collections.sort(descendants, comp);
     }
-
+    // get the start and end indexes based on paging parameters
+    int startIndex = 0;
+    int toIndex = descendants.size();
+    if (pfs != null) {
+      startIndex = pfs.getStartIndex();
+      toIndex = Math.min(descendants.size(), startIndex + pfs.getMaxResults());
+    }
+    // construct the search results
+    for (Concept c : descendants.subList(startIndex, toIndex)) {
+      SearchResult searchResult = new SearchResultJpa();
+      searchResult.setId(c.getId());
+      searchResult.setTerminologyId(c.getTerminologyId());
+      searchResult.setTerminology(c.getTerminology());
+      searchResult.setTerminologyVersion(c.getTerminologyVersion());
+      searchResult.setValue(c.getDefaultPreferredName());
+      searchResultList.addSearchResult(searchResult);
+    }
     // return the search result list
     return searchResultList;
   }
 
+  /* (non-Javadoc)
+   * @see org.ihtsdo.otf.ts.services.ContentService#findAncestorConcepts(java.lang.String, java.lang.String, java.lang.String, org.ihtsdo.otf.ts.helpers.PfsParameter)
+   */
+  @SuppressWarnings("unchecked")
+  @Override
+  public SearchResultList findAncestorConcepts(String terminologyId,
+    String terminology, String terminologyVersion, PfsParameter pfs)
+    throws Exception {
+    Logger.getLogger(ContentServiceJpa.class).debug(
+        "Content Service - find ancestors " + terminologyId + "/"
+            + terminology + "/" + terminologyVersion);
+
+    if (pfs != null && pfs.getQueryRestriction() != null) {
+      throw new IllegalArgumentException(
+          "Query restriction is not implemented for this call: "
+              + pfs.getQueryRestriction());
+    }
+    SearchResultList searchResultList = new SearchResultListJpa();
+    javax.persistence.Query query =
+        manager
+            .createQuery("select super from TransitiveRelationshipJpa tr, ConceptJpa super, ConceptJpa sub "
+                + " where sub.terminologyVersion = :terminologyVersion "
+                + " and sub.terminology = :terminology "
+                + " and sub.terminologyId = :terminologyId"
+                + " and tr.superTypeConcept = super"
+                + " and tr.subTypeConcept = sub");
+    query.setParameter("terminology", terminology);
+    query.setParameter("terminologyVersion", terminologyVersion);
+    query.setParameter("terminologyId", terminologyId);
+
+    // Get the ancestors
+    List<Concept> ancestors = query.getResultList();
+
+    searchResultList.setTotalCount(ancestors.size());
+
+    // apply paging, and sorting if appropriate
+    Comparator<Concept> comp = getPfsComparator(Concept.class, pfs);
+    if (comp != null) {
+      Collections.sort(ancestors, comp);
+    }
+    // get the start and end indexes based on paging parameters
+    int startIndex = 0;
+    int toIndex = ancestors.size();
+    if (pfs != null) {
+      startIndex = pfs.getStartIndex();
+      toIndex = Math.min(ancestors.size(), startIndex + pfs.getMaxResults());
+    }
+    // construct the search results
+    for (Concept c : ancestors.subList(startIndex, toIndex)) {
+      SearchResult searchResult = new SearchResultJpa();
+      searchResult.setId(c.getId());
+      searchResult.setTerminologyId(c.getTerminologyId());
+      searchResult.setTerminology(c.getTerminology());
+      searchResult.setTerminologyVersion(c.getTerminologyVersion());
+      searchResult.setValue(c.getDefaultPreferredName());
+      searchResultList.addSearchResult(searchResult);
+    }
+    // return the search result list
+    return searchResultList;
+  }
+  
   /*
    * (non-Javadoc)
    * 
@@ -1726,4 +1761,48 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
     }
   }
 
+  /**
+   * Returns the pfs comparator.
+   *
+   * @param <T> the
+   * @param clazz the clazz
+   * @param pfs the pfs
+   * @return the pfs comparator
+   * @throws Exception the exception
+   */
+  @SuppressWarnings("static-method")
+  private <T> Comparator<T> getPfsComparator(Class<T> clazz, PfsParameter pfs)
+    throws Exception {
+    if (pfs != null
+        && (pfs.getSortField() != null && !pfs.getSortField().isEmpty())) {
+      // check that specified sort field exists on Concept and is
+      // a string
+      final Field sortField = clazz.getDeclaredField(pfs.getSortField());
+      if (!sortField.getType().equals(String.class)) {
+
+        throw new Exception(
+            "findDescendantConcepts error:  Referenced sort field is not of type String");
+      }
+      // allow the field to access the Concept values
+      sortField.setAccessible(true);
+
+      // make comparator
+      return new Comparator<T>() {
+        @Override
+        public int compare(T o1, T o2) {
+          try {
+            return ((String) sortField.get(o1)).compareTo((String) sortField
+                .get(o2));
+          } catch (IllegalAccessException e) {
+            // on exception, return equality
+            return 0;
+          }
+        }
+      };
+
+    } else {
+      return null;
+    }
+
+  }
 }

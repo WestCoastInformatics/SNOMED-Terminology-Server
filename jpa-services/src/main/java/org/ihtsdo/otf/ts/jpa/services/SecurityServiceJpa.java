@@ -32,6 +32,9 @@ public class SecurityServiceJpa extends RootServiceJpa implements
   /** The handler. */
   private static SecurityServiceHandler handler = null;
 
+  /** The timeout. */
+  private static int timeout;
+
   /**
    * Instantiates an empty {@link SecurityServiceJpa}.
    *
@@ -59,6 +62,7 @@ public class SecurityServiceJpa extends RootServiceJpa implements
     Properties config = ConfigUtility.getConfigProperties();
 
     if (handler == null) {
+      timeout = Integer.valueOf(config.getProperty("security.timeout"));
       String handlerName = config.getProperty("security.handler");
       handler =
           ConfigUtility.newStandardHandlerInstanceWithConfiguration(
@@ -101,11 +105,22 @@ public class SecurityServiceJpa extends RootServiceJpa implements
     // Generate application-managed token
     String token = handler.computeTokenForUser(username);
     tokenUsernameMap.put(token, authUser.getUserName());
-    tokenTimeoutMap.put(token, new Date());
+    tokenTimeoutMap.put(token, new Date(new Date().getTime() + timeout));
 
     Logger.getLogger(this.getClass()).info("User = " + authUser.getUserName());
 
     return token;
+  }
+
+  /*
+   * (non-Javadoc)
+   * 
+   * @see org.ihtsdo.otf.ts.services.SecurityService#logout(java.lang.String)
+   */
+  @Override
+  public void logout(String authToken) {
+    tokenUsernameMap.remove(authToken);
+    tokenTimeoutMap.remove(authToken);
   }
 
   /*
@@ -140,6 +155,8 @@ public class SecurityServiceJpa extends RootServiceJpa implements
         if (tokenTimeoutMap.get(parsedToken).before(new Date())) {
           throw new LocalException("AuthToken has expired");
         }
+        tokenTimeoutMap.put(parsedToken, new Date(new Date().getTime()
+            + timeout));
       }
       return username;
     } else {

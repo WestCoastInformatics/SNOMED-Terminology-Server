@@ -64,6 +64,20 @@ public interface Component {
   public void setLastModified(Date lastModified);
 
   /**
+   * Returns the last modified by.
+   * 
+   * @return the last modified by
+   */
+  public String getLastModifiedBy();
+
+  /**
+   * Sets the last modified by.
+   * 
+   * @param lastModifiedBy the last modified by
+   */
+  public void setLastModifiedBy(String lastModifiedBy);
+
+/**
    * Indicates whether or not active is the case.
    * 
    * @return <code>true</code> if so, <code>false</code> otherwise

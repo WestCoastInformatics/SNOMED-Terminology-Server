@@ -74,6 +74,7 @@ base.url=
 #
 # URL for security service
 #
+security.timeout=7200000
 security.handler=DEFAULT
 security.handler.DEFAULT.class=org.ihtsdo.otf.mapping.services.handlers.DefaultSecurityServiceHandler
 #security.handler.IHTSDO.class=org.ihtsdo.otf.mapping.services.handlers.IHTSDOSecurityServiceHandler

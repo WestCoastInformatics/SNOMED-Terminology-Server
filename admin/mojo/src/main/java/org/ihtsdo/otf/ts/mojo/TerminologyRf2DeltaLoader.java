@@ -605,12 +605,14 @@ public class TerminologyRf2DeltaLoader extends AbstractMojo {
         concept.setTerminologyId(fields[0]);
         concept.setEffectiveTime(deltaLoaderStartDate);
         concept.setActive(fields[2].equals("1") ? true : false);
+        concept.setLastModified(new Date());
+        concept.setLastModifiedBy("loader");
         concept.setModuleId(fields[3]);
         concept.setDefinitionStatusId(fields[4]);
         concept.setTerminology(terminology);
         concept.setTerminologyVersion(terminologyVersion);
         concept.setDefaultPreferredName("TBD");
-
+        concept.setLastModifiedBy("loader");
         if (concept.getId() == null) {
           historyService.addConcept(concept);
         } else {
@@ -710,6 +712,8 @@ public class TerminologyRf2DeltaLoader extends AbstractMojo {
           description.setTerminologyId(fields[0]);
           description.setEffectiveTime(deltaLoaderStartDate);
           description.setActive(fields[2].equals("1") ? true : false);
+          description.setLastModified(new Date());
+          description.setLastModifiedBy("loader");
           description.setModuleId(fields[3]);
 
           description.setLanguageCode(fields[5]);
@@ -812,10 +816,10 @@ public class TerminologyRf2DeltaLoader extends AbstractMojo {
 
           // ensure effective time is set on all appropriate objects
 
-          LanguageRefSetMember languageRefSetMember = null;
+          LanguageRefSetMember member = null;
           if (languageRefSetMemberCache.containsKey(fields[0])) {
 
-            languageRefSetMember = languageRefSetMemberCache.get(fields[0]);
+            member = languageRefSetMemberCache.get(fields[0]);
           } else {
             if (this.existingLanguageRefSetMemberIds.contains(fields[0])) {
               getLog()
@@ -834,35 +838,37 @@ public class TerminologyRf2DeltaLoader extends AbstractMojo {
             }
           }
 
-          if (languageRefSetMember == null) {
+          if (member == null) {
             objectsAdded++;
-            languageRefSetMember = new LanguageRefSetMemberJpa();
+            member = new LanguageRefSetMemberJpa();
           } else {
             objectsUpdated++;
           }
 
-          languageRefSetMember.setDescription(description);
+          member.setDescription(description);
 
           // Universal RefSet attributes
-          languageRefSetMember.setTerminologyId(fields[0]);
-          languageRefSetMember.setEffectiveTime(deltaLoaderStartDate);
-          languageRefSetMember.setActive(fields[2].equals("1") ? true : false);
-          languageRefSetMember.setModuleId(fields[3]);
-          languageRefSetMember.setRefSetId(fields[4]);
+          member.setTerminologyId(fields[0]);
+          member.setEffectiveTime(deltaLoaderStartDate);
+          member.setActive(fields[2].equals("1") ? true : false);
+          member.setLastModified(new Date());
+          member.setLastModifiedBy("loader");
+          member.setModuleId(fields[3]);
+          member.setRefSetId(fields[4]);
 
           // Language unique attributes
-          languageRefSetMember.setAcceptabilityId(fields[6]);
+          member.setAcceptabilityId(fields[6]);
 
           // Terminology attributes
-          languageRefSetMember.setTerminology(terminology);
-          languageRefSetMember.setTerminologyVersion(terminologyVersion);
+          member.setTerminology(terminology);
+          member.setTerminologyVersion(terminologyVersion);
 
-          cacheLanguageRefSetMember(languageRefSetMember);
+          cacheLanguageRefSetMember(member);
 
-          if (languageRefSetMember.getId() == null) {
-            historyService.addLanguageRefSetMember(languageRefSetMember);
+          if (member.getId() == null) {
+            historyService.addLanguageRefSetMember(member);
           } else {
-            historyService.updateLanguageRefSetMember(languageRefSetMember);
+            historyService.updateLanguageRefSetMember(member);
           }
 
         } else {
@@ -990,6 +996,8 @@ public class TerminologyRf2DeltaLoader extends AbstractMojo {
           relationship.setTerminologyId(fields[0]);
           relationship.setEffectiveTime(deltaLoaderStartDate);
           relationship.setActive(fields[2].equals("1") ? true : false); // active
+          relationship.setLastModified(new Date());
+          relationship.setLastModifiedBy("loader");
           relationship.setModuleId(fields[3]); // moduleId
 
           relationship.setRelationshipGroup(Integer.valueOf(fields[6])); // relationshipGroup

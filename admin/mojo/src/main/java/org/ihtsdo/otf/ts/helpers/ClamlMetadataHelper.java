@@ -1,6 +1,7 @@
 package org.ihtsdo.otf.ts.helpers;
 
 import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -523,6 +524,9 @@ public class ClamlMetadataHelper {
     concept.setEffectiveTime(dt.parse(effectiveTime));
     concept.setDefaultPreferredName(defaultPreferredName);
     concept.setActive(true);
+    concept.setLastModified(new Date());
+    concept.setLastModifiedBy("loader");
+
     // default definition status
     if (conceptMap.containsKey("defaultDefinitionStatus"))
       concept.setDefinitionStatusId(conceptMap.get("defaultDefinitionStatus")
@@ -536,6 +540,8 @@ public class ClamlMetadataHelper {
     desc.setTerminologyId(terminologyId);
     desc.setEffectiveTime(dt.parse(effectiveTime));
     desc.setActive(true);
+    desc.setLastModified(new Date());
+    desc.setLastModifiedBy("loader");
     // default module
     if (conceptMap.containsKey("defaultModule"))
       desc.setModuleId(conceptMap.get("defaultModule").getTerminologyId());
@@ -578,6 +584,8 @@ public class ClamlMetadataHelper {
     relationship.setTerminologyId(terminologyId);
     relationship.setEffectiveTime(dt.parse(effectiveTime));
     relationship.setActive(true);
+    relationship.setLastModified(new Date());
+    relationship.setLastModifiedBy("loader");
     relationship
         .setModuleId(conceptMap.get("defaultModule").getTerminologyId());
     relationship.setTerminology(terminology);

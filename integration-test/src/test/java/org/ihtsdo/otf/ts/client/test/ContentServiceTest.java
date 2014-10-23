@@ -56,8 +56,16 @@ public class ContentServiceTest {
     assertNotNull(c);
     assertNotEquals(c.getDefaultPreferredName(),
         "No default preferred name found");
-    Logger.getLogger(this.getClass()).info(
-        "  defaultPreferredName = " + c.getDefaultPreferredName());
+    // one parent, no "other rels"
+    assertEquals(c.getRelationships().size(),1);
+    
+    
+    // two children
+    
+    // three descriptions
+
+
+    Logger.getLogger(this.getClass()).info(c);
   }
 
   /**

@@ -18,6 +18,7 @@ import org.hibernate.search.annotations.Index;
 import org.hibernate.search.annotations.Store;
 import org.ihtsdo.otf.ts.rf2.Component;
 
+// TODO: Auto-generated Javadoc
 /**
  * Abstract implementation of {@link Component} for use with JPA.
  */
@@ -38,6 +39,10 @@ public abstract class AbstractComponent implements Component {
   @Temporal(TemporalType.TIMESTAMP)
   private Date lastModified;
 
+  /** The last modified. */
+  @Column(nullable = false)
+  private String lastModifiedBy;
+
   /** The active. */
   @Column(nullable = false)
   private boolean active;
@@ -50,7 +55,7 @@ public abstract class AbstractComponent implements Component {
   @Column(nullable = false)
   private String terminology;
 
-  /** The terminology id */
+  /** The terminology id. */
   @Column(nullable = false)
   private String terminologyId;
 
@@ -60,13 +65,15 @@ public abstract class AbstractComponent implements Component {
 
   /**
    * Generalized field for any additional value that needs to be attached to a
-   * component
+   * component.
    */
   @Column(nullable = true, length = 4000)
   private String label;
 
-  /**
-   * {@inheritDoc}
+  /*
+   * (non-Javadoc)
+   * 
+   * @see org.ihtsdo.otf.ts.rf2.Component#getId()
    */
   @Override
   @XmlTransient
@@ -74,72 +81,121 @@ public abstract class AbstractComponent implements Component {
     return this.id;
   }
 
-  /**
-   * {@inheritDoc}
+  /*
+   * (non-Javadoc)
+   * 
+   * @see org.ihtsdo.otf.ts.rf2.Component#setId(java.lang.Long)
    */
   @Override
   public void setId(Long id) {
     this.id = id;
   }
 
-  /**
-   * {@inheritDoc}
+  /*
+   * (non-Javadoc)
+   * 
+   * @see org.ihtsdo.otf.ts.rf2.Component#getEffectiveTime()
    */
   @Override
   public Date getEffectiveTime() {
     return effectiveTime;
   }
 
-  /**
-   * {@inheritDoc}
+  /*
+   * (non-Javadoc)
+   * 
+   * @see org.ihtsdo.otf.ts.rf2.Component#setEffectiveTime(java.util.Date)
    */
   @Override
   public void setEffectiveTime(Date effectiveTime) {
     this.effectiveTime = effectiveTime;
   }
 
+  /*
+   * (non-Javadoc)
+   * 
+   * @see org.ihtsdo.otf.ts.rf2.Component#getLastModified()
+   */
   @Override
   public Date getLastModified() {
     return lastModified;
   }
 
+  /*
+   * (non-Javadoc)
+   * 
+   * @see org.ihtsdo.otf.ts.rf2.Component#setLastModified(java.util.Date)
+   */
   @Override
   public void setLastModified(Date lastModified) {
     this.lastModified = lastModified;
   }
 
-  /**
-   * {@inheritDoc}
+  /*
+   * (non-Javadoc)
+   * 
+   * @see org.ihtsdo.otf.ts.rf2.Component#getLastModifiedBy()
+   */
+  @Override
+  public String getLastModifiedBy() {
+    return lastModifiedBy;
+  }
+
+  /*
+   * (non-Javadoc)
+   * 
+   * @see org.ihtsdo.otf.ts.rf2.Component#setLastModifiedBy(java.lang.String)
+   */
+  @Override
+  public void setLastModifiedBy(String lastModifiedBy) {
+    this.lastModifiedBy = lastModifiedBy;
+  }
+
+  /*
+   * (non-Javadoc)
+   * 
+   * @see org.ihtsdo.otf.ts.rf2.Component#isActive()
    */
   @Override
   public boolean isActive() {
     return active;
   }
 
-  /**
-   * {@inheritDoc}
+  /*
+   * (non-Javadoc)
+   * 
+   * @see org.ihtsdo.otf.ts.rf2.Component#setActive(boolean)
    */
   @Override
   public void setActive(boolean active) {
     this.active = active;
   }
 
-  /**
-   * {@inheritDoc}
+  /*
+   * (non-Javadoc)
+   * 
+   * @see org.ihtsdo.otf.ts.rf2.Component#getModuleId()
    */
   @Override
   public String getModuleId() {
     return moduleId;
   }
 
-  /**
-   * {@inheritDoc}
+  /*
+   * (non-Javadoc)
+   * 
+   * @see org.ihtsdo.otf.ts.rf2.Component#setModuleId(java.lang.String)
    */
   @Override
   public void setModuleId(String moduleId) {
     this.moduleId = moduleId;
   }
 
+  /*
+   * (non-Javadoc)
+   * 
+   * @see java.lang.Object#hashCode()
+   */
   @Override
   public int hashCode() {
     final int prime = 31;
@@ -152,6 +208,11 @@ public abstract class AbstractComponent implements Component {
     return result;
   }
 
+  /*
+   * (non-Javadoc)
+   * 
+   * @see java.lang.Object#equals(java.lang.Object)
+   */
   @Override
   public boolean equals(Object obj) {
     if (this == obj)
@@ -174,8 +235,10 @@ public abstract class AbstractComponent implements Component {
     return true;
   }
 
-  /**
-   * {@inheritDoc}
+  /*
+   * (non-Javadoc)
+   * 
+   * @see org.ihtsdo.otf.ts.rf2.Component#getTerminologyVersion()
    */
   @Override
   @Field(index = Index.YES, analyze = Analyze.NO, store = Store.NO)
@@ -183,32 +246,41 @@ public abstract class AbstractComponent implements Component {
     return terminologyVersion;
   }
 
-  /**
-   * {@inheritDoc}
+  /*
+   * (non-Javadoc)
+   * 
+   * @see
+   * org.ihtsdo.otf.ts.rf2.Component#setTerminologyVersion(java.lang.String)
    */
   @Override
   public void setTerminologyVersion(String terminologyVersion) {
     this.terminologyVersion = terminologyVersion;
   }
 
-  /**
-   * {@inheritDoc}
+  /*
+   * (non-Javadoc)
+   * 
+   * @see org.ihtsdo.otf.ts.rf2.Component#getTerminology()
    */
   @Override
   public String getTerminology() {
     return terminology;
   }
 
-  /**
-   * {@inheritDoc}
+  /*
+   * (non-Javadoc)
+   * 
+   * @see org.ihtsdo.otf.ts.rf2.Component#setTerminology(java.lang.String)
    */
   @Override
   public void setTerminology(String terminology) {
     this.terminology = terminology;
   }
 
-  /**
-   * {@inheritDoc}
+  /*
+   * (non-Javadoc)
+   * 
+   * @see org.ihtsdo.otf.ts.rf2.Component#getTerminologyId()
    */
   @Override
   @XmlID
@@ -217,16 +289,20 @@ public abstract class AbstractComponent implements Component {
     return terminologyId;
   }
 
-  /**
-   * {@inheritDoc}
+  /*
+   * (non-Javadoc)
+   * 
+   * @see org.ihtsdo.otf.ts.rf2.Component#setTerminologyId(java.lang.String)
    */
   @Override
   public void setTerminologyId(String terminologyId) {
     this.terminologyId = terminologyId;
   }
 
-  /**
-   * {@inheritDoc}
+  /*
+   * (non-Javadoc)
+   * 
+   * @see java.lang.Object#toString()
    */
   @Override
   public String toString() {
@@ -237,20 +313,20 @@ public abstract class AbstractComponent implements Component {
         + this.getModuleId(); // end of basic component fields
   }
 
-  /**
-   * Returns the label.
-   *
-   * @return the label
+  /*
+   * (non-Javadoc)
+   * 
+   * @see org.ihtsdo.otf.ts.rf2.Component#getLabel()
    */
   @Override
   public String getLabel() {
     return label;
   }
 
-  /**
-   * Sets the label.
-   *
-   * @param label the label to set
+  /*
+   * (non-Javadoc)
+   * 
+   * @see org.ihtsdo.otf.ts.rf2.Component#setLabel(java.lang.String)
    */
   @Override
   public void setLabel(String label) {
