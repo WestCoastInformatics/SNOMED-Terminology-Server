@@ -4,6 +4,9 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import org.apache.log4j.Logger;
 import org.ihtsdo.otf.ts.helpers.ConceptList;
 import org.ihtsdo.otf.ts.helpers.PfsParameterJpa;
@@ -12,6 +15,8 @@ import org.ihtsdo.otf.ts.helpers.SearchResultList;
 import org.ihtsdo.otf.ts.jpa.client.ContentClientRest;
 import org.ihtsdo.otf.ts.jpa.client.SecurityClientRest;
 import org.ihtsdo.otf.ts.rf2.Concept;
+import org.ihtsdo.otf.ts.rf2.Relationship;
+import org.ihtsdo.otf.ts.services.helpers.ConceptReportHelper;
 import org.ihtsdo.otf.ts.services.helpers.ConfigUtility;
 import org.junit.After;
 import org.junit.Before;
@@ -27,6 +32,9 @@ public class ContentServiceTest {
 
   /** The auth token. */
   private static String authToken;
+
+  /**  The Constant sctIsaRel. */
+  private final static String sctIsaRel = "116680003";
 
   /**
    * Setup.
@@ -56,8 +64,16 @@ public class ContentServiceTest {
     assertNotNull(c);
     assertNotEquals(c.getDefaultPreferredName(),
         "No default preferred name found");
+
     // one parent, no "other rels"
-    assertEquals(c.getRelationships().size(),1);
+    Set<Relationship> isaRels = new HashSet<>();
+    for (Relationship r : c.getRelationships()) {
+      if (r.getTypeId().equals(sctIsaRel) && r.isActive()) {
+        
+        isaRels.add(r);
+      }
+    }
+    assertEquals(1, isaRels.size());
     
     
     // two children
@@ -65,7 +81,7 @@ public class ContentServiceTest {
     // three descriptions
 
 
-    Logger.getLogger(this.getClass()).info(c);
+    Logger.getLogger(this.getClass()).info(ConceptReportHelper.getConceptReport(c));
   }
 
   /**
