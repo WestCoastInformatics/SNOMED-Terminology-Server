@@ -57,7 +57,7 @@ public class ContentClientRest implements ContentServiceRest {
 
     String resultString = response.getEntity(String.class);
     if (response.getClientResponseStatus().getFamily() == Family.SUCCESSFUL) {
-      Logger.getLogger(this.getClass()).info(resultString);
+      Logger.getLogger(this.getClass()).debug(resultString);
     } else {
       throw new Exception(resultString);
     }
@@ -82,7 +82,7 @@ public class ContentClientRest implements ContentServiceRest {
 
     String resultString = response.getEntity(String.class);
     if (response.getClientResponseStatus().getFamily() == Family.SUCCESSFUL) {
-      Logger.getLogger(this.getClass()).info(resultString);
+      Logger.getLogger(this.getClass()).debug(resultString);
     } else {
       throw new Exception(resultString);
     }
@@ -119,7 +119,7 @@ public class ContentClientRest implements ContentServiceRest {
 
     String resultString = response.getEntity(String.class);
     if (response.getClientResponseStatus().getFamily() == Family.SUCCESSFUL) {
-      Logger.getLogger(this.getClass()).info(resultString);
+      Logger.getLogger(this.getClass()).debug(resultString);
     } else {
       throw new Exception(resultString);
     }

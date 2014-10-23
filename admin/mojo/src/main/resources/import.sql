@@ -5,4 +5,4 @@ INSERT INTO users (id, applicationRole, email, name, userName) values (1, 'ADMIN
 -- Load initial guest user
 INSERT INTO users (id, applicationRole, email, name, userName) values (2, 'VIEWER', 'test@example.com', 'Guest User', 'guest');
 -- Load initial loader user
-INSERT INTO users (id, applicationRole, email, name, userName) values (2, 'VIEWER', 'test@example.com', 'Loader User', 'loader');
+INSERT INTO users (id, applicationRole, email, name, userName) values (3, 'VIEWER', 'test@example.com', 'Loader User', 'loader');

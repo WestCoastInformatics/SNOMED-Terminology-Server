@@ -18,7 +18,6 @@ import org.hibernate.search.annotations.Index;
 import org.hibernate.search.annotations.Store;
 import org.ihtsdo.otf.ts.rf2.Component;
 
-// TODO: Auto-generated Javadoc
 /**
  * Abstract implementation of {@link Component} for use with JPA.
  */
@@ -89,6 +88,25 @@ public abstract class AbstractComponent implements Component {
   @Override
   public void setId(Long id) {
     this.id = id;
+  }
+
+  /* (non-Javadoc)
+   * @see org.ihtsdo.otf.ts.rf2.Component#getObjectId()
+   */
+  @Override
+  @XmlID
+  public String getObjectId() {
+    return this.id.toString();
+  }
+
+  /*
+   * (non-Javadoc)
+   * 
+   * @see org.ihtsdo.otf.ts.rf2.Component#setId(java.lang.Long)
+   */
+  @Override
+  public void setObjectId(String id) {
+    this.id = Long.valueOf(id);
   }
 
   /*
@@ -288,7 +306,7 @@ public abstract class AbstractComponent implements Component {
   public String getTerminologyId() {
     return terminologyId;
   }
-
+  
   /*
    * (non-Javadoc)
    * 

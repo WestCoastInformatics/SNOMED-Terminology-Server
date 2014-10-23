@@ -17,6 +17,7 @@
   <description>Public facing API for rest services.</description>
 
   <properties>
+    <base.url>http://localhost:8080/term-server-rest</base.url>
     <execFinalName>exec-${project.build.finalName}.jar</execFinalName>
     <packageName>${project.parent.artifactId}-rest</packageName>
   </properties>
@@ -143,26 +144,30 @@
     <finalName>${project.artifactId}</finalName>
     <plugins>
       <plugin>
-        <groupId>org.apache.tomcat.maven</groupId>
-        <artifactId>tomcat7-maven-plugin</artifactId>
-        <version>2.1</version>
-        <executions>
-          <execution>
-            <id>tomcat-run</id>
-            <goals>
-              <goal>exec-war-only</goal>
-            </goals>
-            <phase>package</phase>
-            <configuration>
-              <path>/term-server-rest</path>
-              <finalName>exec-${project.build.finalName}.jar</finalName>
-              <enableNaming>true</enableNaming>
-            </configuration>
-          </execution>
-        </executions>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-war-plugin</artifactId>
+        <configuration>
+          <warName>term-server-rest</warName>
+          <filteringDeploymentDescriptors>true</filteringDeploymentDescriptors>
+          <webResources>
+            <resource>
+              <directory>src/main/webapp</directory>
+              <filtering>true</filtering>
+              <includes>
+                <include>index.html</include>
+              </includes>
+            </resource>
+            <resource>
+              <directory>src/main/webapp</directory>
+              <filtering>false</filtering>
+              <excludes>
+                <exclude>index.html</exclude>
+              </excludes>
+            </resource>
+          </webResources>
+
+        </configuration>
       </plugin>
-
     </plugins>
-
   </build>
 </project>
