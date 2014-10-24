@@ -15,4 +15,13 @@ public interface SecurityServiceRest {
    * @throws Exception if anything goes wrong
    */
   public String authenticate(String username, String password) throws Exception;
+
+  /**
+   * Logout.
+   *
+   * @param authToken the auth token
+   * @throws Exception the exception
+   */
+  public void logout(String authToken) throws Exception;
+  
 }

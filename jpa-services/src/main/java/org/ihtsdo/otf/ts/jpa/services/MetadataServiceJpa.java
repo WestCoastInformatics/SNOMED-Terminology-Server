@@ -5,8 +5,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
+import org.ihtsdo.otf.ts.helpers.ConfigUtility;
 import org.ihtsdo.otf.ts.services.MetadataService;
-import org.ihtsdo.otf.ts.services.helpers.ConfigUtility;
 
 /**
  * Reference implementation of {@link MetadataService}

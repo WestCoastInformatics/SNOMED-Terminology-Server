@@ -220,21 +220,8 @@ public class ComplexMapRefSetMemberJpa extends AbstractConceptRefSetMember
    */
   @Override
   public String toString() {
-    return this.getId()
-        + ","
-        + this.getTerminology()
-        + ","
-        + this.getTerminologyId()
-        + ","
-        + this.getTerminologyVersion()
-        + ","
-        + this.getEffectiveTime()
-        + ","
-        + this.isActive()
-        + ","
-        +
-
-        (this.getConcept() == null ? null : this.getConcept()
+    return super.toString()
+        +        (this.getConcept() == null ? null : this.getConcept()
             .getTerminologyId()) + "," + Integer.toString(this.getMapGroup())
         + "," + Integer.toString(this.getMapPriority()) + ","
         + this.getMapRule() + "," + this.getMapAdvice() + ","

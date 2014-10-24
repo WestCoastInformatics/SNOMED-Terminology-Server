@@ -1,6 +1,7 @@
 package org.ihtsdo.otf.ts.rest.impl;
 
 import javax.ws.rs.Consumes;
+import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
@@ -67,4 +68,29 @@ public class SecurityServiceRestImpl extends RootServiceRestImpl implements
     }
 
   }
+
+  @Override
+  @GET
+  @Path("/logout/{authToken}")
+  @Produces({
+      MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML
+  })
+  @ApiOperation(value = "Logs out an auth token.", notes = "Performs logout on specified auth token.", response = String.class)
+  public void logout(
+    @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @PathParam("username") String authToken) {
+
+    Logger.getLogger(SecurityServiceRestImpl.class).info(
+        "RESTful call (Authentication): /logout for authToken = " + authToken);
+    try {
+      SecurityService securityService = new SecurityServiceJpa();
+      securityService.logout(authToken);
+    } catch (LocalException e) {
+      throw new WebApplicationException(Response.status(401)
+          .entity(e.getMessage()).build());
+    } catch (Exception e) {
+      handleException(e, "trying to authenticate a user");
+    }
+
+  }
+
 }

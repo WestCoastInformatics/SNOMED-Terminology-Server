@@ -134,7 +134,7 @@ public class RelationshipJpa extends AbstractComponent implements Relationship {
   }
 
   /**
-   *  For serialization .
+   * For serialization .
    *
    * @return the source concept id
    */
@@ -165,7 +165,7 @@ public class RelationshipJpa extends AbstractComponent implements Relationship {
   }
 
   /**
-   *  For serialization.
+   * For serialization.
    *
    * @return the destination concept id
    */
@@ -210,23 +210,8 @@ public class RelationshipJpa extends AbstractComponent implements Relationship {
    */
   @Override
   public String toString() {
-    return this.getId()
-        + ","
-        + this.getTerminology()
-        + ","
-        + this.getTerminologyId()
-        + ","
-        + this.getTerminologyVersion()
-        + ","
-        + this.getEffectiveTime()
-        + ","
-        + this.isActive()
-        + ","
-        + this.getModuleId()
-        + ","
-        + // end of basic component fields
-
-        (this.getSourceConcept() == null ? null : this.getSourceConcept()
+    return super.toString()
+        + (this.getSourceConcept() == null ? null : this.getSourceConcept()
             .getId())
         + ","
         + (this.getDestinationConcept() == null ? null : this

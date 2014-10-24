@@ -15,6 +15,7 @@ import java.util.Set;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoFailureException;
 import org.ihtsdo.otf.ts.helpers.ConceptList;
+import org.ihtsdo.otf.ts.helpers.ConfigUtility;
 import org.ihtsdo.otf.ts.helpers.DescriptionList;
 import org.ihtsdo.otf.ts.helpers.LanguageRefSetMemberList;
 import org.ihtsdo.otf.ts.helpers.RelationshipList;
@@ -33,7 +34,6 @@ import org.ihtsdo.otf.ts.rf2.jpa.RelationshipJpa;
 import org.ihtsdo.otf.ts.services.ContentService;
 import org.ihtsdo.otf.ts.services.HistoryService;
 import org.ihtsdo.otf.ts.services.MetadataService;
-import org.ihtsdo.otf.ts.services.helpers.ConfigUtility;
 
 /**
  * Goal which loads an RF2 Delta of SNOMED CT data
@@ -83,13 +83,13 @@ public class TerminologyRf2DeltaLoader extends AbstractMojo {
   private File deltaDir;
 
   /** the defaultPreferredNames type id. */
-  private Long dpnTypeId;
+  private String dpnTypeId;
 
   /** The dpn ref set id. */
-  private Long dpnRefSetId;
+  private String dpnRefSetId;
 
   /** The dpn acceptability id. */
-  private Long dpnAcceptabilityId;
+  private String dpnAcceptabilityId;
 
   /** The concept reader. */
   /** File readers. */
@@ -417,13 +417,13 @@ public class TerminologyRf2DeltaLoader extends AbstractMojo {
 
     // set the parameters for determining defaultPreferredNames
     dpnTypeId =
-        Long.valueOf(config.getProperty("loader.defaultPreferredNames.typeId"));
+        config.getProperty("loader.defaultPreferredNames.typeId");
     dpnRefSetId =
-        Long.valueOf(config
-            .getProperty("loader.defaultPreferredNames.refSetId"));
+        config
+            .getProperty("loader.defaultPreferredNames.refSetId");
     dpnAcceptabilityId =
-        Long.valueOf(config
-            .getProperty("loader.defaultPreferredNames.acceptabilityId"));
+        config
+            .getProperty("loader.defaultPreferredNames.acceptabilityId");
 
     // output relevant properties/settings to console
     getLog().info("Terminology Version: " + terminologyVersion);
@@ -1108,7 +1108,7 @@ public class TerminologyRf2DeltaLoader extends AbstractMojo {
               // if language ref set is active and matches
               // parameters,
               // this description has the default preferred name
-              if (new Long(language.getRefSetId()).equals(dpnRefSetId)
+              if (language.getRefSetId().equals(dpnRefSetId)
                   && language.isActive()
                   && language.getAcceptabilityId().equals(dpnAcceptabilityId)) {
 

@@ -18,6 +18,7 @@ import javax.persistence.NoResultException;
 
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoFailureException;
+import org.ihtsdo.otf.ts.helpers.ConfigUtility;
 import org.ihtsdo.otf.ts.helpers.FileSorter;
 import org.ihtsdo.otf.ts.jpa.algo.TransitiveClosureAlgorithm;
 import org.ihtsdo.otf.ts.jpa.services.ContentServiceJpa;
@@ -40,7 +41,6 @@ import org.ihtsdo.otf.ts.rf2.jpa.SimpleMapRefSetMemberJpa;
 import org.ihtsdo.otf.ts.rf2.jpa.SimpleRefSetMemberJpa;
 import org.ihtsdo.otf.ts.services.ContentService;
 import org.ihtsdo.otf.ts.services.MetadataService;
-import org.ihtsdo.otf.ts.services.helpers.ConfigUtility;
 
 import com.google.common.io.Files;
 

@@ -13,8 +13,8 @@ import org.apache.maven.plugin.MojoFailureException;
 import org.hibernate.CacheMode;
 import org.hibernate.search.jpa.FullTextEntityManager;
 import org.hibernate.search.jpa.Search;
+import org.ihtsdo.otf.ts.helpers.ConfigUtility;
 import org.ihtsdo.otf.ts.rf2.jpa.ConceptJpa;
-import org.ihtsdo.otf.ts.services.helpers.ConfigUtility;
 
 /**
  * Goal which makes lucene indexes based on hibernate-search annotations.

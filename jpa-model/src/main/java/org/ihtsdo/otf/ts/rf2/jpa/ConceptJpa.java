@@ -77,19 +77,19 @@ public class ConceptJpa extends AbstractComponent implements Concept {
   @OneToMany(mappedBy = "destinationConcept", orphanRemoval = true, targetEntity = RelationshipJpa.class)
   private Set<Relationship> inverseRelationships = new HashSet<>();
 
-  /**  The simple RefSet members. */
+  /** The simple RefSet members. */
   @OneToMany(mappedBy = "concept", cascade = CascadeType.ALL, orphanRemoval = true, targetEntity = SimpleRefSetMemberJpa.class)
   private Set<SimpleRefSetMember> simpleRefSetMembers = new HashSet<>();
 
-  /**  The simpleMap RefSet members. */
+  /** The simpleMap RefSet members. */
   @OneToMany(mappedBy = "concept", cascade = CascadeType.ALL, orphanRemoval = true, targetEntity = SimpleMapRefSetMemberJpa.class)
   private Set<SimpleMapRefSetMember> simpleMapRefSetMembers = new HashSet<>();
 
-  /**  The complexMap RefSet members. */
+  /** The complexMap RefSet members. */
   @OneToMany(mappedBy = "concept", cascade = CascadeType.ALL, orphanRemoval = true, targetEntity = ComplexMapRefSetMemberJpa.class)
   private Set<ComplexMapRefSetMember> complexMapRefSetMembers = new HashSet<>();
 
-  /**  The attributeValue RefSet members. */
+  /** The attributeValue RefSet members. */
   @OneToMany(mappedBy = "concept", cascade = CascadeType.ALL, orphanRemoval = true, targetEntity = AttributeValueRefSetMemberJpa.class)
   private Set<AttributeValueRefSetMember> attributeValueRefSetMembers =
       new HashSet<>();
@@ -101,7 +101,9 @@ public class ConceptJpa extends AbstractComponent implements Concept {
   })
   private String defaultPreferredName;
 
-  /* (non-Javadoc)
+  /*
+   * (non-Javadoc)
+   * 
    * @see org.ihtsdo.otf.ts.rf2.Concept#getWorkflowStatus()
    */
   @Override
@@ -109,7 +111,9 @@ public class ConceptJpa extends AbstractComponent implements Concept {
     return workflowStatus;
   }
 
-  /* (non-Javadoc)
+  /*
+   * (non-Javadoc)
+   * 
    * @see org.ihtsdo.otf.ts.rf2.Concept#setWorkflowStatus(java.lang.String)
    */
   @Override
@@ -117,7 +121,9 @@ public class ConceptJpa extends AbstractComponent implements Concept {
     this.workflowStatus = workflowStatus;
   }
 
-  /* (non-Javadoc)
+  /*
+   * (non-Javadoc)
+   * 
    * @see org.ihtsdo.otf.ts.rf2.Concept#getDefinitionStatusId()
    */
   @Override
@@ -125,7 +131,9 @@ public class ConceptJpa extends AbstractComponent implements Concept {
     return definitionStatusId;
   }
 
-  /* (non-Javadoc)
+  /*
+   * (non-Javadoc)
+   * 
    * @see org.ihtsdo.otf.ts.rf2.Concept#setDefinitionStatusId(java.lang.String)
    */
   @Override
@@ -133,7 +141,9 @@ public class ConceptJpa extends AbstractComponent implements Concept {
     this.definitionStatusId = definitionStatusId;
   }
 
-  /* (non-Javadoc)
+  /*
+   * (non-Javadoc)
+   * 
    * @see org.ihtsdo.otf.ts.rf2.Concept#getDescriptions()
    */
   @Override
@@ -142,7 +152,9 @@ public class ConceptJpa extends AbstractComponent implements Concept {
     return descriptions;
   }
 
-  /* (non-Javadoc)
+  /*
+   * (non-Javadoc)
+   * 
    * @see org.ihtsdo.otf.ts.rf2.Concept#setDescriptions(java.util.Set)
    */
   @Override
@@ -150,8 +162,12 @@ public class ConceptJpa extends AbstractComponent implements Concept {
     this.descriptions = descriptions;
   }
 
-  /* (non-Javadoc)
-   * @see org.ihtsdo.otf.ts.rf2.Concept#addDescription(org.ihtsdo.otf.ts.rf2.Description)
+  /*
+   * (non-Javadoc)
+   * 
+   * @see
+   * org.ihtsdo.otf.ts.rf2.Concept#addDescription(org.ihtsdo.otf.ts.rf2.Description
+   * )
    */
   @Override
   public void addDescription(Description description) {
@@ -159,15 +175,20 @@ public class ConceptJpa extends AbstractComponent implements Concept {
     this.descriptions.add(description);
   }
 
-  /* (non-Javadoc)
-   * @see org.ihtsdo.otf.ts.rf2.Concept#removeDescription(org.ihtsdo.otf.ts.rf2.Description)
+  /*
+   * (non-Javadoc)
+   * 
+   * @see org.ihtsdo.otf.ts.rf2.Concept#removeDescription(org.ihtsdo.otf.ts.rf2.
+   * Description)
    */
   @Override
   public void removeDescription(Description description) {
     this.descriptions.remove(description);
   }
 
-  /* (non-Javadoc)
+  /*
+   * (non-Javadoc)
+   * 
    * @see org.ihtsdo.otf.ts.rf2.Concept#getRelationships()
    */
   @Override
@@ -176,7 +197,9 @@ public class ConceptJpa extends AbstractComponent implements Concept {
     return relationships;
   }
 
-  /* (non-Javadoc)
+  /*
+   * (non-Javadoc)
+   * 
    * @see org.ihtsdo.otf.ts.rf2.Concept#setRelationships(java.util.Set)
    */
   @Override
@@ -184,7 +207,9 @@ public class ConceptJpa extends AbstractComponent implements Concept {
     this.relationships = relationships;
   }
 
-  /* (non-Javadoc)
+  /*
+   * (non-Javadoc)
+   * 
    * @see org.ihtsdo.otf.ts.rf2.Concept#getInverseRelationships()
    */
   @XmlTransient
@@ -193,7 +218,9 @@ public class ConceptJpa extends AbstractComponent implements Concept {
     return inverseRelationships;
   }
 
-  /* (non-Javadoc)
+  /*
+   * (non-Javadoc)
+   * 
    * @see org.ihtsdo.otf.ts.rf2.Concept#setInverseRelationships(java.util.Set)
    */
   @Override
@@ -201,7 +228,9 @@ public class ConceptJpa extends AbstractComponent implements Concept {
     this.inverseRelationships = inverseRelationships;
   }
 
-  /* (non-Javadoc)
+  /*
+   * (non-Javadoc)
+   * 
    * @see org.ihtsdo.otf.ts.rf2.Concept#getSimpleRefSetMembers()
    */
   @XmlTransient
@@ -210,7 +239,9 @@ public class ConceptJpa extends AbstractComponent implements Concept {
     return this.simpleRefSetMembers;
   }
 
-  /* (non-Javadoc)
+  /*
+   * (non-Javadoc)
+   * 
    * @see org.ihtsdo.otf.ts.rf2.Concept#setSimpleRefSetMembers(java.util.Set)
    */
   @Override
@@ -218,8 +249,12 @@ public class ConceptJpa extends AbstractComponent implements Concept {
     this.simpleRefSetMembers = simpleRefSetMembers;
   }
 
-  /* (non-Javadoc)
-   * @see org.ihtsdo.otf.ts.rf2.Concept#addSimpleRefSetMember(org.ihtsdo.otf.ts.rf2.SimpleRefSetMember)
+  /*
+   * (non-Javadoc)
+   * 
+   * @see
+   * org.ihtsdo.otf.ts.rf2.Concept#addSimpleRefSetMember(org.ihtsdo.otf.ts.rf2
+   * .SimpleRefSetMember)
    */
   @Override
   public void addSimpleRefSetMember(SimpleRefSetMember simpleRefSetMember) {
@@ -227,15 +262,21 @@ public class ConceptJpa extends AbstractComponent implements Concept {
     this.simpleRefSetMembers.add(simpleRefSetMember);
   }
 
-  /* (non-Javadoc)
-   * @see org.ihtsdo.otf.ts.rf2.Concept#removeSimpleRefSetMember(org.ihtsdo.otf.ts.rf2.SimpleRefSetMember)
+  /*
+   * (non-Javadoc)
+   * 
+   * @see
+   * org.ihtsdo.otf.ts.rf2.Concept#removeSimpleRefSetMember(org.ihtsdo.otf.ts
+   * .rf2.SimpleRefSetMember)
    */
   @Override
   public void removeSimpleRefSetMember(SimpleRefSetMember simpleRefSetMember) {
     this.simpleRefSetMembers.remove(simpleRefSetMember);
   }
 
-  /* (non-Javadoc)
+  /*
+   * (non-Javadoc)
+   * 
    * @see org.ihtsdo.otf.ts.rf2.Concept#getSimpleMapRefSetMembers()
    */
   @XmlTransient
@@ -244,7 +285,9 @@ public class ConceptJpa extends AbstractComponent implements Concept {
     return this.simpleMapRefSetMembers;
   }
 
-  /* (non-Javadoc)
+  /*
+   * (non-Javadoc)
+   * 
    * @see org.ihtsdo.otf.ts.rf2.Concept#setSimpleMapRefSetMembers(java.util.Set)
    */
   @Override
@@ -253,8 +296,12 @@ public class ConceptJpa extends AbstractComponent implements Concept {
     this.simpleMapRefSetMembers = simpleMapRefSetMembers;
   }
 
-  /* (non-Javadoc)
-   * @see org.ihtsdo.otf.ts.rf2.Concept#addSimpleMapRefSetMember(org.ihtsdo.otf.ts.rf2.SimpleMapRefSetMember)
+  /*
+   * (non-Javadoc)
+   * 
+   * @see
+   * org.ihtsdo.otf.ts.rf2.Concept#addSimpleMapRefSetMember(org.ihtsdo.otf.ts
+   * .rf2.SimpleMapRefSetMember)
    */
   @Override
   public void addSimpleMapRefSetMember(
@@ -263,8 +310,12 @@ public class ConceptJpa extends AbstractComponent implements Concept {
     this.simpleMapRefSetMembers.add(simpleMapRefSetMember);
   }
 
-  /* (non-Javadoc)
-   * @see org.ihtsdo.otf.ts.rf2.Concept#removeSimpleMapRefSetMember(org.ihtsdo.otf.ts.rf2.SimpleMapRefSetMember)
+  /*
+   * (non-Javadoc)
+   * 
+   * @see
+   * org.ihtsdo.otf.ts.rf2.Concept#removeSimpleMapRefSetMember(org.ihtsdo.otf
+   * .ts.rf2.SimpleMapRefSetMember)
    */
   @Override
   public void removeSimpleMapRefSetMember(
@@ -272,7 +323,9 @@ public class ConceptJpa extends AbstractComponent implements Concept {
     this.simpleMapRefSetMembers.remove(simpleMapRefSetMember);
   }
 
-  /* (non-Javadoc)
+  /*
+   * (non-Javadoc)
+   * 
    * @see org.ihtsdo.otf.ts.rf2.Concept#getComplexMapRefSetMembers()
    */
   @XmlTransient
@@ -281,8 +334,11 @@ public class ConceptJpa extends AbstractComponent implements Concept {
     return this.complexMapRefSetMembers;
   }
 
-  /* (non-Javadoc)
-   * @see org.ihtsdo.otf.ts.rf2.Concept#setComplexMapRefSetMembers(java.util.Set)
+  /*
+   * (non-Javadoc)
+   * 
+   * @see
+   * org.ihtsdo.otf.ts.rf2.Concept#setComplexMapRefSetMembers(java.util.Set)
    */
   @Override
   public void setComplexMapRefSetMembers(
@@ -290,8 +346,12 @@ public class ConceptJpa extends AbstractComponent implements Concept {
     this.complexMapRefSetMembers = complexMapRefSetMembers;
   }
 
-  /* (non-Javadoc)
-   * @see org.ihtsdo.otf.ts.rf2.Concept#addComplexMapRefSetMember(org.ihtsdo.otf.ts.rf2.ComplexMapRefSetMember)
+  /*
+   * (non-Javadoc)
+   * 
+   * @see
+   * org.ihtsdo.otf.ts.rf2.Concept#addComplexMapRefSetMember(org.ihtsdo.otf.
+   * ts.rf2.ComplexMapRefSetMember)
    */
   @Override
   public void addComplexMapRefSetMember(
@@ -322,8 +382,11 @@ public class ConceptJpa extends AbstractComponent implements Concept {
     return this.attributeValueRefSetMembers;
   }
 
-  /* (non-Javadoc)
-   * @see org.ihtsdo.otf.ts.rf2.Concept#setAttributeValueRefSetMembers(java.util.Set)
+  /*
+   * (non-Javadoc)
+   * 
+   * @see
+   * org.ihtsdo.otf.ts.rf2.Concept#setAttributeValueRefSetMembers(java.util.Set)
    */
   @Override
   public void setAttributeValueRefSetMembers(
@@ -331,8 +394,12 @@ public class ConceptJpa extends AbstractComponent implements Concept {
     this.attributeValueRefSetMembers = attributeValueRefSetMembers;
   }
 
-  /* (non-Javadoc)
-   * @see org.ihtsdo.otf.ts.rf2.Concept#addAttributeValueRefSetMember(org.ihtsdo.otf.ts.rf2.AttributeValueRefSetMember)
+  /*
+   * (non-Javadoc)
+   * 
+   * @see
+   * org.ihtsdo.otf.ts.rf2.Concept#addAttributeValueRefSetMember(org.ihtsdo.
+   * otf.ts.rf2.AttributeValueRefSetMember)
    */
   @Override
   public void addAttributeValueRefSetMember(
@@ -341,8 +408,12 @@ public class ConceptJpa extends AbstractComponent implements Concept {
     this.attributeValueRefSetMembers.add(attributeValueRefSetMember);
   }
 
-  /* (non-Javadoc)
-   * @see org.ihtsdo.otf.ts.rf2.Concept#removeAttributeValueRefSetMember(org.ihtsdo.otf.ts.rf2.AttributeValueRefSetMember)
+  /*
+   * (non-Javadoc)
+   * 
+   * @see
+   * org.ihtsdo.otf.ts.rf2.Concept#removeAttributeValueRefSetMember(org.ihtsdo
+   * .otf.ts.rf2.AttributeValueRefSetMember)
    */
   @Override
   public void removeAttributeValueRefSetMember(
@@ -350,7 +421,9 @@ public class ConceptJpa extends AbstractComponent implements Concept {
     this.attributeValueRefSetMembers.remove(attributeValueRefSetMember);
   }
 
-  /* (non-Javadoc)
+  /*
+   * (non-Javadoc)
+   * 
    * @see org.ihtsdo.otf.ts.rf2.jpa.AbstractComponent#getEffectiveTime()
    */
   @Field(index = Index.YES, analyze = Analyze.NO, store = Store.YES)
@@ -359,7 +432,9 @@ public class ConceptJpa extends AbstractComponent implements Concept {
     return super.getEffectiveTime();
   }
 
-  /* (non-Javadoc)
+  /*
+   * (non-Javadoc)
+   * 
    * @see org.ihtsdo.otf.ts.rf2.jpa.AbstractComponent#getTerminology()
    */
   @Field(index = Index.YES, analyze = Analyze.NO, store = Store.YES)
@@ -368,7 +443,9 @@ public class ConceptJpa extends AbstractComponent implements Concept {
     return super.getTerminology();
   }
 
-  /* (non-Javadoc)
+  /*
+   * (non-Javadoc)
+   * 
    * @see org.ihtsdo.otf.ts.rf2.jpa.AbstractComponent#getTerminologyVersion()
    */
   @Field(index = Index.YES, analyze = Analyze.NO, store = Store.YES)
@@ -377,7 +454,9 @@ public class ConceptJpa extends AbstractComponent implements Concept {
     return super.getTerminologyVersion();
   }
 
-  /* (non-Javadoc)
+  /*
+   * (non-Javadoc)
+   * 
    * @see org.ihtsdo.otf.ts.rf2.Concept#getDefaultPreferredName()
    */
   @Override
@@ -386,30 +465,27 @@ public class ConceptJpa extends AbstractComponent implements Concept {
     return defaultPreferredName;
   }
 
-  /* (non-Javadoc)
-   * @see org.ihtsdo.otf.ts.rf2.Concept#setDefaultPreferredName(java.lang.String)
+  /*
+   * (non-Javadoc)
+   * 
+   * @see
+   * org.ihtsdo.otf.ts.rf2.Concept#setDefaultPreferredName(java.lang.String)
    */
   @Override
   public void setDefaultPreferredName(String defaultPreferredName) {
     this.defaultPreferredName = defaultPreferredName;
   }
 
-  /* (non-Javadoc)
+  /*
+   * (non-Javadoc)
+   * 
    * @see org.ihtsdo.otf.ts.rf2.jpa.AbstractComponent#toString()
    */
   @Override
   public String toString() {
 
-    return this.getId() + "," + this.getTerminology() + ","
-        + this.getTerminologyId() + "," + this.getTerminologyVersion() + ","
-        + this.getEffectiveTime() + "," + this.isActive() + ","
-        + this.getModuleId() + "," + // end of basic component fields
-        // end
-        // of
-        // basic
-        // concept
-        // fields
-        this.getDefinitionStatusId() + "," + this.getDefaultPreferredName();
+    return super.toString() + getDefinitionStatusId() + ","
+        + getDefaultPreferredName();
   }
 
   /*

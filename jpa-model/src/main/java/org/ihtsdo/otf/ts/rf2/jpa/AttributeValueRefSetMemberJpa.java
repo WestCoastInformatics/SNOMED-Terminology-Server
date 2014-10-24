@@ -41,21 +41,8 @@ public class AttributeValueRefSetMemberJpa extends AbstractConceptRefSetMember
    */
   @Override
   public String toString() {
-    return this.getId()
-        + ","
-        + this.getTerminology()
-        + ","
-        + this.getTerminologyId()
-        + ","
-        + this.getTerminologyVersion()
-        + ","
-        + this.getEffectiveTime()
-        + ","
-        + this.isActive()
-        + ","
-        +
-
-        (this.getConcept() == null ? null : this.getConcept()
+    return super.toString()
+        + (this.getConcept() == null ? null : this.getConcept()
             .getTerminologyId()) + "," + this.getValueId();
   }
 

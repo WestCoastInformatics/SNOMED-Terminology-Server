@@ -3,21 +3,23 @@ package org.ihtsdo.otf.ts.client.test;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 import java.util.HashSet;
 import java.util.Set;
 
 import org.apache.log4j.Logger;
 import org.ihtsdo.otf.ts.helpers.ConceptList;
+import org.ihtsdo.otf.ts.helpers.ConfigUtility;
 import org.ihtsdo.otf.ts.helpers.PfsParameterJpa;
 import org.ihtsdo.otf.ts.helpers.SearchResult;
 import org.ihtsdo.otf.ts.helpers.SearchResultList;
 import org.ihtsdo.otf.ts.jpa.client.ContentClientRest;
 import org.ihtsdo.otf.ts.jpa.client.SecurityClientRest;
 import org.ihtsdo.otf.ts.rf2.Concept;
+import org.ihtsdo.otf.ts.rf2.Description;
 import org.ihtsdo.otf.ts.rf2.Relationship;
 import org.ihtsdo.otf.ts.services.helpers.ConceptReportHelper;
-import org.ihtsdo.otf.ts.services.helpers.ConfigUtility;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -75,11 +77,16 @@ public class ContentServiceTest {
     }
     assertEquals(1, isaRels.size());
     
-    
-    // two children
-    
     // three descriptions
-
+    int descCt = 0;
+    for (Description d : c.getDescriptions()) {
+      descCt++;
+      // each is active
+      assertTrue(d.isActive());
+      // each has 2 language refset members
+      assertEquals(2,d.getLanguageRefSetMembers());
+    }
+    assertEquals(3, descCt);
 
     Logger.getLogger(this.getClass()).info(ConceptReportHelper.getConceptReport(c));
   }

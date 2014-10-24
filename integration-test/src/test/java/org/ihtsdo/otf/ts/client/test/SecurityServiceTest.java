@@ -2,9 +2,9 @@ package org.ihtsdo.otf.ts.client.test;
 
 import static org.junit.Assert.assertEquals;
 
+import org.ihtsdo.otf.ts.helpers.ConfigUtility;
 import org.ihtsdo.otf.ts.jpa.client.SecurityClientRest;
 import org.ihtsdo.otf.ts.services.handlers.DefaultSecurityServiceHandler;
-import org.ihtsdo.otf.ts.services.helpers.ConfigUtility;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -33,9 +33,12 @@ public class SecurityServiceTest {
    * @throws Exception
    */
   @Test
-  public void testAuthenticate() throws Exception {
+  public void testAuthenticateAndLogout() throws Exception {
+    // test authenticating
     String authToken = client.authenticate("guest", "guest");
     assertEquals(authToken, "guest");
+    // test logging out
+    client.logout(authToken);
   }
 
   /**

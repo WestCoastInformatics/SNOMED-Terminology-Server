@@ -27,9 +27,9 @@ public interface SecurityService extends RootService {
    * Logout.
    *
    * @param authToken the auth token
-   * @return the string
+   * @throws Exception 
    */
-  public void logout(String authToken);
+  public void logout(String authToken) throws Exception;
   
   /**
    * Returns the username for token.

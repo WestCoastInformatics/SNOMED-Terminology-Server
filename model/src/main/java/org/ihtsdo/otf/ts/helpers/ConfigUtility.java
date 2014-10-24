@@ -1,4 +1,4 @@
-package org.ihtsdo.otf.ts.services.helpers;
+package org.ihtsdo.otf.ts.helpers;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
@@ -10,6 +10,7 @@ import java.io.InputStream;
 import java.io.StringReader;
 import java.io.StringWriter;
 import java.nio.charset.StandardCharsets;
+import java.text.SimpleDateFormat;
 import java.util.Properties;
 import java.util.Scanner;
 
@@ -31,7 +32,6 @@ import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
 
 import org.apache.log4j.Logger;
-import org.ihtsdo.otf.ts.helpers.Configurable;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.xml.sax.SAXException;
@@ -50,6 +50,9 @@ public class ConfigUtility {
   /** The transformer for DOM -> XML. */
   private static Transformer transformer;
 
+  /**  The date format. */
+  public static SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("YYYYmmDD");
+  
   static {
     try {
       TransformerFactory factory = TransformerFactory.newInstance();

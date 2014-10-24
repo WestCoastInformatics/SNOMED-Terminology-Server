@@ -350,4 +350,5 @@ public abstract class AbstractComponent implements Component {
   public void setLabel(String label) {
     this.label = label;
   }
+
 }

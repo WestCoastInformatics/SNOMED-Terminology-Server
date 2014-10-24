@@ -51,4 +51,25 @@ public class SecurityClientRest implements SecurityServiceRest {
     return resultString.replaceAll("\"","");
   }
 
+  /* (non-Javadoc)
+   * @see org.ihtsdo.otf.ts.rest.SecurityServiceRest#logout(java.lang.String)
+   */
+  @Override
+  public void logout(String authToken) throws Exception {
+    Client client = Client.create();
+    WebResource resource =
+        client.resource(config.getProperty("base.url") + "/security/logout/"
+            + authToken);
+    resource.accept(MediaType.APPLICATION_JSON);
+    ClientResponse response = resource.get(ClientResponse.class);
+    String resultString = response.getEntity(String.class);
+    Logger.getLogger(this.getClass()).info("status: " + response.getStatus());
+    if (response.getClientResponseStatus().getFamily() == Family.SUCCESSFUL) {
+      Logger.getLogger(this.getClass()).info(resultString);
+    } else {
+      throw new Exception(resultString);
+    }
+
+  }
+
 }

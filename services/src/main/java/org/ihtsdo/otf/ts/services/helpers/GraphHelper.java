@@ -54,7 +54,7 @@ public class GraphHelper {
 
           // if relationship is active, typeId equals the provided typeId, and
           // the source concept is active
-          if (rel.isActive() && rel.getTypeId().equals(new Long(typeId))
+          if (rel.isActive() && rel.getTypeId().equals(typeId)
               && rel.getSourceConcept().isActive()) {
 
             // get source concept from inverse relationship (i.e. child of
@@ -100,7 +100,7 @@ public class GraphHelper {
 
       // if relationship is active, typeId equals the provided typeId, and
       // the source concept is active
-      if (rel.isActive() && rel.getTypeId().equals(new Long(typeId))
+      if (rel.isActive() && rel.getTypeId().equals(typeId)
           && rel.getSourceConcept().isActive()) {
 
         // get source concept from inverse relationship (i.e. child of

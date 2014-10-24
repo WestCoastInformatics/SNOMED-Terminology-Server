@@ -7,6 +7,7 @@ import java.util.Map;
 import java.util.Properties;
 
 import org.apache.log4j.Logger;
+import org.ihtsdo.otf.ts.helpers.ConfigUtility;
 import org.ihtsdo.otf.ts.helpers.LocalException;
 import org.ihtsdo.otf.ts.helpers.User;
 import org.ihtsdo.otf.ts.helpers.UserJpa;
@@ -15,7 +16,6 @@ import org.ihtsdo.otf.ts.helpers.UserListJpa;
 import org.ihtsdo.otf.ts.helpers.UserRole;
 import org.ihtsdo.otf.ts.services.SecurityService;
 import org.ihtsdo.otf.ts.services.handlers.SecurityServiceHandler;
-import org.ihtsdo.otf.ts.services.helpers.ConfigUtility;
 
 /**
  * Reference implementation of the {@link SecurityService}.
@@ -118,9 +118,10 @@ public class SecurityServiceJpa extends RootServiceJpa implements
    * @see org.ihtsdo.otf.ts.services.SecurityService#logout(java.lang.String)
    */
   @Override
-  public void logout(String authToken) {
+  public void logout(String authToken) throws Exception {
     tokenUsernameMap.remove(authToken);
     tokenTimeoutMap.remove(authToken);
+    throw new Exception("sample exception " + authToken);
   }
 
   /*

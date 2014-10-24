@@ -4,12 +4,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 
+import org.ihtsdo.otf.ts.helpers.ConfigUtility;
 import org.ihtsdo.otf.ts.helpers.ValidationResult;
 import org.ihtsdo.otf.ts.helpers.ValidationResultJpa;
 import org.ihtsdo.otf.ts.rf2.Concept;
 import org.ihtsdo.otf.ts.services.ValidationService;
 import org.ihtsdo.otf.ts.services.handlers.ValidationCheck;
-import org.ihtsdo.otf.ts.services.helpers.ConfigUtility;
 
 /**
  * Validation services for the Jpa model.

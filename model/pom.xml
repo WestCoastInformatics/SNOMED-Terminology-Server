@@ -14,4 +14,12 @@
   <name>Terminology server domain model.</name>
   <description>Conceptual model for RF2 data objects.</description>
 
+  <dependencies>
+  
+    <!-- Logging -->
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-log4j12</artifactId>
+    </dependency>
+  </dependencies>
 </project>

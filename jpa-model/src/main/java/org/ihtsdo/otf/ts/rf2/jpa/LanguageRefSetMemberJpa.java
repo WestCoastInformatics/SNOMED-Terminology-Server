@@ -49,22 +49,8 @@ public class LanguageRefSetMemberJpa extends AbstractDescriptionRefSetMember
    */
   @Override
   public String toString() {
-    return this.getId() + ","
-        + this.getTerminology()
-        + ","
-        + this.getTerminologyId()
-        + ","
-        + this.getTerminologyVersion()
-        + ","
-        + this.getEffectiveTime()
-        + ","
-        + this.isActive()
-        + ","
-        + this.getModuleId()
-        + ","
-        + // end of basic component fields
-
-        (this.getDescription() == null ? null : getDescription()
+    return super.toString()
+        +        (this.getDescription() == null ? null : getDescription()
             .getTerminologyId()) + "," + this.getAcceptabilityId();
   }
 

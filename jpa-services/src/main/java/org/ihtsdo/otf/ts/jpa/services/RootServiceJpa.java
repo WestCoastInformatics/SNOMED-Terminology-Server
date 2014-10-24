@@ -8,8 +8,8 @@ import javax.persistence.EntityTransaction;
 import javax.persistence.Persistence;
 
 import org.apache.log4j.Logger;
+import org.ihtsdo.otf.ts.helpers.ConfigUtility;
 import org.ihtsdo.otf.ts.services.RootService;
-import org.ihtsdo.otf.ts.services.helpers.ConfigUtility;
 
 /**
  * The root service for managing the entity manager factory and hibernate search

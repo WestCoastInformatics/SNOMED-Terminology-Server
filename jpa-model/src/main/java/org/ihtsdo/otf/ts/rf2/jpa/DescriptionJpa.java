@@ -128,8 +128,7 @@ public class DescriptionJpa extends AbstractComponent implements Description {
   /**
    * Returns the term.
    * 
-   * @return
-   *  the term
+   * @return the term
    */
   @Override
   @Field(index = Index.YES, analyze = Analyze.YES, store = Store.NO)
@@ -247,18 +246,10 @@ public class DescriptionJpa extends AbstractComponent implements Description {
    */
   @Override
   public String toString() {
-    return this.getId() + "," + this.getTerminology() + ","
-        + this.getTerminologyId() + "," + this.getTerminologyVersion() + ","
-        + this.getEffectiveTime() + "," + this.isActive() + ","
-        + this.getModuleId()
-        + ","
-        + // end of basic component fields
-
-        (this.getConcept() == null ? null : getConcept().getTerminologyId())
+    return super.toString()
+        + (this.getConcept() == null ? null : getConcept().getTerminologyId())
         + "," + this.getLanguageCode() + "," + this.getTypeId() + ","
-        + this.getTerm() + "," + this.getCaseSignificanceId(); // end of basic
-                                                               // description
-    // fields
+        + this.getTerm() + "," + this.getCaseSignificanceId();
   }
 
   /*
