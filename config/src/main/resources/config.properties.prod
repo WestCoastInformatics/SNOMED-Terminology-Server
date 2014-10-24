@@ -83,11 +83,11 @@ security.handler.DEFAULT.class=org.ihtsdo.otf.mapping.services.handlers.DefaultS
 #
 # Exception processing emails
 #
-mail.enabled=false
-mail.smtp.user=mapping@ihtsdotools.org
-mail.smtp.password=Sn0m3dCT
-mail.smtp.host=auth.smtp.1and1.co.uk
+mail.enabled=true
+mail.smtp.user=EDIT_THIS
+mail.smtp.password=
+mail.smtp.host=localhost
 mail.smtp.port=587
-mail.smtp.starttls.enable=true
-mail.smtp.auth=true
+mail.smtp.starttls.enable=false
+mail.smtp.auth=false
 mail.smtp.to=EDIT_THIS
