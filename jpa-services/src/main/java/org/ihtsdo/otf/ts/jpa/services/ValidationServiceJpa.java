@@ -17,7 +17,7 @@ import org.ihtsdo.otf.ts.services.handlers.ValidationCheck;
 public class ValidationServiceJpa extends RootServiceJpa implements ValidationService {
 
   /**  The checks. */
-  public List<ValidationCheck> checks = null;
+  public static List<ValidationCheck> checks = null;
 
   /**
    * Instantiates an empty {@link ValidationServiceJpa}.

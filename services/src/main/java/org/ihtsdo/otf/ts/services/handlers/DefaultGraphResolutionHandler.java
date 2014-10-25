@@ -29,10 +29,11 @@ public class DefaultGraphResolutionHandler implements GraphResolutionHandler {
       for (Relationship r : concept.getRelationships()) {
         r.getDestinationConcept().getDefaultPreferredName();
       }
-      concept.getAttributeValueRefSetMembers().size();
-      concept.getComplexMapRefSetMembers().size();
-      concept.getSimpleMapRefSetMembers();
-      concept.getSimpleRefSetMembers().size();
+      // don't resolve these, limit to what uses Cascade.ALL
+      //concept.getAttributeValueRefSetMembers().size();
+      //concept.getComplexMapRefSetMembers().size();
+      //concept.getSimpleMapRefSetMembers();
+      //concept.getSimpleRefSetMembers().size();
     }
   }
 

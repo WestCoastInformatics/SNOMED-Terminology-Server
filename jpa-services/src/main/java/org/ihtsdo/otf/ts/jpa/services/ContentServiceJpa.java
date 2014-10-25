@@ -1,10 +1,12 @@
 package org.ihtsdo.otf.ts.jpa.services;
 
 import java.lang.reflect.Field;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Properties;
 import java.util.Set;
 
 import javax.persistence.NoResultException;
@@ -22,6 +24,7 @@ import org.hibernate.search.jpa.FullTextQuery;
 import org.hibernate.search.jpa.Search;
 import org.ihtsdo.otf.ts.helpers.ConceptList;
 import org.ihtsdo.otf.ts.helpers.ConceptListJpa;
+import org.ihtsdo.otf.ts.helpers.ConfigUtility;
 import org.ihtsdo.otf.ts.helpers.LocalException;
 import org.ihtsdo.otf.ts.helpers.PfsParameter;
 import org.ihtsdo.otf.ts.helpers.SearchResult;
@@ -47,12 +50,16 @@ import org.ihtsdo.otf.ts.rf2.jpa.SimpleMapRefSetMemberJpa;
 import org.ihtsdo.otf.ts.rf2.jpa.SimpleRefSetMemberJpa;
 import org.ihtsdo.otf.ts.rf2.jpa.TransitiveRelationshipJpa;
 import org.ihtsdo.otf.ts.services.ContentService;
+import org.ihtsdo.otf.ts.services.handlers.WorkflowListener;
 
 /**
  * The Content Services for the Jpa model.
  */
 public class ContentServiceJpa extends RootServiceJpa implements ContentService {
 
+  /**  The listener. */
+  private static List<WorkflowListener> listeners = null;
+  
   /**
    * Instantiates an empty {@link ContentServiceJpa}.
    *
@@ -60,6 +67,19 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
    */
   public ContentServiceJpa() throws Exception {
     super();
+    if (listeners == null) {
+      listeners = new ArrayList<>();
+      Properties config = ConfigUtility.getConfigProperties();
+      String key = "workflow.listener.handler";
+      for (String handlerName : config.getProperty(key).split(",")) {
+
+        // Add handlers to map
+        WorkflowListener handlerService =
+            ConfigUtility.newStandardHandlerInstanceWithConfiguration(
+                key, handlerName, WorkflowListener.class);
+        listeners.add(handlerService);
+      }
+    }
   }
 
 
@@ -249,7 +269,9 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
     } else {
       manager.persist(concept);
     }
-
+    for (WorkflowListener listener : listeners) {
+      listener.conceptAdded(concept);
+    }
     return concept;
   }
 

@@ -39,6 +39,10 @@ import org.ihtsdo.otf.ts.rf2.LanguageRefSetMember;
 @XmlRootElement(name = "description")
 public class DescriptionJpa extends AbstractComponent implements Description {
 
+  /** The workflow status. */
+  @Column(nullable = true)
+  private String workflowStatus;
+  
   /** The language code. */
   @Column(nullable = false, length = 10)
   private String languageCode;
@@ -82,6 +86,23 @@ public class DescriptionJpa extends AbstractComponent implements Description {
    */
   public DescriptionJpa(String type) {
     this.typeId = type;
+  }
+
+  /* (non-Javadoc)
+   * @see org.ihtsdo.otf.ts.rf2.Description#getWorkflowStatus()
+   */
+  @Override
+  public String getWorkflowStatus() {
+    return workflowStatus;
+  }
+
+   
+  /* (non-Javadoc)
+   * @see org.ihtsdo.otf.ts.rf2.Description#setWorkflowStatus(java.lang.String)
+   */
+  @Override
+  public void setWorkflowStatus(String workflowStatus) {
+    this.workflowStatus = workflowStatus;
   }
 
   /**

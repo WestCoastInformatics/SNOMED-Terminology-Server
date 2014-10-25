@@ -7,9 +7,19 @@ import java.util.Set;
  */
 public interface Description extends Component {
 
-  /*
-   * Add method getLanguageRefSetMembers
+  /**
+   * Returns the workflow status.
+   * 
+   * @return the workflow status
    */
+  public String getWorkflowStatus();
+
+  /**
+   * Sets the workflow status.
+   * 
+   * @param workflowStatus the workflow status
+   */
+  public void setWorkflowStatus(String workflowStatus);
 
   /**
    * Returns the language code.
