@@ -485,10 +485,20 @@ public class ClamlMetadataServiceJpaHelper extends RootServiceJpa implements
   }
 
   /* (non-Javadoc)
+   * @see org.ihtsdo.otf.ts.services.MetadataService#getNonGroupingRelationshipTypes(java.lang.String, java.lang.String)
+   */
+  @Override
+  public Map<String, String> getNonGroupingRelationshipTypes(
+    String terminology, String version) {
+    return new HashMap<>();
+  }
+
+  /* (non-Javadoc)
    * @see org.ihtsdo.otf.ts.helpers.Configurable#setProperties(java.util.Properties)
    */
   @Override
   public void setProperties(Properties p) {
     // do nothing    
   }
+
 }

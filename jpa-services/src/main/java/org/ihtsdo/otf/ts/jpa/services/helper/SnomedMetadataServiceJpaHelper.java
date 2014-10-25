@@ -412,7 +412,7 @@ public class SnomedMetadataServiceJpaHelper extends RootServiceJpa implements
     // find all active descendants
     ContentService contentService = new ContentServiceJpa();
     Concept isaRel =
-        contentService.getSingleConcept(isaRelationshipType + "", terminology,
+        contentService.getSingleConcept(isaRelationshipType, terminology,
             version);
     map.put(new String(isaRel.getTerminologyId()),
         isaRel.getDefaultPreferredName());
@@ -508,6 +508,23 @@ public class SnomedMetadataServiceJpaHelper extends RootServiceJpa implements
     return null;
   }
 
+  @Override
+  public Map<String, String> getNonGroupingRelationshipTypes(
+    String terminology, String version) throws Exception {
+    Map<String, String> map = new HashMap<>();
+    ContentService contentService = new ContentServiceJpa();
+    final String[] nonGroupingRelIds = new String [] {
+        "123005000", "272741003", "127489000", "411116001"
+    };
+    for (String id : nonGroupingRelIds) {
+      Concept concept =
+        contentService.getSingleConcept(id, terminology,
+            version);
+      map.put(id, concept.getDefaultPreferredName());
+    } 
+    return map;
+  }
+
   /**
    * Helper method for getting descendants.
    * @param contentService
@@ -536,4 +553,5 @@ public class SnomedMetadataServiceJpaHelper extends RootServiceJpa implements
   public void setProperties(Properties p) {
     // do nothing
   }
+
 }

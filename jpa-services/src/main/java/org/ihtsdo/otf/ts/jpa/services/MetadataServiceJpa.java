@@ -114,6 +114,12 @@ public class MetadataServiceJpa extends RootServiceJpa implements
     if (sIdNameMap != null) {
       idNameMapList.put("Simple Refsets", sIdNameMap);
     }
+    Map<String, String> nonGroupingRelTypeMap =
+        getNonGroupingRelationshipTypes(terminology, version);
+    if (sIdNameMap != null) {
+      idNameMapList.put("Non Grouping Relationship Types", nonGroupingRelTypeMap);
+    }
+
     return idNameMapList;
   }
 
@@ -462,8 +468,30 @@ public class MetadataServiceJpa extends RootServiceJpa implements
 
   }
 
-  /* (non-Javadoc)
-   * @see org.ihtsdo.otf.ts.helpers.Configurable#setProperties(java.util.Properties)
+  /*
+   * (non-Javadoc)
+   * 
+   * @see
+   * org.ihtsdo.otf.ts.services.MetadataService#getNonGroupingRelationshipTypes
+   * (java.lang.String, java.lang.String)
+   */
+  @Override
+  public Map<String, String> getNonGroupingRelationshipTypes(
+    String terminology, String version) throws Exception {
+    if (helperMap.containsKey(terminology)) {
+      return helperMap.get(terminology).getNonGroupingRelationshipTypes(
+          terminology, version);
+    } else {
+      // return an empty map
+      return new HashMap<>();
+    }
+  }
+
+  /*
+   * (non-Javadoc)
+   * 
+   * @see
+   * org.ihtsdo.otf.ts.helpers.Configurable#setProperties(java.util.Properties)
    */
   @Override
   public void setProperties(Properties p) {
