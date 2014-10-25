@@ -44,6 +44,12 @@ validation.service.handler.NEW_CONCEPT.preferredId=900000000000548007
 validation.service.handler.NEW_CONCEPT.languageId=900000000000509007
 
 #
+# Workflow listener handler
+#
+workflow.listener.handler=DEFAULT
+workflow.listener.handler.DEFAULT.class=org.ihtsdo.otf.ts.jpa.services.handlers.DefaultWorkflowListener
+
+#
 # Graph Service Settings
 #
 graph.resolution.handler=DEFAULT

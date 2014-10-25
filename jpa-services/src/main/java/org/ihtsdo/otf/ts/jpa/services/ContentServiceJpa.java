@@ -72,7 +72,7 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
       Properties config = ConfigUtility.getConfigProperties();
       String key = "workflow.listener.handler";
       for (String handlerName : config.getProperty(key).split(",")) {
-
+        if (handlerName.isEmpty()) continue;
         // Add handlers to map
         WorkflowListener handlerService =
             ConfigUtility.newStandardHandlerInstanceWithConfiguration(

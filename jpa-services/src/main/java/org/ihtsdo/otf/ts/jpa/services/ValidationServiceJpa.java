@@ -31,6 +31,7 @@ public class ValidationServiceJpa extends RootServiceJpa implements ValidationSe
       Properties config = ConfigUtility.getConfigProperties();
       String key = "validation.service.handler";
       for (String handlerName : config.getProperty(key).split(",")) {
+        if (handlerName.isEmpty()) continue;
 
         // Add handlers to map
         ValidationCheck handlerService =
