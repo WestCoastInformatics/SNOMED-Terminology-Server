@@ -110,7 +110,8 @@ public class ExceptionHandler {
           "Sending error email : " + props);
       if (config.getProperty("mail.enabled") != null
           && config.getProperty("mail.enabled").equals("true")) {
-        sendEmail(subject, from, recipients, body.toString(), props);
+        sendEmail(subject, from, recipients, body.toString(), props,
+        		"true".equals(props.get("mail.smtp.auth")));   
       } else {
         Logger.getLogger(ExceptionHandler.class).info(
             "Sending mail is disabled.");
@@ -131,12 +132,18 @@ public class ExceptionHandler {
    * @param recipients the recipients
    * @param body the body
    * @param details the details
+   * @param authFlag the auth flag
    * @throws Exception the exception
    */
   public static void sendEmail(String subject, String from, String recipients,
-    String body, Properties details) throws Exception {
-    Authenticator auth = new SMTPAuthenticator();
-    Session session = Session.getInstance(details, auth);
+    String body, Properties details, boolean authFlag) throws Exception {
+    Session session = null;
+    if (authFlag) {
+	  Authenticator auth = new SMTPAuthenticator();
+	  session = Session.getInstance(details, auth);
+	} else {
+	  session = Session.getInstance(details);
+	}
 
     MimeMessage msg = new MimeMessage(session);
     msg.setText(body.toString());
