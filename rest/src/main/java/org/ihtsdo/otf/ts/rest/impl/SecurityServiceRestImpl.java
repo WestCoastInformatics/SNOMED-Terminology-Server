@@ -24,7 +24,7 @@ import com.wordnik.swagger.annotations.ApiParam;
  * Security service for authentication.
  */
 @Path("/security")
-@Api(value = "/security", description = "Operations supporting application authentication and authorization.")
+@Api(value = "/security", description = "Operations supporting security.")
 @Produces({
     MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML
 })
