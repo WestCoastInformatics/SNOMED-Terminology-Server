@@ -14,9 +14,10 @@ import org.ihtsdo.otf.ts.services.handlers.ValidationCheck;
 /**
  * Validation services for the Jpa model.
  */
-public class ValidationServiceJpa extends RootServiceJpa implements ValidationService {
+public class ValidationServiceJpa extends RootServiceJpa implements
+    ValidationService {
 
-  /**  The checks. */
+  /** The checks. */
   public static List<ValidationCheck> checks = null;
 
   /**
@@ -31,19 +32,24 @@ public class ValidationServiceJpa extends RootServiceJpa implements ValidationSe
       Properties config = ConfigUtility.getConfigProperties();
       String key = "validation.service.handler";
       for (String handlerName : config.getProperty(key).split(",")) {
-        if (handlerName.isEmpty()) continue;
+        if (handlerName.isEmpty())
+          continue;
 
         // Add handlers to map
         ValidationCheck handlerService =
-            ConfigUtility.newStandardHandlerInstanceWithConfiguration(
-                key, handlerName, ValidationCheck.class);
+            ConfigUtility.newStandardHandlerInstanceWithConfiguration(key,
+                handlerName, ValidationCheck.class);
         checks.add(handlerService);
       }
     }
   }
 
-  /* (non-Javadoc)
-   * @see org.ihtsdo.otf.ts.services.ValidationService#validateConcept(org.ihtsdo.otf.ts.rf2.Concept)
+  /*
+   * (non-Javadoc)
+   * 
+   * @see
+   * org.ihtsdo.otf.ts.services.ValidationService#validateConcept(org.ihtsdo
+   * .otf.ts.rf2.Concept)
    */
   @Override
   public ValidationResult validateConcept(Concept concept) {

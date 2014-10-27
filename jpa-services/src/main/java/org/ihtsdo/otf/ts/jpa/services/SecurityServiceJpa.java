@@ -121,7 +121,6 @@ public class SecurityServiceJpa extends RootServiceJpa implements
   public void logout(String authToken) throws Exception {
     tokenUsernameMap.remove(authToken);
     tokenTimeoutMap.remove(authToken);
-    throw new Exception("sample exception " + authToken);
   }
 
   /*

@@ -17,14 +17,17 @@ import org.ihtsdo.otf.ts.rf2.TransitiveRelationship;
 @Entity
 // @UniqueConstraint here is being used to create an index, not to enforce
 // uniqueness
-@Table(name = "transitive_relationships", 
-   uniqueConstraints = {
-    @UniqueConstraint(columnNames = {"subTypeConcept_id", "superTypeConcept_id"}),
-    @UniqueConstraint(columnNames = {"superTypeConcept_id", "subTypeConcept_id"})
+@Table(name = "transitive_relationships", uniqueConstraints = {
+    @UniqueConstraint(columnNames = {
+        "subTypeConcept_id", "superTypeConcept_id"
+    }), @UniqueConstraint(columnNames = {
+        "superTypeConcept_id", "subTypeConcept_id"
+    })
 })
 @Audited
 @XmlRootElement(name = "transitiveRelationship")
-public class TransitiveRelationshipJpa extends AbstractComponent implements TransitiveRelationship {
+public class TransitiveRelationshipJpa extends AbstractComponent implements
+    TransitiveRelationship {
 
   /** The subtype concept. */
   @ManyToOne(targetEntity = ConceptJpa.class, optional = false)
@@ -35,7 +38,9 @@ public class TransitiveRelationshipJpa extends AbstractComponent implements Tran
   @ManyToOne(targetEntity = ConceptJpa.class, optional = false)
   private Concept superTypeConcept;
 
-  /* (non-Javadoc)
+  /*
+   * (non-Javadoc)
+   * 
    * @see org.ihtsdo.otf.mapping.rf2.TransitiveRelationship#getSubTypeConcept()
    */
   @Override
@@ -43,31 +48,44 @@ public class TransitiveRelationshipJpa extends AbstractComponent implements Tran
     return subTypeConcept;
   }
 
-  /* (non-Javadoc)
-   * @see org.ihtsdo.otf.mapping.rf2.TransitiveRelationship#setSubTypeConcept(org.ihtsdo.otf.mapping.rf2.Concept)
+  /*
+   * (non-Javadoc)
+   * 
+   * @see
+   * org.ihtsdo.otf.mapping.rf2.TransitiveRelationship#setSubTypeConcept(org
+   * .ihtsdo.otf.mapping.rf2.Concept)
    */
   @Override
   public void setSubTypeConcept(Concept subTypeConcept) {
     this.subTypeConcept = subTypeConcept;
   }
 
-  /* (non-Javadoc)
-   * @see org.ihtsdo.otf.mapping.rf2.TransitiveRelationship#getSuperTypeConcept()
+  /*
+   * (non-Javadoc)
+   * 
+   * @see
+   * org.ihtsdo.otf.mapping.rf2.TransitiveRelationship#getSuperTypeConcept()
    */
   @Override
   public Concept getSuperTypeConcept() {
     return superTypeConcept;
   }
 
-  /* (non-Javadoc)
-   * @see org.ihtsdo.otf.mapping.rf2.TransitiveRelationship#setSuperTypeConcept(org.ihtsdo.otf.mapping.rf2.Concept)
+  /*
+   * (non-Javadoc)
+   * 
+   * @see
+   * org.ihtsdo.otf.mapping.rf2.TransitiveRelationship#setSuperTypeConcept(org
+   * .ihtsdo.otf.mapping.rf2.Concept)
    */
   @Override
   public void setSuperTypeConcept(Concept superTypeConcept) {
     this.superTypeConcept = superTypeConcept;
   }
 
-  /* (non-Javadoc)
+  /*
+   * (non-Javadoc)
+   * 
    * @see org.ihtsdo.otf.mapping.rf2.jpa.AbstractComponent#hashCode()
    */
   @Override
@@ -83,8 +101,11 @@ public class TransitiveRelationshipJpa extends AbstractComponent implements Tran
     return result;
   }
 
-  /* (non-Javadoc)
-   * @see org.ihtsdo.otf.mapping.rf2.jpa.AbstractComponent#equals(java.lang.Object)
+  /*
+   * (non-Javadoc)
+   * 
+   * @see
+   * org.ihtsdo.otf.mapping.rf2.jpa.AbstractComponent#equals(java.lang.Object)
    */
   @Override
   public boolean equals(Object obj) {

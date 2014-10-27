@@ -108,7 +108,7 @@ public class MetadataServiceRestImpl extends RootServiceRestImpl implements
       metadataService.close();
       return keyValuePairLists;
     } catch (Exception e) {
-      handleException(e, "trying to retrieve the metadata", user, "", "");
+      handleException(e, "trying to retrieve the metadata", user);
       return null;
     }
   }
@@ -152,7 +152,7 @@ public class MetadataServiceRestImpl extends RootServiceRestImpl implements
       metadataService.close();
       return keyValuePairLists;
     } catch (Exception e) {
-      handleException(e, "trying to retrieve all metadata", user, "", "");
+      handleException(e, "trying to retrieve all metadata", user);
       return null;
     }
   }
@@ -193,8 +193,7 @@ public class MetadataServiceRestImpl extends RootServiceRestImpl implements
       Map<String, String> versionMap =
           metadataService.getTerminologyLatestVersions();
       KeyValuePairList keyValuePairList = new KeyValuePairList();
-      for (Map.Entry<String, String> termVersionPair : versionMap
-          .entrySet()) {
+      for (Map.Entry<String, String> termVersionPair : versionMap.entrySet()) {
         keyValuePairList.addKeyValuePair(new KeyValuePair(termVersionPair
             .getKey(), termVersionPair.getValue()));
       }
@@ -202,8 +201,7 @@ public class MetadataServiceRestImpl extends RootServiceRestImpl implements
       return keyValuePairList;
     } catch (Exception e) {
       handleException(e,
-          "trying to retrieve the latest versions of all terminologies", user,
-          "", "");
+          "trying to retrieve the latest versions of all terminologies", user);
       return null;
     }
   }
@@ -258,7 +256,7 @@ public class MetadataServiceRestImpl extends RootServiceRestImpl implements
       return keyValuePairLists;
     } catch (Exception e) {
       handleException(e,
-          "trying to retrieve the versions of all terminologies", user, "", "");
+          "trying to retrieve the versions of all terminologies", user);
       return null;
     }
   }

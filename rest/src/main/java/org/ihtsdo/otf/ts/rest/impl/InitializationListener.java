@@ -45,12 +45,12 @@ public class InitializationListener implements AbstractResourceModelListener {
     today.set(Calendar.MINUTE, 0);
     today.set(Calendar.SECOND, 0);
     timer.scheduleAtFixedRate(task, today.getTime(), 24 * 60 * 60 * 1000);
-    
+
     // Cache the "guest" user.
     SecurityService service;
     try {
       service = new SecurityServiceJpa();
-      service.authenticate("guest","guest");
+      service.authenticate("guest", "guest");
     } catch (Exception e) {
       try {
         ExceptionHandler.handleException(e, "Cacheing guest user info");
@@ -78,8 +78,8 @@ public class InitializationListener implements AbstractResourceModelListener {
 
         // For now, the timer is not doing anything
 
-      } catch (Exception e) { 
-      	e.printStackTrace();
+      } catch (Exception e) {
+        e.printStackTrace();
         Logger.getLogger(this.getClass()).error(
             "Error running the process to compute list of finished records.");
       }

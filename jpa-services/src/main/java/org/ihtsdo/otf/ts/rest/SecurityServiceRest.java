@@ -1,6 +1,5 @@
 package org.ihtsdo.otf.ts.rest;
 
-
 /**
  * Represents a security available via a REST service.
  */
@@ -23,5 +22,5 @@ public interface SecurityServiceRest {
    * @throws Exception the exception
    */
   public void logout(String authToken) throws Exception;
-  
+
 }

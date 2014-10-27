@@ -81,9 +81,9 @@ public class TerminologyRemoverMojo extends AbstractMojo {
       String terminologyVersion = metadataService.getLatestVersion(terminology);
       metadataService.close();
       if (terminologyVersion != null) {
-      ContentService contentService = new ContentServiceJpa();
-      contentService.clearConcepts(terminology, terminologyVersion);
-      contentService.close();
+        ContentService contentService = new ContentServiceJpa();
+        contentService.clearConcepts(terminology, terminologyVersion);
+        contentService.close();
       }
       getLog().info("done ...");
     } catch (Throwable e) {

@@ -13,7 +13,7 @@ import com.sun.jersey.api.client.ClientResponse;
 import com.sun.jersey.api.client.WebResource;
 
 /**
- * A client for connecting to a security  REST service.
+ * A client for connecting to a security REST service.
  */
 public class SecurityClientRest implements SecurityServiceRest {
 
@@ -29,15 +29,19 @@ public class SecurityClientRest implements SecurityServiceRest {
     this.config = config;
   }
 
-  /* (non-Javadoc)
-   * @see org.ihtsdo.otf.mapping.rest.SecurityServiceRest#authenticate(java.lang.String, java.lang.String)
+  /*
+   * (non-Javadoc)
+   * 
+   * @see
+   * org.ihtsdo.otf.mapping.rest.SecurityServiceRest#authenticate(java.lang.
+   * String, java.lang.String)
    */
   @Override
   public String authenticate(String username, String password) throws Exception {
     Client client = Client.create();
     WebResource resource =
-        client.resource(config.getProperty("base.url") + "/security/authenticate/"
-            + username);
+        client.resource(config.getProperty("base.url")
+            + "/security/authenticate/" + username);
     resource.accept(MediaType.APPLICATION_JSON);
     ClientResponse response = resource.post(ClientResponse.class, password);
     String resultString = response.getEntity(String.class);
@@ -48,10 +52,12 @@ public class SecurityClientRest implements SecurityServiceRest {
       throw new Exception(resultString);
     }
     // return auth token
-    return resultString.replaceAll("\"","");
+    return resultString.replaceAll("\"", "");
   }
 
-  /* (non-Javadoc)
+  /*
+   * (non-Javadoc)
+   * 
    * @see org.ihtsdo.otf.ts.rest.SecurityServiceRest#logout(java.lang.String)
    */
   @Override

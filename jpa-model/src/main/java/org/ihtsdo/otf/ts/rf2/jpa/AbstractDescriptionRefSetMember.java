@@ -18,7 +18,7 @@ import org.ihtsdo.otf.ts.rf2.DescriptionRefSetMember;
 public abstract class AbstractDescriptionRefSetMember extends
     AbstractRefSetMember implements DescriptionRefSetMember {
 
-  /**  The description. */
+  /** The description. */
   @ManyToOne(targetEntity = DescriptionJpa.class, optional = false)
   // NOTE: this may apply only to LanguageRefSetMember given how
   // description uses @IndexedEmbedded

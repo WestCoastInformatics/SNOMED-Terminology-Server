@@ -3,8 +3,7 @@ package org.ihtsdo.otf.ts.helpers;
 import java.util.Set;
 
 /**
- * Generically represents a validation result, either an error
- * or a warning.
+ * Generically represents a validation result, either an error or a warning.
  */
 public interface ValidationResult {
 

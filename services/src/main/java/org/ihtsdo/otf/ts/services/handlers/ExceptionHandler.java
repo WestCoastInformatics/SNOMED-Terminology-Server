@@ -38,7 +38,7 @@ public class ExceptionHandler {
    */
   public static void handleException(Exception e, String whatIsHappening)
     throws Exception {
-    handleException(e, whatIsHappening, "", "", "");
+    handleException(e, whatIsHappening, "");
   }
 
   /**
@@ -55,7 +55,7 @@ public class ExceptionHandler {
    * @throws Exception the web application exception
    */
   public static void handleException(Exception e, String whatIsHappening,
-    String userName, String project, String recordId) throws Exception {
+    String userName) throws Exception {
 
     e.printStackTrace();
     if (e instanceof LocalException) {
@@ -98,8 +98,6 @@ public class ExceptionHandler {
       }
       body.append("TIME: " + df.format(new Date())).append("\n");
       body.append("USER: " + userName).append("\n");
-      body.append("PROJECT: " + project).append("\n");
-      body.append("ID: " + recordId).append("\n\n");
 
       body.append("MESSAGE: " + e.getMessage()).append("\n\n");
       StringWriter out = new StringWriter();

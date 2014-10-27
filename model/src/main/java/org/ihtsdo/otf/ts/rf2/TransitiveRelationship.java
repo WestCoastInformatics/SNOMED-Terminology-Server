@@ -1,8 +1,8 @@
 package org.ihtsdo.otf.ts.rf2;
 
 /**
- * Represents a transitive relationship between two 
- * a supertype concept and a subtype concepts.
+ * Represents a transitive relationship between two a supertype concept and a
+ * subtype concepts.
  */
 public interface TransitiveRelationship extends Component {
 

@@ -57,9 +57,9 @@ import org.ihtsdo.otf.ts.services.handlers.WorkflowListener;
  */
 public class ContentServiceJpa extends RootServiceJpa implements ContentService {
 
-  /**  The listener. */
+  /** The listener. */
   private static List<WorkflowListener> listeners = null;
-  
+
   /**
    * Instantiates an empty {@link ContentServiceJpa}.
    *
@@ -72,19 +72,23 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
       Properties config = ConfigUtility.getConfigProperties();
       String key = "workflow.listener.handler";
       for (String handlerName : config.getProperty(key).split(",")) {
-        if (handlerName.isEmpty()) continue;
+        if (handlerName.isEmpty())
+          continue;
         // Add handlers to map
         WorkflowListener handlerService =
-            ConfigUtility.newStandardHandlerInstanceWithConfiguration(
-                key, handlerName, WorkflowListener.class);
+            ConfigUtility.newStandardHandlerInstanceWithConfiguration(key,
+                handlerName, WorkflowListener.class);
         listeners.add(handlerService);
       }
     }
   }
 
-
-  /* (non-Javadoc)
-   * @see org.ihtsdo.otf.ts.services.ContentService#getConcepts(java.lang.String, java.lang.String, org.ihtsdo.otf.ts.helpers.PfsParameter)
+  /*
+   * (non-Javadoc)
+   * 
+   * @see
+   * org.ihtsdo.otf.ts.services.ContentService#getConcepts(java.lang.String,
+   * java.lang.String, org.ihtsdo.otf.ts.helpers.PfsParameter)
    */
   @SuppressWarnings("unchecked")
   @Override
@@ -1411,7 +1415,7 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
         "Content Service - find descendants " + terminologyId + "/"
             + terminology + "/" + terminologyVersion);
 
-    if (pfs  != null && pfs.getQueryRestriction() != null) {
+    if (pfs != null && pfs.getQueryRestriction() != null) {
       throw new IllegalArgumentException(
           "Query restriction is not implemented for this call: "
               + pfs.getQueryRestriction());
@@ -1460,8 +1464,13 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
     return searchResultList;
   }
 
-  /* (non-Javadoc)
-   * @see org.ihtsdo.otf.ts.services.ContentService#findAncestorConcepts(java.lang.String, java.lang.String, java.lang.String, org.ihtsdo.otf.ts.helpers.PfsParameter)
+  /*
+   * (non-Javadoc)
+   * 
+   * @see
+   * org.ihtsdo.otf.ts.services.ContentService#findAncestorConcepts(java.lang
+   * .String, java.lang.String, java.lang.String,
+   * org.ihtsdo.otf.ts.helpers.PfsParameter)
    */
   @SuppressWarnings("unchecked")
   @Override
@@ -1469,8 +1478,8 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
     String terminology, String terminologyVersion, PfsParameter pfs)
     throws Exception {
     Logger.getLogger(ContentServiceJpa.class).debug(
-        "Content Service - find ancestors " + terminologyId + "/"
-            + terminology + "/" + terminologyVersion);
+        "Content Service - find ancestors " + terminologyId + "/" + terminology
+            + "/" + terminologyVersion);
 
     if (pfs != null && pfs.getQueryRestriction() != null) {
       throw new IllegalArgumentException(
@@ -1520,7 +1529,7 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
     // return the search result list
     return searchResultList;
   }
-  
+
   /*
    * (non-Javadoc)
    * 

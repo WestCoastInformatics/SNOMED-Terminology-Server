@@ -530,7 +530,6 @@ public class TerminologyRf2SnapshotLoaderMojo extends AbstractMojo {
    * @param outputDir the output dir
    * @throws Exception the exception
    */
-  @SuppressWarnings("null")
   private void sortRf2Files(File coreInputDir, File outputDir) throws Exception {
 
     // Check expectations and pre-conditions
@@ -945,7 +944,6 @@ public class TerminologyRf2SnapshotLoaderMojo extends AbstractMojo {
    * @return the sorted {@link File}
    * @throws IOException Signals that an I/O exception has occurred.
    */
-  @SuppressWarnings("null")
   private File mergeSortedFiles(File files1, File files2,
     Comparator<String> comp, File dir, String headerLine) throws IOException {
 
@@ -1535,16 +1533,14 @@ public class TerminologyRf2SnapshotLoaderMojo extends AbstractMojo {
 
       line = line.replace("\r", "");
       String fields[] = line.split("\t");
-      AttributeValueRefSetMember member =
-          new AttributeValueRefSetMemberJpa();
+      AttributeValueRefSetMember member = new AttributeValueRefSetMemberJpa();
 
       if (!fields[0].equals("id")) { // header
 
         // Universal RefSet attributes
         member.setTerminologyId(fields[0]);
         member.setEffectiveTime(dt.parse(fields[1]));
-        member.setActive(fields[2].equals("1") ? true
-            : false);
+        member.setActive(fields[2].equals("1") ? true : false);
         member.setLastModified(new Date());
         member.setLastModifiedBy("loader");
         member.setModuleId(fields[3]);
@@ -1560,14 +1556,12 @@ public class TerminologyRf2SnapshotLoaderMojo extends AbstractMojo {
         // Retrieve concept -- firstToken is referencedComponentId
         Concept concept =
             getConcept(fields[5], member.getTerminology(),
-                member.getTerminologyVersion(),
-                contentService);
+                member.getTerminologyVersion(), contentService);
 
         if (concept != null) {
 
           member.setConcept(concept);
-          contentService
-              .addAttributeValueRefSetMember(member);
+          contentService.addAttributeValueRefSetMember(member);
 
           // regularly commit at intervals
           if (++objectCt % commitCt == 0) {
@@ -1577,8 +1571,7 @@ public class TerminologyRf2SnapshotLoaderMojo extends AbstractMojo {
           }
         } else {
           getLog().debug(
-              "attributeValueRefSetMember "
-                  + member.getTerminologyId()
+              "attributeValueRefSetMember " + member.getTerminologyId()
                   + " references non-existent concept " + fields[5]);
         }
       }
@@ -1690,8 +1683,7 @@ public class TerminologyRf2SnapshotLoaderMojo extends AbstractMojo {
 
       line = line.replace("\r", "");
       String fields[] = line.split("\t");
-      SimpleMapRefSetMember member =
-          new SimpleMapRefSetMemberJpa();
+      SimpleMapRefSetMember member = new SimpleMapRefSetMemberJpa();
 
       if (!fields[0].equals("id")) { // header
 
@@ -1728,8 +1720,7 @@ public class TerminologyRf2SnapshotLoaderMojo extends AbstractMojo {
           }
         } else {
           getLog().info(
-              "simpleMapRefSetMember "
-                  + member.getTerminologyId()
+              "simpleMapRefSetMember " + member.getTerminologyId()
                   + " references non-existent concept " + fields[5]);
         }
       }
@@ -1766,8 +1757,7 @@ public class TerminologyRf2SnapshotLoaderMojo extends AbstractMojo {
 
       line = line.replace("\r", "");
       String fields[] = line.split("\t");
-      ComplexMapRefSetMember member =
-          new ComplexMapRefSetMemberJpa();
+      ComplexMapRefSetMember member = new ComplexMapRefSetMemberJpa();
 
       if (!fields[0].equals("id")) { // header
 
@@ -1815,8 +1805,7 @@ public class TerminologyRf2SnapshotLoaderMojo extends AbstractMojo {
           }
         } else {
           getLog().info(
-              "complexMapRefSetMember "
-                  + member.getTerminologyId()
+              "complexMapRefSetMember " + member.getTerminologyId()
                   + " references non-existent concept " + fields[5]);
         }
 
@@ -1857,8 +1846,7 @@ public class TerminologyRf2SnapshotLoaderMojo extends AbstractMojo {
 
       line = line.replace("\r", "");
       String fields[] = line.split("\t");
-      ComplexMapRefSetMember member =
-          new ComplexMapRefSetMemberJpa();
+      ComplexMapRefSetMember member = new ComplexMapRefSetMemberJpa();
 
       if (!fields[0].equals("id")) { // header
 
@@ -1906,8 +1894,7 @@ public class TerminologyRf2SnapshotLoaderMojo extends AbstractMojo {
           }
         } else {
           getLog().info(
-              "complexMapRefSetMember "
-                  + member.getTerminologyId()
+              "complexMapRefSetMember " + member.getTerminologyId()
                   + " references non-existent concept " + fields[5]);
         }
 

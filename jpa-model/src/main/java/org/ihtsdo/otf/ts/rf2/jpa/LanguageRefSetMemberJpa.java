@@ -50,7 +50,7 @@ public class LanguageRefSetMemberJpa extends AbstractDescriptionRefSetMember
   @Override
   public String toString() {
     return super.toString()
-        +        (this.getDescription() == null ? null : getDescription()
+        + (this.getDescription() == null ? null : getDescription()
             .getTerminologyId()) + "," + this.getAcceptabilityId();
   }
 

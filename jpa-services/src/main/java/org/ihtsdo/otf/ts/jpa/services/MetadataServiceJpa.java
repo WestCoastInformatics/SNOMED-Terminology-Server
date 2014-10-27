@@ -117,7 +117,8 @@ public class MetadataServiceJpa extends RootServiceJpa implements
     Map<String, String> nonGroupingRelTypeMap =
         getNonGroupingRelationshipTypes(terminology, version);
     if (sIdNameMap != null) {
-      idNameMapList.put("Non Grouping Relationship Types", nonGroupingRelTypeMap);
+      idNameMapList.put("Non Grouping Relationship Types",
+          nonGroupingRelTypeMap);
     }
 
     return idNameMapList;

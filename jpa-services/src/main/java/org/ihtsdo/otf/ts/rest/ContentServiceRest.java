@@ -11,11 +11,9 @@ import org.ihtsdo.otf.ts.rf2.Concept;
 public interface ContentServiceRest {
 
   /**
-   * Returns the concept for the specified parameters.
-   * As there may be multiple simltaneous versions of the same concept
-   * this returns a list.
-   * The returned concept(s) include descriptions language refsets 
-   * and relationships.
+   * Returns the concept for the specified parameters. As there may be multiple
+   * simltaneous versions of the same concept this returns a list. The returned
+   * concept(s) include descriptions language refsets and relationships.
    *
    * @param terminologyId the terminology id
    * @param terminology the terminology
@@ -28,10 +26,9 @@ public interface ContentServiceRest {
     String version, String authToken) throws Exception;
 
   /**
-   * Returns the single concept for the specified parameters.
-   * If there are more than one, it throws an exception.
-   * The returned concept includes descriptions language refsets 
-   * and relationships.
+   * Returns the single concept for the specified parameters. If there are more
+   * than one, it throws an exception. The returned concept includes
+   * descriptions language refsets and relationships.
    *
    * @param terminologyId the terminology id
    * @param terminology the terminology

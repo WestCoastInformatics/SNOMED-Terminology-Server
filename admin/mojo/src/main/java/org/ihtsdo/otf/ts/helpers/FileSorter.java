@@ -282,7 +282,7 @@ public class FileSorter {
    * 
    * @param lines the lines
    * @param fileIn the file_in
-   * @param outputDir 
+   * @param outputDir
    * @return the string
    * @throws IOException Signals that an I/O exception has occurred.
    */

@@ -35,7 +35,7 @@ public class ContentServiceTest {
   /** The auth token. */
   private static String authToken;
 
-  /**  The Constant sctIsaRel. */
+  /** The Constant sctIsaRel. */
   private final static String sctIsaRel = "116680003";
 
   /**
@@ -71,12 +71,12 @@ public class ContentServiceTest {
     Set<Relationship> isaRels = new HashSet<>();
     for (Relationship r : c.getRelationships()) {
       if (r.getTypeId().equals(sctIsaRel) && r.isActive()) {
-        
+
         isaRels.add(r);
       }
     }
     assertEquals(1, isaRels.size());
-    
+
     // three descriptions
     int descCt = 0;
     for (Description d : c.getDescriptions()) {
@@ -84,11 +84,12 @@ public class ContentServiceTest {
       // each is active
       assertTrue(d.isActive());
       // each has 2 language refset members
-      assertEquals(2,d.getLanguageRefSetMembers());
+      assertEquals(2, d.getLanguageRefSetMembers());
     }
     assertEquals(3, descCt);
 
-    Logger.getLogger(this.getClass()).info(ConceptReportHelper.getConceptReport(c));
+    Logger.getLogger(this.getClass()).info(
+        ConceptReportHelper.getConceptReport(c));
   }
 
   /**

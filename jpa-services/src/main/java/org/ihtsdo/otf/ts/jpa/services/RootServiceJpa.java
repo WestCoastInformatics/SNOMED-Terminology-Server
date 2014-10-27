@@ -64,8 +64,7 @@ public class RootServiceJpa implements RootService {
       Logger.getLogger(this.getClass()).info(
           "Setting root service entity manager factory.");
       Properties config = ConfigUtility.getConfigProperties();
-      factory =
-          Persistence.createEntityManagerFactory("TermServiceDS", config);
+      factory = Persistence.createEntityManagerFactory("TermServiceDS", config);
     }
   }
 
@@ -142,7 +141,9 @@ public class RootServiceJpa implements RootService {
     tx.commit();
   }
 
-  /* (non-Javadoc)
+  /*
+   * (non-Javadoc)
+   * 
    * @see org.ihtsdo.otf.mapping.services.RootService#close()
    */
   @Override
