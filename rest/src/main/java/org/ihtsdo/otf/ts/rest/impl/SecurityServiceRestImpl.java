@@ -77,7 +77,7 @@ public class SecurityServiceRestImpl extends RootServiceRestImpl implements
   })
   @ApiOperation(value = "Logs out an auth token.", notes = "Performs logout on specified auth token.", response = String.class)
   public void logout(
-    @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @PathParam("username") String authToken) {
+    @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @PathParam("authToken") String authToken) {
 
     Logger.getLogger(SecurityServiceRestImpl.class).info(
         "RESTful call (Authentication): /logout for authToken = " + authToken);
