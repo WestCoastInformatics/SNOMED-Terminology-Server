@@ -72,11 +72,11 @@ public class HistoryServiceRestImpl extends RootServiceRestImpl implements
     @ApiParam(value = "Concept terminology name, e.g. SNOMEDCT", required = true) @PathParam("terminology") String terminology,
     @ApiParam(value = "Concept terminology version, e.g. 20140731", required = true) @PathParam("version") String version,
     @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken,
-    @ApiParam(value = "Paging/filtering/sorting parameter object", required = true) PfsParameter pfsParameter) {
+    @ApiParam(value = "PFS Parameter, e.g. '{ \"startIndex\":\"1\", \"maxResults\":\"5\" }'", required = true) PfsParameter pfsParameter) {
 
     Logger.getLogger(HistoryServiceRestImpl.class).info(
-        "RESTful call (History): /terminology/id/" + terminology + "/"
-            + version + "/delta");
+        "RESTful call (History): /delta/" + terminology + "/"
+            + version);
 
     try {
       // authorize call

@@ -188,6 +188,55 @@ public class ContentServiceRestImpl extends RootServiceRestImpl implements
   /*
    * (non-Javadoc)
    * 
+   * @see org.ihtsdo.otf.ts.rest.ContentServiceRest#getConcept(java.lang.Long)
+   */
+  @Override
+  @GET
+  @Path("/concept/id/{id}")
+  @ApiOperation(value = "Get concept by id", notes = "Gets the concept for the specified id.", response = Concept.class)
+  @Produces({
+      MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML
+  })
+  public Concept getConcept(
+    @ApiParam(value = "Concept internal id, e.g. 2", required = true) @PathParam("terminologyId") Long id,
+    @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken) {
+    Logger.getLogger(ContentServiceRestImpl.class).info(
+        "RESTful call (Content): /concept/id/" + id);
+
+    try {
+      // authorize call
+      UserRole role = securityService.getApplicationRoleForToken(authToken);
+      if (!role.hasPrivilegesOf(UserRole.VIEWER))
+        throw new WebApplicationException(Response.status(401)
+            .entity("User does not have permissions to retrieve the concept.")
+            .build());
+
+      ContentService contentService = new ContentServiceJpa();
+      Concept c =
+          contentService.getConcept(id);
+
+      if (c != null) {
+        // Make sure to read descriptions and relationships (prevents
+        // serialization error)
+        for (Description d : c.getDescriptions()) {
+          d.getLanguageRefSetMembers().size();
+        }
+        for (Relationship r : c.getRelationships()) {
+          r.getDestinationConcept().getDefaultPreferredName();
+        }
+      }
+
+      contentService.close();
+      return c;
+    } catch (Exception e) {
+      handleException(e, "trying to retrieve a concept");
+      return null;
+    }
+  }
+
+  /*
+   * (non-Javadoc)
+   * 
    * @see
    * org.ihtsdo.otf.mapping.rest.ContentServiceRest#findConceptsForQuery(java
    * .lang.String, java.lang.String, java.lang.String, java.lang.String)

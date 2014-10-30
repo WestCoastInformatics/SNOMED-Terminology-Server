@@ -41,6 +41,17 @@ public interface ContentServiceRest {
     String version, String authToken) throws Exception;
 
   /**
+   * Gets the concept for the specified identifier.
+   *
+   * @param id the internal concept id.  Used when other REST APIs
+   * return information that includes internal identifiers.
+   * @param authToken the auth token
+   * @return the concept
+   * @throws Exception the exception
+   */
+  public Concept getConcept(Long id, String authToken) throws Exception;
+  
+  /**
    * Returns the concept for search string.
    *
    * @param terminology the terminology
