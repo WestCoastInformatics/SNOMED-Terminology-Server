@@ -63,6 +63,27 @@ public class ContentServiceTest {
         "TEST - " + "10013000, SNOMEDCT, 20140731, " + authToken);
     Concept c =
         client.getSingleConcept("10013000", "SNOMEDCT", "20140731", authToken);
+    getConceptAssertions(c);
+    Logger.getLogger(this.getClass()).info(
+        ConceptReportHelper.getConceptReport(c));
+  }
+
+  /**
+   * Test getting a concept by id.
+   * @throws Exception
+   */
+  @Test
+  public void test004GetConcept() throws Exception {
+    Logger.getLogger(this.getClass()).info(
+        "TEST - 18");
+    Concept c =
+        client.getConcept(18L, authToken);
+    getConceptAssertions(c);
+    Logger.getLogger(this.getClass()).info(
+        ConceptReportHelper.getConceptReport(c));    
+  }
+  
+  private void getConceptAssertions(Concept c) {
     assertNotNull(c);
     assertNotEquals(c.getDefaultPreferredName(),
         "No default preferred name found");
@@ -88,12 +109,10 @@ public class ContentServiceTest {
     }
     assertEquals(3, descCt);
 
-    Logger.getLogger(this.getClass()).info(
-        ConceptReportHelper.getConceptReport(c));
   }
-
+  
   /**
-   * Test get single concept for SNOMEDCT.
+   * Test get single concept for ICD9CM.
    * @throws Exception
    */
   @Test
@@ -109,7 +128,23 @@ public class ContentServiceTest {
   }
 
   /**
-   * Test get concepts for SNOMEDCT.
+   * Test get single concept for ICD9CM by id.
+   * @throws Exception
+   */
+  @Test
+  public void test004GetConceptICD9CM() throws Exception {
+    Logger.getLogger(this.getClass()).info(
+        "TEST - 43872");
+    Concept c = client.getConcept(43872L, authToken);
+    assertNotNull(c);
+    assertNotEquals(c.getDefaultPreferredName(),
+        "No default preferred name found");
+    Logger.getLogger(this.getClass()).info(
+        "  defaultPreferredName = " + c.getDefaultPreferredName());
+  }
+
+  /**
+   * Test get concepts for ICD9CM.
    * @throws Exception
    */
   @Test

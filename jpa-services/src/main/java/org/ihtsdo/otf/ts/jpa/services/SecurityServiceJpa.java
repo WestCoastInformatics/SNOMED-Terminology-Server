@@ -145,7 +145,7 @@ public class SecurityServiceJpa extends RootServiceJpa implements
       Logger.getLogger(this.getClass()).info(
           "User = " + username + " Token = " + parsedToken);
 
-      // Validate that the user has not time dout.
+      // Validate that the user has not timed out.
       if (handler.timeoutUser(username)) {
 
         if (tokenTimeoutMap.get(parsedToken) == null) {
