@@ -34,11 +34,11 @@ public interface ContentService extends RootService {
   /**
    * Returns the concept.
    * 
-   * @param conceptId the concept id
+   * @param id the concept id
    * @return the concept
    * @throws Exception if anything goes wrong
    */
-  public Concept getConcept(Long conceptId) throws Exception;
+  public Concept getConcept(Long id) throws Exception;
 
   /**
    * Returns the concept matching the specified parameters.
@@ -100,7 +100,7 @@ public interface ContentService extends RootService {
    * @return the description
    * @throws Exception if anything goes wrong
    */
-  public Description getDescription(String id) throws Exception;
+  public Description getDescription(Long id) throws Exception;
 
   /**
    * Returns the description matching the specified parameters.
@@ -142,11 +142,11 @@ public interface ContentService extends RootService {
   /**
    * Returns the relationship.
    * 
-   * @param relationshipId the relationship id
+   * @param id the relationship id
    * @return the relationship
    * @throws Exception if anything goes wrong
    */
-  public Relationship getRelationship(String relationshipId) throws Exception;
+  public Relationship getRelationship(Long id) throws Exception;
 
   /**
    * Returns the relationship matching the specified parameters.
@@ -216,12 +216,12 @@ public interface ContentService extends RootService {
   /**
    * Returns the languageRefSetMember.
    * 
-   * @param languageRefSetMemberId the languageRefSetMember id
+   * @param id the languageRefSetMember id
    * @return the languageRefSetMember
    * @throws Exception if anything goes wrong
    */
   public LanguageRefSetMember getLanguageRefSetMember(
-    String languageRefSetMemberId) throws Exception;
+    Long id) throws Exception;
 
   /**
    * Returns the languageRefSetMember matching the specified parameters.
@@ -265,12 +265,12 @@ public interface ContentService extends RootService {
   /**
    * Returns the attributeValueRefSetMember.
    * 
-   * @param attributeValueRefSetMemberId the attributeValueRefSetMember id
+   * @param id the attributeValueRefSetMember id
    * @return the attributeValueRefSetMember
    * @throws Exception if anything goes wrong
    */
   public AttributeValueRefSetMember getAttributeValueRefSetMember(
-    String attributeValueRefSetMemberId) throws Exception;
+    Long id) throws Exception;
 
   /**
    * Returns the attributeValueRefSetMember matching the specified parameters.
@@ -315,12 +315,12 @@ public interface ContentService extends RootService {
   /**
    * Returns the complexMapRefSetMember.
    * 
-   * @param complexMapRefSetMemberId the complexMapRefSetMember id
+   * @param id the complexMapRefSetMember id
    * @return the complexMapRefSetMember
    * @throws Exception if anything goes wrong
    */
   public ComplexMapRefSetMember getComplexMapRefSetMember(
-    String complexMapRefSetMemberId) throws Exception;
+    Long id) throws Exception;
 
   /**
    * Returns the complexMapRefSetMember matching the specified parameters.
@@ -364,12 +364,12 @@ public interface ContentService extends RootService {
   /**
    * Returns the simpleMapRefSetMember.
    * 
-   * @param simpleMapRefSetMemberId the simpleMapRefSetMember id
+   * @param id the simpleMapRefSetMember id
    * @return the simpleMapRefSetMember
    * @throws Exception if anything goes wrong
    */
   public SimpleMapRefSetMember getSimpleMapRefSetMember(
-    String simpleMapRefSetMemberId) throws Exception;
+    Long id) throws Exception;
 
   /**
    * Returns the simpleMapRefSetMember matching the specified parameters.
@@ -413,11 +413,11 @@ public interface ContentService extends RootService {
   /**
    * Returns the simpleRefSetMember.
    * 
-   * @param simpleRefSetMemberId the simpleRefSetMember id
+   * @param id the simpleRefSetMember id
    * @return the simpleRefSetMember
    * @throws Exception if anything goes wrong
    */
-  public SimpleRefSetMember getSimpleRefSetMember(String simpleRefSetMemberId)
+  public SimpleRefSetMember getSimpleRefSetMember(Long id)
     throws Exception;
 
   /**
