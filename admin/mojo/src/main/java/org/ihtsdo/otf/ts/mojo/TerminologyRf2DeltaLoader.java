@@ -358,7 +358,7 @@ public class TerminologyRf2DeltaLoader extends AbstractMojo {
       getLog().info("==================================");
       getLog().info("Delta load completed successfully!");
       getLog().info("==================================");
-    } catch (Throwable e) {
+    } catch (Exception e) {
       e.printStackTrace();
       throw new MojoFailureException("Unexpected exception:", e);
     }

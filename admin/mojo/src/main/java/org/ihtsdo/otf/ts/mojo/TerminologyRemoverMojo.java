@@ -86,7 +86,7 @@ public class TerminologyRemoverMojo extends AbstractMojo {
         contentService.close();
       }
       getLog().info("done ...");
-    } catch (Throwable e) {
+    } catch (Exception e) {
       e.printStackTrace();
       throw new MojoFailureException("Unexpected exception:", e);
     }

@@ -13,7 +13,7 @@ public class LocalException extends Exception {
    * @param message the message
    * @param t the t
    */
-  public LocalException(String message, Throwable t) {
+  public LocalException(String message, Exception t) {
     super(message, t);
   }
 

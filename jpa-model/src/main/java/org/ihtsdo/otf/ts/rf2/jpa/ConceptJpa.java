@@ -504,4 +504,11 @@ public class ConceptJpa extends AbstractComponent implements Concept {
     return true;
   }
 
+  /* (non-Javadoc)
+   * @see org.ihtsdo.otf.ts.rf2.jpa.AbstractComponent#hashCode()
+   */
+  @Override
+  public int hashCode() {
+    return super.hashCode();
+  }
 }
