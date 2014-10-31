@@ -16,17 +16,11 @@ public class MetadataServiceJpa extends RootServiceJpa implements
 
   /** The helper map. */
   private static Map<String, MetadataService> helperMap = null;
-
-  /**
-   * Instantiates an empty {@link MetadataServiceJpa}.
-   * @throws Exception
-   */
-  public MetadataServiceJpa() throws Exception {
-    super();
-
-    if (helperMap == null) {
-      helperMap = new HashMap<>();
-      Properties config = ConfigUtility.getConfigProperties();
+  static {
+    helperMap = new HashMap<>();
+    Properties config;
+    try {
+      config = ConfigUtility.getConfigProperties();
       String key = "metadata.service.handler";
       for (String handlerName : config.getProperty(key).split(",")) {
 
@@ -36,6 +30,21 @@ public class MetadataServiceJpa extends RootServiceJpa implements
                 handlerName, MetadataService.class);
         helperMap.put(handlerName, handlerService);
       }
+    } catch (Exception e) {
+      e.printStackTrace();
+      helperMap = null;
+    }
+  }
+
+  /**
+   * Instantiates an empty {@link MetadataServiceJpa}.
+   * @throws Exception
+   */
+  public MetadataServiceJpa() throws Exception {
+    super();
+
+    if (helperMap == null) {
+      throw new Exception("Helper map not properly initialized, serious error.");
     }
   }
 

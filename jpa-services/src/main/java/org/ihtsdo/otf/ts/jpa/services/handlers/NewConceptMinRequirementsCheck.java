@@ -41,10 +41,19 @@ public class NewConceptMinRequirementsCheck implements ValidationCheck {
   public void setProperties(Properties p) {
     String prop = p.getProperty("isaRel");
     if (prop != null) {
-      isaRel = prop;
+      setIsaProperty(prop);
     }
   }
 
+  /**
+   * Sets the isa property.
+   *
+   * @param isaRel the new isa property
+   */
+  public static void setIsaProperty(String isaRel) {
+    NewConceptMinRequirementsCheck.isaRel = isaRel;    
+  }
+  
   /*
    * (non-Javadoc)
    * 

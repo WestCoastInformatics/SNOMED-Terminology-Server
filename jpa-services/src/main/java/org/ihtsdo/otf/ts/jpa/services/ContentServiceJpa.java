@@ -59,17 +59,11 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
 
   /** The listener. */
   private static List<WorkflowListener> listeners = null;
-
-  /**
-   * Instantiates an empty {@link ContentServiceJpa}.
-   *
-   * @throws Exception the exception
-   */
-  public ContentServiceJpa() throws Exception {
-    super();
-    if (listeners == null) {
-      listeners = new ArrayList<>();
-      Properties config = ConfigUtility.getConfigProperties();
+  static {
+    listeners = new ArrayList<>();
+    Properties config;
+    try {
+      config = ConfigUtility.getConfigProperties();
       String key = "workflow.listener.handler";
       for (String handlerName : config.getProperty(key).split(",")) {
         if (handlerName.isEmpty())
@@ -80,6 +74,21 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
                 handlerName, WorkflowListener.class);
         listeners.add(handlerService);
       }
+    } catch (Exception e) {
+      e.printStackTrace();
+      listeners = null;
+    }
+  }
+
+  /**
+   * Instantiates an empty {@link ContentServiceJpa}.
+   *
+   * @throws Exception the exception
+   */
+  public ContentServiceJpa() throws Exception {
+    super();
+    if (listeners == null) {
+      throw new Exception("Listeners did not properly initialize, serious error.");
     }
   }
 
@@ -334,9 +343,11 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
     }
   }
 
-
-  /* (non-Javadoc)
-   * @see org.ihtsdo.otf.ts.services.ContentService#getDescription(java.lang.Long)
+  /*
+   * (non-Javadoc)
+   * 
+   * @see
+   * org.ihtsdo.otf.ts.services.ContentService#getDescription(java.lang.Long)
    */
   @Override
   public Description getDescription(Long id) throws Exception {
@@ -454,9 +465,11 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
     }
   }
 
-
-  /* (non-Javadoc)
-   * @see org.ihtsdo.otf.ts.services.ContentService#getRelationship(java.lang.Long)
+  /*
+   * (non-Javadoc)
+   * 
+   * @see
+   * org.ihtsdo.otf.ts.services.ContentService#getRelationship(java.lang.Long)
    */
   @Override
   public Relationship getRelationship(Long id) throws Exception {
@@ -662,8 +675,12 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
     }
   }
 
-  /* (non-Javadoc)
-   * @see org.ihtsdo.otf.ts.services.ContentService#getAttributeValueRefSetMember(java.lang.Long)
+  /*
+   * (non-Javadoc)
+   * 
+   * @see
+   * org.ihtsdo.otf.ts.services.ContentService#getAttributeValueRefSetMember
+   * (java.lang.Long)
    */
   @Override
   public AttributeValueRefSetMember getAttributeValueRefSetMember(Long id)
@@ -792,9 +809,12 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
     }
   }
 
-  
-  /* (non-Javadoc)
-   * @see org.ihtsdo.otf.ts.services.ContentService#getComplexMapRefSetMember(java.lang.Long)
+  /*
+   * (non-Javadoc)
+   * 
+   * @see
+   * org.ihtsdo.otf.ts.services.ContentService#getComplexMapRefSetMember(java
+   * .lang.Long)
    */
   @Override
   public ComplexMapRefSetMember getComplexMapRefSetMember(Long id)
@@ -922,12 +942,15 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
     }
   }
 
-  /* (non-Javadoc)
-   * @see org.ihtsdo.otf.ts.services.ContentService#getLanguageRefSetMember(java.lang.Long)
+  /*
+   * (non-Javadoc)
+   * 
+   * @see
+   * org.ihtsdo.otf.ts.services.ContentService#getLanguageRefSetMember(java.
+   * lang.Long)
    */
   @Override
-  public LanguageRefSetMember getLanguageRefSetMember(Long id)
-    throws Exception {
+  public LanguageRefSetMember getLanguageRefSetMember(Long id) throws Exception {
     Logger.getLogger(ContentServiceJpa.class).debug(
         "Content Service - get language refset member " + id);
     LanguageRefSetMember c = manager.find(LanguageRefSetMemberJpa.class, id);
@@ -1049,9 +1072,12 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
     }
   }
 
-
-  /* (non-Javadoc)
-   * @see org.ihtsdo.otf.ts.services.ContentService#getSimpleMapRefSetMember(java.lang.Long)
+  /*
+   * (non-Javadoc)
+   * 
+   * @see
+   * org.ihtsdo.otf.ts.services.ContentService#getSimpleMapRefSetMember(java
+   * .lang.Long)
    */
   @Override
   public SimpleMapRefSetMember getSimpleMapRefSetMember(Long id)
@@ -1176,9 +1202,13 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
       }
     }
   }
-  
-  /* (non-Javadoc)
-   * @see org.ihtsdo.otf.ts.services.ContentService#getSimpleRefSetMember(java.lang.Long)
+
+  /*
+   * (non-Javadoc)
+   * 
+   * @see
+   * org.ihtsdo.otf.ts.services.ContentService#getSimpleRefSetMember(java.lang
+   * .Long)
    */
   @Override
   public SimpleRefSetMember getSimpleRefSetMember(Long id) throws Exception {

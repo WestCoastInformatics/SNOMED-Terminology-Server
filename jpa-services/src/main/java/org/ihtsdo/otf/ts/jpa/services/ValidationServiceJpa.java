@@ -19,17 +19,11 @@ public class ValidationServiceJpa extends RootServiceJpa implements
 
   /** The checks. */
   public static List<ValidationCheck> checks = null;
-
-  /**
-   * Instantiates an empty {@link ValidationServiceJpa}.
-   *
-   * @throws Exception the exception
-   */
-  public ValidationServiceJpa() throws Exception {
-    super();
-    if (checks == null) {
-      checks = new ArrayList<>();
-      Properties config = ConfigUtility.getConfigProperties();
+  static {
+    checks = new ArrayList<>();
+    Properties config;
+    try {
+      config = ConfigUtility.getConfigProperties();
       String key = "validation.service.handler";
       for (String handlerName : config.getProperty(key).split(",")) {
         if (handlerName.isEmpty())
@@ -41,6 +35,21 @@ public class ValidationServiceJpa extends RootServiceJpa implements
                 handlerName, ValidationCheck.class);
         checks.add(handlerService);
       }
+    } catch (Exception e) {
+      e.printStackTrace();
+      checks = null;
+    }
+  }
+
+  /**
+   * Instantiates an empty {@link ValidationServiceJpa}.
+   *
+   * @throws Exception the exception
+   */
+  public ValidationServiceJpa() throws Exception {
+    super();
+    if (checks == null) {
+      throw new Exception("Check list is null, serious problem.");
     }
   }
 

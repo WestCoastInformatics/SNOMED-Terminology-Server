@@ -19,9 +19,18 @@ public class RootServiceJpa implements RootService {
 
   /** The factory. */
   protected static EntityManagerFactory factory;
-
-  /** The lock. */
-  private static String lock = "lock";
+  static {
+    Logger.getLogger(RootServiceJpa.class).info(
+        "Setting root service entity manager factory.");
+    Properties config;
+    try {
+      config = ConfigUtility.getConfigProperties();
+      factory = Persistence.createEntityManagerFactory("TermServiceDS", config);
+    } catch (Exception e) {
+      e.printStackTrace();
+      factory = null;
+    }
+  }
 
   /** The manager. */
   protected EntityManager manager;
@@ -39,10 +48,14 @@ public class RootServiceJpa implements RootService {
    */
   public RootServiceJpa() throws Exception {
     // created once or if the factory has closed
-    synchronized (lock) {
-      if (factory == null || !factory.isOpen()) {
-        openFactory();
-      }
+    if (factory == null) {
+      throw new Exception("Factory is null, serious problem.");
+    }
+    if (!factory.isOpen()) {
+      Logger.getLogger(this.getClass()).info(
+          "Setting root service entity manager factory.");
+      Properties config = ConfigUtility.getConfigProperties();
+      factory = Persistence.createEntityManagerFactory("TermServiceDS", config);
     }
 
     // created on each instantiation
@@ -59,8 +72,10 @@ public class RootServiceJpa implements RootService {
   public void openFactory() throws Exception {
 
     // if factory has not been instantiated or has been closed, open it
-    if (factory == null || !factory.isOpen()) {
-
+    if (factory == null) {
+      throw new Exception("Factory is null, serious problem.");
+    }
+    if (!factory.isOpen()) {
       Logger.getLogger(this.getClass()).info(
           "Setting root service entity manager factory.");
       Properties config = ConfigUtility.getConfigProperties();
@@ -131,14 +146,16 @@ public class RootServiceJpa implements RootService {
   @Override
   public void commit() {
 
-    if (getTransactionPerOperation())
+    if (getTransactionPerOperation()) {
       throw new IllegalStateException(
           "Error attempting to commit a transaction when using transactions per operation mode.");
-    else if (tx != null && !tx.isActive())
+    } else if (tx != null && !tx.isActive()) {
       throw new IllegalStateException(
           "Error attempting to commit a transaction when there "
               + "is no active transaction");
-    tx.commit();
+    } else if (tx != null) {
+      tx.commit();
+    }
   }
 
   /*
