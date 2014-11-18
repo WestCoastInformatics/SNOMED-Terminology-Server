@@ -3,7 +3,7 @@ package org.ihtsdo.otf.ts.rf2;
 /**
  * Represents a reference set member with associated Concept
  */
-public interface ConceptRefSetMember extends RefSetMember {
+public interface ConceptRefSetMember extends RefSetMember<Concept> {
 
   /**
    * returns the Concept

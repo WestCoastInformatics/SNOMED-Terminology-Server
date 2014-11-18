@@ -23,6 +23,7 @@ goto trailer)
 if DEFINED SERVER_CONFIG (echo SERVER_CONFIG = %SERVER_CONFIG%) else (echo SERVER_CONFIG must be defined
 goto trailer)
 set error=0
+pause
 
 echo     Run updatedb with hibernate.hbm2ddl.auto = create ...%date% %time%
 cd %SERVER_HOME%/admin/updatedb

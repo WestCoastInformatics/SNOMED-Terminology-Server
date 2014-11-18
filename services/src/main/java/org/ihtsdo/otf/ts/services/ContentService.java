@@ -5,7 +5,7 @@ import java.util.Set;
 import org.ihtsdo.otf.ts.helpers.ConceptList;
 import org.ihtsdo.otf.ts.helpers.PfsParameter;
 import org.ihtsdo.otf.ts.helpers.SearchResultList;
-import org.ihtsdo.otf.ts.rf2.AttributeValueRefSetMember;
+import org.ihtsdo.otf.ts.rf2.AttributeValueConceptRefSetMember;
 import org.ihtsdo.otf.ts.rf2.ComplexMapRefSetMember;
 import org.ihtsdo.otf.ts.rf2.Concept;
 import org.ihtsdo.otf.ts.rf2.Description;
@@ -269,7 +269,7 @@ public interface ContentService extends RootService {
    * @return the attributeValueRefSetMember
    * @throws Exception if anything goes wrong
    */
-  public AttributeValueRefSetMember getAttributeValueRefSetMember(
+  public AttributeValueConceptRefSetMember getAttributeValueRefSetMember(
     String attributeValueRefSetMemberId) throws Exception;
 
   /**
@@ -281,7 +281,7 @@ public interface ContentService extends RootService {
    * @return the attributeValueRefSetMember
    * @throws Exception if anything goes wrong
    */
-  public AttributeValueRefSetMember getAttributeValueRefSetMember(
+  public AttributeValueConceptRefSetMember getAttributeValueRefSetMember(
     String terminologyId, String terminology, String version)
     throws Exception;
 
@@ -292,8 +292,8 @@ public interface ContentService extends RootService {
    * @return the attributeValueRefSetMember
    * @throws Exception the exception
    */
-  public AttributeValueRefSetMember addAttributeValueRefSetMember(
-    AttributeValueRefSetMember attributeValueRefSetMember) throws Exception;
+  public AttributeValueConceptRefSetMember addAttributeValueRefSetMember(
+    AttributeValueConceptRefSetMember attributeValueRefSetMember) throws Exception;
 
   /**
    * Update attributeValueRefSetMember.
@@ -302,7 +302,7 @@ public interface ContentService extends RootService {
    * @throws Exception the exception
    */
   public void updateAttributeValueRefSetMember(
-    AttributeValueRefSetMember attributeValueRefSetMember) throws Exception;
+    AttributeValueConceptRefSetMember attributeValueRefSetMember) throws Exception;
 
   /**
    * Removes the attributeValueRefSetMember.

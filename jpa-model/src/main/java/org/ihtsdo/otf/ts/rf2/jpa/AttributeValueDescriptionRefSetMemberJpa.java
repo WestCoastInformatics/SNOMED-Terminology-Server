@@ -5,6 +5,7 @@ import javax.persistence.Entity;
 import javax.persistence.Table;
 
 import org.hibernate.envers.Audited;
+import org.ihtsdo.otf.ts.rf2.AttributeValueDescriptionRefSetMember;
 import org.ihtsdo.otf.ts.rf2.AttributeValueConceptRefSetMember;
 
 /**
@@ -13,8 +14,8 @@ import org.ihtsdo.otf.ts.rf2.AttributeValueConceptRefSetMember;
 @Entity
 @Table(name = "attribute_value_refset_members")
 @Audited
-public class AttributeValueRefSetMemberJpa extends AbstractConceptRefSetMember
-    implements AttributeValueConceptRefSetMember {
+public class AttributeValueDescriptionRefSetMemberJpa extends AbstractDescriptionRefSetMember
+    implements AttributeValueDescriptionRefSetMember {
 
   /** The value id */
   @Column(nullable = false)
@@ -42,7 +43,7 @@ public class AttributeValueRefSetMemberJpa extends AbstractConceptRefSetMember
   @Override
   public String toString() {
     return super.toString()
-        + (this.getConcept() == null ? null : this.getConcept()
+        + (this.getDescription() == null ? null : this.getDescription()
             .getTerminologyId()) + "," + this.getValueId();
   }
 
@@ -74,7 +75,7 @@ public class AttributeValueRefSetMemberJpa extends AbstractConceptRefSetMember
       return false;
     if (getClass() != obj.getClass())
       return false;
-    AttributeValueRefSetMemberJpa other = (AttributeValueRefSetMemberJpa) obj;
+    AttributeValueDescriptionRefSetMemberJpa other = (AttributeValueDescriptionRefSetMemberJpa) obj;
     if (valueId == null) {
       if (other.valueId != null)
         return false;

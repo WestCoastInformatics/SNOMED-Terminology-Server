@@ -14,7 +14,7 @@ import org.ihtsdo.otf.ts.rf2.ConceptRefSetMember;
  */
 @MappedSuperclass
 @Audited
-public abstract class AbstractConceptRefSetMember extends AbstractRefSetMember
+public abstract class AbstractConceptRefSetMember extends AbstractRefSetMember<Concept>
     implements ConceptRefSetMember {
 
   /** The Concept associated with this element */

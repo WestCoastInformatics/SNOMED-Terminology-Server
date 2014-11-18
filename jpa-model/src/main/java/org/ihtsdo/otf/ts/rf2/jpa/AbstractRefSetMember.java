@@ -4,15 +4,17 @@ import javax.persistence.Column;
 import javax.persistence.MappedSuperclass;
 
 import org.hibernate.envers.Audited;
+import org.ihtsdo.otf.ts.rf2.Component;
 import org.ihtsdo.otf.ts.rf2.RefSetMember;
 
 /**
  * Abstract implementation of {@link RefSetMember} for use with JPA
+ * @param <T> the {@link Component}
  */
 @MappedSuperclass
 @Audited
-public abstract class AbstractRefSetMember extends AbstractComponent implements
-    RefSetMember {
+public abstract class AbstractRefSetMember<T extends Component> extends
+    AbstractComponent implements RefSetMember<T> {
 
   /** The ref set id */
   @Column(nullable = false)
@@ -53,7 +55,9 @@ public abstract class AbstractRefSetMember extends AbstractComponent implements
       return false;
     if (getClass() != obj.getClass())
       return false;
-    AbstractRefSetMember other = (AbstractRefSetMember) obj;
+    @SuppressWarnings("unchecked")
+    AbstractRefSetMember<? extends Component> other =
+        (AbstractRefSetMember<? extends Component>) obj;
     if (refSetId == null) {
       if (other.refSetId != null)
         return false;

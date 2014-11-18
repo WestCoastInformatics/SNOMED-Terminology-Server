@@ -3,7 +3,7 @@ package org.ihtsdo.otf.ts.rf2;
 /**
  * Represents a reference set member with associated Description
  */
-public interface DescriptionRefSetMember extends RefSetMember {
+public interface DescriptionRefSetMember extends RefSetMember<Description> {
 
   /**
    * returns the Description

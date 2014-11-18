@@ -23,7 +23,7 @@ import org.ihtsdo.otf.ts.helpers.FileSorter;
 import org.ihtsdo.otf.ts.jpa.algo.TransitiveClosureAlgorithm;
 import org.ihtsdo.otf.ts.jpa.services.ContentServiceJpa;
 import org.ihtsdo.otf.ts.jpa.services.MetadataServiceJpa;
-import org.ihtsdo.otf.ts.rf2.AttributeValueRefSetMember;
+import org.ihtsdo.otf.ts.rf2.AttributeValueConceptRefSetMember;
 import org.ihtsdo.otf.ts.rf2.ComplexMapRefSetMember;
 import org.ihtsdo.otf.ts.rf2.Concept;
 import org.ihtsdo.otf.ts.rf2.Description;
@@ -1535,7 +1535,7 @@ public class TerminologyRf2SnapshotLoaderMojo extends AbstractMojo {
 
       line = line.replace("\r", "");
       String fields[] = line.split("\t");
-      AttributeValueRefSetMember member =
+      AttributeValueConceptRefSetMember member =
           new AttributeValueRefSetMemberJpa();
 
       if (!fields[0].equals("id")) { // header

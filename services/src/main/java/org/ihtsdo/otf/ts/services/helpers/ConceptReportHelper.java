@@ -1,6 +1,6 @@
 package org.ihtsdo.otf.ts.services.helpers;
 
-import org.ihtsdo.otf.ts.rf2.AttributeValueRefSetMember;
+import org.ihtsdo.otf.ts.rf2.AttributeValueConceptRefSetMember;
 import org.ihtsdo.otf.ts.rf2.ComplexMapRefSetMember;
 import org.ihtsdo.otf.ts.rf2.Concept;
 import org.ihtsdo.otf.ts.rf2.Description;
@@ -37,7 +37,7 @@ public class ConceptReportHelper {
     for (Relationship r : c.getInverseRelationships()) {
       builder.append("  INV_REL = " + r).append(nl);
     }
-    for (AttributeValueRefSetMember member : c.getAttributeValueRefSetMembers()) {
+    for (AttributeValueConceptRefSetMember member : c.getAttributeValueRefSetMembers()) {
       builder.append("  ATT_VALUE = " + member).append(nl);
     }
     for (ComplexMapRefSetMember member : c.getComplexMapRefSetMembers()) {

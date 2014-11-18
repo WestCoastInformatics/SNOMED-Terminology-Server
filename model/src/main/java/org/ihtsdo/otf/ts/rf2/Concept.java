@@ -200,7 +200,7 @@ public interface Concept extends Component {
    * 
    * @return the set of AttributeValueRefSetMembers
    */
-  public Set<AttributeValueRefSetMember> getAttributeValueRefSetMembers();
+  public Set<AttributeValueConceptRefSetMember> getAttributeValueRefSetMembers();
 
   /**
    * Sets the set of AttributeValueRefSetMembers
@@ -208,7 +208,7 @@ public interface Concept extends Component {
    * @param attributeValueRefSetMembers the set of AttributeValueRefSetMembers
    */
   public void setAttributeValueRefSetMembers(
-    Set<AttributeValueRefSetMember> attributeValueRefSetMembers);
+    Set<AttributeValueConceptRefSetMember> attributeValueRefSetMembers);
 
   /**
    * Adds a AttributeValueRefSetMember to the set of AttributeValueRefSetMembers
@@ -217,7 +217,7 @@ public interface Concept extends Component {
    *          added
    */
   public void addAttributeValueRefSetMember(
-    AttributeValueRefSetMember attributeValueRefSetMember);
+    AttributeValueConceptRefSetMember attributeValueRefSetMember);
 
   /**
    * Removes a AttributeValueRefSetMember from the set of
@@ -227,6 +227,6 @@ public interface Concept extends Component {
    *          removed
    */
   public void removeAttributeValueRefSetMember(
-    AttributeValueRefSetMember attributeValueRefSetMember);
+    AttributeValueConceptRefSetMember attributeValueRefSetMember);
 
 }

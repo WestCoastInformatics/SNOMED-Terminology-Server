@@ -17,6 +17,7 @@ import javax.xml.bind.annotation.XmlTransient;
 
 import org.hibernate.envers.Audited;
 import org.hibernate.search.annotations.Analyze;
+import org.hibernate.search.annotations.Analyzer;
 import org.hibernate.search.annotations.ContainedIn;
 import org.hibernate.search.annotations.Field;
 import org.hibernate.search.annotations.Fields;
@@ -54,8 +55,9 @@ public class DescriptionJpa extends AbstractComponent implements Description {
   /** The term. */
   @Column(nullable = false, length = 4000)
   @Fields({
-      @Field, @Field(name = "all", analyze = Analyze.YES, store = Store.NO)
-  })
+      @Field, 
+      @Field(name = "all", analyze = Analyze.YES, store = Store.NO)
+  }) @Analyzer(definition = "noStopWord")
   private String term;
 
   /** The case significance id. */

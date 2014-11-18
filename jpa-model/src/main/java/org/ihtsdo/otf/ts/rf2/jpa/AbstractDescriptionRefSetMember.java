@@ -16,7 +16,7 @@ import org.ihtsdo.otf.ts.rf2.DescriptionRefSetMember;
 @MappedSuperclass
 @Audited
 public abstract class AbstractDescriptionRefSetMember extends
-    AbstractRefSetMember implements DescriptionRefSetMember {
+    AbstractRefSetMember<Description> implements DescriptionRefSetMember {
 
   /**  The description. */
   @ManyToOne(targetEntity = DescriptionJpa.class, optional = false)

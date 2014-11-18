@@ -19,6 +19,7 @@ import org.apache.solr.analysis.StandardFilterFactory;
 import org.apache.solr.analysis.StandardTokenizerFactory;
 import org.hibernate.envers.Audited;
 import org.hibernate.search.annotations.Analyze;
+import org.hibernate.search.annotations.Analyzer;
 import org.hibernate.search.annotations.AnalyzerDef;
 import org.hibernate.search.annotations.Field;
 import org.hibernate.search.annotations.Fields;
@@ -28,7 +29,7 @@ import org.hibernate.search.annotations.IndexedEmbedded;
 import org.hibernate.search.annotations.Store;
 import org.hibernate.search.annotations.TokenFilterDef;
 import org.hibernate.search.annotations.TokenizerDef;
-import org.ihtsdo.otf.ts.rf2.AttributeValueRefSetMember;
+import org.ihtsdo.otf.ts.rf2.AttributeValueConceptRefSetMember;
 import org.ihtsdo.otf.ts.rf2.ComplexMapRefSetMember;
 import org.ihtsdo.otf.ts.rf2.Concept;
 import org.ihtsdo.otf.ts.rf2.Description;
@@ -91,14 +92,14 @@ public class ConceptJpa extends AbstractComponent implements Concept {
 
   /** The attributeValue RefSet members. */
   @OneToMany(mappedBy = "concept", cascade = CascadeType.ALL, orphanRemoval = true, targetEntity = AttributeValueRefSetMemberJpa.class)
-  private Set<AttributeValueRefSetMember> attributeValueRefSetMembers =
+  private Set<AttributeValueConceptRefSetMember> attributeValueRefSetMembers =
       new HashSet<>();
 
   /** The default preferred name. */
   @Column(nullable = false, length = 256)
   @Fields({
       @Field, @Field(name = "all", analyze = Analyze.YES, store = Store.NO)
-  })
+  }) @Analyzer(definition = "noStopWord")
   private String defaultPreferredName;
 
   /*
@@ -378,7 +379,7 @@ public class ConceptJpa extends AbstractComponent implements Concept {
    */
   @XmlTransient
   @Override
-  public Set<AttributeValueRefSetMember> getAttributeValueRefSetMembers() {
+  public Set<AttributeValueConceptRefSetMember> getAttributeValueRefSetMembers() {
     return this.attributeValueRefSetMembers;
   }
 
@@ -390,7 +391,7 @@ public class ConceptJpa extends AbstractComponent implements Concept {
    */
   @Override
   public void setAttributeValueRefSetMembers(
-    Set<AttributeValueRefSetMember> attributeValueRefSetMembers) {
+    Set<AttributeValueConceptRefSetMember> attributeValueRefSetMembers) {
     this.attributeValueRefSetMembers = attributeValueRefSetMembers;
   }
 
@@ -403,7 +404,7 @@ public class ConceptJpa extends AbstractComponent implements Concept {
    */
   @Override
   public void addAttributeValueRefSetMember(
-    AttributeValueRefSetMember attributeValueRefSetMember) {
+    AttributeValueConceptRefSetMember attributeValueRefSetMember) {
     attributeValueRefSetMember.setConcept(this);
     this.attributeValueRefSetMembers.add(attributeValueRefSetMember);
   }
@@ -417,7 +418,7 @@ public class ConceptJpa extends AbstractComponent implements Concept {
    */
   @Override
   public void removeAttributeValueRefSetMember(
-    AttributeValueRefSetMember attributeValueRefSetMember) {
+    AttributeValueConceptRefSetMember attributeValueRefSetMember) {
     this.attributeValueRefSetMembers.remove(attributeValueRefSetMember);
   }
 

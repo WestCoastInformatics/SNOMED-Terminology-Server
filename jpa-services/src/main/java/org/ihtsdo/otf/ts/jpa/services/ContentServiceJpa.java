@@ -31,7 +31,7 @@ import org.ihtsdo.otf.ts.helpers.SearchResult;
 import org.ihtsdo.otf.ts.helpers.SearchResultJpa;
 import org.ihtsdo.otf.ts.helpers.SearchResultList;
 import org.ihtsdo.otf.ts.helpers.SearchResultListJpa;
-import org.ihtsdo.otf.ts.rf2.AttributeValueRefSetMember;
+import org.ihtsdo.otf.ts.rf2.AttributeValueConceptRefSetMember;
 import org.ihtsdo.otf.ts.rf2.ComplexMapRefSetMember;
 import org.ihtsdo.otf.ts.rf2.Concept;
 import org.ihtsdo.otf.ts.rf2.Description;
@@ -672,11 +672,11 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
    * (java.lang.String)
    */
   @Override
-  public AttributeValueRefSetMember getAttributeValueRefSetMember(String id)
+  public AttributeValueConceptRefSetMember getAttributeValueRefSetMember(String id)
     throws Exception {
     Logger.getLogger(ContentServiceJpa.class).debug(
         "Content Service - get attribute value refset member " + id);
-    AttributeValueRefSetMember c =
+    AttributeValueConceptRefSetMember c =
         manager.find(AttributeValueRefSetMemberJpa.class, id);
     return c;
   }
@@ -685,7 +685,7 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
    * {@inheritDoc}
    */
   @Override
-  public AttributeValueRefSetMember getAttributeValueRefSetMember(
+  public AttributeValueConceptRefSetMember getAttributeValueRefSetMember(
     String terminologyId, String terminology, String terminologyVersion)
     throws Exception {
     Logger.getLogger(ContentServiceJpa.class).debug(
@@ -702,8 +702,8 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
       query.setParameter("terminologyId", terminologyId);
       query.setParameter("terminology", terminology);
       query.setParameter("terminologyVersion", terminologyVersion);
-      AttributeValueRefSetMember c =
-          (AttributeValueRefSetMember) query.getSingleResult();
+      AttributeValueConceptRefSetMember c =
+          (AttributeValueConceptRefSetMember) query.getSingleResult();
       return c;
     } catch (NoResultException e) {
       return null;
@@ -724,8 +724,8 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
    * (org.ihtsdo.otf.mapping.rf2.AttributeValueRefSetMember)
    */
   @Override
-  public AttributeValueRefSetMember addAttributeValueRefSetMember(
-    AttributeValueRefSetMember attributeValueRefSetMember) throws Exception {
+  public AttributeValueConceptRefSetMember addAttributeValueRefSetMember(
+    AttributeValueConceptRefSetMember attributeValueRefSetMember) throws Exception {
     Logger.getLogger(ContentServiceJpa.class).debug(
         "Content Service - add attribute value refset member"
             + attributeValueRefSetMember.getTerminologyId());
@@ -750,7 +750,7 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
    */
   @Override
   public void updateAttributeValueRefSetMember(
-    AttributeValueRefSetMember attributeValueRefSetMember) throws Exception {
+    AttributeValueConceptRefSetMember attributeValueRefSetMember) throws Exception {
     Logger.getLogger(ContentServiceJpa.class).debug(
         "Content Service - update attribute value refset member "
             + attributeValueRefSetMember.getTerminologyId());
@@ -778,7 +778,7 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
         "Content Service - remove attribute value refset member " + id);
     tx = manager.getTransaction();
     // retrieve this map specialist
-    AttributeValueRefSetMember mu =
+    AttributeValueConceptRefSetMember mu =
         manager.find(AttributeValueRefSetMemberJpa.class, id);
     if (getTransactionPerOperation()) {
       // remove refset member

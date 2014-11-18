@@ -2,8 +2,9 @@ package org.ihtsdo.otf.ts.rf2;
 
 /**
  * Represents a reference set member
+ * @param <T> a {@link Component}
  */
-public interface RefSetMember extends Component {
+public interface RefSetMember<T extends Component> extends Component {
 
   /**
    * returns the refSetId
