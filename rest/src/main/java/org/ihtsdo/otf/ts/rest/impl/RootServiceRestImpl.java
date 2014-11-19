@@ -26,7 +26,7 @@ public class RootServiceRestImpl {
   @SuppressWarnings("static-method")
   public void handleException(Exception e, String whatIsHappening) {
     try {
-      ExceptionHandler.handleException(e, whatIsHappening, "", "", "");
+      ExceptionHandler.handleException(e, whatIsHappening, "");
     } catch (Exception e1) {
       // do nothing
     }
@@ -48,10 +48,9 @@ public class RootServiceRestImpl {
    * @param recordId the record id
    */
   public static void handleException(Exception e, String whatIsHappening,
-    String userName, String project, String recordId) {
+    String userName) {
     try {
-      ExceptionHandler.handleException(e, whatIsHappening, userName, project,
-          recordId);
+      ExceptionHandler.handleException(e, whatIsHappening, userName);
     } catch (Exception e1) {
       // do nothing
     }

@@ -20,8 +20,8 @@ public class SimpleRefSetMemberJpa extends AbstractConceptRefSetMember
    */
   @Override
   public String toString() {
-    return super.toString() +
-        (this.getConcept() == null ? null : this.getConcept()
+    return super.toString()
+        + (this.getConcept() == null ? null : this.getConcept()
             .getTerminologyId());
   }
 

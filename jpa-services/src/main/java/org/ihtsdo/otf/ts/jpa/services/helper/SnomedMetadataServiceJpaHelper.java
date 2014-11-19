@@ -513,15 +513,14 @@ public class SnomedMetadataServiceJpaHelper extends RootServiceJpa implements
     String terminology, String version) throws Exception {
     Map<String, String> map = new HashMap<>();
     ContentService contentService = new ContentServiceJpa();
-    final String[] nonGroupingRelIds = new String [] {
+    final String[] nonGroupingRelIds = new String[] {
         "123005000", "272741003", "127489000", "411116001"
     };
     for (String id : nonGroupingRelIds) {
       Concept concept =
-        contentService.getSingleConcept(id, terminology,
-            version);
+          contentService.getSingleConcept(id, terminology, version);
       map.put(id, concept.getDefaultPreferredName());
-    } 
+    }
     return map;
   }
 
@@ -546,8 +545,11 @@ public class SnomedMetadataServiceJpaHelper extends RootServiceJpa implements
 
   }
 
-  /* (non-Javadoc)
-   * @see org.ihtsdo.otf.ts.helpers.Configurable#setProperties(java.util.Properties)
+  /*
+   * (non-Javadoc)
+   * 
+   * @see
+   * org.ihtsdo.otf.ts.helpers.Configurable#setProperties(java.util.Properties)
    */
   @Override
   public void setProperties(Properties p) {

@@ -50,9 +50,9 @@ public class ConfigUtility {
   /** The transformer for DOM -> XML. */
   private static Transformer transformer;
 
-  /**  The date format. */
+  /** The date format. */
   public static SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("YYYYmmDD");
-  
+
   static {
     try {
       TransformerFactory factory = TransformerFactory.newInstance();
@@ -103,7 +103,8 @@ public class ConfigUtility {
       FileReader in = new FileReader(new File(configFileName));
       testConfig.load(in);
       in.close();
-      Logger.getLogger(ConfigUtility.class).info("  properties = " + testConfig);
+      Logger.getLogger(ConfigUtility.class)
+          .info("  properties = " + testConfig);
     }
     return testConfig;
   }

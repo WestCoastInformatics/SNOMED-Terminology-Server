@@ -44,7 +44,8 @@ public class ClamlMetadataServiceJpaHelper extends RootServiceJpa implements
     String version) throws Exception {
     ContentService contentService = new ContentServiceJpa();
     SearchResultList results =
-        contentService.findConceptsForQuery(terminology, version, "Isa", new PfsParameterJpa());
+        contentService.findConceptsForQuery(terminology, version, "Isa",
+            new PfsParameterJpa());
     for (SearchResult result : results.getSearchResults()) {
       if (result.getTerminology().equals(terminology)
           && result.getTerminologyVersion().equals(version)
@@ -85,7 +86,8 @@ public class ClamlMetadataServiceJpaHelper extends RootServiceJpa implements
     ContentService contentService = new ContentServiceJpa();
     Long rootId = null;
     SearchResultList results =
-        contentService.findConceptsForQuery(terminology, version, "Module", new PfsParameterJpa());
+        contentService.findConceptsForQuery(terminology, version, "Module",
+            new PfsParameterJpa());
     for (SearchResult result : results.getSearchResults()) {
       if (result.getTerminology().equals(terminology)
           && result.getTerminologyVersion().equals(version)
@@ -166,8 +168,8 @@ public class ClamlMetadataServiceJpaHelper extends RootServiceJpa implements
     ContentService contentService = new ContentServiceJpa();
     Long rootId = null;
     SearchResultList results =
-        contentService.findConceptsForQuery(terminology, version, "Simple refsets",
-            new PfsParameterJpa());
+        contentService.findConceptsForQuery(terminology, version,
+            "Simple refsets", new PfsParameterJpa());
     for (SearchResult result : results.getSearchResults()) {
       if (result.getTerminology().equals(terminology)
           && result.getTerminologyVersion().equals(version)
@@ -208,8 +210,8 @@ public class ClamlMetadataServiceJpaHelper extends RootServiceJpa implements
     ContentService contentService = new ContentServiceJpa();
     Long rootId = null;
     SearchResultList results =
-        contentService.findConceptsForQuery(terminology, version, "Definition status",
-            new PfsParameterJpa());
+        contentService.findConceptsForQuery(terminology, version,
+            "Definition status", new PfsParameterJpa());
     for (SearchResult result : results.getSearchResults()) {
       if (result.getTerminology().equals(terminology)
           && result.getTerminologyVersion().equals(version)
@@ -237,8 +239,8 @@ public class ClamlMetadataServiceJpaHelper extends RootServiceJpa implements
     ContentService contentService = new ContentServiceJpa();
     Long rootId = null;
     SearchResultList results =
-        contentService.findConceptsForQuery(terminology, version, "Description type",
-            new PfsParameterJpa());
+        contentService.findConceptsForQuery(terminology, version,
+            "Description type", new PfsParameterJpa());
     for (SearchResult result : results.getSearchResults()) {
       if (result.getTerminology().equals(terminology)
           && result.getTerminologyVersion().equals(version)
@@ -266,8 +268,8 @@ public class ClamlMetadataServiceJpaHelper extends RootServiceJpa implements
     ContentService contentService = new ContentServiceJpa();
     Long rootId = null;
     SearchResultList results =
-        contentService.findConceptsForQuery(terminology, version, "Case significance",
-            new PfsParameterJpa());
+        contentService.findConceptsForQuery(terminology, version,
+            "Case significance", new PfsParameterJpa());
     for (SearchResult result : results.getSearchResults()) {
       if (result.getTerminology().equals(terminology)
           && result.getTerminologyVersion().equals(version)
@@ -296,8 +298,8 @@ public class ClamlMetadataServiceJpaHelper extends RootServiceJpa implements
     ContentService contentService = new ContentServiceJpa();
     Long rootId = null;
     SearchResultList results =
-        contentService.findConceptsForQuery(terminology, version, "Relationship type",
-            new PfsParameterJpa());
+        contentService.findConceptsForQuery(terminology, version,
+            "Relationship type", new PfsParameterJpa());
     for (SearchResult result : results.getSearchResults()) {
       if (result.getTerminology().equals(terminology)
           && result.getTerminologyVersion().equals(version)
@@ -348,8 +350,8 @@ public class ClamlMetadataServiceJpaHelper extends RootServiceJpa implements
     ContentService contentService = new ContentServiceJpa();
     Long rootId = null;
     SearchResultList results =
-        contentService.findConceptsForQuery(terminology, version, "Characteristic type",
-            new PfsParameterJpa());
+        contentService.findConceptsForQuery(terminology, version,
+            "Characteristic type", new PfsParameterJpa());
     for (SearchResult result : results.getSearchResults()) {
       if (result.getTerminology().equals(terminology)
           && result.getTerminologyVersion().equals(version)
@@ -377,7 +379,8 @@ public class ClamlMetadataServiceJpaHelper extends RootServiceJpa implements
     ContentService contentService = new ContentServiceJpa();
     Long rootId = null;
     SearchResultList results =
-        contentService.findConceptsForQuery(terminology, version, "Modifier", new PfsParameterJpa());
+        contentService.findConceptsForQuery(terminology, version, "Modifier",
+            new PfsParameterJpa());
     for (SearchResult result : results.getSearchResults()) {
       if (result.getTerminology().equals(terminology)
           && result.getTerminologyVersion().equals(version)
@@ -484,8 +487,12 @@ public class ClamlMetadataServiceJpaHelper extends RootServiceJpa implements
     return map;
   }
 
-  /* (non-Javadoc)
-   * @see org.ihtsdo.otf.ts.services.MetadataService#getNonGroupingRelationshipTypes(java.lang.String, java.lang.String)
+  /*
+   * (non-Javadoc)
+   * 
+   * @see
+   * org.ihtsdo.otf.ts.services.MetadataService#getNonGroupingRelationshipTypes
+   * (java.lang.String, java.lang.String)
    */
   @Override
   public Map<String, String> getNonGroupingRelationshipTypes(
@@ -493,12 +500,15 @@ public class ClamlMetadataServiceJpaHelper extends RootServiceJpa implements
     return new HashMap<>();
   }
 
-  /* (non-Javadoc)
-   * @see org.ihtsdo.otf.ts.helpers.Configurable#setProperties(java.util.Properties)
+  /*
+   * (non-Javadoc)
+   * 
+   * @see
+   * org.ihtsdo.otf.ts.helpers.Configurable#setProperties(java.util.Properties)
    */
   @Override
   public void setProperties(Properties p) {
-    // do nothing    
+    // do nothing
   }
 
 }

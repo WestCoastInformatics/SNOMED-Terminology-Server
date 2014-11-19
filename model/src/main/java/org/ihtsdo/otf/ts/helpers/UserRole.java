@@ -18,7 +18,7 @@ public enum UserRole {
   /** The administrator. */
   ADMINISTRATOR("Administrator");
 
-  /**  The value. */
+  /** The value. */
   private String value;
 
   /**

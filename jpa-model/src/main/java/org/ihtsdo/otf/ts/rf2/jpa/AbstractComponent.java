@@ -90,7 +90,9 @@ public abstract class AbstractComponent implements Component {
     this.id = id;
   }
 
-  /* (non-Javadoc)
+  /*
+   * (non-Javadoc)
+   * 
    * @see org.ihtsdo.otf.ts.rf2.Component#getObjectId()
    */
   @Override
@@ -306,7 +308,7 @@ public abstract class AbstractComponent implements Component {
   public String getTerminologyId() {
     return terminologyId;
   }
-  
+
   /*
    * (non-Javadoc)
    * 

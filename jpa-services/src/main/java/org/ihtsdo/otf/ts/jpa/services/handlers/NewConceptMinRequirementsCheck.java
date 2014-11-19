@@ -11,8 +11,8 @@ import org.ihtsdo.otf.ts.rf2.Relationship;
 import org.ihtsdo.otf.ts.services.handlers.ValidationCheck;
 
 /**
- * A sample validation check for a new concept meeting the minimum
- * qualifying criteria.
+ * A sample validation check for a new concept meeting the minimum qualifying
+ * criteria.
  */
 public class NewConceptMinRequirementsCheck implements ValidationCheck {
 
@@ -41,10 +41,19 @@ public class NewConceptMinRequirementsCheck implements ValidationCheck {
   public void setProperties(Properties p) {
     String prop = p.getProperty("isaRel");
     if (prop != null) {
-      isaRel = prop;
+      setIsaProperty(prop);
     }
   }
 
+  /**
+   * Sets the isa property.
+   *
+   * @param isaRel the new isa property
+   */
+  public static void setIsaProperty(String isaRel) {
+    NewConceptMinRequirementsCheck.isaRel = isaRel;    
+  }
+  
   /*
    * (non-Javadoc)
    * 

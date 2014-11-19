@@ -38,7 +38,7 @@ public class ExceptionHandler {
    */
   public static void handleException(Exception e, String whatIsHappening)
     throws Exception {
-    handleException(e, whatIsHappening, "", "", "");
+    handleException(e, whatIsHappening, "");
   }
 
   /**
@@ -55,7 +55,7 @@ public class ExceptionHandler {
    * @throws Exception the web application exception
    */
   public static void handleException(Exception e, String whatIsHappening,
-    String userName, String project, String recordId) throws Exception {
+    String userName) throws Exception {
 
     e.printStackTrace();
     if (e instanceof LocalException) {
@@ -98,8 +98,6 @@ public class ExceptionHandler {
       }
       body.append("TIME: " + df.format(new Date())).append("\n");
       body.append("USER: " + userName).append("\n");
-      body.append("PROJECT: " + project).append("\n");
-      body.append("ID: " + recordId).append("\n\n");
 
       body.append("MESSAGE: " + e.getMessage()).append("\n\n");
       StringWriter out = new StringWriter();
@@ -110,7 +108,8 @@ public class ExceptionHandler {
           "Sending error email : " + props);
       if (config.getProperty("mail.enabled") != null
           && config.getProperty("mail.enabled").equals("true")) {
-        sendEmail(subject, from, recipients, body.toString(), props);
+        sendEmail(subject, from, recipients, body.toString(), props,
+        		"true".equals(props.get("mail.smtp.auth")));   
       } else {
         Logger.getLogger(ExceptionHandler.class).info(
             "Sending mail is disabled.");
@@ -131,12 +130,18 @@ public class ExceptionHandler {
    * @param recipients the recipients
    * @param body the body
    * @param details the details
+   * @param authFlag the auth flag
    * @throws Exception the exception
    */
   public static void sendEmail(String subject, String from, String recipients,
-    String body, Properties details) throws Exception {
-    Authenticator auth = new SMTPAuthenticator();
-    Session session = Session.getInstance(details, auth);
+    String body, Properties details, boolean authFlag) throws Exception {
+    Session session = null;
+    if (authFlag) {
+	  Authenticator auth = new SMTPAuthenticator();
+	  session = Session.getInstance(details, auth);
+	} else {
+	  session = Session.getInstance(details);
+	}
 
     MimeMessage msg = new MimeMessage(session);
     msg.setText(body.toString());

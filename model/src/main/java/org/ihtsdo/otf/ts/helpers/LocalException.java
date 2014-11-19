@@ -1,9 +1,8 @@
 package org.ihtsdo.otf.ts.helpers;
 
-
 /**
- * Represents a known exception with a user-friendly error
- * message that is handled differently by error handlers.
+ * Represents a known exception with a user-friendly error message that is
+ * handled differently by error handlers.
  */
 @SuppressWarnings("serial")
 public class LocalException extends Exception {
@@ -14,7 +13,7 @@ public class LocalException extends Exception {
    * @param message the message
    * @param t the t
    */
-  public LocalException(String message, Throwable t) {
+  public LocalException(String message, Exception t) {
     super(message, t);
   }
 

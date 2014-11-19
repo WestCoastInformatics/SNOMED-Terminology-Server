@@ -1,6 +1,6 @@
 package org.ihtsdo.otf.ts.rest;
 
-import org.ihtsdo.otf.ts.helpers.PfsParameter;
+import org.ihtsdo.otf.ts.helpers.PfsParameterJpa;
 import org.ihtsdo.otf.ts.helpers.SearchResultList;
 
 /**
@@ -19,7 +19,7 @@ public interface HistoryServiceRest {
    */
 
   public SearchResultList findDeltaConceptsForTerminology(String terminology,
-    String version, String authToken, PfsParameter pfsParameter)
+    String version, String authToken, PfsParameterJpa pfsParameter)
     throws Exception;
 
 }

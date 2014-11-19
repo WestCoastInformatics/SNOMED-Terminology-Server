@@ -3,27 +3,25 @@ package org.ihtsdo.otf.ts.helpers;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.ihtsdo.otf.ts.helpers.SearchResult;
-
 /**
  * JPA enabled implementation of a {@link SearchResult}.
  */
 @XmlRootElement(name = "searchResult")
 public class SearchResultJpa implements SearchResult {
 
-  /**  The id. */
+  /** The id. */
   private Long id;
 
-  /**  The terminology id. */
+  /** The terminology id. */
   private String terminologyId;
 
-  /**  The terminology. */
+  /** The terminology. */
   private String terminology;
 
-  /**  The terminology version. */
+  /** The terminology version. */
   private String terminologyVersion;
 
-  /**  The value. */
+  /** The value. */
   private String value;
 
   /**
@@ -90,7 +88,9 @@ public class SearchResultJpa implements SearchResult {
 
   }
 
-  /* (non-Javadoc)
+  /*
+   * (non-Javadoc)
+   * 
    * @see org.ihtsdo.otf.mapping.helpers.SearchResult#getTerminology()
    */
   @Override
@@ -98,15 +98,21 @@ public class SearchResultJpa implements SearchResult {
     return this.terminology;
   }
 
-  /* (non-Javadoc)
-   * @see org.ihtsdo.otf.mapping.helpers.SearchResult#setTerminology(java.lang.String)
+  /*
+   * (non-Javadoc)
+   * 
+   * @see
+   * org.ihtsdo.otf.mapping.helpers.SearchResult#setTerminology(java.lang.String
+   * )
    */
   @Override
   public void setTerminology(String terminology) {
     this.terminology = terminology;
   }
 
-  /* (non-Javadoc)
+  /*
+   * (non-Javadoc)
+   * 
    * @see org.ihtsdo.otf.mapping.helpers.SearchResult#getTerminologyVersion()
    */
   @Override
@@ -114,8 +120,12 @@ public class SearchResultJpa implements SearchResult {
     return this.terminologyVersion;
   }
 
-  /* (non-Javadoc)
-   * @see org.ihtsdo.otf.mapping.helpers.SearchResult#setTerminologyVersion(java.lang.String)
+  /*
+   * (non-Javadoc)
+   * 
+   * @see
+   * org.ihtsdo.otf.mapping.helpers.SearchResult#setTerminologyVersion(java.
+   * lang.String)
    */
   @Override
   public void setTerminologyVersion(String terminologyVersion) {
@@ -144,7 +154,9 @@ public class SearchResultJpa implements SearchResult {
 
   }
 
-  /* (non-Javadoc)
+  /*
+   * (non-Javadoc)
+   * 
    * @see java.lang.Object#hashCode()
    */
   @Override
@@ -164,7 +176,9 @@ public class SearchResultJpa implements SearchResult {
     return result;
   }
 
-  /* (non-Javadoc)
+  /*
+   * (non-Javadoc)
+   * 
    * @see java.lang.Object#equals(java.lang.Object)
    */
   @Override
@@ -199,7 +213,9 @@ public class SearchResultJpa implements SearchResult {
     return true;
   }
 
-  /* (non-Javadoc)
+  /*
+   * (non-Javadoc)
+   * 
    * @see java.lang.Object#toString()
    */
   @Override
@@ -208,6 +224,5 @@ public class SearchResultJpa implements SearchResult {
         + ", terminology=" + terminology + ", terminologyVersion="
         + terminologyVersion + ", value=" + value + "]";
   }
-
 
 }

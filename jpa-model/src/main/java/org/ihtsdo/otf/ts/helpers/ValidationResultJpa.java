@@ -5,8 +5,6 @@ import java.util.Set;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.ihtsdo.otf.ts.helpers.ValidationResult;
-
 /**
  * JPA enabled implementation of {@link ValidationResult}.
  */

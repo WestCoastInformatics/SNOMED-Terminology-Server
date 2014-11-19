@@ -3,8 +3,6 @@ package org.ihtsdo.otf.ts.helpers;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.ihtsdo.otf.ts.helpers.RestPrimitive;
-
 /**
  * Generic object to contain a primitive result.
  * 

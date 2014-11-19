@@ -74,7 +74,6 @@ public class TransitiveClosureAlgorithm extends ContentServiceJpa implements
    */
   @Override
   public void compute() throws Exception {
-    // TODO Auto-generated method stub
     computeTransitiveClosure(rootId, terminology, terminologyVersion);
   }
 

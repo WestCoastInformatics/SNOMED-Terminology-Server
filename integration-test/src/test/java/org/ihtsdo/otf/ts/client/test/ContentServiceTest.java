@@ -35,7 +35,7 @@ public class ContentServiceTest {
   /** The auth token. */
   private static String authToken;
 
-  /**  The Constant sctIsaRel. */
+  /** The Constant sctIsaRel. */
   private final static String sctIsaRel = "116680003";
 
   /**
@@ -63,6 +63,27 @@ public class ContentServiceTest {
         "TEST - " + "10013000, SNOMEDCT, 20140731, " + authToken);
     Concept c =
         client.getSingleConcept("10013000", "SNOMEDCT", "20140731", authToken);
+    getConceptAssertions(c);
+    Logger.getLogger(this.getClass()).info(
+        ConceptReportHelper.getConceptReport(c));
+  }
+
+  /**
+   * Test getting a concept by id.
+   * @throws Exception
+   */
+  @Test
+  public void test004GetConcept() throws Exception {
+    Logger.getLogger(this.getClass()).info(
+        "TEST - 18");
+    Concept c =
+        client.getConcept(18L, authToken);
+    getConceptAssertions(c);
+    Logger.getLogger(this.getClass()).info(
+        ConceptReportHelper.getConceptReport(c));    
+  }
+  
+  private void getConceptAssertions(Concept c) {
     assertNotNull(c);
     assertNotEquals(c.getDefaultPreferredName(),
         "No default preferred name found");
@@ -71,12 +92,12 @@ public class ContentServiceTest {
     Set<Relationship> isaRels = new HashSet<>();
     for (Relationship r : c.getRelationships()) {
       if (r.getTypeId().equals(sctIsaRel) && r.isActive()) {
-        
+
         isaRels.add(r);
       }
     }
     assertEquals(1, isaRels.size());
-    
+
     // three descriptions
     int descCt = 0;
     for (Description d : c.getDescriptions()) {
@@ -84,15 +105,14 @@ public class ContentServiceTest {
       // each is active
       assertTrue(d.isActive());
       // each has 2 language refset members
-      assertEquals(2,d.getLanguageRefSetMembers());
+      assertEquals(2, d.getLanguageRefSetMembers());
     }
     assertEquals(3, descCt);
 
-    Logger.getLogger(this.getClass()).info(ConceptReportHelper.getConceptReport(c));
   }
-
+  
   /**
-   * Test get single concept for SNOMEDCT.
+   * Test get single concept for ICD9CM.
    * @throws Exception
    */
   @Test
@@ -108,7 +128,23 @@ public class ContentServiceTest {
   }
 
   /**
-   * Test get concepts for SNOMEDCT.
+   * Test get single concept for ICD9CM by id.
+   * @throws Exception
+   */
+  @Test
+  public void test004GetConceptICD9CM() throws Exception {
+    Logger.getLogger(this.getClass()).info(
+        "TEST - 43872");
+    Concept c = client.getConcept(43872L, authToken);
+    assertNotNull(c);
+    assertNotEquals(c.getDefaultPreferredName(),
+        "No default preferred name found");
+    Logger.getLogger(this.getClass()).info(
+        "  defaultPreferredName = " + c.getDefaultPreferredName());
+  }
+
+  /**
+   * Test get concepts for ICD9CM.
    * @throws Exception
    */
   @Test

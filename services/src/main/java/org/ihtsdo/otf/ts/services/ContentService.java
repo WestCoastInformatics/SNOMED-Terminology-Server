@@ -101,7 +101,7 @@ public interface ContentService extends RootService {
    * @return the description
    * @throws Exception if anything goes wrong
    */
-  public Description getDescription(String id) throws Exception;
+  public Description getDescription(Long id) throws Exception;
 
   /**
    * Returns the description matching the specified parameters.
@@ -147,7 +147,11 @@ public interface ContentService extends RootService {
    * @return the relationship
    * @throws Exception if anything goes wrong
    */
+<<<<<<< .mine
   public Relationship getRelationship(String id) throws Exception;
+=======
+  public Relationship getRelationship(Long id) throws Exception;
+>>>>>>> .theirs
 
   /**
    * Returns the relationship matching the specified parameters.
@@ -217,12 +221,21 @@ public interface ContentService extends RootService {
   /**
    * Returns the language refset member.
    * 
+<<<<<<< .mine
    * @param id the id
    * @return the language refset member
+=======
+   * @param id the languageRefSetMember id
+   * @return the languageRefSetMember
+>>>>>>> .theirs
    * @throws Exception if anything goes wrong
    */
   public LanguageRefSetMember getLanguageRefSetMember(
+<<<<<<< .mine
     String id) throws Exception;
+=======
+    Long id) throws Exception;
+>>>>>>> .theirs
 
   /**
    * Returns the language refset member matching the specified parameters.
@@ -316,12 +329,21 @@ public interface ContentService extends RootService {
   /**
    * Returns the complex map refset member.
    * 
+<<<<<<< .mine
    * @param id the id
    * @return the complex map refset member
+=======
+   * @param id the complexMapRefSetMember id
+   * @return the complexMapRefSetMember
+>>>>>>> .theirs
    * @throws Exception if anything goes wrong
    */
   public ComplexMapRefSetMember getComplexMapRefSetMember(
+<<<<<<< .mine
     String id) throws Exception;
+=======
+    Long id) throws Exception;
+>>>>>>> .theirs
 
   /**
    * Returns the complex map refset member matching the specified parameters.
@@ -365,12 +387,21 @@ public interface ContentService extends RootService {
   /**
    * Returns the simple map refset member.
    * 
+<<<<<<< .mine
    * @param id the id
    * @return the simple map refset member
+=======
+   * @param id the simpleMapRefSetMember id
+   * @return the simpleMapRefSetMember
+>>>>>>> .theirs
    * @throws Exception if anything goes wrong
    */
   public SimpleMapRefSetMember getSimpleMapRefSetMember(
+<<<<<<< .mine
     String id) throws Exception;
+=======
+    Long id) throws Exception;
+>>>>>>> .theirs
 
   /**
    * Returns the simple map refset member matching the specified parameters.

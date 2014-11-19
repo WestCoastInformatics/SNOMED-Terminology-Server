@@ -14,10 +14,32 @@ import org.ihtsdo.otf.ts.services.handlers.ValidationCheck;
 /**
  * Validation services for the Jpa model.
  */
-public class ValidationServiceJpa extends RootServiceJpa implements ValidationService {
+public class ValidationServiceJpa extends RootServiceJpa implements
+    ValidationService {
 
-  /**  The checks. */
+  /** The checks. */
   public static List<ValidationCheck> checks = null;
+  static {
+    checks = new ArrayList<>();
+    Properties config;
+    try {
+      config = ConfigUtility.getConfigProperties();
+      String key = "validation.service.handler";
+      for (String handlerName : config.getProperty(key).split(",")) {
+        if (handlerName.isEmpty())
+          continue;
+
+        // Add handlers to map
+        ValidationCheck handlerService =
+            ConfigUtility.newStandardHandlerInstanceWithConfiguration(key,
+                handlerName, ValidationCheck.class);
+        checks.add(handlerService);
+      }
+    } catch (Exception e) {
+      e.printStackTrace();
+      checks = null;
+    }
+  }
 
   /**
    * Instantiates an empty {@link ValidationServiceJpa}.
@@ -27,23 +49,16 @@ public class ValidationServiceJpa extends RootServiceJpa implements ValidationSe
   public ValidationServiceJpa() throws Exception {
     super();
     if (checks == null) {
-      checks = new ArrayList<>();
-      Properties config = ConfigUtility.getConfigProperties();
-      String key = "validation.service.handler";
-      for (String handlerName : config.getProperty(key).split(",")) {
-        if (handlerName.isEmpty()) continue;
-
-        // Add handlers to map
-        ValidationCheck handlerService =
-            ConfigUtility.newStandardHandlerInstanceWithConfiguration(
-                key, handlerName, ValidationCheck.class);
-        checks.add(handlerService);
-      }
+      throw new Exception("Check list is null, serious problem.");
     }
   }
 
-  /* (non-Javadoc)
-   * @see org.ihtsdo.otf.ts.services.ValidationService#validateConcept(org.ihtsdo.otf.ts.rf2.Concept)
+  /*
+   * (non-Javadoc)
+   * 
+   * @see
+   * org.ihtsdo.otf.ts.services.ValidationService#validateConcept(org.ihtsdo
+   * .otf.ts.rf2.Concept)
    */
   @Override
   public ValidationResult validateConcept(Concept concept) {

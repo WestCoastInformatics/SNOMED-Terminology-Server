@@ -12,6 +12,7 @@ import org.ihtsdo.otf.ts.rest.MetadataServiceRest;
 public class MetadataClientRest implements MetadataServiceRest {
 
   /** The config. */
+  @SuppressWarnings("unused")
   private Properties config = null;
 
   /**
@@ -29,7 +30,6 @@ public class MetadataClientRest implements MetadataServiceRest {
   @Override
   public KeyValuePairLists getMetadata(String terminology, String version,
     String authToken) throws Exception {
-    // TODO Auto-generated method stub
     return null;
   }
 
@@ -39,7 +39,7 @@ public class MetadataClientRest implements MetadataServiceRest {
   @Override
   public KeyValuePairLists getAllMetadata(String terminology, String authToken)
     throws Exception {
-    // TODO Auto-generated method stub
+
     return null;
   }
 
@@ -49,7 +49,7 @@ public class MetadataClientRest implements MetadataServiceRest {
   @Override
   public KeyValuePairList getAllTerminologiesLatestVersions(String authToken)
     throws Exception {
-    // TODO Auto-generated method stub
+
     return null;
   }
 
@@ -59,7 +59,7 @@ public class MetadataClientRest implements MetadataServiceRest {
   @Override
   public KeyValuePairLists getAllTerminologiesVersions(String authToken)
     throws Exception {
-    // TODO Auto-generated method stub
+
     return null;
   }
 

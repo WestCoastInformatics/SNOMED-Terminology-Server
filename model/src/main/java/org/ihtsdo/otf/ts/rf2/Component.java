@@ -22,16 +22,15 @@ public interface Component {
   public void setId(Long id);
 
   /**
-   * Returns the id as a string.
-   * This method is used for handling
-   * the identifier for XML transport.
+   * Returns the id as a string. This method is used for handling the identifier
+   * for XML transport.
    * @return the id
    */
   public String getObjectId();
 
   /**
-   * Sets the id as a string.  This method is used for handling
-   * the identifier for XML transport.
+   * Sets the id as a string. This method is used for handling the identifier
+   * for XML transport.
    * 
    * @param id the id
    */
@@ -93,7 +92,7 @@ public interface Component {
    */
   public void setLastModifiedBy(String lastModifiedBy);
 
-/**
+  /**
    * Indicates whether or not active is the case.
    * 
    * @return <code>true</code> if so, <code>false</code> otherwise

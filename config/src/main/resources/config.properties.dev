@@ -73,7 +73,7 @@ loader.defaultPreferredNames.acceptabilityId=900000000000548007
 loader.ICD9CM.input.data=C:/data/icd9cm-2013.xml
 
 #
-# Webapp base URL (currently unused)
+# Webapp base URL 
 #
 base.url=http://localhost:8080/term-server-rest
 

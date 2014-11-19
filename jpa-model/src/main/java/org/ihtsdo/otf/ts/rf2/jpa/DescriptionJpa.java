@@ -43,7 +43,7 @@ public class DescriptionJpa extends AbstractComponent implements Description {
   /** The workflow status. */
   @Column(nullable = true)
   private String workflowStatus;
-  
+
   /** The language code. */
   @Column(nullable = false, length = 10)
   private String languageCode;
@@ -90,7 +90,9 @@ public class DescriptionJpa extends AbstractComponent implements Description {
     this.typeId = type;
   }
 
-  /* (non-Javadoc)
+  /*
+   * (non-Javadoc)
+   * 
    * @see org.ihtsdo.otf.ts.rf2.Description#getWorkflowStatus()
    */
   @Override
@@ -98,8 +100,9 @@ public class DescriptionJpa extends AbstractComponent implements Description {
     return workflowStatus;
   }
 
-   
-  /* (non-Javadoc)
+  /*
+   * (non-Javadoc)
+   * 
    * @see org.ihtsdo.otf.ts.rf2.Description#setWorkflowStatus(java.lang.String)
    */
   @Override

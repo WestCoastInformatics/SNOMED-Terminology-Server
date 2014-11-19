@@ -121,7 +121,6 @@ public class SecurityServiceJpa extends RootServiceJpa implements
   public void logout(String authToken) throws Exception {
     tokenUsernameMap.remove(authToken);
     tokenTimeoutMap.remove(authToken);
-    throw new Exception("sample exception " + authToken);
   }
 
   /*
@@ -146,7 +145,7 @@ public class SecurityServiceJpa extends RootServiceJpa implements
       Logger.getLogger(this.getClass()).info(
           "User = " + username + " Token = " + parsedToken);
 
-      // Validate that the user has not time dout.
+      // Validate that the user has not timed out.
       if (handler.timeoutUser(username)) {
 
         if (tokenTimeoutMap.get(parsedToken) == null) {

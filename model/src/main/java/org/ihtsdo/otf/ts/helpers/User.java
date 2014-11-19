@@ -1,7 +1,7 @@
 package org.ihtsdo.otf.ts.helpers;
 
 /**
- * Represents a user TODO: fix!.
+ * Represents a user.
  */
 public interface User {
 

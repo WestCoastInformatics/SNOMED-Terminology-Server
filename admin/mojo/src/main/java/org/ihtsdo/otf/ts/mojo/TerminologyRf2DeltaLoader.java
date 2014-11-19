@@ -358,7 +358,7 @@ public class TerminologyRf2DeltaLoader extends AbstractMojo {
       getLog().info("==================================");
       getLog().info("Delta load completed successfully!");
       getLog().info("==================================");
-    } catch (Throwable e) {
+    } catch (Exception e) {
       e.printStackTrace();
       throw new MojoFailureException("Unexpected exception:", e);
     }
@@ -416,14 +416,10 @@ public class TerminologyRf2DeltaLoader extends AbstractMojo {
     metadataService.close();
 
     // set the parameters for determining defaultPreferredNames
-    dpnTypeId =
-        config.getProperty("loader.defaultPreferredNames.typeId");
-    dpnRefSetId =
-        config
-            .getProperty("loader.defaultPreferredNames.refSetId");
+    dpnTypeId = config.getProperty("loader.defaultPreferredNames.typeId");
+    dpnRefSetId = config.getProperty("loader.defaultPreferredNames.refSetId");
     dpnAcceptabilityId =
-        config
-            .getProperty("loader.defaultPreferredNames.acceptabilityId");
+        config.getProperty("loader.defaultPreferredNames.acceptabilityId");
 
     // output relevant properties/settings to console
     getLog().info("Terminology Version: " + terminologyVersion);

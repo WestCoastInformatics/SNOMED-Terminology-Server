@@ -2,7 +2,7 @@ package org.ihtsdo.otf.ts.jpa.client;
 
 import java.util.Properties;
 
-import org.ihtsdo.otf.ts.helpers.PfsParameter;
+import org.ihtsdo.otf.ts.helpers.PfsParameterJpa;
 import org.ihtsdo.otf.ts.helpers.SearchResultList;
 import org.ihtsdo.otf.ts.rest.HistoryServiceRest;
 
@@ -12,6 +12,7 @@ import org.ihtsdo.otf.ts.rest.HistoryServiceRest;
 public class HistoryClientRest implements HistoryServiceRest {
 
   /** The config. */
+  @SuppressWarnings("unused")
   private Properties config = null;
 
   /**
@@ -28,10 +29,9 @@ public class HistoryClientRest implements HistoryServiceRest {
    */
   @Override
   public SearchResultList findDeltaConceptsForTerminology(String terminology,
-    String version, String authToken, PfsParameter pfsParameter)
+    String version, String authToken, PfsParameterJpa pfsParameter)
     throws Exception {
-    // TODO Auto-generated method stub
-    return null;
+    throw new Exception("Not implemented yet.");
   }
 
 }

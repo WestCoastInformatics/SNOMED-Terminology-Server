@@ -2,8 +2,6 @@ package org.ihtsdo.otf.ts.helpers;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.ihtsdo.otf.ts.helpers.PfsParameter;
-
 /**
  * The Jpa implementation of the paging/filtering/sorting object
  */
