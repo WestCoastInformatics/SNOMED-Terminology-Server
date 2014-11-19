@@ -58,26 +58,16 @@ public abstract class AbstractAssociationReferenceRefSetMemberJpa<T extends Comp
     this.targetComponentId = targetComponentId;
   }
 
-  /*
-   * (non-Javadoc)
-   * 
-   * @see org.ihtsdo.otf.mapping.rf2.jpa.AbstractConceptRefSetMember#hashCode()
-   */
   @Override
   public int hashCode() {
     final int prime = 31;
     int result = super.hashCode();
-    result = prime * result + ((targetComponentId == null) ? 0 : targetComponentId.hashCode());
+    result =
+        prime * result
+            + ((targetComponentId == null) ? 0 : targetComponentId.hashCode());
     return result;
   }
 
-  /*
-   * (non-Javadoc)
-   * 
-   * @see
-   * org.ihtsdo.otf.mapping.rf2.jpa.AbstractConceptRefSetMember#equals(java.
-   * lang.Object)
-   */
   @Override
   public boolean equals(Object obj) {
     if (this == obj)
@@ -86,8 +76,8 @@ public abstract class AbstractAssociationReferenceRefSetMemberJpa<T extends Comp
       return false;
     if (getClass() != obj.getClass())
       return false;
-    AbstractAssociationReferenceRefSetMemberJpa<?> other =
-        (AbstractAssociationReferenceRefSetMemberJpa<?>) obj;
+    AbstractAssociationReferenceRefSetMemberJpa other =
+        (AbstractAssociationReferenceRefSetMemberJpa) obj;
     if (targetComponentId == null) {
       if (other.targetComponentId != null)
         return false;

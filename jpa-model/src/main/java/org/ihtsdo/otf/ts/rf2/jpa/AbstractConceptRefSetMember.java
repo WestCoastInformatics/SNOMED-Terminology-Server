@@ -70,11 +70,6 @@ public abstract class AbstractConceptRefSetMember extends
     this.concept = concept;
   }
 
-  /*
-   * (non-Javadoc)
-   * 
-   * @see org.ihtsdo.otf.mapping.rf2.jpa.AbstractComponent#hashCode()
-   */
   @Override
   public int hashCode() {
     final int prime = 31;
@@ -83,12 +78,6 @@ public abstract class AbstractConceptRefSetMember extends
     return result;
   }
 
-  /*
-   * (non-Javadoc)
-   * 
-   * @see
-   * org.ihtsdo.otf.mapping.rf2.jpa.AbstractComponent#equals(java.lang.Object)
-   */
   @Override
   public boolean equals(Object obj) {
     if (this == obj)

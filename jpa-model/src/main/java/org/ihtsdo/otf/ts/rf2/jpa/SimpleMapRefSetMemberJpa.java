@@ -66,11 +66,6 @@ public class SimpleMapRefSetMemberJpa extends AbstractConceptRefSetMember
 
   }
 
-  /*
-   * (non-Javadoc)
-   * 
-   * @see org.ihtsdo.otf.mapping.rf2.jpa.AbstractConceptRefSetMember#hashCode()
-   */
   @Override
   public int hashCode() {
     final int prime = 31;
@@ -79,13 +74,6 @@ public class SimpleMapRefSetMemberJpa extends AbstractConceptRefSetMember
     return result;
   }
 
-  /*
-   * (non-Javadoc)
-   * 
-   * @see
-   * org.ihtsdo.otf.mapping.rf2.jpa.AbstractConceptRefSetMember#equals(java.
-   * lang.Object)
-   */
   @Override
   public boolean equals(Object obj) {
     if (this == obj)

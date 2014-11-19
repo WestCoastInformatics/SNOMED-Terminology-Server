@@ -250,11 +250,6 @@ public class RelationshipJpa extends AbstractComponent implements Relationship {
 
   }
 
-  /*
-   * (non-Javadoc)
-   * 
-   * @see org.ihtsdo.otf.mapping.rf2.jpa.AbstractComponent#hashCode()
-   */
   @Override
   public int hashCode() {
     final int prime = 31;
@@ -262,7 +257,14 @@ public class RelationshipJpa extends AbstractComponent implements Relationship {
     result =
         prime
             * result
+            + ((characteristicTypeId == null) ? 0 : characteristicTypeId
+                .hashCode());
+    result =
+        prime
+            * result
             + ((destinationConcept == null) ? 0 : destinationConcept.hashCode());
+    result =
+        prime * result + ((modifierId == null) ? 0 : modifierId.hashCode());
     result =
         prime * result
             + ((relationshipGroup == null) ? 0 : relationshipGroup.hashCode());
@@ -273,12 +275,6 @@ public class RelationshipJpa extends AbstractComponent implements Relationship {
     return result;
   }
 
-  /*
-   * (non-Javadoc)
-   * 
-   * @see
-   * org.ihtsdo.otf.mapping.rf2.jpa.AbstractComponent#equals(java.lang.Object)
-   */
   @Override
   public boolean equals(Object obj) {
     if (this == obj)
@@ -288,10 +284,20 @@ public class RelationshipJpa extends AbstractComponent implements Relationship {
     if (getClass() != obj.getClass())
       return false;
     RelationshipJpa other = (RelationshipJpa) obj;
+    if (characteristicTypeId == null) {
+      if (other.characteristicTypeId != null)
+        return false;
+    } else if (!characteristicTypeId.equals(other.characteristicTypeId))
+      return false;
     if (destinationConcept == null) {
       if (other.destinationConcept != null)
         return false;
     } else if (!destinationConcept.equals(other.destinationConcept))
+      return false;
+    if (modifierId == null) {
+      if (other.modifierId != null)
+        return false;
+    } else if (!modifierId.equals(other.modifierId))
       return false;
     if (relationshipGroup == null) {
       if (other.relationshipGroup != null)

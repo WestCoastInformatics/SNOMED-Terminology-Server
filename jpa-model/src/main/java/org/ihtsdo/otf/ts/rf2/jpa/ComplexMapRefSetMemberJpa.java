@@ -186,15 +186,13 @@ public class ComplexMapRefSetMemberJpa extends AbstractConceptRefSetMember
 
   }
 
-  /*
-   * (non-Javadoc)
-   * 
-   * @see org.ihtsdo.otf.mapping.rf2.jpa.AbstractConceptRefSetMember#hashCode()
-   */
   @Override
   public int hashCode() {
     final int prime = 31;
     int result = super.hashCode();
+    result = prime * result + ((mapAdvice == null) ? 0 : mapAdvice.hashCode());
+    result = prime * result + mapGroup;
+    result = prime * result + mapPriority;
     result =
         prime * result
             + ((mapRelationId == null) ? 0 : mapRelationId.hashCode());
@@ -203,13 +201,6 @@ public class ComplexMapRefSetMemberJpa extends AbstractConceptRefSetMember
     return result;
   }
 
-  /*
-   * (non-Javadoc)
-   * 
-   * @see
-   * org.ihtsdo.otf.mapping.rf2.jpa.AbstractConceptRefSetMember#equals(java.
-   * lang.Object)
-   */
   @Override
   public boolean equals(Object obj) {
     if (this == obj)
@@ -219,6 +210,15 @@ public class ComplexMapRefSetMemberJpa extends AbstractConceptRefSetMember
     if (getClass() != obj.getClass())
       return false;
     ComplexMapRefSetMemberJpa other = (ComplexMapRefSetMemberJpa) obj;
+    if (mapAdvice == null) {
+      if (other.mapAdvice != null)
+        return false;
+    } else if (!mapAdvice.equals(other.mapAdvice))
+      return false;
+    if (mapGroup != other.mapGroup)
+      return false;
+    if (mapPriority != other.mapPriority)
+      return false;
     if (mapRelationId == null) {
       if (other.mapRelationId != null)
         return false;

@@ -626,11 +626,6 @@ public class ConceptJpa extends AbstractComponent implements Concept {
         + getDefaultPreferredName();
   }
 
-  /*
-   * (non-Javadoc)
-   * 
-   * @see java.lang.Object#equals(java.lang.Object)
-   */
   @Override
   public boolean equals(Object obj) {
     if (this == obj)
@@ -639,14 +634,23 @@ public class ConceptJpa extends AbstractComponent implements Concept {
       return false;
     if (getClass() != obj.getClass())
       return false;
+    ConceptJpa other = (ConceptJpa) obj;
+    if (definitionStatusId == null) {
+      if (other.definitionStatusId != null)
+        return false;
+    } else if (!definitionStatusId.equals(other.definitionStatusId))
+      return false;
     return true;
   }
 
-  /* (non-Javadoc)
-   * @see org.ihtsdo.otf.ts.rf2.jpa.AbstractComponent#hashCode()
-   */
   @Override
   public int hashCode() {
-    return super.hashCode();
+    final int prime = 31;
+    int result = super.hashCode();
+    result =
+        prime
+            * result
+            + ((definitionStatusId == null) ? 0 : definitionStatusId.hashCode());
+    return result;
   }
 }

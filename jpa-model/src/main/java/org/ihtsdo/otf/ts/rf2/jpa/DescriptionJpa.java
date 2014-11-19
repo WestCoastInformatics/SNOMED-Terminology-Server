@@ -432,15 +432,15 @@ public class DescriptionJpa extends AbstractComponent implements Description {
         + this.getTerm() + "," + this.getCaseSignificanceId();
   }
 
-  /*
-   * (non-Javadoc)
-   * 
-   * @see org.ihtsdo.otf.mapping.rf2.jpa.AbstractComponent#hashCode()
-   */
   @Override
   public int hashCode() {
     final int prime = 31;
     int result = super.hashCode();
+    result =
+        prime
+            * result
+            + ((caseSignificanceId == null) ? 0 : caseSignificanceId.hashCode());
+    result = prime * result + ((concept == null) ? 0 : concept.hashCode());
     result =
         prime * result + ((languageCode == null) ? 0 : languageCode.hashCode());
     result = prime * result + ((term == null) ? 0 : term.hashCode());
@@ -448,12 +448,6 @@ public class DescriptionJpa extends AbstractComponent implements Description {
     return result;
   }
 
-  /*
-   * (non-Javadoc)
-   * 
-   * @see
-   * org.ihtsdo.otf.mapping.rf2.jpa.AbstractComponent#equals(java.lang.Object)
-   */
   @Override
   public boolean equals(Object obj) {
     if (this == obj)
@@ -463,6 +457,16 @@ public class DescriptionJpa extends AbstractComponent implements Description {
     if (getClass() != obj.getClass())
       return false;
     DescriptionJpa other = (DescriptionJpa) obj;
+    if (caseSignificanceId == null) {
+      if (other.caseSignificanceId != null)
+        return false;
+    } else if (!caseSignificanceId.equals(other.caseSignificanceId))
+      return false;
+    if (concept == null) {
+      if (other.concept != null)
+        return false;
+    } else if (!concept.equals(other.concept))
+      return false;
     if (languageCode == null) {
       if (other.languageCode != null)
         return false;

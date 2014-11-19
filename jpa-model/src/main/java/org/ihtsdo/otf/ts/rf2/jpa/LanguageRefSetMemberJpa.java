@@ -72,12 +72,6 @@ public class LanguageRefSetMemberJpa extends AbstractDescriptionRefSetMember
             .getTerminologyId()) + "," + this.getAcceptabilityId();
   }
 
-  /*
-   * (non-Javadoc)
-   * 
-   * @see
-   * org.ihtsdo.otf.mapping.rf2.jpa.AbstractDescriptionRefSetMember#hashCode()
-   */
   @Override
   public int hashCode() {
     final int prime = 31;
@@ -88,12 +82,6 @@ public class LanguageRefSetMemberJpa extends AbstractDescriptionRefSetMember
     return result;
   }
 
-  /*
-   * (non-Javadoc)
-   * 
-   * @see org.ihtsdo.otf.mapping.rf2.jpa.AbstractDescriptionRefSetMember#equals
-   * (java .lang.Object)
-   */
   @Override
   public boolean equals(Object obj) {
     if (this == obj)

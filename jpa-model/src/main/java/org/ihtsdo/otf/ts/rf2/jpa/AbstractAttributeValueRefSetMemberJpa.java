@@ -61,11 +61,6 @@ public abstract class AbstractAttributeValueRefSetMemberJpa<T extends Component>
     this.valueId = valueId;
   }
 
-  /*
-   * (non-Javadoc)
-   * 
-   * @see org.ihtsdo.otf.mapping.rf2.jpa.AbstractConceptRefSetMember#hashCode()
-   */
   @Override
   public int hashCode() {
     final int prime = 31;
@@ -74,13 +69,6 @@ public abstract class AbstractAttributeValueRefSetMemberJpa<T extends Component>
     return result;
   }
 
-  /*
-   * (non-Javadoc)
-   * 
-   * @see
-   * org.ihtsdo.otf.mapping.rf2.jpa.AbstractConceptRefSetMember#equals(java.
-   * lang.Object)
-   */
   @Override
   public boolean equals(Object obj) {
     if (this == obj)
@@ -89,8 +77,8 @@ public abstract class AbstractAttributeValueRefSetMemberJpa<T extends Component>
       return false;
     if (getClass() != obj.getClass())
       return false;
-    AbstractAttributeValueRefSetMemberJpa<?> other =
-        (AbstractAttributeValueRefSetMemberJpa<?>) obj;
+    AbstractAttributeValueRefSetMemberJpa other =
+        (AbstractAttributeValueRefSetMemberJpa) obj;
     if (valueId == null) {
       if (other.valueId != null)
         return false;

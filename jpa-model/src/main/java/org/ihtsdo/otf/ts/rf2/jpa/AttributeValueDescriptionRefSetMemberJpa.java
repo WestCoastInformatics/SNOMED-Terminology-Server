@@ -55,9 +55,6 @@ public class AttributeValueDescriptionRefSetMemberJpa extends AbstractAttributeV
   }
 
 
-  /* (non-Javadoc)
-   * @see org.ihtsdo.otf.ts.rf2.jpa.AbstractAttributeValueRefSetMemberJpa#hashCode()
-   */
   @Override
   public int hashCode() {
     final int prime = 31;
@@ -68,9 +65,6 @@ public class AttributeValueDescriptionRefSetMemberJpa extends AbstractAttributeV
   }
 
 
-  /* (non-Javadoc)
-   * @see org.ihtsdo.otf.ts.rf2.jpa.AbstractAttributeValueRefSetMemberJpa#equals(java.lang.Object)
-   */
   @Override
   public boolean equals(Object obj) {
     if (this == obj)

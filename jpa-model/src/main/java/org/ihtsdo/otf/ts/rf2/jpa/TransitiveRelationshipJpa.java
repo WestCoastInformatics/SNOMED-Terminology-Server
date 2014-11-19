@@ -100,11 +100,6 @@ public class TransitiveRelationshipJpa extends AbstractComponent implements
     this.superTypeConcept = superTypeConcept;
   }
 
-  /*
-   * (non-Javadoc)
-   * 
-   * @see org.ihtsdo.otf.mapping.rf2.jpa.AbstractComponent#hashCode()
-   */
   @Override
   public int hashCode() {
     final int prime = 31;
@@ -118,12 +113,6 @@ public class TransitiveRelationshipJpa extends AbstractComponent implements
     return result;
   }
 
-  /*
-   * (non-Javadoc)
-   * 
-   * @see
-   * org.ihtsdo.otf.mapping.rf2.jpa.AbstractComponent#equals(java.lang.Object)
-   */
   @Override
   public boolean equals(Object obj) {
     if (this == obj)
