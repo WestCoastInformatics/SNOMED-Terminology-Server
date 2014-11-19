@@ -18,7 +18,7 @@
 
   <profiles>
 
-    <!-- Load SNOMED -->
+    <!-- Load SNOMED, specify -Drun.config=... -->
     <profile>
       <id>SNOMEDCT</id>
       <build>
@@ -43,8 +43,8 @@
         </plugins>
       </build>
     </profile>
-    
-     <!-- Load SNOMED delta -->
+
+    <!-- Load SNOMED delta, specify -Drun.config=... -->
     <profile>
       <id>SNOMEDCTDelta</id>
       <build>
@@ -96,7 +96,7 @@
       </build>
     </profile>
 
-    <!-- Load ICD9CM -->
+    <!-- Load ICD9CM, specify -Drun.config=... -->
     <profile>
       <id>ICD9CM</id>
       <build>
@@ -122,7 +122,7 @@
       </build>
     </profile>
 
-    <!-- Load ICPC -->
+    <!-- Load ICPC, specify -Drun.config=... -->
     <profile>
       <id>ICPC</id>
       <build>
@@ -147,6 +147,6 @@
         </plugins>
       </build>
     </profile>
- 
+
   </profiles>
 </project>

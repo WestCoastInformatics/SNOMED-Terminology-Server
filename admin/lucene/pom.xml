@@ -15,8 +15,14 @@
   <description>Rebuilds Lucene indexes.</description>
   <packaging>pom</packaging>
 
+  <properties>
+    <!-- Indicate objects to index, leave blank for all objects -->
+    <!-- Override this property setting on the command line -->
+    <indexedObjects></indexedObjects>
+  </properties>
 
   <profiles>
+    <!-- Specify -Drun.config=... -->
     <profile>
       <id>run</id>
       <activation>
@@ -27,7 +33,7 @@
       <build>
         <plugins>
 
-          <!-- Execute the mojo -->
+          <!-- Reindex -->
           <plugin>
             <groupId>org.ihtsdo.otf.term-server</groupId>
             <artifactId>term-server-admin-mojo</artifactId>
@@ -40,6 +46,7 @@
                   <goal>reindex</goal>
                 </goals>
                 <configuration>
+                  <!-- Specify -DindexedObjects=... -->
                   <indexedObjects>${indexedObjects}</indexedObjects>
                 </configuration>
               </execution>
@@ -48,5 +55,6 @@
         </plugins>
       </build>
     </profile>
-  </profiles>
+    
+  </profiles>  
 </project>

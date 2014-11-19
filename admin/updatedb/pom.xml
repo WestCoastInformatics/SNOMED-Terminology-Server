@@ -15,7 +15,17 @@
   <description>Used to create the DB schema and update it when new code is deployed.</description>
   <packaging>pom</packaging>
 
+  <properties>
+    <!-- This can be overridden to use "create" instead via -D....=create -->
+    <!-- NOTE: this setting alone, as a maven property filters down to the HBM2DDL 
+      tool and causes it to work, no need for environment or config file properties -->
+    <hibernate.hbm2ddl.auto>update</hibernate.hbm2ddl.auto>
+  </properties>
+
+
   <profiles>
+
+    <!-- Specify -Drun.config=... -->
     <profile>
       <id>run</id>
       <activation>
@@ -24,18 +34,10 @@
         </property>
       </activation>
 
-      <properties>
-        <!-- This can be overridden to use "create" instead via -D....=create -->
-        <!-- NOTE: this setting alone, as a maven property filters down to the
-                   HBM2DDL tool and causes it to work, no need for environment
-                   or config file properties -->
-        <hibernate.hbm2ddl.auto>update</hibernate.hbm2ddl.auto>
-      </properties>
-
       <build>
         <plugins>
 
-          <!-- Execute the mojo -->
+          <!-- Update the database schema (or create it)-->
           <plugin>
             <groupId>org.ihtsdo.otf.term-server</groupId>
             <artifactId>term-server-admin-mojo</artifactId>
@@ -53,5 +55,6 @@
         </plugins>
       </build>
     </profile>
+
   </profiles>
 </project>
