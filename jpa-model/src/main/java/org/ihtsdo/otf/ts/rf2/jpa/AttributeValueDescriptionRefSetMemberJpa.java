@@ -29,7 +29,24 @@ public class AttributeValueDescriptionRefSetMemberJpa extends AbstractAttributeV
   private Description description;
 
   /**
-   * {@inheritDoc}
+   * Instantiates an empty {@link AttributeValueDescriptionRefSetMemberJpa}.
+   */
+  public AttributeValueDescriptionRefSetMemberJpa() {
+    // do nothing
+  }
+  
+  /**
+   * Instantiates a {@link AttributeValueDescriptionRefSetMemberJpa} from the specified parameters.
+   *
+   * @param member the member
+   */
+  public AttributeValueDescriptionRefSetMemberJpa(AttributeValueDescriptionRefSetMember member) {
+    super(member);
+    description = member.getDescription();
+  }
+
+  /* (non-Javadoc)
+   * @see org.ihtsdo.otf.ts.rf2.DescriptionRefSetMember#getDescription()
    */
   @XmlTransient
   @Override

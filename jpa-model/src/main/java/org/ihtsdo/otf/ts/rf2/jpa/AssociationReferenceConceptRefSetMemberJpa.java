@@ -25,6 +25,23 @@ public class AssociationReferenceConceptRefSetMemberJpa extends
   private Concept concept;
 
   /**
+   * Instantiates an empty {@link AssociationReferenceConceptRefSetMemberJpa}.
+   */
+  public AssociationReferenceConceptRefSetMemberJpa() {
+    // do nothing
+  }
+  
+  /**
+   * Instantiates a {@link AssociationReferenceConceptRefSetMemberJpa} from the specified parameters.
+   *
+   * @param member the member
+   */
+  public AssociationReferenceConceptRefSetMemberJpa(AssociationReferenceConceptRefSetMember member) {
+    super(member);
+    concept = member.getConcept();
+  }
+
+  /**
    * {@inheritDoc}
    */
   @XmlTransient

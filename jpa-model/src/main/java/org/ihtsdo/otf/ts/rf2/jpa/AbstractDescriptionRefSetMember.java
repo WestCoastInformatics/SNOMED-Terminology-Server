@@ -27,6 +27,23 @@ public abstract class AbstractDescriptionRefSetMember extends
   private Description description;
 
   /**
+   * Instantiates an empty {@link AbstractDescriptionRefSetMember}.
+   */
+  protected AbstractDescriptionRefSetMember() {
+    // do nothing
+  }
+  
+  /**
+   * Instantiates a {@link AbstractDescriptionRefSetMember} from the specified parameters.
+   *
+   * @param member the member
+   */
+  protected AbstractDescriptionRefSetMember(DescriptionRefSetMember member) {
+    super(member);
+    description = member.getDescription();
+  }
+  
+  /**
    * {@inheritDoc}
    */
   @XmlTransient

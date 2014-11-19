@@ -24,8 +24,26 @@ public class LanguageRefSetMemberJpa extends AbstractDescriptionRefSetMember
   private String acceptabilityId;
 
   /**
-   * returns the acceptability id
-   * 
+   * Instantiates an empty {@link LanguageRefSetMemberJpa}.
+   */
+  public LanguageRefSetMemberJpa() {
+    // do nothing
+  }
+  
+  /**
+   * Instantiates a {@link LanguageRefSetMemberJpa} from the specified parameters.
+   *
+   * @param member the member
+   */
+  public LanguageRefSetMemberJpa(LanguageRefSetMember member) {
+    super(member);
+    this.acceptabilityId = member.getAcceptabilityId();
+  }
+   
+  
+  /**
+   * returns the acceptability id.
+   *
    * @return the acceptability id
    */
   @Override

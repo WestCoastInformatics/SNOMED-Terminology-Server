@@ -29,6 +29,23 @@ public abstract class AbstractAttributeValueRefSetMemberJpa<T extends Component>
   private String valueId;
 
   /**
+   * Instantiates an empty {@link AbstractAttributeValueRefSetMemberJpa}.
+   */
+  protected AbstractAttributeValueRefSetMemberJpa() {
+    // do nothing
+  }
+  
+  /**
+   * Instantiates a {@link AbstractAttributeValueRefSetMemberJpa} from the specified parameters.
+   *
+   * @param member the member
+   */
+  protected AbstractAttributeValueRefSetMemberJpa(AttributeValueRefSetMember<T> member) {
+    super(member);
+    valueId = member.getValueId();
+  }
+  
+  /**
    * {@inheritDoc}
    */
   @Override

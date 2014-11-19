@@ -121,7 +121,6 @@ public class FileSorter {
    * @param file the file
    */
   public static void deleteSortedFiles(File file) {
-
     // Check if file is directory/folder
     if (file.isDirectory()) {
       // Get all files in the folder

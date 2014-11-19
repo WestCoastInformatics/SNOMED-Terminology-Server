@@ -25,6 +25,23 @@ public class AssociationReferenceDescriptionRefSetMemberJpa extends
   @ManyToOne(targetEntity = DescriptionJpa.class, optional = true)
   private Description description;
 
+  /**
+   * Instantiates an empty {@link AssociationReferenceDescriptionRefSetMemberJpa}.
+   */
+  public AssociationReferenceDescriptionRefSetMemberJpa() {
+    // do nothing
+  }
+  
+  /**
+   * Instantiates a {@link AssociationReferenceDescriptionRefSetMemberJpa} from the specified parameters.
+   *
+   * @param member the member
+   */
+  public AssociationReferenceDescriptionRefSetMemberJpa(AssociationReferenceDescriptionRefSetMember member) {
+    super(member);
+    description = member.getDescription();
+  }
+  
   @XmlTransient
   @Override
   public Description getDescription() {

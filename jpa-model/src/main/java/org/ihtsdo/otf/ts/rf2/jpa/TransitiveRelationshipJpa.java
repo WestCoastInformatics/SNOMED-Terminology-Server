@@ -38,6 +38,23 @@ public class TransitiveRelationshipJpa extends AbstractComponent implements
   @ManyToOne(targetEntity = ConceptJpa.class, optional = false)
   private Concept superTypeConcept;
 
+  /**
+   * Instantiates an empty {@link TransitiveRelationshipJpa}.
+   */
+  public TransitiveRelationshipJpa() {
+    // do nothing
+  }
+  
+  /**
+   * Instantiates a {@link TransitiveRelationshipJpa} from the specified parameters.
+   *
+   * @param transitiveRelationship the transitive relationship
+   */
+  public TransitiveRelationshipJpa(TransitiveRelationship transitiveRelationship) {
+    subTypeConcept = transitiveRelationship.getSubTypeConcept();
+    superTypeConcept = transitiveRelationship.getSuperTypeConcept();
+  }
+  
   /*
    * (non-Javadoc)
    * 

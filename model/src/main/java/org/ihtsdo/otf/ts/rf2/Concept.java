@@ -229,4 +229,38 @@ public interface Concept extends Component {
   public void removeAttributeValueRefSetMember(
     AttributeValueConceptRefSetMember attributeValueRefSetMember);
 
+  
+  /**
+   * Returns the set of AssociationReferenceRefSetMembers
+   * 
+   * @return the set of AssociationReferenceRefSetMembers
+   */
+  public Set<AssociationReferenceConceptRefSetMember> getAssociationReferenceRefSetMembers();
+
+  /**
+   * Sets the set of AssociationReferenceRefSetMembers
+   * 
+   * @param associationReferenceRefSetMembers the set of AssociationReferenceRefSetMembers
+   */
+  public void setAssociationReferenceRefSetMembers(
+    Set<AssociationReferenceConceptRefSetMember> associationReferenceRefSetMembers);
+
+  /**
+   * Adds a AssociationReferenceRefSetMember to the set of AssociationReferenceRefSetMembers
+   * 
+   * @param associationReferenceRefSetMember the AssociationReferenceRefSetMembers to be
+   *          added
+   */
+  public void addAssociationReferenceRefSetMember(
+    AssociationReferenceConceptRefSetMember associationReferenceRefSetMember);
+
+  /**
+   * Removes a AssociationReferenceRefSetMember from the set of
+   * AssociationReferenceRefSetMembers
+   * 
+   * @param associationReferenceRefSetMember the AssociationReferenceRefSetMember to be
+   *          removed
+   */
+  public void removeAssociationReferenceRefSetMember(
+    AssociationReferenceConceptRefSetMember associationReferenceRefSetMember);  
 }

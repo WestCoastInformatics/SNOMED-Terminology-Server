@@ -16,18 +16,6 @@ import org.ihtsdo.otf.ts.rf2.ComplexMapRefSetMember;
 public class ComplexMapRefSetMemberJpa extends AbstractConceptRefSetMember
     implements ComplexMapRefSetMember {
 
-  /** The map block */
-  @Column(nullable = false)
-  private int mapBlock;
-
-  /** the map block rule */
-  @Column(nullable = true)
-  private String mapBlockRule;
-
-  /** the map block advice */
-  @Column(nullable = true)
-  private String mapBlockAdvice;
-
   /** The map group */
   @Column(nullable = false)
   private int mapGroup;
@@ -53,57 +41,26 @@ public class ComplexMapRefSetMemberJpa extends AbstractConceptRefSetMember
   private String mapRelationId;
 
   /**
-   * returns the mapBlock
-   * @return the mapBlock
+   * Instantiates an empty {@link ComplexMapRefSetMemberJpa}.
    */
-  @Override
-  public int getMapBlock() {
-    return this.mapBlock;
+  public ComplexMapRefSetMemberJpa() {
+    // do nothing
   }
 
   /**
-   * sets the mapBlock
-   * @param mapBlock the mapBlock
+   * Instantiates a {@link ComplexMapRefSetMemberJpa} from the specified
+   * parameters.
+   *
+   * @param member the member
    */
-  @Override
-  public void setMapBlock(int mapBlock) {
-    this.mapBlock = mapBlock;
-  }
-
-  /**
-   * returns the mapBlockRule
-   * @return the mapBlockRule
-   */
-  @Override
-  public String getMapBlockRule() {
-    return this.mapBlockRule;
-  }
-
-  /**
-   * sets the mapBlockRule
-   * @paran the mapBlockRule
-   */
-  @Override
-  public void setMapBlockRule(String mapBlockRule) {
-    this.mapBlockRule = mapBlockRule;
-  }
-
-  /**
-   * returns the mapBlockAdvice
-   * @return the mapBlockAdvice
-   */
-  @Override
-  public String getMapBlockAdvice() {
-    return this.mapBlockAdvice;
-  }
-
-  /**
-   * sets the mapBlockAdvice
-   * @param mapBlockAdvice the mapBlockAdvice
-   */
-  @Override
-  public void setMapBlockAdvice(String mapBlockAdvice) {
-    this.mapBlockAdvice = mapBlockAdvice;
+  public ComplexMapRefSetMemberJpa(ComplexMapRefSetMember member) {
+    super(member);
+    mapAdvice = member.getMapAdvice();
+    mapGroup = member.getMapGroup();
+    mapPriority = member.getMapPriority();
+    mapRelationId = member.getMapRelationId();
+    mapRule = member.getMapRule();
+    mapTarget = member.getMapTarget();
   }
 
   /**
@@ -225,10 +182,8 @@ public class ComplexMapRefSetMemberJpa extends AbstractConceptRefSetMember
             .getTerminologyId()) + "," + Integer.toString(this.getMapGroup())
         + "," + Integer.toString(this.getMapPriority()) + ","
         + this.getMapRule() + "," + this.getMapAdvice() + ","
-        + this.getMapTarget() + "," + this.getMapRelationId() + "," +
+        + this.getMapTarget() + "," + this.getMapRelationId();
 
-        Integer.toString(this.getMapBlock()) + "," + this.getMapBlockRule()
-        + "," + this.getMapBlockAdvice();
   }
 
   /*

@@ -23,6 +23,8 @@ import org.hibernate.search.annotations.Field;
 import org.hibernate.search.annotations.Fields;
 import org.hibernate.search.annotations.Index;
 import org.hibernate.search.annotations.Store;
+import org.ihtsdo.otf.ts.rf2.AssociationReferenceDescriptionRefSetMember;
+import org.ihtsdo.otf.ts.rf2.AttributeValueDescriptionRefSetMember;
 import org.ihtsdo.otf.ts.rf2.Concept;
 import org.ihtsdo.otf.ts.rf2.Description;
 import org.ihtsdo.otf.ts.rf2.LanguageRefSetMember;
@@ -55,9 +57,9 @@ public class DescriptionJpa extends AbstractComponent implements Description {
   /** The term. */
   @Column(nullable = false, length = 4000)
   @Fields({
-      @Field, 
-      @Field(name = "all", analyze = Analyze.YES, store = Store.NO)
-  }) @Analyzer(definition = "noStopWord")
+      @Field, @Field(name = "all", analyze = Analyze.YES, store = Store.NO)
+  })
+  @Analyzer(definition = "noStopWord")
   private String term;
 
   /** The case significance id. */
@@ -74,11 +76,61 @@ public class DescriptionJpa extends AbstractComponent implements Description {
   // @IndexedEmbedded(targetElement = LanguageRefSetMemberJpa.class) PG
   private Set<LanguageRefSetMember> languageRefSetMembers = new HashSet<>();
 
+  /** The attributeValue RefSet members. */
+  @OneToMany(mappedBy = "description", cascade = CascadeType.ALL, orphanRemoval = true, targetEntity = AttributeValueDescriptionRefSetMemberJpa.class)
+  private Set<AttributeValueDescriptionRefSetMember> attributeValueRefSetMembers =
+      new HashSet<>();
+
+  /** The associationReference RefSet members. */
+  @OneToMany(mappedBy = "description", cascade = CascadeType.ALL, orphanRemoval = true, targetEntity = AssociationReferenceDescriptionRefSetMemberJpa.class)
+  private Set<AssociationReferenceDescriptionRefSetMember> associationReferenceRefSetMembers =
+      new HashSet<>();
+  
+  
   /**
    * Instantiates an empty {@link Description}.
    */
   public DescriptionJpa() {
     // empty
+  }
+
+  /**
+   * Instantiates a {@link DescriptionJpa} from the specified parameters.
+   *
+   * @param description the description
+   * @param cascadeCopy the cascade copy flag
+   */
+  public DescriptionJpa(Description description, boolean cascadeCopy) {
+    super(description);
+    caseSignificanceId = description.getCaseSignificanceId();
+    concept = description.getConcept();
+    languageCode = description.getLanguageCode();
+    term = description.getTerm();
+    typeId = description.getTypeId();
+    workflowStatus = description.getWorkflowStatus();
+    if (cascadeCopy) {
+      languageRefSetMembers = new HashSet<>();
+      for (LanguageRefSetMember member : description.getLanguageRefSetMembers()) {
+        LanguageRefSetMember newMember = new LanguageRefSetMemberJpa(member);
+        newMember.setDescription(this);
+        languageRefSetMembers.add(newMember);
+      }
+      
+      attributeValueRefSetMembers = new HashSet<>();
+      for (AttributeValueDescriptionRefSetMember member : description.getAttributeValueRefSetMembers()) {
+        AttributeValueDescriptionRefSetMember newMember = new AttributeValueDescriptionRefSetMemberJpa(member);
+        newMember.setDescription(this);
+        attributeValueRefSetMembers.add(newMember);
+      }
+
+      associationReferenceRefSetMembers = new HashSet<>();
+      for (AssociationReferenceDescriptionRefSetMember member : description.getAssociationReferenceRefSetMembers()) {
+        AssociationReferenceDescriptionRefSetMember newMember = new AssociationReferenceDescriptionRefSetMemberJpa(member);
+        newMember.setDescription(this);
+        associationReferenceRefSetMembers.add(newMember);
+      }
+      
+    }
   }
 
   /**
@@ -267,6 +319,108 @@ public class DescriptionJpa extends AbstractComponent implements Description {
     this.languageRefSetMembers.remove(languageRefSetMember);
   }
 
+
+  /**
+   * Returns the set of AttributeValueRefSetMembers.
+   *
+   * @return the set of AttributeValueRefSetMembers
+   */
+  @XmlTransient
+  @Override
+  public Set<AttributeValueDescriptionRefSetMember> getAttributeValueRefSetMembers() {
+    return this.attributeValueRefSetMembers;
+  }
+
+  /*
+   * (non-Javadoc)
+   * 
+   * @see
+   * org.ihtsdo.otf.ts.rf2.Description#setAttributeValueRefSetMembers(java.util.Set)
+   */
+  @Override
+  public void setAttributeValueRefSetMembers(
+    Set<AttributeValueDescriptionRefSetMember> attributeValueRefSetMembers) {
+    this.attributeValueRefSetMembers = attributeValueRefSetMembers;
+  }
+
+  /*
+   * (non-Javadoc)
+   * 
+   * @see
+   * org.ihtsdo.otf.ts.rf2.Description#addAttributeValueRefSetMember(org.ihtsdo.
+   * otf.ts.rf2.AttributeValueRefSetMember)
+   */
+  @Override
+  public void addAttributeValueRefSetMember(
+    AttributeValueDescriptionRefSetMember attributeValueRefSetMember) {
+    attributeValueRefSetMember.setDescription(this);
+    this.attributeValueRefSetMembers.add(attributeValueRefSetMember);
+  }
+
+  /*
+   * (non-Javadoc)
+   * 
+   * @see
+   * org.ihtsdo.otf.ts.rf2.Description#removeAttributeValueRefSetMember(org.ihtsdo
+   * .otf.ts.rf2.AttributeValueRefSetMember)
+   */
+  @Override
+  public void removeAttributeValueRefSetMember(
+    AttributeValueDescriptionRefSetMember attributeValueRefSetMember) {
+    this.attributeValueRefSetMembers.remove(attributeValueRefSetMember);
+  }
+
+  /**
+   * Returns the set of AssociationReferenceRefSetMembers.
+   *
+   * @return the set of AssociationReferenceRefSetMembers
+   */
+  @XmlTransient
+  @Override
+  public Set<AssociationReferenceDescriptionRefSetMember> getAssociationReferenceRefSetMembers() {
+    return this.associationReferenceRefSetMembers;
+  }
+
+  /*
+   * (non-Javadoc)
+   * 
+   * @see
+   * org.ihtsdo.otf.ts.rf2.Description#setAssociationReferenceRefSetMembers(java.util.Set)
+   */
+  @Override
+  public void setAssociationReferenceRefSetMembers(
+    Set<AssociationReferenceDescriptionRefSetMember> associationReferenceRefSetMembers) {
+    this.associationReferenceRefSetMembers = associationReferenceRefSetMembers;
+  }
+
+  /*
+   * (non-Javadoc)
+   * 
+   * @see
+   * org.ihtsdo.otf.ts.rf2.Description#addAssociationReferenceRefSetMember(org.ihtsdo.
+   * otf.ts.rf2.AssociationReferenceRefSetMember)
+   */
+  @Override
+  public void addAssociationReferenceRefSetMember(
+    AssociationReferenceDescriptionRefSetMember associationReferenceRefSetMember) {
+    associationReferenceRefSetMember.setDescription(this);
+    this.associationReferenceRefSetMembers.add(associationReferenceRefSetMember);
+  }
+
+  /*
+   * (non-Javadoc)
+   * 
+   * @see
+   * org.ihtsdo.otf.ts.rf2.Description#removeAssociationReferenceRefSetMember(org.ihtsdo
+   * .otf.ts.rf2.AssociationReferenceRefSetMember)
+   */
+  @Override
+  public void removeAssociationReferenceRefSetMember(
+    AssociationReferenceDescriptionRefSetMember associationReferenceRefSetMember) {
+    this.associationReferenceRefSetMembers.remove(associationReferenceRefSetMember);
+  }  
+    
+  
   /**
    * {@inheritDoc}
    */

@@ -53,6 +53,33 @@ public class RelationshipJpa extends AbstractComponent implements Relationship {
   private Integer relationshipGroup;
 
   /**
+   * Relationship.
+   */
+  public RelationshipJpa() {
+    // do nothing
+  }
+  
+  /**
+   * Instantiates a {@link RelationshipJpa} from the specified parameters.
+   *
+   * @param relationship the relationship
+   */
+  public RelationshipJpa(Relationship relationship) {
+    super(relationship);
+    characteristicTypeId = relationship.getCharacteristicTypeId();
+    // could be a problem if a concept has 2 relationships with the same destination
+    // because they coming from JSON would be separate objects, though if id is
+    // always set, then its fine
+    destinationConcept = relationship.getDestinationConcept();
+    modifierId  = relationship.getModifierId();
+    relationshipGroup = relationship.getRelationshipGroup();
+    // in deep copy contexts, this will be overridden
+    sourceConcept = relationship.getSourceConcept();
+    typeId = relationship.getTypeId();
+  }
+  
+  
+  /**
    * Returns the type id.
    * 
    * @return the type id

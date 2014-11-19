@@ -15,12 +15,29 @@ import org.ihtsdo.otf.ts.rf2.ConceptRefSetMember;
 @MappedSuperclass
 @Audited
 public abstract class AbstractConceptRefSetMember extends
-    AbstractRefSetMemberJpa<Concept> implements
-    ConceptRefSetMember {
+    AbstractRefSetMemberJpa<Concept> implements ConceptRefSetMember {
 
   /** The Concept associated with this element */
   @ManyToOne(targetEntity = ConceptJpa.class, optional = false)
   private Concept concept;
+
+  /**
+   * Instantiates an empty {@link AbstractConceptRefSetMember}.
+   */
+  protected AbstractConceptRefSetMember() {
+    // do nothing
+  }
+  
+  /**
+   * Instantiates a {@link AbstractConceptRefSetMember} from the specified
+   * parameters.
+   *
+   * @param member the member
+   */
+  protected AbstractConceptRefSetMember(ConceptRefSetMember member) {
+    super(member);
+    concept = member.getConcept();
+  }
 
   /**
    * {@inheritDoc}
@@ -31,23 +48,28 @@ public abstract class AbstractConceptRefSetMember extends
     return this.concept;
   }
 
-  /* (non-Javadoc)
+  /*
+   * (non-Javadoc)
+   * 
    * @see org.ihtsdo.otf.ts.rf2.RefSetMember#getComponent()
    */
   @Override
   public Concept getComponent() {
     return concept;
   }
-  
-  /* (non-Javadoc)
-   * @see org.ihtsdo.otf.ts.rf2.RefSetMember#setComponent(org.ihtsdo.otf.ts.rf2.Component)
+
+  /*
+   * (non-Javadoc)
+   * 
+   * @see
+   * org.ihtsdo.otf.ts.rf2.RefSetMember#setComponent(org.ihtsdo.otf.ts.rf2.Component
+   * )
    */
   @Override
   public void setComponent(Concept concept) {
     this.concept = concept;
   }
 
-  
   /*
    * (non-Javadoc)
    * 

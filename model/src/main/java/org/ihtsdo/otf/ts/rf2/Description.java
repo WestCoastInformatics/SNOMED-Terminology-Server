@@ -126,4 +126,74 @@ public interface Description extends Component {
   public void removeLanguageRefSetMember(
     LanguageRefSetMember languageRefSetMember);
 
+
+  /**
+   * Returns the set of AttributeValueRefSetMembers
+   * 
+   * @return the set of AttributeValueRefSetMembers
+   */
+  public Set<AttributeValueDescriptionRefSetMember> getAttributeValueRefSetMembers();
+
+  /**
+   * Sets the set of AttributeValueRefSetMembers
+   * 
+   * @param attributeValueRefSetMembers the set of AttributeValueRefSetMembers
+   */
+  public void setAttributeValueRefSetMembers(
+    Set<AttributeValueDescriptionRefSetMember> attributeValueRefSetMembers);
+
+  /**
+   * Adds a AttributeValueRefSetMember to the set of AttributeValueRefSetMembers
+   * 
+   * @param attributeValueRefSetMember the AttributeValueRefSetMembers to be
+   *          added
+   */
+  public void addAttributeValueRefSetMember(
+    AttributeValueDescriptionRefSetMember attributeValueRefSetMember);
+
+  /**
+   * Removes a AttributeValueRefSetMember from the set of
+   * AttributeValueRefSetMembers
+   * 
+   * @param attributeValueRefSetMember the AttributeValueRefSetMember to be
+   *          removed
+   */
+  public void removeAttributeValueRefSetMember(
+    AttributeValueDescriptionRefSetMember attributeValueRefSetMember);
+
+  
+  /**
+   * Returns the set of AssociationReferenceRefSetMembers
+   * 
+   * @return the set of AssociationReferenceRefSetMembers
+   */
+  public Set<AssociationReferenceDescriptionRefSetMember> getAssociationReferenceRefSetMembers();
+
+  /**
+   * Sets the set of AssociationReferenceRefSetMembers
+   * 
+   * @param associationReferenceRefSetMembers the set of AssociationReferenceRefSetMembers
+   */
+  public void setAssociationReferenceRefSetMembers(
+    Set<AssociationReferenceDescriptionRefSetMember> associationReferenceRefSetMembers);
+
+  /**
+   * Adds a AssociationReferenceRefSetMember to the set of AssociationReferenceRefSetMembers
+   * 
+   * @param associationReferenceRefSetMember the AssociationReferenceRefSetMembers to be
+   *          added
+   */
+  public void addAssociationReferenceRefSetMember(
+    AssociationReferenceDescriptionRefSetMember associationReferenceRefSetMember);
+
+  /**
+   * Removes a AssociationReferenceRefSetMember from the set of
+   * AssociationReferenceRefSetMembers
+   * 
+   * @param associationReferenceRefSetMember the AssociationReferenceRefSetMember to be
+   *          removed
+   */
+  public void removeAssociationReferenceRefSetMember(
+    AssociationReferenceDescriptionRefSetMember associationReferenceRefSetMember);  
+
 }

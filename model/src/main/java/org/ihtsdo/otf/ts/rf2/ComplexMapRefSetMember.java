@@ -6,42 +6,6 @@ package org.ihtsdo.otf.ts.rf2;
 public interface ComplexMapRefSetMember extends ConceptRefSetMember {
 
   /**
-   * returns the mapBlock
-   * @return the mapBlock
-   */
-  public int getMapBlock();
-
-  /**
-   * sets the mapBlock
-   * @param mapBlock the mapBlock
-   */
-  public void setMapBlock(int mapBlock);
-
-  /**
-   * returns the mapBlockRule
-   * @return the mapBlockRule
-   */
-  public String getMapBlockRule();
-
-  /**
-   * sets the mapBlockRule
-   * @param mapBlockRule the mapBlockRule
-   */
-  public void setMapBlockRule(String mapBlockRule);
-
-  /**
-   * returns the mapBlockAdvice
-   * @return the mapBlockAdvice
-   */
-  public String getMapBlockAdvice();
-
-  /**
-   * sets the mapBlockAdvice
-   * @param mapBlockAdvice the mapBlockAdvice
-   */
-  public void setMapBlockAdvice(String mapBlockAdvice);
-
-  /**
    * returns the mapGroup
    * @return the mapGroup
    * 

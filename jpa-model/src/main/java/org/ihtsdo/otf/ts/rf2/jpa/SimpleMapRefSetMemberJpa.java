@@ -15,11 +15,28 @@ import org.ihtsdo.otf.ts.rf2.SimpleMapRefSetMember;
 @Audited
 public class SimpleMapRefSetMemberJpa extends AbstractConceptRefSetMember
     implements SimpleMapRefSetMember {
-
+  
   /** The map target */
   @Column(nullable = false)
   private String mapTarget;
 
+  /**
+   * Instantiates an empty {@link SimpleMapRefSetMemberJpa}.
+   */
+  public SimpleMapRefSetMemberJpa() {
+    // do nothing
+  }
+  
+  /**
+   * Instantiates a {@link SimpleMapRefSetMemberJpa} from the specified parameters.
+   *
+   * @param member the member
+   */
+  public SimpleMapRefSetMemberJpa(SimpleMapRefSetMember member) {
+    super(member);
+    mapTarget = member.getMapTarget();
+  }
+  
   /**
    * returns the map target
    * @return the map target

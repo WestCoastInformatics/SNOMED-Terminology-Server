@@ -25,6 +25,23 @@ public class AttributeValueConceptRefSetMemberJpa extends AbstractAttributeValue
   private Concept concept;
 
   /**
+   * Instantiates an empty {@link AttributeValueConceptRefSetMemberJpa}.
+   */
+  public AttributeValueConceptRefSetMemberJpa() {
+    // do nothing
+  }
+  
+  /**
+   * Instantiates a {@link AttributeValueConceptRefSetMemberJpa} from the specified parameters.
+   *
+   * @param member the member
+   */
+  public AttributeValueConceptRefSetMemberJpa(AttributeValueConceptRefSetMember member) {
+    super(member);
+    this.concept = member.getConcept();
+  }
+  
+  /**
    * {@inheritDoc}
    */
   @XmlTransient

@@ -16,6 +16,23 @@ public class SimpleRefSetMemberJpa extends AbstractConceptRefSetMember
     implements SimpleRefSetMember {
 
   /**
+   * Instantiates an empty {@link SimpleRefSetMemberJpa}.
+   */
+  public SimpleRefSetMemberJpa() {
+    // do nothing
+  }
+  
+  /**
+   * Instantiates a {@link SimpleRefSetMemberJpa} from the specified parameters.
+   *
+   * @param member the member
+   */
+  public SimpleRefSetMemberJpa(SimpleRefSetMember member) {
+    super(member);
+  }
+  
+  
+  /**
    * {@inheritDoc}
    */
   @Override

@@ -29,6 +29,7 @@ import org.hibernate.search.annotations.IndexedEmbedded;
 import org.hibernate.search.annotations.Store;
 import org.hibernate.search.annotations.TokenFilterDef;
 import org.hibernate.search.annotations.TokenizerDef;
+import org.ihtsdo.otf.ts.rf2.AssociationReferenceConceptRefSetMember;
 import org.ihtsdo.otf.ts.rf2.AttributeValueConceptRefSetMember;
 import org.ihtsdo.otf.ts.rf2.ComplexMapRefSetMember;
 import org.ihtsdo.otf.ts.rf2.Concept;
@@ -95,6 +96,11 @@ public class ConceptJpa extends AbstractComponent implements Concept {
   private Set<AttributeValueConceptRefSetMember> attributeValueRefSetMembers =
       new HashSet<>();
 
+  /** The associationReference RefSet members. */
+  @OneToMany(mappedBy = "concept", cascade = CascadeType.ALL, orphanRemoval = true, targetEntity = AssociationReferenceConceptRefSetMemberJpa.class)
+  private Set<AssociationReferenceConceptRefSetMember> associationReferenceRefSetMembers =
+      new HashSet<>();
+
   /** The default preferred name. */
   @Column(nullable = false, length = 256)
   @Fields({
@@ -102,6 +108,87 @@ public class ConceptJpa extends AbstractComponent implements Concept {
   }) @Analyzer(definition = "noStopWord")
   private String defaultPreferredName;
 
+  /**
+   * Instantiates an empty {@link ConceptJpa}.
+   */
+  public ConceptJpa() {
+    // do nothing
+  }
+  
+  /**
+   * Instantiates a {@link ConceptJpa} from the specified parameters.
+   *
+   * @param concept the concept
+   * @param cascadeCopy the cascade copy flag
+   * @param deepCopy the deep copy flag
+   */
+  public ConceptJpa(Concept concept, boolean cascadeCopy, boolean deepCopy) {
+    super(concept);
+    defaultPreferredName = concept.getDefaultPreferredName();
+    definitionStatusId = concept.getDefinitionStatusId();
+    workflowStatus = concept.getWorkflowStatus();
+    
+    if (cascadeCopy || deepCopy) {
+      descriptions = new HashSet<>();
+      for (Description description : concept.getDescriptions()) {
+        Description newDescription = new DescriptionJpa(description, cascadeCopy);
+        newDescription.setConcept(this);
+        descriptions.add(newDescription);
+      }
+      relationships = new HashSet<>();
+      for (Relationship rel : concept.getRelationships()) {
+        Relationship newRel = new RelationshipJpa(rel);
+        newRel.setSourceConcept(this);
+        relationships.add(newRel);
+      }
+
+      attributeValueRefSetMembers = new HashSet<>();
+      for (AttributeValueConceptRefSetMember member : concept.getAttributeValueRefSetMembers()) {
+        AttributeValueConceptRefSetMember newMember = new AttributeValueConceptRefSetMemberJpa(member);
+        newMember.setConcept(this);
+        attributeValueRefSetMembers.add(newMember);
+      }
+
+      associationReferenceRefSetMembers = new HashSet<>();
+      for (AssociationReferenceConceptRefSetMember member : concept.getAssociationReferenceRefSetMembers()) {
+        AssociationReferenceConceptRefSetMember newMember = new AssociationReferenceConceptRefSetMemberJpa(member);
+        newMember.setConcept(this);
+        associationReferenceRefSetMembers.add(newMember);
+      }
+
+      complexMapRefSetMembers = new HashSet<>();
+      for (ComplexMapRefSetMember member : concept.getComplexMapRefSetMembers()) {
+        ComplexMapRefSetMember newMember = new ComplexMapRefSetMemberJpa(member);
+        newMember.setConcept(this);
+        complexMapRefSetMembers.add(newMember);
+      }
+
+      simpleMapRefSetMembers = new HashSet<>();
+      for (SimpleMapRefSetMember member : concept.getSimpleMapRefSetMembers()) {
+        SimpleMapRefSetMember newMember = new SimpleMapRefSetMemberJpa(member);
+        newMember.setConcept(this);
+        simpleMapRefSetMembers.add(newMember);
+      }
+
+      simpleRefSetMembers = new HashSet<>();
+      for (SimpleRefSetMember member : concept.getSimpleRefSetMembers()) {
+        SimpleRefSetMember newMember = new SimpleRefSetMemberJpa(member);
+        newMember.setConcept(this);
+        simpleRefSetMembers.add(newMember);
+      }
+    }
+    
+    if (deepCopy) {
+      inverseRelationships = new HashSet<>();
+      for (Relationship rel : concept.getInverseRelationships()) {
+        Relationship newRel = new RelationshipJpa(rel);
+        newRel.setSourceConcept(this);
+        inverseRelationships.add(newRel);
+      }
+
+    }
+  }  
+  
   /*
    * (non-Javadoc)
    * 
@@ -422,6 +509,56 @@ public class ConceptJpa extends AbstractComponent implements Concept {
     this.attributeValueRefSetMembers.remove(attributeValueRefSetMember);
   }
 
+  /**
+   * Returns the set of AssociationReferenceRefSetMembers.
+   *
+   * @return the set of AssociationReferenceRefSetMembers
+   */
+  @XmlTransient
+  @Override
+  public Set<AssociationReferenceConceptRefSetMember> getAssociationReferenceRefSetMembers() {
+    return this.associationReferenceRefSetMembers;
+  }
+
+  /*
+   * (non-Javadoc)
+   * 
+   * @see
+   * org.ihtsdo.otf.ts.rf2.Concept#setAssociationReferenceRefSetMembers(java.util.Set)
+   */
+  @Override
+  public void setAssociationReferenceRefSetMembers(
+    Set<AssociationReferenceConceptRefSetMember> associationReferenceRefSetMembers) {
+    this.associationReferenceRefSetMembers = associationReferenceRefSetMembers;
+  }
+
+  /*
+   * (non-Javadoc)
+   * 
+   * @see
+   * org.ihtsdo.otf.ts.rf2.Concept#addAssociationReferenceRefSetMember(org.ihtsdo.
+   * otf.ts.rf2.AssociationReferenceRefSetMember)
+   */
+  @Override
+  public void addAssociationReferenceRefSetMember(
+    AssociationReferenceConceptRefSetMember associationReferenceRefSetMember) {
+    associationReferenceRefSetMember.setConcept(this);
+    this.associationReferenceRefSetMembers.add(associationReferenceRefSetMember);
+  }
+
+  /*
+   * (non-Javadoc)
+   * 
+   * @see
+   * org.ihtsdo.otf.ts.rf2.Concept#removeAssociationReferenceRefSetMember(org.ihtsdo
+   * .otf.ts.rf2.AssociationReferenceRefSetMember)
+   */
+  @Override
+  public void removeAssociationReferenceRefSetMember(
+    AssociationReferenceConceptRefSetMember associationReferenceRefSetMember) {
+    this.associationReferenceRefSetMembers.remove(associationReferenceRefSetMember);
+  }  
+  
   /*
    * (non-Javadoc)
    * 

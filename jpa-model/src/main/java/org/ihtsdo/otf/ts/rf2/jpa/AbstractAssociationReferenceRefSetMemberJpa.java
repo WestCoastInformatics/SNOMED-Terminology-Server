@@ -33,6 +33,26 @@ public abstract class AbstractAssociationReferenceRefSetMemberJpa<T extends Comp
     return this.targetComponentId;
   }
 
+  /**
+   * Instantiates an empty {@link AbstractAssociationReferenceRefSetMemberJpa}.
+   */
+  protected AbstractAssociationReferenceRefSetMemberJpa() {
+    // do nothing
+  }
+  
+  /**
+   * Instantiates a {@link AbstractAssociationReferenceRefSetMemberJpa} from the specified parameters.
+   *
+   * @param member the member
+   */
+  protected AbstractAssociationReferenceRefSetMemberJpa(AssociationReferenceRefSetMember<T> member) {
+    super(member);
+    targetComponentId = member.getTargetComponentId();
+  }
+
+  /* (non-Javadoc)
+   * @see org.ihtsdo.otf.ts.rf2.AssociationReferenceRefSetMember#setTargetComponentId(java.lang.String)
+   */
   @Override
   public void setTargetComponentId(String targetComponentId) {
     this.targetComponentId = targetComponentId;
