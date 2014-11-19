@@ -75,7 +75,7 @@ loader.ICD9CM.input.data=C:/data/icd9cm-2013.xml
 #
 # Webapp base URL (currently unused)
 #
-base.url=
+base.url=http://localhost:8080/term-server-rest
 
 #
 # URL for security service

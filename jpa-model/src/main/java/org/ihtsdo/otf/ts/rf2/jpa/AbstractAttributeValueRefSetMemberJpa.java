@@ -1,20 +1,28 @@
 package org.ihtsdo.otf.ts.rf2.jpa;
 
 import javax.persistence.Column;
+import javax.persistence.DiscriminatorColumn;
+import javax.persistence.DiscriminatorType;
 import javax.persistence.Entity;
+import javax.persistence.Inheritance;
+import javax.persistence.InheritanceType;
 import javax.persistence.Table;
 
 import org.hibernate.envers.Audited;
-import org.ihtsdo.otf.ts.rf2.AttributeValueConceptRefSetMember;
+import org.ihtsdo.otf.ts.rf2.AttributeValueRefSetMember;
+import org.ihtsdo.otf.ts.rf2.Component;
 
 /**
- * Concrete implementation of {@link AttributeValueConceptRefSetMember}.
+ * Abstract implementation of {@link AttributeValueRefSetMember}.
+ * @param <T> the {@link Component}
  */
 @Entity
 @Table(name = "attribute_value_refset_members")
+@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
+@DiscriminatorColumn(name = "type", discriminatorType = DiscriminatorType.STRING, length = 50)
 @Audited
-public class AttributeValueRefSetMemberJpa extends AbstractConceptRefSetMember
-    implements AttributeValueConceptRefSetMember {
+public abstract class AbstractAttributeValueRefSetMemberJpa<T extends Component>
+    extends AbstractRefSetMemberJpa<T> implements AttributeValueRefSetMember<T> {
 
   /** The value id */
   @Column(nullable = false)
@@ -34,16 +42,6 @@ public class AttributeValueRefSetMemberJpa extends AbstractConceptRefSetMember
   @Override
   public void setValueId(String valueId) {
     this.valueId = valueId;
-  }
-
-  /**
-   * {@inheritDoc}
-   */
-  @Override
-  public String toString() {
-    return super.toString()
-        + (this.getConcept() == null ? null : this.getConcept()
-            .getTerminologyId()) + "," + this.getValueId();
   }
 
   /*
@@ -74,7 +72,8 @@ public class AttributeValueRefSetMemberJpa extends AbstractConceptRefSetMember
       return false;
     if (getClass() != obj.getClass())
       return false;
-    AttributeValueRefSetMemberJpa other = (AttributeValueRefSetMemberJpa) obj;
+    AbstractAttributeValueRefSetMemberJpa<?> other =
+        (AbstractAttributeValueRefSetMemberJpa<?>) obj;
     if (valueId == null) {
       if (other.valueId != null)
         return false;
@@ -82,4 +81,5 @@ public class AttributeValueRefSetMemberJpa extends AbstractConceptRefSetMember
       return false;
     return true;
   }
+
 }

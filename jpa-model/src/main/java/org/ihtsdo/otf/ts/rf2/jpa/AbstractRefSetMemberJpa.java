@@ -13,7 +13,7 @@ import org.ihtsdo.otf.ts.rf2.RefSetMember;
  */
 @MappedSuperclass
 @Audited
-public abstract class AbstractRefSetMember<T extends Component> extends
+public abstract class AbstractRefSetMemberJpa<T extends Component> extends
     AbstractComponent implements RefSetMember<T> {
 
   /** The ref set id */
@@ -56,8 +56,8 @@ public abstract class AbstractRefSetMember<T extends Component> extends
     if (getClass() != obj.getClass())
       return false;
     @SuppressWarnings("unchecked")
-    AbstractRefSetMember<? extends Component> other =
-        (AbstractRefSetMember<? extends Component>) obj;
+    AbstractRefSetMemberJpa<? extends Component> other =
+        (AbstractRefSetMemberJpa<? extends Component>) obj;
     if (refSetId == null) {
       if (other.refSetId != null)
         return false;

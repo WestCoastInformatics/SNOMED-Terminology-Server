@@ -23,7 +23,7 @@ import org.ihtsdo.otf.ts.helpers.FileSorter;
 import org.ihtsdo.otf.ts.jpa.algo.TransitiveClosureAlgorithm;
 import org.ihtsdo.otf.ts.jpa.services.ContentServiceJpa;
 import org.ihtsdo.otf.ts.jpa.services.MetadataServiceJpa;
-import org.ihtsdo.otf.ts.rf2.AttributeValueConceptRefSetMember;
+import org.ihtsdo.otf.ts.rf2.AttributeValueRefSetMember;
 import org.ihtsdo.otf.ts.rf2.ComplexMapRefSetMember;
 import org.ihtsdo.otf.ts.rf2.Concept;
 import org.ihtsdo.otf.ts.rf2.Description;
@@ -31,7 +31,7 @@ import org.ihtsdo.otf.ts.rf2.LanguageRefSetMember;
 import org.ihtsdo.otf.ts.rf2.Relationship;
 import org.ihtsdo.otf.ts.rf2.SimpleMapRefSetMember;
 import org.ihtsdo.otf.ts.rf2.SimpleRefSetMember;
-import org.ihtsdo.otf.ts.rf2.jpa.AttributeValueRefSetMemberJpa;
+import org.ihtsdo.otf.ts.rf2.jpa.AttributeValueConceptRefSetMemberJpa;
 import org.ihtsdo.otf.ts.rf2.jpa.ComplexMapRefSetMemberJpa;
 import org.ihtsdo.otf.ts.rf2.jpa.ConceptJpa;
 import org.ihtsdo.otf.ts.rf2.jpa.DescriptionJpa;
@@ -1535,8 +1535,8 @@ public class TerminologyRf2SnapshotLoaderMojo extends AbstractMojo {
 
       line = line.replace("\r", "");
       String fields[] = line.split("\t");
-      AttributeValueConceptRefSetMember member =
-          new AttributeValueRefSetMemberJpa();
+      AttributeValueRefSetMember<Concept> member =
+          new AttributeValueConceptRefSetMemberJpa();
 
       if (!fields[0].equals("id")) { // header
 
@@ -1565,7 +1565,7 @@ public class TerminologyRf2SnapshotLoaderMojo extends AbstractMojo {
 
         if (concept != null) {
 
-          member.setConcept(concept);
+          member.setComponent(concept);
           contentService
               .addAttributeValueRefSetMember(member);
 

@@ -25,6 +25,9 @@
     <maven.resources.plugin.version>2.6</maven.resources.plugin.version>
     <maven.surefire.plugin.version>2.16</maven.surefire.plugin.version>
     <maven.war.plugin.version>2.4</maven.war.plugin.version>
+    <properties.maven.plugin>1.0-alpha-1</properties.maven.plugin>
+    <build.helper.maven.version>1.9.1</build.helper.maven.version>
+    <truezip.maven.version>1.2</truezip.maven.version>
 
     <!-- Set third-party dependency versions -->
     <hibernate.version>4.1.0.Final</hibernate.version>
@@ -265,6 +268,27 @@
             <enableSshAgent>true</enableSshAgent>
             <noDeploy>true</noDeploy>
           </configuration>
+        </plugin>
+
+        <!-- Properties plugin, for loading properties from a file -->
+        <plugin>
+          <groupId>org.codehaus.mojo</groupId>
+          <artifactId>properties-maven-plugin</artifactId>
+          <version>${properties.maven.plugin}</version>
+        </plugin>
+
+        <!-- For attaching zip artifacts -->
+        <plugin>
+          <groupId>org.codehaus.mojo</groupId>
+          <artifactId>build-helper-maven-plugin</artifactId>
+          <version>${build.helper.maven.version}</version>
+        </plugin>
+
+        <!-- For building zip files -->
+        <plugin>
+          <groupId>org.codehaus.mojo</groupId>
+          <artifactId>truezip-maven-plugin</artifactId>
+          <version>${truezip.maven.version}</version>
         </plugin>
 
       </plugins>

@@ -13,10 +13,10 @@
     <class>org.ihtsdo.otf.ts.rf2.jpa.ConceptJpa</class>
     <class>org.ihtsdo.otf.ts.rf2.jpa.DescriptionJpa</class>
     <class>org.ihtsdo.otf.ts.rf2.jpa.RelationshipJpa</class>
-    <class>org.ihtsdo.otf.ts.rf2.jpa.AbstractRefSetMember</class>
+    <class>org.ihtsdo.otf.ts.rf2.jpa.AbstractRefSetMemberJpa</class>
     <class>org.ihtsdo.otf.ts.rf2.jpa.AbstractConceptRefSetMember</class>
     <class>org.ihtsdo.otf.ts.rf2.jpa.AbstractDescriptionRefSetMember</class>
-    <class>org.ihtsdo.otf.ts.rf2.jpa.AttributeValueRefSetMemberJpa</class>
+    <class>org.ihtsdo.otf.ts.rf2.jpa.AttributeValueConceptRefSetMemberJpa</class>
     <class>org.ihtsdo.otf.ts.rf2.jpa.ComplexMapRefSetMemberJpa</class>
     <class>org.ihtsdo.otf.ts.rf2.jpa.LanguageRefSetMemberJpa</class>
     <class>org.ihtsdo.otf.ts.rf2.jpa.SimpleMapRefSetMemberJpa</class>

@@ -16,9 +16,10 @@ import org.ihtsdo.otf.ts.rf2.DescriptionRefSetMember;
 @MappedSuperclass
 @Audited
 public abstract class AbstractDescriptionRefSetMember extends
-    AbstractRefSetMember<Description> implements DescriptionRefSetMember {
+    AbstractRefSetMemberJpa<Description> implements
+    DescriptionRefSetMember {
 
-  /**  The description. */
+  /** The description. */
   @ManyToOne(targetEntity = DescriptionJpa.class, optional = false)
   // NOTE: this may apply only to LanguageRefSetMember given how
   // description uses @IndexedEmbedded
@@ -34,6 +35,22 @@ public abstract class AbstractDescriptionRefSetMember extends
     return this.description;
   }
 
+
+  /* (non-Javadoc)
+   * @see org.ihtsdo.otf.ts.rf2.RefSetMember#getComponent()
+   */
+  @Override
+  public Description getComponent() {
+    return description;
+  }
+  
+  /* (non-Javadoc)
+   * @see org.ihtsdo.otf.ts.rf2.RefSetMember#setComponent(org.ihtsdo.otf.ts.rf2.Component)
+   */
+  @Override
+  public void setComponent(Description description) {
+    this.description = description;
+  }
   /*
    * (non-Javadoc)
    * 

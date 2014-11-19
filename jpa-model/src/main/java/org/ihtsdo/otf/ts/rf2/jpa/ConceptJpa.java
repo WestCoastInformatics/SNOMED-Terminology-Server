@@ -91,7 +91,7 @@ public class ConceptJpa extends AbstractComponent implements Concept {
   private Set<ComplexMapRefSetMember> complexMapRefSetMembers = new HashSet<>();
 
   /** The attributeValue RefSet members. */
-  @OneToMany(mappedBy = "concept", cascade = CascadeType.ALL, orphanRemoval = true, targetEntity = AttributeValueRefSetMemberJpa.class)
+  @OneToMany(mappedBy = "concept", cascade = CascadeType.ALL, orphanRemoval = true, targetEntity = AttributeValueConceptRefSetMemberJpa.class)
   private Set<AttributeValueConceptRefSetMember> attributeValueRefSetMembers =
       new HashSet<>();
 

@@ -1,22 +1,24 @@
 package org.ihtsdo.otf.ts.rf2.jpa;
 
+import javax.persistence.DiscriminatorValue;
+import javax.persistence.Entity;
 import javax.persistence.ManyToOne;
-import javax.persistence.MappedSuperclass;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlTransient;
 
 import org.hibernate.envers.Audited;
+import org.ihtsdo.otf.ts.rf2.AttributeValueConceptRefSetMember;
 import org.ihtsdo.otf.ts.rf2.Concept;
-import org.ihtsdo.otf.ts.rf2.ConceptRefSetMember;
 
 /**
- * Abstract implementation of {@link ConceptRefSetMember}.
+ * Concrete implementation of {@link AttributeValueConceptRefSetMember}.
  */
-@MappedSuperclass
+@Entity
 @Audited
-public abstract class AbstractConceptRefSetMember extends
-    AbstractRefSetMemberJpa<Concept> implements
-    ConceptRefSetMember {
+@DiscriminatorValue("Concept")
+public class AttributeValueConceptRefSetMemberJpa extends AbstractAttributeValueRefSetMemberJpa<Concept>
+    implements AttributeValueConceptRefSetMember {
+
 
   /** The Concept associated with this element */
   @ManyToOne(targetEntity = ConceptJpa.class, optional = false)
@@ -36,7 +38,7 @@ public abstract class AbstractConceptRefSetMember extends
    */
   @Override
   public Concept getComponent() {
-    return concept;
+    return getConcept();
   }
   
   /* (non-Javadoc)
@@ -44,15 +46,9 @@ public abstract class AbstractConceptRefSetMember extends
    */
   @Override
   public void setComponent(Concept concept) {
-    this.concept = concept;
+    setConcept(concept);
   }
-
   
-  /*
-   * (non-Javadoc)
-   * 
-   * @see org.ihtsdo.otf.mapping.rf2.jpa.AbstractComponent#hashCode()
-   */
   @Override
   public int hashCode() {
     final int prime = 31;
@@ -61,11 +57,8 @@ public abstract class AbstractConceptRefSetMember extends
     return result;
   }
 
-  /*
-   * (non-Javadoc)
-   * 
-   * @see
-   * org.ihtsdo.otf.mapping.rf2.jpa.AbstractComponent#equals(java.lang.Object)
+  /* (non-Javadoc)
+   * @see org.ihtsdo.otf.ts.rf2.jpa.AbstractAttributeValueRefSetMemberJpa#equals(java.lang.Object)
    */
   @Override
   public boolean equals(Object obj) {
@@ -75,7 +68,8 @@ public abstract class AbstractConceptRefSetMember extends
       return false;
     if (getClass() != obj.getClass())
       return false;
-    AbstractConceptRefSetMember other = (AbstractConceptRefSetMember) obj;
+    AttributeValueConceptRefSetMemberJpa other =
+        (AttributeValueConceptRefSetMemberJpa) obj;
     if (concept == null) {
       if (other.concept != null)
         return false;
@@ -102,4 +96,4 @@ public abstract class AbstractConceptRefSetMember extends
   public String getConceptId() {
     return concept != null ? concept.getTerminologyId() : null;
   }
-}
+  }

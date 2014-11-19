@@ -17,9 +17,10 @@
   <description>Public facing API for rest services.</description>
 
   <properties>
-    <base.url>http://localhost:8080/term-server-rest</base.url>
-    <execFinalName>exec-${project.build.finalName}.jar</execFinalName>
-    <packageName>${project.parent.artifactId}-rest</packageName>
+    <!-- Specify default build.config - references config project -->
+    <!-- This requires some images to be in c:/data/images -->
+    <!-- Used -->
+    <build.config>${basedir}/../config/src/main/resources/config.properties.dev</build.config>
   </properties>
 
   <dependencies>
@@ -141,8 +142,30 @@
 
   <!-- Always build, use dev configuration by default -->
   <build>
-    <finalName>${project.artifactId}</finalName>
+
     <plugins>
+
+      <!-- Configure environment-specific build time information through a build.config 
+        file settings -->
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>properties-maven-plugin</artifactId>
+        <executions>
+          <execution>
+            <phase>initialize</phase>
+            <goals>
+              <goal>read-project-properties</goal>
+            </goals>
+            <configuration>
+              <files>
+                <file>${build.config}</file>
+              </files>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+
+      <!-- Configure .war settings -->
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-war-plugin</artifactId>

@@ -32,7 +32,9 @@ import org.ihtsdo.otf.ts.helpers.SearchResultJpa;
 import org.ihtsdo.otf.ts.helpers.SearchResultList;
 import org.ihtsdo.otf.ts.helpers.SearchResultListJpa;
 import org.ihtsdo.otf.ts.rf2.AttributeValueConceptRefSetMember;
+import org.ihtsdo.otf.ts.rf2.AttributeValueRefSetMember;
 import org.ihtsdo.otf.ts.rf2.ComplexMapRefSetMember;
+import org.ihtsdo.otf.ts.rf2.Component;
 import org.ihtsdo.otf.ts.rf2.Concept;
 import org.ihtsdo.otf.ts.rf2.Description;
 import org.ihtsdo.otf.ts.rf2.LanguageRefSetMember;
@@ -40,7 +42,8 @@ import org.ihtsdo.otf.ts.rf2.Relationship;
 import org.ihtsdo.otf.ts.rf2.SimpleMapRefSetMember;
 import org.ihtsdo.otf.ts.rf2.SimpleRefSetMember;
 import org.ihtsdo.otf.ts.rf2.TransitiveRelationship;
-import org.ihtsdo.otf.ts.rf2.jpa.AttributeValueRefSetMemberJpa;
+import org.ihtsdo.otf.ts.rf2.jpa.AbstractAttributeValueRefSetMemberJpa;
+import org.ihtsdo.otf.ts.rf2.jpa.AttributeValueConceptRefSetMemberJpa;
 import org.ihtsdo.otf.ts.rf2.jpa.ComplexMapRefSetMemberJpa;
 import org.ihtsdo.otf.ts.rf2.jpa.ConceptJpa;
 import org.ihtsdo.otf.ts.rf2.jpa.DescriptionJpa;
@@ -57,9 +60,9 @@ import org.ihtsdo.otf.ts.services.handlers.WorkflowListener;
  */
 public class ContentServiceJpa extends RootServiceJpa implements ContentService {
 
-  /**  The listener. */
+  /** The listener. */
   private static List<WorkflowListener> listeners = null;
-  
+
   /**
    * Instantiates an empty {@link ContentServiceJpa}.
    *
@@ -72,19 +75,23 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
       Properties config = ConfigUtility.getConfigProperties();
       String key = "workflow.listener.handler";
       for (String handlerName : config.getProperty(key).split(",")) {
-        if (handlerName.isEmpty()) continue;
+        if (handlerName.isEmpty())
+          continue;
         // Add handlers to map
         WorkflowListener handlerService =
-            ConfigUtility.newStandardHandlerInstanceWithConfiguration(
-                key, handlerName, WorkflowListener.class);
+            ConfigUtility.newStandardHandlerInstanceWithConfiguration(key,
+                handlerName, WorkflowListener.class);
         listeners.add(handlerService);
       }
     }
   }
 
-
-  /* (non-Javadoc)
-   * @see org.ihtsdo.otf.ts.services.ContentService#getConcepts(java.lang.String, java.lang.String, org.ihtsdo.otf.ts.helpers.PfsParameter)
+  /*
+   * (non-Javadoc)
+   * 
+   * @see
+   * org.ihtsdo.otf.ts.services.ContentService#getConcepts(java.lang.String,
+   * java.lang.String, org.ihtsdo.otf.ts.helpers.PfsParameter)
    */
   @SuppressWarnings("unchecked")
   @Override
@@ -672,12 +679,12 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
    * (java.lang.String)
    */
   @Override
-  public AttributeValueConceptRefSetMember getAttributeValueRefSetMember(String id)
-    throws Exception {
+  public AttributeValueRefSetMember<? extends Component> getAttributeValueRefSetMember(
+    String id) throws Exception {
     Logger.getLogger(ContentServiceJpa.class).debug(
         "Content Service - get attribute value refset member " + id);
     AttributeValueConceptRefSetMember c =
-        manager.find(AttributeValueRefSetMemberJpa.class, id);
+        manager.find(AttributeValueConceptRefSetMemberJpa.class, id);
     return c;
   }
 
@@ -685,7 +692,7 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
    * {@inheritDoc}
    */
   @Override
-  public AttributeValueConceptRefSetMember getAttributeValueRefSetMember(
+  public AttributeValueRefSetMember<? extends Component> getAttributeValueRefSetMember(
     String terminologyId, String terminology, String terminologyVersion)
     throws Exception {
     Logger.getLogger(ContentServiceJpa.class).debug(
@@ -702,8 +709,8 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
       query.setParameter("terminologyId", terminologyId);
       query.setParameter("terminology", terminology);
       query.setParameter("terminologyVersion", terminologyVersion);
-      AttributeValueConceptRefSetMember c =
-          (AttributeValueConceptRefSetMember) query.getSingleResult();
+      AttributeValueRefSetMember<?> c =
+          (AttributeValueRefSetMember<?>) query.getSingleResult();
       return c;
     } catch (NoResultException e) {
       return null;
@@ -724,8 +731,8 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
    * (org.ihtsdo.otf.mapping.rf2.AttributeValueRefSetMember)
    */
   @Override
-  public AttributeValueConceptRefSetMember addAttributeValueRefSetMember(
-    AttributeValueConceptRefSetMember attributeValueRefSetMember) throws Exception {
+  public AttributeValueRefSetMember<?> addAttributeValueRefSetMember(
+    AttributeValueRefSetMember<?> attributeValueRefSetMember) throws Exception {
     Logger.getLogger(ContentServiceJpa.class).debug(
         "Content Service - add attribute value refset member"
             + attributeValueRefSetMember.getTerminologyId());
@@ -750,7 +757,7 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
    */
   @Override
   public void updateAttributeValueRefSetMember(
-    AttributeValueConceptRefSetMember attributeValueRefSetMember) throws Exception {
+    AttributeValueRefSetMember<?> attributeValueRefSetMember) throws Exception {
     Logger.getLogger(ContentServiceJpa.class).debug(
         "Content Service - update attribute value refset member "
             + attributeValueRefSetMember.getTerminologyId());
@@ -778,8 +785,8 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
         "Content Service - remove attribute value refset member " + id);
     tx = manager.getTransaction();
     // retrieve this map specialist
-    AttributeValueConceptRefSetMember mu =
-        manager.find(AttributeValueRefSetMemberJpa.class, id);
+    AttributeValueRefSetMember<?> mu =
+        manager.find(AbstractAttributeValueRefSetMemberJpa.class, id);
     if (getTransactionPerOperation()) {
       // remove refset member
       tx.begin();
@@ -1411,7 +1418,7 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
         "Content Service - find descendants " + terminologyId + "/"
             + terminology + "/" + terminologyVersion);
 
-    if (pfs  != null && pfs.getQueryRestriction() != null) {
+    if (pfs != null && pfs.getQueryRestriction() != null) {
       throw new IllegalArgumentException(
           "Query restriction is not implemented for this call: "
               + pfs.getQueryRestriction());
@@ -1460,8 +1467,13 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
     return searchResultList;
   }
 
-  /* (non-Javadoc)
-   * @see org.ihtsdo.otf.ts.services.ContentService#findAncestorConcepts(java.lang.String, java.lang.String, java.lang.String, org.ihtsdo.otf.ts.helpers.PfsParameter)
+  /*
+   * (non-Javadoc)
+   * 
+   * @see
+   * org.ihtsdo.otf.ts.services.ContentService#findAncestorConcepts(java.lang
+   * .String, java.lang.String, java.lang.String,
+   * org.ihtsdo.otf.ts.helpers.PfsParameter)
    */
   @SuppressWarnings("unchecked")
   @Override
@@ -1469,8 +1481,8 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
     String terminology, String terminologyVersion, PfsParameter pfs)
     throws Exception {
     Logger.getLogger(ContentServiceJpa.class).debug(
-        "Content Service - find ancestors " + terminologyId + "/"
-            + terminology + "/" + terminologyVersion);
+        "Content Service - find ancestors " + terminologyId + "/" + terminology
+            + "/" + terminologyVersion);
 
     if (pfs != null && pfs.getQueryRestriction() != null) {
       throw new IllegalArgumentException(
@@ -1520,7 +1532,7 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
     // return the search result list
     return searchResultList;
   }
-  
+
   /*
    * (non-Javadoc)
    * 
