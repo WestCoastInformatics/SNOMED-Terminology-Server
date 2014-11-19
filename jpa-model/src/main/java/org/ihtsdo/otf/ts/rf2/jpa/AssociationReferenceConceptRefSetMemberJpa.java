@@ -7,18 +7,18 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlTransient;
 
 import org.hibernate.envers.Audited;
-import org.ihtsdo.otf.ts.rf2.AttributeValueConceptRefSetMember;
+import org.ihtsdo.otf.ts.rf2.AssociationReferenceConceptRefSetMember;
 import org.ihtsdo.otf.ts.rf2.Concept;
 
 /**
- * Concrete implementation of {@link AttributeValueConceptRefSetMember}.
+ * Concrete implementation of {@link AssociationReferenceConceptRefSetMember}.
  */
 @Entity
 @Audited
 @DiscriminatorValue("Concept")
-public class AttributeValueConceptRefSetMemberJpa extends AbstractAttributeValueRefSetMemberJpa<Concept>
-    implements AttributeValueConceptRefSetMember {
-
+public class AssociationReferenceConceptRefSetMemberJpa extends
+    AbstractAssociationReferenceRefSetMemberJpa<Concept> implements
+    AssociationReferenceConceptRefSetMember {
 
   /** The Concept associated with this element */
   @ManyToOne(targetEntity = ConceptJpa.class, optional = true)
@@ -33,22 +33,28 @@ public class AttributeValueConceptRefSetMemberJpa extends AbstractAttributeValue
     return this.concept;
   }
 
-  /* (non-Javadoc)
+  /*
+   * (non-Javadoc)
+   * 
    * @see org.ihtsdo.otf.ts.rf2.RefSetMember#getComponent()
    */
   @Override
   public Concept getComponent() {
     return getConcept();
   }
-  
-  /* (non-Javadoc)
-   * @see org.ihtsdo.otf.ts.rf2.RefSetMember#setComponent(org.ihtsdo.otf.ts.rf2.Component)
+
+  /*
+   * (non-Javadoc)
+   * 
+   * @see
+   * org.ihtsdo.otf.ts.rf2.RefSetMember#setComponent(org.ihtsdo.otf.ts.rf2.Component
+   * )
    */
   @Override
   public void setComponent(Concept concept) {
     setConcept(concept);
   }
-  
+
   @Override
   public int hashCode() {
     final int prime = 31;
@@ -57,9 +63,6 @@ public class AttributeValueConceptRefSetMemberJpa extends AbstractAttributeValue
     return result;
   }
 
-  /* (non-Javadoc)
-   * @see org.ihtsdo.otf.ts.rf2.jpa.AbstractAttributeValueRefSetMemberJpa#equals(java.lang.Object)
-   */
   @Override
   public boolean equals(Object obj) {
     if (this == obj)
@@ -68,8 +71,8 @@ public class AttributeValueConceptRefSetMemberJpa extends AbstractAttributeValue
       return false;
     if (getClass() != obj.getClass())
       return false;
-    AttributeValueConceptRefSetMemberJpa other =
-        (AttributeValueConceptRefSetMemberJpa) obj;
+    AssociationReferenceConceptRefSetMemberJpa other =
+        (AssociationReferenceConceptRefSetMemberJpa) obj;
     if (concept == null) {
       if (other.concept != null)
         return false;
@@ -96,4 +99,4 @@ public class AttributeValueConceptRefSetMemberJpa extends AbstractAttributeValue
   public String getConceptId() {
     return concept != null ? concept.getTerminologyId() : null;
   }
-  }
+}

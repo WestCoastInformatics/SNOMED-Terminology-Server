@@ -44,8 +44,6 @@ public class RootServiceRestImpl {
    * @param e the e
    * @param whatIsHappening the what is happening
    * @param userName the user name
-   * @param project the project
-   * @param recordId the record id
    */
   public static void handleException(Exception e, String whatIsHappening,
     String userName) {

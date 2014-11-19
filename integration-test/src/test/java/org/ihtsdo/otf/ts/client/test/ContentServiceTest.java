@@ -83,6 +83,12 @@ public class ContentServiceTest {
         ConceptReportHelper.getConceptReport(c));    
   }
   
+  /**
+   * Returns the concept assertions.
+   *
+   * @param c the c
+   */
+  @SuppressWarnings("static-method")
   private void getConceptAssertions(Concept c) {
     assertNotNull(c);
     assertNotEquals(c.getDefaultPreferredName(),

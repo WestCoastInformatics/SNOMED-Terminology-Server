@@ -31,6 +31,8 @@ import org.ihtsdo.otf.ts.helpers.SearchResult;
 import org.ihtsdo.otf.ts.helpers.SearchResultJpa;
 import org.ihtsdo.otf.ts.helpers.SearchResultList;
 import org.ihtsdo.otf.ts.helpers.SearchResultListJpa;
+import org.ihtsdo.otf.ts.rf2.AssociationReferenceConceptRefSetMember;
+import org.ihtsdo.otf.ts.rf2.AssociationReferenceRefSetMember;
 import org.ihtsdo.otf.ts.rf2.AttributeValueConceptRefSetMember;
 import org.ihtsdo.otf.ts.rf2.AttributeValueRefSetMember;
 import org.ihtsdo.otf.ts.rf2.ComplexMapRefSetMember;
@@ -42,7 +44,9 @@ import org.ihtsdo.otf.ts.rf2.Relationship;
 import org.ihtsdo.otf.ts.rf2.SimpleMapRefSetMember;
 import org.ihtsdo.otf.ts.rf2.SimpleRefSetMember;
 import org.ihtsdo.otf.ts.rf2.TransitiveRelationship;
+import org.ihtsdo.otf.ts.rf2.jpa.AbstractAssociationReferenceRefSetMemberJpa;
 import org.ihtsdo.otf.ts.rf2.jpa.AbstractAttributeValueRefSetMemberJpa;
+import org.ihtsdo.otf.ts.rf2.jpa.AssociationReferenceConceptRefSetMemberJpa;
 import org.ihtsdo.otf.ts.rf2.jpa.AttributeValueConceptRefSetMemberJpa;
 import org.ihtsdo.otf.ts.rf2.jpa.ComplexMapRefSetMemberJpa;
 import org.ihtsdo.otf.ts.rf2.jpa.ConceptJpa;
@@ -91,9 +95,10 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
   public ContentServiceJpa() throws Exception {
     super();
     if (listeners == null) {
-      throw new Exception("Listeners did not properly initialize, serious error.");
-      }
+      throw new Exception(
+          "Listeners did not properly initialize, serious error.");
     }
+  }
 
   /*
    * (non-Javadoc)
@@ -163,8 +168,8 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
     return c;
   }
 
-  /**
-   * {@inheritDoc}
+  /* (non-Javadoc)
+   * @see org.ihtsdo.otf.ts.services.ContentService#getConcepts(java.lang.String, java.lang.String, java.lang.String)
    */
   @SuppressWarnings("unchecked")
   @Override
@@ -360,8 +365,8 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
     return c;
   }
 
-  /**
-   * {@inheritDoc}
+  /* (non-Javadoc)
+   * @see org.ihtsdo.otf.ts.services.ContentService#getDescription(java.lang.String, java.lang.String, java.lang.String)
    */
   @Override
   public Description getDescription(String terminologyId, String terminology,
@@ -482,8 +487,8 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
     return c;
   }
 
-  /**
-   * {@inheritDoc}
+  /* (non-Javadoc)
+   * @see org.ihtsdo.otf.ts.services.ContentService#getRelationship(java.lang.String, java.lang.String, java.lang.String)
    */
   @Override
   public Relationship getRelationship(String terminologyId, String terminology,
@@ -695,8 +700,8 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
     return c;
   }
 
-  /**
-   * {@inheritDoc}
+  /* (non-Javadoc)
+   * @see org.ihtsdo.otf.ts.services.ContentService#getAttributeValueRefSetMember(java.lang.String, java.lang.String, java.lang.String)
    */
   @Override
   public AttributeValueRefSetMember<? extends Component> getAttributeValueRefSetMember(
@@ -816,6 +821,142 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
    * (non-Javadoc)
    * 
    * @see
+   * org.ihtsdo.otf.ts.services.ContentService#getAssociationReferenceRefSetMember
+   * (java.lang.Long)
+   */
+  @Override
+  public AssociationReferenceRefSetMember<? extends Component> getAssociationReferenceRefSetMember(
+    String id) throws Exception {
+    Logger.getLogger(ContentServiceJpa.class).debug(
+        "Content Service - get association reference refset member " + id);
+    AssociationReferenceConceptRefSetMember c =
+        manager.find(AssociationReferenceConceptRefSetMemberJpa.class, id);
+    return c;
+  }
+
+  /* (non-Javadoc)
+   * @see org.ihtsdo.otf.ts.services.ContentService#getAssociationReferenceRefSetMember(java.lang.String, java.lang.String, java.lang.String)
+   */
+  @Override
+  public AssociationReferenceRefSetMember<? extends Component> getAssociationReferenceRefSetMember(
+    String terminologyId, String terminology, String terminologyVersion)
+    throws Exception {
+    Logger.getLogger(ContentServiceJpa.class).debug(
+        "Content Service - get association reference refset member "
+            + terminologyId + "/" + terminology + "/" + terminologyVersion);
+    javax.persistence.Query query =
+        manager
+            .createQuery("select c from AssociationReferenceRefSetMemberJpa c where terminologyId = :terminologyId and terminologyVersion = :terminologyVersion and terminology = :terminology");
+    /*
+     * Try to retrieve the single expected result If zero or more than one
+     * result are returned, log error and set result to null
+     */
+    try {
+      query.setParameter("terminologyId", terminologyId);
+      query.setParameter("terminology", terminology);
+      query.setParameter("terminologyVersion", terminologyVersion);
+      AssociationReferenceRefSetMember<?> c =
+          (AssociationReferenceRefSetMember<?>) query.getSingleResult();
+      return c;
+    } catch (NoResultException e) {
+      return null;
+      /*
+       * throw new LocalException(
+       * "AssociationReferenceRefSetMember query for terminologyId = " +
+       * terminologyId + ", terminology = " + terminology +
+       * ", terminologyVersion = " + terminologyVersion +
+       * " returned no results!", e);
+       */
+    }
+  }
+
+  /*
+   * (non-Javadoc)
+   * 
+   * @see org.ihtsdo.otf.mapping.services.ContentService#
+   * addAssociationReferenceRefSetMember
+   * (org.ihtsdo.otf.mapping.rf2.AssociationReferenceRefSetMember)
+   */
+  @Override
+  public AssociationReferenceRefSetMember<?> addAssociationReferenceRefSetMember(
+    AssociationReferenceRefSetMember<?> associationReferenceRefSetMember)
+    throws Exception {
+    Logger.getLogger(ContentServiceJpa.class).debug(
+        "Content Service - add association reference refset member"
+            + associationReferenceRefSetMember.getTerminologyId());
+    if (getTransactionPerOperation()) {
+      tx = manager.getTransaction();
+      tx.begin();
+      manager.persist(associationReferenceRefSetMember);
+      tx.commit();
+    } else {
+      manager.persist(associationReferenceRefSetMember);
+    }
+
+    return associationReferenceRefSetMember;
+  }
+
+  /*
+   * (non-Javadoc)
+   * 
+   * @see org.ihtsdo.otf.mapping.services.ContentService#
+   * updateAssociationReferenceRefSetMember
+   * (org.ihtsdo.otf.mapping.rf2.AssociationReferenceRefSetMember)
+   */
+  @Override
+  public void updateAssociationReferenceRefSetMember(
+    AssociationReferenceRefSetMember<?> associationReferenceRefSetMember)
+    throws Exception {
+    Logger.getLogger(ContentServiceJpa.class).debug(
+        "Content Service - update association reference refset member "
+            + associationReferenceRefSetMember.getTerminologyId());
+    if (getTransactionPerOperation()) {
+      tx = manager.getTransaction();
+      tx.begin();
+      manager.merge(associationReferenceRefSetMember);
+      tx.commit();
+    } else {
+      manager.merge(associationReferenceRefSetMember);
+    }
+
+  }
+
+  /*
+   * (non-Javadoc)
+   * 
+   * @see org.ihtsdo.otf.mapping.services.ContentService#
+   * removeAssociationReferenceRefSetMember (java.lang.String)
+   */
+  @Override
+  public void removeAssociationReferenceRefSetMember(Long id) throws Exception {
+    Logger.getLogger(ContentServiceJpa.class).debug(
+        "Content Service - remove association reference refset member " + id);
+    tx = manager.getTransaction();
+    // retrieve this map specialist
+    AssociationReferenceRefSetMember<?> mu =
+        manager.find(AbstractAssociationReferenceRefSetMemberJpa.class, id);
+    if (getTransactionPerOperation()) {
+      // remove refset member
+      tx.begin();
+      if (manager.contains(mu)) {
+        manager.remove(mu);
+      } else {
+        manager.remove(manager.merge(mu));
+      }
+      tx.commit();
+    } else {
+      if (manager.contains(mu)) {
+        manager.remove(mu);
+      } else {
+        manager.remove(manager.merge(mu));
+      }
+    }
+  }
+
+  /*
+   * (non-Javadoc)
+   * 
+   * @see
    * org.ihtsdo.otf.ts.services.ContentService#getComplexMapRefSetMember(java
    * .lang.Long)
    */
@@ -829,8 +970,9 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
     return c;
   }
 
-  /**
-   * {@inheritDoc}
+
+  /* (non-Javadoc)
+   * @see org.ihtsdo.otf.ts.services.ContentService#getComplexMapRefSetMember(java.lang.String, java.lang.String, java.lang.String)
    */
   @Override
   public ComplexMapRefSetMember getComplexMapRefSetMember(String terminologyId,
@@ -960,8 +1102,9 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
     return c;
   }
 
-  /**
-   * {@inheritDoc}
+
+  /* (non-Javadoc)
+   * @see org.ihtsdo.otf.ts.services.ContentService#getLanguageRefSetMember(java.lang.String, java.lang.String, java.lang.String)
    */
   @Override
   public LanguageRefSetMember getLanguageRefSetMember(String terminologyId,
@@ -1091,8 +1234,9 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
     return c;
   }
 
-  /**
-   * {@inheritDoc}
+
+  /* (non-Javadoc)
+   * @see org.ihtsdo.otf.ts.services.ContentService#getSimpleMapRefSetMember(java.lang.String, java.lang.String, java.lang.String)
    */
   @Override
   public SimpleMapRefSetMember getSimpleMapRefSetMember(String terminologyId,
@@ -1221,8 +1365,8 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
     return c;
   }
 
-  /**
-   * {@inheritDoc}
+  /* (non-Javadoc)
+   * @see org.ihtsdo.otf.ts.services.ContentService#getSimpleRefSetMember(java.lang.String, java.lang.String, java.lang.String)
    */
   @Override
   public SimpleRefSetMember getSimpleRefSetMember(String terminologyId,

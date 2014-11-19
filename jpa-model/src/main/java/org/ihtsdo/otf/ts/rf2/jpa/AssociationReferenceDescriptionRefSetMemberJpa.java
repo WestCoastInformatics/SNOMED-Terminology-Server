@@ -7,40 +7,52 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlTransient;
 
 import org.hibernate.envers.Audited;
-import org.hibernate.search.annotations.ContainedIn;
-import org.ihtsdo.otf.ts.rf2.AttributeValueConceptRefSetMember;
-import org.ihtsdo.otf.ts.rf2.AttributeValueDescriptionRefSetMember;
+import org.ihtsdo.otf.ts.rf2.AssociationReferenceConceptRefSetMember;
+import org.ihtsdo.otf.ts.rf2.AssociationReferenceDescriptionRefSetMember;
 import org.ihtsdo.otf.ts.rf2.Description;
 
 /**
- * Concrete implementation of {@link AttributeValueConceptRefSetMember}.
+ * Concrete implementation of {@link AssociationReferenceConceptRefSetMember}.
  */
 @Entity
 @Audited
 @DiscriminatorValue("Description")
-public class AttributeValueDescriptionRefSetMemberJpa extends AbstractAttributeValueRefSetMemberJpa<Description>
-    implements AttributeValueDescriptionRefSetMember {
+public class AssociationReferenceDescriptionRefSetMemberJpa extends
+    AbstractAssociationReferenceRefSetMemberJpa<Description> implements
+    AssociationReferenceDescriptionRefSetMember {
 
-  /** The description. */
+  /** The Description associated with this element */
   @ManyToOne(targetEntity = DescriptionJpa.class, optional = true)
-  // NOTE: this may apply only to LanguageRefSetMember given how
-  // description uses @IndexedEmbedded
-  @ContainedIn
   private Description description;
 
-  /**
-   * {@inheritDoc}
-   */
   @XmlTransient
   @Override
   public Description getDescription() {
     return this.description;
   }
 
-
-  /* (non-Javadoc)
-   * @see org.ihtsdo.otf.ts.rf2.jpa.AbstractAttributeValueRefSetMemberJpa#hashCode()
+  /*
+   * (non-Javadoc)
+   * 
+   * @see org.ihtsdo.otf.ts.rf2.RefSetMember#getComponent()
    */
+  @Override
+  public Description getComponent() {
+    return getDescription();
+  }
+
+  /*
+   * (non-Javadoc)
+   * 
+   * @see
+   * org.ihtsdo.otf.ts.rf2.RefSetMember#setComponent(org.ihtsdo.otf.ts.rf2.Component
+   * )
+   */
+  @Override
+  public void setComponent(Description description) {
+    setDescription(description);
+  }
+
   @Override
   public int hashCode() {
     final int prime = 31;
@@ -50,10 +62,6 @@ public class AttributeValueDescriptionRefSetMemberJpa extends AbstractAttributeV
     return result;
   }
 
-
-  /* (non-Javadoc)
-   * @see org.ihtsdo.otf.ts.rf2.jpa.AbstractAttributeValueRefSetMemberJpa#equals(java.lang.Object)
-   */
   @Override
   public boolean equals(Object obj) {
     if (this == obj)
@@ -62,8 +70,8 @@ public class AttributeValueDescriptionRefSetMemberJpa extends AbstractAttributeV
       return false;
     if (getClass() != obj.getClass())
       return false;
-    AttributeValueDescriptionRefSetMemberJpa other =
-        (AttributeValueDescriptionRefSetMemberJpa) obj;
+    AssociationReferenceDescriptionRefSetMemberJpa other =
+        (AssociationReferenceDescriptionRefSetMemberJpa) obj;
     if (description == null) {
       if (other.description != null)
         return false;
@@ -71,7 +79,6 @@ public class AttributeValueDescriptionRefSetMemberJpa extends AbstractAttributeV
       return false;
     return true;
   }
-
 
   /**
    * {@inheritDoc}
@@ -91,23 +98,4 @@ public class AttributeValueDescriptionRefSetMemberJpa extends AbstractAttributeV
   public String getDescriptionId() {
     return description != null ? description.getTerminologyId() : null;
   }
-
-
-  /* (non-Javadoc)
-   * @see org.ihtsdo.otf.ts.rf2.RefSetMember#getComponent()
-   */
-  @Override
-  public Description getComponent() {
-    return getDescription();
-  }
-
-
-  /* (non-Javadoc)
-   * @see org.ihtsdo.otf.ts.rf2.RefSetMember#setComponent(org.ihtsdo.otf.ts.rf2.Component)
-   */
-  @Override
-  public void setComponent(Description component) {
-    setDescription(component);    
-  }
-
 }

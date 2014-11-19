@@ -50,8 +50,6 @@ public class ExceptionHandler {
    * @param e the e
    * @param whatIsHappening the what is happening
    * @param userName the current user
-   * @param project the map project
-   * @param recordId the map record id
    * @throws Exception the web application exception
    */
   public static void handleException(Exception e, String whatIsHappening,

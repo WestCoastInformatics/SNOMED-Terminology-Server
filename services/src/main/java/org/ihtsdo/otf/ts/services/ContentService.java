@@ -5,6 +5,7 @@ import java.util.Set;
 import org.ihtsdo.otf.ts.helpers.ConceptList;
 import org.ihtsdo.otf.ts.helpers.PfsParameter;
 import org.ihtsdo.otf.ts.helpers.SearchResultList;
+import org.ihtsdo.otf.ts.rf2.AssociationReferenceRefSetMember;
 import org.ihtsdo.otf.ts.rf2.AttributeValueRefSetMember;
 import org.ihtsdo.otf.ts.rf2.ComplexMapRefSetMember;
 import org.ihtsdo.otf.ts.rf2.Component;
@@ -30,7 +31,8 @@ public interface ContentService extends RootService {
    * @return the concepts
    * @throws Exception the exception
    */
-  public ConceptList getConcepts(String terminology, String version, PfsParameter pfs) throws Exception;
+  public ConceptList getConcepts(String terminology, String version,
+    PfsParameter pfs) throws Exception;
 
   /**
    * Returns the concept.
@@ -42,10 +44,9 @@ public interface ContentService extends RootService {
   public Concept getConcept(Long id) throws Exception;
 
   /**
-   * Returns the concept matching the specified parameters.
-   * May return more than one concept if there are multiple entries
-   * with the same id, terminology, and version.
-   * NOTE: this only applies to concept, not to other data types.
+   * Returns the concept matching the specified parameters. May return more than
+   * one concept if there are multiple entries with the same id, terminology,
+   * and version. NOTE: this only applies to concept, not to other data types.
    * 
    * @param terminologyId the id
    * @param terminology the terminology
@@ -57,8 +58,8 @@ public interface ContentService extends RootService {
     String version) throws Exception;
 
   /**
-   * Returns the single concept for the specified parameters.  If there
-   * are more than one it throws an exception.
+   * Returns the single concept for the specified parameters. If there are more
+   * than one it throws an exception.
    *
    * @param terminologyId the id
    * @param terminology the terminology
@@ -221,8 +222,7 @@ public interface ContentService extends RootService {
    * @return the language refset member
    * @throws Exception if anything goes wrong
    */
-  public LanguageRefSetMember getLanguageRefSetMember(
-    Long id) throws Exception;
+  public LanguageRefSetMember getLanguageRefSetMember(Long id) throws Exception;
 
   /**
    * Returns the language refset member matching the specified parameters.
@@ -274,7 +274,8 @@ public interface ContentService extends RootService {
     String id) throws Exception;
 
   /**
-   * Returns the attribute value refset member matching the specified parameters.
+   * Returns the attribute value refset member matching the specified
+   * parameters.
    * 
    * @param terminologyId the id
    * @param terminology the terminology
@@ -283,18 +284,18 @@ public interface ContentService extends RootService {
    * @throws Exception if anything goes wrong
    */
   public AttributeValueRefSetMember<? extends Component> getAttributeValueRefSetMember(
-    String terminologyId, String terminology, String version)
-    throws Exception;
+    String terminologyId, String terminology, String version) throws Exception;
 
   /**
    * Adds the attribute value refset member.
    * 
-   * @param attributeValueRefSetMember the attribute value  refset member
+   * @param attributeValueRefSetMember the attribute value refset member
    * @return the attribute value refset member
    * @throws Exception the exception
    */
   public AttributeValueRefSetMember<? extends Component> addAttributeValueRefSetMember(
-    AttributeValueRefSetMember<? extends Component> attributeValueRefSetMember) throws Exception;
+    AttributeValueRefSetMember<? extends Component> attributeValueRefSetMember)
+    throws Exception;
 
   /**
    * Update attribute value refset member.
@@ -303,7 +304,8 @@ public interface ContentService extends RootService {
    * @throws Exception the exception
    */
   public void updateAttributeValueRefSetMember(
-    AttributeValueRefSetMember<? extends Component> attributeValueRefSetMember) throws Exception;
+    AttributeValueRefSetMember<? extends Component> attributeValueRefSetMember)
+    throws Exception;
 
   /**
    * Removes the attribute value refset member.
@@ -314,14 +316,68 @@ public interface ContentService extends RootService {
   public void removeAttributeValueRefSetMember(Long id) throws Exception;
 
   /**
+   * Returns the association reference refset member.
+   * 
+   * @param id the id
+   * @return the association reference refset member
+   * @throws Exception if anything goes wrong
+   */
+  public AssociationReferenceRefSetMember<? extends Component> getAssociationReferenceRefSetMember(
+    String id) throws Exception;
+
+  /**
+   * Returns the association reference refset member matching the specified
+   * parameters.
+   * 
+   * @param terminologyId the id
+   * @param terminology the terminology
+   * @param version the version
+   * @return the association reference refset member
+   * @throws Exception if anything goes wrong
+   */
+  public AssociationReferenceRefSetMember<? extends Component> getAssociationReferenceRefSetMember(
+    String terminologyId, String terminology, String version) throws Exception;
+
+  /**
+   * Adds the association reference refset member.
+   * 
+   * @param associationReferenceRefSetMember the association reference refset
+   *          member
+   * @return the attribute value refset member
+   * @throws Exception the exception
+   */
+  public AssociationReferenceRefSetMember<? extends Component> addAssociationReferenceRefSetMember(
+    AssociationReferenceRefSetMember<? extends Component> associationReferenceRefSetMember)
+    throws Exception;
+
+  /**
+   * Update association reference refset member.
+   * 
+   * @param associationReferenceRefSetMember the association reference refset
+   *          member
+   * @throws Exception the exception
+   */
+  public void updateAssociationReferenceRefSetMember(
+    AssociationReferenceRefSetMember<? extends Component> associationReferenceRefSetMember)
+    throws Exception;
+
+  /**
+   * Removes the association reference refset member.
+   * 
+   * @param id the id
+   * @throws Exception the exception
+   */
+  public void removeAssociationReferenceRefSetMember(Long id) throws Exception;
+
+  /**
    * Returns the complex map refset member.
    * 
    * @param id the id
    * @return the complex map refset member
    * @throws Exception if anything goes wrong
    */
-  public ComplexMapRefSetMember getComplexMapRefSetMember(
-    Long id) throws Exception;
+  public ComplexMapRefSetMember getComplexMapRefSetMember(Long id)
+    throws Exception;
 
   /**
    * Returns the complex map refset member matching the specified parameters.
@@ -369,8 +425,8 @@ public interface ContentService extends RootService {
    * @return the simple map refset member
    * @throws Exception if anything goes wrong
    */
-  public SimpleMapRefSetMember getSimpleMapRefSetMember(
-    Long id) throws Exception;
+  public SimpleMapRefSetMember getSimpleMapRefSetMember(Long id)
+    throws Exception;
 
   /**
    * Returns the simple map refset member matching the specified parameters.
@@ -418,8 +474,7 @@ public interface ContentService extends RootService {
    * @return the simple refset member
    * @throws Exception if anything goes wrong
    */
-  public SimpleRefSetMember getSimpleRefSetMember(Long id)
-    throws Exception;
+  public SimpleRefSetMember getSimpleRefSetMember(Long id) throws Exception;
 
   /**
    * Returns the simple refset member matching the specified parameters.
@@ -470,8 +525,8 @@ public interface ContentService extends RootService {
    * @return the search results for the search string
    * @throws Exception if anything goes wrong
    */
-  public SearchResultList findConceptsForQuery(String terminology, String version, String query,
-    PfsParameter pfs) throws Exception;
+  public SearchResultList findConceptsForQuery(String terminology,
+    String version, String query, PfsParameter pfs) throws Exception;
 
   /**
    * Finds the descendants of a concept, subject to max results limitation in
@@ -480,30 +535,26 @@ public interface ContentService extends RootService {
    * @param terminologyId the id
    * @param terminology the terminology
    * @param version the terminology version
-   * @param pfs the pfs parameter containing the max results
-   *          restriction
+   * @param pfs the pfs parameter containing the max results restriction
    * @return the set of concepts
    * @throws Exception the exception
    */
   public SearchResultList findDescendantConcepts(String terminologyId,
-    String terminology, String version, PfsParameter pfs)
-    throws Exception;
+    String terminology, String version, PfsParameter pfs) throws Exception;
 
   /**
-   * Finds the ancestor of a concept, subject to max results limitation in
-   * PFS parameters object.
+   * Finds the ancestor of a concept, subject to max results limitation in PFS
+   * parameters object.
    * 
    * @param terminologyId the id
    * @param terminology the terminology
    * @param version the terminology version
-   * @param pfs the pfs parameter containing the max results
-   *          restriction
+   * @param pfs the pfs parameter containing the max results restriction
    * @return the set of concepts
    * @throws Exception the exception
    */
   public SearchResultList findAncestorConcepts(String terminologyId,
-    String terminology, String version, PfsParameter pfs)
-    throws Exception;
+    String terminology, String version, PfsParameter pfs) throws Exception;
 
   /**
    * Gets the all concepts.
@@ -512,8 +563,7 @@ public interface ContentService extends RootService {
    * @param version the terminology version
    * @return the all concepts
    */
-  public ConceptList getAllConcepts(String terminology,
-    String version);
+  public ConceptList getAllConcepts(String terminology, String version);
 
   /**
    * Gets the all relationship ids.
@@ -552,8 +602,8 @@ public interface ContentService extends RootService {
    * @param version the terminology version
    * @throws Exception the exception
    */
-  public void clearTransitiveClosure(String terminology,
-    String version) throws Exception;
+  public void clearTransitiveClosure(String terminology, String version)
+    throws Exception;
 
   /**
    * Removes all concepts and connected data structures
