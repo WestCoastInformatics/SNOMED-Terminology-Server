@@ -71,6 +71,20 @@ public interface Concept extends Component {
   public Set<Relationship> getRelationships();
 
   /**
+   * Adds the relationship.
+   * 
+   * @param relationship the relationship
+   */
+  public void addRelationship(Relationship relationship);
+
+  /**
+   * Removes the relationship.
+   * 
+   * @param relationship the relationship
+   */
+  public void removeRelationship(Relationship relationship);
+
+  /**
    * Sets the relationships.
    * 
    * @param relationships the relationships
@@ -83,6 +97,20 @@ public interface Concept extends Component {
    * @return the inverse relationships
    */
   public Set<Relationship> getInverseRelationships();
+
+  /**
+   * Adds the inverse relationship.
+   * 
+   * @param relationship the relationship
+   */
+  public void addInverseRelationship(Relationship relationship);
+
+  /**
+   * Removes the inverse relationship.
+   * 
+   * @param relationship the relationship
+   */
+  public void removeInverseRelationship(Relationship relationship);
 
   /**
    * Sets the inverse relationships.

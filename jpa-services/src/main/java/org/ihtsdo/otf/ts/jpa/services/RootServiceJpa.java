@@ -155,6 +155,7 @@ public class RootServiceJpa implements RootService {
               + "is no active transaction");
     } else if (tx != null) {
       tx.commit();
+      manager.clear();
     }
   }
 

@@ -1,16 +1,20 @@
 package org.ihtsdo.otf.ts.helpers;
 
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringReader;
 import java.io.StringWriter;
 import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
+import java.util.Comparator;
 import java.util.Properties;
 import java.util.Scanner;
 
@@ -369,4 +373,59 @@ public class ConfigUtility {
                                      // it
     }
   }
+
+  /**
+   * Merge-sort two files.
+   * 
+   * @param files1 the first set of files
+   * @param files2 the second set of files
+   * @param comp the comparator
+   * @param dir the sort dir
+   * @param headerLine the header_line
+   * @return the sorted {@link File}
+   * @throws IOException Signals that an I/O exception has occurred.
+   */
+  @SuppressWarnings("null")
+  public static File mergeSortedFiles(File files1, File files2,
+    Comparator<String> comp, File dir, String headerLine) throws IOException {
+
+    final BufferedReader in1 = new BufferedReader(new FileReader(files1));
+    final BufferedReader in2 = new BufferedReader(new FileReader(files2));
+    final File outFile = File.createTempFile("t+~", ".tmp", dir);
+    final BufferedWriter out = new BufferedWriter(new FileWriter(outFile));
+    String line1 = in1.readLine();
+    String line2 = in2.readLine();
+    String line = null;
+    if (!headerLine.isEmpty()) {
+      line = headerLine;
+      out.write(line);
+      out.newLine();
+    }
+    while (line1 != null || line2 != null) {
+      if (line1 == null) {
+        line = line2;
+        line2 = in2.readLine();
+      } else if (line2 == null) {
+        line = line1;
+        line1 = in1.readLine();
+      } else if (comp.compare(line1, line2) < 0) {
+        line = line1;
+        line1 = in1.readLine();
+      } else {
+        line = line2;
+        line2 = in2.readLine();
+      } 
+      // if a header line, do not write
+      if (!line.startsWith("id")) {
+        out.write(line);
+        out.newLine();
+      }
+    }
+    out.flush();
+    out.close();
+    in1.close();
+    in2.close();
+    return outFile;
+  }
+
 }

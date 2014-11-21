@@ -74,19 +74,18 @@ public class DescriptionJpa extends AbstractComponent implements Description {
   /** The language RefSet members */
   @OneToMany(mappedBy = "description", cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true, targetEntity = LanguageRefSetMemberJpa.class)
   // @IndexedEmbedded(targetElement = LanguageRefSetMemberJpa.class) PG
-  private Set<LanguageRefSetMember> languageRefSetMembers = new HashSet<>();
+  private Set<LanguageRefSetMember> languageRefSetMembers = null;
 
   /** The attributeValue RefSet members. */
   @OneToMany(mappedBy = "description", cascade = CascadeType.ALL, orphanRemoval = true, targetEntity = AttributeValueDescriptionRefSetMemberJpa.class)
   private Set<AttributeValueDescriptionRefSetMember> attributeValueRefSetMembers =
-      new HashSet<>();
+      null;
 
   /** The associationReference RefSet members. */
   @OneToMany(mappedBy = "description", cascade = CascadeType.ALL, orphanRemoval = true, targetEntity = AssociationReferenceDescriptionRefSetMemberJpa.class)
   private Set<AssociationReferenceDescriptionRefSetMember> associationReferenceRefSetMembers =
-      new HashSet<>();
-  
-  
+      null;
+
   /**
    * Instantiates an empty {@link Description}.
    */
@@ -115,21 +114,25 @@ public class DescriptionJpa extends AbstractComponent implements Description {
         newMember.setDescription(this);
         languageRefSetMembers.add(newMember);
       }
-      
+
       attributeValueRefSetMembers = new HashSet<>();
-      for (AttributeValueDescriptionRefSetMember member : description.getAttributeValueRefSetMembers()) {
-        AttributeValueDescriptionRefSetMember newMember = new AttributeValueDescriptionRefSetMemberJpa(member);
+      for (AttributeValueDescriptionRefSetMember member : description
+          .getAttributeValueRefSetMembers()) {
+        AttributeValueDescriptionRefSetMember newMember =
+            new AttributeValueDescriptionRefSetMemberJpa(member);
         newMember.setDescription(this);
         attributeValueRefSetMembers.add(newMember);
       }
 
       associationReferenceRefSetMembers = new HashSet<>();
-      for (AssociationReferenceDescriptionRefSetMember member : description.getAssociationReferenceRefSetMembers()) {
-        AssociationReferenceDescriptionRefSetMember newMember = new AssociationReferenceDescriptionRefSetMemberJpa(member);
+      for (AssociationReferenceDescriptionRefSetMember member : description
+          .getAssociationReferenceRefSetMembers()) {
+        AssociationReferenceDescriptionRefSetMember newMember =
+            new AssociationReferenceDescriptionRefSetMemberJpa(member);
         newMember.setDescription(this);
         associationReferenceRefSetMembers.add(newMember);
       }
-      
+
     }
   }
 
@@ -283,6 +286,9 @@ public class DescriptionJpa extends AbstractComponent implements Description {
   @XmlElement(type = LanguageRefSetMemberJpa.class, name = "languageRefSetMember")
   @Override
   public Set<LanguageRefSetMember> getLanguageRefSetMembers() {
+    if (languageRefSetMembers == null) {
+      languageRefSetMembers = new HashSet<>();
+    }
     return this.languageRefSetMembers;
   }
 
@@ -304,8 +310,11 @@ public class DescriptionJpa extends AbstractComponent implements Description {
    */
   @Override
   public void addLanguageRefSetMember(LanguageRefSetMember languageRefSetMember) {
+    if (languageRefSetMembers == null) {
+      languageRefSetMembers = new HashSet<>();
+    }
     languageRefSetMember.setDescription(this);
-    this.languageRefSetMembers.add(languageRefSetMember);
+    languageRefSetMembers.add(languageRefSetMember);
   }
 
   /**
@@ -316,9 +325,11 @@ public class DescriptionJpa extends AbstractComponent implements Description {
   @Override
   public void removeLanguageRefSetMember(
     LanguageRefSetMember languageRefSetMember) {
-    this.languageRefSetMembers.remove(languageRefSetMember);
+    if (languageRefSetMembers == null) {
+      return;
+    }
+    languageRefSetMembers.remove(languageRefSetMember);
   }
-
 
   /**
    * Returns the set of AttributeValueRefSetMembers.
@@ -328,6 +339,9 @@ public class DescriptionJpa extends AbstractComponent implements Description {
   @XmlTransient
   @Override
   public Set<AttributeValueDescriptionRefSetMember> getAttributeValueRefSetMembers() {
+    if (attributeValueRefSetMembers == null) {
+      attributeValueRefSetMembers = new HashSet<>();
+    }
     return this.attributeValueRefSetMembers;
   }
 
@@ -335,7 +349,8 @@ public class DescriptionJpa extends AbstractComponent implements Description {
    * (non-Javadoc)
    * 
    * @see
-   * org.ihtsdo.otf.ts.rf2.Description#setAttributeValueRefSetMembers(java.util.Set)
+   * org.ihtsdo.otf.ts.rf2.Description#setAttributeValueRefSetMembers(java.util
+   * .Set)
    */
   @Override
   public void setAttributeValueRefSetMembers(
@@ -353,21 +368,27 @@ public class DescriptionJpa extends AbstractComponent implements Description {
   @Override
   public void addAttributeValueRefSetMember(
     AttributeValueDescriptionRefSetMember attributeValueRefSetMember) {
+    if (attributeValueRefSetMembers == null) {
+      attributeValueRefSetMembers = new HashSet<>();
+    }
     attributeValueRefSetMember.setDescription(this);
-    this.attributeValueRefSetMembers.add(attributeValueRefSetMember);
+    attributeValueRefSetMembers.add(attributeValueRefSetMember);
   }
 
   /*
    * (non-Javadoc)
    * 
    * @see
-   * org.ihtsdo.otf.ts.rf2.Description#removeAttributeValueRefSetMember(org.ihtsdo
-   * .otf.ts.rf2.AttributeValueRefSetMember)
+   * org.ihtsdo.otf.ts.rf2.Description#removeAttributeValueRefSetMember(org.
+   * ihtsdo .otf.ts.rf2.AttributeValueRefSetMember)
    */
   @Override
   public void removeAttributeValueRefSetMember(
     AttributeValueDescriptionRefSetMember attributeValueRefSetMember) {
-    this.attributeValueRefSetMembers.remove(attributeValueRefSetMember);
+    if (attributeValueRefSetMembers == null) {
+      return;
+    }
+    attributeValueRefSetMembers.remove(attributeValueRefSetMember);
   }
 
   /**
@@ -378,6 +399,9 @@ public class DescriptionJpa extends AbstractComponent implements Description {
   @XmlTransient
   @Override
   public Set<AssociationReferenceDescriptionRefSetMember> getAssociationReferenceRefSetMembers() {
+    if (associationReferenceRefSetMembers == null) {
+      associationReferenceRefSetMembers = new HashSet<>();
+    }
     return this.associationReferenceRefSetMembers;
   }
 
@@ -385,7 +409,8 @@ public class DescriptionJpa extends AbstractComponent implements Description {
    * (non-Javadoc)
    * 
    * @see
-   * org.ihtsdo.otf.ts.rf2.Description#setAssociationReferenceRefSetMembers(java.util.Set)
+   * org.ihtsdo.otf.ts.rf2.Description#setAssociationReferenceRefSetMembers(
+   * java.util.Set)
    */
   @Override
   public void setAssociationReferenceRefSetMembers(
@@ -397,39 +422,44 @@ public class DescriptionJpa extends AbstractComponent implements Description {
    * (non-Javadoc)
    * 
    * @see
-   * org.ihtsdo.otf.ts.rf2.Description#addAssociationReferenceRefSetMember(org.ihtsdo.
-   * otf.ts.rf2.AssociationReferenceRefSetMember)
+   * org.ihtsdo.otf.ts.rf2.Description#addAssociationReferenceRefSetMember(org
+   * .ihtsdo. otf.ts.rf2.AssociationReferenceRefSetMember)
    */
   @Override
   public void addAssociationReferenceRefSetMember(
     AssociationReferenceDescriptionRefSetMember associationReferenceRefSetMember) {
+    if (associationReferenceRefSetMembers == null) {
+      associationReferenceRefSetMembers = new HashSet<>();
+    }
     associationReferenceRefSetMember.setDescription(this);
-    this.associationReferenceRefSetMembers.add(associationReferenceRefSetMember);
+    associationReferenceRefSetMembers.add(associationReferenceRefSetMember);
   }
 
   /*
    * (non-Javadoc)
    * 
    * @see
-   * org.ihtsdo.otf.ts.rf2.Description#removeAssociationReferenceRefSetMember(org.ihtsdo
-   * .otf.ts.rf2.AssociationReferenceRefSetMember)
+   * org.ihtsdo.otf.ts.rf2.Description#removeAssociationReferenceRefSetMember
+   * (org.ihtsdo .otf.ts.rf2.AssociationReferenceRefSetMember)
    */
   @Override
   public void removeAssociationReferenceRefSetMember(
     AssociationReferenceDescriptionRefSetMember associationReferenceRefSetMember) {
-    this.associationReferenceRefSetMembers.remove(associationReferenceRefSetMember);
-  }  
-    
-  
+    if (associationReferenceRefSetMembers == null) {
+      return;
+    }
+    associationReferenceRefSetMembers.remove(associationReferenceRefSetMember);
+  }
+
   /**
    * {@inheritDoc}
    */
   @Override
   public String toString() {
     return super.toString()
-        + (this.getConcept() == null ? null : getConcept().getTerminologyId())
-        + "," + this.getLanguageCode() + "," + this.getTypeId() + ","
-        + this.getTerm() + "," + this.getCaseSignificanceId();
+        + (getConcept() == null ? null : getConcept().getTerminologyId()) + ","
+        + getLanguageCode() + "," + getTypeId() + "," + getTerm() + ","
+        + getCaseSignificanceId();
   }
 
   @Override
