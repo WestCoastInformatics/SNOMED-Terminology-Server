@@ -128,7 +128,7 @@ public class IhtsdoSecurityServiceHandler implements SecurityServiceHandler {
    */
   @Override
   public void setProperties(Properties properties) {
-    //this.properties = properties;
+    this.properties = properties;
   }
 
 }

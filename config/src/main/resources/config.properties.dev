@@ -87,6 +87,9 @@ security.handler=DEFAULT
 security.handler.DEFAULT.class=org.ihtsdo.otf.ts.services.handlers.DefaultSecurityServiceHandler
 #security.handler.IHTSDO.class=org.ihtsdo.otf.ts.services.handlers.IHTSDOSecurityServiceHandler
 #security.handler.IHTSDO.url=https://usermanagement.ihtsdotools.org/security-web/query/
+security.handler.UTS.class=org.ihtsdo.otf.ts.services.handlers.UtsSecurityServiceHandler
+security.handler.UTS.license.code=NLM-XXXX
+security.handler.UTS.url=https://uts-ws.nlm.nih.gov/restful/isValidUMLSUser
 
 #
 # Exception processing emails
