@@ -76,6 +76,8 @@ loader.ICD9CM.input.data=C:/data/icd9cm-2013.xml
 # Webapp base URL (currently unused)
 #
 base.url=
+deploy.favicon=/path/to/images/favicon.png
+deploy.logo=/path/to/images/logo.png
 
 #
 # URL for security service

@@ -76,28 +76,28 @@ public class ConceptJpa extends AbstractComponent implements Concept {
   private Set<Relationship> relationships = null;
 
   /** The inverse relationships. */
-  @OneToMany(mappedBy = "destinationConcept", orphanRemoval = true, targetEntity = RelationshipJpa.class)
+  @OneToMany(mappedBy = "destinationConcept", targetEntity = RelationshipJpa.class)
   private Set<Relationship> inverseRelationships = null;
 
   /** The simple RefSet members. */
-  @OneToMany(mappedBy = "concept", cascade = CascadeType.ALL, orphanRemoval = true, targetEntity = SimpleRefSetMemberJpa.class)
+  @OneToMany(mappedBy = "concept", targetEntity = SimpleRefSetMemberJpa.class)
   private Set<SimpleRefSetMember> simpleRefSetMembers = null;
 
   /** The simpleMap RefSet members. */
-  @OneToMany(mappedBy = "concept", cascade = CascadeType.ALL, orphanRemoval = true, targetEntity = SimpleMapRefSetMemberJpa.class)
+  @OneToMany(mappedBy = "concept", targetEntity = SimpleMapRefSetMemberJpa.class)
   private Set<SimpleMapRefSetMember> simpleMapRefSetMembers = null;
 
   /** The complexMap RefSet members. */
-  @OneToMany(mappedBy = "concept", cascade = CascadeType.ALL, orphanRemoval = true, targetEntity = ComplexMapRefSetMemberJpa.class)
+  @OneToMany(mappedBy = "concept", targetEntity = ComplexMapRefSetMemberJpa.class)
   private Set<ComplexMapRefSetMember> complexMapRefSetMembers = null;
 
   /** The attributeValue RefSet members. */
-  @OneToMany(mappedBy = "concept", cascade = CascadeType.ALL, orphanRemoval = true, targetEntity = AttributeValueConceptRefSetMemberJpa.class)
+  @OneToMany(mappedBy = "concept", targetEntity = AttributeValueConceptRefSetMemberJpa.class)
   private Set<AttributeValueConceptRefSetMember> attributeValueRefSetMembers =
       null;
 
   /** The associationReference RefSet members. */
-  @OneToMany(mappedBy = "concept", cascade = CascadeType.ALL, orphanRemoval = true, targetEntity = AssociationReferenceConceptRefSetMemberJpa.class)
+  @OneToMany(mappedBy = "concept", targetEntity = AssociationReferenceConceptRefSetMemberJpa.class)
   private Set<AssociationReferenceConceptRefSetMember> associationReferenceRefSetMembers =
       null;
 
@@ -133,7 +133,7 @@ public class ConceptJpa extends AbstractComponent implements Concept {
       descriptions = new HashSet<>();
       for (Description description : concept.getDescriptions()) {
         Description newDescription =
-            new DescriptionJpa(description, cascadeCopy);
+            new DescriptionJpa(description, cascadeCopy, deepCopy);
         newDescription.setConcept(this);
         descriptions.add(newDescription);
       }
@@ -142,6 +142,15 @@ public class ConceptJpa extends AbstractComponent implements Concept {
         Relationship newRel = new RelationshipJpa(rel);
         newRel.setSourceConcept(this);
         relationships.add(newRel);
+      }
+    }
+    
+    if (deepCopy) {   
+      inverseRelationships = new HashSet<>();
+      for (Relationship rel : concept.getInverseRelationships()) {
+        Relationship newRel = new RelationshipJpa(rel);
+        newRel.setSourceConcept(this);
+        inverseRelationships.add(newRel);
       }
 
       attributeValueRefSetMembers = new HashSet<>();
@@ -182,15 +191,6 @@ public class ConceptJpa extends AbstractComponent implements Concept {
         SimpleRefSetMember newMember = new SimpleRefSetMemberJpa(member);
         newMember.setConcept(this);
         simpleRefSetMembers.add(newMember);
-      }
-    }
-
-    if (deepCopy) {
-      inverseRelationships = new HashSet<>();
-      for (Relationship rel : concept.getInverseRelationships()) {
-        Relationship newRel = new RelationshipJpa(rel);
-        newRel.setSourceConcept(this);
-        inverseRelationships.add(newRel);
       }
 
     }
@@ -258,6 +258,9 @@ public class ConceptJpa extends AbstractComponent implements Concept {
   @Override
   public void setDescriptions(Set<Description> descriptions) {
     this.descriptions = descriptions;
+    for (Description description : descriptions) {
+      description.setConcept(this);
+    }
   }
 
   /*
@@ -342,6 +345,9 @@ public class ConceptJpa extends AbstractComponent implements Concept {
   @Override
   public void setRelationships(Set<Relationship> relationships) {
     this.relationships = relationships;
+    for (Relationship relationship : relationships) {
+      relationship.setSourceConcept(this);
+    }
   }
 
   /*
@@ -397,6 +403,9 @@ public class ConceptJpa extends AbstractComponent implements Concept {
   @Override
   public void setInverseRelationships(Set<Relationship> inverseRelationships) {
     this.inverseRelationships = inverseRelationships;
+    for (Relationship relationship : inverseRelationships) {
+      relationship.setDestinationConcept(this);
+    }
   }
 
   /*
@@ -421,6 +430,9 @@ public class ConceptJpa extends AbstractComponent implements Concept {
   @Override
   public void setSimpleRefSetMembers(Set<SimpleRefSetMember> simpleRefSetMembers) {
     this.simpleRefSetMembers = simpleRefSetMembers;
+    for (SimpleRefSetMember member : simpleRefSetMembers) {
+      member.setConcept(this);
+    }
   }
 
   /*
@@ -477,6 +489,9 @@ public class ConceptJpa extends AbstractComponent implements Concept {
   public void setSimpleMapRefSetMembers(
     Set<SimpleMapRefSetMember> simpleMapRefSetMembers) {
     this.simpleMapRefSetMembers = simpleMapRefSetMembers;
+    for (SimpleMapRefSetMember member : simpleMapRefSetMembers) {
+      member.setConcept(this);
+    }
   }
 
   /*
@@ -536,6 +551,9 @@ public class ConceptJpa extends AbstractComponent implements Concept {
   public void setComplexMapRefSetMembers(
     Set<ComplexMapRefSetMember> complexMapRefSetMembers) {
     this.complexMapRefSetMembers = complexMapRefSetMembers;
+    for (ComplexMapRefSetMember member : complexMapRefSetMembers) {
+      member.setConcept(this);
+    }
   }
 
   /*
@@ -593,6 +611,9 @@ public class ConceptJpa extends AbstractComponent implements Concept {
   public void setAttributeValueRefSetMembers(
     Set<AttributeValueConceptRefSetMember> attributeValueRefSetMembers) {
     this.attributeValueRefSetMembers = attributeValueRefSetMembers;
+    for (AttributeValueConceptRefSetMember member : attributeValueRefSetMembers) {
+      member.setConcept(this);
+    }
   }
 
   /*
@@ -653,6 +674,9 @@ public class ConceptJpa extends AbstractComponent implements Concept {
   public void setAssociationReferenceRefSetMembers(
     Set<AssociationReferenceConceptRefSetMember> associationReferenceRefSetMembers) {
     this.associationReferenceRefSetMembers = associationReferenceRefSetMembers;
+    for (AssociationReferenceConceptRefSetMember member : associationReferenceRefSetMembers) {
+      member.setConcept(this);
+    }
   }
 
   /*
@@ -669,8 +693,7 @@ public class ConceptJpa extends AbstractComponent implements Concept {
       associationReferenceRefSetMembers = new HashSet<>();
     }
     associationReferenceRefSetMember.setConcept(this);
-    associationReferenceRefSetMembers
-        .add(associationReferenceRefSetMember);
+    associationReferenceRefSetMembers.add(associationReferenceRefSetMember);
   }
 
   /*
@@ -686,8 +709,7 @@ public class ConceptJpa extends AbstractComponent implements Concept {
     if (associationReferenceRefSetMembers == null) {
       return;
     }
-    associationReferenceRefSetMembers
-        .remove(associationReferenceRefSetMember);
+    associationReferenceRefSetMembers.remove(associationReferenceRefSetMember);
   }
 
   /*

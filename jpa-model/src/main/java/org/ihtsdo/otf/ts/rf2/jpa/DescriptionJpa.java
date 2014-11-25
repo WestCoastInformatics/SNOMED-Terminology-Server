@@ -77,12 +77,12 @@ public class DescriptionJpa extends AbstractComponent implements Description {
   private Set<LanguageRefSetMember> languageRefSetMembers = null;
 
   /** The attributeValue RefSet members. */
-  @OneToMany(mappedBy = "description", cascade = CascadeType.ALL, orphanRemoval = true, targetEntity = AttributeValueDescriptionRefSetMemberJpa.class)
+  @OneToMany(mappedBy = "description", targetEntity = AttributeValueDescriptionRefSetMemberJpa.class)
   private Set<AttributeValueDescriptionRefSetMember> attributeValueRefSetMembers =
       null;
 
   /** The associationReference RefSet members. */
-  @OneToMany(mappedBy = "description", cascade = CascadeType.ALL, orphanRemoval = true, targetEntity = AssociationReferenceDescriptionRefSetMemberJpa.class)
+  @OneToMany(mappedBy = "description", targetEntity = AssociationReferenceDescriptionRefSetMemberJpa.class)
   private Set<AssociationReferenceDescriptionRefSetMember> associationReferenceRefSetMembers =
       null;
 
@@ -98,8 +98,10 @@ public class DescriptionJpa extends AbstractComponent implements Description {
    *
    * @param description the description
    * @param cascadeCopy the cascade copy flag
+   * @param deepCopy the deep copy
    */
-  public DescriptionJpa(Description description, boolean cascadeCopy) {
+  public DescriptionJpa(Description description, boolean cascadeCopy,
+      boolean deepCopy) {
     super(description);
     caseSignificanceId = description.getCaseSignificanceId();
     concept = description.getConcept();
@@ -107,14 +109,16 @@ public class DescriptionJpa extends AbstractComponent implements Description {
     term = description.getTerm();
     typeId = description.getTypeId();
     workflowStatus = description.getWorkflowStatus();
-    if (cascadeCopy) {
+    if (cascadeCopy || deepCopy) {
       languageRefSetMembers = new HashSet<>();
       for (LanguageRefSetMember member : description.getLanguageRefSetMembers()) {
         LanguageRefSetMember newMember = new LanguageRefSetMemberJpa(member);
         newMember.setDescription(this);
         languageRefSetMembers.add(newMember);
       }
+    }
 
+    if (deepCopy) {
       attributeValueRefSetMembers = new HashSet<>();
       for (AttributeValueDescriptionRefSetMember member : description
           .getAttributeValueRefSetMembers()) {
@@ -301,6 +305,9 @@ public class DescriptionJpa extends AbstractComponent implements Description {
   public void setLanguageRefSetMembers(
     Set<LanguageRefSetMember> languageRefSetMembers) {
     this.languageRefSetMembers = languageRefSetMembers;
+    for (LanguageRefSetMember member : languageRefSetMembers) {
+      member.setDescription(this);
+    }
   }
 
   /**
@@ -356,6 +363,9 @@ public class DescriptionJpa extends AbstractComponent implements Description {
   public void setAttributeValueRefSetMembers(
     Set<AttributeValueDescriptionRefSetMember> attributeValueRefSetMembers) {
     this.attributeValueRefSetMembers = attributeValueRefSetMembers;
+    for (AttributeValueDescriptionRefSetMember member : attributeValueRefSetMembers) {
+      member.setDescription(this);
+    }
   }
 
   /*
@@ -416,6 +426,9 @@ public class DescriptionJpa extends AbstractComponent implements Description {
   public void setAssociationReferenceRefSetMembers(
     Set<AssociationReferenceDescriptionRefSetMember> associationReferenceRefSetMembers) {
     this.associationReferenceRefSetMembers = associationReferenceRefSetMembers;
+    for (AssociationReferenceDescriptionRefSetMember member : associationReferenceRefSetMembers) {
+      member.setDescription(this);
+    }
   }
 
   /*

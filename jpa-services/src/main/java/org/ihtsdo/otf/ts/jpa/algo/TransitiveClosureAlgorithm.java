@@ -227,19 +227,19 @@ public class TransitiveClosureAlgorithm extends ContentServiceJpa implements
     Logger.getLogger(this.getClass()).debug("  Get descendants for " + par);
     // if we've seen this node already, children are accounted for - bail
     if (seen.contains(par)) {
-      return new HashSet<>();
+      return new HashSet<>(0);
     }
     seen.add(par);
 
     // Get Children of this node
-    Set<String> children = parChd.get(par);
+    final Set<String> children = parChd.get(par);
 
     // If this is a leaf node, bail
     if (children == null || children.isEmpty()) {
-      return new HashSet<>();
+      return new HashSet<>(0);
     }
     // Iterate through children, mark as descendant and recursively call
-    Set<String> descendants = new HashSet<>();
+    final Set<String> descendants = new HashSet<>();
     for (String chd : children) {
       descendants.add(chd);
       descendants.addAll(getDescendants(chd, seen, parChd));

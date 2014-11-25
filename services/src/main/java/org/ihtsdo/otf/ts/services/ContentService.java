@@ -239,21 +239,21 @@ public interface ContentService extends RootService {
   /**
    * Adds the language refset member.
    * 
-   * @param languageRefSetMember the language refset member
+   * @param member the language refset member
    * @return the languageRefSetMember
    * @throws Exception the exception
    */
   public LanguageRefSetMember addLanguageRefSetMember(
-    LanguageRefSetMember languageRefSetMember) throws Exception;
+    LanguageRefSetMember member) throws Exception;
 
   /**
    * Update language refset member.
    * 
-   * @param languageRefSetMember the language refset member
+   * @param member the language refset member
    * @throws Exception the exception
    */
   public void updateLanguageRefSetMember(
-    LanguageRefSetMember languageRefSetMember) throws Exception;
+    LanguageRefSetMember member) throws Exception;
 
   /**
    * Removes the language refset member.
@@ -289,22 +289,22 @@ public interface ContentService extends RootService {
   /**
    * Adds the attribute value refset member.
    * 
-   * @param attributeValueRefSetMember the attribute value refset member
+   * @param member the attribute value refset member
    * @return the attribute value refset member
    * @throws Exception the exception
    */
   public AttributeValueRefSetMember<? extends Component> addAttributeValueRefSetMember(
-    AttributeValueRefSetMember<? extends Component> attributeValueRefSetMember)
+    AttributeValueRefSetMember<? extends Component> member)
     throws Exception;
 
   /**
    * Update attribute value refset member.
    * 
-   * @param attributeValueRefSetMember the attribute value refset member
+   * @param member the attribute value refset member
    * @throws Exception the exception
    */
   public void updateAttributeValueRefSetMember(
-    AttributeValueRefSetMember<? extends Component> attributeValueRefSetMember)
+    AttributeValueRefSetMember<? extends Component> member)
     throws Exception;
 
   /**
@@ -341,24 +341,24 @@ public interface ContentService extends RootService {
   /**
    * Adds the association reference refset member.
    * 
-   * @param associationReferenceRefSetMember the association reference refset
+   * @param member the association reference refset
    *          member
    * @return the attribute value refset member
    * @throws Exception the exception
    */
   public AssociationReferenceRefSetMember<? extends Component> addAssociationReferenceRefSetMember(
-    AssociationReferenceRefSetMember<? extends Component> associationReferenceRefSetMember)
+    AssociationReferenceRefSetMember<? extends Component> member)
     throws Exception;
 
   /**
    * Update association reference refset member.
    * 
-   * @param associationReferenceRefSetMember the association reference refset
+   * @param member the association reference refset
    *          member
    * @throws Exception the exception
    */
   public void updateAssociationReferenceRefSetMember(
-    AssociationReferenceRefSetMember<? extends Component> associationReferenceRefSetMember)
+    AssociationReferenceRefSetMember<? extends Component> member)
     throws Exception;
 
   /**
@@ -394,21 +394,21 @@ public interface ContentService extends RootService {
   /**
    * Adds the complex map refset member.
    * 
-   * @param complexMapRefSetMember the complex map refset member
+   * @param member the complex map refset member
    * @return the complex map refset member
    * @throws Exception the exception
    */
   public ComplexMapRefSetMember addComplexMapRefSetMember(
-    ComplexMapRefSetMember complexMapRefSetMember) throws Exception;
+    ComplexMapRefSetMember member) throws Exception;
 
   /**
    * Update complex map refset member.
    * 
-   * @param complexMapRefSetMember the complex map refset member
+   * @param member the complex map refset member
    * @throws Exception the exception
    */
   public void updateComplexMapRefSetMember(
-    ComplexMapRefSetMember complexMapRefSetMember) throws Exception;
+    ComplexMapRefSetMember member) throws Exception;
 
   /**
    * Removes the complex map refset member.
@@ -443,21 +443,21 @@ public interface ContentService extends RootService {
   /**
    * Adds the simple map refset member.
    * 
-   * @param simpleMapRefSetMember the simple map refset member
+   * @param member the simple map refset member
    * @return the simple map refset member
    * @throws Exception the exception
    */
   public SimpleMapRefSetMember addSimpleMapRefSetMember(
-    SimpleMapRefSetMember simpleMapRefSetMember) throws Exception;
+    SimpleMapRefSetMember member) throws Exception;
 
   /**
    * Update simple map refset member.
    * 
-   * @param simpleMapRefSetMember the simple map refset member
+   * @param member the simple map refset member
    * @throws Exception the exception
    */
   public void updateSimpleMapRefSetMember(
-    SimpleMapRefSetMember simpleMapRefSetMember) throws Exception;
+    SimpleMapRefSetMember member) throws Exception;
 
   /**
    * Removes the simple map refset member.
@@ -491,20 +491,20 @@ public interface ContentService extends RootService {
   /**
    * Adds the simple refset member.
    * 
-   * @param simpleRefSetMember the simple refset member
+   * @param member the simple refset member
    * @return the simpleRefSetMember
    * @throws Exception the exception
    */
   public SimpleRefSetMember addSimpleRefSetMember(
-    SimpleRefSetMember simpleRefSetMember) throws Exception;
+    SimpleRefSetMember member) throws Exception;
 
   /**
    * Update simple refset member.
    * 
-   * @param simpleRefSetMember the simple refset member
+   * @param member the simple refset member
    * @throws Exception the exception
    */
-  public void updateSimpleRefSetMember(SimpleRefSetMember simpleRefSetMember)
+  public void updateSimpleRefSetMember(SimpleRefSetMember member)
     throws Exception;
 
   /**
