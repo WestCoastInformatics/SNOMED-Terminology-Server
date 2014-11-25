@@ -680,7 +680,7 @@ public class TerminologyRf2DeltaLoader extends AbstractMojo {
           if (description == null) {
             newDescription = new DescriptionJpa();
           } else {
-            newDescription = new DescriptionJpa(description, true);
+            newDescription = new DescriptionJpa(description, true, false);
           }
           newDescription.setConcept(concept);
 
