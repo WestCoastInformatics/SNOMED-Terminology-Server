@@ -337,9 +337,6 @@ public class TerminologyRf2SnapshotLoaderMojo extends AbstractMojo {
           Concept c =
               contentService.getSingleConcept(conceptId, terminology,
                   terminologyVersion);
-          getLog().info("    concept = " + c.getTerminologyId());
-          getLog().info("    concept.rels.ct = " + c.getRelationships().size());
-          getLog().info("    isaRelType = " + isaRelType);
           for (Relationship r : c.getRelationships()) {
             getLog().info(
                 "      rel = " + r.getTerminologyId() + ", " + r.isActive()
@@ -355,8 +352,8 @@ public class TerminologyRf2SnapshotLoaderMojo extends AbstractMojo {
         contentService.close();
 
         getLog().info(
-            "  Compute transitive closure from rootId " + rootId + " for "
-                + terminology + ", " + terminologyVersion);
+            "  Compute transitive closure from  " + rootId + "/"
+                + terminology + "/" + terminologyVersion);
         TransitiveClosureAlgorithm algo = new TransitiveClosureAlgorithm();
         algo.setTerminology(terminology);
         algo.setTerminologyVersion(terminologyVersion);
