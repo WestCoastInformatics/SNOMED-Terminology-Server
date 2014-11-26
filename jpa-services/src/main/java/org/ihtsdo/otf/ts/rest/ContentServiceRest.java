@@ -1,3 +1,6 @@
+/*
+ * 
+ */
 package org.ihtsdo.otf.ts.rest;
 
 import org.ihtsdo.otf.ts.helpers.ConceptList;
@@ -17,10 +20,10 @@ public interface ContentServiceRest {
    *
    * @param terminologyId the terminology id
    * @param terminology the terminology
-   * @param version the terminology version
+   * @param version the version
    * @param authToken the auth token
-   * @return the concept
-   * @throws Exception if anything goes wrong
+   * @return the concepts
+   * @throws Exception the exception
    */
   public ConceptList getConcepts(String terminologyId, String terminology,
     String version, String authToken) throws Exception;

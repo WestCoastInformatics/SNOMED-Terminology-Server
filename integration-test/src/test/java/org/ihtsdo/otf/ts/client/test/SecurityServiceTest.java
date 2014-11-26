@@ -4,7 +4,7 @@ import static org.junit.Assert.assertEquals;
 
 import org.ihtsdo.otf.ts.helpers.ConfigUtility;
 import org.ihtsdo.otf.ts.jpa.client.SecurityClientRest;
-import org.ihtsdo.otf.ts.services.handlers.DefaultSecurityServiceHandler;
+import org.ihtsdo.otf.ts.jpa.services.handlers.DefaultSecurityServiceHandler;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;

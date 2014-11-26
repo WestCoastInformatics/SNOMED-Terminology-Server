@@ -414,7 +414,7 @@ public class ConfigUtility {
       } else {
         line = line2;
         line2 = in2.readLine();
-      } 
+      }
       // if a header line, do not write
       if (!line.startsWith("id")) {
         out.write(line);
@@ -427,7 +427,7 @@ public class ConfigUtility {
     in2.close();
     return outFile;
   }
-  
+
   /**
    * Delete directory.
    *
@@ -435,18 +435,17 @@ public class ConfigUtility {
    * @return true, if successful
    */
   static public boolean deleteDirectory(File path) {
-    if( path.exists() ) {
+    if (path.exists()) {
       File[] files = path.listFiles();
-      for(int i=0; i<files.length; i++) {
-         if(files[i].isDirectory()) {
-           deleteDirectory(files[i]);
-         }
-         else {
-           files[i].delete();
-         }
+      for (int i = 0; i < files.length; i++) {
+        if (files[i].isDirectory()) {
+          deleteDirectory(files[i]);
+        } else {
+          files[i].delete();
+        }
       }
     }
-    return( path.delete() );
+    return (path.delete());
   }
 
 }

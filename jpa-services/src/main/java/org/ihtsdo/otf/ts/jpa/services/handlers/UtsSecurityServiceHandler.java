@@ -1,4 +1,4 @@
-package org.ihtsdo.otf.ts.services.handlers;
+package org.ihtsdo.otf.ts.jpa.services.handlers;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
@@ -11,6 +11,7 @@ import java.util.UUID;
 
 import org.ihtsdo.otf.ts.helpers.LocalException;
 import org.ihtsdo.otf.ts.helpers.User;
+import org.ihtsdo.otf.ts.services.handlers.SecurityServiceHandler;
 import org.ihtsdo.otf.ts.services.helpers.UserImpl;
 
 /**

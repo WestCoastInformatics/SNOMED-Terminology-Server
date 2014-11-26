@@ -1,4 +1,4 @@
-package org.ihtsdo.otf.ts.services.handlers;
+package org.ihtsdo.otf.ts.jpa.services.handlers;
 
 import java.util.Properties;
 import java.util.Set;
@@ -9,6 +9,7 @@ import org.ihtsdo.otf.ts.rf2.Description;
 import org.ihtsdo.otf.ts.rf2.DescriptionRefSetMember;
 import org.ihtsdo.otf.ts.rf2.LanguageRefSetMember;
 import org.ihtsdo.otf.ts.rf2.Relationship;
+import org.ihtsdo.otf.ts.services.handlers.GraphResolutionHandler;
 
 /**
  * Default implementation of {@link GraphResolutionHandler}. This connects

@@ -1,4 +1,4 @@
-package org.ihtsdo.otf.ts.services.handlers;
+package org.ihtsdo.otf.ts.jpa.services.handlers;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -12,6 +12,7 @@ import javax.ws.rs.core.Response.Status.Family;
 import org.apache.log4j.Logger;
 import org.ihtsdo.otf.ts.helpers.LocalException;
 import org.ihtsdo.otf.ts.helpers.User;
+import org.ihtsdo.otf.ts.services.handlers.SecurityServiceHandler;
 import org.ihtsdo.otf.ts.services.helpers.UserImpl;
 
 import com.fasterxml.jackson.databind.ObjectMapper;

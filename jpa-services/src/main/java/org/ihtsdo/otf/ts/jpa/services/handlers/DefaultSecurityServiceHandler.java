@@ -1,9 +1,10 @@
-package org.ihtsdo.otf.ts.services.handlers;
+package org.ihtsdo.otf.ts.jpa.services.handlers;
 
 import java.util.Properties;
 
 import org.ihtsdo.otf.ts.helpers.User;
 import org.ihtsdo.otf.ts.helpers.UserRole;
+import org.ihtsdo.otf.ts.services.handlers.SecurityServiceHandler;
 import org.ihtsdo.otf.ts.services.helpers.UserImpl;
 
 /**

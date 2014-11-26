@@ -47,11 +47,13 @@ public class ValidationClientRest implements ValidationServiceRest {
     WebResource resource =
         client.resource(config.getProperty("base.url") + "/validation/concept");
 
+    String conceptString =
+        (concept != null ? ConfigUtility.getStringForGraph(concept) : null);
     ClientResponse response =
         resource.accept(MediaType.APPLICATION_XML)
             .header("Authorization", authToken)
             .header("Content-type", MediaType.APPLICATION_XML)
-            .post(ClientResponse.class, concept);
+            .post(ClientResponse.class, conceptString);
 
     String resultString = response.getEntity(String.class);
     if (response.getClientResponseStatus().getFamily() == Family.SUCCESSFUL) {

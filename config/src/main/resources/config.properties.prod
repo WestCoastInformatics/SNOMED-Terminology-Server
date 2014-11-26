@@ -50,10 +50,16 @@ workflow.listener.handler=DEFAULT
 workflow.listener.handler.DEFAULT.class=org.ihtsdo.otf.ts.jpa.services.handlers.DefaultWorkflowListener
 
 #
-# Graph Service Settings
+# Graph resolution handler
 #
 graph.resolution.handler=DEFAULT
-graph.resolution.handler.DEFAULT.class=org.ihtsdo.otf.ts.services.handlers.DefaultGraphResolutionHandler
+graph.resolution.handler.DEFAULT.class=org.ihtsdo.otf.ts.jpa.services.handlers.DefaultGraphResolutionHandler
+
+#
+# Identifier assignment handler
+#
+identifier.assignment.handler=UUID
+identifier.assignment.UUID.class=org.ihtsdo.otf.ts.jpa.services.handlers.UuidHashtIdentifierAssignmentHandler
 
 #
 # SNOMEDCT data location
@@ -84,8 +90,8 @@ deploy.logo=/path/to/images/logo.png
 #
 security.timeout=7200000
 security.handler=DEFAULT
-security.handler.DEFAULT.class=org.ihtsdo.otf.mapping.services.handlers.DefaultSecurityServiceHandler
-#security.handler.IHTSDO.class=org.ihtsdo.otf.mapping.services.handlers.IHTSDOSecurityServiceHandler
+security.handler.DEFAULT.class=org.ihtsdo.otf.ts.jpa.services.handlers.DefaultSecurityServiceHandler
+#security.handler.IHTSDO.class=org.ihtsdo.otf.ts.jpa.services.handlers.IHTSDOSecurityServiceHandler
 #security.handler.IHTSDO.url=https://usermanagement.ihtsdotools.org/security-web/query/
 security.handler.UTS.license.code=NLM-XXX
 security.handler.UTS.url=https://uts-ws.nlm.nih.gov/restful/isValidUMLSUser

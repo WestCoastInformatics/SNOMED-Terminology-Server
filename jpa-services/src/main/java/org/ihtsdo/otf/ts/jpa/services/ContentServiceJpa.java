@@ -65,6 +65,7 @@ import org.ihtsdo.otf.ts.rf2.jpa.SimpleRefSetMemberJpa;
 import org.ihtsdo.otf.ts.rf2.jpa.TransitiveRelationshipJpa;
 import org.ihtsdo.otf.ts.services.ContentService;
 import org.ihtsdo.otf.ts.services.handlers.GraphResolutionHandler;
+import org.ihtsdo.otf.ts.services.handlers.IdentifierAssignmentHandler;
 import org.ihtsdo.otf.ts.services.handlers.WorkflowListener;
 
 /**
@@ -118,6 +119,29 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
     }
   }
 
+  /** The id assignment handler . */
+  public static IdentifierAssignmentHandler idHandler = null;
+  static {
+    Properties config;
+    try {
+      config = ConfigUtility.getConfigProperties();
+      String key = "identifier.assignment.handler";
+      String handlerName = config.getProperty(key);
+      if (handlerName == null || handlerName.isEmpty()) {
+        throw new Exception("Undefined identifier assignment handler");
+      }
+      // Set handler up
+      IdentifierAssignmentHandler handler =
+          ConfigUtility.newStandardHandlerInstanceWithConfiguration(key,
+              handlerName, IdentifierAssignmentHandler.class);
+      idHandler = handler;
+
+    } catch (Exception e) {
+      e.printStackTrace();
+      idHandler = null;
+    }
+  }
+
   /**
    * Instantiates an empty {@link ContentServiceJpa}.
    *
@@ -132,6 +156,40 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
     if (graphResolver == null) {
       throw new Exception(
           "Graph resolver did not properly initialize, serious error.");
+    }
+
+    if (idHandler == null) {
+      throw new Exception(
+          "Identifier assignment handler did not properly initialize, serious error.");
+    }
+  }
+
+  /*
+   * (non-Javadoc)
+   * 
+   * @see org.ihtsdo.otf.ts.jpa.services.RootServiceJpa#beginTransaction()
+   */
+  @Override
+  public void beginTransaction() {
+    super.beginTransaction();
+    for (WorkflowListener listener : listeners) {
+      listener.beginTransaction();
+    }
+  }
+
+  /*
+   * (non-Javadoc)
+   * 
+   * @see org.ihtsdo.otf.ts.jpa.services.RootServiceJpa#commit()
+   */
+  @Override
+  public void commit() {
+    for (WorkflowListener listener : listeners) {
+      listener.preCommit();
+    }
+    super.commit();
+    for (WorkflowListener listener : listeners) {
+      listener.postCommit();
     }
   }
 
@@ -315,6 +373,8 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
   public Concept addConcept(Concept concept) throws Exception {
     Logger.getLogger(ContentServiceJpa.class).debug(
         "Content Service - add concept " + concept.getTerminologyId());
+    // Assign id
+    concept.setTerminologyId(idHandler.getTerminologyId(concept));
     // Set modification date
     concept.setLastModified(new Date());
     if (getTransactionPerOperation()) {
@@ -342,6 +402,9 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
   public void updateConcept(Concept concept) throws Exception {
     Logger.getLogger(ContentServiceJpa.class).debug(
         "Content Service - update concept " + concept.getTerminologyId());
+    // Assign id
+    concept.setTerminologyId(idHandler.getTerminologyId(concept));
+
     // Set modification date
     concept.setLastModified(new Date());
     if (getTransactionPerOperation()) {
@@ -352,7 +415,9 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
     } else {
       manager.merge(concept);
     }
-
+    for (WorkflowListener listener : listeners) {
+      listener.conceptUpdated(concept);
+    }
   }
 
   /*
@@ -387,6 +452,9 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
       } else {
         manager.remove(manager.merge(concept));
       }
+    }
+    for (WorkflowListener listener : listeners) {
+      listener.conceptRemoved(concept);
     }
   }
 
@@ -451,6 +519,8 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
   public Description addDescription(Description description) throws Exception {
     Logger.getLogger(ContentServiceJpa.class).debug(
         "Content Service - add description " + description.getTerminologyId());
+    // Assign id
+    description.setTerminologyId(idHandler.getTerminologyId(description));
     // Set modification date
     description.setLastModified(new Date());
     if (getTransactionPerOperation()) {
@@ -460,6 +530,9 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
       tx.commit();
     } else {
       manager.persist(description);
+    }
+    for (WorkflowListener listener : listeners) {
+      listener.descriptionAdded(description);
     }
     return description;
   }
@@ -476,6 +549,11 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
     Logger.getLogger(ContentServiceJpa.class).debug(
         "Content Service - update description "
             + description.getTerminologyId());
+    // Id assignment should not change
+    if (!description.getTerminologyId().equals(
+        idHandler.getTerminologyId(description))) {
+      throw new Exception("Update cannot be used to change object identity.");
+    }
     // Set modification date
     description.setLastModified(new Date());
     if (getTransactionPerOperation()) {
@@ -485,6 +563,9 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
       tx.commit();
     } else {
       manager.merge(description);
+    }
+    for (WorkflowListener listener : listeners) {
+      listener.descriptionUpdated(description);
     }
   }
 
@@ -519,6 +600,9 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
       } else {
         manager.remove(manager.merge(description));
       }
+    }
+    for (WorkflowListener listener : listeners) {
+      listener.descriptionRemoved(description);
     }
   }
 
@@ -586,6 +670,8 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
         .debug(
             "Content Service - add relationship "
                 + relationship.getTerminologyId());
+    // Assign id
+    relationship.setTerminologyId(idHandler.getTerminologyId(relationship));
     // Set modification date
     relationship.setLastModified(new Date());
     if (getTransactionPerOperation()) {
@@ -596,7 +682,9 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
     } else {
       manager.persist(relationship);
     }
-
+    for (WorkflowListener listener : listeners) {
+      listener.relationshipAdded(relationship);
+    }
     return relationship;
   }
 
@@ -612,6 +700,11 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
     Logger.getLogger(ContentServiceJpa.class).debug(
         "Content Service - update relationship "
             + relationship.getTerminologyId());
+    // Id assignment should not change
+    if (!relationship.getTerminologyId().equals(
+        idHandler.getTerminologyId(relationship))) {
+      throw new Exception("Update cannot be used to change object identity.");
+    }
     // Set modification date
     relationship.setLastModified(new Date());
     if (getTransactionPerOperation()) {
@@ -622,7 +715,9 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
     } else {
       manager.merge(relationship);
     }
-
+    for (WorkflowListener listener : listeners) {
+      listener.relationshipUpdated(relationship);
+    }
   }
 
   /*
@@ -657,6 +752,9 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
         manager.remove(manager.merge(relationship));
       }
     }
+    for (WorkflowListener listener : listeners) {
+      listener.relationshipRemoved(relationship);
+    }
   }
 
   /*
@@ -673,6 +771,8 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
         "Content Service - add transitive relationship "
             + relationship.getSuperTypeConcept() + "/"
             + relationship.getSubTypeConcept());
+    // Assign id
+    relationship.setTerminologyId(idHandler.getTerminologyId(relationship));
     // Set modification date
     relationship.setLastModified(new Date());
     if (getTransactionPerOperation()) {
@@ -683,6 +783,7 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
     } else {
       manager.persist(relationship);
     }
+    // no listener
     return relationship;
   }
 
@@ -700,6 +801,11 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
         "Content Service - add transitive relationship "
             + relationship.getSuperTypeConcept() + "/"
             + relationship.getSubTypeConcept());
+    // Id assignment should not change
+    if (!relationship.getTerminologyId().equals(
+        idHandler.getTerminologyId(relationship))) {
+      throw new Exception("Update cannot be used to change object identity.");
+    }
     // Set modification date
     relationship.setLastModified(new Date());
     if (getTransactionPerOperation()) {
@@ -710,6 +816,7 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
     } else {
       manager.merge(relationship);
     }
+    // no listeners
   }
 
   /*
@@ -746,6 +853,7 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
         manager.remove(manager.merge(relationship));
       }
     }
+    // no notifications
   }
 
   /*
@@ -825,6 +933,8 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
     Logger.getLogger(ContentServiceJpa.class).debug(
         "Content Service - add attribute value refset member"
             + member.getTerminologyId());
+    // Assign id
+    member.setTerminologyId(idHandler.getTerminologyId(member));
     // Set modification date
     member.setLastModified(new Date());
     if (getTransactionPerOperation()) {
@@ -834,6 +944,9 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
       tx.commit();
     } else {
       manager.persist(member);
+    }
+    for (WorkflowListener listener : listeners) {
+      listener.refSetMemberAdded(member);
     }
 
     return member;
@@ -852,6 +965,10 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
     Logger.getLogger(ContentServiceJpa.class).debug(
         "Content Service - update attribute value refset member "
             + member.getTerminologyId());
+    // Id assignment should not change
+    if (!member.getTerminologyId().equals(idHandler.getTerminologyId(member))) {
+      throw new Exception("Update cannot be used to change object identity.");
+    }
     // Set modification date
     member.setLastModified(new Date());
     if (getTransactionPerOperation()) {
@@ -862,7 +979,9 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
     } else {
       manager.merge(member);
     }
-
+    for (WorkflowListener listener : listeners) {
+      listener.refSetMemberUpdated(member);
+    }
   }
 
   /*
@@ -898,6 +1017,9 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
       } else {
         manager.remove(manager.merge(member));
       }
+    }
+    for (WorkflowListener listener : listeners) {
+      listener.refSetMemberRemoved(member);
     }
   }
 
@@ -972,6 +1094,8 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
     Logger.getLogger(ContentServiceJpa.class).debug(
         "Content Service - add association reference refset member"
             + member.getTerminologyId());
+    // Assign id
+    member.setTerminologyId(idHandler.getTerminologyId(member));
     // Set modification date
     member.setLastModified(new Date());
     if (getTransactionPerOperation()) {
@@ -981,6 +1105,9 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
       tx.commit();
     } else {
       manager.persist(member);
+    }
+    for (WorkflowListener listener : listeners) {
+      listener.refSetMemberAdded(member);
     }
 
     return member;
@@ -1000,6 +1127,10 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
     Logger.getLogger(ContentServiceJpa.class).debug(
         "Content Service - update association reference refset member "
             + member.getTerminologyId());
+    // Id assignment should not change
+    if (!member.getTerminologyId().equals(idHandler.getTerminologyId(member))) {
+      throw new Exception("Update cannot be used to change object identity.");
+    }
     // Set modification date
     member.setLastModified(new Date());
     if (getTransactionPerOperation()) {
@@ -1010,7 +1141,9 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
     } else {
       manager.merge(member);
     }
-
+    for (WorkflowListener listener : listeners) {
+      listener.refSetMemberUpdated(member);
+    }
   }
 
   /*
@@ -1045,6 +1178,9 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
       } else {
         manager.remove(manager.merge(member));
       }
+    }
+    for (WorkflowListener listener : listeners) {
+      listener.refSetMemberRemoved(member);
     }
   }
 
@@ -1116,6 +1252,8 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
     Logger.getLogger(ContentServiceJpa.class).debug(
         "Content Service - add complex map refset member"
             + member.getTerminologyId());
+    // Assign id
+    member.setTerminologyId(idHandler.getTerminologyId(member));
     // Set modification date
     member.setLastModified(new Date());
     if (getTransactionPerOperation()) {
@@ -1125,6 +1263,9 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
       tx.commit();
     } else {
       manager.persist(member);
+    }
+    for (WorkflowListener listener : listeners) {
+      listener.refSetMemberAdded(member);
     }
 
     return member;
@@ -1143,6 +1284,10 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
     Logger.getLogger(ContentServiceJpa.class).debug(
         "Content Service - update complex map refset member "
             + member.getTerminologyId());
+    // Id assignment should not change
+    if (!member.getTerminologyId().equals(idHandler.getTerminologyId(member))) {
+      throw new Exception("Update cannot be used to change object identity.");
+    }
     // Set modification date
     member.setLastModified(new Date());
     if (getTransactionPerOperation()) {
@@ -1153,7 +1298,9 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
     } else {
       manager.merge(member);
     }
-
+    for (WorkflowListener listener : listeners) {
+      listener.refSetMemberUpdated(member);
+    }
   }
 
   /*
@@ -1188,6 +1335,9 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
       } else {
         manager.remove(manager.merge(member));
       }
+    }
+    for (WorkflowListener listener : listeners) {
+      listener.refSetMemberRemoved(member);
     }
   }
 
@@ -1256,6 +1406,8 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
     Logger.getLogger(ContentServiceJpa.class).debug(
         "Content Service - add language refset member"
             + member.getTerminologyId());
+    // Assign id
+    member.setTerminologyId(idHandler.getTerminologyId(member));
     // Set modification date
     member.setLastModified(new Date());
     if (getTransactionPerOperation()) {
@@ -1265,6 +1417,9 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
       tx.commit();
     } else {
       manager.persist(member);
+    }
+    for (WorkflowListener listener : listeners) {
+      listener.refSetMemberAdded(member);
     }
 
     return member;
@@ -1283,7 +1438,10 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
     Logger.getLogger(ContentServiceJpa.class).debug(
         "Content Service - update language refset member "
             + member.getTerminologyId());
-
+    // Id assignment should not change
+    if (!member.getTerminologyId().equals(idHandler.getTerminologyId(member))) {
+      throw new Exception("Update cannot be used to change object identity.");
+    }
     // Set modification date
     member.setLastModified(new Date());
     if (getTransactionPerOperation()) {
@@ -1294,7 +1452,9 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
     } else {
       manager.merge(member);
     }
-
+    for (WorkflowListener listener : listeners) {
+      listener.refSetMemberUpdated(member);
+    }
   }
 
   /*
@@ -1329,6 +1489,9 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
       } else {
         manager.remove(manager.merge(member));
       }
+    }
+    for (WorkflowListener listener : listeners) {
+      listener.refSetMemberRemoved(member);
     }
   }
 
@@ -1398,6 +1561,8 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
     Logger.getLogger(ContentServiceJpa.class).debug(
         "Content Service - add simple map refset member"
             + member.getTerminologyId());
+    // Assign id
+    member.setTerminologyId(idHandler.getTerminologyId(member));
     // Set modification date
     member.setLastModified(new Date());
     if (getTransactionPerOperation()) {
@@ -1407,6 +1572,9 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
       tx.commit();
     } else {
       manager.persist(member);
+    }
+    for (WorkflowListener listener : listeners) {
+      listener.refSetMemberAdded(member);
     }
 
     return member;
@@ -1425,6 +1593,10 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
     Logger.getLogger(ContentServiceJpa.class).debug(
         "Content Service - update simple map refset member "
             + member.getTerminologyId());
+    // Id assignment should not change
+    if (!member.getTerminologyId().equals(idHandler.getTerminologyId(member))) {
+      throw new Exception("Update cannot be used to change object identity.");
+    }
     // Set modification date
     member.setLastModified(new Date());
     if (getTransactionPerOperation()) {
@@ -1435,7 +1607,9 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
     } else {
       manager.merge(member);
     }
-
+    for (WorkflowListener listener : listeners) {
+      listener.refSetMemberUpdated(member);
+    }
   }
 
   /*
@@ -1470,6 +1644,9 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
       } else {
         manager.remove(manager.merge(member));
       }
+    }
+    for (WorkflowListener listener : listeners) {
+      listener.refSetMemberRemoved(member);
     }
   }
 
@@ -1538,6 +1715,8 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
     Logger.getLogger(ContentServiceJpa.class).debug(
         "Content Service - add simple refset member"
             + member.getTerminologyId());
+    // Assign id
+    member.setTerminologyId(idHandler.getTerminologyId(member));
     // Set modification date
     member.setLastModified(new Date());
     if (getTransactionPerOperation()) {
@@ -1547,6 +1726,9 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
       tx.commit();
     } else {
       manager.persist(member);
+    }
+    for (WorkflowListener listener : listeners) {
+      listener.refSetMemberAdded(member);
     }
 
     return member;
@@ -1565,6 +1747,10 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
     Logger.getLogger(ContentServiceJpa.class).debug(
         "Content Service - update simple refset member "
             + member.getTerminologyId());
+    // Id assignment should not change
+    if (!member.getTerminologyId().equals(idHandler.getTerminologyId(member))) {
+      throw new Exception("Update cannot be used to change object identity.");
+    }
     // Set modification date
     member.setLastModified(new Date());
     if (getTransactionPerOperation()) {
@@ -1575,7 +1761,9 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
     } else {
       manager.merge(member);
     }
-
+    for (WorkflowListener listener : listeners) {
+      listener.refSetMemberUpdated(member);
+    }
   }
 
   /*
@@ -1609,6 +1797,9 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
       } else {
         manager.remove(manager.merge(member));
       }
+    }
+    for (WorkflowListener listener : listeners) {
+      listener.refSetMemberRemoved(member);
     }
   }
 
@@ -1703,6 +1894,8 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
     Logger.getLogger(ContentServiceJpa.class).debug(
         "Content Service - add refset descriptor refset member"
             + member.getTerminologyId());
+    // Assign id
+    member.setTerminologyId(idHandler.getTerminologyId(member));
     // Set modification date
     member.setLastModified(new Date());
     if (getTransactionPerOperation()) {
@@ -1712,6 +1905,9 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
       tx.commit();
     } else {
       manager.persist(member);
+    }
+    for (WorkflowListener listener : listeners) {
+      listener.refSetMemberAdded(member);
     }
 
     return member;
@@ -1730,6 +1926,10 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
     Logger.getLogger(ContentServiceJpa.class).debug(
         "Content Service - update refset descriptor refset member "
             + member.getTerminologyId());
+    // Id assignment should not change
+    if (!member.getTerminologyId().equals(idHandler.getTerminologyId(member))) {
+      throw new Exception("Update cannot be used to change object identity.");
+    }
     // Set modification date
     member.setLastModified(new Date());
     if (getTransactionPerOperation()) {
@@ -1740,7 +1940,9 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
     } else {
       manager.merge(member);
     }
-
+    for (WorkflowListener listener : listeners) {
+      listener.refSetMemberUpdated(member);
+    }
   }
 
   /*
@@ -1775,6 +1977,9 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
       } else {
         manager.remove(manager.merge(member));
       }
+    }
+    for (WorkflowListener listener : listeners) {
+      listener.refSetMemberRemoved(member);
     }
   }
 
@@ -1872,6 +2077,8 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
     Logger.getLogger(ContentServiceJpa.class).debug(
         "Content Service - add description type refset member"
             + member.getTerminologyId());
+    // Assign id
+    member.setTerminologyId(idHandler.getTerminologyId(member));
     // Set modification date
     member.setLastModified(new Date());
     if (getTransactionPerOperation()) {
@@ -1881,6 +2088,9 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
       tx.commit();
     } else {
       manager.persist(member);
+    }
+    for (WorkflowListener listener : listeners) {
+      listener.refSetMemberAdded(member);
     }
 
     return member;
@@ -1899,6 +2109,10 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
     Logger.getLogger(ContentServiceJpa.class).debug(
         "Content Service - update description type refset member "
             + member.getTerminologyId());
+    // Id assignment should not change
+    if (!member.getTerminologyId().equals(idHandler.getTerminologyId(member))) {
+      throw new Exception("Update cannot be used to change object identity.");
+    }
     // Set modification date
     member.setLastModified(new Date());
     if (getTransactionPerOperation()) {
@@ -1909,7 +2123,9 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
     } else {
       manager.merge(member);
     }
-
+    for (WorkflowListener listener : listeners) {
+      listener.refSetMemberUpdated(member);
+    }
   }
 
   /*
@@ -1944,6 +2160,9 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
       } else {
         manager.remove(manager.merge(member));
       }
+    }
+    for (WorkflowListener listener : listeners) {
+      listener.refSetMemberRemoved(member);
     }
   }
 
@@ -2037,6 +2256,8 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
     Logger.getLogger(ContentServiceJpa.class).debug(
         "Content Service - add module dependency refset member"
             + member.getTerminologyId());
+    // Assign id
+    member.setTerminologyId(idHandler.getTerminologyId(member));
     // Set modification date
     member.setLastModified(new Date());
     if (getTransactionPerOperation()) {
@@ -2046,6 +2267,9 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
       tx.commit();
     } else {
       manager.persist(member);
+    }
+    for (WorkflowListener listener : listeners) {
+      listener.refSetMemberAdded(member);
     }
 
     return member;
@@ -2064,6 +2288,10 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
     Logger.getLogger(ContentServiceJpa.class).debug(
         "Content Service - update module dependency refset member "
             + member.getTerminologyId());
+    // Id assignment should not change
+    if (!member.getTerminologyId().equals(idHandler.getTerminologyId(member))) {
+      throw new Exception("Update cannot be used to change object identity.");
+    }
     // Set modification date
     member.setLastModified(new Date());
     if (getTransactionPerOperation()) {
@@ -2074,7 +2302,9 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
     } else {
       manager.merge(member);
     }
-
+    for (WorkflowListener listener : listeners) {
+      listener.refSetMemberUpdated(member);
+    }
   }
 
   /*
@@ -2109,6 +2339,9 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
       } else {
         manager.remove(manager.merge(member));
       }
+    }
+    for (WorkflowListener listener : listeners) {
+      listener.refSetMemberRemoved(member);
     }
   }
 
@@ -2630,7 +2863,9 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
 
   }
 
-  /* (non-Javadoc)
+  /*
+   * (non-Javadoc)
+   * 
    * @see org.ihtsdo.otf.ts.services.ContentService#getGraphResolutionHandler()
    */
   @Override
