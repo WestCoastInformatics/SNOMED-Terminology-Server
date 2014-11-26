@@ -431,8 +431,8 @@ public class TerminologyRf2SnapshotLoaderMojo extends AbstractMojo {
         new File(outputDir, "simpleMapRefsetsByConcept.sort");
     File complexMapRefsetsByConceptFile =
         new File(outputDir, "complexMapRefsetsByConcept.sort");
-    File extendedMapRefsetsByConceptsFile =
-        new File(outputDir, "extendedMapRefsetsByConcepts.sort");
+    File extendedMapRefsetsByConceptFile =
+        new File(outputDir, "extendedMapRefsetsByConcept.sort");
 
     // Concept reader
     conceptsByConcept =
@@ -473,7 +473,7 @@ public class TerminologyRf2SnapshotLoaderMojo extends AbstractMojo {
 
     // Extended map reader
     extendedMapRefsetsByConcept =
-        new BufferedReader(new FileReader(extendedMapRefsetsByConceptsFile));
+        new BufferedReader(new FileReader(extendedMapRefsetsByConceptFile));
 
   }
 
@@ -806,8 +806,8 @@ public class TerminologyRf2SnapshotLoaderMojo extends AbstractMojo {
         new File(outputDir, "simpleMapRefsetsByConcept.sort");
     File complexMapRefsetsByConceptFile =
         new File(outputDir, "complexMapRefsetsByConcept.sort");
-    File extendedMapRefsetsByConceptsFile =
-        new File(outputDir, "extendedMap");
+    File extendedMapRefsetsByConceptFile =
+        new File(outputDir, "extendedMapRefsetsByConcept.sort");
 
     getLog().info("      Sort files");
     // Sort concept files
@@ -866,7 +866,7 @@ public class TerminologyRf2SnapshotLoaderMojo extends AbstractMojo {
     sortRf2File(coreComplexMapInputFile, complexMapRefsetsByConceptFile, 5);
 
     // sort extended map file
-    sortRf2File(coreExtendedMapInputFile, extendedMapRefsetsByConceptsFile, 5);
+    sortRf2File(coreExtendedMapInputFile, extendedMapRefsetsByConceptFile, 5);
 
     // Sort language file
     sortRf2File(coreLanguageInputFile, languageRefsetsByDescriptionFile, 5);
