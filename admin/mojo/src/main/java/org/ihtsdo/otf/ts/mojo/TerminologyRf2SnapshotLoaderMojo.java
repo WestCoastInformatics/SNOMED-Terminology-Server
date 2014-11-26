@@ -795,7 +795,7 @@ public class TerminologyRf2SnapshotLoaderMojo extends AbstractMojo {
     File relationshipsBySourceConceptFile =
         new File(outputDir, "relationshipsBySourceConcept.sort");
     File languageRefsetsByDescriptionFile =
-        new File(outputDir, "languageRefsetsByDescriptions.sort");
+        new File(outputDir, "languageRefsetsByDescription.sort");
     File attributeValueRefsetsByConceptFile =
         new File(outputDir, "attributeValueRefsetsByConcept.sort");
     File associationReferenceRefsetsByRefCompIdFile =
