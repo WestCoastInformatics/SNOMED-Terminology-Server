@@ -415,9 +415,6 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
     concept.setLastModified(new Date());
     concept.setEffectiveTime(null);
 
-    // handle preferred name
-    // TODO
-
     if (getTransactionPerOperation()) {
       tx = manager.getTransaction();
       tx.begin();
@@ -583,8 +580,6 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
     description.setLastModified(new Date());
     description.setEffectiveTime(null);
 
-    // Handle preferred name change
-
     if (getTransactionPerOperation()) {
       tx = manager.getTransaction();
       tx.begin();
@@ -627,8 +622,6 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
     description.setLastModified(new Date());
     description.setEffectiveTime(null);
 
-    // Handle preferred name change
-
     if (getTransactionPerOperation()) {
       tx = manager.getTransaction();
       tx.begin();
@@ -660,8 +653,6 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
     Description description = manager.find(DescriptionJpa.class, id);
     // Set modification date
     description.setLastModified(new Date());
-
-    // Handle preferred name change
 
     if (getTransactionPerOperation()) {
       // remove description
@@ -1531,8 +1522,6 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
     member.setLastModified(new Date());
     member.setEffectiveTime(null);
 
-    // Handle preferred name change
-
     if (getTransactionPerOperation()) {
       tx = manager.getTransaction();
       tx.begin();
@@ -1575,8 +1564,6 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
     // Set dates
     member.setLastModified(new Date());
     member.setEffectiveTime(null);
-
-    // Handle preferred name change
 
     if (getTransactionPerOperation()) {
       tx = manager.getTransaction();

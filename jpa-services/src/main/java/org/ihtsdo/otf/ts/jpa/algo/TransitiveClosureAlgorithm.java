@@ -32,6 +32,9 @@ public class TransitiveClosureAlgorithm extends ContentServiceJpa implements
   /** The terminology version. */
   private String terminologyVersion;
 
+  /**  The Constant commitCt. */
+  private final static int commitCt = 2000;
+  
   /**
    * Instantiates an empty {@link TransitiveClosureAlgorithm}.
    * @throws Exception if anything goes wrong
@@ -199,7 +202,7 @@ public class TransitiveClosureAlgorithm extends ContentServiceJpa implements
         tr.setTerminologyVersion(terminologyVersion);
         addTransitiveRelationship(tr);
       }
-      if (ct % 500 == 0) {
+      if (ct % commitCt == 0) {
         Logger.getLogger(this.getClass()).info(
             "      " + ct + " codes processed ..." + new Date());
         commit();
