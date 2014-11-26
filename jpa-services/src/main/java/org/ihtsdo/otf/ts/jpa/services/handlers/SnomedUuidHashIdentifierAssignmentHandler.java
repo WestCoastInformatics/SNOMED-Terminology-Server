@@ -48,7 +48,7 @@ public class SnomedUuidHashIdentifierAssignmentHandler implements
    */
   @Override
   public String getTerminologyId(Concept concept) throws Exception {
-    // If the concept already has an sctid
+    // If the concept already has an sctid return it
     if (isSctid(concept.getTerminologyId())) {
       return concept.getTerminologyId();
     }
@@ -76,10 +76,7 @@ public class SnomedUuidHashIdentifierAssignmentHandler implements
    */
   @Override
   public String getTerminologyId(Description description) throws Exception {
-    // If the concept already has an sctid
-    if (isSctid(description.getTerminologyId())) {
-      return description.getTerminologyId();
-    }
+    // always return the uuid - for identity comparisons
     String value =
         description.getConcept().getId() + description.getTypeId()
             + description.getTerm();
@@ -94,10 +91,7 @@ public class SnomedUuidHashIdentifierAssignmentHandler implements
    */
   @Override
   public String getTerminologyId(Relationship relationship) throws Exception {
-    // If the concept already has an sctid
-    if (isSctid(relationship.getTerminologyId())) {
-      return relationship.getTerminologyId();
-    }
+    // always return the uuid - for identity comparisons
     String value =
         relationship.getSourceConcept().getId()
             + relationship.getDestinationConcept().getId()
@@ -235,6 +229,7 @@ public class SnomedUuidHashIdentifierAssignmentHandler implements
   @Override
   public String getTerminologyId(TransitiveRelationship relationship)
     throws Exception {
+    // always return the uuid - for identity comparisons
     String value =
         relationship.getSuperTypeConcept() + ","
             + relationship.getSubTypeConcept();

@@ -835,4 +835,12 @@ public interface ContentService extends RootService {
    */
   public ComputePreferredNameHandler getComputePreferredNameHandler(String terminology) throws Exception;
 
+  /**
+   * Computes preferred name.
+   *
+   * @param concept the concept
+   * @throws Exception 
+   */
+  public void computePreferredName(Concept concept) throws Exception;
+
 }

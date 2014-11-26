@@ -71,7 +71,7 @@ public class ConceptJpa extends AbstractComponent implements Concept {
   // PG
   private Set<Description> descriptions = null;
 
-  /**  The description count. */
+  /** The description count. */
   @Transient
   private int descriptionCount = -1;
 
@@ -80,11 +80,11 @@ public class ConceptJpa extends AbstractComponent implements Concept {
   @IndexedEmbedded(targetElement = RelationshipJpa.class)
   private Set<Relationship> relationships = null;
 
-  /**  The relationship count. */
+  /** The relationship count. */
   @Transient
   private int relationshipCount = -1;
-  
-  /**  The child count. */
+
+  /** The child count. */
   @Transient
   private int childCount = -1;
 
@@ -116,10 +116,6 @@ public class ConceptJpa extends AbstractComponent implements Concept {
 
   /** The default preferred name. */
   @Column(nullable = false, length = 256)
-  @Fields({
-      @Field, @Field(name = "all", analyze = Analyze.YES, store = Store.NO)
-  })
-  @Analyzer(definition = "noStopWord")
   private String defaultPreferredName;
 
   /**
@@ -157,8 +153,8 @@ public class ConceptJpa extends AbstractComponent implements Concept {
         relationships.add(newRel);
       }
     }
-    
-    if (deepCopy) {   
+
+    if (deepCopy) {
       inverseRelationships = new HashSet<>();
       for (Relationship rel : concept.getInverseRelationships()) {
         Relationship newRel = new RelationshipJpa(rel);
@@ -262,8 +258,10 @@ public class ConceptJpa extends AbstractComponent implements Concept {
     }
     return descriptions;
   }
-  
-  /* (non-Javadoc)
+
+  /*
+   * (non-Javadoc)
+   * 
    * @see org.ihtsdo.otf.ts.rf2.Concept#getDescriptionCount()
    */
   @Override
@@ -271,14 +269,16 @@ public class ConceptJpa extends AbstractComponent implements Concept {
     return descriptionCount;
   }
 
-  /* (non-Javadoc)
+  /*
+   * (non-Javadoc)
+   * 
    * @see org.ihtsdo.otf.ts.rf2.Concept#setDescriptionCount(int)
    */
   @Override
   public void setDescriptionCount(int ct) {
     this.descriptionCount = ct;
   }
-  
+
   /*
    * (non-Javadoc)
    * 
@@ -336,38 +336,46 @@ public class ConceptJpa extends AbstractComponent implements Concept {
     return relationships;
   }
 
-  /* (non-Javadoc)
+  /*
+   * (non-Javadoc)
+   * 
    * @see org.ihtsdo.otf.ts.rf2.Concept#getRelationshipCount()
    */
   @Override
   public int getRelationshipCount() {
     return relationshipCount;
   }
-  
-  /* (non-Javadoc)
+
+  /*
+   * (non-Javadoc)
+   * 
    * @see org.ihtsdo.otf.ts.rf2.Concept#setRelationshipCount(int)
    */
   @Override
   public void setRelationshipCount(int ct) {
     this.relationshipCount = ct;
   }
-  
-  /* (non-Javadoc)
+
+  /*
+   * (non-Javadoc)
+   * 
    * @see org.ihtsdo.otf.ts.rf2.Concept#getChildCount()
    */
   @Override
   public int getChildCount() {
     return childCount;
   }
-  
-  /* (non-Javadoc)
+
+  /*
+   * (non-Javadoc)
+   * 
    * @see org.ihtsdo.otf.ts.rf2.Concept#setChildCount(int)
    */
   @Override
   public void setChildCount(int ct) {
     this.childCount = ct;
   }
-  
+
   /*
    * (non-Javadoc)
    * 
@@ -778,7 +786,7 @@ public class ConceptJpa extends AbstractComponent implements Concept {
    * 
    * @see org.ihtsdo.otf.ts.rf2.jpa.AbstractComponent#getEffectiveTime()
    */
-  @Field(index = Index.YES, analyze = Analyze.NO, store = Store.YES)
+  @Field(index = Index.YES, analyze = Analyze.NO, store = Store.NO)
   @Override
   public Date getEffectiveTime() {
     return super.getEffectiveTime();
@@ -789,7 +797,7 @@ public class ConceptJpa extends AbstractComponent implements Concept {
    * 
    * @see org.ihtsdo.otf.ts.rf2.jpa.AbstractComponent#getTerminology()
    */
-  @Field(index = Index.YES, analyze = Analyze.NO, store = Store.YES)
+  @Field(index = Index.YES, analyze = Analyze.NO, store = Store.NO)
   @Override
   public String getTerminology() {
     return super.getTerminology();
@@ -800,7 +808,7 @@ public class ConceptJpa extends AbstractComponent implements Concept {
    * 
    * @see org.ihtsdo.otf.ts.rf2.jpa.AbstractComponent#getTerminologyVersion()
    */
-  @Field(index = Index.YES, analyze = Analyze.NO, store = Store.YES)
+  @Field(index = Index.YES, analyze = Analyze.NO, store = Store.NO)
   @Override
   public String getTerminologyVersion() {
     return super.getTerminologyVersion();
@@ -812,7 +820,11 @@ public class ConceptJpa extends AbstractComponent implements Concept {
    * @see org.ihtsdo.otf.ts.rf2.Concept#getDefaultPreferredName()
    */
   @Override
-  @Field(index = Index.YES, analyze = Analyze.YES, store = Store.YES)
+  @Fields({
+      @Field(index = Index.YES, analyze = Analyze.YES, store = Store.NO),
+      @Field(name = "all", index = Index.YES, analyze = Analyze.YES, store = Store.NO)
+  })
+  @Analyzer(definition = "noStopWord")
   public String getDefaultPreferredName() {
     return defaultPreferredName;
   }

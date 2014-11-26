@@ -34,6 +34,7 @@ import org.ihtsdo.otf.ts.helpers.SearchResult;
 import org.ihtsdo.otf.ts.helpers.SearchResultJpa;
 import org.ihtsdo.otf.ts.helpers.SearchResultList;
 import org.ihtsdo.otf.ts.helpers.SearchResultListJpa;
+import org.ihtsdo.otf.ts.jpa.services.helper.TerminologyUtility;
 import org.ihtsdo.otf.ts.rf2.AssociationReferenceConceptRefSetMember;
 import org.ihtsdo.otf.ts.rf2.AssociationReferenceRefSetMember;
 import org.ihtsdo.otf.ts.rf2.AttributeValueConceptRefSetMember;
@@ -413,10 +414,10 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
     // Set dates
     concept.setLastModified(new Date());
     concept.setEffectiveTime(null);
-    
+
     // handle preferred name
     // TODO
-    
+
     if (getTransactionPerOperation()) {
       tx = manager.getTransaction();
       tx.begin();
@@ -453,6 +454,7 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
         throw new Exception("Update cannot be used to change object identity.");
       }
     } else {
+      // set concept id on update
       concept.setTerminologyId(idHandler.getTerminologyId(concept));
     }
 
@@ -583,7 +585,6 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
 
     // Handle preferred name change
 
-
     if (getTransactionPerOperation()) {
       tx = manager.getTransaction();
       tx.begin();
@@ -619,9 +620,8 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
           idHandler.getTerminologyId(description2))) {
         throw new Exception("Update cannot be used to change object identity.");
       }
-    } else {
-      description.setTerminologyId(idHandler.getTerminologyId(description));
     }
+    // don't set id on update
 
     // Set dates
     description.setLastModified(new Date());
@@ -790,9 +790,8 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
           idHandler.getTerminologyId(relationship2))) {
         throw new Exception("Update cannot be used to change object identity.");
       }
-    } else {
-      relationship.setTerminologyId(idHandler.getTerminologyId(relationship));
     }
+    // don't set id on update
 
     // Set date
     relationship.setLastModified(new Date());
@@ -903,9 +902,8 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
           idHandler.getTerminologyId(relationship2))) {
         throw new Exception("Update cannot be used to change object identity.");
       }
-    } else {
-      relationship.setTerminologyId(idHandler.getTerminologyId(relationship));
     }
+    // don't set id on update
 
     // Set dates
     relationship.setLastModified(new Date());
@@ -1071,9 +1069,8 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
           idHandler.getTerminologyId(member2))) {
         throw new Exception("Update cannot be used to change object identity.");
       }
-    } else {
-      member.setTerminologyId(idHandler.getTerminologyId(member));
     }
+    // don't set id on update
 
     // Set dates
     member.setLastModified(new Date());
@@ -1242,9 +1239,8 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
           idHandler.getTerminologyId(member2))) {
         throw new Exception("Update cannot be used to change object identity.");
       }
-    } else {
-      member.setTerminologyId(idHandler.getTerminologyId(member));
     }
+    // don't set id on update
 
     // Set dates
     member.setLastModified(new Date());
@@ -1409,9 +1405,8 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
           idHandler.getTerminologyId(member2))) {
         throw new Exception("Update cannot be used to change object identity.");
       }
-    } else {
-      member.setTerminologyId(idHandler.getTerminologyId(member));
     }
+    // don't set id on update
 
     // Set dates
     member.setLastModified(new Date());
@@ -1574,16 +1569,14 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
           idHandler.getTerminologyId(member2))) {
         throw new Exception("Update cannot be used to change object identity.");
       }
-    } else {
-      member.setTerminologyId(idHandler.getTerminologyId(member));
     }
+    // don't set id on update
 
     // Set dates
     member.setLastModified(new Date());
     member.setEffectiveTime(null);
 
     // Handle preferred name change
-    
 
     if (getTransactionPerOperation()) {
       tx = manager.getTransaction();
@@ -1617,7 +1610,6 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
         manager.find(LanguageRefSetMemberJpa.class, id);
     // Set modification date
     member.setLastModified(new Date());
-
 
     if (getTransactionPerOperation()) {
       // remove language ref set member
@@ -1743,9 +1735,8 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
           idHandler.getTerminologyId(member2))) {
         throw new Exception("Update cannot be used to change object identity.");
       }
-    } else {
-      member.setTerminologyId(idHandler.getTerminologyId(member));
     }
+    // don't set id on update
 
     // Set dates
     member.setLastModified(new Date());
@@ -1906,9 +1897,8 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
           idHandler.getTerminologyId(member2))) {
         throw new Exception("Update cannot be used to change object identity.");
       }
-    } else {
-      member.setTerminologyId(idHandler.getTerminologyId(member));
     }
+    // don't set id on update
 
     // Set dates
     member.setLastModified(new Date());
@@ -2101,9 +2091,8 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
           idHandler.getTerminologyId(member2))) {
         throw new Exception("Update cannot be used to change object identity.");
       }
-    } else {
-      member.setTerminologyId(idHandler.getTerminologyId(member));
     }
+    // don't set id on update
 
     // Set dates
     member.setLastModified(new Date());
@@ -2300,9 +2289,8 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
           idHandler.getTerminologyId(member2))) {
         throw new Exception("Update cannot be used to change object identity.");
       }
-    } else {
-      member.setTerminologyId(idHandler.getTerminologyId(member));
     }
+    // don't set id on update
 
     // Set dates
     member.setLastModified(new Date());
@@ -2494,9 +2482,8 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
           idHandler.getTerminologyId(member2))) {
         throw new Exception("Update cannot be used to change object identity.");
       }
-    } else {
-      member.setTerminologyId(idHandler.getTerminologyId(member));
     }
+    // don't set id on update
 
     // Set dates
     member.setLastModified(new Date());
@@ -3105,6 +3092,23 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
   public ComputePreferredNameHandler getComputePreferredNameHandler(
     String terminology) throws Exception {
     return pnHandlerMap.get(terminology);
+  }
+
+  /*
+   * (non-Javadoc)
+   * 
+   * @see
+   * org.ihtsdo.otf.ts.services.ContentService#computePreferredName(org.ihtsdo
+   * .otf.ts.rf2.Concept)
+   */
+  @Override
+  public void computePreferredName(Concept concept) throws Exception {
+    graphResolver.resolve(concept, TerminologyUtility.getHierarchcialIsaRels(
+        concept.getTerminology(), concept.getTerminologyVersion()));
+    final String pn =
+        pnHandlerMap.get(concept.getTerminologyId()).computePreferredName(
+            concept.getDescriptions());
+    concept.setDefaultPreferredName(pn);
   }
 
   /*

@@ -57,10 +57,6 @@ public class DescriptionJpa extends AbstractComponent implements Description {
 
   /** The term. */
   @Column(nullable = false, length = 4000)
-  @Fields({
-      @Field, @Field(name = "all", analyze = Analyze.YES, store = Store.NO)
-  })
-  @Analyzer(definition = "noStopWord")
   private String term;
 
   /** The case significance id. */
@@ -76,10 +72,10 @@ public class DescriptionJpa extends AbstractComponent implements Description {
   @OneToMany(mappedBy = "description", cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true, targetEntity = LanguageRefSetMemberJpa.class)
   private Set<LanguageRefSetMember> languageRefSetMembers = null;
 
-  /**  The language ref set member count. */
+  /** The language ref set member count. */
   @Transient
   private int languageRefSetMemberCount = -1;
-  
+
   /** The attributeValue RefSet members. */
   @OneToMany(mappedBy = "description", targetEntity = AttributeValueDescriptionRefSetMemberJpa.class)
   private Set<AttributeValueDescriptionRefSetMember> attributeValueRefSetMembers =
@@ -220,7 +216,11 @@ public class DescriptionJpa extends AbstractComponent implements Description {
    * @return the term
    */
   @Override
-  @Field(index = Index.YES, analyze = Analyze.YES, store = Store.NO)
+  @Fields({
+      @Field(index = Index.YES, analyze = Analyze.YES, store = Store.NO),
+      @Field(name = "all", index = Index.YES, analyze = Analyze.YES, store = Store.NO)
+  })
+  @Analyzer(definition = "noStopWord")
   public String getTerm() {
     return term;
   }
@@ -299,16 +299,20 @@ public class DescriptionJpa extends AbstractComponent implements Description {
     }
     return this.languageRefSetMembers;
   }
-  
-  /* (non-Javadoc)
+
+  /*
+   * (non-Javadoc)
+   * 
    * @see org.ihtsdo.otf.ts.rf2.Description#getLanguageRefSetMemberCount()
    */
   @Override
   public int getLanguageRefSetMemberCount() {
     return languageRefSetMemberCount;
   }
-  
-  /* (non-Javadoc)
+
+  /*
+   * (non-Javadoc)
+   * 
    * @see org.ihtsdo.otf.ts.rf2.Description#setLanguageRefSetMemberCount(int)
    */
   @Override
