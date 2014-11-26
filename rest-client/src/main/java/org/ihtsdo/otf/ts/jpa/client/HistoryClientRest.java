@@ -7,7 +7,7 @@ import org.ihtsdo.otf.ts.helpers.SearchResultList;
 import org.ihtsdo.otf.ts.rest.HistoryServiceRest;
 
 /**
- * A client for connecting to a security  REST service.
+ * A client for connecting to a history REST service.
  */
 public class HistoryClientRest implements HistoryServiceRest {
 

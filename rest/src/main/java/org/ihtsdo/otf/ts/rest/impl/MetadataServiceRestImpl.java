@@ -28,7 +28,7 @@ import com.wordnik.swagger.annotations.ApiOperation;
 import com.wordnik.swagger.annotations.ApiParam;
 
 /**
- * Metadata Services REST package.
+ * REST implementation for {@link MetadataServiceRest}.
  */
 @Path("/metadata")
 @Api(value = "/metadata", description = "Operations providing terminology metadata.")
@@ -59,7 +59,7 @@ public class MetadataServiceRestImpl extends RootServiceRestImpl implements
    */
   @Override
   @GET
-  @Path("/metadata/terminology/id/{terminology}/{version}")
+  @Path("/terminology/id/{terminology}/{version}")
   @ApiOperation(value = "Get metadata for terminology and version.", notes = "Gets the key-value pairs representing all metadata for a particular terminology and version.", response = KeyValuePairLists.class)
   @Produces({
       MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML
@@ -70,7 +70,7 @@ public class MetadataServiceRestImpl extends RootServiceRestImpl implements
     @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken) {
 
     Logger.getLogger(MetadataServiceRestImpl.class).info(
-        "RESTful call (Metadata): /metadata/" + terminology + "/" + version);
+        "RESTful call (Metadata): /" + terminology + "/" + version);
 
     String user = "";
     try {
@@ -121,7 +121,7 @@ public class MetadataServiceRestImpl extends RootServiceRestImpl implements
    */
   @Override
   @GET
-  @Path("/metadata/terminology/id/{terminology}/latest")
+  @Path("/terminology/id/{terminology}/latest")
   @ApiOperation(value = "Get all metadata for the the latest version of a terminology.", notes = "Returns all metadata for the latest version of a specified terminology.", response = KeyValuePairLists.class)
   @Produces({
       MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML

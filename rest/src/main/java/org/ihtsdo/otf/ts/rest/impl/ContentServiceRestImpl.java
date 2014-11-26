@@ -1,7 +1,5 @@
 package org.ihtsdo.otf.ts.rest.impl;
 
-import java.util.Properties;
-
 import javax.ws.rs.GET;
 import javax.ws.rs.HeaderParam;
 import javax.ws.rs.POST;
@@ -14,26 +12,25 @@ import javax.ws.rs.core.Response;
 
 import org.apache.log4j.Logger;
 import org.ihtsdo.otf.ts.helpers.ConceptList;
-import org.ihtsdo.otf.ts.helpers.ConfigUtility;
 import org.ihtsdo.otf.ts.helpers.PfsParameterJpa;
 import org.ihtsdo.otf.ts.helpers.SearchResultList;
 import org.ihtsdo.otf.ts.helpers.UserRole;
 import org.ihtsdo.otf.ts.jpa.services.ContentServiceJpa;
 import org.ihtsdo.otf.ts.jpa.services.MetadataServiceJpa;
 import org.ihtsdo.otf.ts.jpa.services.SecurityServiceJpa;
+import org.ihtsdo.otf.ts.rest.ContentChangeServiceRest;
 import org.ihtsdo.otf.ts.rest.ContentServiceRest;
 import org.ihtsdo.otf.ts.rf2.Concept;
 import org.ihtsdo.otf.ts.services.ContentService;
 import org.ihtsdo.otf.ts.services.MetadataService;
 import org.ihtsdo.otf.ts.services.SecurityService;
-import org.ihtsdo.otf.ts.services.handlers.GraphResolutionHandler;
 
 import com.wordnik.swagger.annotations.Api;
 import com.wordnik.swagger.annotations.ApiOperation;
 import com.wordnik.swagger.annotations.ApiParam;
 
 /**
- * REST implementation for content service.
+ * REST implementation for {@link ContentServiceRest}..
  */
 @Path("/content")
 @Api(value = "/content", description = "Operations to retrieve RF2 content for a terminology.")
@@ -46,9 +43,6 @@ public class ContentServiceRestImpl extends RootServiceRestImpl implements
   /** The security service. */
   private SecurityService securityService;
 
-  /** The handler. */
-  private GraphResolutionHandler handler;
-
   /**
    * Instantiates an empty {@link ContentServiceRestImpl}.
    *
@@ -56,20 +50,6 @@ public class ContentServiceRestImpl extends RootServiceRestImpl implements
    */
   public ContentServiceRestImpl() throws Exception {
     securityService = new SecurityServiceJpa();
-
-    if (handler == null) {
-      Properties config = ConfigUtility.getConfigProperties();
-      String key = "graph.resolution.handler";
-      for (String handlerName : config.getProperty(key).split(",")) {
-
-        // Add handlers to map
-        handler =
-            ConfigUtility.newStandardHandlerInstanceWithConfiguration(key,
-                handlerName, GraphResolutionHandler.class);
-
-      }
-    }
-
   }
 
   /*

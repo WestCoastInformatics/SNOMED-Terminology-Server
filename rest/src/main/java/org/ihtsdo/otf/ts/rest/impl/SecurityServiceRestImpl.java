@@ -21,7 +21,7 @@ import com.wordnik.swagger.annotations.ApiOperation;
 import com.wordnik.swagger.annotations.ApiParam;
 
 /**
- * Security service for authentication.
+ * REST implementation for {@link SecurityServiceRest}.
  */
 @Path("/security")
 @Api(value = "/security", description = "Operations supporting security.")
