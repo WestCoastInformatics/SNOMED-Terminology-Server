@@ -9,8 +9,8 @@ public enum UserRole {
   /** The viewer. */
   VIEWER("Viewer"),
 
-  /** The specialist. */
-  SPECIALIST("Specialist"),
+  /** The author. */
+  AUTHOR("Author"),
 
   /** The lead. */
   LEAD("Lead"),
@@ -48,11 +48,11 @@ public enum UserRole {
   public boolean hasPrivilegesOf(UserRole role) {
     if (this.equals(UserRole.VIEWER) && role.equals(UserRole.VIEWER))
       return true;
-    else if (this.equals(UserRole.SPECIALIST)
-        && (role.equals(UserRole.VIEWER) || role.equals(UserRole.SPECIALIST)))
+    else if (this.equals(UserRole.AUTHOR)
+        && (role.equals(UserRole.VIEWER) || role.equals(UserRole.AUTHOR)))
       return true;
     else if (this.equals(UserRole.LEAD)
-        && (role.equals(UserRole.VIEWER) || role.equals(UserRole.SPECIALIST) || role
+        && (role.equals(UserRole.VIEWER) || role.equals(UserRole.AUTHOR) || role
             .equals(UserRole.LEAD)))
       return true;
     else if (this.equals(UserRole.ADMINISTRATOR))

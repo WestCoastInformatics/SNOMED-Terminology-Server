@@ -1,39 +1,55 @@
 package org.ihtsdo.otf.ts.services.handlers;
 
 import java.util.Properties;
+import java.util.Set;
 
 import org.ihtsdo.otf.ts.rf2.Concept;
 import org.ihtsdo.otf.ts.rf2.ConceptRefSetMember;
 import org.ihtsdo.otf.ts.rf2.Description;
 import org.ihtsdo.otf.ts.rf2.DescriptionRefSetMember;
+import org.ihtsdo.otf.ts.rf2.LanguageRefSetMember;
 import org.ihtsdo.otf.ts.rf2.Relationship;
 
 /**
- * Default implementation of {@link GraphResolutionHandler}.
+ * Default implementation of {@link GraphResolutionHandler}. This connects
+ * graphs at the level at which CascadeType.ALL is used in the data model.
  */
 public class DefaultGraphResolutionHandler implements GraphResolutionHandler {
 
-  /**
-   * Resolve concepts.
-   *
-   * @param concept the concept
+  /* (non-Javadoc)
+   * @see org.ihtsdo.otf.ts.services.handlers.GraphResolutionHandler#resolve(org.ihtsdo.otf.ts.rf2.Concept, java.lang.String)
    */
   @Override
-  public void resolve(Concept concept) {
+  public void resolve(Concept concept, Set<String> isaRelTypeIds) {
     if (concept != null) {
       // Make sure to read descriptions and relationships (prevents
       // serialization error)
-      for (Description d : concept.getDescriptions()) {
-        d.getLanguageRefSetMembers().size();
+      int ct = 0;
+      for (Description description : concept.getDescriptions()) {
+        ct++;
+        description.setConcept(concept);
+        resolve(description);
       }
-      for (Relationship r : concept.getRelationships()) {
-        r.getDestinationConcept().getDefaultPreferredName();
+      concept.setDescriptionCount(ct);
+      
+      ct = 0;
+      int ct2 = 0;
+      for (Relationship relationship : concept.getRelationships()) {
+        ct++;
+        relationship.setSourceConcept(concept);
+        relationship.getDestinationConcept().getDefaultPreferredName();
+        if (isaRelTypeIds != null && isaRelTypeIds.contains(relationship.getTypeId())) {
+          ct2++;
+        }
       }
+      concept.setRelationshipCount(ct);
+      concept.setChildCount(ct2);
+      
       // don't resolve these, limit to what uses Cascade.ALL
-      //concept.getAttributeValueRefSetMembers().size();
-      //concept.getComplexMapRefSetMembers().size();
-      //concept.getSimpleMapRefSetMembers();
-      //concept.getSimpleRefSetMembers().size();
+      // concept.getAttributeValueRefSetMembers().size();
+      // concept.getComplexMapRefSetMembers().size();
+      // concept.getSimpleMapRefSetMembers();
+      // concept.getSimpleRefSetMembers().size();
     }
   }
 
@@ -45,7 +61,13 @@ public class DefaultGraphResolutionHandler implements GraphResolutionHandler {
   @Override
   public void resolve(Description description) {
     if (description != null) {
-      description.getLanguageRefSetMembers().size();
+      int ct = 0;
+      for (LanguageRefSetMember member : description
+          .getLanguageRefSetMembers()) {
+        ct++;
+        member.setDescription(description);
+      }
+      description.setLanguageRefSetMemberCount(ct);
     }
   }
 

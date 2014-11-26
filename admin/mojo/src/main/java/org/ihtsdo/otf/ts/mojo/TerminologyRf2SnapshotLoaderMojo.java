@@ -97,7 +97,7 @@ public class TerminologyRf2SnapshotLoaderMojo extends AbstractMojo {
   private BufferedReader conceptsByConcept;
 
   /** The descriptions by description. */
-  private BufferedReader descriptionsByDescription;
+  private BufferedReader descriptionsByConcept;
 
   /** The relationships by source concept. */
   private BufferedReader relationshipsBySourceConcept;
@@ -245,7 +245,7 @@ public class TerminologyRf2SnapshotLoaderMojo extends AbstractMojo {
         }
 
         // load Descriptions and Language Ref Set Members
-        if (descriptionsByDescription != null
+        if (descriptionsByConcept != null
             && languageRefsetsByDescription != null) {
           getLog().info("  Loading Descriptions and LanguageRefSets...");
           startTime = System.nanoTime();
@@ -413,46 +413,46 @@ public class TerminologyRf2SnapshotLoaderMojo extends AbstractMojo {
    * @throws IOException Signals that an I/O exception has occurred.
    */
   private void openSortedFileReaders(File outputDir) throws IOException {
-    File conceptsByConceptsFile =
-        new File(outputDir, "concepts_by_concept.sort");
-    File descriptionsByDescriptionFile =
-        new File(outputDir, "descriptions_by_description.sort");
+    File conceptsByConceptFile =
+        new File(outputDir, "conceptsByConcept.sort");
+    File descriptionsByConceptFile =
+        new File(outputDir, "descriptionsByConcept.sort");
     File relationshipsBySourceConceptFile =
-        new File(outputDir, "relationship_by_source_concept.sort");
-    File languageRefsetsByDescriptionsFile =
-        new File(outputDir, "language_refsets_by_description.sort");
-    File attributeRefsetsByConceptFile =
-        new File(outputDir, "attribute_refsets_by_concept.sort");
+        new File(outputDir, "relationshipsBySourceConcept.sort");
+    File languageRefsetsByDescriptionFile =
+        new File(outputDir, "languageRefsetsByDescription.sort");
+    File attributeValueRefsetsByRefCompIdFile =
+        new File(outputDir, "attributeValueRefsetsByRefCompIdFile.sort");
     File associationReferenceRefsetsByRefCompIdFile =
-        new File(outputDir, "association_reference_refsets_by_refCompId.sort");
+        new File(outputDir, "associationReferenceRefsetsByRefCompId.sort");
     File simpleRefsetsByConceptFile =
-        new File(outputDir, "simple_refsets_by_concept.sort");
+        new File(outputDir, "simpleRefsetsByConcept.sort");
     File simpleMapRefsetsByConceptFile =
-        new File(outputDir, "simple_map_refsets_by_concept.sort");
+        new File(outputDir, "simpleMapRefsetsByConcept.sort");
     File complexMapRefsetsByConceptFile =
-        new File(outputDir, "complex_map_refsets_by_concept.sort");
+        new File(outputDir, "complexMapRefsetsByConcept.sort");
     File extendedMapRefsetsByConceptsFile =
-        new File(outputDir, "extended_map_refsets_by_concept.sort");
+        new File(outputDir, "extendedMapRefsetsByConcepts.sort");
 
     // Concept reader
     conceptsByConcept =
-        new BufferedReader(new FileReader(conceptsByConceptsFile));
+        new BufferedReader(new FileReader(conceptsByConceptFile));
 
     // Relationships by source concept reader
     relationshipsBySourceConcept =
         new BufferedReader(new FileReader(relationshipsBySourceConceptFile));
 
     // Descriptions by description id reader
-    descriptionsByDescription =
-        new BufferedReader(new FileReader(descriptionsByDescriptionFile));
+    descriptionsByConcept =
+        new BufferedReader(new FileReader(descriptionsByConceptFile));
 
     // Language RefSets by description id
     languageRefsetsByDescription =
-        new BufferedReader(new FileReader(languageRefsetsByDescriptionsFile));
+        new BufferedReader(new FileReader(languageRefsetsByDescriptionFile));
 
     // Attribute Value reader
     attributeValueRefsetsByRefCompId =
-        new BufferedReader(new FileReader(attributeRefsetsByConceptFile));
+        new BufferedReader(new FileReader(attributeValueRefsetsByRefCompIdFile));
 
     // Association Reference reader
     associationReferenceRefsetsByRefCompId =
@@ -686,20 +686,6 @@ public class TerminologyRf2SnapshotLoaderMojo extends AbstractMojo {
         "      Simple refset file = " + coreSimpleRefsetInputFile.toString()
             + " " + coreSimpleRefsetInputFile.exists());
 
-    // Association reference file
-    for (File f : coreContentInputDir.listFiles()) {
-      if (f.getName().contains("AssociationReference")) {
-        if (coreAssociationReferenceInputFile != null)
-          throw new MojoFailureException(
-              "Multiple Association Reference Files!");
-        coreAssociationReferenceInputFile = f;
-      }
-    }
-    getLog().info(
-        "      Association reference file = "
-            + coreAssociationReferenceInputFile.toString() + " "
-            + coreAssociationReferenceInputFile.exists());
-
     // Attribute value file
     for (File f : coreContentInputDir.listFiles()) {
       if (f.getName().contains("AttributeValue")) {
@@ -797,53 +783,51 @@ public class TerminologyRf2SnapshotLoaderMojo extends AbstractMojo {
         "    Refset/Metadata dir = " + coreMetadataInputDir.toString() + " "
             + coreMetadataInputDir.exists());
 
-    // TODO: load metadata files
-
     // Initialize files
     File conceptsByConceptFile =
-        new File(outputDir, "concepts_by_concept.sort");
-    File descriptionsByDescriptionFile =
-        new File(outputDir, "descriptions_by_description.sort");
-    File descriptionsCoreByDescriptionFile =
-        new File(outputDir, "descriptions_core_by_description.sort");
-    File descriptionsTextByDescriptionFile =
-        new File(outputDir, "descriptions_text_by_description.sort");
+        new File(outputDir, "conceptsByConcept.sort");
+    File descriptionsByConceptFile =
+        new File(outputDir, "descriptionsByConcept.sort");
+    File descriptionsTextByConceptFile =
+        new File(outputDir, "descriptionsTextByConcept.sort");
+    File descriptionsAllByConceptFile =
+        new File(outputDir, "descriptionsAllByConcept.sort");
     File relationshipsBySourceConceptFile =
-        new File(outputDir, "relationship_by_source_concept.sort");
+        new File(outputDir, "relationshipsBySourceConcept.sort");
     File languageRefsetsByDescriptionFile =
-        new File(outputDir, "language_refsets_by_description.sort");
-    File attributeValueRefsetByRefCompIdFile =
-        new File(outputDir, "attribute_refsets_by_concept.sort");
+        new File(outputDir, "languageRefsetsByDescriptions.sort");
+    File attributeValueRefsetsByConceptFile =
+        new File(outputDir, "attributeValueRefsetsByConcept.sort");
     File associationReferenceRefsetsByRefCompIdFile =
-        new File(outputDir, "association_refsets_by_refCompId.sort");
+        new File(outputDir, "associationReferenceRefsetsByRefCompId.sort");
     File simpleRefsetsByConceptFile =
-        new File(outputDir, "simple_refsets_by_concept.sort");
+        new File(outputDir, "simpleRefsetsByConcept.sort");
     File simpleMapRefsetsByConceptFile =
-        new File(outputDir, "simple_map_refsets_by_concept.sort");
+        new File(outputDir, "simpleMapRefsetsByConcept.sort");
     File complexMapRefsetsByConceptFile =
-        new File(outputDir, "complex_map_refsets_by_concept.sort");
+        new File(outputDir, "complexMapRefsetsByConcept.sort");
     File extendedMapRefsetsByConceptsFile =
-        new File(outputDir, "extended_map_refsets_by_concept.sort");
+        new File(outputDir, "extendedMap");
 
     getLog().info("      Sort files");
     // Sort concept files
     sortRf2File(coreConceptInputFile, conceptsByConceptFile, 0);
 
     // Sort description file
-    sortRf2File(coreDescriptionInputFile, descriptionsCoreByDescriptionFile, 0);
+    sortRf2File(coreDescriptionInputFile, descriptionsByConceptFile, 0);
 
     // Sort text definitions file
     if (coreTextDefinitionInputFile != null) {
 
       // sort the text definition file
       sortRf2File(coreTextDefinitionInputFile,
-          descriptionsTextByDescriptionFile, 0);
+          descriptionsTextByConceptFile, 0);
 
       // merge the two description files
       getLog().info("        Merging description files...");
       File mergedDesc =
-          ConfigUtility.mergeSortedFiles(descriptionsTextByDescriptionFile,
-              descriptionsCoreByDescriptionFile, new Comparator<String>() {
+          ConfigUtility.mergeSortedFiles(descriptionsTextByConceptFile,
+              descriptionsByConceptFile, new Comparator<String>() {
                 @Override
                 public int compare(String s1, String s2) {
                   String v1[] = s1.split("\t");
@@ -853,12 +837,12 @@ public class TerminologyRf2SnapshotLoaderMojo extends AbstractMojo {
               }, outputDir, ""); // header line
 
       // rename the temporary file
-      Files.move(mergedDesc, descriptionsByDescriptionFile);
+      Files.move(mergedDesc, descriptionsAllByConceptFile);
 
     } else {
       // copy the core descriptions file
-      Files.copy(descriptionsCoreByDescriptionFile,
-          descriptionsByDescriptionFile);
+      Files.copy(descriptionsAllByConceptFile,
+          descriptionsByConceptFile);
     }
 
     // Sort relationships file
@@ -866,7 +850,7 @@ public class TerminologyRf2SnapshotLoaderMojo extends AbstractMojo {
 
     // Sort attribute value file
     sortRf2File(coreAttributeValueInputFile,
-        attributeValueRefsetByRefCompIdFile, 5);
+        attributeValueRefsetsByConceptFile, 5);
 
     // Sort association reference input file by referenced component id
     sortRf2File(coreAssociationReferenceInputFile,
@@ -926,8 +910,8 @@ public class TerminologyRf2SnapshotLoaderMojo extends AbstractMojo {
     if (conceptsByConcept != null) {
       conceptsByConcept.close();
     }
-    if (descriptionsByDescription != null) {
-      descriptionsByDescription.close();
+    if (descriptionsByConcept != null) {
+      descriptionsByConcept.close();
     }
     if (relationshipsBySourceConcept != null) {
       relationshipsBySourceConcept.close();
@@ -1267,7 +1251,7 @@ public class TerminologyRf2SnapshotLoaderMojo extends AbstractMojo {
 
     String line, fields[];
 
-    if ((line = descriptionsByDescription.readLine()) != null) {
+    if ((line = descriptionsByConcept.readLine()) != null) {
 
       line = line.replace("\r", "");
       fields = line.split("\t");

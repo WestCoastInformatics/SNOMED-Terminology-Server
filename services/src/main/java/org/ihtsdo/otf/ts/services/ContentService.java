@@ -1,5 +1,6 @@
 package org.ihtsdo.otf.ts.services;
 
+import java.util.List;
 import java.util.Set;
 
 import org.ihtsdo.otf.ts.helpers.ConceptList;
@@ -11,11 +12,15 @@ import org.ihtsdo.otf.ts.rf2.ComplexMapRefSetMember;
 import org.ihtsdo.otf.ts.rf2.Component;
 import org.ihtsdo.otf.ts.rf2.Concept;
 import org.ihtsdo.otf.ts.rf2.Description;
+import org.ihtsdo.otf.ts.rf2.DescriptionTypeRefSetMember;
 import org.ihtsdo.otf.ts.rf2.LanguageRefSetMember;
+import org.ihtsdo.otf.ts.rf2.ModuleDependencyRefSetMember;
+import org.ihtsdo.otf.ts.rf2.RefsetDescriptorRefSetMember;
 import org.ihtsdo.otf.ts.rf2.Relationship;
 import org.ihtsdo.otf.ts.rf2.SimpleMapRefSetMember;
 import org.ihtsdo.otf.ts.rf2.SimpleRefSetMember;
 import org.ihtsdo.otf.ts.rf2.TransitiveRelationship;
+import org.ihtsdo.otf.ts.services.handlers.GraphResolutionHandler;
 
 /**
  * Generically represents a service for accessing content.
@@ -492,7 +497,7 @@ public interface ContentService extends RootService {
    * Adds the simple refset member.
    * 
    * @param member the simple refset member
-   * @return the simpleRefSetMember
+   * @return the simple refset member
    * @throws Exception the exception
    */
   public SimpleRefSetMember addSimpleRefSetMember(
@@ -514,6 +519,185 @@ public interface ContentService extends RootService {
    * @throws Exception the exception
    */
   public void removeSimpleRefSetMember(Long id) throws Exception;
+
+  /**
+   * Returns the refset descriptor refset member.
+   * 
+   * @param id the id
+   * @return the refset descriptor refset member
+   * @throws Exception if anything goes wrong
+   */
+  public RefsetDescriptorRefSetMember getRefsetDescriptorRefSetMember(Long id) throws Exception;
+
+  /**
+   * Returns the refset descriptor refset member matching the specified parameters.
+   * 
+   * @param terminologyId the id
+   * @param terminology the terminology
+   * @param version the version
+   * @return the refset descriptor refset member
+   * @throws Exception if anything goes wrong
+   */
+  public RefsetDescriptorRefSetMember getRefsetDescriptorRefSetMember(String terminologyId,
+    String terminology, String version) throws Exception;
+
+  /**
+   * Returns the refset descriptor ref set members for refset.
+   *
+   * @param terminologyId the terminology id
+   * @param terminology the terminology
+   * @param version the version
+   * @return the refset descriptor ref set members for refset
+   */
+  public List<RefsetDescriptorRefSetMember> getRefsetDescriptorRefSetMembersForRefset(String terminologyId,
+    String terminology, String version);
+
+  /**
+   * Adds the refset descriptor refset member.
+   * 
+   * @param member the refset descriptor refset member
+   * @return the refset descriptor refset member
+   * @throws Exception the exception
+   */
+  public RefsetDescriptorRefSetMember addRefsetDescriptorRefSetMember(
+    RefsetDescriptorRefSetMember member) throws Exception;
+
+  /**
+   * Update refset descriptor refset member.
+   * 
+   * @param member the refset descriptor refset member
+   * @throws Exception the exception
+   */
+  public void updateRefsetDescriptorRefSetMember(RefsetDescriptorRefSetMember member)
+    throws Exception;
+
+  /**
+   * Removes the refset descriptor refset member.
+   * 
+   * @param id the id
+   * @throws Exception the exception
+   */
+  public void removeRefsetDescriptorRefSetMember(Long id) throws Exception;
+  
+  /**
+   * Returns the description type refset member.
+   * 
+   * @param id the id
+   * @return the description type refset member
+   * @throws Exception if anything goes wrong
+   */
+  public DescriptionTypeRefSetMember getDescriptionTypeRefSetMember(Long id) throws Exception;
+
+  /**
+   * Returns the description type refset member matching the specified parameters.
+   * 
+   * @param terminologyId the id
+   * @param terminology the terminology
+   * @param version the version
+   * @return the description type refset member
+   * @throws Exception if anything goes wrong
+   */
+  public DescriptionTypeRefSetMember getDescriptionTypeRefSetMember(String terminologyId,
+    String terminology, String version) throws Exception;
+
+  /**
+   * Returns the description type ref set member for description type.
+   *
+   * @param terminologyId the terminology id
+   * @param terminology the terminology
+   * @param version the version
+   * @return the description type ref set member for description type
+   * @throws Exception the exception
+   */
+  public DescriptionTypeRefSetMember getDescriptionTypeRefSetMemberForDescriptionType(String terminologyId,
+    String terminology, String version) throws Exception;
+
+  /**
+   * Adds the description type refset member.
+   * 
+   * @param member the description type refset member
+   * @return the description type refset member
+   * @throws Exception the exception
+   */
+  public DescriptionTypeRefSetMember addDescriptionTypeRefSetMember(
+    DescriptionTypeRefSetMember member) throws Exception;
+
+  /**
+   * Update description type refset member.
+   * 
+   * @param member the description type refset member
+   * @throws Exception the exception
+   */
+  public void updateDescriptionTypeRefSetMember(DescriptionTypeRefSetMember member)
+    throws Exception;
+
+  /**
+   * Removes the description type refset member.
+   * 
+   * @param id the id
+   * @throws Exception the exception
+   */
+  public void removeDescriptionTypeRefSetMember(Long id) throws Exception;
+
+  /**
+   * Returns the module dependency refset member.
+   * 
+   * @param id the id
+   * @return the module dependency refset member
+   * @throws Exception if anything goes wrong
+   */
+  public ModuleDependencyRefSetMember getModuleDependencyRefSetMember(Long id) throws Exception;
+
+  /**
+   * Returns the module dependency refset member matching the specified parameters.
+   * 
+   * @param terminologyId the id
+   * @param terminology the terminology
+   * @param version the version
+   * @return the module dependency refset member
+   * @throws Exception if anything goes wrong
+   */
+  public ModuleDependencyRefSetMember getModuleDependencyRefSetMember(String terminologyId,
+    String terminology, String version) throws Exception;
+
+  /**
+   * Returns the module dependency ref set members for module.
+   *
+   * @param terminologyId the terminology id
+   * @param terminology the terminology
+   * @param version the version
+   * @return the module dependency ref set members for module
+   * @throws Exception the exception
+   */
+  public List<ModuleDependencyRefSetMember> getModuleDependencyRefSetMembersForModule(String terminologyId,
+    String terminology, String version) throws Exception;
+
+  /**
+   * Adds the module dependency refset member.
+   * 
+   * @param member the module dependency refset member
+   * @return the module dependency refset member
+   * @throws Exception the exception
+   */
+  public ModuleDependencyRefSetMember addModuleDependencyRefSetMember(
+    ModuleDependencyRefSetMember member) throws Exception;
+
+  /**
+   * Update module dependency refset member.
+   * 
+   * @param member the module dependency refset member
+   * @throws Exception the exception
+   */
+  public void updateModuleDependencyRefSetMember(ModuleDependencyRefSetMember member)
+    throws Exception;
+
+  /**
+   * Removes the module dependency refset member.
+   * 
+   * @param id the id
+   * @throws Exception the exception
+   */
+  public void removeModuleDependencyRefSetMember(Long id) throws Exception;
 
   /**
    * Returns the concept search results matching the query. Results can be
@@ -612,4 +796,13 @@ public interface ContentService extends RootService {
    * @param version the terminology version
    */
   public void clearConcepts(String terminology, String version);
+
+  /**
+   * Returns the graph resolution handler. 
+   * This is configured internally but made available through this service.
+   *
+   * @return the graph resolution handler
+   */
+  public GraphResolutionHandler getGraphResolutionHandler();
+  
 }

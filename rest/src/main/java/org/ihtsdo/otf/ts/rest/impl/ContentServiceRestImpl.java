@@ -19,12 +19,12 @@ import org.ihtsdo.otf.ts.helpers.PfsParameterJpa;
 import org.ihtsdo.otf.ts.helpers.SearchResultList;
 import org.ihtsdo.otf.ts.helpers.UserRole;
 import org.ihtsdo.otf.ts.jpa.services.ContentServiceJpa;
+import org.ihtsdo.otf.ts.jpa.services.MetadataServiceJpa;
 import org.ihtsdo.otf.ts.jpa.services.SecurityServiceJpa;
 import org.ihtsdo.otf.ts.rest.ContentServiceRest;
 import org.ihtsdo.otf.ts.rf2.Concept;
-import org.ihtsdo.otf.ts.rf2.Description;
-import org.ihtsdo.otf.ts.rf2.Relationship;
 import org.ihtsdo.otf.ts.services.ContentService;
+import org.ihtsdo.otf.ts.services.MetadataService;
 import org.ihtsdo.otf.ts.services.SecurityService;
 import org.ihtsdo.otf.ts.services.handlers.GraphResolutionHandler;
 
@@ -108,18 +108,20 @@ public class ContentServiceRestImpl extends RootServiceRestImpl implements
       ConceptList cl =
           contentService.getConcepts(terminologyId, terminology, version);
 
-      for (Concept c : cl.getIterable()) {
-        if (c != null) {
-          // Make sure to read descriptions and relationships (prevents
-          // serialization error)
-          for (Description d : c.getDescriptions()) {
-            d.getLanguageRefSetMembers().size();
-          }
-          for (Relationship r : c.getRelationships()) {
-            r.getDestinationConcept().getDefaultPreferredName();
-          }
+      // TODO: cache this instead of recomputing it each time, possibly even
+      // internally
+      MetadataService metadataService = new MetadataServiceJpa();
+      for (Concept concept : cl.getIterable()) {
+        if (concept != null) {
+          contentService.getGraphResolutionHandler().resolve(
+              concept,
+              metadataService.getHierarchicalRelationshipTypes(
+                  concept.getTerminology(), concept.getTerminologyVersion())
+                  .keySet());
         }
       }
+
+      metadataService.close();
       contentService.close();
       return cl;
     } catch (Exception e) {
@@ -162,22 +164,23 @@ public class ContentServiceRestImpl extends RootServiceRestImpl implements
             .build());
 
       ContentService contentService = new ContentServiceJpa();
-      Concept c =
+      Concept concept =
           contentService.getSingleConcept(terminologyId, terminology, version);
 
-      if (c != null) {
-        // Make sure to read descriptions and relationships (prevents
-        // serialization error)
-        for (Description d : c.getDescriptions()) {
-          d.getLanguageRefSetMembers().size();
-        }
-        for (Relationship r : c.getRelationships()) {
-          r.getDestinationConcept().getDefaultPreferredName();
-        }
+      if (concept != null) {
+        // TODO: cache this instead of recomputing it each time, possibly even
+        // internally
+        MetadataService metadataService = new MetadataServiceJpa();
+        contentService.getGraphResolutionHandler().resolve(
+            concept,
+            metadataService.getHierarchicalRelationshipTypes(
+                concept.getTerminology(), concept.getTerminologyVersion())
+                .keySet());
+        metadataService.close();
       }
 
       contentService.close();
-      return c;
+      return concept;
     } catch (Exception e) {
       handleException(e, "trying to retrieve a concept");
       return null;
@@ -212,22 +215,21 @@ public class ContentServiceRestImpl extends RootServiceRestImpl implements
             .build());
 
       ContentService contentService = new ContentServiceJpa();
-      Concept c =
-          contentService.getConcept(id);
+      Concept concept = contentService.getConcept(id);
 
-      if (c != null) {
-        // Make sure to read descriptions and relationships (prevents
-        // serialization error)
-        for (Description d : c.getDescriptions()) {
-          d.getLanguageRefSetMembers().size();
-        }
-        for (Relationship r : c.getRelationships()) {
-          r.getDestinationConcept().getDefaultPreferredName();
-        }
+      if (concept != null) {
+        // TODO: cache this instead of recomputing it each time, possibly even
+        // internally
+        MetadataService metadataService = new MetadataServiceJpa();
+        contentService.getGraphResolutionHandler().resolve(
+            concept,
+            metadataService.getHierarchicalRelationshipTypes(
+                concept.getTerminology(), concept.getTerminologyVersion())
+                .keySet());
+        metadataService.close();
       }
-
       contentService.close();
-      return c;
+      return concept;
     } catch (Exception e) {
       handleException(e, "trying to retrieve a concept");
       return null;

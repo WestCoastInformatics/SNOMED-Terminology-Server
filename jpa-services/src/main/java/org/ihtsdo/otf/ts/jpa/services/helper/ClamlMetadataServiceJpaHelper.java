@@ -16,6 +16,7 @@ import org.ihtsdo.otf.ts.services.ContentService;
 import org.ihtsdo.otf.ts.services.MetadataService;
 import org.ihtsdo.otf.ts.services.helpers.GraphHelper;
 
+// TODO: Auto-generated Javadoc
 /**
  * Implementation of {@link MetadataService} for ClaML based terminologies.
  * 
@@ -395,6 +396,61 @@ public class ClamlMetadataServiceJpaHelper extends RootServiceJpa implements
     return getDescendantMap(contentService, rootId, terminology, version);
   }
 
+
+  /* (non-Javadoc)
+   * @see org.ihtsdo.otf.ts.services.MetadataService#getAttributeDescriptions(java.lang.String, java.lang.String)
+   */
+  @Override
+  public Map<String, String> getAttributeDescriptions(String terminology,
+    String version) throws Exception {
+    return new HashMap<>();
+  }
+
+  /* (non-Javadoc)
+   * @see org.ihtsdo.otf.ts.services.MetadataService#getAttributeTypes(java.lang.String, java.lang.String)
+   */
+  @Override
+  public Map<String, String> getAttributeTypes(String terminology,
+    String version) throws Exception {
+    return new HashMap<>();
+  }
+
+  /* (non-Javadoc)
+   * @see org.ihtsdo.otf.ts.services.MetadataService#getDescriptionFormats(java.lang.String, java.lang.String)
+   */
+  @Override
+  public Map<String, String> getDescriptionFormats(String terminology,
+    String version) throws Exception {
+    return new HashMap<>();
+  }
+
+  /* (non-Javadoc)
+   * @see org.ihtsdo.otf.ts.services.MetadataService#getResfsetDescriptorRefSets(java.lang.String, java.lang.String)
+   */
+  @Override
+  public Map<String, String> getRefsetDescriptorRefSets(String terminology,
+    String version) throws Exception {
+    return new HashMap<>();
+  }
+
+  /* (non-Javadoc)
+   * @see org.ihtsdo.otf.ts.services.MetadataService#getModuleDependencyRefSets(java.lang.String, java.lang.String)
+   */
+  @Override
+  public Map<String, String> getModuleDependencyRefSets(String terminology,
+    String version) throws Exception {
+    return new HashMap<>();
+  }
+
+  /* (non-Javadoc)
+   * @see org.ihtsdo.otf.ts.services.MetadataService#getDescriptionTypeRefSets(java.lang.String, java.lang.String)
+   */
+  @Override
+  public Map<String, String> getDescriptionTypeRefSets(String terminology,
+    String version) throws Exception {
+    return new HashMap<>();
+  }
+
   /*
    * (non-Javadoc)
    * 
@@ -457,13 +513,13 @@ public class ClamlMetadataServiceJpaHelper extends RootServiceJpa implements
 
   /**
    * Returns the descendant map for the specified parameters.
-   * 
+   *
    * @param contentService the content service
    * @param id the concept id
    * @param terminology the terminology
    * @param version the version
    * @return the descendant map
-   * @throws Exception
+   * @throws Exception the exception
    */
   @SuppressWarnings("static-method")
   private Map<String, String> getDescendantMap(ContentService contentService,

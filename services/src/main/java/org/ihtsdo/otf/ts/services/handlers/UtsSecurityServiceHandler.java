@@ -9,6 +9,7 @@ import java.net.URLEncoder;
 import java.util.Properties;
 import java.util.UUID;
 
+import org.ihtsdo.otf.ts.helpers.LocalException;
 import org.ihtsdo.otf.ts.helpers.User;
 import org.ihtsdo.otf.ts.services.helpers.UserImpl;
 
@@ -59,21 +60,27 @@ public class UtsSecurityServiceHandler implements SecurityServiceHandler {
     BufferedReader rd =
         new BufferedReader(new InputStreamReader(conn.getInputStream()));
     String line;
+    boolean authenticated = false;
     while ((line = rd.readLine()) != null) {
-      // see if we can extract user info from this
-      System.out.println(line);
+      if (line.toLowerCase().contains("true")) {
+        authenticated = false;
+      }
     }
     wr.close();
     rd.close();
 
+    if (!authenticated) {
+      throw new LocalException("Username or password invalid.");
+    }
+    
     /*
      * Synchronize the information sent back from ITHSDO with the User object.
      * Add a new user if there isn't one matching the username If there is, load
      * and update that user and save the changes
      */
-    String authUserName = "";
-    String authEmail = "";
-    String authGivenName = "";
+    String authUserName = username;
+    String authEmail = "test@example.com";
+    String authGivenName = "UTS User - " + username;
     String authSurname = "";
 
     User returnUser = new UserImpl();

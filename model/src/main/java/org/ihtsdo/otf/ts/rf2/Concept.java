@@ -43,6 +43,20 @@ public interface Concept extends Component {
   public Set<Description> getDescriptions();
 
   /**
+   * Returns the description count.
+   *
+   * @return the description count
+   */
+  public int getDescriptionCount();
+  
+  /**
+   * Sets the description count.
+   *
+   * @param ct the description count
+   */
+  public void setDescriptionCount(int ct);
+
+  /**
    * Sets the descriptions.
    * 
    * @param descriptions the descriptions
@@ -69,6 +83,34 @@ public interface Concept extends Component {
    * @return the relationships
    */
   public Set<Relationship> getRelationships();
+
+  /**
+   * Returns the relationship count.
+   *
+   * @return the relationship count
+   */
+  public int getRelationshipCount();
+  
+  /**
+   * Sets the relationship count.
+   *
+   * @param ct the relationship count
+   */
+  public void setRelationshipCount(int ct);
+
+  /**
+   * Returns the child count.
+   *
+   * @return the child count
+   */
+  public int getChildCount();
+  
+  /**
+   * Sets the child count.
+   *
+   * @param ct the child count
+   */
+  public void setChildCount(int ct);
 
   /**
    * Adds the relationship.

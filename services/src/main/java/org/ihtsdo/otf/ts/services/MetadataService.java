@@ -5,10 +5,59 @@ import java.util.Map;
 
 import org.ihtsdo.otf.ts.helpers.Configurable;
 
+// TODO: Auto-generated Javadoc
 /**
  * Services to retrieve metadata objects.
  */
 public interface MetadataService extends RootService, Configurable {
+
+  /**
+   * An enum for the keys of the get all metadata call.
+   */
+  public enum MetadataKeys {
+    /** The Modules. */
+    Modules,
+    /** The Attribute_ types. */
+    Attribute_Types,
+    /** The Attribute_ descriptions. */
+    Attribute_Descriptions,
+    /** The Description_ formats. */
+    Description_Formats,
+    /** The Attribute_ value_ refsets. */
+    Attribute_Value_Refsets,
+    /** The Case_ significances. */
+    Case_Significances,
+    /** The Complex_ map_ refsets. */
+    Complex_Map_Refsets,
+    /** The Definition_ statuses. */
+    Definition_Statuses,
+    /** The Description_ types. */
+    Description_Types,
+    /** The Language_ refsets. */
+    Language_Refsets,
+    /** The Map_ relations. */
+    Map_Relations,
+    /** The Relationship_ characteristic_ types. */
+    Relationship_Characteristic_Types,
+    /** The Relationship_ modifiers. */
+    Relationship_Modifiers,
+    /** The Relationship_ types. */
+    Relationship_Types,
+    /** The Hierarchical_ relationship_ types. */
+    Hierarchical_Relationship_Types,
+    /** The Simple_ map_ refsets. */
+    Simple_Map_Refsets,
+    /** The Simple_ refsets. */
+    Simple_Refsets,
+    /** The Refset_ descriptor_ refsets. */
+    Refset_Descriptor_Refsets,
+    /** The Description_ type_ refsets. */
+    Description_Type_Refsets,
+    /** The Module_ dependency_ refsets. */
+    Module_Dependency_Refsets,
+    /** The Non_ grouping_ relationship_ types. */
+    Non_Grouping_Relationship_Types;
+  }
 
   /**
    * Returns the terminologies.
@@ -70,6 +119,41 @@ public interface MetadataService extends RootService, Configurable {
     throws Exception;
 
   /**
+   * Returns the attribute descriptions. These are associated with fields of the
+   * refset descriptor refset members.
+   * @param terminology the terminology
+   * @param version the version
+   * @return the attribute descriptions
+   * @throws Exception the exception
+   */
+  public Map<String, String> getAttributeDescriptions(String terminology,
+    String version) throws Exception;
+
+  /**
+   * Returns the attribute types. These are associated with fields of the refset
+   * descriptor refset members.
+   *
+   * @param terminology the terminology
+   * @param version the version
+   * @return the attribute types
+   * @throws Exception the exception
+   */
+  public Map<String, String> getAttributeTypes(String terminology,
+    String version) throws Exception;
+
+  /**
+   * Returns the description formats. These are associated with fields of the
+   * description type refset members.
+   *
+   * @param terminology the terminology
+   * @param version the version
+   * @return the description formats
+   * @throws Exception the exception
+   */
+  public Map<String, String> getDescriptionFormats(String terminology,
+    String version) throws Exception;
+
+  /**
    * Returns the attribute value ref sets.
    * 
    * @param terminology the terminology
@@ -123,6 +207,39 @@ public interface MetadataService extends RootService, Configurable {
    */
   public Map<String, String> getSimpleRefSets(String terminology, String version)
     throws Exception;
+
+  /**
+   * Returns the resfset descriptor ref sets.
+   *
+   * @param terminology the terminology
+   * @param version the version
+   * @return the resfset descriptor ref sets
+   * @throws Exception the exception
+   */
+  public Map<String, String> getRefsetDescriptorRefSets(String terminology,
+    String version) throws Exception;
+
+  /**
+   * Returns the module dependency ref sets.
+   *
+   * @param terminology the terminology
+   * @param version the version
+   * @return the module dependency ref sets
+   * @throws Exception the exception
+   */
+  public Map<String, String> getModuleDependencyRefSets(String terminology,
+    String version) throws Exception;
+
+  /**
+   * Returns the description type ref sets.
+   *
+   * @param terminology the terminology
+   * @param version the version
+   * @return the description type ref sets
+   * @throws Exception the exception
+   */
+  public Map<String, String> getDescriptionTypeRefSets(String terminology,
+    String version) throws Exception;
 
   /**
    * Returns the map relations.
@@ -223,7 +340,7 @@ public interface MetadataService extends RootService, Configurable {
    * @param terminology the terminology
    * @param version the version
    * @return the non grouping relationship types
-   * @throws Exception 
+   * @throws Exception the exception
    */
   public Map<String, String> getNonGroupingRelationshipTypes(
     String terminology, String version) throws Exception;

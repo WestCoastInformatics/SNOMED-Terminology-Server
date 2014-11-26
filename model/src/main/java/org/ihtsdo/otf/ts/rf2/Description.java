@@ -112,6 +112,20 @@ public interface Description extends Component {
     Set<LanguageRefSetMember> languageRefSetMembers);
 
   /**
+   * Returns the language ref set member count.
+   *
+   * @return the language ref set member count
+   */
+  public int getLanguageRefSetMemberCount();
+  
+  /**
+   * Sets the language ref set member count.
+   *
+   * @param ct the language ref set member count
+   */
+  public void setLanguageRefSetMemberCount(int ct);
+
+  /**
    * Adds a LanguageRefSetMember to the set of LanguageRefSetMembers
    * 
    * @param languageRefSetMember the LanguageRefSetMembers to be added

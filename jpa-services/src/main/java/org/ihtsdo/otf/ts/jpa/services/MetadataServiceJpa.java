@@ -9,7 +9,8 @@ import org.ihtsdo.otf.ts.helpers.ConfigUtility;
 import org.ihtsdo.otf.ts.services.MetadataService;
 
 /**
- * Reference implementation of {@link MetadataService}
+ * Implementation of {@link MetadataService} that redirects to
+ * terminology-specific implemlentations.
  */
 public class MetadataServiceJpa extends RootServiceJpa implements
     MetadataService {
@@ -38,7 +39,8 @@ public class MetadataServiceJpa extends RootServiceJpa implements
 
   /**
    * Instantiates an empty {@link MetadataServiceJpa}.
-   * @throws Exception
+   *
+   * @throws Exception the exception
    */
   public MetadataServiceJpa() throws Exception {
     super();
@@ -61,72 +63,124 @@ public class MetadataServiceJpa extends RootServiceJpa implements
     Map<String, Map<String, String>> idNameMapList = new HashMap<>();
     Map<String, String> modulesIdNameMap = getModules(terminology, version);
     if (modulesIdNameMap != null) {
-      idNameMapList.put("Modules", modulesIdNameMap);
+      idNameMapList.put(MetadataKeys.Modules.toString(), modulesIdNameMap);
     }
+
+    Map<String, String> adNameMap =
+        getAttributeDescriptions(terminology, version);
+    if (adNameMap != null) {
+      idNameMapList.put(MetadataKeys.Attribute_Types.toString(), adNameMap);
+    }
+
+    Map<String, String> atNameMap = getAttributeTypes(terminology, version);
+    if (atNameMap != null) {
+      idNameMapList.put(MetadataKeys.Attribute_Descriptions.toString(),
+          atNameMap);
+    }
+
+    Map<String, String> dfNameMap = getDescriptionFormats(terminology, version);
+    if (dfNameMap != null) {
+      idNameMapList.put(MetadataKeys.Description_Formats.toString(), dfNameMap);
+    }
+
     Map<String, String> atvIdNameMap =
         getAttributeValueRefSets(terminology, version);
     if (atvIdNameMap != null) {
-      idNameMapList.put("Attribute Value Refsets", atvIdNameMap);
+      idNameMapList.put(MetadataKeys.Attribute_Value_Refsets.toString(),
+          atvIdNameMap);
     }
     Map<String, String> csIdNameMap =
         getCaseSignificances(terminology, version);
     if (csIdNameMap != null) {
-      idNameMapList.put("Case Significances", csIdNameMap);
+      idNameMapList
+          .put(MetadataKeys.Case_Significances.toString(), csIdNameMap);
     }
     Map<String, String> cmIdNameMap =
         getComplexMapRefSets(terminology, version);
     if (cmIdNameMap != null) {
-      idNameMapList.put("Complex Map Refsets", cmIdNameMap);
+      idNameMapList.put(MetadataKeys.Complex_Map_Refsets.toString(),
+          cmIdNameMap);
     }
     Map<String, String> dsIdNameMap =
         getDefinitionStatuses(terminology, version);
     if (dsIdNameMap != null) {
-      idNameMapList.put("Definition Statuses", dsIdNameMap);
+      idNameMapList.put(MetadataKeys.Definition_Statuses.toString(),
+          dsIdNameMap);
     }
     Map<String, String> dtIdNameMap = getDescriptionTypes(terminology, version);
     if (dtIdNameMap != null) {
-      idNameMapList.put("Description Types", dtIdNameMap);
+      idNameMapList.put(MetadataKeys.Description_Types.toString(), dtIdNameMap);
     }
     Map<String, String> lIdNameMap = getLanguageRefSets(terminology, version);
     if (lIdNameMap != null) {
-      idNameMapList.put("Language Refsets", lIdNameMap);
+      idNameMapList.put(MetadataKeys.Language_Refsets.toString(), lIdNameMap);
     }
     Map<String, String> mrIdNameMap = getMapRelations(terminology, version);
     if (mrIdNameMap != null) {
-      idNameMapList.put("Map Relations", mrIdNameMap);
+      idNameMapList.put(MetadataKeys.Map_Relations.toString(), mrIdNameMap);
     }
     Map<String, String> rctIdNameMap =
         getRelationshipCharacteristicTypes(terminology, version);
     if (rctIdNameMap != null) {
-      idNameMapList.put("Relationship Characteristic Types", rctIdNameMap);
+      idNameMapList.put(
+          MetadataKeys.Relationship_Characteristic_Types.toString(),
+          rctIdNameMap);
     }
     Map<String, String> rmIdNameMap =
         getRelationshipModifiers(terminology, version);
     if (rmIdNameMap != null) {
-      idNameMapList.put("Relationship Modifiers", rmIdNameMap);
+      idNameMapList.put(MetadataKeys.Relationship_Modifiers.toString(),
+          rmIdNameMap);
     }
     Map<String, String> rtIdNameMap =
         getRelationshipTypes(terminology, version);
     if (rtIdNameMap != null) {
-      idNameMapList.put("Relationship Types", rtIdNameMap);
+      idNameMapList
+          .put(MetadataKeys.Relationship_Types.toString(), rtIdNameMap);
     }
     Map<String, String> hierRtIdNameMap =
         getHierarchicalRelationshipTypes(terminology, version);
     if (hierRtIdNameMap != null) {
-      idNameMapList.put("Hierarchical Relationship Types", hierRtIdNameMap);
+      idNameMapList.put(
+          MetadataKeys.Hierarchical_Relationship_Types.toString(),
+          hierRtIdNameMap);
     }
     Map<String, String> smIdNameMap = getSimpleMapRefSets(terminology, version);
     if (smIdNameMap != null) {
-      idNameMapList.put("Simple Map Refsets", smIdNameMap);
+      idNameMapList
+          .put(MetadataKeys.Simple_Map_Refsets.toString(), smIdNameMap);
     }
     Map<String, String> sIdNameMap = getSimpleRefSets(terminology, version);
     if (sIdNameMap != null) {
-      idNameMapList.put("Simple Refsets", sIdNameMap);
+      idNameMapList.put(MetadataKeys.Simple_Refsets.toString(), sIdNameMap);
     }
+
+    Map<String, String> rdNameMap =
+        getRefsetDescriptorRefSets(terminology, version);
+    if (rdNameMap != null) {
+      idNameMapList.put(MetadataKeys.Refset_Descriptor_Refsets.toString(),
+          rdNameMap);
+    }
+
+    Map<String, String> dtNameMap =
+        getDescriptionTypeRefSets(terminology, version);
+    if (dtNameMap != null) {
+      idNameMapList.put(MetadataKeys.Description_Type_Refsets.toString(),
+          dtNameMap);
+    }
+
+    Map<String, String> mdNameMap =
+        getModuleDependencyRefSets(terminology, version);
+    if (mdNameMap != null) {
+      idNameMapList.put(MetadataKeys.Module_Dependency_Refsets.toString(),
+          mdNameMap);
+    }
+
     Map<String, String> nonGroupingRelTypeMap =
         getNonGroupingRelationshipTypes(terminology, version);
     if (sIdNameMap != null) {
-      idNameMapList.put("Non Grouping Relationship Types",
+      idNameMapList.put(
+          MetadataKeys.Non_Grouping_Relationship_Types.toString(),
           nonGroupingRelTypeMap);
     }
 
@@ -145,6 +199,62 @@ public class MetadataServiceJpa extends RootServiceJpa implements
     throws Exception {
     if (helperMap.containsKey(terminology)) {
       return helperMap.get(terminology).getModules(terminology, version);
+    } else {
+      // return an empty map
+      return new HashMap<>();
+    }
+  }
+
+  /*
+   * (non-Javadoc)
+   * 
+   * @see
+   * org.ihtsdo.otf.ts.services.MetadataService#getAttributeDescriptions(java
+   * .lang.String, java.lang.String)
+   */
+  @Override
+  public Map<String, String> getAttributeDescriptions(String terminology,
+    String version) throws Exception {
+    if (helperMap.containsKey(terminology)) {
+      return helperMap.get(terminology).getAttributeDescriptions(terminology,
+          version);
+    } else {
+      // return an empty map
+      return new HashMap<>();
+    }
+  }
+
+  /*
+   * (non-Javadoc)
+   * 
+   * @see
+   * org.ihtsdo.otf.ts.services.MetadataService#getAttributeTypes(java.lang.
+   * String, java.lang.String)
+   */
+  @Override
+  public Map<String, String> getAttributeTypes(String terminology,
+    String version) throws Exception {
+    if (helperMap.containsKey(terminology)) {
+      return helperMap.get(terminology).getAttributeTypes(terminology, version);
+    } else {
+      // return an empty map
+      return new HashMap<>();
+    }
+  }
+
+  /*
+   * (non-Javadoc)
+   * 
+   * @see
+   * org.ihtsdo.otf.ts.services.MetadataService#getDescriptionFormats(java.lang
+   * .String, java.lang.String)
+   */
+  @Override
+  public Map<String, String> getDescriptionFormats(String terminology,
+    String version) throws Exception {
+    if (helperMap.containsKey(terminology)) {
+      return helperMap.get(terminology).getDescriptionFormats(terminology,
+          version);
     } else {
       // return an empty map
       return new HashMap<>();
@@ -239,6 +349,64 @@ public class MetadataServiceJpa extends RootServiceJpa implements
     throws Exception {
     if (helperMap.containsKey(terminology)) {
       return helperMap.get(terminology).getSimpleRefSets(terminology, version);
+    } else {
+      // return an empty map
+      return new HashMap<>();
+    }
+  }
+
+  /**
+   * Returns the refset descriptor ref sets.
+   *
+   * @param terminology the terminology
+   * @param version the version
+   * @return the refset descriptor ref sets
+   * @throws Exception the exception
+   */
+  @Override
+  public Map<String, String> getRefsetDescriptorRefSets(String terminology,
+    String version) throws Exception {
+    if (helperMap.containsKey(terminology)) {
+      return helperMap.get(terminology).getRefsetDescriptorRefSets(terminology,
+          version);
+    } else {
+      // return an empty map
+      return new HashMap<>();
+    }
+  }
+
+  /*
+   * (non-Javadoc)
+   * 
+   * @see
+   * org.ihtsdo.otf.ts.services.MetadataService#getDescriptionTypeRefSets(java
+   * .lang.String, java.lang.String)
+   */
+  @Override
+  public Map<String, String> getDescriptionTypeRefSets(String terminology,
+    String version) throws Exception {
+    if (helperMap.containsKey(terminology)) {
+      return helperMap.get(terminology).getDescriptionTypeRefSets(terminology,
+          version);
+    } else {
+      // return an empty map
+      return new HashMap<>();
+    }
+  }
+
+  /*
+   * (non-Javadoc)
+   * 
+   * @see
+   * org.ihtsdo.otf.ts.services.MetadataService#getModuleDependencyRefSets(java
+   * .lang.String, java.lang.String)
+   */
+  @Override
+  public Map<String, String> getModuleDependencyRefSets(String terminology,
+    String version) throws Exception {
+    if (helperMap.containsKey(terminology)) {
+      return helperMap.get(terminology).getModuleDependencyRefSets(terminology,
+          version);
     } else {
       // return an empty map
       return new HashMap<>();

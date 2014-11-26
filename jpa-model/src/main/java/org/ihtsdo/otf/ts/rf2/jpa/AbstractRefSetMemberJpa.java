@@ -62,7 +62,7 @@ public abstract class AbstractRefSetMemberJpa<T extends Component> extends
       return false;
     if (getClass() != obj.getClass())
       return false;
-    AbstractRefSetMemberJpa other = (AbstractRefSetMemberJpa) obj;
+    AbstractRefSetMemberJpa<?> other = (AbstractRefSetMemberJpa<?>) obj;
     if (refSetId == null) {
       if (other.refSetId != null)
         return false;

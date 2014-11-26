@@ -27,6 +27,10 @@ import org.ihtsdo.otf.ts.rf2.Relationship;
 @XmlRootElement(name = "relationship")
 public class RelationshipJpa extends AbstractComponent implements Relationship {
 
+  /** The workflow status. */
+  @Column(nullable = true)
+  private String workflowStatus;
+
   /** The source concept. */
   @ManyToOne(targetEntity = ConceptJpa.class, optional = false)
   @ContainedIn
@@ -76,8 +80,24 @@ public class RelationshipJpa extends AbstractComponent implements Relationship {
     // in deep copy contexts, this will be overridden
     sourceConcept = relationship.getSourceConcept();
     typeId = relationship.getTypeId();
+    workflowStatus = relationship.getWorkflowStatus();
   }
   
+  /* (non-Javadoc)
+   * @see org.ihtsdo.otf.ts.rf2.Relationship#getWorkflowStatus()
+   */
+  @Override
+  public String getWorkflowStatus() {
+    return workflowStatus;
+  }
+
+  /* (non-Javadoc)
+   * @see org.ihtsdo.otf.ts.rf2.Relationship#setWorkflowStatus(java.lang.String)
+   */
+  @Override
+  public void setWorkflowStatus(String workflowStatus) {
+    this.workflowStatus = workflowStatus;
+  }
   
   /**
    * Returns the type id.
