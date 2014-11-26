@@ -71,8 +71,12 @@ public class SnomedMetadataServiceJpaHelper extends ContentServiceJpa implements
     return map;
   }
 
-  /* (non-Javadoc)
-   * @see org.ihtsdo.otf.ts.services.MetadataService#getAttributeDescriptions(java.lang.String, java.lang.String)
+  /*
+   * (non-Javadoc)
+   * 
+   * @see
+   * org.ihtsdo.otf.ts.services.MetadataService#getAttributeDescriptions(java
+   * .lang.String, java.lang.String)
    */
   @Override
   public Map<String, String> getAttributeDescriptions(String terminology,
@@ -94,8 +98,12 @@ public class SnomedMetadataServiceJpaHelper extends ContentServiceJpa implements
     return map;
   }
 
-  /* (non-Javadoc)
-   * @see org.ihtsdo.otf.ts.services.MetadataService#getAttributeTypes(java.lang.String, java.lang.String)
+  /*
+   * (non-Javadoc)
+   * 
+   * @see
+   * org.ihtsdo.otf.ts.services.MetadataService#getAttributeTypes(java.lang.
+   * String, java.lang.String)
    */
   @Override
   public Map<String, String> getAttributeTypes(String terminology,
@@ -117,8 +125,12 @@ public class SnomedMetadataServiceJpaHelper extends ContentServiceJpa implements
     return map;
   }
 
-  /* (non-Javadoc)
-   * @see org.ihtsdo.otf.ts.services.MetadataService#getDescriptionFormats(java.lang.String, java.lang.String)
+  /*
+   * (non-Javadoc)
+   * 
+   * @see
+   * org.ihtsdo.otf.ts.services.MetadataService#getDescriptionFormats(java.lang
+   * .String, java.lang.String)
    */
   @Override
   public Map<String, String> getDescriptionFormats(String terminology,
@@ -271,8 +283,12 @@ public class SnomedMetadataServiceJpaHelper extends ContentServiceJpa implements
     return map;
   }
 
-  /* (non-Javadoc)
-   * @see org.ihtsdo.otf.ts.services.MetadataService#getRefsetDescriptorRefSets(java.lang.String, java.lang.String)
+  /*
+   * (non-Javadoc)
+   * 
+   * @see
+   * org.ihtsdo.otf.ts.services.MetadataService#getRefsetDescriptorRefSets(java
+   * .lang.String, java.lang.String)
    */
   @Override
   public Map<String, String> getRefsetDescriptorRefSets(String terminology,
@@ -285,8 +301,12 @@ public class SnomedMetadataServiceJpaHelper extends ContentServiceJpa implements
     return map;
   }
 
-  /* (non-Javadoc)
-   * @see org.ihtsdo.otf.ts.services.MetadataService#getModuleDependencyRefSets(java.lang.String, java.lang.String)
+  /*
+   * (non-Javadoc)
+   * 
+   * @see
+   * org.ihtsdo.otf.ts.services.MetadataService#getModuleDependencyRefSets(java
+   * .lang.String, java.lang.String)
    */
   @Override
   public Map<String, String> getModuleDependencyRefSets(String terminology,
@@ -299,8 +319,12 @@ public class SnomedMetadataServiceJpaHelper extends ContentServiceJpa implements
     return map;
   }
 
-  /* (non-Javadoc)
-   * @see org.ihtsdo.otf.ts.services.MetadataService#getDescriptionTypeRefSets(java.lang.String, java.lang.String)
+  /*
+   * (non-Javadoc)
+   * 
+   * @see
+   * org.ihtsdo.otf.ts.services.MetadataService#getDescriptionTypeRefSets(java
+   * .lang.String, java.lang.String)
    */
   @Override
   public Map<String, String> getDescriptionTypeRefSets(String terminology,
@@ -475,6 +499,10 @@ public class SnomedMetadataServiceJpaHelper extends ContentServiceJpa implements
     // find all active descendants
     Concept isaRel =
         getSingleConcept(isaRelationshipType, terminology, version);
+    // this can happen when terminology data is being loaded
+    if (isaRel == null) {
+      return map;
+    }
     map.put(new String(isaRel.getTerminologyId()),
         isaRel.getDefaultPreferredName());
     return map;
@@ -531,7 +559,9 @@ public class SnomedMetadataServiceJpaHelper extends ContentServiceJpa implements
     return map;
   }
 
-  /* (non-Javadoc)
+  /*
+   * (non-Javadoc)
+   * 
    * @see org.ihtsdo.otf.ts.jpa.services.RootServiceJpa#close()
    */
   @Override
@@ -539,7 +569,9 @@ public class SnomedMetadataServiceJpaHelper extends ContentServiceJpa implements
     // no-op - this is just helper class
   }
 
-  /* (non-Javadoc)
+  /*
+   * (non-Javadoc)
+   * 
    * @see org.ihtsdo.otf.ts.services.MetadataService#getTerminologies()
    */
   @Override
@@ -548,8 +580,11 @@ public class SnomedMetadataServiceJpaHelper extends ContentServiceJpa implements
     return null;
   }
 
-  /* (non-Javadoc)
-   * @see org.ihtsdo.otf.ts.services.MetadataService#getVersions(java.lang.String)
+  /*
+   * (non-Javadoc)
+   * 
+   * @see
+   * org.ihtsdo.otf.ts.services.MetadataService#getVersions(java.lang.String)
    */
   @Override
   public List<String> getVersions(String terminology) {
@@ -557,8 +592,12 @@ public class SnomedMetadataServiceJpaHelper extends ContentServiceJpa implements
     return null;
   }
 
-  /* (non-Javadoc)
-   * @see org.ihtsdo.otf.ts.services.MetadataService#getLatestVersion(java.lang.String)
+  /*
+   * (non-Javadoc)
+   * 
+   * @see
+   * org.ihtsdo.otf.ts.services.MetadataService#getLatestVersion(java.lang.String
+   * )
    */
   @Override
   public String getLatestVersion(String terminology) {
@@ -566,8 +605,11 @@ public class SnomedMetadataServiceJpaHelper extends ContentServiceJpa implements
     return null;
   }
 
-  /* (non-Javadoc)
-   * @see org.ihtsdo.otf.ts.services.MetadataService#getTerminologyLatestVersions()
+  /*
+   * (non-Javadoc)
+   * 
+   * @see
+   * org.ihtsdo.otf.ts.services.MetadataService#getTerminologyLatestVersions()
    */
   @Override
   public Map<String, String> getTerminologyLatestVersions() {
@@ -575,8 +617,12 @@ public class SnomedMetadataServiceJpaHelper extends ContentServiceJpa implements
     return null;
   }
 
-  /* (non-Javadoc)
-   * @see org.ihtsdo.otf.ts.services.MetadataService#getNonGroupingRelationshipTypes(java.lang.String, java.lang.String)
+  /*
+   * (non-Javadoc)
+   * 
+   * @see
+   * org.ihtsdo.otf.ts.services.MetadataService#getNonGroupingRelationshipTypes
+   * (java.lang.String, java.lang.String)
    */
   @Override
   public Map<String, String> getNonGroupingRelationshipTypes(
@@ -618,7 +664,7 @@ public class SnomedMetadataServiceJpaHelper extends ContentServiceJpa implements
    * org.ihtsdo.otf.ts.helpers.Configurable#setProperties(java.util.Properties)
    */
   @Override
-  public void setProperties(Properties p) {
+  public void setProperties(Properties p) throws Exception {
     // do nothing
   }
 

@@ -125,7 +125,7 @@ public class RootServiceJpa implements RootService {
    * @see org.ihtsdo.otf.mapping.services.MappingService#beginTransaction()
    */
   @Override
-  public void beginTransaction() {
+  public void beginTransaction() throws Exception {
 
     if (getTransactionPerOperation())
       throw new IllegalStateException(
@@ -144,7 +144,7 @@ public class RootServiceJpa implements RootService {
    * @see org.ihtsdo.otf.mapping.services.MappingService#commit()
    */
   @Override
-  public void commit() {
+  public void commit() throws Exception {
 
     if (getTransactionPerOperation()) {
       throw new IllegalStateException(

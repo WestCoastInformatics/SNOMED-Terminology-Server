@@ -51,14 +51,9 @@ public class IhtsdoSecurityServiceHandler implements SecurityServiceHandler {
     ClientResponse response = resource.post(ClientResponse.class, form);
     String resultString = "";
     if (response.getClientResponseStatus().getFamily() == Family.SUCCESSFUL) {
-      Logger.getLogger(this.getClass())
-          .info("Success! " + response.getStatus());
       resultString = response.getEntity(String.class);
       Logger.getLogger(this.getClass()).info(resultString);
     } else {
-      // TODO Differentiate error messages with NO RESPONE and Authentication
-      // Failed (Check text)
-      Logger.getLogger(this.getClass()).info("ERROR! " + response.getStatus());
       resultString = response.getEntity(String.class);
       Logger.getLogger(this.getClass()).info(resultString);
       throw new LocalException("Incorrect user name or password.");

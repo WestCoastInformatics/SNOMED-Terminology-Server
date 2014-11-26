@@ -22,6 +22,6 @@ public class ActionClientRest implements ActionServiceRest {
     this.config = config;
   }
 
-  // TODO: implement rest servcies as they are added
+  // TODO: implement rest services as they are added
 
 }

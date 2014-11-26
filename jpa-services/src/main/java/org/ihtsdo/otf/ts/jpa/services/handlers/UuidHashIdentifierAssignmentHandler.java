@@ -26,7 +26,7 @@ import org.ihtsdo.otf.ts.services.handlers.IdentifierAssignmentHandler;
  * Default implementation of {@link IdentifierAssignmentHandler}. This supports
  * "application-managed" identifier assignment.
  */
-public class UuidHashtIdentifierAssignmentHandler implements
+public class UuidHashIdentifierAssignmentHandler implements
     IdentifierAssignmentHandler {
 
   /*
@@ -46,6 +46,7 @@ public class UuidHashtIdentifierAssignmentHandler implements
    */
   @Override
   public String getTerminologyId(Concept concept) throws Exception {
+
     StringBuilder sb = new StringBuilder();
     List<Concept> concepts =
         TerminologyUtility.getActiveParentConcepts(concept);
@@ -115,8 +116,8 @@ public class UuidHashtIdentifierAssignmentHandler implements
    * id.
    */
   @Override
-  public String getTerminologyId(AttributeValueRefSetMember<? extends Component> member)
-    throws Exception {
+  public String getTerminologyId(
+    AttributeValueRefSetMember<? extends Component> member) throws Exception {
     String value = member.getRefSetId() + member.getComponent().getId();
     String id = TerminologyUtility.getUuid(value).toString();
     member.setTerminologyId(id);
@@ -128,7 +129,8 @@ public class UuidHashtIdentifierAssignmentHandler implements
    * map rule, and map target.
    */
   @Override
-  public String getTerminologyId(ComplexMapRefSetMember member) throws Exception {
+  public String getTerminologyId(ComplexMapRefSetMember member)
+    throws Exception {
     String value =
         member.getRefSetId() + member.getComponent().getId()
             + member.getMapRule() + member.getMapTarget();
@@ -142,7 +144,8 @@ public class UuidHashtIdentifierAssignmentHandler implements
    * id.
    */
   @Override
-  public String getTerminologyId(DescriptionTypeRefSetMember member) throws Exception {
+  public String getTerminologyId(DescriptionTypeRefSetMember member)
+    throws Exception {
     String value = member.getRefSetId() + member.getComponent().getId();
     String id = TerminologyUtility.getUuid(value).toString();
     member.setTerminologyId(id);
@@ -164,7 +167,8 @@ public class UuidHashtIdentifierAssignmentHandler implements
    * Module dependency member ID based on refset id, referenced component id.
    */
   @Override
-  public String getTerminologyId(ModuleDependencyRefSetMember member) throws Exception {
+  public String getTerminologyId(ModuleDependencyRefSetMember member)
+    throws Exception {
     String value = member.getRefSetId() + member.getComponent().getId();
     String id = TerminologyUtility.getUuid(value).toString();
     member.setTerminologyId(id);
@@ -176,7 +180,8 @@ public class UuidHashtIdentifierAssignmentHandler implements
    * attribute description, attribute type, and attribute order.
    */
   @Override
-  public String getTerminologyId(RefsetDescriptorRefSetMember member) throws Exception {
+  public String getTerminologyId(RefsetDescriptorRefSetMember member)
+    throws Exception {
     String value =
         member.getRefSetId() + member.getComponent().getId()
             + member.getAttributeDescription() + member.getAttributeType()
@@ -215,13 +220,36 @@ public class UuidHashtIdentifierAssignmentHandler implements
    * Transitive relationship id based on super/subtype concepts.
    */
   @Override
-  public String getTerminologyId(TransitiveRelationship relationship) throws Exception {
+  public String getTerminologyId(TransitiveRelationship relationship)
+    throws Exception {
     String value =
         relationship.getSuperTypeConcept() + ","
             + relationship.getSubTypeConcept();
     String id = TerminologyUtility.getUuid(value).toString();
     relationship.setTerminologyId(id);
     return id;
+  }
+
+  /*
+   * (non-Javadoc)
+   * 
+   * @see org.ihtsdo.otf.ts.services.handlers.IdentifierAssignmentHandler#
+   * allowIdChangeOnUpdate()
+   */
+  @Override
+  public boolean allowIdChangeOnUpdate() {
+    return false;
+  }
+
+  /*
+   * (non-Javadoc)
+   * 
+   * @see org.ihtsdo.otf.ts.services.handlers.IdentifierAssignmentHandler#
+   * allowConceptIdChangeOnUpdate()
+   */
+  @Override
+  public boolean allowConceptIdChangeOnUpdate() {
+    return true;
   }
 
 }

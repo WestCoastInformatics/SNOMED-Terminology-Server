@@ -41,6 +41,20 @@ public class TerminologyUtility {
   }
 
   /**
+   * Indicates whether or not the relationship is a hierarchical isa rel.
+   *
+   * @param relationship the relationship
+   * @return <code>true</code> if so, <code>false</code> otherwise
+   * @throws Exception the exception
+   */
+  public static boolean isHierarchicalIsaRel(Relationship relationship) throws Exception{
+    Set<String> isaRels =
+        cacheIsaRels(relationship.getTerminology(),
+            relationship.getTerminologyVersion());
+    return relationship != null && isaRels.contains(relationship.getTypeId());
+  }
+
+  /**
    * Cache isa rels.
    *
    * @param terminology the terminology
@@ -78,8 +92,6 @@ public class TerminologyUtility {
     }
     return results;
   }
-  
-  
 
   /**
    * Gets the UUID for a string using the null namespace.

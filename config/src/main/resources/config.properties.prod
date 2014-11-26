@@ -29,8 +29,19 @@ hibernate.search.default.directory_provider=filesystem
 # Metadata Service Settings (one for each "terminology")
 #
 metadata.service.handler=SNOMEDCT,ICD9CM
-metadata.service.handler.SNOMEDCT.class=org.ihtsdo.otf.mapping.jpa.services.helper.SnomedMetadataServiceJpaHelper
-metadata.service.handler.ICD9CM.class=org.ihtsdo.otf.mapping.jpa.services.helper.ClamlMetadataServiceJpaHelper
+metadata.service.handler.SNOMEDCT.class=org.ihtsdo.otf.ts.jpa.services.helper.SnomedMetadataServiceJpaHelper
+metadata.service.handler.ICD9CM.class=org.ihtsdo.otf.ts.jpa.services.helper.ClamlMetadataServiceJpaHelper
+
+#
+# Compute preferred name handlers
+#
+compute.preferred.name.handler=SNOMEDCT,ICD9CM
+compute.preferred.name.handler.SNOMEDCT.class=org.ihtsdo.otf.ts.jpa.services.handlers.Rf2ComputePreferredNameHandler
+compute.preferred.name.handler.SNOMEDCT.defaultPreferredNames.typeId=900000000000013009
+compute.preferred.name.handler.SNOMEDCT.defaultPreferredNames.refSetId=900000000000509007
+compute.preferred.name.handler.SNOMEDCT.defaultPreferredNames.acceptabilityId=900000000000548007
+compute.preferred.name.handler.ICD9CM.class=org.ihtsdo.otf.ts.jpa.services.handlers.ClamlComputePreferredNameHandler
+compute.preferred.name.handler.ICD9CM.defaultPreferredNames.type=4
 
 #
 # Validation Service Settings
@@ -59,19 +70,13 @@ graph.resolution.handler.DEFAULT.class=org.ihtsdo.otf.ts.jpa.services.handlers.D
 # Identifier assignment handler
 #
 identifier.assignment.handler=UUID
-identifier.assignment.UUID.class=org.ihtsdo.otf.ts.jpa.services.handlers.UuidHashtIdentifierAssignmentHandler
+identifier.assignment.handler.UUID.class=org.ihtsdo.otf.ts.jpa.services.handlers.SnomedUuidHashIdentifierAssignmentHandler
 
 #
 # SNOMEDCT data location
 #
 loader.SNOMEDCT.input.data=C:/data/snomedct-20140731-mini
 loader.SNOMEDCT.delta.data=C:/data/snomed-dailybuild-mini
-# SNOMED CT RF2 SCTID for "Synonym"
-loader.defaultPreferredNames.typeId=900000000000013009
-# SNOMED CT RF2 SCTID for the US English language refset
-loader.defaultPreferredNames.refSetId=900000000000509007
-# SNOMED CT RF2 SCTID for "Preferred"
-loader.defaultPreferredNames.acceptabilityId=900000000000548007
 
 #
 # ICD9CM data location

@@ -39,6 +39,7 @@ import org.ihtsdo.otf.ts.rf2.jpa.SimpleMapRefSetMemberJpa;
 import org.ihtsdo.otf.ts.rf2.jpa.SimpleRefSetMemberJpa;
 import org.ihtsdo.otf.ts.services.ContentService;
 import org.ihtsdo.otf.ts.services.MetadataService;
+import org.ihtsdo.otf.ts.services.handlers.ComputePreferredNameHandler;
 
 import com.google.common.io.Files;
 
@@ -80,15 +81,6 @@ public class TerminologyRf2SnapshotLoaderMojo extends AbstractMojo {
 
   /** The version. */
   private String version = null;
-
-  /** the defaultPreferredNames values. */
-  private Long dpnTypeId;
-
-  /** The dpn ref set id. */
-  private Long dpnRefSetId;
-
-  /** The dpn acceptability id. */
-  private Long dpnAcceptabilityId;
 
   /** The date format. */
   private final SimpleDateFormat dt = new SimpleDateFormat("yyyymmdd");
@@ -170,17 +162,6 @@ public class TerminologyRf2SnapshotLoaderMojo extends AbstractMojo {
             + ".input.data directory does not exist: " + coreInputDirString);
       }
 
-      // Set the parameters for determining defaultPreferredNames
-      dpnTypeId =
-          Long.valueOf(config
-              .getProperty("loader.defaultPreferredNames.typeId"));
-      dpnRefSetId =
-          Long.valueOf(config
-              .getProperty("loader.defaultPreferredNames.refSetId"));
-      dpnAcceptabilityId =
-          Long.valueOf(config
-              .getProperty("loader.defaultPreferredNames.acceptabilityId"));
-
       //
       // Determine version
       //
@@ -203,11 +184,6 @@ public class TerminologyRf2SnapshotLoaderMojo extends AbstractMojo {
             "Could not find concept file to determine version");
       }
 
-      // output relevant properties/settings to console
-      getLog().info("  Default preferred name settings:");
-      getLog().info("    typeId = " + dpnTypeId);
-      getLog().info("    refSetId = " + dpnRefSetId);
-      getLog().info("    acceptabilityId = " + dpnAcceptabilityId);
       getLog().info(
           "  Objects committed in blocks of " + Integer.toString(commitCt));
 
@@ -1098,7 +1074,8 @@ public class TerminologyRf2SnapshotLoaderMojo extends AbstractMojo {
     final ContentService contentService = new ContentServiceJpa();
     contentService.setTransactionPerOperation(false);
     contentService.beginTransaction();
-
+    
+    ComputePreferredNameHandler pnHandler = contentService.getComputePreferredNameHandler(terminology);
     // Load and persist first description
     description = getNextDescription(contentService);
 
@@ -1135,10 +1112,7 @@ public class TerminologyRf2SnapshotLoaderMojo extends AbstractMojo {
 
         // Check if this language refset and description form the
         // defaultPreferredName
-        if (description.isActive() && description.getTypeId().equals(dpnTypeId)
-            && new Long(language.getRefSetId()).equals(dpnRefSetId)
-            && language.isActive()
-            && language.getAcceptabilityId().equals(dpnAcceptabilityId)) {
+        if (pnHandler.isPreferredName(description, language)) {
 
           // retrieve the concept for this description
           concept = description.getConcept();

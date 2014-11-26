@@ -3,7 +3,7 @@ package org.ihtsdo.otf.ts.helpers;
 import java.util.Properties;
 
 /**
- * Represents something Configurable.
+ * Represents something configurable.
  */
 public interface Configurable {
 
@@ -11,6 +11,7 @@ public interface Configurable {
    * Sets the properties.
    *
    * @param p the properties
+   * @throws Exception 
    */
-  public void setProperties(Properties p);
+  public void setProperties(Properties p) throws Exception;
 }

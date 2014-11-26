@@ -20,13 +20,25 @@ import org.ihtsdo.otf.ts.rf2.Relationship;
 import org.ihtsdo.otf.ts.rf2.SimpleMapRefSetMember;
 import org.ihtsdo.otf.ts.rf2.SimpleRefSetMember;
 import org.ihtsdo.otf.ts.rf2.TransitiveRelationship;
+import org.ihtsdo.otf.ts.services.handlers.ComputePreferredNameHandler;
 import org.ihtsdo.otf.ts.services.handlers.GraphResolutionHandler;
+import org.ihtsdo.otf.ts.services.handlers.IdentifierAssignmentHandler;
 
 /**
  * Generically represents a service for accessing content.
  */
 public interface ContentService extends RootService {
 
+  /**
+   * Enable listeners.
+   */
+  public void enableListeners();
+  
+  /**
+   * Disable listeners.
+   */
+  public void disableListeners();
+  
   /**
    * Gets all concepts.
    * @param terminology the terminology
@@ -276,7 +288,7 @@ public interface ContentService extends RootService {
    * @throws Exception if anything goes wrong
    */
   public AttributeValueRefSetMember<? extends Component> getAttributeValueRefSetMember(
-    String id) throws Exception;
+    Long id) throws Exception;
 
   /**
    * Returns the attribute value refset member matching the specified
@@ -328,7 +340,7 @@ public interface ContentService extends RootService {
    * @throws Exception if anything goes wrong
    */
   public AssociationReferenceRefSetMember<? extends Component> getAssociationReferenceRefSetMember(
-    String id) throws Exception;
+    Long id) throws Exception;
 
   /**
    * Returns the association reference refset member matching the specified
@@ -802,7 +814,25 @@ public interface ContentService extends RootService {
    * This is configured internally but made available through this service.
    *
    * @return the graph resolution handler
+   * @throws Exception the exception
    */
-  public GraphResolutionHandler getGraphResolutionHandler();
+  public GraphResolutionHandler getGraphResolutionHandler() throws Exception;
+
+  /**
+   * Returns the identifier assignment handler.
+   *
+   * @return the identifier assignment handler
+   * @throws Exception the exception
+   */
+  public IdentifierAssignmentHandler getIdentifierAssignmentHandler() throws Exception;
   
+  /**
+   * Returns the compute preferred name handler.
+   *
+   * @param terminology the terminology
+   * @return the compute preferred name handler
+   * @throws Exception the exception
+   */
+  public ComputePreferredNameHandler getComputePreferredNameHandler(String terminology) throws Exception;
+
 }

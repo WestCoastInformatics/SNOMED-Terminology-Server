@@ -18,7 +18,7 @@ import org.ihtsdo.otf.ts.helpers.UserRole;
 import org.ihtsdo.otf.ts.jpa.services.ContentServiceJpa;
 import org.ihtsdo.otf.ts.jpa.services.MetadataServiceJpa;
 import org.ihtsdo.otf.ts.jpa.services.SecurityServiceJpa;
-import org.ihtsdo.otf.ts.rest.ContentChangeServiceRest;
+import org.ihtsdo.otf.ts.jpa.services.helper.TerminologyUtility;
 import org.ihtsdo.otf.ts.rest.ContentServiceRest;
 import org.ihtsdo.otf.ts.rf2.Concept;
 import org.ihtsdo.otf.ts.services.ContentService;
@@ -88,20 +88,15 @@ public class ContentServiceRestImpl extends RootServiceRestImpl implements
       ConceptList cl =
           contentService.getConcepts(terminologyId, terminology, version);
 
-      // TODO: cache this instead of recomputing it each time, possibly even
-      // internally
-      MetadataService metadataService = new MetadataServiceJpa();
       for (Concept concept : cl.getIterable()) {
         if (concept != null) {
           contentService.getGraphResolutionHandler().resolve(
               concept,
-              metadataService.getHierarchicalRelationshipTypes(
-                  concept.getTerminology(), concept.getTerminologyVersion())
-                  .keySet());
+              TerminologyUtility.getHierarchcialIsaRels(
+                  concept.getTerminology(), concept.getTerminologyVersion()));
+
         }
       }
-
-      metadataService.close();
       contentService.close();
       return cl;
     } catch (Exception e) {
