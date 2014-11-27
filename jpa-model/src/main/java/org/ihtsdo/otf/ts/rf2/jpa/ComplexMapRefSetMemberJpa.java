@@ -3,6 +3,7 @@ package org.ihtsdo.otf.ts.rf2.jpa;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Table;
+import javax.xml.bind.annotation.XmlRootElement;
 
 import org.hibernate.envers.Audited;
 import org.ihtsdo.otf.ts.rf2.ComplexMapRefSetMember;
@@ -13,6 +14,7 @@ import org.ihtsdo.otf.ts.rf2.ComplexMapRefSetMember;
 @Entity
 @Table(name = "complex_map_refset_members")
 @Audited
+@XmlRootElement(name = "complexMap")
 public class ComplexMapRefSetMemberJpa extends AbstractConceptRefSetMember
     implements ComplexMapRefSetMember {
 

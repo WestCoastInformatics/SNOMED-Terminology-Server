@@ -14,9 +14,8 @@ import org.ihtsdo.otf.ts.helpers.UserRole;
 import org.ihtsdo.otf.ts.helpers.ValidationResult;
 import org.ihtsdo.otf.ts.jpa.services.SecurityServiceJpa;
 import org.ihtsdo.otf.ts.jpa.services.ValidationServiceJpa;
-import org.ihtsdo.otf.ts.rest.SecurityServiceRest;
 import org.ihtsdo.otf.ts.rest.ValidationServiceRest;
-import org.ihtsdo.otf.ts.rf2.Concept;
+import org.ihtsdo.otf.ts.rf2.jpa.ConceptJpa;
 import org.ihtsdo.otf.ts.services.SecurityService;
 import org.ihtsdo.otf.ts.services.ValidationService;
 
@@ -62,7 +61,7 @@ public class ValidationServiceRestImpl extends RootServiceRestImpl implements
       MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML
   })
   public ValidationResult validateConcept(
-    @ApiParam(value = "The concept to validate, e.g. 'TBD'", required = true) Concept concept,
+    @ApiParam(value = "The concept to validate, e.g. 'TBD'", required = true) ConceptJpa concept,
     @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken)
     throws Exception {
 

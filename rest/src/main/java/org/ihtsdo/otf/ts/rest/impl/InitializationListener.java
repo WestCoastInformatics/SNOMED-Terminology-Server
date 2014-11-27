@@ -1,12 +1,14 @@
 package org.ihtsdo.otf.ts.rest.impl;
 
 import java.util.Calendar;
+import java.util.Properties;
 import java.util.Timer;
 import java.util.TimerTask;
 
 import javax.ws.rs.ext.Provider;
 
 import org.apache.log4j.Logger;
+import org.ihtsdo.otf.ts.helpers.ConfigUtility;
 import org.ihtsdo.otf.ts.jpa.services.SecurityServiceJpa;
 import org.ihtsdo.otf.ts.services.SecurityService;
 import org.ihtsdo.otf.ts.services.handlers.ExceptionHandler;
@@ -50,7 +52,10 @@ public class InitializationListener implements AbstractResourceModelListener {
     SecurityService service;
     try {
       service = new SecurityServiceJpa();
-      service.authenticate("guest", "guest");
+      Properties config = ConfigUtility.getConfigProperties();
+      if (config.getProperty("security.handler").equals("DEFAULT")) {
+        service.authenticate("guest", "guest");
+      }
     } catch (Exception e) {
       try {
         ExceptionHandler.handleException(e, "Cacheing guest user info");

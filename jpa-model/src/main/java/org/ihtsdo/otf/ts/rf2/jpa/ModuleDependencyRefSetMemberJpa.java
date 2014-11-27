@@ -4,6 +4,7 @@ import java.util.Date;
 
 import javax.persistence.Entity;
 import javax.persistence.Table;
+import javax.xml.bind.annotation.XmlRootElement;
 
 import org.hibernate.envers.Audited;
 import org.ihtsdo.otf.ts.rf2.ModuleDependencyRefSetMember;
@@ -14,6 +15,7 @@ import org.ihtsdo.otf.ts.rf2.ModuleDependencyRefSetMember;
 @Entity
 @Table(name = "module_dependency_refset_members")
 @Audited
+@XmlRootElement(name = "moduleDependency")
 public class ModuleDependencyRefSetMemberJpa extends
     AbstractConceptRefSetMember implements ModuleDependencyRefSetMember {
 

@@ -12,6 +12,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlRootElement(name = "searchCriteria")
 public class SearchCriteriaJpa implements SearchCriteria {
 
+
   /** The id. */
   @Id
   @GeneratedValue
@@ -328,4 +329,79 @@ public class SearchCriteriaJpa implements SearchCriteria {
     this.relationshipDescendants = descendants;
   }
 
+
+  /* (non-Javadoc)
+   * @see java.lang.Object#hashCode()
+   */
+  @Override
+  public int hashCode() {
+    final int prime = 31;
+    int result = 1;
+    result = prime * result + (activeOnly ? 1231 : 1237);
+    result = prime * result + (definedOnly ? 1231 : 1237);
+    result = prime * result + (descendants ? 1231 : 1237);
+    result =
+        prime * result
+            + ((destinationId == null) ? 0 : destinationId.hashCode());
+    result = prime * result + (inactiveOnly ? 1231 : 1237);
+    result = prime * result + ((moduleId == null) ? 0 : moduleId.hashCode());
+    result = prime * result + (primitiveOnly ? 1231 : 1237);
+    result = prime * result + (relationshipDescendants ? 1231 : 1237);
+    result =
+        prime
+            * result
+            + ((relationshipTypeId == null) ? 0 : relationshipTypeId.hashCode());
+    result = prime * result + (self ? 1231 : 1237);
+    result = prime * result + ((sourceId == null) ? 0 : sourceId.hashCode());
+    return result;
+  }
+
+  /* (non-Javadoc)
+   * @see java.lang.Object#equals(java.lang.Object)
+   */
+  @Override
+  public boolean equals(Object obj) {
+    if (this == obj)
+      return true;
+    if (obj == null)
+      return false;
+    if (getClass() != obj.getClass())
+      return false;
+    SearchCriteriaJpa other = (SearchCriteriaJpa) obj;
+    if (activeOnly != other.activeOnly)
+      return false;
+    if (definedOnly != other.definedOnly)
+      return false;
+    if (descendants != other.descendants)
+      return false;
+    if (destinationId == null) {
+      if (other.destinationId != null)
+        return false;
+    } else if (!destinationId.equals(other.destinationId))
+      return false;
+    if (inactiveOnly != other.inactiveOnly)
+      return false;
+    if (moduleId == null) {
+      if (other.moduleId != null)
+        return false;
+    } else if (!moduleId.equals(other.moduleId))
+      return false;
+    if (primitiveOnly != other.primitiveOnly)
+      return false;
+    if (relationshipDescendants != other.relationshipDescendants)
+      return false;
+    if (relationshipTypeId == null) {
+      if (other.relationshipTypeId != null)
+        return false;
+    } else if (!relationshipTypeId.equals(other.relationshipTypeId))
+      return false;
+    if (self != other.self)
+      return false;
+    if (sourceId == null) {
+      if (other.sourceId != null)
+        return false;
+    } else if (!sourceId.equals(other.sourceId))
+      return false;
+    return true;
+  }
 }

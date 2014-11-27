@@ -1,7 +1,7 @@
 package org.ihtsdo.otf.ts.rest;
 
 import org.ihtsdo.otf.ts.helpers.ValidationResult;
-import org.ihtsdo.otf.ts.rf2.Concept;
+import org.ihtsdo.otf.ts.rf2.jpa.ConceptJpa;
 
 /**
  * Represents a service for validating content.
@@ -17,7 +17,7 @@ public interface ValidationServiceRest {
    * @return the validation result
    * @throws Exception the exception
    */
-  public ValidationResult validateConcept(Concept concept, String authToken)
+  public ValidationResult validateConcept(ConceptJpa concept, String authToken)
     throws Exception;
 
 }

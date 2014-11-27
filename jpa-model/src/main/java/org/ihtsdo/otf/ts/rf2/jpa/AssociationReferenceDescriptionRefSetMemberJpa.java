@@ -4,6 +4,7 @@ import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 import javax.persistence.ManyToOne;
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
 import org.hibernate.envers.Audited;
@@ -17,6 +18,7 @@ import org.ihtsdo.otf.ts.rf2.Description;
 @Entity
 @Audited
 @DiscriminatorValue("Description")
+@XmlRootElement(name = "assocRefDescription")
 public class AssociationReferenceDescriptionRefSetMemberJpa extends
     AbstractAssociationReferenceRefSetMemberJpa<Description> implements
     AssociationReferenceDescriptionRefSetMember {
@@ -26,22 +28,25 @@ public class AssociationReferenceDescriptionRefSetMemberJpa extends
   private Description description;
 
   /**
-   * Instantiates an empty {@link AssociationReferenceDescriptionRefSetMemberJpa}.
+   * Instantiates an empty
+   * {@link AssociationReferenceDescriptionRefSetMemberJpa}.
    */
   public AssociationReferenceDescriptionRefSetMemberJpa() {
     // do nothing
   }
-  
+
   /**
-   * Instantiates a {@link AssociationReferenceDescriptionRefSetMemberJpa} from the specified parameters.
+   * Instantiates a {@link AssociationReferenceDescriptionRefSetMemberJpa} from
+   * the specified parameters.
    *
    * @param member the member
    */
-  public AssociationReferenceDescriptionRefSetMemberJpa(AssociationReferenceDescriptionRefSetMember member) {
+  public AssociationReferenceDescriptionRefSetMemberJpa(
+      AssociationReferenceDescriptionRefSetMember member) {
     super(member);
     description = member.getDescription();
   }
-  
+
   @XmlTransient
   @Override
   public Description getDescription() {
@@ -53,6 +58,7 @@ public class AssociationReferenceDescriptionRefSetMemberJpa extends
    * 
    * @see org.ihtsdo.otf.ts.rf2.RefSetMember#getComponent()
    */
+  @XmlTransient
   @Override
   public Description getComponent() {
     return getDescription();
@@ -70,6 +76,13 @@ public class AssociationReferenceDescriptionRefSetMemberJpa extends
     setDescription(description);
   }
 
+  /*
+   * (non-Javadoc)
+   * 
+   * @see
+   * org.ihtsdo.otf.ts.rf2.jpa.AbstractAssociationReferenceRefSetMemberJpa#hashCode
+   * ()
+   */
   @Override
   public int hashCode() {
     final int prime = 31;
@@ -79,6 +92,13 @@ public class AssociationReferenceDescriptionRefSetMemberJpa extends
     return result;
   }
 
+  /*
+   * (non-Javadoc)
+   * 
+   * @see
+   * org.ihtsdo.otf.ts.rf2.jpa.AbstractAssociationReferenceRefSetMemberJpa#equals
+   * (java.lang.Object)
+   */
   @Override
   public boolean equals(Object obj) {
     if (this == obj)

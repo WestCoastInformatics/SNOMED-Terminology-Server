@@ -3,6 +3,7 @@ package org.ihtsdo.otf.ts.rf2.jpa;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Table;
+import javax.xml.bind.annotation.XmlRootElement;
 
 import org.hibernate.envers.Audited;
 import org.ihtsdo.otf.ts.rf2.SimpleMapRefSetMember;
@@ -13,9 +14,10 @@ import org.ihtsdo.otf.ts.rf2.SimpleMapRefSetMember;
 @Entity
 @Table(name = "simple_map_refset_members")
 @Audited
+@XmlRootElement(name = "simpleMap")
 public class SimpleMapRefSetMemberJpa extends AbstractConceptRefSetMember
     implements SimpleMapRefSetMember {
-  
+
   /** The map target */
   @Column(nullable = false)
   private String mapTarget;
@@ -26,9 +28,10 @@ public class SimpleMapRefSetMemberJpa extends AbstractConceptRefSetMember
   public SimpleMapRefSetMemberJpa() {
     // do nothing
   }
-  
+
   /**
-   * Instantiates a {@link SimpleMapRefSetMemberJpa} from the specified parameters.
+   * Instantiates a {@link SimpleMapRefSetMemberJpa} from the specified
+   * parameters.
    *
    * @param member the member
    */
@@ -36,7 +39,7 @@ public class SimpleMapRefSetMemberJpa extends AbstractConceptRefSetMember
     super(member);
     mapTarget = member.getMapTarget();
   }
-  
+
   /**
    * returns the map target
    * @return the map target

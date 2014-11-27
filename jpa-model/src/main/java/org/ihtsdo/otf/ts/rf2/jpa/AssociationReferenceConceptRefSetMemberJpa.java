@@ -4,6 +4,7 @@ import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 import javax.persistence.ManyToOne;
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
 import org.hibernate.envers.Audited;
@@ -16,6 +17,7 @@ import org.ihtsdo.otf.ts.rf2.Concept;
 @Entity
 @Audited
 @DiscriminatorValue("Concept")
+@XmlRootElement(name = "assocRefConcept")
 public class AssociationReferenceConceptRefSetMemberJpa extends
     AbstractAssociationReferenceRefSetMemberJpa<Concept> implements
     AssociationReferenceConceptRefSetMember {
@@ -30,19 +32,23 @@ public class AssociationReferenceConceptRefSetMemberJpa extends
   public AssociationReferenceConceptRefSetMemberJpa() {
     // do nothing
   }
-  
+
   /**
-   * Instantiates a {@link AssociationReferenceConceptRefSetMemberJpa} from the specified parameters.
+   * Instantiates a {@link AssociationReferenceConceptRefSetMemberJpa} from the
+   * specified parameters.
    *
    * @param member the member
    */
-  public AssociationReferenceConceptRefSetMemberJpa(AssociationReferenceConceptRefSetMember member) {
+  public AssociationReferenceConceptRefSetMemberJpa(
+      AssociationReferenceConceptRefSetMember member) {
     super(member);
     concept = member.getConcept();
   }
 
-  /**
-   * {@inheritDoc}
+  /*
+   * (non-Javadoc)
+   * 
+   * @see org.ihtsdo.otf.ts.rf2.ConceptRefSetMember#getConcept()
    */
   @XmlTransient
   @Override
@@ -55,6 +61,7 @@ public class AssociationReferenceConceptRefSetMemberJpa extends
    * 
    * @see org.ihtsdo.otf.ts.rf2.RefSetMember#getComponent()
    */
+  @XmlTransient
   @Override
   public Concept getComponent() {
     return getConcept();
@@ -72,6 +79,13 @@ public class AssociationReferenceConceptRefSetMemberJpa extends
     setConcept(concept);
   }
 
+  /*
+   * (non-Javadoc)
+   * 
+   * @see
+   * org.ihtsdo.otf.ts.rf2.jpa.AbstractAssociationReferenceRefSetMemberJpa#hashCode
+   * ()
+   */
   @Override
   public int hashCode() {
     final int prime = 31;
@@ -80,6 +94,13 @@ public class AssociationReferenceConceptRefSetMemberJpa extends
     return result;
   }
 
+  /*
+   * (non-Javadoc)
+   * 
+   * @see
+   * org.ihtsdo.otf.ts.rf2.jpa.AbstractAssociationReferenceRefSetMemberJpa#equals
+   * (java.lang.Object)
+   */
   @Override
   public boolean equals(Object obj) {
     if (this == obj)

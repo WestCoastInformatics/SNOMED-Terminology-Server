@@ -4,6 +4,7 @@ import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 import javax.persistence.ManyToOne;
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
 import org.hibernate.envers.Audited;
@@ -18,8 +19,10 @@ import org.ihtsdo.otf.ts.rf2.Description;
 @Entity
 @Audited
 @DiscriminatorValue("Description")
-public class AttributeValueDescriptionRefSetMemberJpa extends AbstractAttributeValueRefSetMemberJpa<Description>
-    implements AttributeValueDescriptionRefSetMember {
+@XmlRootElement(name = "attributeValueConcept")
+public class AttributeValueDescriptionRefSetMemberJpa extends
+    AbstractAttributeValueRefSetMemberJpa<Description> implements
+    AttributeValueDescriptionRefSetMember {
 
   /** The description. */
   @ManyToOne(targetEntity = DescriptionJpa.class, optional = true)
@@ -34,18 +37,22 @@ public class AttributeValueDescriptionRefSetMemberJpa extends AbstractAttributeV
   public AttributeValueDescriptionRefSetMemberJpa() {
     // do nothing
   }
-  
+
   /**
-   * Instantiates a {@link AttributeValueDescriptionRefSetMemberJpa} from the specified parameters.
+   * Instantiates a {@link AttributeValueDescriptionRefSetMemberJpa} from the
+   * specified parameters.
    *
    * @param member the member
    */
-  public AttributeValueDescriptionRefSetMemberJpa(AttributeValueDescriptionRefSetMember member) {
+  public AttributeValueDescriptionRefSetMemberJpa(
+      AttributeValueDescriptionRefSetMember member) {
     super(member);
     description = member.getDescription();
   }
 
-  /* (non-Javadoc)
+  /*
+   * (non-Javadoc)
+   * 
    * @see org.ihtsdo.otf.ts.rf2.DescriptionRefSetMember#getDescription()
    */
   @XmlTransient
@@ -54,38 +61,12 @@ public class AttributeValueDescriptionRefSetMemberJpa extends AbstractAttributeV
     return this.description;
   }
 
-
-  @Override
-  public int hashCode() {
-    final int prime = 31;
-    int result = super.hashCode();
-    result =
-        prime * result + ((description == null) ? 0 : description.hashCode());
-    return result;
-  }
-
-
-  @Override
-  public boolean equals(Object obj) {
-    if (this == obj)
-      return true;
-    if (!super.equals(obj))
-      return false;
-    if (getClass() != obj.getClass())
-      return false;
-    AttributeValueDescriptionRefSetMemberJpa other =
-        (AttributeValueDescriptionRefSetMemberJpa) obj;
-    if (description == null) {
-      if (other.description != null)
-        return false;
-    } else if (!description.equals(other.description))
-      return false;
-    return true;
-  }
-
-
-  /**
-   * {@inheritDoc}
+  /*
+   * (non-Javadoc)
+   * 
+   * @see
+   * org.ihtsdo.otf.ts.rf2.DescriptionRefSetMember#setDescription(org.ihtsdo
+   * .otf.ts.rf2.Description)
    */
   @Override
   public void setDescription(Description description) {
@@ -103,22 +84,68 @@ public class AttributeValueDescriptionRefSetMemberJpa extends AbstractAttributeV
     return description != null ? description.getTerminologyId() : null;
   }
 
-
-  /* (non-Javadoc)
+  /*
+   * (non-Javadoc)
+   * 
    * @see org.ihtsdo.otf.ts.rf2.RefSetMember#getComponent()
    */
+  @XmlTransient
   @Override
   public Description getComponent() {
     return getDescription();
   }
 
-
-  /* (non-Javadoc)
-   * @see org.ihtsdo.otf.ts.rf2.RefSetMember#setComponent(org.ihtsdo.otf.ts.rf2.Component)
+  /*
+   * (non-Javadoc)
+   * 
+   * @see
+   * org.ihtsdo.otf.ts.rf2.RefSetMember#setComponent(org.ihtsdo.otf.ts.rf2.Component
+   * )
    */
+  @XmlTransient
   @Override
   public void setComponent(Description component) {
-    setDescription(component);    
+    setDescription(component);
+  }
+
+  /*
+   * (non-Javadoc)
+   * 
+   * @see
+   * org.ihtsdo.otf.ts.rf2.jpa.AbstractAttributeValueRefSetMemberJpa#hashCode()
+   */
+  @Override
+  public int hashCode() {
+    final int prime = 31;
+    int result = super.hashCode();
+    result =
+        prime * result + ((description == null) ? 0 : description.hashCode());
+    return result;
+  }
+
+  /*
+   * (non-Javadoc)
+   * 
+   * @see
+   * org.ihtsdo.otf.ts.rf2.jpa.AbstractAttributeValueRefSetMemberJpa#equals(
+   * java.lang.Object)
+   */
+  @Override
+  public boolean equals(Object obj) {
+    if (this == obj)
+      return true;
+    if (!super.equals(obj))
+      return false;
+    if (getClass() != obj.getClass())
+      return false;
+    AttributeValueDescriptionRefSetMemberJpa other =
+        (AttributeValueDescriptionRefSetMemberJpa) obj;
+    if (description == null) {
+      if (other.description != null)
+        return false;
+    } else if (!description.equals(other.description))
+      return false;
+    return true;
   }
 
 }

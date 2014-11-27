@@ -2,6 +2,7 @@ package org.ihtsdo.otf.ts.rf2.jpa;
 
 import javax.persistence.Column;
 import javax.persistence.MappedSuperclass;
+import javax.xml.bind.annotation.XmlRootElement;
 
 import org.hibernate.envers.Audited;
 import org.ihtsdo.otf.ts.rf2.Component;

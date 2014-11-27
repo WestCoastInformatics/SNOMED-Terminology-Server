@@ -77,8 +77,9 @@ public abstract class AbstractAttributeValueRefSetMemberJpa<T extends Component>
       return false;
     if (getClass() != obj.getClass())
       return false;
-    AbstractAttributeValueRefSetMemberJpa other =
-        (AbstractAttributeValueRefSetMemberJpa) obj;
+    @SuppressWarnings("unchecked")
+    AbstractAttributeValueRefSetMemberJpa<? extends Component> other =
+        (AbstractAttributeValueRefSetMemberJpa<? extends Component>) obj;
     if (valueId == null) {
       if (other.valueId != null)
         return false;

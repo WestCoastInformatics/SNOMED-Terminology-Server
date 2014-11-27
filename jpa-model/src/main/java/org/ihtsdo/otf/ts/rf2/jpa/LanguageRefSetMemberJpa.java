@@ -4,10 +4,13 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
 
 import org.hibernate.envers.Audited;
 import org.ihtsdo.otf.ts.rf2.LanguageRefSetMember;
 
+// TODO: Auto-generated Javadoc
 /**
  * Concrete implementation of {@link LanguageRefSetMember}.
  */
@@ -16,10 +19,11 @@ import org.ihtsdo.otf.ts.rf2.LanguageRefSetMember;
 @Table(name = "language_refset_members", uniqueConstraints = @UniqueConstraint(columnNames = {
     "terminologyId", "terminology", "terminologyVersion", "id"
 }))
+@XmlRootElement(name = "language")
 public class LanguageRefSetMemberJpa extends AbstractDescriptionRefSetMember
     implements LanguageRefSetMember {
 
-  /** the acceptability id */
+  /**  the acceptability id. */
   @Column(nullable = false)
   private String acceptabilityId;
 
@@ -52,8 +56,8 @@ public class LanguageRefSetMemberJpa extends AbstractDescriptionRefSetMember
   }
 
   /**
-   * sets the acceptability id
-   * 
+   * sets the acceptability id.
+   *
    * @param acceptabilityId the acceptability id
    */
   @Override
@@ -62,8 +66,20 @@ public class LanguageRefSetMemberJpa extends AbstractDescriptionRefSetMember
 
   }
 
+
   /**
-   * {@inheritDoc}
+   * Returns the description id. Used for XML/JSON serialization.
+   * 
+   * @return the description id
+   */
+  @Override
+  @XmlElement
+  public String getDescriptionId() {
+    return getDescription() != null ? getDescription().getTerminologyId() : null;
+  }
+
+  /* (non-Javadoc)
+   * @see org.ihtsdo.otf.ts.rf2.jpa.AbstractComponent#toString()
    */
   @Override
   public String toString() {
@@ -72,6 +88,9 @@ public class LanguageRefSetMemberJpa extends AbstractDescriptionRefSetMember
             .getTerminologyId()) + "," + this.getAcceptabilityId();
   }
 
+  /* (non-Javadoc)
+   * @see org.ihtsdo.otf.ts.rf2.jpa.AbstractDescriptionRefSetMember#hashCode()
+   */
   @Override
   public int hashCode() {
     final int prime = 31;
@@ -82,6 +101,9 @@ public class LanguageRefSetMemberJpa extends AbstractDescriptionRefSetMember
     return result;
   }
 
+  /* (non-Javadoc)
+   * @see org.ihtsdo.otf.ts.rf2.jpa.AbstractDescriptionRefSetMember#equals(java.lang.Object)
+   */
   @Override
   public boolean equals(Object obj) {
     if (this == obj)

@@ -27,7 +27,7 @@ public abstract class AbstractConceptRefSetMember extends
   protected AbstractConceptRefSetMember() {
     // do nothing
   }
-  
+
   /**
    * Instantiates a {@link AbstractConceptRefSetMember} from the specified
    * parameters.
@@ -53,6 +53,7 @@ public abstract class AbstractConceptRefSetMember extends
    * 
    * @see org.ihtsdo.otf.ts.rf2.RefSetMember#getComponent()
    */
+  @XmlTransient
   @Override
   public Concept getComponent() {
     return concept;

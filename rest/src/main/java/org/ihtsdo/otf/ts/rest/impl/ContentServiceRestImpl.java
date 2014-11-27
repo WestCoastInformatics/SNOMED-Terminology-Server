@@ -176,7 +176,7 @@ public class ContentServiceRestImpl extends RootServiceRestImpl implements
       MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML
   })
   public Concept getConcept(
-    @ApiParam(value = "Concept internal id, e.g. 2", required = true) @PathParam("terminologyId") Long id,
+    @ApiParam(value = "Concept internal id, e.g. 2", required = true) @PathParam("id") Long id,
     @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken) {
     Logger.getLogger(ContentServiceRestImpl.class).info(
         "RESTful call (Content): /concept/id/" + id);

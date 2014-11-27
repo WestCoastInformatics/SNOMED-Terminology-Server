@@ -7,6 +7,7 @@ import javax.persistence.Entity;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.Table;
+import javax.xml.bind.annotation.XmlRootElement;
 
 import org.hibernate.envers.Audited;
 import org.ihtsdo.otf.ts.rf2.AssociationReferenceRefSetMember;
@@ -76,8 +77,9 @@ public abstract class AbstractAssociationReferenceRefSetMemberJpa<T extends Comp
       return false;
     if (getClass() != obj.getClass())
       return false;
-    AbstractAssociationReferenceRefSetMemberJpa other =
-        (AbstractAssociationReferenceRefSetMemberJpa) obj;
+    @SuppressWarnings("unchecked")
+    AbstractAssociationReferenceRefSetMemberJpa<? extends Component> other =
+        (AbstractAssociationReferenceRefSetMemberJpa<? extends Component>) obj;
     if (targetComponentId == null) {
       if (other.targetComponentId != null)
         return false;

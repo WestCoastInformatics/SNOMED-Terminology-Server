@@ -10,7 +10,7 @@ import org.ihtsdo.otf.ts.helpers.ConfigUtility;
 import org.ihtsdo.otf.ts.helpers.ValidationResult;
 import org.ihtsdo.otf.ts.helpers.ValidationResultJpa;
 import org.ihtsdo.otf.ts.rest.ValidationServiceRest;
-import org.ihtsdo.otf.ts.rf2.Concept;
+import org.ihtsdo.otf.ts.rf2.jpa.ConceptJpa;
 
 import com.sun.jersey.api.client.Client;
 import com.sun.jersey.api.client.ClientResponse;
@@ -41,7 +41,7 @@ public class ValidationClientRest implements ValidationServiceRest {
    * .otf.ts.rf2.Concept, java.lang.String)
    */
   @Override
-  public ValidationResult validateConcept(Concept concept, String authToken)
+  public ValidationResult validateConcept(ConceptJpa concept, String authToken)
     throws Exception {
     Client client = Client.create();
     WebResource resource =

@@ -4,6 +4,7 @@ import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 import javax.persistence.ManyToOne;
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
 import org.hibernate.envers.Audited;
@@ -16,9 +17,10 @@ import org.ihtsdo.otf.ts.rf2.Concept;
 @Entity
 @Audited
 @DiscriminatorValue("Concept")
-public class AttributeValueConceptRefSetMemberJpa extends AbstractAttributeValueRefSetMemberJpa<Concept>
-    implements AttributeValueConceptRefSetMember {
-
+@XmlRootElement(name = "attributeValueConcept")
+public class AttributeValueConceptRefSetMemberJpa extends
+    AbstractAttributeValueRefSetMemberJpa<Concept> implements
+    AttributeValueConceptRefSetMember {
 
   /** The Concept associated with this element */
   @ManyToOne(targetEntity = ConceptJpa.class, optional = true)
@@ -30,19 +32,21 @@ public class AttributeValueConceptRefSetMemberJpa extends AbstractAttributeValue
   public AttributeValueConceptRefSetMemberJpa() {
     // do nothing
   }
-  
+
   /**
-   * Instantiates a {@link AttributeValueConceptRefSetMemberJpa} from the specified parameters.
+   * Instantiates a {@link AttributeValueConceptRefSetMemberJpa} from the
+   * specified parameters.
    *
    * @param member the member
    */
-  public AttributeValueConceptRefSetMemberJpa(AttributeValueConceptRefSetMember member) {
+  public AttributeValueConceptRefSetMemberJpa(
+      AttributeValueConceptRefSetMember member) {
     super(member);
     this.concept = member.getConcept();
   }
-  
-  /**
-   * {@inheritDoc}
+
+  /* (non-Javadoc)
+   * @see org.ihtsdo.otf.ts.rf2.ConceptRefSetMember#getConcept()
    */
   @XmlTransient
   @Override
@@ -50,22 +54,29 @@ public class AttributeValueConceptRefSetMemberJpa extends AbstractAttributeValue
     return this.concept;
   }
 
-  /* (non-Javadoc)
+  /*
+   * (non-Javadoc)
+   * 
    * @see org.ihtsdo.otf.ts.rf2.RefSetMember#getComponent()
    */
+  @XmlTransient
   @Override
   public Concept getComponent() {
     return getConcept();
   }
-  
-  /* (non-Javadoc)
-   * @see org.ihtsdo.otf.ts.rf2.RefSetMember#setComponent(org.ihtsdo.otf.ts.rf2.Component)
+
+  /*
+   * (non-Javadoc)
+   * 
+   * @see
+   * org.ihtsdo.otf.ts.rf2.RefSetMember#setComponent(org.ihtsdo.otf.ts.rf2.Component
+   * )
    */
   @Override
   public void setComponent(Concept concept) {
     setConcept(concept);
   }
-  
+
   @Override
   public int hashCode() {
     final int prime = 31;
@@ -110,4 +121,4 @@ public class AttributeValueConceptRefSetMemberJpa extends AbstractAttributeValue
   public String getConceptId() {
     return concept != null ? concept.getTerminologyId() : null;
   }
-  }
+}

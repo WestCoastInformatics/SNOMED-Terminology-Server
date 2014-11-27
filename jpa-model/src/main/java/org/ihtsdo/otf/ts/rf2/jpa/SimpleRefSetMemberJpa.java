@@ -2,6 +2,7 @@ package org.ihtsdo.otf.ts.rf2.jpa;
 
 import javax.persistence.Entity;
 import javax.persistence.Table;
+import javax.xml.bind.annotation.XmlRootElement;
 
 import org.hibernate.envers.Audited;
 import org.ihtsdo.otf.ts.rf2.SimpleRefSetMember;
@@ -12,6 +13,7 @@ import org.ihtsdo.otf.ts.rf2.SimpleRefSetMember;
 @Entity
 @Table(name = "simple_refset_members")
 @Audited
+@XmlRootElement(name = "simple")
 public class SimpleRefSetMemberJpa extends AbstractConceptRefSetMember
     implements SimpleRefSetMember {
 

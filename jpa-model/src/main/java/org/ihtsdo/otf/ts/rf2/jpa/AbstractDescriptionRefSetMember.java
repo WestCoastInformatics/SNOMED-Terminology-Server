@@ -10,14 +10,14 @@ import org.hibernate.search.annotations.ContainedIn;
 import org.ihtsdo.otf.ts.rf2.Description;
 import org.ihtsdo.otf.ts.rf2.DescriptionRefSetMember;
 
+// TODO: Auto-generated Javadoc
 /**
  * Abstract implementation of {@link DescriptionRefSetMember}.
  */
 @MappedSuperclass
 @Audited
 public abstract class AbstractDescriptionRefSetMember extends
-    AbstractRefSetMemberJpa<Description> implements
-    DescriptionRefSetMember {
+    AbstractRefSetMemberJpa<Description> implements DescriptionRefSetMember {
 
   /** The description. */
   @ManyToOne(targetEntity = DescriptionJpa.class, optional = false)
@@ -32,9 +32,10 @@ public abstract class AbstractDescriptionRefSetMember extends
   protected AbstractDescriptionRefSetMember() {
     // do nothing
   }
-  
+
   /**
-   * Instantiates a {@link AbstractDescriptionRefSetMember} from the specified parameters.
+   * Instantiates a {@link AbstractDescriptionRefSetMember} from the specified
+   * parameters.
    *
    * @param member the member
    */
@@ -42,9 +43,9 @@ public abstract class AbstractDescriptionRefSetMember extends
     super(member);
     description = member.getDescription();
   }
-  
-  /**
-   * {@inheritDoc}
+
+  /* (non-Javadoc)
+   * @see org.ihtsdo.otf.ts.rf2.DescriptionRefSetMember#getDescription()
    */
   @XmlTransient
   @Override
@@ -52,22 +53,52 @@ public abstract class AbstractDescriptionRefSetMember extends
     return this.description;
   }
 
-
-  /* (non-Javadoc)
+  /*
+   * (non-Javadoc)
+   * 
    * @see org.ihtsdo.otf.ts.rf2.RefSetMember#getComponent()
    */
+  @XmlTransient
   @Override
   public Description getComponent() {
     return description;
   }
-  
-  /* (non-Javadoc)
-   * @see org.ihtsdo.otf.ts.rf2.RefSetMember#setComponent(org.ihtsdo.otf.ts.rf2.Component)
+
+  /*
+   * (non-Javadoc)
+   * 
+   * @see
+   * org.ihtsdo.otf.ts.rf2.RefSetMember#setComponent(org.ihtsdo.otf.ts.rf2.Component
+   * )
    */
   @Override
   public void setComponent(Description description) {
     this.description = description;
   }
+
+
+  /* (non-Javadoc)
+   * @see org.ihtsdo.otf.ts.rf2.DescriptionRefSetMember#setDescription(org.ihtsdo.otf.ts.rf2.Description)
+   */
+  @Override
+  public void setDescription(Description description) {
+    this.description = description;
+
+  }
+
+  /**
+   * Returns the description id. Used for XML/JSON serialization.
+   * 
+   * @return the description id
+   */
+  @XmlElement
+  public String getDescriptionId() {
+    return description != null ? description.getTerminologyId() : null;
+  }
+  
+  /* (non-Javadoc)
+   * @see org.ihtsdo.otf.ts.rf2.jpa.AbstractRefSetMemberJpa#hashCode()
+   */
   @Override
   public int hashCode() {
     final int prime = 31;
@@ -77,6 +108,9 @@ public abstract class AbstractDescriptionRefSetMember extends
     return result;
   }
 
+  /* (non-Javadoc)
+   * @see org.ihtsdo.otf.ts.rf2.jpa.AbstractRefSetMemberJpa#equals(java.lang.Object)
+   */
   @Override
   public boolean equals(Object obj) {
     if (this == obj)
@@ -95,22 +129,4 @@ public abstract class AbstractDescriptionRefSetMember extends
     return true;
   }
 
-  /**
-   * {@inheritDoc}
-   */
-  @Override
-  public void setDescription(Description description) {
-    this.description = description;
-
-  }
-
-  /**
-   * Returns the description id. Used for XML/JSON serialization.
-   * 
-   * @return the description id
-   */
-  @XmlElement
-  public String getDescriptionId() {
-    return description != null ? description.getTerminologyId() : null;
-  }
 }
