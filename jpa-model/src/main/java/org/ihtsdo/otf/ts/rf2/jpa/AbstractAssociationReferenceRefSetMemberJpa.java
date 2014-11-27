@@ -7,7 +7,6 @@ import javax.persistence.Entity;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.Table;
-import javax.xml.bind.annotation.XmlRootElement;
 
 import org.hibernate.envers.Audited;
 import org.ihtsdo.otf.ts.rf2.AssociationReferenceRefSetMember;

@@ -282,8 +282,18 @@ public class DescriptionJpa extends AbstractComponent implements Description {
    * @return the concept id
    */
   @XmlElement
-  public String getConceptId() {
+  private String getConceptId() {
     return concept != null ? concept.getTerminologyId() : null;
+  }
+
+  /**
+   * Sets the concept id.
+   *
+   * @param conceptId the concept id
+   */
+  @SuppressWarnings("unused")
+  private void setConceptId(String conceptId) {
+    // do nothing - here for JAXB
   }
 
   /**
@@ -291,7 +301,7 @@ public class DescriptionJpa extends AbstractComponent implements Description {
    * 
    * @return the set of SimpleRefSetMembers
    */
-  @XmlElement(type = LanguageRefSetMemberJpa.class, name = "languageRefSetMember")
+  @XmlElement(type = LanguageRefSetMemberJpa.class, name = "language")
   @Override
   public Set<LanguageRefSetMember> getLanguageRefSetMembers() {
     if (languageRefSetMembers == null) {

@@ -47,7 +47,7 @@ compute.preferred.name.handler.ICD9CM.defaultPreferredNames.type=4
 # Validation Service Settings
 #
 validation.service.handler=NEW_CONCEPT
-validation.service.handler.NEW_CONCEPT.class=org.ihtsdo.otf.ts.services.validation.NewConceptMinRequirementsCheck
+validation.service.handler.NEW_CONCEPT.class=org.ihtsdo.otf.ts.jpa.services.validation.NewConceptMinRequirementsCheck
 validation.service.handler.NEW_CONCEPT.isaRel=116680003
 validation.service.handler.NEW_CONCEPT.fnType=900000000000003001
 validation.service.handler.NEW_CONCEPT.ptType=900000000000013009

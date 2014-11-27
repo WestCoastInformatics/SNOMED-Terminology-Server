@@ -1,4 +1,4 @@
-package org.ihtsdo.otf.ts.jpa.services.handlers;
+package org.ihtsdo.otf.ts.jpa.services.validation;
 
 import java.util.Properties;
 

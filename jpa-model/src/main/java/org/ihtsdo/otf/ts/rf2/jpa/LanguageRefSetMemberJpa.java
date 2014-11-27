@@ -4,13 +4,11 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
-import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.hibernate.envers.Audited;
 import org.ihtsdo.otf.ts.rf2.LanguageRefSetMember;
 
-// TODO: Auto-generated Javadoc
 /**
  * Concrete implementation of {@link LanguageRefSetMember}.
  */
@@ -66,17 +64,6 @@ public class LanguageRefSetMemberJpa extends AbstractDescriptionRefSetMember
 
   }
 
-
-  /**
-   * Returns the description id. Used for XML/JSON serialization.
-   * 
-   * @return the description id
-   */
-  @Override
-  @XmlElement
-  public String getDescriptionId() {
-    return getDescription() != null ? getDescription().getTerminologyId() : null;
-  }
 
   /* (non-Javadoc)
    * @see org.ihtsdo.otf.ts.rf2.jpa.AbstractComponent#toString()

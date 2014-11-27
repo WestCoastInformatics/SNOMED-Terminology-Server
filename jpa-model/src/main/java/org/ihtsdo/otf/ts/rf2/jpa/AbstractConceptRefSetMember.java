@@ -48,6 +48,14 @@ public abstract class AbstractConceptRefSetMember extends
     return this.concept;
   }
 
+  /* (non-Javadoc)
+   * @see org.ihtsdo.otf.ts.rf2.ConceptRefSetMember#setConcept(org.ihtsdo.otf.ts.rf2.Concept)
+   */
+  @Override
+  public void setConcept(Concept concept) {
+    this.concept = concept;
+
+  }
   /*
    * (non-Javadoc)
    * 
@@ -71,6 +79,29 @@ public abstract class AbstractConceptRefSetMember extends
     this.concept = concept;
   }
 
+  /**
+   * Returns the concept id. Used for XML/JSON serialization.
+   * 
+   * @return the concept id
+   */
+  @XmlElement
+  private String getConceptId() {
+    return concept != null ? concept.getTerminologyId() : null;
+  }
+
+  /**
+   * Sets the concept id.
+   *
+   * @param conceptId the concept id
+   */
+  @SuppressWarnings("unused")
+  private void setConceptId(String conceptId) {
+    // do nothing - here for JAXB
+  }
+  
+  /* (non-Javadoc)
+   * @see org.ihtsdo.otf.ts.rf2.jpa.AbstractRefSetMemberJpa#hashCode()
+   */
   @Override
   public int hashCode() {
     final int prime = 31;
@@ -79,6 +110,9 @@ public abstract class AbstractConceptRefSetMember extends
     return result;
   }
 
+  /* (non-Javadoc)
+   * @see org.ihtsdo.otf.ts.rf2.jpa.AbstractRefSetMemberJpa#equals(java.lang.Object)
+   */
   @Override
   public boolean equals(Object obj) {
     if (this == obj)
@@ -96,22 +130,4 @@ public abstract class AbstractConceptRefSetMember extends
     return true;
   }
 
-  /**
-   * {@inheritDoc}
-   */
-  @Override
-  public void setConcept(Concept concept) {
-    this.concept = concept;
-
-  }
-
-  /**
-   * Returns the concept id. Used for XML/JSON serialization.
-   * 
-   * @return the concept id
-   */
-  @XmlElement
-  public String getConceptId() {
-    return concept != null ? concept.getTerminologyId() : null;
-  }
 }

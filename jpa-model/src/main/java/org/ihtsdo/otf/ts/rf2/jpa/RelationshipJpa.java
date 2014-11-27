@@ -62,7 +62,7 @@ public class RelationshipJpa extends AbstractComponent implements Relationship {
   public RelationshipJpa() {
     // do nothing
   }
-  
+
   /**
    * Instantiates a {@link RelationshipJpa} from the specified parameters.
    *
@@ -71,19 +71,22 @@ public class RelationshipJpa extends AbstractComponent implements Relationship {
   public RelationshipJpa(Relationship relationship) {
     super(relationship);
     characteristicTypeId = relationship.getCharacteristicTypeId();
-    // could be a problem if a concept has 2 relationships with the same destination
+    // could be a problem if a concept has 2 relationships with the same
+    // destination
     // because they coming from JSON would be separate objects, though if id is
     // always set, then its fine
     destinationConcept = relationship.getDestinationConcept();
-    modifierId  = relationship.getModifierId();
+    modifierId = relationship.getModifierId();
     relationshipGroup = relationship.getRelationshipGroup();
     // in deep copy contexts, this will be overridden
     sourceConcept = relationship.getSourceConcept();
     typeId = relationship.getTypeId();
     workflowStatus = relationship.getWorkflowStatus();
   }
-  
-  /* (non-Javadoc)
+
+  /*
+   * (non-Javadoc)
+   * 
    * @see org.ihtsdo.otf.ts.rf2.Relationship#getWorkflowStatus()
    */
   @Override
@@ -91,14 +94,16 @@ public class RelationshipJpa extends AbstractComponent implements Relationship {
     return workflowStatus;
   }
 
-  /* (non-Javadoc)
+  /*
+   * (non-Javadoc)
+   * 
    * @see org.ihtsdo.otf.ts.rf2.Relationship#setWorkflowStatus(java.lang.String)
    */
   @Override
   public void setWorkflowStatus(String workflowStatus) {
     this.workflowStatus = workflowStatus;
   }
-  
+
   /**
    * Returns the type id.
    * 
@@ -191,6 +196,16 @@ public class RelationshipJpa extends AbstractComponent implements Relationship {
   }
 
   /**
+   * Sets the source concept id.
+   *
+   * @param sourceConceptId the source concept id
+   */
+  @SuppressWarnings("unused")
+  private void setSourceConceptId(String sourceConceptId) {
+    // do nothing - for JAXB
+  }
+
+  /**
    * Returns the destination concept.
    * 
    * @return the destination concept
@@ -222,14 +237,34 @@ public class RelationshipJpa extends AbstractComponent implements Relationship {
   }
 
   /**
+   * Sets the destination concept id.
+   *
+   * @param destinationConceptId the destination concept id
+   */
+  @SuppressWarnings("unused")
+  private void setDestinationConceptId(String destinationConceptId) {
+    // do nothing - here for JAXB
+  }
+
+  /**
    * Returns the destination concept preferred name. Used for XML/JSON
    * serialization.
    * @return the destination concept preferred name
    */
   @XmlElement
-  public String getDestinationConceptPreferredName() {
+  private String getDestinationConceptPreferredName() {
     return destinationConcept != null ? destinationConcept
         .getDefaultPreferredName() : null;
+  }
+
+  /**
+   * Sets the destination concept preferred name.
+   *
+   * @param name the destination concept preferred name
+   */
+  @SuppressWarnings("unused")
+  private void setDestinationConceptPreferredName(String name) {
+    // do nothing - here for JAXB
   }
 
   /**
@@ -252,8 +287,10 @@ public class RelationshipJpa extends AbstractComponent implements Relationship {
     this.relationshipGroup = relationshipGroup;
   }
 
-  /**
-   * {@inheritDoc}
+  /*
+   * (non-Javadoc)
+   * 
+   * @see org.ihtsdo.otf.ts.rf2.jpa.AbstractComponent#toString()
    */
   @Override
   public String toString() {
@@ -270,6 +307,11 @@ public class RelationshipJpa extends AbstractComponent implements Relationship {
 
   }
 
+  /*
+   * (non-Javadoc)
+   * 
+   * @see org.ihtsdo.otf.ts.rf2.jpa.AbstractComponent#hashCode()
+   */
   @Override
   public int hashCode() {
     final int prime = 31;
@@ -295,6 +337,11 @@ public class RelationshipJpa extends AbstractComponent implements Relationship {
     return result;
   }
 
+  /*
+   * (non-Javadoc)
+   * 
+   * @see org.ihtsdo.otf.ts.rf2.jpa.AbstractComponent#equals(java.lang.Object)
+   */
   @Override
   public boolean equals(Object obj) {
     if (this == obj)

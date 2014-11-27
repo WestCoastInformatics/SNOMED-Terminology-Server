@@ -53,6 +53,15 @@ public abstract class AbstractDescriptionRefSetMember extends
     return this.description;
   }
 
+  /* (non-Javadoc)
+   * @see org.ihtsdo.otf.ts.rf2.DescriptionRefSetMember#setDescription(org.ihtsdo.otf.ts.rf2.Description)
+   */
+  @Override
+  public void setDescription(Description description) {
+    this.description = description;
+
+  }
+  
   /*
    * (non-Javadoc)
    * 
@@ -76,25 +85,26 @@ public abstract class AbstractDescriptionRefSetMember extends
     this.description = description;
   }
 
-
-  /* (non-Javadoc)
-   * @see org.ihtsdo.otf.ts.rf2.DescriptionRefSetMember#setDescription(org.ihtsdo.otf.ts.rf2.Description)
-   */
-  @Override
-  public void setDescription(Description description) {
-    this.description = description;
-
-  }
-
   /**
    * Returns the description id. Used for XML/JSON serialization.
    * 
    * @return the description id
    */
   @XmlElement
-  public String getDescriptionId() {
+  private String getDescriptionId() {
     return description != null ? description.getTerminologyId() : null;
   }
+  
+  /**
+   * Sets the description id.
+   *
+   * @param descriptionId the description id
+   */
+  @SuppressWarnings("unused")
+  private void setDescriptionId(String descriptionId) {
+    // do nothing - here for JAXB
+  }
+  
   
   /* (non-Javadoc)
    * @see org.ihtsdo.otf.ts.rf2.jpa.AbstractRefSetMemberJpa#hashCode()
