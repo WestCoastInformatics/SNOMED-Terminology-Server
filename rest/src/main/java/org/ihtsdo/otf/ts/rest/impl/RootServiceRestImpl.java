@@ -3,6 +3,8 @@ package org.ihtsdo.otf.ts.rest.impl;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
 
+import org.ihtsdo.otf.ts.helpers.UserRole;
+import org.ihtsdo.otf.ts.services.SecurityService;
 import org.ihtsdo.otf.ts.services.handlers.ExceptionHandler;
 
 /**
@@ -59,6 +61,15 @@ public class RootServiceRestImpl {
             "Unexpected error trying to " + whatIsHappening
                 + ". Please contact the administrator.").build());
 
+  }
+  
+  public static void authenticate(SecurityService securityService, String authToken, String perform) throws Exception {
+    // authorize call
+    UserRole role = securityService.getApplicationRoleForToken(authToken);
+    if (!role.hasPrivilegesOf(UserRole.VIEWER))
+      throw new WebApplicationException(Response.status(401)
+          .entity("User does not have permissions to " + perform + ".")
+          .build());
   }
 
 }
