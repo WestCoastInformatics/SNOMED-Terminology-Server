@@ -5,6 +5,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Properties;
 
+import org.apache.log4j.Logger;
 import org.ihtsdo.otf.ts.jpa.services.helper.TerminologyUtility;
 import org.ihtsdo.otf.ts.rf2.AssociationReferenceRefSetMember;
 import org.ihtsdo.otf.ts.rf2.AttributeValueRefSetMember;
@@ -78,7 +79,7 @@ public class SnomedUuidHashIdentifierAssignmentHandler implements
   public String getTerminologyId(Description description) throws Exception {
     // If the description already has an sctid return it
     // NOTE: this will allow changing the identity fields
-    //       of a description if the SCTID is already assigned
+    // of a description if the SCTID is already assigned
     if (isSctid(description.getTerminologyId())) {
       return description.getTerminologyId();
     }
@@ -99,7 +100,7 @@ public class SnomedUuidHashIdentifierAssignmentHandler implements
   public String getTerminologyId(Relationship relationship) throws Exception {
     // If the relationship already has an sctid return it
     // NOTE: this will allow changing the identity fields
-    //       of a relationship if the SCTID is already assigned
+    // of a relationship if the SCTID is already assigned
     if (isSctid(relationship.getTerminologyId())) {
       return relationship.getTerminologyId();
     }
@@ -279,7 +280,7 @@ public class SnomedUuidHashIdentifierAssignmentHandler implements
    * @return <code>true</code> if so, <code>false</code> otherwise
    * @throws Exception the exception
    */
-  protected static boolean isSctid(String str) throws Exception {
+  protected boolean isSctid(String str) throws Exception {
     if (str == null || str.isEmpty()) {
       return false;
     }
@@ -287,8 +288,8 @@ public class SnomedUuidHashIdentifierAssignmentHandler implements
       if (Verhoeff.validateVerhoeff(str)) {
         return true;
       } else {
-        throw new Exception(
-            "Unexpected numeric identifier with bad Verhoeff digit");
+        Logger.getLogger(this.getClass()).info(
+            "Unexpected numeric identifier with bad Verhoeff digit " + str);
       }
     }
     return false;
