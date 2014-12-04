@@ -8,9 +8,7 @@ import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
-import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
 
 import org.apache.commons.lang3.time.FastDateFormat;
 import org.apache.log4j.Logger;
@@ -87,15 +85,7 @@ public class HistoryServiceRestImpl extends RootServiceRestImpl implements
         "RESTful call (History): /concepts/" + terminology + "/" + date);
 
     try {
-      // authorize call
-      UserRole role = securityService.getApplicationRoleForToken(authToken);
-      if (!role.hasPrivilegesOf(UserRole.VIEWER))
-        throw new WebApplicationException(
-            Response
-                .status(401)
-                .entity(
-                    "User does not have permissions to find concepts modoified since date.")
-                .build());
+      authenticate(securityService, authToken, "find the concepts modified since date", UserRole.VIEWER);
 
       HistoryService historyService = new HistoryServiceJpa();
       ConceptList cl =
@@ -148,12 +138,7 @@ public class HistoryServiceRestImpl extends RootServiceRestImpl implements
             + "/" + endDate + "/all");
 
     try {
-      // authorize call
-      UserRole role = securityService.getApplicationRoleForToken(authToken);
-      if (!role.hasPrivilegesOf(UserRole.AUTHOR))
-        throw new WebApplicationException(Response.status(401)
-            .entity("User does not have permissions to retrieve the concept.")
-            .build());
+      authenticate(securityService, authToken, "find the concept revisions", UserRole.VIEWER);
 
       HistoryService historyService = new HistoryServiceJpa();
       ConceptList cl =
@@ -164,7 +149,7 @@ public class HistoryServiceRestImpl extends RootServiceRestImpl implements
       historyService.close();
       return cl;
     } catch (Exception e) {
-      handleException(e, "trying to retrieve a concept");
+      handleException(e, "trying to find the concept revisions");
       return null;
     }
   }
@@ -185,12 +170,7 @@ public class HistoryServiceRestImpl extends RootServiceRestImpl implements
         "RESTful call (History): /concepts/revisions/" + id + "/" + release);
 
     try {
-      // authorize call
-      UserRole role = securityService.getApplicationRoleForToken(authToken);
-      if (!role.hasPrivilegesOf(UserRole.AUTHOR))
-        throw new WebApplicationException(Response.status(401)
-            .entity("User does not have permissions to retrieve the concept.")
-            .build());
+      authenticate(securityService, authToken, "find the concept release revision", UserRole.VIEWER);
 
       HistoryService historyService = new HistoryServiceJpa();
       Concept concept =
@@ -201,7 +181,7 @@ public class HistoryServiceRestImpl extends RootServiceRestImpl implements
       historyService.close();
       return concept;
     } catch (Exception e) {
-      handleException(e, "trying to retrieve a concept");
+      handleException(e, "trying to find the concept release revision");
       return null;
     }
   }
@@ -231,15 +211,8 @@ public class HistoryServiceRestImpl extends RootServiceRestImpl implements
         "RESTful call (History): /descriptions/" + terminology + "/" + date);
 
     try {
-      // authorize call
-      UserRole role = securityService.getApplicationRoleForToken(authToken);
-      if (!role.hasPrivilegesOf(UserRole.VIEWER))
-        throw new WebApplicationException(
-            Response
-                .status(401)
-                .entity(
-                    "User does not have permissions to find descriptions modoified since date.")
-                .build());
+      authenticate(securityService, authToken, "find the descriptions modified since date", UserRole.VIEWER);
+
 
       HistoryService historyService = new HistoryServiceJpa();
       DescriptionList cl =
@@ -293,14 +266,7 @@ public class HistoryServiceRestImpl extends RootServiceRestImpl implements
             + startDate + "/" + endDate + "/all");
 
     try {
-      // authorize call
-      UserRole role = securityService.getApplicationRoleForToken(authToken);
-      if (!role.hasPrivilegesOf(UserRole.AUTHOR))
-        throw new WebApplicationException(Response
-            .status(401)
-            .entity(
-                "User does not have permissions to retrieve the description.")
-            .build());
+      authenticate(securityService, authToken, "find the description revisions", UserRole.VIEWER);
 
       HistoryService historyService = new HistoryServiceJpa();
       DescriptionList cl =
@@ -311,7 +277,7 @@ public class HistoryServiceRestImpl extends RootServiceRestImpl implements
       historyService.close();
       return cl;
     } catch (Exception e) {
-      handleException(e, "trying to retrieve a description");
+      handleException(e, "trying to find the release revisions");
       return null;
     }
   }
@@ -334,14 +300,7 @@ public class HistoryServiceRestImpl extends RootServiceRestImpl implements
                 + release);
 
     try {
-      // authorize call
-      UserRole role = securityService.getApplicationRoleForToken(authToken);
-      if (!role.hasPrivilegesOf(UserRole.AUTHOR))
-        throw new WebApplicationException(Response
-            .status(401)
-            .entity(
-                "User does not have permissions to retrieve the description.")
-            .build());
+      authenticate(securityService, authToken, "find the description release revision", UserRole.VIEWER);
 
       HistoryService historyService = new HistoryServiceJpa();
       Description description =
@@ -352,7 +311,7 @@ public class HistoryServiceRestImpl extends RootServiceRestImpl implements
       historyService.close();
       return description;
     } catch (Exception e) {
-      handleException(e, "trying to retrieve a description");
+      handleException(e, "find the description release revision");
       return null;
     }
   }
@@ -382,15 +341,7 @@ public class HistoryServiceRestImpl extends RootServiceRestImpl implements
         "RESTful call (History): /relationships/" + terminology + "/" + date);
 
     try {
-      // authorize call
-      UserRole role = securityService.getApplicationRoleForToken(authToken);
-      if (!role.hasPrivilegesOf(UserRole.VIEWER))
-        throw new WebApplicationException(
-            Response
-                .status(401)
-                .entity(
-                    "User does not have permissions to find relationships modoified since date.")
-                .build());
+      authenticate(securityService, authToken, "find the relationships modified since date", UserRole.VIEWER);
 
       HistoryService historyService = new HistoryServiceJpa();
       RelationshipList cl =
@@ -444,14 +395,7 @@ public class HistoryServiceRestImpl extends RootServiceRestImpl implements
             + startDate + "/" + endDate + "/all");
 
     try {
-      // authorize call
-      UserRole role = securityService.getApplicationRoleForToken(authToken);
-      if (!role.hasPrivilegesOf(UserRole.AUTHOR))
-        throw new WebApplicationException(Response
-            .status(401)
-            .entity(
-                "User does not have permissions to retrieve the relationship.")
-            .build());
+      authenticate(securityService, authToken, "find relationship revisions", UserRole.VIEWER);
 
       HistoryService historyService = new HistoryServiceJpa();
       RelationshipList cl =
@@ -462,7 +406,7 @@ public class HistoryServiceRestImpl extends RootServiceRestImpl implements
       historyService.close();
       return cl;
     } catch (Exception e) {
-      handleException(e, "trying to retrieve a relationship");
+      handleException(e, "trying to find relationship revisions");
       return null;
     }
   }
@@ -484,14 +428,7 @@ public class HistoryServiceRestImpl extends RootServiceRestImpl implements
             + release);
 
     try {
-      // authorize call
-      UserRole role = securityService.getApplicationRoleForToken(authToken);
-      if (!role.hasPrivilegesOf(UserRole.AUTHOR))
-        throw new WebApplicationException(Response
-            .status(401)
-            .entity(
-                "User does not have permissions to retrieve the relationship.")
-            .build());
+      authenticate(securityService, authToken, "find relationship release revision", UserRole.VIEWER);
 
       HistoryService historyService = new HistoryServiceJpa();
       Relationship rel =
@@ -502,7 +439,7 @@ public class HistoryServiceRestImpl extends RootServiceRestImpl implements
       historyService.close();
       return rel;
     } catch (Exception e) {
-      handleException(e, "trying to retrieve a relationship");
+      handleException(e, "trying to find relationship release revision");
       return null;
     }
   }
@@ -532,15 +469,7 @@ public class HistoryServiceRestImpl extends RootServiceRestImpl implements
         "RESTful call (History): /languages/" + terminology + "/" + date);
 
     try {
-      // authorize call
-      UserRole role = securityService.getApplicationRoleForToken(authToken);
-      if (!role.hasPrivilegesOf(UserRole.VIEWER))
-        throw new WebApplicationException(
-            Response
-                .status(401)
-                .entity(
-                    "User does not have permissions to find language refset members modoified since date.")
-                .build());
+      authenticate(securityService, authToken, "find language refset members modified since date", UserRole.VIEWER);
 
       HistoryService historyService = new HistoryServiceJpa();
       LanguageRefSetMemberList cl =
@@ -596,15 +525,7 @@ public class HistoryServiceRestImpl extends RootServiceRestImpl implements
             + "/" + endDate + "/all");
 
     try {
-      // authorize call
-      UserRole role = securityService.getApplicationRoleForToken(authToken);
-      if (!role.hasPrivilegesOf(UserRole.AUTHOR))
-        throw new WebApplicationException(
-            Response
-                .status(401)
-                .entity(
-                    "User does not have permissions to retrieve the languageRefSetMember.")
-                .build());
+      authenticate(securityService, authToken, "find language refset member revisions", UserRole.VIEWER);
 
       HistoryService historyService = new HistoryServiceJpa();
       LanguageRefSetMemberList cl =
@@ -615,7 +536,7 @@ public class HistoryServiceRestImpl extends RootServiceRestImpl implements
       historyService.close();
       return cl;
     } catch (Exception e) {
-      handleException(e, "trying to retrieve a languageRefSetMember");
+      handleException(e, "find language refset member revisions");
       return null;
     }
   }
@@ -644,15 +565,7 @@ public class HistoryServiceRestImpl extends RootServiceRestImpl implements
         "RESTful call (History): /languages/revisions/" + id + "/" + release);
 
     try {
-      // authorize call
-      UserRole role = securityService.getApplicationRoleForToken(authToken);
-      if (!role.hasPrivilegesOf(UserRole.AUTHOR))
-        throw new WebApplicationException(
-            Response
-                .status(401)
-                .entity(
-                    "User does not have permissions to retrieve the languageRefSetMember.")
-                .build());
+      authenticate(securityService, authToken, "find language refset member release revision", UserRole.VIEWER);
 
       HistoryService historyService = new HistoryServiceJpa();
       LanguageRefSetMember member =
@@ -663,7 +576,7 @@ public class HistoryServiceRestImpl extends RootServiceRestImpl implements
       historyService.close();
       return member;
     } catch (Exception e) {
-      handleException(e, "trying to retrieve a languageRefSetMember");
+      handleException(e, "find language refset member release revision");
       return null;
     }
   }
@@ -695,15 +608,7 @@ public class HistoryServiceRestImpl extends RootServiceRestImpl implements
             + "/deep");
 
     try {
-      // authorize call
-      UserRole role = securityService.getApplicationRoleForToken(authToken);
-      if (!role.hasPrivilegesOf(UserRole.VIEWER))
-        throw new WebApplicationException(
-            Response
-                .status(401)
-                .entity(
-                    "User does not have permissions to find concepts deep modoified since date.")
-                .build());
+      authenticate(securityService, authToken, "find deep modified concepts since date", UserRole.VIEWER);
 
       HistoryService historyService = new HistoryServiceJpa();
       ConceptList cl =
@@ -739,12 +644,7 @@ public class HistoryServiceRestImpl extends RootServiceRestImpl implements
         "RESTful call (History): /release/history/");
 
     try {
-      // authorize call
-      UserRole role = securityService.getApplicationRoleForToken(authToken);
-      if (!role.hasPrivilegesOf(UserRole.VIEWER))
-        throw new WebApplicationException(Response.status(401)
-            .entity("User does not have permissions to get release history.")
-            .build());
+      authenticate(securityService, authToken, "get release history", UserRole.VIEWER);
 
       HistoryService historyService = new HistoryServiceJpa();
       ReleaseInfoList result = historyService.getReleaseHistory();
@@ -778,14 +678,7 @@ public class HistoryServiceRestImpl extends RootServiceRestImpl implements
         "RESTful call (History): /release/current/");
 
     try {
-      // authorize call
-      UserRole role = securityService.getApplicationRoleForToken(authToken);
-      if (!role.hasPrivilegesOf(UserRole.VIEWER))
-        throw new WebApplicationException(Response
-            .status(401)
-            .entity(
-                "User does not have permissions to get current release info.")
-            .build());
+      authenticate(securityService, authToken, "get current release info", UserRole.VIEWER);
 
       HistoryService historyService = new HistoryServiceJpa();
       ReleaseInfo result = historyService.getCurrentReleaseInfo();
@@ -819,14 +712,7 @@ public class HistoryServiceRestImpl extends RootServiceRestImpl implements
         "RESTful call (History): /release/previous/");
 
     try {
-      // authorize call
-      UserRole role = securityService.getApplicationRoleForToken(authToken);
-      if (!role.hasPrivilegesOf(UserRole.VIEWER))
-        throw new WebApplicationException(Response
-            .status(401)
-            .entity(
-                "User does not have permissions to get previous release info.")
-            .build());
+      authenticate(securityService, authToken, "get previous release info", UserRole.VIEWER);
 
       HistoryService historyService = new HistoryServiceJpa();
       ReleaseInfo result = historyService.getPreviousReleaseInfo();
@@ -853,14 +739,7 @@ public class HistoryServiceRestImpl extends RootServiceRestImpl implements
         "RESTful call (History): /release/planned/");
 
     try {
-      // authorize call
-      UserRole role = securityService.getApplicationRoleForToken(authToken);
-      if (!role.hasPrivilegesOf(UserRole.VIEWER))
-        throw new WebApplicationException(Response
-            .status(401)
-            .entity(
-                "User does not have permissions to get planned release info.")
-            .build());
+      authenticate(securityService, authToken, "get planned release info", UserRole.VIEWER);
 
       HistoryService historyService = new HistoryServiceJpa();
       ReleaseInfo result = historyService.getPlannedReleaseInfo();
@@ -895,14 +774,7 @@ public class HistoryServiceRestImpl extends RootServiceRestImpl implements
         "RESTful call (History): /release/" + release);
 
     try {
-      // authorize call
-      UserRole role = securityService.getApplicationRoleForToken(authToken);
-      if (!role.hasPrivilegesOf(UserRole.VIEWER))
-        throw new WebApplicationException(Response
-            .status(401)
-            .entity(
-                "User does not have permissions to get release info for "
-                    + release).build());
+      authenticate(securityService, authToken, "get release info for " + release, UserRole.VIEWER);
 
       HistoryService historyService = new HistoryServiceJpa();
       ReleaseInfo result = historyService.getReleaseInfo(release);
@@ -937,12 +809,7 @@ public class HistoryServiceRestImpl extends RootServiceRestImpl implements
         "RESTful call (History): /release/add " + releaseInfo.getName());
 
     try {
-      // authorize call
-      UserRole role = securityService.getApplicationRoleForToken(authToken);
-      if (!role.hasPrivilegesOf(UserRole.ADMINISTRATOR))
-        throw new WebApplicationException(Response.status(401)
-            .entity("User does not have permissions to add release info")
-            .build());
+      authenticate(securityService, authToken, "add release info", UserRole.ADMINISTRATOR);
 
       HistoryService historyService = new HistoryServiceJpa();
       ReleaseInfo result = historyService.addReleaseInfo(releaseInfo);
@@ -977,12 +844,7 @@ public class HistoryServiceRestImpl extends RootServiceRestImpl implements
         "RESTful call (History): /release/update " + releaseInfo.getName());
 
     try {
-      // authorize call
-      UserRole role = securityService.getApplicationRoleForToken(authToken);
-      if (!role.hasPrivilegesOf(UserRole.ADMINISTRATOR))
-        throw new WebApplicationException(Response.status(401)
-            .entity("User does not have permissions to update release info")
-            .build());
+      authenticate(securityService, authToken, "update release info", UserRole.ADMINISTRATOR);
 
       HistoryService historyService = new HistoryServiceJpa();
       historyService.updateReleaseInfo(releaseInfo);
@@ -1014,12 +876,7 @@ public class HistoryServiceRestImpl extends RootServiceRestImpl implements
         "RESTful call (History): /release/remove/" + id);
 
     try {
-      // authorize call
-      UserRole role = securityService.getApplicationRoleForToken(authToken);
-      if (!role.hasPrivilegesOf(UserRole.ADMINISTRATOR))
-        throw new WebApplicationException(Response.status(401)
-            .entity("User does not have permissions to remove release info")
-            .build());
+      authenticate(securityService, authToken, "remove release info", UserRole.ADMINISTRATOR);
 
       HistoryService historyService = new HistoryServiceJpa();
       historyService.removeReleaseInfo(Long.valueOf(id));

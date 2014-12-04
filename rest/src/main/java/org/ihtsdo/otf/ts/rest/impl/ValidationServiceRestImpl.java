@@ -4,9 +4,7 @@ import javax.ws.rs.HeaderParam;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
-import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
 
 import org.apache.log4j.Logger;
 import org.ihtsdo.otf.ts.helpers.KeyValuePairList;
@@ -70,13 +68,7 @@ public class ValidationServiceRestImpl extends RootServiceRestImpl implements
 
     String user = "";
     try {
-      // authorize call
-      user = securityService.getUsernameForToken(authToken);
-      UserRole role = securityService.getApplicationRoleForToken(authToken);
-      if (!role.hasPrivilegesOf(UserRole.VIEWER))
-        throw new WebApplicationException(Response.status(401)
-            .entity("User does not have permissions to validate a concept.")
-            .build());
+      authenticate(securityService, authToken, "validate the concept", UserRole.VIEWER);
 
       ValidationService service = new ValidationServiceJpa();
       ValidationResult result = service.validateConcept(concept);
