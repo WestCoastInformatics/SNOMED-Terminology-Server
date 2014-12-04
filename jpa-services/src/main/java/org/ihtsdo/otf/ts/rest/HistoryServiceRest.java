@@ -7,9 +7,13 @@ import org.ihtsdo.otf.ts.helpers.PfsParameterJpa;
 import org.ihtsdo.otf.ts.helpers.RelationshipList;
 import org.ihtsdo.otf.ts.helpers.ReleaseInfo;
 import org.ihtsdo.otf.ts.helpers.ReleaseInfoList;
+import org.ihtsdo.otf.ts.rf2.Concept;
+import org.ihtsdo.otf.ts.rf2.Description;
+import org.ihtsdo.otf.ts.rf2.LanguageRefSetMember;
+import org.ihtsdo.otf.ts.rf2.Relationship;
 
 /**
- * Represents a security available via a REST service.
+ * Represents a history services available via a REST service.
  */
 public interface HistoryServiceRest {
 
@@ -35,7 +39,7 @@ public interface HistoryServiceRest {
    * @param pfs the pfs parameter
    * @param authToken the auth token
    * @return the concept revisions
-   * @throws Exception 
+   * @throws Exception
    */
   public ConceptList findConceptRevisions(String id, String startDate,
     String endDate, PfsParameterJpa pfs, String authToken) throws Exception;
@@ -44,14 +48,14 @@ public interface HistoryServiceRest {
    * Find concept release revisions for the specified date range.
    *
    * @param id the id
-   * @param startDate the start date
-   * @param endDate the end date
+   * @param release the release
    * @param pfs the pfs
    * @param authToken the auth token
    * @return the concept list
+   * @throws Exception the exception
    */
-  public ConceptList findConceptReleaseRevisions(String id, String startDate,
-    String endDate, PfsParameterJpa pfs, String authToken) throws Exception;
+  public Concept findConceptReleaseRevision(String id, String release,
+   String authToken) throws Exception;
 
   /**
    * Find descriptions modified since date.
@@ -82,14 +86,14 @@ public interface HistoryServiceRest {
    * Find description release revisions.
    *
    * @param id the id
-   * @param startDate the start date
-   * @param endDate the end date
+   * @param release the release
    * @param pfs the pfs
    * @param authToken the auth token
    * @return the description list
+   * @throws Exception the exception
    */
-  public DescriptionList findDescriptionReleaseRevisions(String id,
-    String startDate, String endDate, PfsParameterJpa pfs, String authToken) throws Exception;
+  public Description findDescriptionReleaseRevision(String id,
+    String release,  String authToken) throws Exception;
 
   /**
    * Find relationships modified since date.
@@ -101,7 +105,8 @@ public interface HistoryServiceRest {
    * @return the search result list
    */
   public RelationshipList findRelationshipsModifiedSinceDate(
-    String terminology, String date, PfsParameterJpa pfs, String authToken) throws Exception;
+    String terminology, String date, PfsParameterJpa pfs, String authToken)
+    throws Exception;
 
   /**
    * Finds all relationship revisions for the specified date range.
@@ -114,8 +119,9 @@ public interface HistoryServiceRest {
    * @param authToken the auth token
    * @return the relationship list
    */
-  public RelationshipList findRelationshipRevisions(String id, String startDate,
-    String endDate, PfsParameterJpa pfs, String authToken) throws Exception;
+  public RelationshipList findRelationshipRevisions(String id,
+    String startDate, String endDate, PfsParameterJpa pfs, String authToken)
+    throws Exception;
 
   /**
    * Find relationship release revisions.
@@ -127,8 +133,8 @@ public interface HistoryServiceRest {
    * @param authToken the auth token
    * @return the relationship list
    */
-  public RelationshipList findRelationshipReleaseRevisions(String id,
-    String startDate, String endDate, PfsParameterJpa pfs, String authToken) throws Exception;
+  public Relationship findRelationshipReleaseRevision(String id,
+    String release, String authToken) throws Exception;
 
   /**
    * Find language ref set members modified since date.
@@ -140,7 +146,8 @@ public interface HistoryServiceRest {
    * @return the search result list
    */
   public LanguageRefSetMemberList findLanguageRefSetMembersModifiedSinceDate(
-    String terminology, String date, PfsParameterJpa pfs, String authToken) throws Exception;
+    String terminology, String date, PfsParameterJpa pfs, String authToken)
+    throws Exception;
 
   /**
    * Find language ref set member revisions.
@@ -154,7 +161,8 @@ public interface HistoryServiceRest {
    * @return the language ref set member list
    */
   public LanguageRefSetMemberList findLanguageRefSetMemberRevisions(String id,
-    String startDate, String endDate, PfsParameterJpa pfs, String authToken) throws Exception;
+    String startDate, String endDate, PfsParameterJpa pfs, String authToken)
+    throws Exception;
 
   /**
    * Find language ref set member release revisions.
@@ -166,9 +174,9 @@ public interface HistoryServiceRest {
    * @param authToken the auth token
    * @return the language ref set member list
    */
-  public LanguageRefSetMemberList findLanguageRefSetMemberReleaseRevisions(
-    String id, String startDate, String endDate, PfsParameterJpa pfs,
-    String authToken) throws Exception;
+  public LanguageRefSetMember findLanguageRefSetMemberReleaseRevision(
+    String id, String release, String authToken)
+    throws Exception;
 
   /**
    * Returns concepts changed since certain date – performs a "deep" search for
@@ -220,7 +228,7 @@ public interface HistoryServiceRest {
    * @throws Exception the exception
    */
   public ReleaseInfo getPlannedReleaseInfo(String authToken) throws Exception;
-  
+
   /**
    * Returns the release info.
    *

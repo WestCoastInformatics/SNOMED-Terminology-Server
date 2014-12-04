@@ -25,6 +25,10 @@ import org.ihtsdo.otf.ts.helpers.UserRole;
 import org.ihtsdo.otf.ts.jpa.services.HistoryServiceJpa;
 import org.ihtsdo.otf.ts.jpa.services.SecurityServiceJpa;
 import org.ihtsdo.otf.ts.rest.HistoryServiceRest;
+import org.ihtsdo.otf.ts.rf2.Concept;
+import org.ihtsdo.otf.ts.rf2.Description;
+import org.ihtsdo.otf.ts.rf2.LanguageRefSetMember;
+import org.ihtsdo.otf.ts.rf2.Relationship;
 import org.ihtsdo.otf.ts.services.HistoryService;
 import org.ihtsdo.otf.ts.services.SecurityService;
 
@@ -154,7 +158,7 @@ public class HistoryServiceRestImpl extends RootServiceRestImpl implements
       HistoryService historyService = new HistoryServiceJpa();
       ConceptList cl =
           historyService.findConceptRevisions(Long.valueOf(id),
-              format.parse(startDate), format.parse(endDate), false, pfs);
+              format.parse(startDate), format.parse(endDate), pfs);
 
       // explicitly do not want to use graph resolution handler.
       historyService.close();
@@ -165,31 +169,20 @@ public class HistoryServiceRestImpl extends RootServiceRestImpl implements
     }
   }
 
-  /*
-   * (non-Javadoc)
-   * 
-   * @see
-   * org.ihtsdo.otf.ts.rest.HistoryServiceRest#findConceptReleaseRevisions(java
-   * .lang.String, java.lang.String, java.lang.String,
-   * org.ihtsdo.otf.ts.helpers.PfsParameterJpa, java.lang.String)
-   */
   @Override
   @POST
-  @Path("/concepts/revisions/{id}/{startDate: [0-9][0-9][0-9][0-9]-[0-1][0-9]-[0-3][0-9]}/{endDate: [0-9][0-9][0-9][0-9]-[0-1][0-9]-[0-3][0-9]}/release")
-  @ApiOperation(value = "Get concepts release revisions in a date range", notes = "Gets concept release revisions in a date range. Use a null date to leave it open ended", response = ConceptList.class)
+  @Path("/concepts/revisions/{id}/{release: [0-9][0-9][0-9][0-9]-[0-1][0-9]-[0-3][0-9]}/release")
+  @ApiOperation(value = "Get concepts release revision", notes = "Gets concept release revision.", response = Concept.class)
   @Produces({
       MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML
   })
-  public ConceptList findConceptReleaseRevisions(
-    @ApiParam(value = "Concept terminology , e.g. SNOMEDCT", required = true) @PathParam("id") String id,
-    @ApiParam(value = "Date in the format YYYYMMDD , e.g. 20140731", required = true) @PathParam("startDate") String startDate,
-    @ApiParam(value = "Date in the format YYYYMMDD , e.g. 20140731", required = true) @PathParam("endDate") String endDate,
-    @ApiParam(value = "PFS Parameter, e.g. '{ \"startIndex\":\"1\", \"maxResults\":\"5\" }'", required = false) PfsParameterJpa pfs,
+  public Concept findConceptReleaseRevision(
+    @ApiParam(value = "Concept id, e.g. 2", required = true) @PathParam("id") String id,
+    @ApiParam(value = "Release date in the format YYYYMMDD , e.g. 20140731", required = true) @PathParam("release") String release,
     @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken) {
 
     Logger.getLogger(ContentServiceRestImpl.class).info(
-        "RESTful call (History): /concepts/revisions/" + id + "/" + startDate
-            + "/" + endDate + "/release");
+        "RESTful call (History): /concepts/revisions/" + id + "/" + release);
 
     try {
       // authorize call
@@ -200,13 +193,13 @@ public class HistoryServiceRestImpl extends RootServiceRestImpl implements
             .build());
 
       HistoryService historyService = new HistoryServiceJpa();
-      ConceptList cl =
-          historyService.findConceptRevisions(Long.valueOf(id),
-              format.parse(startDate), format.parse(endDate), true, pfs);
+      Concept concept =
+          historyService.findConceptReleaseRevision(Long.valueOf(id),
+              format.parse(release));
 
       // explicitly do not want to use graph resolution handler.
       historyService.close();
-      return cl;
+      return concept;
     } catch (Exception e) {
       handleException(e, "trying to retrieve a concept");
       return null;
@@ -312,7 +305,7 @@ public class HistoryServiceRestImpl extends RootServiceRestImpl implements
       HistoryService historyService = new HistoryServiceJpa();
       DescriptionList cl =
           historyService.findDescriptionRevisions(Long.valueOf(id),
-              format.parse(startDate), format.parse(endDate), false, pfs);
+              format.parse(startDate), format.parse(endDate), pfs);
 
       // explicitly do not want to use graph resolution handler.
       historyService.close();
@@ -323,31 +316,22 @@ public class HistoryServiceRestImpl extends RootServiceRestImpl implements
     }
   }
 
-  /*
-   * (non-Javadoc)
-   * 
-   * @see
-   * org.ihtsdo.otf.ts.rest.HistoryServiceRest#findDescriptionReleaseRevisions
-   * (java.lang.String, java.lang.String, java.lang.String,
-   * org.ihtsdo.otf.ts.helpers.PfsParameterJpa, java.lang.String)
-   */
   @Override
   @POST
-  @Path("/descriptions/revisions/{id}/{startDate: [0-9][0-9][0-9][0-9]-[0-1][0-9]-[0-3][0-9]}/{endDate: [0-9][0-9][0-9][0-9]-[0-1][0-9]-[0-3][0-9]}/release")
-  @ApiOperation(value = "Get descriptions release revisions in a date range", notes = "Gets description release revisions in a date range. Use a null date to leave it open ended", response = DescriptionList.class)
+  @Path("/descriptions/revisions/{id}/{release: [0-9][0-9][0-9][0-9]-[0-1][0-9]-[0-3][0-9]}/release")
+  @ApiOperation(value = "Get descriptions release revision", notes = "Gets description release revision", response = Description.class)
   @Produces({
       MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML
   })
-  public DescriptionList findDescriptionReleaseRevisions(
-    @ApiParam(value = "Concept terminology , e.g. SNOMEDCT", required = true) @PathParam("id") String id,
-    @ApiParam(value = "Date in the format YYYYMMDD , e.g. 20140731", required = true) @PathParam("startDate") String startDate,
-    @ApiParam(value = "Date in the format YYYYMMDD , e.g. 20140731", required = true) @PathParam("endDate") String endDate,
-    @ApiParam(value = "PFS Parameter, e.g. '{ \"startIndex\":\"1\", \"maxResults\":\"5\" }'", required = false) PfsParameterJpa pfs,
+  public Description findDescriptionReleaseRevision(
+    @ApiParam(value = "Concept id , e.g. 2", required = true) @PathParam("id") String id,
+    @ApiParam(value = "Release date in the format YYYYMMDD , e.g. 20140731", required = true) @PathParam("release") String release,
     @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken) {
 
-    Logger.getLogger(ContentServiceRestImpl.class).info(
-        "RESTful call (History): /descriptions/revisions/" + id + "/"
-            + startDate + "/" + endDate + "/release");
+    Logger.getLogger(ContentServiceRestImpl.class)
+        .info(
+            "RESTful call (History): /descriptions/revisions/" + id + "/"
+                + release);
 
     try {
       // authorize call
@@ -360,13 +344,13 @@ public class HistoryServiceRestImpl extends RootServiceRestImpl implements
             .build());
 
       HistoryService historyService = new HistoryServiceJpa();
-      DescriptionList cl =
-          historyService.findDescriptionRevisions(Long.valueOf(id),
-              format.parse(startDate), format.parse(endDate), true, pfs);
+      Description description =
+          historyService.findDescriptionReleaseRevision(Long.valueOf(id),
+              format.parse(release));
 
       // explicitly do not want to use graph resolution handler.
       historyService.close();
-      return cl;
+      return description;
     } catch (Exception e) {
       handleException(e, "trying to retrieve a description");
       return null;
@@ -472,7 +456,7 @@ public class HistoryServiceRestImpl extends RootServiceRestImpl implements
       HistoryService historyService = new HistoryServiceJpa();
       RelationshipList cl =
           historyService.findRelationshipRevisions(Long.valueOf(id),
-              format.parse(startDate), format.parse(endDate), false, pfs);
+              format.parse(startDate), format.parse(endDate), pfs);
 
       // explicitly do not want to use graph resolution handler.
       historyService.close();
@@ -483,31 +467,21 @@ public class HistoryServiceRestImpl extends RootServiceRestImpl implements
     }
   }
 
-  /*
-   * (non-Javadoc)
-   * 
-   * @see
-   * org.ihtsdo.otf.ts.rest.HistoryServiceRest#findRelationshipReleaseRevisions
-   * (java.lang.String, java.lang.String, java.lang.String,
-   * org.ihtsdo.otf.ts.helpers.PfsParameterJpa, java.lang.String)
-   */
   @Override
   @POST
-  @Path("/relationships/revisions/{id}/{startDate: [0-9][0-9][0-9][0-9]-[0-1][0-9]-[0-3][0-9]}/{endDate: [0-9][0-9][0-9][0-9]-[0-1][0-9]-[0-3][0-9]}/release")
-  @ApiOperation(value = "Get relationships release revisions in a date range", notes = "Gets relationship release revisions in a date range. Use a null date to leave it open ended", response = RelationshipList.class)
+  @Path("/relationships/revisions/{id}/{release: [0-9][0-9][0-9][0-9]-[0-1][0-9]-[0-3][0-9]}/release")
+  @ApiOperation(value = "Get relationships release revision", notes = "Gets relationship release revision", response = Relationship.class)
   @Produces({
       MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML
   })
-  public RelationshipList findRelationshipReleaseRevisions(
-    @ApiParam(value = "Concept terminology , e.g. SNOMEDCT", required = true) @PathParam("id") String id,
-    @ApiParam(value = "Date in the format YYYYMMDD , e.g. 20140731", required = true) @PathParam("startDate") String startDate,
-    @ApiParam(value = "Date in the format YYYYMMDD , e.g. 20140731", required = true) @PathParam("endDate") String endDate,
-    @ApiParam(value = "PFS Parameter, e.g. '{ \"startIndex\":\"1\", \"maxResults\":\"5\" }'", required = false) PfsParameterJpa pfs,
+  public Relationship findRelationshipReleaseRevision(
+    @ApiParam(value = "Concept id, e.g. 2", required = true) @PathParam("id") String id,
+    @ApiParam(value = "Release date in the format YYYYMMDD , e.g. 20140731", required = true) @PathParam("release") String release,
     @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken) {
 
     Logger.getLogger(ContentServiceRestImpl.class).info(
         "RESTful call (History): /relationships/revisions/" + id + "/"
-            + startDate + "/" + endDate + "/release");
+            + release);
 
     try {
       // authorize call
@@ -520,13 +494,13 @@ public class HistoryServiceRestImpl extends RootServiceRestImpl implements
             .build());
 
       HistoryService historyService = new HistoryServiceJpa();
-      RelationshipList cl =
-          historyService.findRelationshipRevisions(Long.valueOf(id),
-              format.parse(startDate), format.parse(endDate), true, pfs);
+      Relationship rel =
+          historyService.findRelationshipReleaseRevision(Long.valueOf(id),
+              format.parse(release));
 
       // explicitly do not want to use graph resolution handler.
       historyService.close();
-      return cl;
+      return rel;
     } catch (Exception e) {
       handleException(e, "trying to retrieve a relationship");
       return null;
@@ -635,7 +609,7 @@ public class HistoryServiceRestImpl extends RootServiceRestImpl implements
       HistoryService historyService = new HistoryServiceJpa();
       LanguageRefSetMemberList cl =
           historyService.findLanguageRefSetMemberRevisions(Long.valueOf(id),
-              format.parse(startDate), format.parse(endDate), false, pfs);
+              format.parse(startDate), format.parse(endDate), pfs);
 
       // explicitly do not want to use graph resolution handler.
       historyService.close();
@@ -656,21 +630,18 @@ public class HistoryServiceRestImpl extends RootServiceRestImpl implements
    */
   @Override
   @POST
-  @Path("/languages/revisions/{id}/{startDate: [0-9][0-9][0-9][0-9]-[0-1][0-9]-[0-3][0-9]}/{endDate: [0-9][0-9][0-9][0-9]-[0-1][0-9]-[0-3][0-9]}/release")
-  @ApiOperation(value = "Get language refset members release revisions in a date range", notes = "Gets language refset members release revisions in a date range. Use a null date to leave it open ended", response = LanguageRefSetMemberList.class)
+  @Path("/languages/revisions/{id}/{release: [0-9][0-9][0-9][0-9]-[0-1][0-9]-[0-3][0-9]}/release")
+  @ApiOperation(value = "Get language refset members release revision", notes = "Gets language refset members release revision", response = LanguageRefSetMember.class)
   @Produces({
       MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML
   })
-  public LanguageRefSetMemberList findLanguageRefSetMemberReleaseRevisions(
-    @ApiParam(value = "Concept terminology , e.g. SNOMEDCT", required = true) @PathParam("id") String id,
-    @ApiParam(value = "Date in the format YYYYMMDD , e.g. 20140731", required = true) @PathParam("startDate") String startDate,
-    @ApiParam(value = "Date in the format YYYYMMDD , e.g. 20140731", required = true) @PathParam("endDate") String endDate,
-    @ApiParam(value = "PFS Parameter, e.g. '{ \"startIndex\":\"1\", \"maxResults\":\"5\" }'", required = false) PfsParameterJpa pfs,
+  public LanguageRefSetMember findLanguageRefSetMemberReleaseRevision(
+    @ApiParam(value = "Concept id, e.g. 2", required = true) @PathParam("id") String id,
+    @ApiParam(value = "Release date in the format YYYYMMDD , e.g. 20140731", required = true) @PathParam("release") String release,
     @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken) {
 
     Logger.getLogger(ContentServiceRestImpl.class).info(
-        "RESTful call (History): /languages/revisions/" + id + "/" + startDate
-            + "/" + endDate + "/release");
+        "RESTful call (History): /languages/revisions/" + id + "/" + release);
 
     try {
       // authorize call
@@ -684,13 +655,13 @@ public class HistoryServiceRestImpl extends RootServiceRestImpl implements
                 .build());
 
       HistoryService historyService = new HistoryServiceJpa();
-      LanguageRefSetMemberList cl =
-          historyService.findLanguageRefSetMemberRevisions(Long.valueOf(id),
-              format.parse(startDate), format.parse(endDate), true, pfs);
+      LanguageRefSetMember member =
+          historyService.findLanguageRefSetMemberReleaseRevision(
+              Long.valueOf(id), format.parse(release));
 
       // explicitly do not want to use graph resolution handler.
       historyService.close();
-      return cl;
+      return member;
     } catch (Exception e) {
       handleException(e, "trying to retrieve a languageRefSetMember");
       return null;
@@ -901,6 +872,7 @@ public class HistoryServiceRestImpl extends RootServiceRestImpl implements
       return null;
     }
   }
+
   /*
    * (non-Javadoc)
    * 

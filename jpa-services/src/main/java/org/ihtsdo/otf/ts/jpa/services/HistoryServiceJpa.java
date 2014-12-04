@@ -44,7 +44,7 @@ import org.ihtsdo.otf.ts.rf2.jpa.RelationshipJpa;
 import org.ihtsdo.otf.ts.services.HistoryService;
 
 /**
- * The Content Services for the Jpa model.
+ * JPA enabled implmementation of {@link HistoryService}.
  */
 public class HistoryServiceJpa extends ContentServiceJpa implements
     HistoryService {
@@ -97,14 +97,13 @@ public class HistoryServiceJpa extends ContentServiceJpa implements
    */
   @Override
   public ConceptList findConceptRevisions(Long id, Date startDate,
-    Date endDate, boolean releaseRevisionsOnly, PfsParameter pfs) {
+    Date endDate, PfsParameter pfs) {
     Logger.getLogger(ContentServiceJpa.class).debug(
         "History Service - find concept revisions " + id + "," + startDate
-            + ", " + endDate + "," + releaseRevisionsOnly);
+            + ", " + endDate);
 
     List<ConceptJpa> revisions =
-        findRevisions(id, ConceptJpa.class, startDate, endDate,
-            releaseRevisionsOnly, pfs);
+        findRevisions(id, ConceptJpa.class, startDate, endDate, pfs);
     // Repackage as ConceptList
     ConceptList results = new ConceptListJpa();
     results.setTotalCount(revisions.size());
@@ -112,6 +111,25 @@ public class HistoryServiceJpa extends ContentServiceJpa implements
       results.addObject(concept);
     }
     return results;
+  }
+
+  /*
+   * (non-Javadoc)
+   * 
+   * @see
+   * org.ihtsdo.otf.ts.services.HistoryService#findConceptReleaseRevision(java
+   * .lang.Long, java.lang.String)
+   */
+  @Override
+  public Concept findConceptReleaseRevision(Long id, Date release)
+    throws Exception {
+    Logger.getLogger(ContentServiceJpa.class)
+        .debug(
+            "History Service - find concept release revision " + id + ","
+                + format.format(release));
+
+    ConceptJpa revision = findReleaseRevision(id, release, ConceptJpa.class);
+    return revision;
   }
 
   /*
@@ -149,13 +167,12 @@ public class HistoryServiceJpa extends ContentServiceJpa implements
    */
   @Override
   public DescriptionList findDescriptionRevisions(Long id, Date startDate,
-    Date endDate, boolean releaseRevisionsOnly, PfsParameter pfs) {
+    Date endDate, PfsParameter pfs) {
     Logger.getLogger(ContentServiceJpa.class).debug(
         "History Service - find description revisions " + id + "," + startDate
-            + ", " + endDate + "," + releaseRevisionsOnly);
+            + ", " + endDate);
     List<DescriptionJpa> revisions =
-        findRevisions(id, DescriptionJpa.class, startDate, endDate,
-            releaseRevisionsOnly, pfs);
+        findRevisions(id, DescriptionJpa.class, startDate, endDate, pfs);
     // Repackage as DescriptionList
     DescriptionList results = new DescriptionListJpa();
     results.setTotalCount(revisions.size());
@@ -163,6 +180,25 @@ public class HistoryServiceJpa extends ContentServiceJpa implements
       results.addObject(Description);
     }
     return results;
+  }
+
+  /*
+   * (non-Javadoc)
+   * 
+   * @see
+   * org.ihtsdo.otf.ts.services.HistoryService#findDescriptionReleaseRevision
+   * (java.lang.Long, java.lang.String)
+   */
+  @Override
+  public Description findDescriptionReleaseRevision(Long id, Date release)
+    throws Exception {
+    Logger.getLogger(ContentServiceJpa.class).debug(
+        "History Service - find description release revision " + id + ","
+            + release);
+
+    DescriptionJpa revision =
+        findReleaseRevision(id, release, DescriptionJpa.class);
+    return revision;
   }
 
   /*
@@ -199,13 +235,12 @@ public class HistoryServiceJpa extends ContentServiceJpa implements
    */
   @Override
   public RelationshipList findRelationshipRevisions(Long id, Date startDate,
-    Date endDate, boolean releaseRevisionsOnly, PfsParameter pfs) {
+    Date endDate, PfsParameter pfs) {
     Logger.getLogger(ContentServiceJpa.class).debug(
         "History Service - find relationship revisions " + id + "," + startDate
-            + ", " + endDate + "," + releaseRevisionsOnly);
+            + ", " + endDate);
     List<RelationshipJpa> revisions =
-        findRevisions(id, RelationshipJpa.class, startDate, endDate,
-            releaseRevisionsOnly, pfs);
+        findRevisions(id, RelationshipJpa.class, startDate, endDate, pfs);
     // Repackage as RelationshipList
     RelationshipList results = new RelationshipListJpa();
     results.setTotalCount(revisions.size());
@@ -213,6 +248,25 @@ public class HistoryServiceJpa extends ContentServiceJpa implements
       results.addObject(Relationship);
     }
     return results;
+  }
+
+  /*
+   * (non-Javadoc)
+   * 
+   * @see
+   * org.ihtsdo.otf.ts.services.HistoryService#findRelationshipReleaseRevision
+   * (java.lang.Long, java.lang.String)
+   */
+  @Override
+  public Relationship findRelationshipReleaseRevision(Long id, Date release)
+    throws Exception {
+    Logger.getLogger(ContentServiceJpa.class).debug(
+        "History Service - find relationship release revision " + id + ","
+            + release);
+
+    RelationshipJpa revision =
+        findReleaseRevision(id, release, RelationshipJpa.class);
+    return revision;
   }
 
   /*
@@ -249,13 +303,13 @@ public class HistoryServiceJpa extends ContentServiceJpa implements
    */
   @Override
   public LanguageRefSetMemberList findLanguageRefSetMemberRevisions(Long id,
-    Date startDate, Date endDate, boolean releaseRevisionsOnly, PfsParameter pfs) {
+    Date startDate, Date endDate, PfsParameter pfs) {
     Logger.getLogger(ContentServiceJpa.class).debug(
         "History Service - find language revsest revisions" + id + ","
-            + startDate + ", " + endDate + "," + releaseRevisionsOnly);
+            + startDate + ", " + endDate);
     List<LanguageRefSetMemberJpa> revisions =
         findRevisions(id, LanguageRefSetMemberJpa.class, startDate, endDate,
-            releaseRevisionsOnly, pfs);
+            pfs);
     // Repackage as LanguageRefSetMemberList
     LanguageRefSetMemberList results = new LanguageRefSetMemberListJpa();
     results.setTotalCount(revisions.size());
@@ -263,6 +317,24 @@ public class HistoryServiceJpa extends ContentServiceJpa implements
       results.addObject(LanguageRefSetMember);
     }
     return results;
+  }
+
+  /*
+   * (non-Javadoc)
+   * 
+   * @see org.ihtsdo.otf.ts.services.HistoryService#
+   * findLanguageRefSetMemberReleaseRevision(java.lang.Long, java.lang.String)
+   */
+  @Override
+  public LanguageRefSetMember findLanguageRefSetMemberReleaseRevision(Long id,
+    Date release) throws Exception {
+    Logger.getLogger(ContentServiceJpa.class).debug(
+        "History Service - find language refset member release revision " + id
+            + "," + release);
+
+    LanguageRefSetMemberJpa revision =
+        findReleaseRevision(id, release, LanguageRefSetMemberJpa.class);
+    return revision;
   }
 
   /*
@@ -579,12 +651,11 @@ public class HistoryServiceJpa extends ContentServiceJpa implements
    * @param clazz the clazz
    * @param startDate the start date
    * @param endDate the end date
-   * @param releaseRevisionsOnly the release revisions only
    * @param pfs the pfs parameter
    * @return the list
    */
   private <T> List<T> findRevisions(Long id, Class<T> clazz, Date startDate,
-    Date endDate, boolean releaseRevisionsOnly, PfsParameter pfs) {
+    Date endDate, PfsParameter pfs) {
 
     AuditReader reader = AuditReaderFactory.get(manager);
     AuditQuery query = reader.createQuery()
@@ -600,12 +671,6 @@ public class HistoryServiceJpa extends ContentServiceJpa implements
 
         // search by upper bound on last modified
         .add(AuditEntity.property("lastModified").le(endDate));
-
-    // Determine release by having null release version
-    // publication states have non null effective times.
-    if (releaseRevisionsOnly) {
-      query = query.add(AuditEntity.property("effectiveTime").isNotNull());
-    }
 
     if (pfs != null && pfs.getSortField() != null) {
       query = query.addOrder(AuditEntity.property(pfs.getSortField()).asc());
@@ -623,6 +688,41 @@ public class HistoryServiceJpa extends ContentServiceJpa implements
     @SuppressWarnings("unchecked")
     List<T> revisions = query.getResultList();
     return revisions;
+  }
+
+  /**
+   * Find release revision.
+   *
+   * @param <T> the generic type
+   * @param id the id
+   * @param release the release
+   * @param clazz the clazz
+   * @return the t
+   * @throws ParseException the parse exception
+   */
+  private <T> T findReleaseRevision(Long id, Date release, Class<T> clazz)
+    throws ParseException {
+
+    AuditReader reader = AuditReaderFactory.get(manager);
+    AuditQuery query = reader.createQuery()
+
+    // all revisions, returned as objects, not finding deleted entries
+        .forRevisionsOfEntity(clazz, true, false)
+
+        // search by id
+        .add(AuditEntity.id().eq(id))
+
+        // search by lower bound on last modified
+        .add(AuditEntity.property("effectiveTime").eq(release));
+
+    // execute query
+    @SuppressWarnings("unchecked")
+    List<T> revisions = query.getResultList();
+    if (revisions.size() > 0) {
+      return revisions.get(0);
+    } else {
+      return null;
+    }
   }
 
 }

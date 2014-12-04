@@ -9,6 +9,10 @@ import org.ihtsdo.otf.ts.helpers.PfsParameter;
 import org.ihtsdo.otf.ts.helpers.RelationshipList;
 import org.ihtsdo.otf.ts.helpers.ReleaseInfo;
 import org.ihtsdo.otf.ts.helpers.ReleaseInfoList;
+import org.ihtsdo.otf.ts.rf2.Concept;
+import org.ihtsdo.otf.ts.rf2.Description;
+import org.ihtsdo.otf.ts.rf2.LanguageRefSetMember;
+import org.ihtsdo.otf.ts.rf2.Relationship;
 
 /**
  * Generically represents a service for asking questions about content history.
@@ -33,12 +37,22 @@ public interface HistoryService extends ContentService {
    * @param id the id
    * @param startDate the start date
    * @param endDate the end date
-   * @param releaseRevisionsOnly the release revisions only
    * @param pfs the pfs parameter
    * @return the concept revisions
+   * @throws Exception the exception
    */
   public ConceptList findConceptRevisions(Long id, Date startDate,
-    Date endDate, boolean releaseRevisionsOnly, PfsParameter pfs);
+    Date endDate, PfsParameter pfs) throws Exception;
+
+  /**
+   * Find concept release revision.
+   *
+   * @param id the id
+   * @param release the release
+   * @return the description list
+   * @throws Exception the exception
+   */
+  public Concept findConceptReleaseRevision(Long id, Date release) throws Exception;
 
   /**
    * Find descriptions modified since date.
@@ -47,9 +61,10 @@ public interface HistoryService extends ContentService {
    * @param date the date
    * @param pfs the pfs parameter
    * @return the search result list
+   * @throws Exception the exception
    */
   public DescriptionList findDescriptionsModifiedSinceDate(String terminology,
-    Date date, PfsParameter pfs);
+    Date date, PfsParameter pfs) throws Exception;
 
   /**
    * Finds all description revisions for the specified date range.
@@ -57,12 +72,22 @@ public interface HistoryService extends ContentService {
    * @param id the id
    * @param startDate the start date
    * @param endDate the end date
-   * @param releaseRevisionsOnly the release revisions only
    * @param pfs the pfs parameter
    * @return the description list
+   * @throws Exception the exception
    */
   public DescriptionList findDescriptionRevisions(Long id, Date startDate,
-    Date endDate, boolean releaseRevisionsOnly, PfsParameter pfs);
+    Date endDate, PfsParameter pfs) throws Exception;
+
+  /**
+   * Find description release revision.
+   *
+   * @param id the id
+   * @param release the release
+   * @return the description list
+   * @throws Exception the exception
+   */
+  public Description findDescriptionReleaseRevision(Long id, Date release) throws Exception;
 
   /**
    * Find relationships modified since date.
@@ -71,9 +96,20 @@ public interface HistoryService extends ContentService {
    * @param date the date
    * @param pfs the pfs parameter
    * @return the search result list
+   * @throws Exception the exception
    */
-  public RelationshipList findRelationshipsModifiedSinceDate(String terminology,
-    Date date, PfsParameter pfs);
+  public RelationshipList findRelationshipsModifiedSinceDate(
+    String terminology, Date date, PfsParameter pfs) throws Exception;
+
+  /**
+   * Find relationship release revision.
+   *
+   * @param id the id
+   * @param release the release
+   * @return the description list
+   * @throws Exception the exception
+   */
+  public Relationship findRelationshipReleaseRevision(Long id, Date release) throws Exception;
 
   /**
    * Finds all relationship revisions for the specified date range.
@@ -81,12 +117,12 @@ public interface HistoryService extends ContentService {
    * @param id the id
    * @param startDate the start date
    * @param endDate the end date
-   * @param releaseRevisionsOnly the release revisions only
    * @param pfs the pfs parameter
    * @return the relationship list
+   * @throws Exception the exception
    */
   public RelationshipList findRelationshipRevisions(Long id, Date startDate,
-    Date endDate, boolean releaseRevisionsOnly, PfsParameter pfs);
+    Date endDate, PfsParameter pfs) throws Exception;
 
   /**
    * Find language ref set members modified since date.
@@ -95,9 +131,10 @@ public interface HistoryService extends ContentService {
    * @param date the date
    * @param pfs the pfs parameter
    * @return the search result list
+   * @throws Exception the exception
    */
   public LanguageRefSetMemberList findLanguageRefSetMembersModifiedSinceDate(
-    String terminology, Date date, PfsParameter pfs);
+    String terminology, Date date, PfsParameter pfs) throws Exception;
 
   /**
    * Find language ref set member revisions.
@@ -105,13 +142,24 @@ public interface HistoryService extends ContentService {
    * @param id the id
    * @param startDate the start date
    * @param endDate the end date
-   * @param releaseRevisionsOnly the release revisions only
    * @param pfs the pfs parameter
    * @return the language ref set member list
+   * @throws Exception the exception
    */
-  public LanguageRefSetMemberList findLanguageRefSetMemberRevisions(Long id, Date startDate,
-    Date endDate, boolean releaseRevisionsOnly, PfsParameter pfs);
-  
+  public LanguageRefSetMemberList findLanguageRefSetMemberRevisions(Long id,
+    Date startDate, Date endDate, PfsParameter pfs) throws Exception;
+
+  /**
+   * Find language refset member release revision.
+   *
+   * @param id the id
+   * @param release the release
+   * @return the description list
+   * @throws Exception the exception
+   */
+  public LanguageRefSetMember findLanguageRefSetMemberReleaseRevision(
+    Long id, Date release) throws Exception;
+
   /**
    * Returns concepts changed since certain date – performs a "deep" search for
    * all concepts where it or any of its components have changed in the relevant
@@ -175,7 +223,7 @@ public interface HistoryService extends ContentService {
    * @throws Exception the exception
    */
   public ReleaseInfo addReleaseInfo(ReleaseInfo releaseInfo) throws Exception;
-  
+
   /**
    * Updates release info.
    *
@@ -183,7 +231,7 @@ public interface HistoryService extends ContentService {
    * @throws Exception the exception
    */
   public void updateReleaseInfo(ReleaseInfo releaseInfo) throws Exception;
-  
+
   /**
    * Removes the release info.
    *
@@ -191,5 +239,5 @@ public interface HistoryService extends ContentService {
    * @throws Exception the exception
    */
   public void removeReleaseInfo(Long id) throws Exception;
-  
+
 }
