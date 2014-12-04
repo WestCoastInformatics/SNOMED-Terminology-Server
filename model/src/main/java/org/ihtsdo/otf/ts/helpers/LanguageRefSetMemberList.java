@@ -1,7 +1,5 @@
 package org.ihtsdo.otf.ts.helpers;
 
-import java.util.List;
-
 import org.ihtsdo.otf.ts.rf2.LanguageRefSetMember;
 
 /**
@@ -9,35 +7,5 @@ import org.ihtsdo.otf.ts.rf2.LanguageRefSetMember;
  */
 public interface LanguageRefSetMemberList extends
     ResultList<LanguageRefSetMember> {
-
-  /**
-   * Adds the map languageRefSetMember.
-   * 
-   * @param LanguageRefSetMember the map languageRefSetMember
-   */
-  public void addLanguageRefSetMember(LanguageRefSetMember LanguageRefSetMember);
-
-  /**
-   * Removes the map languageRefSetMember.
-   * 
-   * @param LanguageRefSetMember the map languageRefSetMember
-   */
-  public void removeLanguageRefSetMember(
-    LanguageRefSetMember LanguageRefSetMember);
-
-  /**
-   * Sets the map languageRefSetMembers.
-   * 
-   * @param LanguageRefSetMembers the new map languageRefSetMembers
-   */
-  public void setLanguageRefSetMembers(
-    List<LanguageRefSetMember> LanguageRefSetMembers);
-
-  /**
-   * Gets the map languageRefSetMembers.
-   * 
-   * @return the map languageRefSetMembers
-   */
-  public List<LanguageRefSetMember> getLanguageRefSetMembers();
-
+  // nothing extra, a simple wrapper for easy serialization
 }

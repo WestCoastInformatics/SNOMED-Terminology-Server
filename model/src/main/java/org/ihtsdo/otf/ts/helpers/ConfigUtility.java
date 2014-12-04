@@ -13,7 +13,6 @@ import java.io.InputStream;
 import java.io.StringReader;
 import java.io.StringWriter;
 import java.nio.charset.StandardCharsets;
-import java.text.SimpleDateFormat;
 import java.util.Comparator;
 import java.util.Properties;
 import java.util.Scanner;
@@ -35,6 +34,7 @@ import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
 
+import org.apache.commons.lang3.time.FastDateFormat;
 import org.apache.log4j.Logger;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
@@ -55,7 +55,8 @@ public class ConfigUtility {
   private static Transformer transformer;
 
   /** The date format. */
-  public static SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("YYYYmmDD");
+  public final static FastDateFormat format = FastDateFormat
+      .getInstance("yyyyMMdd");
 
   static {
     try {
@@ -385,7 +386,6 @@ public class ConfigUtility {
    * @return the sorted {@link File}
    * @throws IOException Signals that an I/O exception has occurred.
    */
-  @SuppressWarnings("null")
   public static File mergeSortedFiles(File files1, File files2,
     Comparator<String> comp, File dir, String headerLine) throws IOException {
 

@@ -39,6 +39,7 @@ import org.ihtsdo.otf.ts.rf2.Relationship;
 import org.ihtsdo.otf.ts.rf2.SimpleMapRefSetMember;
 import org.ihtsdo.otf.ts.rf2.SimpleRefSetMember;
 
+// TODO: Auto-generated Javadoc
 /**
  * Jpa enabled implementation of {@link Concept}.
  */
@@ -64,6 +65,10 @@ public class ConceptJpa extends AbstractComponent implements Concept {
   /** The definition status id. */
   @Column(nullable = false)
   private String definitionStatusId;
+
+  /** The is anonymous. */
+  @Column(nullable = false)
+  private boolean anonymous = false;
 
   /** The descriptions. */
   @OneToMany(mappedBy = "concept", cascade = CascadeType.ALL, orphanRemoval = true, targetEntity = DescriptionJpa.class)
@@ -244,7 +249,22 @@ public class ConceptJpa extends AbstractComponent implements Concept {
   public void setDefinitionStatusId(String definitionStatusId) {
     this.definitionStatusId = definitionStatusId;
   }
+  
+  /* (non-Javadoc)
+   * @see org.ihtsdo.otf.ts.rf2.Concept#isAnonymous()
+   */
+  @Override
+  public boolean isAnonymous() {
+    return anonymous;
+  }
 
+  /* (non-Javadoc)
+   * @see org.ihtsdo.otf.ts.rf2.Concept#setAnonymous(boolean)
+   */
+  @Override
+  public void setAnonymous(boolean anonymous) {
+    this.anonymous = anonymous;
+  }
   /*
    * (non-Javadoc)
    * 
@@ -852,6 +872,9 @@ public class ConceptJpa extends AbstractComponent implements Concept {
         + getDefaultPreferredName();
   }
 
+  /* (non-Javadoc)
+   * @see org.ihtsdo.otf.ts.rf2.jpa.AbstractComponent#equals(java.lang.Object)
+   */
   @Override
   public boolean equals(Object obj) {
     if (this == obj)
@@ -869,6 +892,9 @@ public class ConceptJpa extends AbstractComponent implements Concept {
     return true;
   }
 
+  /* (non-Javadoc)
+   * @see org.ihtsdo.otf.ts.rf2.jpa.AbstractComponent#hashCode()
+   */
   @Override
   public int hashCode() {
     final int prime = 31;

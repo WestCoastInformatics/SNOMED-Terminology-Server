@@ -31,6 +31,7 @@ public abstract class AbstractComponent implements Component {
   private Long id;
 
   /** The effective time. e.g. publication time. */
+  @Column(nullable = false)
   @Temporal(TemporalType.TIMESTAMP)
   private Date effectiveTime;
 

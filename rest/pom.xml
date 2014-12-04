@@ -138,6 +138,10 @@
       <groupId>com.sun.mail</groupId>
       <artifactId>javax.mail</artifactId>
     </dependency>
+    <dependency>
+      <groupId>org.apache.commons</groupId>
+      <artifactId>commons-lang3</artifactId>
+    </dependency>
   </dependencies>
 
   <!-- Always build, use dev configuration by default -->
@@ -165,7 +169,7 @@
         </executions>
       </plugin>
 
-     <!-- Copy files -->
+      <!-- Copy files -->
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-antrun-plugin</artifactId>

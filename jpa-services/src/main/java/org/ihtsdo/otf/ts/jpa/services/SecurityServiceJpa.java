@@ -77,7 +77,7 @@ public class SecurityServiceJpa extends RootServiceJpa implements
     // check if authenticated user matches one of our users
     UserList userList = getUsers();
     User userFound = null;
-    for (User user : userList.getUsers()) {
+    for (User user : userList.getObjects()) {
       if (user.getUserName().equals(authUser.getUserName())) {
         userFound = user;
         break;
@@ -290,7 +290,7 @@ public class SecurityServiceJpa extends RootServiceJpa implements
         manager.createQuery("select u from UserJpa u");
     List<User> m = query.getResultList();
     UserListJpa mapUserList = new UserListJpa();
-    mapUserList.setUsers(m);
+    mapUserList.setObjects(m);
     mapUserList.setTotalCount(m.size());
     return mapUserList;
   }

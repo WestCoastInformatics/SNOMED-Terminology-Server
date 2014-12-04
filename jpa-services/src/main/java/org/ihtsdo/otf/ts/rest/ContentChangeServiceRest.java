@@ -10,7 +10,6 @@ import org.ihtsdo.otf.ts.rf2.jpa.DescriptionJpa;
 import org.ihtsdo.otf.ts.rf2.jpa.RelationshipJpa;
 import org.ihtsdo.otf.ts.rf2.jpa.TransitiveRelationshipJpa;
 
-// TODO: Auto-generated Javadoc
 /**
  * Represents a content change service available via a REST service.
  */

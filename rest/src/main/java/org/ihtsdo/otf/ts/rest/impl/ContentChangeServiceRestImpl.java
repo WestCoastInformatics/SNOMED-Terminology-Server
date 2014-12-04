@@ -51,6 +51,9 @@ public class ContentChangeServiceRestImpl extends RootServiceRestImpl implements
 
   }
 
+  /* (non-Javadoc)
+   * @see org.ihtsdo.otf.ts.rest.ContentChangeServiceRest#addConcept(org.ihtsdo.otf.ts.rf2.jpa.ConceptJpa, org.ihtsdo.otf.ts.helpers.UserJpa, java.lang.String)
+   */
   @Override
   @PUT
   @Path("/concept")
@@ -70,6 +73,9 @@ public class ContentChangeServiceRestImpl extends RootServiceRestImpl implements
     return null;
   }
 
+  /* (non-Javadoc)
+   * @see org.ihtsdo.otf.ts.rest.ContentChangeServiceRest#updateConcept(org.ihtsdo.otf.ts.rf2.jpa.ConceptJpa, org.ihtsdo.otf.ts.helpers.UserJpa, java.lang.String)
+   */
   @Override
   @POST
   @Path("/concept")
@@ -89,6 +95,9 @@ public class ContentChangeServiceRestImpl extends RootServiceRestImpl implements
 
   }
 
+  /* (non-Javadoc)
+   * @see org.ihtsdo.otf.ts.rest.ContentChangeServiceRest#removeConcept(java.lang.Long, org.ihtsdo.otf.ts.helpers.UserJpa, java.lang.String)
+   */
   @Override
   @DELETE
   @Path("/concept/id/{id}")
@@ -106,6 +115,9 @@ public class ContentChangeServiceRestImpl extends RootServiceRestImpl implements
     authenticate(securityService, authToken, "remove Concept");
   }
 
+  /* (non-Javadoc)
+   * @see org.ihtsdo.otf.ts.rest.ContentChangeServiceRest#addDescription(org.ihtsdo.otf.ts.rf2.jpa.DescriptionJpa, org.ihtsdo.otf.ts.helpers.UserJpa, java.lang.String)
+   */
   @Override
   @PUT
   @Path("/description")
@@ -122,6 +134,9 @@ public class ContentChangeServiceRestImpl extends RootServiceRestImpl implements
     return null;
   }
 
+  /* (non-Javadoc)
+   * @see org.ihtsdo.otf.ts.rest.ContentChangeServiceRest#updateDescription(org.ihtsdo.otf.ts.rf2.jpa.DescriptionJpa, org.ihtsdo.otf.ts.helpers.UserJpa, java.lang.String)
+   */
   @Override
   @POST
   @Path("/description")
@@ -138,6 +153,9 @@ public class ContentChangeServiceRestImpl extends RootServiceRestImpl implements
 
   }
 
+  /* (non-Javadoc)
+   * @see org.ihtsdo.otf.ts.rest.ContentChangeServiceRest#removeDescription(java.lang.Long, org.ihtsdo.otf.ts.helpers.UserJpa, java.lang.String)
+   */
   @Override
   @DELETE
   @Path("/description/id/{id}")
@@ -154,6 +172,9 @@ public class ContentChangeServiceRestImpl extends RootServiceRestImpl implements
 
   }
 
+  /* (non-Javadoc)
+   * @see org.ihtsdo.otf.ts.rest.ContentChangeServiceRest#addRelationship(org.ihtsdo.otf.ts.rf2.jpa.RelationshipJpa, org.ihtsdo.otf.ts.helpers.UserJpa, java.lang.String)
+   */
   @Override
   @PUT
   @Path("/relationship")
@@ -173,6 +194,9 @@ public class ContentChangeServiceRestImpl extends RootServiceRestImpl implements
     return null;
   }
 
+  /* (non-Javadoc)
+   * @see org.ihtsdo.otf.ts.rest.ContentChangeServiceRest#updateRelationship(org.ihtsdo.otf.ts.rf2.jpa.RelationshipJpa, org.ihtsdo.otf.ts.helpers.UserJpa, java.lang.String)
+   */
   @Override
   @POST
   @Path("/relationship")
@@ -192,6 +216,9 @@ public class ContentChangeServiceRestImpl extends RootServiceRestImpl implements
 
   }
 
+  /* (non-Javadoc)
+   * @see org.ihtsdo.otf.ts.rest.ContentChangeServiceRest#removeRelationship(java.lang.Long, org.ihtsdo.otf.ts.helpers.UserJpa, java.lang.String)
+   */
   @Override
   @DELETE
   @Path("/relationship/id/{id}")
@@ -209,6 +236,9 @@ public class ContentChangeServiceRestImpl extends RootServiceRestImpl implements
     authenticate(securityService, authToken, "remove Relationship");
   }
 
+  /* (non-Javadoc)
+   * @see org.ihtsdo.otf.ts.rest.ContentChangeServiceRest#addTransitiveRelationship(org.ihtsdo.otf.ts.rf2.jpa.TransitiveRelationshipJpa, org.ihtsdo.otf.ts.helpers.UserJpa, java.lang.String)
+   */
   @Override
   @PUT
   @Path("/transitiveRelationship")
@@ -228,6 +258,9 @@ public class ContentChangeServiceRestImpl extends RootServiceRestImpl implements
     return null;
   }
 
+  /* (non-Javadoc)
+   * @see org.ihtsdo.otf.ts.rest.ContentChangeServiceRest#updateTransitiveRelationship(org.ihtsdo.otf.ts.rf2.jpa.TransitiveRelationshipJpa, org.ihtsdo.otf.ts.helpers.UserJpa, java.lang.String)
+   */
   @Override
   @POST
   @Path("/transitiveRelationship")
@@ -247,6 +280,9 @@ public class ContentChangeServiceRestImpl extends RootServiceRestImpl implements
 
   }
 
+  /* (non-Javadoc)
+   * @see org.ihtsdo.otf.ts.rest.ContentChangeServiceRest#removeTransitiveRelationship(java.lang.Long, org.ihtsdo.otf.ts.helpers.UserJpa, java.lang.String)
+   */
   @Override
   @DELETE
   @Path("/transitiveRelationship/id/{id}")
@@ -264,6 +300,9 @@ public class ContentChangeServiceRestImpl extends RootServiceRestImpl implements
     authenticate(securityService, authToken, "remove TransitiveRelationship");
   }
 
+  /* (non-Javadoc)
+   * @see org.ihtsdo.otf.ts.rest.ContentChangeServiceRest#computeTransitiveClosure(java.lang.String, java.lang.String, java.lang.String, org.ihtsdo.otf.ts.helpers.UserJpa, java.lang.String)
+   */
   @Override
   @POST
   @Path("/transitiveClosure/{terminology}/{version}/{terminologyId}")
@@ -279,6 +318,10 @@ public class ContentChangeServiceRestImpl extends RootServiceRestImpl implements
     authenticate(securityService, authToken, "compute TransitiveClosure");
 
   }
+  
+  /* (non-Javadoc)
+   * @see org.ihtsdo.otf.ts.rest.ContentChangeServiceRest#clearTransitiveClosure(java.lang.String, java.lang.String, java.lang.String, org.ihtsdo.otf.ts.helpers.UserJpa, java.lang.String)
+   */
   @Override
   @DELETE
   @Path("/transitiveClosure/{terminology}/{version}/{terminologyId}")
@@ -295,6 +338,9 @@ public class ContentChangeServiceRestImpl extends RootServiceRestImpl implements
 
   }
 
+  /* (non-Javadoc)
+   * @see org.ihtsdo.otf.ts.rest.ContentChangeServiceRest#clearConcepts(java.lang.String, java.lang.String, java.lang.String, org.ihtsdo.otf.ts.helpers.UserJpa, java.lang.String)
+   */
   @Override
   @DELETE
   @Path("/concepts/{terminology}/{version}/{terminologyId}")

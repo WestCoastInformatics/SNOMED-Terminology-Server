@@ -49,6 +49,12 @@ public class ReleaseInfoJpa implements ReleaseInfo {
   @Temporal(TemporalType.TIMESTAMP)
   private Date releaseFinishDate;
 
+  /** The planned flag. */
+  private boolean planned;
+
+  /** The published flag. */
+  private boolean published;
+
   /**
    * Instantiates an empty {@link ReleaseInfoJpa}.
    */
@@ -68,10 +74,12 @@ public class ReleaseInfoJpa implements ReleaseInfo {
     effectiveTime = releaseInfo.getEffectiveTime();
     releaseBeginDate = releaseInfo.getReleaseBeginDate();
     releaseFinishDate = releaseInfo.getReleaseFinishDate();
+    planned = releaseInfo.isPlanned();
+    published = releaseInfo.isPublished();
   }
 
   /**
-   * ID for XML serialization
+   * ID for XML serialization.
    *
    * @return the object id
    */
@@ -88,7 +96,7 @@ public class ReleaseInfoJpa implements ReleaseInfo {
   public void setObjectId(String id) {
     this.id = Long.valueOf(id);
   }
-  
+
   /*
    * (non-Javadoc)
    * 
@@ -214,7 +222,32 @@ public class ReleaseInfoJpa implements ReleaseInfo {
   }
 
 
-  /* (non-Javadoc)
+  @Override
+  public boolean isPlanned() {
+    return planned;
+  }
+
+
+  @Override
+  public void setPlanned(boolean planned) {
+    this.planned = planned;
+  }
+
+
+  @Override
+  public boolean isPublished() {
+    return published;
+  }
+
+
+  @Override
+  public void setPublished(boolean published) {
+    this.published = published;
+  }
+
+  /*
+   * (non-Javadoc)
+   * 
    * @see java.lang.Object#hashCode()
    */
   @Override
@@ -236,7 +269,9 @@ public class ReleaseInfoJpa implements ReleaseInfo {
     return result;
   }
 
-  /* (non-Javadoc)
+  /*
+   * (non-Javadoc)
+   * 
    * @see java.lang.Object#equals(java.lang.Object)
    */
   @Override
@@ -275,4 +310,5 @@ public class ReleaseInfoJpa implements ReleaseInfo {
       return false;
     return true;
   }
+
 }

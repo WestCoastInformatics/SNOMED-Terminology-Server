@@ -73,6 +73,11 @@ identifier.assignment.handler=UUID
 identifier.assignment.handler.UUID.class=org.ihtsdo.otf.ts.jpa.services.handlers.SnomedUuidHashIdentifierAssignmentHandler
 
 #
+# Service configuration
+#
+action.service.timeout=7200000
+
+#
 # SNOMEDCT data location
 #
 loader.SNOMEDCT.input.data=C:/data/snomedct-20140731-mini

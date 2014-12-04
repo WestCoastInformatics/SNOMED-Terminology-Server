@@ -12,6 +12,7 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Properties;
 
+import org.apache.commons.lang3.time.FastDateFormat;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoFailureException;
 import org.ihtsdo.otf.ts.helpers.ConfigUtility;
@@ -91,7 +92,7 @@ public class TerminologyRf2FullLoaderMojo extends AbstractMojo {
   private Long dpnAcceptabilityId;
 
   /** The date format. */
-  private final SimpleDateFormat dt = new SimpleDateFormat("yyyymmdd");
+  private final FastDateFormat dt = FastDateFormat.getInstance("yyyyMMdd");
 
   /** The concepts by concept. */
   private BufferedReader conceptsByConcept;
@@ -535,7 +536,6 @@ public class TerminologyRf2FullLoaderMojo extends AbstractMojo {
    * @param outputDir the output dir
    * @throws Exception the exception
    */
-  @SuppressWarnings("null")
   private void sortRf2Files(File coreInputDir, File outputDir) throws Exception {
 
     // log reason for sort
@@ -827,17 +827,24 @@ public class TerminologyRf2FullLoaderMojo extends AbstractMojo {
 
     getLog().info("      Sort files");
     // Sort concept files
-    sortRf2File(coreConceptInputFile, conceptsByConceptFile, new int[] { 1, 0 });
+    sortRf2File(coreConceptInputFile, conceptsByConceptFile, new int[] {
+        1, 0
+    });
 
     // Sort description file
-    sortRf2File(coreDescriptionInputFile, descriptionsCoreByDescriptionFile, new int[] {1, 0});
+    sortRf2File(coreDescriptionInputFile, descriptionsCoreByDescriptionFile,
+        new int[] {
+            1, 0
+        });
 
     // Sort text definitions file
     if (coreTextDefinitionInputFile != null) {
 
       // sort the text definition file
       sortRf2File(coreTextDefinitionInputFile,
-          descriptionsTextByDescriptionFile, new int[] {1, 0});
+          descriptionsTextByDescriptionFile, new int[] {
+              1, 0
+          });
 
       // merge the two description files
       getLog().info("        Merging description files...");
@@ -846,7 +853,9 @@ public class TerminologyRf2FullLoaderMojo extends AbstractMojo {
         public int compare(String s1, String s2) {
           String v1[] = s1.split("\t");
           String v2[] = s2.split("\t");
-          for (final int sortColumn : new int[] {1, 0}) {
+          for (final int sortColumn : new int[] {
+              1, 0
+          }) {
             final int cmp = v1[sortColumn].compareTo(v2[sortColumn]);
             if (cmp != 0) {
               return cmp;
@@ -857,7 +866,8 @@ public class TerminologyRf2FullLoaderMojo extends AbstractMojo {
       };
       File mergedDesc =
           ConfigUtility.mergeSortedFiles(descriptionsTextByDescriptionFile,
-              descriptionsCoreByDescriptionFile, comp, outputDir, ""); // header line
+              descriptionsCoreByDescriptionFile, comp, outputDir, ""); // header
+                                                                       // line
 
       // rename the temporary file
       Files.move(mergedDesc, descriptionsByDescriptionFile);
@@ -869,30 +879,51 @@ public class TerminologyRf2FullLoaderMojo extends AbstractMojo {
     }
 
     // Sort relationships file
-    sortRf2File(coreRelInputFile, relationshipsBySourceConceptFile, new int[] {1, 4});
+    sortRf2File(coreRelInputFile, relationshipsBySourceConceptFile, new int[] {
+        1, 4
+    });
 
     // Sort attribute value file
     sortRf2File(coreAttributeValueInputFile,
-        attributeValueRefsetByRefCompIdFile, new int[] {1, 5});
+        attributeValueRefsetByRefCompIdFile, new int[] {
+            1, 5
+        });
 
     // Sort association reference input file by referenced component id
     sortRf2File(coreAssociationReferenceInputFile,
-        associationReferenceRefsetsByRefCompIdFile, new int[] {1, 5});
+        associationReferenceRefsetsByRefCompIdFile, new int[] {
+            1, 5
+        });
 
     // Sort simple file
-    sortRf2File(coreSimpleRefsetInputFile, simpleRefsetsByConceptFile, new int[] {1, 5});
+    sortRf2File(coreSimpleRefsetInputFile, simpleRefsetsByConceptFile,
+        new int[] {
+            1, 5
+        });
 
     // Sort simple map file
-    sortRf2File(coreSimpleMapInputFile, simpleMapRefsetsByConceptFile, new int[] {1,5});
+    sortRf2File(coreSimpleMapInputFile, simpleMapRefsetsByConceptFile,
+        new int[] {
+            1, 5
+        });
 
     // Sort complex map file
-    sortRf2File(coreComplexMapInputFile, complexMapRefsetsByConceptFile, new int[] {1, 5});
+    sortRf2File(coreComplexMapInputFile, complexMapRefsetsByConceptFile,
+        new int[] {
+            1, 5
+        });
 
     // sort extended map file
-    sortRf2File(coreExtendedMapInputFile, extendedMapRefsetsByConceptsFile, new int[] {1, 5});
+    sortRf2File(coreExtendedMapInputFile, extendedMapRefsetsByConceptsFile,
+        new int[] {
+            1, 5
+        });
 
     // Sort language file
-    sortRf2File(coreLanguageInputFile, languageRefsetsByDescriptionFile, new int[] {1, 5});
+    sortRf2File(coreLanguageInputFile, languageRefsetsByDescriptionFile,
+        new int[] {
+            1, 5
+        });
 
   }
 

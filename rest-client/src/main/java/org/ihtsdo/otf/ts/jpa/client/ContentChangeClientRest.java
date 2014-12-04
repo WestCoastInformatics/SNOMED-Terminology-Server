@@ -2,7 +2,6 @@ package org.ihtsdo.otf.ts.jpa.client;
 
 import java.util.Properties;
 
-import org.ihtsdo.otf.ts.helpers.User;
 import org.ihtsdo.otf.ts.helpers.UserJpa;
 import org.ihtsdo.otf.ts.rest.ContentChangeServiceRest;
 import org.ihtsdo.otf.ts.rf2.Concept;

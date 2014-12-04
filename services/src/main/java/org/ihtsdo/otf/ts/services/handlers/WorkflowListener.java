@@ -34,6 +34,34 @@ public interface WorkflowListener extends Configurable {
   public void postCommit() throws Exception;
 
   /**
+   * Classification started.
+   *
+   * @throws Exception the exception
+   */
+  public void classificationStarted() throws Exception;
+  
+  /**
+   * Classification finished.
+   *
+   * @throws Exception the exception
+   */
+  public void classificationFinished() throws Exception;
+  
+  /**
+   * Pre classification started.
+   *
+   * @throws Exception the exception
+   */
+  public void preClassificationStarted() throws Exception;
+  
+  /**
+   * Pre classification finished.
+   *
+   * @throws Exception the exception
+   */
+  public void preClassificationFinished() throws Exception;
+  
+  /**
    * Notification of concept added.
    *
    * @param concept the concept

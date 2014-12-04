@@ -8,6 +8,20 @@ import java.util.Set;
 public interface Concept extends Component {
 
   /**
+   * Indicates whether or not the concept is anonymous.
+   *
+   * @return the is anonymous
+   */
+  public boolean isAnonymous();
+  
+  /**
+   * Sets the anonymous flag.
+   *
+   * @param anonymous the new is anonymous
+   */
+  public void setAnonymous(boolean anonymous);
+  
+  /**
    * Returns the workflow status.
    * 
    * @return the workflow status

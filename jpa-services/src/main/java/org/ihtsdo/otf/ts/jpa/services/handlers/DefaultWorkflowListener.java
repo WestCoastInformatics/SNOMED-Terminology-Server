@@ -12,6 +12,8 @@ import org.ihtsdo.otf.ts.services.handlers.WorkflowListener;
 /**
  * A sample validation check for a new concept meeting the minimum qualifying
  * criteria.
+ *
+ * @see DefaultWorkflowEvent
  */
 public class DefaultWorkflowListener implements WorkflowListener {
 
@@ -194,6 +196,38 @@ public class DefaultWorkflowListener implements WorkflowListener {
    */
   @Override
   public void refSetMemberUpdated(RefSetMember<? extends Component> member) {
+    // do nothing
+  }
+
+  /* (non-Javadoc)
+   * @see org.ihtsdo.otf.ts.services.handlers.WorkflowListener#classificationStarted()
+   */
+  @Override
+  public void classificationStarted() throws Exception {
+    // do nothing
+  }
+
+  /* (non-Javadoc)
+   * @see org.ihtsdo.otf.ts.services.handlers.WorkflowListener#classificationFinished()
+   */
+  @Override
+  public void classificationFinished() throws Exception {
+    // do nothing
+  }
+
+  /* (non-Javadoc)
+   * @see org.ihtsdo.otf.ts.services.handlers.WorkflowListener#preClassificationStarted()
+   */
+  @Override
+  public void preClassificationStarted() throws Exception {
+    // do nothing
+  }
+
+  /* (non-Javadoc)
+   * @see org.ihtsdo.otf.ts.services.handlers.WorkflowListener#preClassificationFinished()
+   */
+  @Override
+  public void preClassificationFinished() throws Exception {
     // do nothing
   }
 }

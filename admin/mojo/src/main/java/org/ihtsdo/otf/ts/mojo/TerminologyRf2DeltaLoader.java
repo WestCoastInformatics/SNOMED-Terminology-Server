@@ -6,7 +6,6 @@ package org.ihtsdo.otf.ts.mojo;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
-import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -14,6 +13,7 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 
+import org.apache.commons.lang3.time.FastDateFormat;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoFailureException;
 import org.ihtsdo.otf.ts.helpers.ConceptList;
@@ -21,6 +21,7 @@ import org.ihtsdo.otf.ts.helpers.ConfigUtility;
 import org.ihtsdo.otf.ts.helpers.DescriptionList;
 import org.ihtsdo.otf.ts.helpers.LanguageRefSetMemberList;
 import org.ihtsdo.otf.ts.helpers.RelationshipList;
+import org.ihtsdo.otf.ts.helpers.ReleaseInfo;
 import org.ihtsdo.otf.ts.jpa.algo.TransitiveClosureAlgorithm;
 import org.ihtsdo.otf.ts.jpa.services.ContentServiceJpa;
 import org.ihtsdo.otf.ts.jpa.services.HistoryServiceJpa;
@@ -108,10 +109,12 @@ public class TerminologyRf2DeltaLoader extends AbstractMojo {
   private int objectCt; //
 
   /** The ft. */
-  SimpleDateFormat ft = new SimpleDateFormat("hh:mm:ss a");
+  private final static FastDateFormat ft = FastDateFormat
+      .getInstance("hh:mm:ss a");
 
   /** The dt. */
-  SimpleDateFormat dt = new SimpleDateFormat("yyyyMMdd");
+  private final static FastDateFormat dt = FastDateFormat
+      .getInstance("yyyyMMdd");
 
   /** The start time. */
   long startTime;
@@ -171,7 +174,7 @@ public class TerminologyRf2DeltaLoader extends AbstractMojo {
           "Cache concepts for " + terminology + "/" + terminologyVersion);
       ConceptList conceptList =
           contentService.getAllConcepts(terminology, terminologyVersion);
-      for (Concept c : conceptList.getConcepts()) {
+      for (Concept c : conceptList.getObjects()) {
         existingConceptCache.put(c.getTerminologyId(), c);
       }
       getLog().info("  count = " + conceptList.getCount());
@@ -234,27 +237,22 @@ public class TerminologyRf2DeltaLoader extends AbstractMojo {
       getLog().info("    " + nRelationshipsUpdated + " relationships");
       getLog().info("    " + nLanguagesUpdated + " language ref set members");
 
-      // Commit the content changes
-      getLog().info("Committing...");
-      contentService.commit();
-      getLog().info("  Done.");
-
       // QA
       getLog()
           .info(
               "Checking database contents against number of previously modified objects");
       ConceptList modifiedConcepts =
-          contentService.getConceptsModifiedSinceDate(terminology,
+          contentService.findConceptsModifiedSinceDate(terminology,
               deltaLoaderStartDate, null);
       RelationshipList modifiedRelationships =
-          contentService.getRelationshipsModifiedSinceDate(terminology,
-              deltaLoaderStartDate);
+          contentService.findRelationshipsModifiedSinceDate(terminology,
+              deltaLoaderStartDate, null);
       DescriptionList modifiedDescriptions =
-          contentService.getDescriptionsModifiedSinceDate(terminology,
-              deltaLoaderStartDate);
+          contentService.findDescriptionsModifiedSinceDate(terminology,
+              deltaLoaderStartDate, null);
       LanguageRefSetMemberList modifiedLanguageRefSetMembers =
-          contentService.getLanguageRefSetMembersModifiedSinceDate(terminology,
-              deltaLoaderStartDate);
+          contentService.findLanguageRefSetMembersModifiedSinceDate(
+              terminology, deltaLoaderStartDate, null);
 
       // Report
       getLog().info(
@@ -280,14 +278,10 @@ public class TerminologyRf2DeltaLoader extends AbstractMojo {
               : "  LanguageRefSetMember count matches");
       getLog().info("Computing preferred names for modified concepts");
 
-      // Clean up resources
-      contentService.close();
-
-      // Compute default preferred names: TODO: why not do this pre commit?
-      contentService = new HistoryServiceJpa();
-      contentService.setTransactionPerOperation(false);
-      contentService.beginTransaction();
       computeDefaultPreferredNames();
+
+      // Commit the content changes
+      getLog().info("Committing...");
       contentService.commit();
       getLog().info("...done");
 
@@ -340,6 +334,21 @@ public class TerminologyRf2DeltaLoader extends AbstractMojo {
     }
     terminologyVersion =
         fileName.substring(fileName.length() - 12, fileName.length() - 4);
+
+    //
+    // Verify that there is a release info for this version that is
+    // marked as "isPlanned"
+    //
+    ReleaseInfo releaseInfo = contentService.getReleaseInfo(terminologyVersion);
+    if (releaseInfo == null) {
+      throw new Exception("A release info must exist for " + terminologyVersion);
+    } else if (!releaseInfo.isPlanned()) {
+      throw new Exception("Release info for " + terminologyVersion
+          + " is not marked as planned'");
+    } else if (releaseInfo.isPublished()) {
+      throw new Exception("Release info for " + terminologyVersion
+          + " is marked as published");
+    }
 
     // Previous computation of terminology version is based on file name
     // but for delta/daily build files, this is not the current version
@@ -491,7 +500,7 @@ public class TerminologyRf2DeltaLoader extends AbstractMojo {
     String isaRelType = hierRelTypeMap.keySet().iterator().next().toString();
     metadataService.close();
     ContentService contentService = new ContentServiceJpa();
-    
+
     // Clear prior transitive closure
     contentService.clearTransitiveClosure(terminology, terminologyVersion);
 
@@ -581,7 +590,7 @@ public class TerminologyRf2DeltaLoader extends AbstractMojo {
         newConcept.setTerminologyVersion(terminologyVersion);
         newConcept.setDefaultPreferredName("TBD");
         newConcept.setLastModifiedBy("loader");
-        
+
         // If concept is new, add it
         if (concept == null) {
           getLog().info("        add concept " + newConcept.getTerminologyId());
@@ -865,7 +874,6 @@ public class TerminologyRf2DeltaLoader extends AbstractMojo {
    * @param reader the reader
    * @throws Exception the exception
    */
-  @SuppressWarnings("null")
   private void loadRelationships(BufferedReader reader) throws Exception {
 
     // Setup variables
@@ -1007,14 +1015,14 @@ public class TerminologyRf2DeltaLoader extends AbstractMojo {
 
     getLog().info("Checking database against calculated modifications");
     ConceptList modifiedConcepts =
-        contentService.getConceptsModifiedSinceDate(terminology,
+        contentService.findConceptsModifiedSinceDate(terminology,
             deltaLoaderStartDate, null);
     getLog().info(
         "Computing default preferred names for " + modifiedConcepts.getCount()
             + " concepts");
 
     // Iterate over concepts
-    for (Concept concept : modifiedConcepts.getConcepts()) {
+    for (Concept concept : modifiedConcepts.getObjects()) {
 
       // Skip if inactive
       if (!concept.isActive()) {

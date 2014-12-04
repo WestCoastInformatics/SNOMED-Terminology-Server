@@ -30,6 +30,7 @@ import org.ihtsdo.otf.ts.helpers.ConceptListJpa;
 import org.ihtsdo.otf.ts.helpers.ConfigUtility;
 import org.ihtsdo.otf.ts.helpers.LocalException;
 import org.ihtsdo.otf.ts.helpers.PfsParameter;
+import org.ihtsdo.otf.ts.helpers.ReleaseInfo;
 import org.ihtsdo.otf.ts.helpers.SearchResult;
 import org.ihtsdo.otf.ts.helpers.SearchResultJpa;
 import org.ihtsdo.otf.ts.helpers.SearchResultList;
@@ -46,13 +47,13 @@ import org.ihtsdo.otf.ts.rf2.Description;
 import org.ihtsdo.otf.ts.rf2.DescriptionTypeRefSetMember;
 import org.ihtsdo.otf.ts.rf2.LanguageRefSetMember;
 import org.ihtsdo.otf.ts.rf2.ModuleDependencyRefSetMember;
+import org.ihtsdo.otf.ts.rf2.RefSetMember;
 import org.ihtsdo.otf.ts.rf2.RefsetDescriptorRefSetMember;
 import org.ihtsdo.otf.ts.rf2.Relationship;
 import org.ihtsdo.otf.ts.rf2.SimpleMapRefSetMember;
 import org.ihtsdo.otf.ts.rf2.SimpleRefSetMember;
 import org.ihtsdo.otf.ts.rf2.TransitiveRelationship;
 import org.ihtsdo.otf.ts.rf2.jpa.AbstractAssociationReferenceRefSetMemberJpa;
-import org.ihtsdo.otf.ts.rf2.jpa.AbstractAttributeValueRefSetMemberJpa;
 import org.ihtsdo.otf.ts.rf2.jpa.AssociationReferenceConceptRefSetMemberJpa;
 import org.ihtsdo.otf.ts.rf2.jpa.AttributeValueConceptRefSetMemberJpa;
 import org.ihtsdo.otf.ts.rf2.jpa.ComplexMapRefSetMemberJpa;
@@ -171,6 +172,9 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
     }
   }
 
+  /** The planned effective time. */
+  public static Date plannedEffectiveTime = null;
+
   /**
    * Instantiates an empty {@link ContentServiceJpa}.
    *
@@ -195,6 +199,9 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
     if (pnHandlerMap == null) {
       throw new Exception(
           "Identifier compute preferred name handler did not properly initialize, serious error.");
+    }
+    if (plannedEffectiveTime == null) {
+      plannedEffectiveTime = getPlannedEffectiveTime();
     }
   }
 
@@ -279,7 +286,7 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
     List<Concept> concepts = fullTextQuery.getResultList();
     // construct the search results
     for (Concept c : concepts) {
-      results.addConcept(c);
+      results.addObject(c);
     }
     fullTextEntityManager.close();
     // closing fullTextEntityManager closes manager as well, recreate
@@ -328,7 +335,7 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
       query.setParameter("version", version);
       List<Concept> m = query.getResultList();
       ConceptListJpa conceptList = new ConceptListJpa();
-      conceptList.setConcepts(m);
+      conceptList.setObjects(m);
       conceptList.setTotalCount(m.size());
       return conceptList;
 
@@ -364,7 +371,7 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
       throw new Exception("Unexpected number of concepts: "
           + cl.getTotalCount());
     }
-    return cl.getConcepts().get(0);
+    return cl.getObjects().get(0);
   }
 
   /*
@@ -391,7 +398,7 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
       query.setParameter("version", version);
       List<Concept> concepts = query.getResultList();
       ConceptList conceptList = new ConceptListJpa();
-      conceptList.setConcepts(concepts);
+      conceptList.setObjects(concepts);
       return conceptList;
     } catch (NoResultException e) {
       return null;
@@ -411,18 +418,11 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
         "Content Service - add concept " + concept.getTerminologyId());
     // Assign id
     concept.setTerminologyId(idHandler.getTerminologyId(concept));
-    // Set dates
-    concept.setLastModified(new Date());
-    concept.setEffectiveTime(null);
 
-    if (getTransactionPerOperation()) {
-      tx = manager.getTransaction();
-      tx.begin();
-      manager.persist(concept);
-      tx.commit();
-    } else {
-      manager.persist(concept);
-    }
+    // Add component
+    concept = addComponent(concept);
+
+    // Inform listeners
     if (listenersEnabled) {
       for (WorkflowListener listener : listeners) {
         listener.conceptAdded(concept);
@@ -455,17 +455,10 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
       concept.setTerminologyId(idHandler.getTerminologyId(concept));
     }
 
-    // Set dates
-    concept.setLastModified(new Date());
-    concept.setEffectiveTime(null);
-    if (getTransactionPerOperation()) {
-      tx = manager.getTransaction();
-      tx.begin();
-      manager.merge(concept);
-      tx.commit();
-    } else {
-      manager.merge(concept);
-    }
+    // update component
+    this.updateComponent(concept);
+
+    // Inform listeners
     if (listenersEnabled) {
       for (WorkflowListener listener : listeners) {
         listener.conceptUpdated(concept);
@@ -576,18 +569,11 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
         "Content Service - add description " + description.getTerminologyId());
     // Assign id
     description.setTerminologyId(idHandler.getTerminologyId(description));
-    // Set dates
-    description.setLastModified(new Date());
-    description.setEffectiveTime(null);
 
-    if (getTransactionPerOperation()) {
-      tx = manager.getTransaction();
-      tx.begin();
-      manager.persist(description);
-      tx.commit();
-    } else {
-      manager.persist(description);
-    }
+    // Add component
+    description = addComponent(description);
+
+    // Inform listeners
     if (listenersEnabled) {
       for (WorkflowListener listener : listeners) {
         listener.descriptionAdded(description);
@@ -618,18 +604,10 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
     }
     // don't set id on update
 
-    // Set dates
-    description.setLastModified(new Date());
-    description.setEffectiveTime(null);
+    // update component
+    this.updateComponent(description);
 
-    if (getTransactionPerOperation()) {
-      tx = manager.getTransaction();
-      tx.begin();
-      manager.merge(description);
-      tx.commit();
-    } else {
-      manager.merge(description);
-    }
+    // Inform listeners
     if (listenersEnabled) {
       for (WorkflowListener listener : listeners) {
         listener.descriptionUpdated(description);
@@ -743,17 +721,11 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
                 + relationship.getTerminologyId());
     // Assign id
     relationship.setTerminologyId(idHandler.getTerminologyId(relationship));
-    // Set dates
-    relationship.setLastModified(new Date());
-    relationship.setEffectiveTime(null);
-    if (getTransactionPerOperation()) {
-      tx = manager.getTransaction();
-      tx.begin();
-      manager.persist(relationship);
-      tx.commit();
-    } else {
-      manager.persist(relationship);
-    }
+
+    // Add component
+    relationship = addComponent(relationship);
+
+    // Inform listeners
     if (listenersEnabled) {
       for (WorkflowListener listener : listeners) {
         listener.relationshipAdded(relationship);
@@ -784,17 +756,10 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
     }
     // don't set id on update
 
-    // Set date
-    relationship.setLastModified(new Date());
-    relationship.setEffectiveTime(null);
-    if (getTransactionPerOperation()) {
-      tx = manager.getTransaction();
-      tx.begin();
-      manager.merge(relationship);
-      tx.commit();
-    } else {
-      manager.merge(relationship);
-    }
+    // update component
+    this.updateComponent(relationship);
+
+    // Inform listeners
     if (listenersEnabled) {
       for (WorkflowListener listener : listeners) {
         listener.relationshipUpdated(relationship);
@@ -857,17 +822,10 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
             + relationship.getSubTypeConcept());
     // Assign id
     relationship.setTerminologyId(idHandler.getTerminologyId(relationship));
-    // Set modification date
-    relationship.setLastModified(new Date());
-    relationship.setEffectiveTime(null);
-    if (getTransactionPerOperation()) {
-      tx = manager.getTransaction();
-      tx.begin();
-      manager.persist(relationship);
-      tx.commit();
-    } else {
-      manager.persist(relationship);
-    }
+
+    // Add component
+    relationship = addComponent(relationship);
+
     // no listener
     return relationship;
   }
@@ -896,17 +854,9 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
     }
     // don't set id on update
 
-    // Set dates
-    relationship.setLastModified(new Date());
-    relationship.setEffectiveTime(null);
-    if (getTransactionPerOperation()) {
-      tx = manager.getTransaction();
-      tx.begin();
-      manager.merge(relationship);
-      tx.commit();
-    } else {
-      manager.merge(relationship);
-    }
+    // update component
+    this.updateComponent(relationship);
+
     // no listeners
   }
 
@@ -1020,17 +970,11 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
             + member.getTerminologyId());
     // Assign id
     member.setTerminologyId(idHandler.getTerminologyId(member));
-    // Set dates
-    member.setLastModified(new Date());
-    member.setEffectiveTime(null);
-    if (getTransactionPerOperation()) {
-      tx = manager.getTransaction();
-      tx.begin();
-      manager.persist(member);
-      tx.commit();
-    } else {
-      manager.persist(member);
-    }
+
+    // Add component
+    member = addComponent(member);
+
+    // Inform listeners
     if (listenersEnabled) {
       for (WorkflowListener listener : listeners) {
         listener.refSetMemberAdded(member);
@@ -1063,17 +1007,10 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
     }
     // don't set id on update
 
-    // Set dates
-    member.setLastModified(new Date());
-    member.setEffectiveTime(null);
-    if (getTransactionPerOperation()) {
-      tx = manager.getTransaction();
-      tx.begin();
-      manager.merge(member);
-      tx.commit();
-    } else {
-      manager.merge(member);
-    }
+    // update component
+    this.updateComponent(member);
+
+    // Inform listeners
     if (listenersEnabled) {
       for (WorkflowListener listener : listeners) {
         listener.refSetMemberUpdated(member);
@@ -1092,29 +1029,11 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
   public void removeAttributeValueRefSetMember(Long id) throws Exception {
     Logger.getLogger(ContentServiceJpa.class).debug(
         "Content Service - remove attribute value refset member " + id);
-    tx = manager.getTransaction();
-    // retrieve this map specialist
-    @SuppressWarnings("unchecked")
-    AttributeValueRefSetMember<? extends Component> member =
-        manager.find(AbstractAttributeValueRefSetMemberJpa.class, id);
-    // Set modification date
-    member.setLastModified(new Date());
-    if (getTransactionPerOperation()) {
-      // remove refset member
-      tx.begin();
-      if (manager.contains(member)) {
-        manager.remove(member);
-      } else {
-        manager.remove(manager.merge(member));
-      }
-      tx.commit();
-    } else {
-      if (manager.contains(member)) {
-        manager.remove(member);
-      } else {
-        manager.remove(manager.merge(member));
-      }
-    }
+    // Remove the component
+    RefSetMember<?> member =
+        removeComponent(id, AbstractAssociationReferenceRefSetMemberJpa.class);
+
+    // Inform listeners
     if (listenersEnabled) {
       for (WorkflowListener listener : listeners) {
         listener.refSetMemberRemoved(member);
@@ -1189,17 +1108,11 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
             + member.getTerminologyId());
     // Assign id
     member.setTerminologyId(idHandler.getTerminologyId(member));
-    // Set dates
-    member.setLastModified(new Date());
-    member.setEffectiveTime(null);
-    if (getTransactionPerOperation()) {
-      tx = manager.getTransaction();
-      tx.begin();
-      manager.persist(member);
-      tx.commit();
-    } else {
-      manager.persist(member);
-    }
+
+    // Add component
+    member = addComponent(member);
+
+    // Inform listeners
     if (listenersEnabled) {
       for (WorkflowListener listener : listeners) {
         listener.refSetMemberAdded(member);
@@ -1233,17 +1146,10 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
     }
     // don't set id on update
 
-    // Set dates
-    member.setLastModified(new Date());
-    member.setEffectiveTime(null);
-    if (getTransactionPerOperation()) {
-      tx = manager.getTransaction();
-      tx.begin();
-      manager.merge(member);
-      tx.commit();
-    } else {
-      manager.merge(member);
-    }
+    // update component
+    this.updateComponent(member);
+
+    // Inform listeners
     if (listenersEnabled) {
       for (WorkflowListener listener : listeners) {
         listener.refSetMemberUpdated(member);
@@ -1261,29 +1167,12 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
   public void removeAssociationReferenceRefSetMember(Long id) throws Exception {
     Logger.getLogger(ContentServiceJpa.class).debug(
         "Content Service - remove association reference refset member " + id);
-    tx = manager.getTransaction();
-    // retrieve this map specialist
-    @SuppressWarnings("unchecked")
-    AssociationReferenceRefSetMember<? extends Component> member =
-        manager.find(AbstractAssociationReferenceRefSetMemberJpa.class, id);
-    // Set modification date
-    member.setLastModified(new Date());
-    if (getTransactionPerOperation()) {
-      // remove refset member
-      tx.begin();
-      if (manager.contains(member)) {
-        manager.remove(member);
-      } else {
-        manager.remove(manager.merge(member));
-      }
-      tx.commit();
-    } else {
-      if (manager.contains(member)) {
-        manager.remove(member);
-      } else {
-        manager.remove(manager.merge(member));
-      }
-    }
+
+    // Remove the component
+    RefSetMember<?> member =
+        removeComponent(id, AbstractAssociationReferenceRefSetMemberJpa.class);
+
+    // Inform listeners
     if (listenersEnabled) {
       for (WorkflowListener listener : listeners) {
         listener.refSetMemberRemoved(member);
@@ -1355,17 +1244,11 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
             + member.getTerminologyId());
     // Assign id
     member.setTerminologyId(idHandler.getTerminologyId(member));
-    // Set dates
-    member.setLastModified(new Date());
-    member.setEffectiveTime(null);
-    if (getTransactionPerOperation()) {
-      tx = manager.getTransaction();
-      tx.begin();
-      manager.persist(member);
-      tx.commit();
-    } else {
-      manager.persist(member);
-    }
+
+    // Add component
+    member = addComponent(member);
+
+    // Inform listeners
     if (listenersEnabled) {
       for (WorkflowListener listener : listeners) {
         listener.refSetMemberAdded(member);
@@ -1399,17 +1282,10 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
     }
     // don't set id on update
 
-    // Set dates
-    member.setLastModified(new Date());
-    member.setEffectiveTime(null);
-    if (getTransactionPerOperation()) {
-      tx = manager.getTransaction();
-      tx.begin();
-      manager.merge(member);
-      tx.commit();
-    } else {
-      manager.merge(member);
-    }
+    // update component
+    this.updateComponent(member);
+
+    // Inform listeners
     if (listenersEnabled) {
       for (WorkflowListener listener : listeners) {
         listener.refSetMemberUpdated(member);
@@ -1428,28 +1304,11 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
   public void removeComplexMapRefSetMember(Long id) throws Exception {
     Logger.getLogger(ContentServiceJpa.class).debug(
         "Content Service - remove complex map refset member " + id);
-    tx = manager.getTransaction();
-    // retrieve this complex map ref set member
-    ComplexMapRefSetMember member =
-        manager.find(ComplexMapRefSetMemberJpa.class, id);
-    // Set modification date
-    member.setLastModified(new Date());
-    if (getTransactionPerOperation()) {
-      // remove complex map ref set member
-      tx.begin();
-      if (manager.contains(member)) {
-        manager.remove(member);
-      } else {
-        manager.remove(manager.merge(member));
-      }
-      tx.commit();
-    } else {
-      if (manager.contains(member)) {
-        manager.remove(member);
-      } else {
-        manager.remove(manager.merge(member));
-      }
-    }
+    // Remove the component
+    RefSetMember<?> member =
+        removeComponent(id, AbstractAssociationReferenceRefSetMemberJpa.class);
+
+    // Inform listeners
     if (listenersEnabled) {
       for (WorkflowListener listener : listeners) {
         listener.refSetMemberRemoved(member);
@@ -1518,18 +1377,11 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
             + member.getTerminologyId());
     // Assign id
     member.setTerminologyId(idHandler.getTerminologyId(member));
-    // Set dates
-    member.setLastModified(new Date());
-    member.setEffectiveTime(null);
 
-    if (getTransactionPerOperation()) {
-      tx = manager.getTransaction();
-      tx.begin();
-      manager.persist(member);
-      tx.commit();
-    } else {
-      manager.persist(member);
-    }
+    // Add component
+    member = addComponent(member);
+
+    // Inform listeners
     if (listenersEnabled) {
       for (WorkflowListener listener : listeners) {
         listener.refSetMemberAdded(member);
@@ -1561,18 +1413,10 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
     }
     // don't set id on update
 
-    // Set dates
-    member.setLastModified(new Date());
-    member.setEffectiveTime(null);
+    // update component
+    this.updateComponent(member);
 
-    if (getTransactionPerOperation()) {
-      tx = manager.getTransaction();
-      tx.begin();
-      manager.merge(member);
-      tx.commit();
-    } else {
-      manager.merge(member);
-    }
+    // Inform listeners
     if (listenersEnabled) {
       for (WorkflowListener listener : listeners) {
         listener.refSetMemberUpdated(member);
@@ -1683,17 +1527,11 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
             + member.getTerminologyId());
     // Assign id
     member.setTerminologyId(idHandler.getTerminologyId(member));
-    // Set dates
-    member.setLastModified(new Date());
-    member.setEffectiveTime(null);
-    if (getTransactionPerOperation()) {
-      tx = manager.getTransaction();
-      tx.begin();
-      manager.persist(member);
-      tx.commit();
-    } else {
-      manager.persist(member);
-    }
+
+    // Add component
+    member = addComponent(member);
+
+    // Inform listeners
     if (listenersEnabled) {
       for (WorkflowListener listener : listeners) {
         listener.refSetMemberAdded(member);
@@ -1725,17 +1563,10 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
     }
     // don't set id on update
 
-    // Set dates
-    member.setLastModified(new Date());
-    member.setEffectiveTime(null);
-    if (getTransactionPerOperation()) {
-      tx = manager.getTransaction();
-      tx.begin();
-      manager.merge(member);
-      tx.commit();
-    } else {
-      manager.merge(member);
-    }
+    // update component
+    this.updateComponent(member);
+
+    // Inform listeners
     if (listenersEnabled) {
       for (WorkflowListener listener : listeners) {
         listener.refSetMemberUpdated(member);
@@ -1844,17 +1675,11 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
             + member.getTerminologyId());
     // Assign id
     member.setTerminologyId(idHandler.getTerminologyId(member));
-    // Set dates
-    member.setLastModified(new Date());
-    member.setEffectiveTime(null);
-    if (getTransactionPerOperation()) {
-      tx = manager.getTransaction();
-      tx.begin();
-      manager.persist(member);
-      tx.commit();
-    } else {
-      manager.persist(member);
-    }
+
+    // Add component
+    member = addComponent(member);
+
+    // Inform listeners
     if (listenersEnabled) {
       for (WorkflowListener listener : listeners) {
         listener.refSetMemberAdded(member);
@@ -1887,17 +1712,10 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
     }
     // don't set id on update
 
-    // Set dates
-    member.setLastModified(new Date());
-    member.setEffectiveTime(null);
-    if (getTransactionPerOperation()) {
-      tx = manager.getTransaction();
-      tx.begin();
-      manager.merge(member);
-      tx.commit();
-    } else {
-      manager.merge(member);
-    }
+    // update component
+    this.updateComponent(member);
+
+    // Inform listeners
     if (listenersEnabled) {
       for (WorkflowListener listener : listeners) {
         listener.refSetMemberUpdated(member);
@@ -2037,17 +1855,11 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
             + member.getTerminologyId());
     // Assign id
     member.setTerminologyId(idHandler.getTerminologyId(member));
-    // Set dates
-    member.setLastModified(new Date());
-    member.setEffectiveTime(null);
-    if (getTransactionPerOperation()) {
-      tx = manager.getTransaction();
-      tx.begin();
-      manager.persist(member);
-      tx.commit();
-    } else {
-      manager.persist(member);
-    }
+
+    // Add component
+    member = addComponent(member);
+
+    // Inform listeners
     if (listenersEnabled) {
       for (WorkflowListener listener : listeners) {
         listener.refSetMemberAdded(member);
@@ -2081,17 +1893,10 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
     }
     // don't set id on update
 
-    // Set dates
-    member.setLastModified(new Date());
-    member.setEffectiveTime(null);
-    if (getTransactionPerOperation()) {
-      tx = manager.getTransaction();
-      tx.begin();
-      manager.merge(member);
-      tx.commit();
-    } else {
-      manager.merge(member);
-    }
+    // update component
+    this.updateComponent(member);
+
+    // Inform listeners
     if (listenersEnabled) {
       for (WorkflowListener listener : listeners) {
         listener.refSetMemberUpdated(member);
@@ -2235,17 +2040,11 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
             + member.getTerminologyId());
     // Assign id
     member.setTerminologyId(idHandler.getTerminologyId(member));
-    // Set dates
-    member.setLastModified(new Date());
-    member.setEffectiveTime(null);
-    if (getTransactionPerOperation()) {
-      tx = manager.getTransaction();
-      tx.begin();
-      manager.persist(member);
-      tx.commit();
-    } else {
-      manager.persist(member);
-    }
+
+    // Add component
+    member = addComponent(member);
+
+    // Inform listeners
     if (listenersEnabled) {
       for (WorkflowListener listener : listeners) {
         listener.refSetMemberAdded(member);
@@ -2279,17 +2078,10 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
     }
     // don't set id on update
 
-    // Set dates
-    member.setLastModified(new Date());
-    member.setEffectiveTime(null);
-    if (getTransactionPerOperation()) {
-      tx = manager.getTransaction();
-      tx.begin();
-      manager.merge(member);
-      tx.commit();
-    } else {
-      manager.merge(member);
-    }
+    // update component
+    this.updateComponent(member);
+
+    // Inform listeners
     if (listenersEnabled) {
       for (WorkflowListener listener : listeners) {
         listener.refSetMemberUpdated(member);
@@ -2429,17 +2221,11 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
             + member.getTerminologyId());
     // Assign id
     member.setTerminologyId(idHandler.getTerminologyId(member));
-    // Set dates
-    member.setLastModified(new Date());
-    member.setEffectiveTime(null);
-    if (getTransactionPerOperation()) {
-      tx = manager.getTransaction();
-      tx.begin();
-      manager.persist(member);
-      tx.commit();
-    } else {
-      manager.persist(member);
-    }
+
+    // Add component
+    member = addComponent(member);
+
+    // Inform listeners
     if (listenersEnabled) {
       for (WorkflowListener listener : listeners) {
         listener.refSetMemberAdded(member);
@@ -2472,17 +2258,10 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
     }
     // don't set id on update
 
-    // Set dates
-    member.setLastModified(new Date());
-    member.setEffectiveTime(null);
-    if (getTransactionPerOperation()) {
-      tx = manager.getTransaction();
-      tx.begin();
-      manager.merge(member);
-      tx.commit();
-    } else {
-      manager.merge(member);
-    }
+    // update component
+    this.updateComponent(member);
+
+    // Inform listeners
     if (listenersEnabled) {
       for (WorkflowListener listener : listeners) {
         listener.refSetMemberUpdated(member);
@@ -2596,7 +2375,7 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
       sr.setTerminology(c.getTerminology());
       sr.setTerminologyVersion(c.getTerminologyVersion());
       sr.setValue(c.getDefaultPreferredName());
-      results.addSearchResult(sr);
+      results.addObject(sr);
     }
     fullTextEntityManager.close();
     // closing fullTextEntityManager closes manager as well, recreate
@@ -2663,7 +2442,7 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
       searchResult.setTerminology(c.getTerminology());
       searchResult.setTerminologyVersion(c.getTerminologyVersion());
       searchResult.setValue(c.getDefaultPreferredName());
-      searchResultList.addSearchResult(searchResult);
+      searchResultList.addObject(searchResult);
     }
     // return the search result list
     return searchResultList;
@@ -2728,7 +2507,7 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
       searchResult.setTerminology(c.getTerminology());
       searchResult.setTerminologyVersion(c.getTerminologyVersion());
       searchResult.setValue(c.getDefaultPreferredName());
-      searchResultList.addSearchResult(searchResult);
+      searchResultList.addObject(searchResult);
     }
     // return the search result list
     return searchResultList;
@@ -2975,7 +2754,7 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
    * @throws Exception the exception
    */
   @SuppressWarnings("static-method")
-  private void applyPfsToLuceneQuery(Class<?> clazz,
+  protected void applyPfsToLuceneQuery(Class<?> clazz,
     FullTextQuery fullTextQuery, PfsParameter pfs) throws Exception {
     // set paging/filtering/sorting if indicated
     if (pfs != null) {
@@ -3013,7 +2792,7 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
    * @throws Exception the exception
    */
   @SuppressWarnings("static-method")
-  private <T> Comparator<T> getPfsComparator(Class<T> clazz, PfsParameter pfs)
+  protected <T> Comparator<T> getPfsComparator(Class<T> clazz, PfsParameter pfs)
     throws Exception {
     if (pfs != null
         && (pfs.getSortField() != null && !pfs.getSortField().isEmpty())) {
@@ -3045,6 +2824,27 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
     } else {
       return null;
     }
+  }
+
+  /**
+   * Apply pfs to query.
+   *
+   * @param queryStr the query str
+   * @param pfs the pfs
+   * @return the javax.persistence. query
+   */
+  protected javax.persistence.Query applyPfsToQuery(String queryStr,
+    PfsParameter pfs) {
+    String localQueryStr = queryStr;
+    if (pfs.getSortField() != null) {
+      localQueryStr += " order by a." + pfs.getSortField();
+    }
+    javax.persistence.Query query = manager.createQuery(localQueryStr);
+    if (pfs != null && pfs.getStartIndex() > -1 && pfs.getMaxResults() > -1) {
+      query.setFirstResult(pfs.getStartIndex());
+      query.setMaxResults(pfs.getMaxResults());
+    }
+    return query;
   }
 
   /*
@@ -3118,4 +2918,116 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
     listenersEnabled = false;
   }
 
+  /**
+   * Adds the component.
+   *
+   * @param component the component
+   * @return
+   * @return the component
+   */
+  private <T extends Component> T addComponent(T component) throws Exception {
+
+    // Set last modified date
+    component.setLastModified(new Date());
+
+    // Leave effective time alone
+
+    // add
+    if (getTransactionPerOperation()) {
+      tx = manager.getTransaction();
+      tx.begin();
+      manager.persist(component);
+      tx.commit();
+    } else {
+      manager.persist(component);
+    }
+    return component;
+  }
+
+  /**
+   * Update component.
+   *
+   * @param <T> the generic type
+   * @param component the component
+   * @return the t
+   * @throws Exception the exception
+   */
+  private <T extends Component> void updateComponent(T component)
+    throws Exception {
+
+    // Set modification date
+    component.setLastModified(new Date());
+
+    // set effective time to nnull unless this is the planned effective time
+    if (component.getEffectiveTime() != null
+        && !component.getEffectiveTime().equals(plannedEffectiveTime)) {
+      component.setEffectiveTime(null);
+    }
+
+    // update
+    if (getTransactionPerOperation()) {
+      tx = manager.getTransaction();
+      tx.begin();
+      manager.merge(component);
+      tx.commit();
+    } else {
+      manager.merge(component);
+    }
+  }
+
+  /**
+   * Removes the component.
+   *
+   * @param <T> the generic type
+   * @param id the id
+   * @param clazz the clazz
+   * @throws Exception the exception
+   */
+  private <T extends Component> T removeComponent(Long id, Class<T> clazz)
+    throws Exception {
+    // Get transaction and object
+    tx = manager.getTransaction();
+    T component = manager.find(clazz, id);
+
+    // Set modification date
+    component.setLastModified(new Date());
+
+    // Remove
+    if (getTransactionPerOperation()) {
+      // remove refset member
+      tx.begin();
+      if (manager.contains(component)) {
+        manager.remove(component);
+      } else {
+        manager.remove(manager.merge(component));
+      }
+      tx.commit();
+    } else {
+      if (manager.contains(component)) {
+        manager.remove(component);
+      } else {
+        manager.remove(manager.merge(component));
+      }
+    }
+    return component;
+  }
+
+  /**
+   * Gets the planned effective time. Normally controlled by history service, we
+   * need to know this here to be able to get the effective time which is used
+   * for managing publication effective times.
+   *
+   * @return the planned effective time
+   */
+  private Date getPlannedEffectiveTime() {
+    javax.persistence.Query query =
+        manager
+            .createQuery("select a from ReleaseInfoJpa a where planned is TRUE");
+    try {
+      ReleaseInfo releaseInfo = (ReleaseInfo) query.getSingleResult();
+      return releaseInfo.getEffectiveTime();
+    } catch (NoResultException e) {
+      return null;
+    }
+  }
 }

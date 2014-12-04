@@ -161,11 +161,11 @@ public class ContentServiceTest {
         client.getConcepts("10013000", "SNOMEDCT", "20140731", authToken);
     assertNotNull(c);
     assertEquals(c.getTotalCount(), 1);
-    assertNotEquals(c.getConcepts().get(0).getDefaultPreferredName(),
+    assertNotEquals(c.getObjects().get(0).getDefaultPreferredName(),
         "No default preferred name found");
     Logger.getLogger(this.getClass()).info(
         " defaultPreferredName = "
-            + c.getConcepts().get(0).getDefaultPreferredName());
+            + c.getObjects().get(0).getDefaultPreferredName());
   }
 
   /**
@@ -179,11 +179,11 @@ public class ContentServiceTest {
     ConceptList c = client.getConcepts("339.8", "ICD9CM", "2013", authToken);
     assertNotNull(c);
     assertEquals(c.getTotalCount(), 1);
-    assertNotEquals(c.getConcepts().get(0).getDefaultPreferredName(),
+    assertNotEquals(c.getObjects().get(0).getDefaultPreferredName(),
         "No default preferred name found");
     Logger.getLogger(this.getClass()).info(
         " defaultPreferredName = "
-            + c.getConcepts().get(0).getDefaultPreferredName());
+            + c.getObjects().get(0).getDefaultPreferredName());
   }
 
   /**

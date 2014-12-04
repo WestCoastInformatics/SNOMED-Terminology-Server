@@ -43,7 +43,7 @@ public class ClamlMetadataServiceJpaHelper extends ContentServiceJpa implements
     SearchResultList results =
         findConceptsForQuery(terminology, version, "Isa",
             new PfsParameterJpa());
-    for (SearchResult result : results.getSearchResults()) {
+    for (SearchResult result : results.getObjects()) {
       if (result.getTerminology().equals(terminology)
           && result.getTerminologyVersion().equals(version)
           && result.getValue().equals("Isa")) {
@@ -82,7 +82,7 @@ public class ClamlMetadataServiceJpaHelper extends ContentServiceJpa implements
     SearchResultList results =
         findConceptsForQuery(terminology, version, "Module",
             new PfsParameterJpa());
-    for (SearchResult result : results.getSearchResults()) {
+    for (SearchResult result : results.getObjects()) {
       if (result.getTerminology().equals(terminology)
           && result.getTerminologyVersion().equals(version)
           && result.getValue().equals("Module")) {
@@ -163,7 +163,7 @@ public class ClamlMetadataServiceJpaHelper extends ContentServiceJpa implements
     SearchResultList results =
         findConceptsForQuery(terminology, version,
             "Simple refsets", new PfsParameterJpa());
-    for (SearchResult result : results.getSearchResults()) {
+    for (SearchResult result : results.getObjects()) {
       if (result.getTerminology().equals(terminology)
           && result.getTerminologyVersion().equals(version)
           && result.getValue().equals("Simple refsets")) {
@@ -205,7 +205,7 @@ public class ClamlMetadataServiceJpaHelper extends ContentServiceJpa implements
     SearchResultList results =
         findConceptsForQuery(terminology, version,
             "Definition status", new PfsParameterJpa());
-    for (SearchResult result : results.getSearchResults()) {
+    for (SearchResult result : results.getObjects()) {
       if (result.getTerminology().equals(terminology)
           && result.getTerminologyVersion().equals(version)
           && result.getValue().equals("Definition status")) {
@@ -233,7 +233,7 @@ public class ClamlMetadataServiceJpaHelper extends ContentServiceJpa implements
     SearchResultList results =
         findConceptsForQuery(terminology, version,
             "Description type", new PfsParameterJpa());
-    for (SearchResult result : results.getSearchResults()) {
+    for (SearchResult result : results.getObjects()) {
       if (result.getTerminology().equals(terminology)
           && result.getTerminologyVersion().equals(version)
           && result.getValue().equals("Description type")) {
@@ -261,7 +261,7 @@ public class ClamlMetadataServiceJpaHelper extends ContentServiceJpa implements
     SearchResultList results =
         findConceptsForQuery(terminology, version,
             "Case significance", new PfsParameterJpa());
-    for (SearchResult result : results.getSearchResults()) {
+    for (SearchResult result : results.getObjects()) {
       if (result.getTerminology().equals(terminology)
           && result.getTerminologyVersion().equals(version)
           && result.getValue().equals("Case significance")) {
@@ -290,7 +290,7 @@ public class ClamlMetadataServiceJpaHelper extends ContentServiceJpa implements
     SearchResultList results =
         findConceptsForQuery(terminology, version,
             "Relationship type", new PfsParameterJpa());
-    for (SearchResult result : results.getSearchResults()) {
+    for (SearchResult result : results.getObjects()) {
       if (result.getTerminology().equals(terminology)
           && result.getTerminologyVersion().equals(version)
           && result.getValue().equals("Relationship type")) {
@@ -343,7 +343,7 @@ public class ClamlMetadataServiceJpaHelper extends ContentServiceJpa implements
     SearchResultList results =
         findConceptsForQuery(terminology, version,
             "Characteristic type", new PfsParameterJpa());
-    for (SearchResult result : results.getSearchResults()) {
+    for (SearchResult result : results.getObjects()) {
       if (result.getTerminology().equals(terminology)
           && result.getTerminologyVersion().equals(version)
           && result.getValue().equals("Characteristic type")) {
@@ -371,7 +371,7 @@ public class ClamlMetadataServiceJpaHelper extends ContentServiceJpa implements
     SearchResultList results =
         findConceptsForQuery(terminology, version, "Modifier",
             new PfsParameterJpa());
-    for (SearchResult result : results.getSearchResults()) {
+    for (SearchResult result : results.getObjects()) {
       if (result.getTerminology().equals(terminology)
           && result.getTerminologyVersion().equals(version)
           && result.getValue().equals("Modifier")) {
@@ -536,7 +536,7 @@ public class ClamlMetadataServiceJpaHelper extends ContentServiceJpa implements
     Long id, String terminology, String version) throws Exception {
     Map<String, String> map = new HashMap<>();
 
-    // want all descendants, do not use pfsParameter
+    // want all descendants, do not use pfs
     Concept concept = getConcept(id);
 
     Set<Concept> descendants =

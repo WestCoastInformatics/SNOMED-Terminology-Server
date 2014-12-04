@@ -11,7 +11,6 @@ import java.io.InputStreamReader;
 import java.io.PushbackInputStream;
 import java.io.Reader;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -25,6 +24,7 @@ import java.util.Stack;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 
+import org.apache.commons.lang3.time.FastDateFormat;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
@@ -76,7 +76,7 @@ import org.xml.sax.helpers.DefaultHandler;
 public class TerminologyClamlLoaderMojo extends AbstractMojo {
 
   /** The date format. */
-  final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyymmdd");
+  private final static FastDateFormat dateFormat = FastDateFormat.getInstance("yyyyMMdd");
 
   /**
    * Name of terminology to be loaded.
@@ -121,7 +121,6 @@ public class TerminologyClamlLoaderMojo extends AbstractMojo {
    * Executes the plugin.
    * @throws MojoExecutionException the mojo execution exception
    */
-  @SuppressWarnings("null")
   @Override
   public void execute() throws MojoExecutionException {
     getLog().info("Starting loading " + terminology + " data ...");

@@ -12,6 +12,7 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Properties;
 
+import org.apache.commons.lang3.time.FastDateFormat;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoFailureException;
 import org.ihtsdo.otf.ts.helpers.ConfigUtility;
@@ -83,7 +84,7 @@ public class TerminologyRf2SnapshotLoaderMojo extends AbstractMojo {
   private String version = null;
 
   /** The date format. */
-  private final SimpleDateFormat dt = new SimpleDateFormat("yyyymmdd");
+  private final FastDateFormat format = FastDateFormat.getInstance("yyyyMMdd");
 
   /** The concepts by concept. */
   private BufferedReader conceptsByConcept;
@@ -352,8 +353,8 @@ public class TerminologyRf2SnapshotLoaderMojo extends AbstractMojo {
         contentService.close();
 
         getLog().info(
-            "  Compute transitive closure from  " + rootId + "/"
-                + terminology + "/" + terminologyVersion);
+            "  Compute transitive closure from  " + rootId + "/" + terminology
+                + "/" + terminologyVersion);
         TransitiveClosureAlgorithm algo = new TransitiveClosureAlgorithm();
         algo.setTerminology(terminology);
         algo.setTerminologyVersion(terminologyVersion);
@@ -386,8 +387,7 @@ public class TerminologyRf2SnapshotLoaderMojo extends AbstractMojo {
    * @throws IOException Signals that an I/O exception has occurred.
    */
   private void openSortedFileReaders(File outputDir) throws IOException {
-    File conceptsByConceptFile =
-        new File(outputDir, "conceptsByConcept.sort");
+    File conceptsByConceptFile = new File(outputDir, "conceptsByConcept.sort");
     File descriptionsByConceptFile =
         new File(outputDir, "descriptionsByConcept.sort");
     File relationshipsBySourceConceptFile =
@@ -508,7 +508,6 @@ public class TerminologyRf2SnapshotLoaderMojo extends AbstractMojo {
    * @param outputDir the output dir
    * @throws Exception the exception
    */
-  @SuppressWarnings("null")
   private void sortRf2Files(File coreInputDir, File outputDir) throws Exception {
 
     // log reason for sort
@@ -757,8 +756,7 @@ public class TerminologyRf2SnapshotLoaderMojo extends AbstractMojo {
             + coreMetadataInputDir.exists());
 
     // Initialize files
-    File conceptsByConceptFile =
-        new File(outputDir, "conceptsByConcept.sort");
+    File conceptsByConceptFile = new File(outputDir, "conceptsByConcept.sort");
     File descriptionsByConceptFile =
         new File(outputDir, "descriptionsByConcept.sort");
     File descriptionsTextByConceptFile =
@@ -793,8 +791,7 @@ public class TerminologyRf2SnapshotLoaderMojo extends AbstractMojo {
     if (coreTextDefinitionInputFile != null) {
 
       // sort the text definition file
-      sortRf2File(coreTextDefinitionInputFile,
-          descriptionsTextByConceptFile, 0);
+      sortRf2File(coreTextDefinitionInputFile, descriptionsTextByConceptFile, 0);
 
       // merge the two description files
       getLog().info("        Merging description files...");
@@ -814,8 +811,7 @@ public class TerminologyRf2SnapshotLoaderMojo extends AbstractMojo {
 
     } else {
       // copy the core descriptions file
-      Files.copy(descriptionsAllByConceptFile,
-          descriptionsByConceptFile);
+      Files.copy(descriptionsAllByConceptFile, descriptionsByConceptFile);
     }
 
     // Sort relationships file
@@ -935,7 +931,7 @@ public class TerminologyRf2SnapshotLoaderMojo extends AbstractMojo {
       if (!fields[0].equals("id")) { // header
 
         concept.setTerminologyId(fields[0]);
-        concept.setEffectiveTime(dt.parse(fields[1]));
+        concept.setEffectiveTime(format.parse(fields[1]));
         concept.setActive(fields[2].equals("1") ? true : false);
         concept.setModuleId(fields[3]);
         concept.setDefinitionStatusId(fields[4]);
@@ -943,6 +939,7 @@ public class TerminologyRf2SnapshotLoaderMojo extends AbstractMojo {
         concept.setTerminologyVersion(version);
         concept.setDefaultPreferredName("null");
         concept.setLastModifiedBy("loader");
+        concept.setWorkflowStatus("PUBLISHED");
         contentService.addConcept(concept);
 
         // copy concept to shed any hibernate stuff
@@ -998,7 +995,7 @@ public class TerminologyRf2SnapshotLoaderMojo extends AbstractMojo {
         // Configure relationship
         final Relationship relationship = new RelationshipJpa();
         relationship.setTerminologyId(fields[0]);
-        relationship.setEffectiveTime(dt.parse(fields[1]));
+        relationship.setEffectiveTime(format.parse(fields[1]));
         relationship.setActive(fields[2].equals("1") ? true : false); // active
         relationship.setModuleId(fields[3]); // moduleId
 
@@ -1071,8 +1068,9 @@ public class TerminologyRf2SnapshotLoaderMojo extends AbstractMojo {
     final ContentService contentService = new ContentServiceJpa();
     contentService.setTransactionPerOperation(false);
     contentService.beginTransaction();
-    
-    ComputePreferredNameHandler pnHandler = contentService.getComputePreferredNameHandler(terminology);
+
+    ComputePreferredNameHandler pnHandler =
+        contentService.getComputePreferredNameHandler(terminology);
     // Load and persist first description
     description = getNextDescription(contentService);
 
@@ -1191,7 +1189,8 @@ public class TerminologyRf2SnapshotLoaderMojo extends AbstractMojo {
       } else {
         dbConcept.setDefaultPreferredName("No default preferred name found");
       }
-      contentService.updateConcept(dbConcept);
+// TODO: need to deal with this
+      //contentService.updateConcept(dbConcept);
       if (++objectCt % commitCt == 0) {
         getLog().info("    commit = " + objectCt);
         contentService.commit();
@@ -1232,7 +1231,7 @@ public class TerminologyRf2SnapshotLoaderMojo extends AbstractMojo {
         final Description description = new DescriptionJpa();
         description.setTerminologyId("-1");
         description.setTerminologyId(fields[0]);
-        description.setEffectiveTime(dt.parse(fields[1]));
+        description.setEffectiveTime(format.parse(fields[1]));
         description.setActive(fields[2].equals("1") ? true : false);
         description.setModuleId(fields[3]);
 
@@ -1289,7 +1288,7 @@ public class TerminologyRf2SnapshotLoaderMojo extends AbstractMojo {
 
         // Universal RefSet attributes
         member.setTerminologyId(fields[0]);
-        member.setEffectiveTime(dt.parse(fields[1]));
+        member.setEffectiveTime(format.parse(fields[1]));
         member.setActive(fields[2].equals("1") ? true : false);
         member.setModuleId(fields[3]);
         member.setRefSetId(fields[4]);
@@ -1356,7 +1355,7 @@ public class TerminologyRf2SnapshotLoaderMojo extends AbstractMojo {
 
         // Universal RefSet attributes
         member.setTerminologyId(fields[0]);
-        member.setEffectiveTime(dt.parse(fields[1]));
+        member.setEffectiveTime(format.parse(fields[1]));
         member.setActive(fields[2].equals("1") ? true : false);
         member.setLastModified(new Date());
         member.setLastModifiedBy("loader");
@@ -1429,7 +1428,7 @@ public class TerminologyRf2SnapshotLoaderMojo extends AbstractMojo {
 
         // Universal RefSet attributes
         member.setTerminologyId(fields[0]);
-        member.setEffectiveTime(dt.parse(fields[1]));
+        member.setEffectiveTime(format.parse(fields[1]));
         member.setActive(fields[2].equals("1") ? true : false);
         member.setLastModified(new Date());
         member.setLastModifiedBy("loader");
@@ -1502,7 +1501,7 @@ public class TerminologyRf2SnapshotLoaderMojo extends AbstractMojo {
 
         // Universal RefSet attributes
         member.setTerminologyId(fields[0]);
-        member.setEffectiveTime(dt.parse(fields[1]));
+        member.setEffectiveTime(format.parse(fields[1]));
         member.setActive(fields[2].equals("1") ? true : false);
         member.setModuleId(fields[3]);
         member.setRefSetId(fields[4]);
@@ -1573,7 +1572,7 @@ public class TerminologyRf2SnapshotLoaderMojo extends AbstractMojo {
 
         // Universal RefSet attributes
         member.setTerminologyId(fields[0]);
-        member.setEffectiveTime(dt.parse(fields[1]));
+        member.setEffectiveTime(format.parse(fields[1]));
         member.setActive(fields[2].equals("1") ? true : false);
         member.setModuleId(fields[3]);
         member.setRefSetId(fields[4]);
@@ -1643,7 +1642,7 @@ public class TerminologyRf2SnapshotLoaderMojo extends AbstractMojo {
         final ComplexMapRefSetMember member = new ComplexMapRefSetMemberJpa();
 
         member.setTerminologyId(fields[0]);
-        member.setEffectiveTime(dt.parse(fields[1]));
+        member.setEffectiveTime(format.parse(fields[1]));
         member.setActive(fields[2].equals("1") ? true : false);
         member.setModuleId(fields[3]);
         member.setRefSetId(fields[4]);
@@ -1723,7 +1722,7 @@ public class TerminologyRf2SnapshotLoaderMojo extends AbstractMojo {
         final ComplexMapRefSetMember member = new ComplexMapRefSetMemberJpa();
 
         member.setTerminologyId(fields[0]);
-        member.setEffectiveTime(dt.parse(fields[1]));
+        member.setEffectiveTime(format.parse(fields[1]));
         member.setActive(fields[2].equals("1") ? true : false);
         member.setModuleId(fields[3]);
         member.setRefSetId(fields[4]);

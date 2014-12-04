@@ -1,6 +1,7 @@
 package org.ihtsdo.otf.ts.helpers;
 
 import java.util.Comparator;
+import java.util.List;
 
 /**
  * Container for some kind of results
@@ -49,4 +50,32 @@ public interface ResultList<T> {
    * @return the iterable
    */
   public Iterable<T> getIterable();
+  
+  /**
+   * Adds the object.
+   *
+   * @param object the object
+   */
+  public void addObject(T object);
+
+  /**
+   * Removes the object.
+   *
+   * @param object the object
+   */
+  public void removeObject(T object);
+
+  /**
+   * Sets the objects.
+   *
+   * @param objects the new objects
+   */
+  public void setObjects(List<T> objects);
+
+  /**
+   * Gets the objects.
+   * 
+   * @return the objects
+   */
+  public List<T> getObjects();  
 }
