@@ -41,63 +41,59 @@ public class GetterSetterTest {
   public void testModel() {
     try {
 
-      Object[] objects = new Object[] {
-          new AssociationReferenceConceptRefSetMemberJpa(),
-          new AssociationReferenceDescriptionRefSetMemberJpa(),
-          new AttributeValueConceptRefSetMemberJpa(),
-          new AttributeValueDescriptionRefSetMemberJpa(),
-          new ComplexMapRefSetMemberJpa(),
-          new DescriptionTypeRefSetMemberJpa(),
-          new LanguageRefSetMemberJpa(),
-          new ModuleDependencyRefSetMemberJpa(),
-          new RefsetDescriptorRefSetMemberJpa(),
-          new RelationshipJpa(),
-          new SimpleMapRefSetMemberJpa(),
-          new SimpleRefSetMemberJpa(),
-          new TransitiveRelationshipJpa(),
-          new ConceptListJpa(),
-          new DescriptionListJpa(),
-          new LanguageRefSetMemberListJpa(),
-          new PfsParameterJpa(),
-          new RelationshipListJpa(),
-          new ReleaseInfoJpa(),
-          new ReleaseInfoListJpa(),
-          new RestPrimitiveJpa(),
-          new SearchCriteriaJpa(),
-          new SearchResultJpa(),
-          new SearchResultListJpa(),
-          new UserJpa(),
-          new UserListJpa(),
-          new ValidationResultJpa()
-      };
+      Object[] objects =
+          new Object[] {
+              new AssociationReferenceConceptRefSetMemberJpa(),
+              new AssociationReferenceDescriptionRefSetMemberJpa(),
+              new AttributeValueConceptRefSetMemberJpa(),
+              new AttributeValueDescriptionRefSetMemberJpa(),
+              new ComplexMapRefSetMemberJpa(),
+              new DescriptionTypeRefSetMemberJpa(),
+              new LanguageRefSetMemberJpa(),
+              new ModuleDependencyRefSetMemberJpa(),
+              new RefsetDescriptorRefSetMemberJpa(), new RelationshipJpa(),
+              new SimpleMapRefSetMemberJpa(), new SimpleRefSetMemberJpa(),
+              new TransitiveRelationshipJpa(), new ConceptListJpa(),
+              new DescriptionListJpa(), new LanguageRefSetMemberListJpa(),
+              new PfsParameterJpa(), new RelationshipListJpa(),
+              new ReleaseInfoJpa(), new ReleaseInfoListJpa(),
+              new RestPrimitiveJpa(), new SearchCriteriaJpa(),
+              new SearchResultJpa(), new SearchResultListJpa(), new UserJpa(),
+              new UserListJpa(), new ValidationResultJpa()
+          };
 
       for (Object object : objects) {
-        Logger.getLogger(this.getClass()).info("  Testing " + object.getClass().getName());
+        Logger.getLogger(this.getClass()).info(
+            "  Testing " + object.getClass().getName());
         GetterSetterTester tester = new GetterSetterTester(object);
         tester.exclude("objectId");
-        tester.test();        
+        tester.test();
       }
 
       // Test ConceptJpa
-      GetterSetterTester tester = new GetterSetterTester(new ConceptJpa());
+      ConceptJpa concept = new ConceptJpa();
+      GetterSetterTester tester = new GetterSetterTester(concept);
       tester.exclude("objectId");
-      tester.exclude("descriptions");
-      tester.exclude("relationships");
       tester.exclude("inverseRelationships");
-      tester.exclude("associationReferenceRefSetMembers");
-      tester.exclude("attributeValueRefSetMembers");
-      tester.exclude("complexMapRefSetMembers");
-      tester.exclude("simpleMapRefSetMembers");
-      tester.exclude("simpleRefSetMembers");
       tester.test();
-      
+      // test setting to null
+      concept.setDescriptions(null);
+      concept.setRelationships(null);
+      concept.setAssociationReferenceRefSetMembers(null);
+      concept.setAttributeValueRefSetMembers(null);
+      concept.setComplexMapRefSetMembers(null);
+      concept.setSimpleMapRefSetMembers(null);
+      concept.setSimpleRefSetMembers(null);
+
       // Test DescriptionJpa
-      tester = new GetterSetterTester(new DescriptionJpa());
+      DescriptionJpa desc = new DescriptionJpa();
+      tester = new GetterSetterTester(desc);
       tester.exclude("objectId");
-      tester.exclude("associationReferenceRefSetMembers");
-      tester.exclude("attributeValueRefSetMembers");
-      tester.exclude("languageRefSetMembers");
       tester.test();
+      // test setting to null
+      desc.setLanguageRefSetMembers(null);
+      desc.setAssociationReferenceRefSetMembers(null);
+      desc.setAttributeValueRefSetMembers(null);
 
     } catch (Exception e) {
       e.printStackTrace();

@@ -339,8 +339,10 @@ public class DescriptionJpa extends AbstractComponent implements Description {
   public void setLanguageRefSetMembers(
     Set<LanguageRefSetMember> languageRefSetMembers) {
     this.languageRefSetMembers = languageRefSetMembers;
-    for (LanguageRefSetMember member : languageRefSetMembers) {
-      member.setDescription(this);
+    if (languageRefSetMembers != null) {
+      for (LanguageRefSetMember member : languageRefSetMembers) {
+        member.setDescription(this);
+      }
     }
   }
 

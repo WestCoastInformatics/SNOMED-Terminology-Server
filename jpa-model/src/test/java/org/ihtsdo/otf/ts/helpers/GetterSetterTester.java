@@ -6,6 +6,7 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.util.HashSet;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -220,6 +221,7 @@ public class GetterSetterTester {
         proxy
       });
     } catch (InvocationTargetException e) {
+      e.printStackTrace();
       throw new RuntimeException("Setter " + set.getDeclaringClass().getName()
           + "." + set.getName() + " threw " + e.getTargetException().toString());
     }
@@ -253,6 +255,7 @@ public class GetterSetterTester {
    * @throws IllegalArgumentException
    * @throws InstantiationException
    */
+  @SuppressWarnings("rawtypes")
   private Object makeProxy(Class<?> type) throws ClassNotFoundException,
     SecurityException, NoSuchMethodException, IllegalArgumentException,
     IllegalAccessException, InvocationTargetException, InstantiationException {
@@ -273,6 +276,8 @@ public class GetterSetterTester {
       return new Character('x');
     if (type == BigDecimal.class)
       return new BigDecimal("0");
+    if (type == Set.class)
+      return new HashSet();
     if (type == BigInteger.class)
       return new BigInteger("0");
     // JAVA5 - Comment out or remove the next two lines on older Java versions.
