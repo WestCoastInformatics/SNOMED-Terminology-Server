@@ -15,6 +15,10 @@
   <description>Used to remove loaded terminologies from the database.</description>
   <packaging>pom</packaging>
 
+  <!-- Mojo properties -->
+  <properties>
+    <release.info.values></release.info.values>
+  </properties>
 
   <profiles>
 
@@ -36,32 +40,6 @@
                 </goals>
                 <configuration>
                   <terminology>SNOMEDCT</terminology>
-                </configuration>
-              </execution>
-            </executions>
-          </plugin>
-        </plugins>
-      </build>
-    </profile>
-
-    <!-- Remove ICD10, specify -Drun.config=... -->
-    <profile>
-      <id>ICD10</id>
-      <build>
-        <plugins>
-          <plugin>
-            <groupId>org.ihtsdo.otf.term-server</groupId>
-            <artifactId>term-server-admin-mojo</artifactId>
-            <version>${project.version}</version>
-            <executions>
-              <execution>
-                <id>remove-terminology</id>
-                <phase>package</phase>
-                <goals>
-                  <goal>remove-terminology</goal>
-                </goals>
-                <configuration>
-                  <terminology>ICD10</terminology>
                 </configuration>
               </execution>
             </executions>
@@ -96,9 +74,9 @@
       </build>
     </profile>
 
-    <!-- Remove ICPC, specify -Drun.config=... -->
+    <!-- Remove ICD9CM, specify -Drun.config=... -->
     <profile>
-      <id>ICPC</id>
+      <id>ReleaseInfo</id>
       <build>
         <plugins>
           <plugin>
@@ -107,13 +85,14 @@
             <version>${project.version}</version>
             <executions>
               <execution>
-                <id>remove-terminology</id>
+                <id>remove-release-info</id>
                 <phase>package</phase>
                 <goals>
-                  <goal>remove-terminology</goal>
+                  <goal>remove-release-info</goal>
                 </goals>
                 <configuration>
-                  <terminology>ICPC</terminology>
+                  <!-- Leave blank to remove all -->
+                  <releaseInfoValues>${release.info.values}</releaseInfoValues>
                 </configuration>
               </execution>
             </executions>

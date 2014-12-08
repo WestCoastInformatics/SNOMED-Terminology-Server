@@ -79,7 +79,7 @@ public class ContentServiceRestImpl extends RootServiceRestImpl implements
       ConceptList cl =
           contentService.getConcepts(terminologyId, terminology, version);
 
-      for (Concept concept : cl.getIterable()) {
+      for (Concept concept : cl.getObjects()) {
         if (concept != null) {
           contentService.getGraphResolutionHandler().resolve(
               concept,

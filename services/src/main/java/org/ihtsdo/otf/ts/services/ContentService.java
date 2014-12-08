@@ -1,11 +1,17 @@
 package org.ihtsdo.otf.ts.services;
 
-import java.util.List;
-import java.util.Set;
-
+import org.ihtsdo.otf.ts.helpers.AssociationReferenceRefSetMemberList;
+import org.ihtsdo.otf.ts.helpers.AttributeValueRefSetMemberList;
+import org.ihtsdo.otf.ts.helpers.ComplexMapRefSetMemberList;
 import org.ihtsdo.otf.ts.helpers.ConceptList;
+import org.ihtsdo.otf.ts.helpers.LanguageRefSetMemberList;
+import org.ihtsdo.otf.ts.helpers.ModuleDependencyRefSetMemberList;
 import org.ihtsdo.otf.ts.helpers.PfsParameter;
+import org.ihtsdo.otf.ts.helpers.RefsetDescriptorRefSetMemberList;
 import org.ihtsdo.otf.ts.helpers.SearchResultList;
+import org.ihtsdo.otf.ts.helpers.SimpleMapRefSetMemberList;
+import org.ihtsdo.otf.ts.helpers.SimpleRefSetMemberList;
+import org.ihtsdo.otf.ts.helpers.StringList;
 import org.ihtsdo.otf.ts.rf2.AssociationReferenceRefSetMember;
 import org.ihtsdo.otf.ts.rf2.AttributeValueRefSetMember;
 import org.ihtsdo.otf.ts.rf2.ComplexMapRefSetMember;
@@ -33,12 +39,12 @@ public interface ContentService extends RootService {
    * Enable listeners.
    */
   public void enableListeners();
-  
+
   /**
    * Disable listeners.
    */
   public void disableListeners();
-  
+
   /**
    * Gets all concepts.
    * @param terminology the terminology
@@ -254,6 +260,19 @@ public interface ContentService extends RootService {
     String terminology, String version) throws Exception;
 
   /**
+   * Returns the language ref set members for the specified refset id.
+   *
+   * @param refsetId the refset id
+   * @param terminology the terminology
+   * @param version the version
+   * @param pfs the pfs
+   * @return the language ref set members
+   * @throws Exception the exception
+   */
+  public LanguageRefSetMemberList findLanguageRefSetMembers(String refsetId,
+    String terminology, String version, PfsParameter pfs) throws Exception;
+
+  /**
    * Adds the language refset member.
    * 
    * @param member the language refset member
@@ -269,8 +288,8 @@ public interface ContentService extends RootService {
    * @param member the language refset member
    * @throws Exception the exception
    */
-  public void updateLanguageRefSetMember(
-    LanguageRefSetMember member) throws Exception;
+  public void updateLanguageRefSetMember(LanguageRefSetMember member)
+    throws Exception;
 
   /**
    * Removes the language refset member.
@@ -301,7 +320,20 @@ public interface ContentService extends RootService {
    * @throws Exception if anything goes wrong
    */
   public AttributeValueRefSetMember<? extends Component> getAttributeValueRefSetMember(
-    String terminologyId, String terminology, String version) throws Exception;
+      String terminologyId, String terminology, String version) throws Exception;
+
+  /**
+   * Returns the attribute value ref set members for the specified refset id.
+   *
+   * @param refsetId the refset id
+   * @param terminology the terminology
+   * @param version the version
+   * @param pfs the pfs
+   * @return the attribute value ref set members
+   * @throws Exception the exception
+   */
+  public AttributeValueRefSetMemberList findAttributeValueRefSetMembers(
+      String refsetId, String terminology, String version, PfsParameter pfs) throws Exception;
 
   /**
    * Adds the attribute value refset member.
@@ -311,8 +343,7 @@ public interface ContentService extends RootService {
    * @throws Exception the exception
    */
   public AttributeValueRefSetMember<? extends Component> addAttributeValueRefSetMember(
-    AttributeValueRefSetMember<? extends Component> member)
-    throws Exception;
+    AttributeValueRefSetMember<? extends Component> member) throws Exception;
 
   /**
    * Update attribute value refset member.
@@ -321,8 +352,7 @@ public interface ContentService extends RootService {
    * @throws Exception the exception
    */
   public void updateAttributeValueRefSetMember(
-    AttributeValueRefSetMember<? extends Component> member)
-    throws Exception;
+    AttributeValueRefSetMember<? extends Component> member) throws Exception;
 
   /**
    * Removes the attribute value refset member.
@@ -353,13 +383,25 @@ public interface ContentService extends RootService {
    * @throws Exception if anything goes wrong
    */
   public AssociationReferenceRefSetMember<? extends Component> getAssociationReferenceRefSetMember(
-    String terminologyId, String terminology, String version) throws Exception;
+      String terminologyId, String terminology, String version) throws Exception;
+
+  /**
+   * Returns the association reference ref set members for the specified refset id.
+   *
+   * @param refsetId the refset id
+   * @param terminology the terminology
+   * @param version the version
+   * @param pfs the pfs
+   * @return the association reference ref set members
+   * @throws Exception the exception
+   */
+  public AssociationReferenceRefSetMemberList findAssociationReferenceRefSetMembers(
+      String refsetId, String terminology, String version, PfsParameter pfs) throws Exception;
 
   /**
    * Adds the association reference refset member.
    * 
-   * @param member the association reference refset
-   *          member
+   * @param member the association reference refset member
    * @return the attribute value refset member
    * @throws Exception the exception
    */
@@ -370,8 +412,7 @@ public interface ContentService extends RootService {
   /**
    * Update association reference refset member.
    * 
-   * @param member the association reference refset
-   *          member
+   * @param member the association reference refset member
    * @throws Exception the exception
    */
   public void updateAssociationReferenceRefSetMember(
@@ -409,6 +450,19 @@ public interface ContentService extends RootService {
     String terminology, String version) throws Exception;
 
   /**
+   * Returns the complex map ref set members for the specified refset id.
+   *
+   * @param refsetId the refset id
+   * @param terminology the terminology
+   * @param version the version
+   * @param pfs the pfs
+   * @return the complex map ref set members
+   * @throws Exception the exception
+   */
+  public ComplexMapRefSetMemberList findComplexMapRefSetMembers(String refsetId,
+    String terminology, String version, PfsParameter pfs) throws Exception;
+
+  /**
    * Adds the complex map refset member.
    * 
    * @param member the complex map refset member
@@ -424,8 +478,8 @@ public interface ContentService extends RootService {
    * @param member the complex map refset member
    * @throws Exception the exception
    */
-  public void updateComplexMapRefSetMember(
-    ComplexMapRefSetMember member) throws Exception;
+  public void updateComplexMapRefSetMember(ComplexMapRefSetMember member)
+    throws Exception;
 
   /**
    * Removes the complex map refset member.
@@ -458,6 +512,19 @@ public interface ContentService extends RootService {
     String terminology, String version) throws Exception;
 
   /**
+   * Returns the simple map ref set members for the specified refset id.
+   *
+   * @param refsetId the refset id
+   * @param terminology the terminology
+   * @param version the version
+   * @param pfs the pfs
+   * @return the simple map ref set members
+   * @throws Exception the exception
+   */
+  public SimpleMapRefSetMemberList findSimpleMapRefSetMembers(String refsetId,
+    String terminology, String version, PfsParameter pfs) throws Exception;
+
+  /**
    * Adds the simple map refset member.
    * 
    * @param member the simple map refset member
@@ -473,8 +540,8 @@ public interface ContentService extends RootService {
    * @param member the simple map refset member
    * @throws Exception the exception
    */
-  public void updateSimpleMapRefSetMember(
-    SimpleMapRefSetMember member) throws Exception;
+  public void updateSimpleMapRefSetMember(SimpleMapRefSetMember member)
+    throws Exception;
 
   /**
    * Removes the simple map refset member.
@@ -506,14 +573,27 @@ public interface ContentService extends RootService {
     String terminology, String version) throws Exception;
 
   /**
+   * Returns the simple ref set members for the specified refset id.
+   *
+   * @param refsetId the refset id
+   * @param terminology the terminology
+   * @param version the version
+   * @param pfs the pfs
+   * @return the simple ref set members
+   * @throws Exception the exception
+   */
+  public SimpleRefSetMemberList findSimpleRefSetMembers(String refsetId,
+    String terminology, String version, PfsParameter pfs) throws Exception;
+
+  /**
    * Adds the simple refset member.
    * 
    * @param member the simple refset member
    * @return the simple refset member
    * @throws Exception the exception
    */
-  public SimpleRefSetMember addSimpleRefSetMember(
-    SimpleRefSetMember member) throws Exception;
+  public SimpleRefSetMember addSimpleRefSetMember(SimpleRefSetMember member)
+    throws Exception;
 
   /**
    * Update simple refset member.
@@ -539,10 +619,12 @@ public interface ContentService extends RootService {
    * @return the refset descriptor refset member
    * @throws Exception if anything goes wrong
    */
-  public RefsetDescriptorRefSetMember getRefsetDescriptorRefSetMember(Long id) throws Exception;
+  public RefsetDescriptorRefSetMember getRefsetDescriptorRefSetMember(Long id)
+    throws Exception;
 
   /**
-   * Returns the refset descriptor refset member matching the specified parameters.
+   * Returns the refset descriptor refset member matching the specified
+   * parameters.
    * 
    * @param terminologyId the id
    * @param terminology the terminology
@@ -550,8 +632,8 @@ public interface ContentService extends RootService {
    * @return the refset descriptor refset member
    * @throws Exception if anything goes wrong
    */
-  public RefsetDescriptorRefSetMember getRefsetDescriptorRefSetMember(String terminologyId,
-    String terminology, String version) throws Exception;
+  public RefsetDescriptorRefSetMember getRefsetDescriptorRefSetMember(
+    String terminologyId, String terminology, String version) throws Exception;
 
   /**
    * Returns the refset descriptor ref set members for refset.
@@ -561,8 +643,8 @@ public interface ContentService extends RootService {
    * @param version the version
    * @return the refset descriptor ref set members for refset
    */
-  public List<RefsetDescriptorRefSetMember> getRefsetDescriptorRefSetMembersForRefset(String terminologyId,
-    String terminology, String version);
+  public RefsetDescriptorRefSetMemberList getRefsetDescriptorRefSetMembersForRefset(
+    String terminologyId, String terminology, String version);
 
   /**
    * Adds the refset descriptor refset member.
@@ -580,8 +662,8 @@ public interface ContentService extends RootService {
    * @param member the refset descriptor refset member
    * @throws Exception the exception
    */
-  public void updateRefsetDescriptorRefSetMember(RefsetDescriptorRefSetMember member)
-    throws Exception;
+  public void updateRefsetDescriptorRefSetMember(
+    RefsetDescriptorRefSetMember member) throws Exception;
 
   /**
    * Removes the refset descriptor refset member.
@@ -590,7 +672,7 @@ public interface ContentService extends RootService {
    * @throws Exception the exception
    */
   public void removeRefsetDescriptorRefSetMember(Long id) throws Exception;
-  
+
   /**
    * Returns the description type refset member.
    * 
@@ -598,10 +680,12 @@ public interface ContentService extends RootService {
    * @return the description type refset member
    * @throws Exception if anything goes wrong
    */
-  public DescriptionTypeRefSetMember getDescriptionTypeRefSetMember(Long id) throws Exception;
+  public DescriptionTypeRefSetMember getDescriptionTypeRefSetMember(Long id)
+    throws Exception;
 
   /**
-   * Returns the description type refset member matching the specified parameters.
+   * Returns the description type refset member matching the specified
+   * parameters.
    * 
    * @param terminologyId the id
    * @param terminology the terminology
@@ -609,8 +693,8 @@ public interface ContentService extends RootService {
    * @return the description type refset member
    * @throws Exception if anything goes wrong
    */
-  public DescriptionTypeRefSetMember getDescriptionTypeRefSetMember(String terminologyId,
-    String terminology, String version) throws Exception;
+  public DescriptionTypeRefSetMember getDescriptionTypeRefSetMember(
+    String terminologyId, String terminology, String version) throws Exception;
 
   /**
    * Returns the description type ref set member for description type.
@@ -621,8 +705,8 @@ public interface ContentService extends RootService {
    * @return the description type ref set member for description type
    * @throws Exception the exception
    */
-  public DescriptionTypeRefSetMember getDescriptionTypeRefSetMemberForDescriptionType(String terminologyId,
-    String terminology, String version) throws Exception;
+  public DescriptionTypeRefSetMember getDescriptionTypeRefSetMemberForDescriptionType(
+    String terminologyId, String terminology, String version) throws Exception;
 
   /**
    * Adds the description type refset member.
@@ -640,8 +724,8 @@ public interface ContentService extends RootService {
    * @param member the description type refset member
    * @throws Exception the exception
    */
-  public void updateDescriptionTypeRefSetMember(DescriptionTypeRefSetMember member)
-    throws Exception;
+  public void updateDescriptionTypeRefSetMember(
+    DescriptionTypeRefSetMember member) throws Exception;
 
   /**
    * Removes the description type refset member.
@@ -658,10 +742,12 @@ public interface ContentService extends RootService {
    * @return the module dependency refset member
    * @throws Exception if anything goes wrong
    */
-  public ModuleDependencyRefSetMember getModuleDependencyRefSetMember(Long id) throws Exception;
+  public ModuleDependencyRefSetMember getModuleDependencyRefSetMember(Long id)
+    throws Exception;
 
   /**
-   * Returns the module dependency refset member matching the specified parameters.
+   * Returns the module dependency refset member matching the specified
+   * parameters.
    * 
    * @param terminologyId the id
    * @param terminology the terminology
@@ -669,8 +755,8 @@ public interface ContentService extends RootService {
    * @return the module dependency refset member
    * @throws Exception if anything goes wrong
    */
-  public ModuleDependencyRefSetMember getModuleDependencyRefSetMember(String terminologyId,
-    String terminology, String version) throws Exception;
+  public ModuleDependencyRefSetMember getModuleDependencyRefSetMember(
+    String terminologyId, String terminology, String version) throws Exception;
 
   /**
    * Returns the module dependency ref set members for module.
@@ -681,8 +767,8 @@ public interface ContentService extends RootService {
    * @return the module dependency ref set members for module
    * @throws Exception the exception
    */
-  public List<ModuleDependencyRefSetMember> getModuleDependencyRefSetMembersForModule(String terminologyId,
-    String terminology, String version) throws Exception;
+  public ModuleDependencyRefSetMemberList getModuleDependencyRefSetMembersForModule(
+    String terminologyId, String terminology, String version) throws Exception;
 
   /**
    * Adds the module dependency refset member.
@@ -700,8 +786,8 @@ public interface ContentService extends RootService {
    * @param member the module dependency refset member
    * @throws Exception the exception
    */
-  public void updateModuleDependencyRefSetMember(ModuleDependencyRefSetMember member)
-    throws Exception;
+  public void updateModuleDependencyRefSetMember(
+    ModuleDependencyRefSetMember member) throws Exception;
 
   /**
    * Removes the module dependency refset member.
@@ -768,7 +854,7 @@ public interface ContentService extends RootService {
    * @param version the terminology version
    * @return the all relationship ids
    */
-  public Set<String> getAllRelationshipTerminologyIds(String terminology,
+  public StringList getAllRelationshipTerminologyIds(String terminology,
     String version);
 
   /**
@@ -778,7 +864,7 @@ public interface ContentService extends RootService {
    * @param version the terminology version
    * @return the all description ids
    */
-  public Set<String> getAllDescriptionTerminologyIds(String terminology,
+  public StringList getAllDescriptionTerminologyIds(String terminology,
     String version);
 
   /**
@@ -788,7 +874,7 @@ public interface ContentService extends RootService {
    * @param version the terminology version
    * @return the all language ref set member ids
    */
-  public Set<String> getAllLanguageRefSetMemberTerminologyIds(
+  public StringList getAllLanguageRefSetMemberTerminologyIds(
     String terminology, String version);
 
   /**
@@ -802,7 +888,7 @@ public interface ContentService extends RootService {
     throws Exception;
 
   /**
-   * Removes all concepts and connected data structures
+   * Removes all concepts and connected data structures.
    *
    * @param terminology the terminology
    * @param version the terminology version
@@ -810,8 +896,8 @@ public interface ContentService extends RootService {
   public void clearConcepts(String terminology, String version);
 
   /**
-   * Returns the graph resolution handler. 
-   * This is configured internally but made available through this service.
+   * Returns the graph resolution handler. This is configured internally but
+   * made available through this service.
    *
    * @return the graph resolution handler
    * @throws Exception the exception
@@ -821,11 +907,13 @@ public interface ContentService extends RootService {
   /**
    * Returns the identifier assignment handler.
    *
+   * @param terminology the terminology
    * @return the identifier assignment handler
    * @throws Exception the exception
    */
-  public IdentifierAssignmentHandler getIdentifierAssignmentHandler() throws Exception;
-  
+  public IdentifierAssignmentHandler getIdentifierAssignmentHandler(
+    String terminology) throws Exception;
+
   /**
    * Returns the compute preferred name handler.
    *
@@ -833,13 +921,14 @@ public interface ContentService extends RootService {
    * @return the compute preferred name handler
    * @throws Exception the exception
    */
-  public ComputePreferredNameHandler getComputePreferredNameHandler(String terminology) throws Exception;
+  public ComputePreferredNameHandler getComputePreferredNameHandler(
+    String terminology) throws Exception;
 
   /**
    * Computes preferred name.
    *
    * @param concept the concept
-   * @throws Exception 
+   * @throws Exception the exception
    */
   public void computePreferredName(Concept concept) throws Exception;
 

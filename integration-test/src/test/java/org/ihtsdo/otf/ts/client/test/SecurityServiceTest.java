@@ -23,7 +23,7 @@ public class SecurityServiceTest {
    */
   @Before
   public void setup() throws Exception {
-    client = new SecurityClientRest(ConfigUtility.getTestConfigProperties());
+    client = new SecurityClientRest(ConfigUtility.getConfigProperties());
 
   }
 

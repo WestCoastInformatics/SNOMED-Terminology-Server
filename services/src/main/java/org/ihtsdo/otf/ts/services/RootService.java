@@ -39,12 +39,19 @@ public interface RootService {
 	public void setTransactionPerOperation(boolean transactionPerOperation)
 			throws Exception;
 
-	/**
-	 * Commit.
-	 *
-	 * @throws Exception the exception
-	 */
-	public void commit() throws Exception;
+    /**
+     * Commit.
+     *
+     * @throws Exception the exception
+     */
+    public void commit() throws Exception;
+
+    /**
+     * Rollback.
+     *
+     * @throws Exception the exception
+     */
+    public void rollback() throws Exception;
 
 	/**
 	 * Begin transaction.

@@ -283,7 +283,7 @@ public class DescriptionJpa extends AbstractComponent implements Description {
    */
   @XmlElement
   private String getConceptId() {
-    return concept != null ? concept.getTerminologyId() : null;
+    return concept != null ? concept.getObjectId() : "";
   }
 
   /**
@@ -293,7 +293,12 @@ public class DescriptionJpa extends AbstractComponent implements Description {
    */
   @SuppressWarnings("unused")
   private void setConceptId(String conceptId) {
-    // do nothing - here for JAXB
+    if (concept == null) {
+      concept = new ConceptJpa();
+    }
+    concept.setTerminologyId(conceptId);
+    concept.setTerminology(getTerminology());
+    concept.setTerminologyVersion(getTerminologyVersion());
   }
 
   /**
@@ -338,11 +343,12 @@ public class DescriptionJpa extends AbstractComponent implements Description {
   @Override
   public void setLanguageRefSetMembers(
     Set<LanguageRefSetMember> languageRefSetMembers) {
-    this.languageRefSetMembers = languageRefSetMembers;
     if (languageRefSetMembers != null) {
+      this.languageRefSetMembers = new HashSet<>();
       for (LanguageRefSetMember member : languageRefSetMembers) {
         member.setDescription(this);
       }
+      this.languageRefSetMembers.addAll(languageRefSetMembers);
     }
   }
 
@@ -398,9 +404,12 @@ public class DescriptionJpa extends AbstractComponent implements Description {
   @Override
   public void setAttributeValueRefSetMembers(
     Set<AttributeValueDescriptionRefSetMember> attributeValueRefSetMembers) {
-    this.attributeValueRefSetMembers = attributeValueRefSetMembers;
-    for (AttributeValueDescriptionRefSetMember member : attributeValueRefSetMembers) {
-      member.setDescription(this);
+    if (attributeValueRefSetMembers != null) {
+      this.attributeValueRefSetMembers = new HashSet<>();
+      for (AttributeValueDescriptionRefSetMember member : attributeValueRefSetMembers) {
+        member.setDescription(this);
+      }
+      this.attributeValueRefSetMembers.addAll(attributeValueRefSetMembers);
     }
   }
 
@@ -461,9 +470,13 @@ public class DescriptionJpa extends AbstractComponent implements Description {
   @Override
   public void setAssociationReferenceRefSetMembers(
     Set<AssociationReferenceDescriptionRefSetMember> associationReferenceRefSetMembers) {
-    this.associationReferenceRefSetMembers = associationReferenceRefSetMembers;
-    for (AssociationReferenceDescriptionRefSetMember member : associationReferenceRefSetMembers) {
-      member.setDescription(this);
+    if (associationReferenceRefSetMembers != null) {
+      this.associationReferenceRefSetMembers = new HashSet<>();
+      for (AssociationReferenceDescriptionRefSetMember member : associationReferenceRefSetMembers) {
+        member.setDescription(this);
+      }
+      this.associationReferenceRefSetMembers
+          .addAll(associationReferenceRefSetMembers);
     }
   }
 
@@ -505,7 +518,8 @@ public class DescriptionJpa extends AbstractComponent implements Description {
    */
   @Override
   public String toString() {
-    return super.toString()
+    return super.toString() + ","
+        + +(getConcept() == null ? null : getConcept().getId()) + ","
         + (getConcept() == null ? null : getConcept().getTerminologyId()) + ","
         + getLanguageCode() + "," + getTypeId() + "," + getTerm() + ","
         + getCaseSignificanceId();

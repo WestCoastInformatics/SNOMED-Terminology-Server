@@ -132,7 +132,22 @@ public class AssociationReferenceDescriptionRefSetMemberJpa extends
    * @return the description id
    */
   @XmlElement
-  public String getDescriptionId() {
+  private String getDescriptionId() {
     return description != null ? description.getTerminologyId() : null;
+  }
+
+  /**
+   * Sets the description id.
+   *
+   * @param descriptionId the description id
+   */
+  @SuppressWarnings("unused")
+  private void setDescriptionId(String descriptionId) {
+    if (description == null) {
+      description = new DescriptionJpa();
+    }
+    description.setTerminologyId(descriptionId);
+    description.setTerminology(getTerminology());
+    description.setTerminologyVersion(getTerminologyVersion());
   }
 }

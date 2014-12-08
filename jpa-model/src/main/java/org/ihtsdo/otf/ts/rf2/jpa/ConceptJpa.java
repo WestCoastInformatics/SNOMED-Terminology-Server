@@ -310,11 +310,12 @@ public class ConceptJpa extends AbstractComponent implements Concept {
    */
   @Override
   public void setDescriptions(Set<Description> descriptions) {
-    this.descriptions = descriptions;
     if (descriptions != null) {
+      this.descriptions = new HashSet<>();
       for (Description description : descriptions) {
         description.setConcept(this);
       }
+      this.descriptions.addAll(descriptions);
     }
   }
 
@@ -439,11 +440,12 @@ public class ConceptJpa extends AbstractComponent implements Concept {
    */
   @Override
   public void setRelationships(Set<Relationship> relationships) {
-    this.relationships = relationships;
     if (relationships != null) {
+      this.relationships = new HashSet<>();
       for (Relationship relationship : relationships) {
         relationship.setSourceConcept(this);
       }
+      this.relationships.addAll(relationships);
     }
   }
 
@@ -526,11 +528,12 @@ public class ConceptJpa extends AbstractComponent implements Concept {
    */
   @Override
   public void setSimpleRefSetMembers(Set<SimpleRefSetMember> simpleRefSetMembers) {
-    this.simpleRefSetMembers = simpleRefSetMembers;
     if (simpleRefSetMembers != null) {
+      this.simpleRefSetMembers = new HashSet<>();
       for (SimpleRefSetMember member : simpleRefSetMembers) {
         member.setConcept(this);
       }
+      this.simpleRefSetMembers.addAll(simpleRefSetMembers);
     }
   }
 
@@ -587,11 +590,12 @@ public class ConceptJpa extends AbstractComponent implements Concept {
   @Override
   public void setSimpleMapRefSetMembers(
     Set<SimpleMapRefSetMember> simpleMapRefSetMembers) {
-    this.simpleMapRefSetMembers = simpleMapRefSetMembers;
     if (simpleMapRefSetMembers != null) {
+      this.simpleMapRefSetMembers = new HashSet<>();
       for (SimpleMapRefSetMember member : simpleMapRefSetMembers) {
         member.setConcept(this);
       }
+      this.simpleMapRefSetMembers.addAll(simpleMapRefSetMembers);
     }
   }
 
@@ -651,9 +655,12 @@ public class ConceptJpa extends AbstractComponent implements Concept {
   @Override
   public void setComplexMapRefSetMembers(
     Set<ComplexMapRefSetMember> complexMapRefSetMembers) {
-    this.complexMapRefSetMembers = complexMapRefSetMembers;
-    for (ComplexMapRefSetMember member : complexMapRefSetMembers) {
-      member.setConcept(this);
+    if (complexMapRefSetMembers != null) {
+      this.complexMapRefSetMembers = new HashSet<>();
+      for (ComplexMapRefSetMember member : complexMapRefSetMembers) {
+        member.setConcept(this);
+      }
+      this.complexMapRefSetMembers.addAll(complexMapRefSetMembers);
     }
   }
 
@@ -711,11 +718,12 @@ public class ConceptJpa extends AbstractComponent implements Concept {
   @Override
   public void setAttributeValueRefSetMembers(
     Set<AttributeValueConceptRefSetMember> attributeValueRefSetMembers) {
-    this.attributeValueRefSetMembers = attributeValueRefSetMembers;
     if (attributeValueRefSetMembers != null) {
+      this.attributeValueRefSetMembers = new HashSet<>();
       for (AttributeValueConceptRefSetMember member : attributeValueRefSetMembers) {
         member.setConcept(this);
       }
+      this.attributeValueRefSetMembers.addAll(attributeValueRefSetMembers);
     }
   }
 
@@ -776,11 +784,13 @@ public class ConceptJpa extends AbstractComponent implements Concept {
   @Override
   public void setAssociationReferenceRefSetMembers(
     Set<AssociationReferenceConceptRefSetMember> associationReferenceRefSetMembers) {
-    this.associationReferenceRefSetMembers = associationReferenceRefSetMembers;
     if (associationReferenceRefSetMembers != null) {
+      this.associationReferenceRefSetMembers = new HashSet<>();
       for (AssociationReferenceConceptRefSetMember member : associationReferenceRefSetMembers) {
         member.setConcept(this);
       }
+      this.associationReferenceRefSetMembers
+          .addAll(associationReferenceRefSetMembers);
     }
   }
 
@@ -883,8 +893,7 @@ public class ConceptJpa extends AbstractComponent implements Concept {
    */
   @Override
   public String toString() {
-
-    return super.toString() + getDefinitionStatusId() + ","
+    return super.toString() + ", " + getDefinitionStatusId() + ","
         + getDefaultPreferredName();
   }
 

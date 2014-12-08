@@ -45,7 +45,9 @@ public class AttributeValueConceptRefSetMemberJpa extends
     this.concept = member.getConcept();
   }
 
-  /* (non-Javadoc)
+  /*
+   * (non-Javadoc)
+   * 
    * @see org.ihtsdo.otf.ts.rf2.ConceptRefSetMember#getConcept()
    */
   @XmlTransient
@@ -118,7 +120,23 @@ public class AttributeValueConceptRefSetMemberJpa extends
    * @return the concept id
    */
   @XmlElement
-  public String getConceptId() {
+  private String getConceptId() {
     return concept != null ? concept.getTerminologyId() : null;
   }
+
+  /**
+   * Sets the concept id.
+   *
+   * @param conceptId the concept id
+   */
+  @SuppressWarnings("unused")
+  private void setConceptId(String conceptId) {
+    if (concept == null) {
+      concept = new ConceptJpa();
+    }
+    concept.setTerminologyId(conceptId);
+    concept.setTerminology(getTerminology());
+    concept.setTerminologyVersion(getTerminologyVersion());
+  }
+
 }

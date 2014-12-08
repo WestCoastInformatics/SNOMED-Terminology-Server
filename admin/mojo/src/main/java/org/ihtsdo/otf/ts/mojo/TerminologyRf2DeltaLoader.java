@@ -41,25 +41,7 @@ import org.ihtsdo.otf.ts.services.MetadataService;
 /**
  * Goal which loads an RF2 Delta of SNOMED CT data
  * 
- * <pre>
- *      <plugin> 
- *          <groupId>org.ihtsdo.otf.mapping</groupId>
- *          <artifactId>mapping-admin-mojo</artifactId>
- *          <version>${project.version}</version> 
- *          <executions> 
- *              <execution>
- *                  <id>load-rf2-delta</id> 
- *                  <phase>package</phase> 
- *                  <goals>
- *                      <goal>load-rf2-delta</goal> 
- *                  </goals> 
- *                  <configuration>
- *                      <terminology>SNOMEDCT</terminology> 
- *                  </configuration> 
- *              </execution>
- *          </executions>
- *       </plugin>
- * </pre>
+ * See admin/loader/pom.xml for sample usage
  * 
  * @goal load-rf2-delta
  * 
@@ -184,18 +166,19 @@ public class TerminologyRf2DeltaLoader extends AbstractMojo {
       getLog().info("Constructing terminology id sets for quality assurance");
       getLog().info("Cache description ids");
       existingDescriptionIds =
-          contentService.getAllDescriptionTerminologyIds(terminology,
-              terminologyVersion);
+          new HashSet<>(contentService.getAllDescriptionTerminologyIds(
+              terminology, terminologyVersion).getObjects());
       getLog().info("  count = " + existingDescriptionIds.size());
       getLog().info("Cache language refset member ids");
       existingLanguageRefSetMemberIds =
-          contentService.getAllLanguageRefSetMemberTerminologyIds(terminology,
-              terminologyVersion);
+          new HashSet<>(contentService
+              .getAllLanguageRefSetMemberTerminologyIds(terminology,
+                  terminologyVersion).getObjects());
       getLog().info("  count = " + existingLanguageRefSetMemberIds.size());
       getLog().info("Cache relationship ids");
       existingRelationshipIds =
-          contentService.getAllRelationshipTerminologyIds(terminology,
-              terminologyVersion);
+          new HashSet<>(contentService.getAllRelationshipTerminologyIds(
+              terminology, terminologyVersion).getObjects());
       getLog().info("  count = " + existingRelationshipIds.size());
 
       // Load delta data
@@ -528,7 +511,6 @@ public class TerminologyRf2DeltaLoader extends AbstractMojo {
       rootId = conceptId;
       break;
     }
-    contentService.close();
 
     getLog().info(
         "  Compute transitive closure from rootId " + rootId + " for "
@@ -537,9 +519,14 @@ public class TerminologyRf2DeltaLoader extends AbstractMojo {
     algo.setTerminology(terminology);
     algo.setTerminologyVersion(terminologyVersion);
     algo.reset();
-    algo.setRootId(rootId);
+    Long rootIdLong =
+        contentService
+            .getSingleConcept(rootId, terminology, terminologyVersion).getId();
+    algo.setRootId(rootIdLong);
     algo.compute();
     algo.close();
+
+    contentService.close();
 
   }
 
@@ -989,7 +976,9 @@ public class TerminologyRf2DeltaLoader extends AbstractMojo {
 
         // Otherwise, reset effective time (for modified check later)
         else {
-          newRelationship.setEffectiveTime(relationship.getEffectiveTime());
+          if (relationship != null) {
+            newRelationship.setEffectiveTime(relationship.getEffectiveTime());
+          }
         }
       }
     }

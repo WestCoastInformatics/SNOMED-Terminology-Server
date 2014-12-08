@@ -1,12 +1,18 @@
 package org.ihtsdo.otf.ts.client.test;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import org.apache.log4j.Logger;
 import org.ihtsdo.otf.ts.helpers.ConfigUtility;
 import org.ihtsdo.otf.ts.helpers.ValidationResult;
 import org.ihtsdo.otf.ts.jpa.client.ContentClientRest;
 import org.ihtsdo.otf.ts.jpa.client.SecurityClientRest;
 import org.ihtsdo.otf.ts.jpa.client.ValidationClientRest;
+import org.ihtsdo.otf.ts.jpa.services.helper.TerminologyUtility;
+import org.ihtsdo.otf.ts.jpa.services.validation.NewConceptMinRequirementsCheck;
 import org.ihtsdo.otf.ts.rf2.Description;
+import org.ihtsdo.otf.ts.rf2.Relationship;
 import org.ihtsdo.otf.ts.rf2.jpa.ConceptJpa;
 import org.ihtsdo.otf.ts.services.helpers.ConceptReportHelper;
 import org.junit.After;
@@ -37,21 +43,22 @@ public class ValidationServiceTest {
   public void setup() throws Exception {
     if (client == null) {
       client =
-          new ValidationClientRest(ConfigUtility.getTestConfigProperties());
+          new ValidationClientRest(ConfigUtility.getConfigProperties());
       contentClient =
-          new ContentClientRest(ConfigUtility.getTestConfigProperties());
+          new ContentClientRest(ConfigUtility.getConfigProperties());
       SecurityClientRest securityClient =
-          new SecurityClientRest(ConfigUtility.getTestConfigProperties());
+          new SecurityClientRest(ConfigUtility.getConfigProperties());
       authToken = securityClient.authenticate("guest", "guest");
     }
+
   }
 
   /**
-   * Test validating a concept.
+   * Test validating {@link NewConceptMinRequirementsCheck}.
    * @throws Exception
    */
   @Test
-  public void testValidate() throws Exception {
+  public void testNewConceptMinRequirementsCheck() throws Exception {
     Logger.getLogger(this.getClass()).info(
         "TEST - 10013000, SNOMEDCT, 20140731, " + authToken);
 
@@ -67,12 +74,24 @@ public class ValidationServiceTest {
     // Remove SY description
     Description sy = null;
     for (Description d : concept.getDescriptions()) {
-      if (d.getTerm().equals("Lateral meniscus of knee joint,")) {
+      Assert.assertTrue(concept.getDescriptions().contains(d));
+      if (d.getTerm().equals("Lateral meniscus of knee joint")) {
         sy = d;
         break;
       }
     }
+    Assert.assertNotNull(sy);
+    for (Description d : concept.getDescriptions()) {
+      Assert.assertTrue(concept.getDescriptions().contains(d));
+      if (d.getTerm().equals("Lateral meniscus of knee joint")) {
+        Assert.assertEquals(sy, d);
+        Assert.assertEquals(sy.hashCode(), d.hashCode());
+      }
+    }
     concept.removeDescription(sy);
+    Assert.assertEquals(concept.getDescriptions().size(),2);
+
+    // Validation should pass
     Logger.getLogger(this.getClass()).info(
         ConceptReportHelper.getConceptReport(concept));
     result = client.validateConcept(concept, authToken);
@@ -86,13 +105,18 @@ public class ValidationServiceTest {
         break;
       }
     }
+    Assert.assertNotNull(pt);
     concept.removeDescription(pt);
+    Assert.assertEquals(concept.getDescriptions().size(),1);
+
+    // Validation should fail
     Logger.getLogger(this.getClass()).info(
         ConceptReportHelper.getConceptReport(concept));
     result = client.validateConcept(concept, authToken);
+    Logger.getLogger(this.getClass()).info(result.toString());
     Assert.assertFalse(result.isValid());
 
-    // Add pt back and remove fn
+    // Add PT back and remove FN
     concept.addDescription(pt);
     Description fn = null;
     for (Description d : concept.getDescriptions()) {
@@ -101,11 +125,32 @@ public class ValidationServiceTest {
         break;
       }
     }
-    concept.removeDescription(pt);
+    Assert.assertNotNull(fn);
+    concept.removeDescription(fn);
+    Assert.assertEquals(concept.getDescriptions().size(),1);
+
+    // Validation should fail
     Logger.getLogger(this.getClass()).info(
         ConceptReportHelper.getConceptReport(concept));
     result = client.validateConcept(concept, authToken);
     Assert.assertFalse(result.isValid());
+
+    // Add FN back
+    concept.addDescription(fn);
+
+    // Remove isa relationships
+    Set<Relationship> relationships = new HashSet<>(concept.getRelationships());
+    for (Relationship relationship : relationships) {
+      if (TerminologyUtility.isHierarchicalIsaRel(relationship)) {
+        concept.removeRelationship(relationship);
+      }
+    }
+    // Validation should pass
+    Logger.getLogger(this.getClass()).info(
+        ConceptReportHelper.getConceptReport(concept));
+    result = client.validateConcept(concept, authToken);
+    Assert.assertFalse(result.isValid());
+
   }
 
   /**

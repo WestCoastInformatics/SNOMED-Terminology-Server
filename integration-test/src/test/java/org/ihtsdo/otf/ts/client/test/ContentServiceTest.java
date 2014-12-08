@@ -46,9 +46,9 @@ public class ContentServiceTest {
   @Before
   public void setup() throws Exception {
     if (client == null) {
-      client = new ContentClientRest(ConfigUtility.getTestConfigProperties());
+      client = new ContentClientRest(ConfigUtility.getConfigProperties());
       SecurityClientRest securityClient =
-          new SecurityClientRest(ConfigUtility.getTestConfigProperties());
+          new SecurityClientRest(ConfigUtility.getConfigProperties());
       authToken = securityClient.authenticate("guest", "guest");
     }
   }
@@ -74,13 +74,15 @@ public class ContentServiceTest {
    */
   @Test
   public void test004GetConcept() throws Exception {
-    Logger.getLogger(this.getClass()).info(
-        "TEST - 18");
     Concept c =
-        client.getConcept(18L, authToken);
-    getConceptAssertions(c);
+        client.getSingleConcept("10013000", "SNOMEDCT", "20140731", authToken);
+    Logger.getLogger(this.getClass()).info(
+        "TEST - " + c.getId());
+    c =
+        client.getConcept(c.getId(), authToken);
     Logger.getLogger(this.getClass()).info(
         ConceptReportHelper.getConceptReport(c));    
+    getConceptAssertions(c);
   }
   
   /**
@@ -111,7 +113,7 @@ public class ContentServiceTest {
       // each is active
       assertTrue(d.isActive());
       // each has 2 language refset members
-      assertEquals(2, d.getLanguageRefSetMembers());
+      assertEquals(2, d.getLanguageRefSetMembers().size());
     }
     assertEquals(3, descCt);
 
@@ -139,9 +141,10 @@ public class ContentServiceTest {
    */
   @Test
   public void test004GetConceptICD9CM() throws Exception {
+    Concept c = client.getSingleConcept("339.8", "ICD9CM", "2013", authToken);
     Logger.getLogger(this.getClass()).info(
-        "TEST - 43872");
-    Concept c = client.getConcept(43872L, authToken);
+        "TEST - " + c.getId());
+    c = client.getConcept(c.getId(), authToken);
     assertNotNull(c);
     assertNotEquals(c.getDefaultPreferredName(),
         "No default preferred name found");
@@ -197,7 +200,7 @@ public class ContentServiceTest {
     SearchResultList results =
         client.findConceptsForQuery("SNOMEDCT", "20140731", "sulphur",
             new PfsParameterJpa(), authToken);
-    for (SearchResult result : results.getIterable())
+    for (SearchResult result : results.getObjects())
       Logger.getLogger(this.getClass()).info(result);
   }
 
@@ -212,7 +215,7 @@ public class ContentServiceTest {
     SearchResultList results =
         client.findConceptsForQuery("ICD9CM", "2013", "sulphur",
             new PfsParameterJpa(), authToken);
-    for (SearchResult result : results.getIterable())
+    for (SearchResult result : results.getObjects())
       Logger.getLogger(this.getClass()).info(result);
   }
 

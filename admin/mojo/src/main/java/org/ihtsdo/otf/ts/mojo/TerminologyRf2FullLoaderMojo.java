@@ -46,25 +46,7 @@ import com.google.common.io.Files;
 /**
  * Goal which loads an RF2 Snapshot of SNOMED CT data into a database.
  * 
- * <pre>
- *     <plugin>
- *       <groupId>org.ihtsdo.otf.mapping</groupId>
- *       <artifactId>mapping-admin-mojo</artifactId>
- *       <version>${project.version}</version>
- *       <executions>
- *         <execution>
- *           <id>load-rf2-full</id>
- *           <phase>package</phase>
- *           <goals>
- *             <goal>load-rf2-full</goal>
- *           </goals>
- *           <configuration>
- *             <terminology>SNOMEDCT</terminology>
- *           </configuration>
- *         </execution>
- *       </executions>
- *     </plugin>
- * </pre>
+ * See admin/loader/pom.xml for sample usage
  * 
  * @goal load-rf2-full
  * 
@@ -377,7 +359,6 @@ public class TerminologyRf2FullLoaderMojo extends AbstractMojo {
           rootId = conceptId;
           break;
         }
-        contentService.close();
 
         getLog().info(
             "  Compute transitive closure from rootId " + rootId + " for "
@@ -386,9 +367,14 @@ public class TerminologyRf2FullLoaderMojo extends AbstractMojo {
         algo.setTerminology(terminology);
         algo.setTerminologyVersion(terminologyVersion);
         algo.reset();
-        algo.setRootId(rootId);
+        Long rootIdLong =
+            contentService
+                .getSingleConcept(rootId, terminology, terminologyVersion).getId();
+        algo.setRootId(rootIdLong);
         algo.compute();
         algo.close();
+
+        contentService.close();
 
         // Final logging messages
         getLog().info(
@@ -570,17 +556,17 @@ public class TerminologyRf2FullLoaderMojo extends AbstractMojo {
     // Setup files
     //
     File coreRelInputFile = null;
-    File coreStatedRelInputFile = null;
+
     File coreConceptInputFile = null;
     File coreDescriptionInputFile = null;
     File coreSimpleRefsetInputFile = null;
-    File coreAttributeValueInputFile = null;
-    File coreAssociationReferenceInputFile = null;
-    File coreComplexMapInputFile = null;
-    File coreExtendedMapInputFile = null;
-    File coreSimpleMapInputFile = null;
-    File coreLanguageInputFile = null;
-    File coreIdentifierInputFile = null;
+    File coreAttributeValueRefsetInputFile = null;
+    File coreAssociationReferenceRefsetInputFile = null;
+    File coreComplexMapRefsetInputFile = null;
+    File coreExtendedMapRefsetInputFile = null;
+    File coreSimpleMapRefsetInputFile = null;
+    File coreLanguageRefsetInputFile = null;
+
     File coreTextDefinitionInputFile = null;
 
     // Termionlogy dir
@@ -589,83 +575,17 @@ public class TerminologyRf2FullLoaderMojo extends AbstractMojo {
         "    Terminology dir = " + coreTerminologyInputDir.toString() + " "
             + coreTerminologyInputDir.exists());
 
-    // Relationships file
-    for (File f : coreTerminologyInputDir.listFiles()) {
-      if (f.getName().contains("sct2_Relationship_")) {
-        if (coreRelInputFile != null)
-          throw new MojoFailureException("Multiple Relationships Files!");
-        coreRelInputFile = f;
-      }
-    }
-    getLog().info(
-        "      Relationships file = " + coreRelInputFile.toString() + " "
-            + coreRelInputFile.exists());
+    coreRelInputFile =
+        findFile(coreTerminologyInputDir, "sct2_Relationship_");
 
-    // Stated relationships file
-    for (File f : coreTerminologyInputDir.listFiles()) {
-      if (f.getName().contains("sct2_StatedRelationship_")) {
-        if (coreStatedRelInputFile != null)
-          throw new MojoFailureException("Multiple Stated Relationships Files!");
-        coreStatedRelInputFile = f;
-      }
-    }
-    getLog().info(
-        "      Stated relationships file = "
-            + coreStatedRelInputFile.toString() + " "
-            + coreStatedRelInputFile.exists());
+    coreConceptInputFile =
+        findFile(coreTerminologyInputDir, "sct2_Concept_");
 
-    // Concepts file
-    for (File f : coreTerminologyInputDir.listFiles()) {
-      if (f.getName().contains("sct2_Concept_")) {
-        if (coreConceptInputFile != null)
-          throw new MojoFailureException("Multiple Concept Files!");
-        coreConceptInputFile = f;
-      }
-    }
-    getLog().info(
-        "      Concepts file = " + coreConceptInputFile.toString() + " "
-            + coreConceptInputFile.exists());
+    coreDescriptionInputFile =
+        findFile(coreTerminologyInputDir, "sct2_Description_");
 
-    // Descriptions file
-    for (File f : coreTerminologyInputDir.listFiles()) {
-      if (f.getName().contains("sct2_Description_")) {
-        if (coreDescriptionInputFile != null)
-          throw new MojoFailureException("Multiple Description Files!");
-        coreDescriptionInputFile = f;
-      }
-    }
-    getLog().info(
-        "      Descriptions file = " + coreDescriptionInputFile.toString()
-            + " " + coreDescriptionInputFile.exists());
-
-    // Identifier file
-    for (File f : coreTerminologyInputDir.listFiles()) {
-      if (f.getName().contains("sct2_Identifier_")) {
-        if (coreIdentifierInputFile != null)
-          throw new MojoFailureException("Multiple Identifier Files!");
-        coreIdentifierInputFile = f;
-      }
-    }
-    if (coreIdentifierInputFile != null) {
-      getLog().info(
-          "      Identifiers file = " + coreIdentifierInputFile.toString()
-              + " " + coreIdentifierInputFile.exists());
-    }
-
-    // Text definition file
-    for (File f : coreTerminologyInputDir.listFiles()) {
-      if (f.getName().contains("sct2_TextDefinition_")) {
-        if (coreTextDefinitionInputFile != null)
-          throw new MojoFailureException("Multiple TextDefinition Files!");
-        coreTextDefinitionInputFile = f;
-      }
-    }
-    if (coreTextDefinitionInputFile != null) {
-      getLog().info(
-          "      Text definitions file = "
-              + coreTextDefinitionInputFile.toString() + " "
-              + coreTextDefinitionInputFile.exists());
-    }
+    coreTextDefinitionInputFile =
+        findFile(coreTerminologyInputDir, "sct2_TextDefinition_");
 
     // Refset/Content dir
     File coreRefsetInputDir = new File(coreInputDir, "/Refset/");
@@ -674,58 +594,15 @@ public class TerminologyRf2FullLoaderMojo extends AbstractMojo {
         "    Refset/Content dir = " + coreContentInputDir.toString() + " "
             + coreContentInputDir.exists());
 
-    // Simple refset file
-    for (File f : coreContentInputDir.listFiles()) {
-      if (f.getName().contains("Refset_Simple")) {
-        if (coreSimpleRefsetInputFile != null)
-          throw new MojoFailureException("Multiple Simple Refset Files!");
-        coreSimpleRefsetInputFile = f;
-      }
-    }
-    getLog().info(
-        "      Simple refset file = " + coreSimpleRefsetInputFile.toString()
-            + " " + coreSimpleRefsetInputFile.exists());
+    coreSimpleRefsetInputFile =
+        findFile(coreContentInputDir, "Refset_Simple");
 
-    // Association reference file
-    for (File f : coreContentInputDir.listFiles()) {
-      if (f.getName().contains("AssociationReference")) {
-        if (coreAssociationReferenceInputFile != null)
-          throw new MojoFailureException(
-              "Multiple Association Reference Files!");
-        coreAssociationReferenceInputFile = f;
-      }
-    }
-    getLog().info(
-        "      Association reference file = "
-            + coreAssociationReferenceInputFile.toString() + " "
-            + coreAssociationReferenceInputFile.exists());
+    coreAttributeValueRefsetInputFile =
+        findFile(coreContentInputDir, "AttributeValue");
 
-    // Attribute value file
-    for (File f : coreContentInputDir.listFiles()) {
-      if (f.getName().contains("AttributeValue")) {
-        if (coreAttributeValueInputFile != null)
-          throw new MojoFailureException("Multiple Attribute Value Files!");
-        coreAttributeValueInputFile = f;
-      }
-    }
-    getLog().info(
-        "      Attribute value file = "
-            + coreAttributeValueInputFile.toString() + " "
-            + coreAttributeValueInputFile.exists());
+    coreAssociationReferenceRefsetInputFile =
+        findFile(coreContentInputDir, "AssociationReference");
 
-    // Association reference file
-    for (File f : coreContentInputDir.listFiles()) {
-      if (f.getName().contains("AssociationReference")) {
-        if (coreAssociationReferenceInputFile != null)
-          throw new MojoFailureException(
-              "Multiple Association Reference Files!");
-        coreAssociationReferenceInputFile = f;
-      }
-    }
-    getLog().info(
-        "  Core Association Reference Input File = "
-            + coreAssociationReferenceInputFile.toString() + " "
-            + coreAssociationReferenceInputFile.exists());
 
     // Refset/Map dir
     File coreCrossmapInputDir = new File(coreRefsetInputDir, "/Map/");
@@ -733,45 +610,15 @@ public class TerminologyRf2FullLoaderMojo extends AbstractMojo {
         "    Refset/Map dir = " + coreCrossmapInputDir.toString() + " "
             + coreCrossmapInputDir.exists());
 
-    // Complex map file
-    for (File f : coreCrossmapInputDir.listFiles()) {
-      if (f.getName().contains("ComplexMap")) {
-        if (coreComplexMapInputFile != null)
-          throw new MojoFailureException("Multiple Complex Map Files!");
-        coreComplexMapInputFile = f;
-      }
-    }
-    if (coreComplexMapInputFile != null) {
-      getLog().info(
-          "        Complex map file = " + coreComplexMapInputFile.toString()
-              + " " + coreComplexMapInputFile.exists());
-    }
+    coreComplexMapRefsetInputFile =
+        findFile(coreCrossmapInputDir, "ComplexMap");
 
-    // Extended map file
-    for (File f : coreCrossmapInputDir.listFiles()) {
-      if (f.getName().contains("ExtendedMap")) {
-        if (coreExtendedMapInputFile != null)
-          throw new MojoFailureException("Multiple Extended Map Files!");
-        coreExtendedMapInputFile = f;
-      }
-    }
-    if (coreComplexMapInputFile != null) {
-      getLog().info(
-          "      Extended map file = " + coreComplexMapInputFile.toString()
-              + " " + coreComplexMapInputFile.exists());
-    }
+    coreExtendedMapRefsetInputFile =
+        findFile(coreCrossmapInputDir, "ExtendedMap");
 
-    // Simple map file
-    for (File f : coreCrossmapInputDir.listFiles()) {
-      if (f.getName().contains("SimpleMap")) {
-        if (coreSimpleMapInputFile != null)
-          throw new MojoFailureException("Multiple Simple Map Files!");
-        coreSimpleMapInputFile = f;
-      }
-    }
-    getLog().info(
-        "      Simple map file = " + coreSimpleMapInputFile.toString() + " "
-            + coreSimpleMapInputFile.exists());
+    coreSimpleMapRefsetInputFile =
+        findFile(coreCrossmapInputDir, "SimpleMap");
+
 
     // Refset/Langauge dir
     File coreLanguageInputDir = new File(coreRefsetInputDir, "/Language/");
@@ -779,23 +626,16 @@ public class TerminologyRf2FullLoaderMojo extends AbstractMojo {
         "    Refset/Language dir = " + coreLanguageInputDir.toString() + " "
             + coreLanguageInputDir.exists());
 
-    // Language file
-    for (File f : coreLanguageInputDir.listFiles()) {
-      if (f.getName().contains("Language")) {
-        if (coreLanguageInputFile != null)
-          throw new MojoFailureException("Multiple Language Files!");
-        coreLanguageInputFile = f;
-      }
-    }
-    getLog().info(
-        "      Language file = " + coreLanguageInputFile.toString() + " "
-            + coreLanguageInputFile.exists());
+    coreLanguageRefsetInputFile =
+        findFile(coreLanguageInputDir, "Language");
+
 
     // Refset/Metadata dir
     File coreMetadataInputDir = new File(coreRefsetInputDir, "/Metadata/");
     getLog().info(
         "    Refset/Metadata dir = " + coreMetadataInputDir.toString() + " "
             + coreMetadataInputDir.exists());
+
 
     // TODO: load metadata files
 
@@ -884,13 +724,13 @@ public class TerminologyRf2FullLoaderMojo extends AbstractMojo {
     });
 
     // Sort attribute value file
-    sortRf2File(coreAttributeValueInputFile,
+    sortRf2File(coreAttributeValueRefsetInputFile,
         attributeValueRefsetByRefCompIdFile, new int[] {
             1, 5
         });
 
     // Sort association reference input file by referenced component id
-    sortRf2File(coreAssociationReferenceInputFile,
+    sortRf2File(coreAssociationReferenceRefsetInputFile,
         associationReferenceRefsetsByRefCompIdFile, new int[] {
             1, 5
         });
@@ -902,31 +742,56 @@ public class TerminologyRf2FullLoaderMojo extends AbstractMojo {
         });
 
     // Sort simple map file
-    sortRf2File(coreSimpleMapInputFile, simpleMapRefsetsByConceptFile,
+    sortRf2File(coreSimpleMapRefsetInputFile, simpleMapRefsetsByConceptFile,
         new int[] {
             1, 5
         });
 
     // Sort complex map file
-    sortRf2File(coreComplexMapInputFile, complexMapRefsetsByConceptFile,
+    sortRf2File(coreComplexMapRefsetInputFile, complexMapRefsetsByConceptFile,
         new int[] {
             1, 5
         });
 
     // sort extended map file
-    sortRf2File(coreExtendedMapInputFile, extendedMapRefsetsByConceptsFile,
+    sortRf2File(coreExtendedMapRefsetInputFile, extendedMapRefsetsByConceptsFile,
         new int[] {
             1, 5
         });
 
     // Sort language file
-    sortRf2File(coreLanguageInputFile, languageRefsetsByDescriptionFile,
+    sortRf2File(coreLanguageRefsetInputFile, languageRefsetsByDescriptionFile,
         new int[] {
             1, 5
         });
 
   }
 
+  /**
+   * Find file.
+   *
+   * @param dir the dir
+   * @param prefix the prefix
+   * @return the file
+   * @throws Exception the exception
+   */
+  private File findFile(File dir, String prefix) throws Exception {
+    File file = null;
+    // file
+    for (File f : dir.listFiles()) {
+      if (f.getName().contains(prefix)) {
+        if (file != null)
+          throw new MojoFailureException("Multiple " + prefix + " files");
+        file = f;
+      }
+    }
+    if (file == null) {
+      throw new MojoFailureException("Missing " + prefix + " file");
+    }
+    getLog().info(
+        "      " + prefix + " = " + file.toString() + " " + file.exists());
+    return file;
+  }
   /**
    * Helper function for sorting an individual file with colum comparator.
    * 
@@ -1039,6 +904,7 @@ public class TerminologyRf2FullLoaderMojo extends AbstractMojo {
         concept.setTerminologyVersion(version);
         concept.setDefaultPreferredName("null");
         concept.setLastModifiedBy("loader");
+        concept.setWorkflowStatus("PUBLISHED");
         contentService.addConcept(concept);
 
         // copy concept to shed any hibernate stuff

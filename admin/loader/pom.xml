@@ -44,6 +44,31 @@
       </build>
     </profile>
 
+   <!-- Load SNOMED, specify -Drun.config=... -->
+    <profile>
+      <id>SNOMEDCT-Closure</id>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.ihtsdo.otf.term-server</groupId>
+            <artifactId>term-server-admin-mojo</artifactId>
+            <version>${project.version}</version>
+            <executions>
+              <execution>
+                <id>compute-transitive-closure</id>
+                <phase>package</phase>
+                <goals>
+                  <goal>compute-transitive-closure</goal>
+                </goals>
+                <configuration>
+                  <terminology>SNOMEDCT</terminology>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
     <!-- Load SNOMED delta, specify -Drun.config=... -->
     <profile>
       <id>SNOMEDCTDelta</id>
@@ -70,32 +95,6 @@
       </build>
     </profile>
 
-    <!-- Load ICD10 -->
-    <profile>
-      <id>ICD10</id>
-      <build>
-        <plugins>
-          <plugin>
-            <groupId>org.ihtsdo.otf.term-server</groupId>
-            <artifactId>term-server-admin-mojo</artifactId>
-            <version>${project.version}</version>
-            <executions>
-              <execution>
-                <id>load-claml</id>
-                <phase>package</phase>
-                <goals>
-                  <goal>load-claml</goal>
-                </goals>
-                <configuration>
-                  <terminology>ICD10</terminology>
-                </configuration>
-              </execution>
-            </executions>
-          </plugin>
-        </plugins>
-      </build>
-    </profile>
-
     <!-- Load ICD9CM, specify -Drun.config=... -->
     <profile>
       <id>ICD9CM</id>
@@ -114,32 +113,6 @@
                 </goals>
                 <configuration>
                   <terminology>ICD9CM</terminology>
-                </configuration>
-              </execution>
-            </executions>
-          </plugin>
-        </plugins>
-      </build>
-    </profile>
-
-    <!-- Load ICPC, specify -Drun.config=... -->
-    <profile>
-      <id>ICPC</id>
-      <build>
-        <plugins>
-          <plugin>
-            <groupId>org.ihtsdo.otf.term-server</groupId>
-            <artifactId>term-server-admin-mojo</artifactId>
-            <version>${project.version}</version>
-            <executions>
-              <execution>
-                <id>load-claml</id>
-                <phase>package</phase>
-                <goals>
-                  <goal>load-claml</goal>
-                </goals>
-                <configuration>
-                  <terminology>ICPC</terminology>
                 </configuration>
               </execution>
             </executions>

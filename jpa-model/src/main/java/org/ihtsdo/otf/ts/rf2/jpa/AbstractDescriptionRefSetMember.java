@@ -6,7 +6,6 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlTransient;
 
 import org.hibernate.envers.Audited;
-import org.hibernate.search.annotations.ContainedIn;
 import org.ihtsdo.otf.ts.rf2.Description;
 import org.ihtsdo.otf.ts.rf2.DescriptionRefSetMember;
 
@@ -21,9 +20,6 @@ public abstract class AbstractDescriptionRefSetMember extends
 
   /** The description. */
   @ManyToOne(targetEntity = DescriptionJpa.class, optional = false)
-  // NOTE: this may apply only to LanguageRefSetMember given how
-  // description uses @IndexedEmbedded
-  @ContainedIn
   private Description description;
 
   /**
@@ -102,7 +98,12 @@ public abstract class AbstractDescriptionRefSetMember extends
    */
   @SuppressWarnings("unused")
   private void setDescriptionId(String descriptionId) {
-    // do nothing - here for JAXB
+    if (description == null) {
+      description = new DescriptionJpa();
+    }
+    description.setTerminologyId(descriptionId);
+    description.setTerminology(getTerminology());
+    description.setTerminologyVersion(getTerminologyVersion());
   }
   
   

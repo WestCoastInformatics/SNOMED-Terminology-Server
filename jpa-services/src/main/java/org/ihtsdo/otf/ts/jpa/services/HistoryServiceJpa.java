@@ -342,6 +342,7 @@ public class HistoryServiceJpa extends ContentServiceJpa implements
    * 
    * @see org.ihtsdo.otf.ts.services.HistoryService#getReleaseHistory()
    */
+  @Override
   public ReleaseInfoList getReleaseHistory() throws Exception {
     Logger.getLogger(ContentServiceJpa.class).debug(
         "History Service - get release history");
@@ -368,6 +369,7 @@ public class HistoryServiceJpa extends ContentServiceJpa implements
    * 
    * @see org.ihtsdo.otf.ts.services.HistoryService#getCurrentReleaseInfo()
    */
+  @Override
   public ReleaseInfo getCurrentReleaseInfo() throws Exception {
     Logger.getLogger(ContentServiceJpa.class).debug(
         "History Service - get current release info");
@@ -386,6 +388,7 @@ public class HistoryServiceJpa extends ContentServiceJpa implements
    * 
    * @see org.ihtsdo.otf.ts.services.HistoryService#getPreviousReleaseInfo()
    */
+  @Override
   public ReleaseInfo getPreviousReleaseInfo() throws Exception {
     Logger.getLogger(ContentServiceJpa.class).debug(
         "History Service - get previous release info");
@@ -428,6 +431,7 @@ public class HistoryServiceJpa extends ContentServiceJpa implements
    * @see
    * org.ihtsdo.otf.ts.services.HistoryService#getReleaseInfo(java.lang.String)
    */
+  @Override
   public ReleaseInfo getReleaseInfo(String release) throws ParseException {
     Logger.getLogger(ContentServiceJpa.class).debug(
         "History Service - get release info " + release);

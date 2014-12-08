@@ -26,7 +26,7 @@ public class EqualsHashcodeTest {
    */
   @Before
   public void setup() {
-
+    // do nothing
   }
 
   /**
@@ -121,6 +121,7 @@ public class EqualsHashcodeTest {
    * @param c the new component fields
    * @throws ParseException the parse exception
    */
+  @SuppressWarnings("static-method")
   private void setComponentFields(Component c) throws ParseException {
     c.setActive(true);
     c.setEffectiveTime(format.parse("20140731"));
@@ -140,6 +141,7 @@ public class EqualsHashcodeTest {
    * @param c the new component fields
    * @throws ParseException the parse exception
    */
+  @SuppressWarnings("static-method")
   private void changeComponentFieldsSame(Component c) throws ParseException {
     c.setEffectiveTime(format.parse("20150131"));
     c.setId(2L);
@@ -153,7 +155,7 @@ public class EqualsHashcodeTest {
    */
   @After
   public void teardown() {
-
+    // do nothing
   }
 
 }

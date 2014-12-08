@@ -626,6 +626,7 @@ public class HistoryClientRest implements HistoryServiceRest {
    * org.ihtsdo.otf.ts.rest.HistoryServiceRest#getPlannedReleaseInfo(java.lang
    * .String)
    */
+  @Override
   public ReleaseInfo getPlannedReleaseInfo(String authToken) throws Exception {
     Client client = Client.create();
     WebResource resource =

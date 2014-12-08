@@ -69,8 +69,20 @@ graph.resolution.handler.DEFAULT.class=org.ihtsdo.otf.ts.jpa.services.handlers.D
 #
 # Identifier assignment handler
 #
-identifier.assignment.handler=UUID
-identifier.assignment.handler.UUID.class=org.ihtsdo.otf.ts.jpa.services.handlers.SnomedUuidHashIdentifierAssignmentHandler
+identifier.assignment.handler=SNOMEDCT,ICD9CM
+identifier.assignment.handler.SNOMEDCT.class=org.ihtsdo.otf.ts.jpa.services.handlers.SnomedUuidHashIdentifierAssignmentHandler
+identifier.assignment.handler.ICD9CM.class=org.ihtsdo.otf.ts.jpa.services.handlers.DefaultIdentifierAssignmentHandler
+
+#
+# Identifier release handler
+#
+identifier.release.handler=SNOMEDCT,ICD9CM
+identifier.release.handler.SNOMEDCT.class=org.ihtsdo.otf.ts.jpa.services.handlers.SnomedReleaseIdentifierAssignmentHandler
+identifier.release.handler.SNOMEDCT.namespace.id=
+identifier.release.handler.SNOMEDCT.concept.max=703880
+identifier.release.handler.SNOMEDCT.description.max=3010213
+identifier.release.handler.SNOMEDCT.relationship.max=5051755
+identifier.release.handler.ICD9CM.class=org.ihtsdo.otf.ts.jpa.services.handlers.DefaultIdentifierAssignmentHandler
 
 #
 # Service configuration

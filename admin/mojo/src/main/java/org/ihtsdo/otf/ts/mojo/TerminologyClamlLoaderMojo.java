@@ -49,34 +49,20 @@ import org.xml.sax.helpers.DefaultHandler;
 /**
  * Converts claml data to RF2 objects.
  * 
- * Sample execution:
+ * See admin/loader/pom.xml for sample usage
  * 
- * <pre>
- *     <plugin>
- *       <groupId>org.ihtsdo.otf.mapping</groupId>
- *       <artifactId>mapping-admin-mojo</artifactId>
- *       <version>${project.version}</version>
- *       <executions>
- *         <execution>
- *           <id>load-claml</id>
- *           <phase>package</phase>
- *           <goals>
- *             <goal>load-claml</goal>
- *           </goals>
- *           <configuration>
- *             <terminology>ICD10</terminology>
- *           </configuration>
- *         </execution>
- *       </executions>
- *     </plugin>
- * </pre>
  * @goal load-claml
  * @phase package
  */
 public class TerminologyClamlLoaderMojo extends AbstractMojo {
 
+  // NOTE: default visibility is used instead of private
+  // so that the inner class parser does not require
+  // the use of synthetic accessors
+
   /** The date format. */
-  private final static FastDateFormat dateFormat = FastDateFormat.getInstance("yyyyMMdd");
+  final static FastDateFormat dateFormat = FastDateFormat
+      .getInstance("yyyyMMdd");
 
   /**
    * Name of terminology to be loaded.
@@ -84,10 +70,6 @@ public class TerminologyClamlLoaderMojo extends AbstractMojo {
    * @required
    */
   String terminology;
-
-  // NOTE: default visibility is used instead of private
-  // so that the inner class parser does not require
-  // the use of synthetic accessors
 
   /** The effective time. */
   String effectiveTime;
@@ -121,6 +103,7 @@ public class TerminologyClamlLoaderMojo extends AbstractMojo {
    * Executes the plugin.
    * @throws MojoExecutionException the mojo execution exception
    */
+  @SuppressWarnings("null")
   @Override
   public void execute() throws MojoExecutionException {
     getLog().info("Starting loading " + terminology + " data ...");
@@ -174,7 +157,6 @@ public class TerminologyClamlLoaderMojo extends AbstractMojo {
       saxParser.parse(is, handler);
 
       contentService.commit();
-      contentService.close();
 
       // Let service begin its own transaction
       getLog().info("Start computing transtive closure");
@@ -183,10 +165,15 @@ public class TerminologyClamlLoaderMojo extends AbstractMojo {
       algo.setTerminologyVersion(terminologyVersion);
       algo.reset();
       for (String rootId : roots) {
-        algo.setRootId(rootId);
+        final Long rootIdLong =
+            contentService.getSingleConcept(rootId, terminology,
+                terminologyVersion).getId();
+        algo.setRootId(rootIdLong);
         algo.compute();
       }
       algo.close();
+
+      contentService.close();
 
       getLog().info("done ...");
 
@@ -574,6 +561,7 @@ public class TerminologyClamlLoaderMojo extends AbstractMojo {
             concept.setActive(true);
             concept.setLastModified(new Date());
             concept.setLastModifiedBy("loader");
+            concept.setWorkflowStatus("PUBLISHED");
             concept.setModuleId(conceptMap.get("defaultModule")
                 .getTerminologyId());
             concept.setDefinitionStatusId(conceptMap.get(

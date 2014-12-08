@@ -274,6 +274,7 @@ public class ActionServiceJpa extends RootServiceJpa implements ActionService {
    * @param token the token
    * @throws Exception if the token has timed out.
    */
+  @SuppressWarnings("static-method")
   private void tokenCheck(String token) throws Exception {
     if (!tokenTimeoutMap.containsKey(token)) {
       throw new LocalException("Session token is invalid");

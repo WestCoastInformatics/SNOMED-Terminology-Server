@@ -96,7 +96,12 @@ public abstract class AbstractConceptRefSetMember extends
    */
   @SuppressWarnings("unused")
   private void setConceptId(String conceptId) {
-    // do nothing - here for JAXB
+    if (concept == null) {
+      concept = new ConceptJpa();
+    }
+    concept.setTerminologyId(conceptId);
+    concept.setTerminology(getTerminology());
+    concept.setTerminologyVersion(getTerminologyVersion());
   }
   
   /* (non-Javadoc)

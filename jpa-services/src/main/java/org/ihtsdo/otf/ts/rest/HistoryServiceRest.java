@@ -49,7 +49,6 @@ public interface HistoryServiceRest {
    *
    * @param id the id
    * @param release the release
-   * @param pfs the pfs
    * @param authToken the auth token
    * @return the concept list
    * @throws Exception the exception
@@ -65,6 +64,7 @@ public interface HistoryServiceRest {
    * @param pfs the pfs parameter
    * @param authToken the auth token
    * @return the search result list
+   * @throws Exception the exception
    */
   public DescriptionList findDescriptionsModifiedSinceDate(String terminology,
     String date, PfsParameterJpa pfs, String authToken) throws Exception;
@@ -78,6 +78,7 @@ public interface HistoryServiceRest {
    * @param pfs the pfs parameter
    * @param authToken the auth token
    * @return the description list
+   * @throws Exception the exception
    */
   public DescriptionList findDescriptionRevisions(String id, String startDate,
     String endDate, PfsParameterJpa pfs, String authToken) throws Exception;
@@ -87,7 +88,6 @@ public interface HistoryServiceRest {
    *
    * @param id the id
    * @param release the release
-   * @param pfs the pfs
    * @param authToken the auth token
    * @return the description list
    * @throws Exception the exception
@@ -103,6 +103,7 @@ public interface HistoryServiceRest {
    * @param pfs the pfs parameter
    * @param authToken the auth token
    * @return the search result list
+   * @throws Exception the exception
    */
   public RelationshipList findRelationshipsModifiedSinceDate(
     String terminology, String date, PfsParameterJpa pfs, String authToken)
@@ -114,10 +115,10 @@ public interface HistoryServiceRest {
    * @param id the id
    * @param startDate the start date
    * @param endDate the end date
-   * @param releaseRevisionsOnly the release revisions only
    * @param pfs the pfs parameter
    * @param authToken the auth token
    * @return the relationship list
+   * @throws Exception the exception
    */
   public RelationshipList findRelationshipRevisions(String id,
     String startDate, String endDate, PfsParameterJpa pfs, String authToken)
@@ -127,11 +128,10 @@ public interface HistoryServiceRest {
    * Find relationship release revisions.
    *
    * @param id the id
-   * @param startDate the start date
-   * @param endDate the end date
-   * @param pfs the pfs
+   * @param release the release
    * @param authToken the auth token
    * @return the relationship list
+   * @throws Exception the exception
    */
   public Relationship findRelationshipReleaseRevision(String id,
     String release, String authToken) throws Exception;
@@ -144,6 +144,7 @@ public interface HistoryServiceRest {
    * @param pfs the pfs parameter
    * @param authToken the auth token
    * @return the search result list
+   * @throws Exception the exception
    */
   public LanguageRefSetMemberList findLanguageRefSetMembersModifiedSinceDate(
     String terminology, String date, PfsParameterJpa pfs, String authToken)
@@ -155,10 +156,10 @@ public interface HistoryServiceRest {
    * @param id the id
    * @param startDate the start date
    * @param endDate the end date
-   * @param releaseRevisionsOnly the release revisions only
    * @param pfs the pfs parameter
    * @param authToken the auth token
    * @return the language ref set member list
+   * @throws Exception the exception
    */
   public LanguageRefSetMemberList findLanguageRefSetMemberRevisions(String id,
     String startDate, String endDate, PfsParameterJpa pfs, String authToken)
@@ -168,11 +169,10 @@ public interface HistoryServiceRest {
    * Find language ref set member release revisions.
    *
    * @param id the id
-   * @param startDate the start date
-   * @param endDate the end date
-   * @param pfs the pfs
+   * @param release the release
    * @param authToken the auth token
    * @return the language ref set member list
+   * @throws Exception the exception
    */
   public LanguageRefSetMember findLanguageRefSetMemberReleaseRevision(
     String id, String release, String authToken)
@@ -244,6 +244,7 @@ public interface HistoryServiceRest {
    * Adds the release info.
    *
    * @param releaseInfo the release info
+   * @param authToken the auth token
    * @return the release info
    * @throws Exception the exception
    */
@@ -254,6 +255,7 @@ public interface HistoryServiceRest {
    * Updates release info.
    *
    * @param releaseInfo the release info
+   * @param authToken the auth token
    * @throws Exception the exception
    */
   public void updateReleaseInfo(ReleaseInfo releaseInfo, String authToken)
@@ -263,6 +265,7 @@ public interface HistoryServiceRest {
    * Removes the release info.
    *
    * @param id the id
+   * @param authToken the auth token
    * @throws Exception the exception
    */
   public void removeReleaseInfo(String id, String authToken) throws Exception;

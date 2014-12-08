@@ -9,6 +9,7 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.persistence.UniqueConstraint;
 import javax.xml.bind.annotation.XmlID;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
@@ -19,7 +20,13 @@ import org.hibernate.envers.Audited;
  * JPA enabled implementation of a {@link ReleaseInfo}.
  */
 @Entity
-@Table(name = "release_infos")
+@Table(name = "release_infos", uniqueConstraints = {
+    @UniqueConstraint(columnNames = {
+        "name", "terminology"
+    }), @UniqueConstraint(columnNames = {
+        "terminology", "terminologyVersion"
+    })
+})
 @Audited
 @XmlRootElement(name = "releaseInfo")
 public class ReleaseInfoJpa implements ReleaseInfo {
@@ -30,7 +37,7 @@ public class ReleaseInfoJpa implements ReleaseInfo {
   private Long id;
 
   /** The name. */
-  @Column(nullable = false, length = 256)
+  @Column(nullable = false, length = 255)
   private String name;
 
   /** The description. */
@@ -54,6 +61,12 @@ public class ReleaseInfoJpa implements ReleaseInfo {
 
   /** The published flag. */
   private boolean published;
+
+  /** The terminology. */
+  private String terminology;
+
+  /** The terminology version. */
+  private String terminologyVersion;
 
   /**
    * Instantiates an empty {@link ReleaseInfoJpa}.
@@ -221,28 +234,86 @@ public class ReleaseInfoJpa implements ReleaseInfo {
     this.releaseFinishDate = releaseFinishDate;
   }
 
-
+  /*
+   * (non-Javadoc)
+   * 
+   * @see org.ihtsdo.otf.ts.helpers.ReleaseInfo#isPlanned()
+   */
   @Override
   public boolean isPlanned() {
     return planned;
   }
 
-
+  /*
+   * (non-Javadoc)
+   * 
+   * @see org.ihtsdo.otf.ts.helpers.ReleaseInfo#setPlanned(boolean)
+   */
   @Override
   public void setPlanned(boolean planned) {
     this.planned = planned;
   }
 
-
+  /*
+   * (non-Javadoc)
+   * 
+   * @see org.ihtsdo.otf.ts.helpers.ReleaseInfo#isPublished()
+   */
   @Override
   public boolean isPublished() {
     return published;
   }
 
-
+  /*
+   * (non-Javadoc)
+   * 
+   * @see org.ihtsdo.otf.ts.helpers.ReleaseInfo#setPublished(boolean)
+   */
   @Override
   public void setPublished(boolean published) {
     this.published = published;
+  }
+
+  /*
+   * (non-Javadoc)
+   * 
+   * @see org.ihtsdo.otf.ts.helpers.ReleaseInfo#getTerminology()
+   */
+  @Override
+  public String getTerminology() {
+    return terminology;
+  }
+
+  /*
+   * (non-Javadoc)
+   * 
+   * @see org.ihtsdo.otf.ts.helpers.ReleaseInfo#setTerminology(java.lang.String)
+   */
+  @Override
+  public void setTerminology(String terminology) {
+    this.terminology = terminology;
+  }
+
+  /*
+   * (non-Javadoc)
+   * 
+   * @see org.ihtsdo.otf.ts.helpers.ReleaseInfo#getTerminologyVersion()
+   */
+  @Override
+  public String getTerminologyVersion() {
+    return terminologyVersion;
+  }
+
+  /*
+   * (non-Javadoc)
+   * 
+   * @see
+   * org.ihtsdo.otf.ts.helpers.ReleaseInfo#setTerminologyVersion(java.lang.String
+   * )
+   */
+  @Override
+  public void setTerminologyVersion(String version) {
+    this.terminologyVersion = version;
   }
 
   /*
@@ -260,12 +331,14 @@ public class ReleaseInfoJpa implements ReleaseInfo {
         prime * result
             + ((effectiveTime == null) ? 0 : effectiveTime.hashCode());
     result = prime * result + ((name == null) ? 0 : name.hashCode());
+    result = prime * result + (planned ? 1231 : 1237);
+    result = prime * result + (published ? 1231 : 1237);
     result =
-        prime * result
-            + ((releaseBeginDate == null) ? 0 : releaseBeginDate.hashCode());
+        prime * result + ((terminology == null) ? 0 : terminology.hashCode());
     result =
-        prime * result
-            + ((releaseFinishDate == null) ? 0 : releaseFinishDate.hashCode());
+        prime
+            * result
+            + ((terminologyVersion == null) ? 0 : terminologyVersion.hashCode());
     return result;
   }
 
@@ -298,15 +371,19 @@ public class ReleaseInfoJpa implements ReleaseInfo {
         return false;
     } else if (!name.equals(other.name))
       return false;
-    if (releaseBeginDate == null) {
-      if (other.releaseBeginDate != null)
-        return false;
-    } else if (!releaseBeginDate.equals(other.releaseBeginDate))
+    if (planned != other.planned)
       return false;
-    if (releaseFinishDate == null) {
-      if (other.releaseFinishDate != null)
+    if (published != other.published)
+      return false;
+    if (terminology == null) {
+      if (other.terminology != null)
         return false;
-    } else if (!releaseFinishDate.equals(other.releaseFinishDate))
+    } else if (!terminology.equals(other.terminology))
+      return false;
+    if (terminologyVersion == null) {
+      if (other.terminologyVersion != null)
+        return false;
+    } else if (!terminologyVersion.equals(other.terminologyVersion))
       return false;
     return true;
   }

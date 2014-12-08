@@ -34,7 +34,7 @@
       <artifactId>jackson-module-jaxb-annotations</artifactId>
     </dependency>
 
-  
+
     <!-- Model interfaces. -->
     <dependency>
       <groupId>org.ihtsdo.otf.term-server</groupId>
@@ -53,6 +53,11 @@
       <artifactId>javax.mail</artifactId>
     </dependency>
 
+    <!-- JUnit -->
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+    </dependency>
   </dependencies>
 
 

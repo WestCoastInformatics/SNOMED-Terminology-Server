@@ -19,28 +19,8 @@ import org.ihtsdo.otf.ts.rf2.jpa.ConceptJpa;
 /**
  * Goal which makes lucene indexes based on hibernate-search annotations.
  * 
- * Sample execution:
- * 
- * <pre>
- *     <plugin>
- *        <groupId>org.ihtsdo.otf.mapping</groupId>
- *        <artifactId>mapping-admin-mojo</artifactId>
- *        <version>${project.version}</version>
- *        <executions>
- *          <execution>
- *            <id>reindex</id>
- *            <phase>package</phase>
- *            <goals>
- *              <goal>reindex</goal>
- *            </goals>
- *            <configuration>
- *                 <indexedObjects>${indexedObjects}</indexedObjects>
- *               </configuration>
- *          </execution>
- *        </executions>
- *      </plugin>
- * </pre>
- * 
+ * See admin/lucene/pom.xml for sample usage
+ *
  * @goal reindex
  * 
  * @phase package

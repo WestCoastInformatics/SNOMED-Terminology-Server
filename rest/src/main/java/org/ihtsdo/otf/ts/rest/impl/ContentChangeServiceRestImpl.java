@@ -12,6 +12,7 @@ import javax.ws.rs.core.MediaType;
 
 import org.apache.log4j.Logger;
 import org.ihtsdo.otf.ts.helpers.UserRole;
+import org.ihtsdo.otf.ts.jpa.algo.TransitiveClosureAlgorithm;
 import org.ihtsdo.otf.ts.jpa.services.ContentServiceJpa;
 import org.ihtsdo.otf.ts.jpa.services.SecurityServiceJpa;
 import org.ihtsdo.otf.ts.jpa.services.helper.TerminologyUtility;
@@ -35,7 +36,7 @@ import com.wordnik.swagger.annotations.ApiParam;
  * REST implementation for {@link ContentChangeServiceRest}.
  */
 @Path("/edit")
-@Api(value = "/edit", description = "Operations to retrieve RF2 content for a terminology.")
+@Api(value = "/edit", description = "Operations to edit content for a terminology.")
 @Produces({
     MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML
 })
@@ -65,7 +66,7 @@ public class ContentChangeServiceRestImpl extends RootServiceRestImpl implements
   @Override
   @PUT
   @Path("/concept/add")
-  @ApiOperation(value = "Add new transitiveRelationship", notes = "Create new transitiveRelationship.", response = Concept.class)
+  @ApiOperation(value = "Add new concept", notes = "Creates a new concept.", response = Concept.class)
   @Produces({
       MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML
   })
@@ -74,7 +75,7 @@ public class ContentChangeServiceRestImpl extends RootServiceRestImpl implements
     @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken)
     throws Exception {
     Logger.getLogger(ContentChangeServiceRestImpl.class).info(
-        "RESTful call PUT (ContentChange): /concept " + concept);
+        "RESTful call PUT (ContentChange): /concept/add " + concept);
     try {
       authenticate(securityService, authToken, "add concept", UserRole.AUTHOR);
 
@@ -90,6 +91,9 @@ public class ContentChangeServiceRestImpl extends RootServiceRestImpl implements
       } else {
         throw new Exception("Unexpected null concept");
       }
+      // Set the lastModifiedBy
+      concept.setLastModifiedBy(securityService.getUsernameForToken(authToken));
+
       // Add concept and compute preferred name
       Concept newConcept = contentService.addConcept(concept);
       contentService.computePreferredName(newConcept);
@@ -99,7 +103,7 @@ public class ContentChangeServiceRestImpl extends RootServiceRestImpl implements
       contentService.close();
       return newConcept;
     } catch (Exception e) {
-      handleException(e, "trying to retrieve a concept");
+      handleException(e, "trying to add a concept");
       return null;
     }
 
@@ -115,7 +119,7 @@ public class ContentChangeServiceRestImpl extends RootServiceRestImpl implements
   @Override
   @POST
   @Path("/concept/update")
-  @ApiOperation(value = "Update Concept", notes = "Update Concept.")
+  @ApiOperation(value = "Update Concept", notes = "Updates the specified oncept.")
   @Produces({
       MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML
   })
@@ -124,9 +128,34 @@ public class ContentChangeServiceRestImpl extends RootServiceRestImpl implements
     @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken)
     throws Exception {
     Logger.getLogger(ContentChangeServiceRestImpl.class).info(
-        "RESTful call POST (ContentChange): /concept " + concept);
-    authenticate(securityService, authToken, "update concept", UserRole.AUTHOR);
+        "RESTful call POST (ContentChange): /concept/update " + concept);
+    try {
+      authenticate(securityService, authToken, "update concept",
+          UserRole.AUTHOR);
 
+      // Create service and configure transaction scope
+      ContentService contentService = new ContentServiceJpa();
+      contentService.setTransactionPerOperation(false);
+      // Run graph resolver
+      if (concept != null) {
+        contentService.getGraphResolutionHandler().resolve(
+            concept,
+            TerminologyUtility.getHierarchcialIsaRels(concept.getTerminology(),
+                concept.getTerminologyVersion()));
+      } else {
+        throw new Exception("Unexpected null concept");
+      }
+      // compute preferred name and udpate concept
+      contentService.computePreferredName(concept);
+      contentService.updateConcept(concept);
+
+      // Commit, close, and return
+      contentService.commit();
+      contentService.close();
+
+    } catch (Exception e) {
+      handleException(e, "trying to update a concept");
+    }
   }
 
   /*
@@ -139,7 +168,7 @@ public class ContentChangeServiceRestImpl extends RootServiceRestImpl implements
   @Override
   @DELETE
   @Path("/concept/remove/{id}")
-  @ApiOperation(value = "Remove Concept by id", notes = "Removes the Concept for the specified id.")
+  @ApiOperation(value = "Remove concept by id", notes = "Removes the concept for the specified id.")
   @Produces({
       MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML
   })
@@ -148,8 +177,17 @@ public class ContentChangeServiceRestImpl extends RootServiceRestImpl implements
     @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken)
     throws Exception {
     Logger.getLogger(ContentServiceRestImpl.class).info(
-        "RESTful DELETE call (ContentChange): /concept/id/" + id);
-    authenticate(securityService, authToken, "remove concept", UserRole.AUTHOR);
+        "RESTful DELETE call (ContentChange): /concept/remove/id/" + id);
+    try {
+      authenticate(securityService, authToken, "remove concept",
+          UserRole.AUTHOR);
+      // Remove concept
+      ContentService contentService = new ContentServiceJpa();
+      contentService.removeConcept(id);
+      contentService.close();
+    } catch (Exception e) {
+      handleException(e, "trying to remove a concept");
+    }
   }
 
   /*
@@ -162,7 +200,7 @@ public class ContentChangeServiceRestImpl extends RootServiceRestImpl implements
   @Override
   @PUT
   @Path("/description/add")
-  @ApiOperation(value = "Add new description", notes = "Create new description.", response = Description.class)
+  @ApiOperation(value = "Add new description", notes = "Creates a new description.", response = Description.class)
   @Produces({
       MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML
   })
@@ -170,6 +208,8 @@ public class ContentChangeServiceRestImpl extends RootServiceRestImpl implements
     @ApiParam(value = "Description, e.g. newDescription", required = true) DescriptionJpa description,
     @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken)
     throws Exception {
+    Logger.getLogger(ContentChangeServiceRestImpl.class).info(
+        "RESTful call PUT (ContentChange): /description/add " + description);
     authenticate(securityService, authToken, "add description", UserRole.AUTHOR);
     return null;
   }
@@ -184,7 +224,7 @@ public class ContentChangeServiceRestImpl extends RootServiceRestImpl implements
   @Override
   @POST
   @Path("/description/update")
-  @ApiOperation(value = "Update description", notes = "Update description.")
+  @ApiOperation(value = "Update description", notes = "Updates the specified description.")
   @Produces({
       MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML
   })
@@ -192,6 +232,8 @@ public class ContentChangeServiceRestImpl extends RootServiceRestImpl implements
     @ApiParam(value = "Description, e.g. newDescription", required = true) DescriptionJpa description,
     @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken)
     throws Exception {
+    Logger.getLogger(ContentChangeServiceRestImpl.class).info(
+        "RESTful call PUT (ContentChange): /description/update " + description);
     authenticate(securityService, authToken, "update description",
         UserRole.AUTHOR);
 
@@ -215,6 +257,8 @@ public class ContentChangeServiceRestImpl extends RootServiceRestImpl implements
     @ApiParam(value = "Descrption internal id, e.g. 2", required = true) @PathParam("id") Long id,
     @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken)
     throws Exception {
+    Logger.getLogger(ContentChangeServiceRestImpl.class).info(
+        "RESTful call PUT (ContentChange): /description/remove/id/" + id);
     authenticate(securityService, authToken, "remove description",
         UserRole.AUTHOR);
 
@@ -230,7 +274,7 @@ public class ContentChangeServiceRestImpl extends RootServiceRestImpl implements
   @Override
   @PUT
   @Path("/relationship/add")
-  @ApiOperation(value = "Add new relationship", notes = "Create new relationship.", response = Relationship.class)
+  @ApiOperation(value = "Add new relationship", notes = "Creates a new relationship.", response = Relationship.class)
   @Produces({
       MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML
   })
@@ -239,7 +283,7 @@ public class ContentChangeServiceRestImpl extends RootServiceRestImpl implements
     @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken)
     throws Exception {
     Logger.getLogger(ContentChangeServiceRestImpl.class).info(
-        "RESTful call PUT (ContentChange): /relationship " + relationship);
+        "RESTful call PUT (ContentChange): /relationship/add " + relationship);
     authenticate(securityService, authToken, "add relationship",
         UserRole.AUTHOR);
     return null;
@@ -255,7 +299,7 @@ public class ContentChangeServiceRestImpl extends RootServiceRestImpl implements
   @Override
   @POST
   @Path("/relationship/update")
-  @ApiOperation(value = "Update relationship", notes = "Update relationship.")
+  @ApiOperation(value = "Update relationship", notes = "Updates the specified relationship.")
   @Produces({
       MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML
   })
@@ -264,7 +308,8 @@ public class ContentChangeServiceRestImpl extends RootServiceRestImpl implements
     @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken)
     throws Exception {
     Logger.getLogger(ContentChangeServiceRestImpl.class).info(
-        "RESTful call POST (ContentChange): /relationship " + relationship);
+        "RESTful call POST (ContentChange): /relationship/update "
+            + relationship);
     authenticate(securityService, authToken, "update relationship",
         UserRole.AUTHOR);
 
@@ -289,7 +334,7 @@ public class ContentChangeServiceRestImpl extends RootServiceRestImpl implements
     @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken)
     throws Exception {
     Logger.getLogger(ContentServiceRestImpl.class).info(
-        "RESTful DELETE call (ContentChange): /relationship/id/" + id);
+        "RESTful DELETE call (ContentChange): /relationship/remove/id/" + id);
     authenticate(securityService, authToken, "remove relationship",
         UserRole.AUTHOR);
   }
@@ -304,17 +349,16 @@ public class ContentChangeServiceRestImpl extends RootServiceRestImpl implements
   @Override
   @PUT
   @Path("/language/add")
-  @ApiOperation(value = "Add new languageRefSetMember", notes = "Create new languageRefSetMember.", response = LanguageRefSetMember.class)
+  @ApiOperation(value = "Add new language refset member", notes = "Creates a new language refset member.", response = LanguageRefSetMember.class)
   @Produces({
       MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML
   })
   public LanguageRefSetMember addLanguageRefSetMember(
-    @ApiParam(value = "LanguageRefSetMember, e.g. newLanguageRefSetMember", required = true) LanguageRefSetMemberJpa languageRefSetMember,
+    @ApiParam(value = "language refset member, e.g. language refset member", required = true) LanguageRefSetMemberJpa member,
     @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken)
     throws Exception {
     Logger.getLogger(ContentChangeServiceRestImpl.class).info(
-        "RESTful call PUT (ContentChange): /languageRefSetMember "
-            + languageRefSetMember);
+        "RESTful call PUT (ContentChange): /language/add " + member);
     authenticate(securityService, authToken, "add language refset member",
         UserRole.AUTHOR);
     return null;
@@ -330,17 +374,16 @@ public class ContentChangeServiceRestImpl extends RootServiceRestImpl implements
   @Override
   @POST
   @Path("/language/update")
-  @ApiOperation(value = "Update languageRefSetMember", notes = "Update languageRefSetMember.")
+  @ApiOperation(value = "Update language refset member", notes = "Updates the specified language refset member.")
   @Produces({
       MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML
   })
   public void updateLanguageRefSetMember(
-    @ApiParam(value = "LanguageRefSetMember, e.g. update", required = true) LanguageRefSetMemberJpa languageRefSetMember,
+    @ApiParam(value = "language refset member, e.g. language refset member", required = true) LanguageRefSetMemberJpa member,
     @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken)
     throws Exception {
     Logger.getLogger(ContentChangeServiceRestImpl.class).info(
-        "RESTful call POST (ContentChange): /languageRefSetMember "
-            + languageRefSetMember);
+        "RESTful call POST (ContentChange): /language/update " + member);
     authenticate(securityService, authToken, "update language refset member",
         UserRole.AUTHOR);
 
@@ -356,7 +399,7 @@ public class ContentChangeServiceRestImpl extends RootServiceRestImpl implements
   @Override
   @DELETE
   @Path("/language/remove/id/{id}")
-  @ApiOperation(value = "Remove language refset member by id", notes = "Removes the languageRefSetMember for the specified id.")
+  @ApiOperation(value = "Remove language refset member by id", notes = "Removes the language refset member for the specified id.")
   @Produces({
       MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML
   })
@@ -365,7 +408,7 @@ public class ContentChangeServiceRestImpl extends RootServiceRestImpl implements
     @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken)
     throws Exception {
     Logger.getLogger(ContentServiceRestImpl.class).info(
-        "RESTful DELETE call (ContentChange): /languageRefSetMember/id/" + id);
+        "RESTful DELETE call (ContentChange): /language/remove/id/" + id);
     authenticate(securityService, authToken, "remove language refset member",
         UserRole.AUTHOR);
   }
@@ -379,21 +422,32 @@ public class ContentChangeServiceRestImpl extends RootServiceRestImpl implements
    */
   @Override
   @GET
-  @Path("/transitive/compute/{terminology}/{version}/{terminologyId}")
-  @ApiOperation(value = "Compute transitive closure by id, terminology, and version", notes = "Removes all transitive closure matching the specified parameters.")
+  @Path("/transitive/compute/{terminology}/{version}/{rootId}")
+  @ApiOperation(value = "Compute transitive closure by id, terminology, and version", notes = "Computes transitive closure for the specified parameters.")
   @Produces({
       MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML
   })
   public void computeTransitiveClosure(
-    @ApiParam(value = "Concept terminology id, e.g. 102751005", required = true) @PathParam("terminologyId") String terminologyId,
-    @ApiParam(value = "Concept terminology name, e.g. SNOMEDCT", required = true) @PathParam("terminology") String terminology,
+    @ApiParam(value = "Root concept terminology id, e.g. 138875005", required = true) @PathParam("rootId") String rootId,
+    @ApiParam(value = "Concept terminology, e.g. SNOMEDCT", required = true) @PathParam("terminology") String terminology,
     @ApiParam(value = "Concept terminology version, e.g. 20140731", required = true) @PathParam("version") String version,
     @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken)
     throws Exception {
-
-    authenticate(securityService, authToken, "compute transitive closure",
-        UserRole.AUTHOR);
-
+    try {
+      authenticate(securityService, authToken, "compute transitive closure",
+          UserRole.ADMINISTRATOR);
+      ContentService service = new ContentServiceJpa();
+      TransitiveClosureAlgorithm algo = new TransitiveClosureAlgorithm();
+      algo.setTerminology(terminology);
+      algo.setTerminologyVersion(version);
+      algo.reset();
+      algo.setRootId(service.getSingleConcept(rootId, terminology, version)
+          .getId());
+      algo.compute();
+      algo.close();
+    } catch (Exception e) {
+      handleException(e, "trying to clear concepts");
+    }
   }
 
   /*
@@ -405,21 +459,26 @@ public class ContentChangeServiceRestImpl extends RootServiceRestImpl implements
    */
   @Override
   @GET
-  @Path("/transitive/clear/{terminology}/{version}/{terminologyId}")
-  @ApiOperation(value = "Remove transitive closure by id, terminology, and version", notes = "Removes all transitive closure matching the specified parameters.")
+  @Path("/transitive/clear/{terminology}/{version}")
+  @ApiOperation(value = "Remove transitive closure by terminology, and version", notes = "Removes all transitive closure relationships matching the specified parameters.")
   @Produces({
       MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML
   })
   public void clearTransitiveClosure(
-    @ApiParam(value = "Concept terminology id, e.g. 102751005", required = true) @PathParam("terminologyId") String terminologyId,
-    @ApiParam(value = "Concept terminology name, e.g. SNOMEDCT", required = true) @PathParam("terminology") String terminology,
+    @ApiParam(value = "Concept terminology, e.g. SNOMEDCT", required = true) @PathParam("terminology") String terminology,
     @ApiParam(value = "Concept terminology version, e.g. 20140731", required = true) @PathParam("version") String version,
     @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken)
     throws Exception {
-
-    authenticate(securityService, authToken, "clear transitive closure",
-        UserRole.AUTHOR);
-
+    try {
+      authenticate(securityService, authToken, "clear transitive closure",
+          UserRole.ADMINISTRATOR);
+      // Remove concept
+      ContentService contentService = new ContentServiceJpa();
+      contentService.clearTransitiveClosure(terminology, version);
+      contentService.close();
+    } catch (Exception e) {
+      handleException(e, "trying to clear concepts");
+    }
   }
 
   /*
@@ -431,18 +490,26 @@ public class ContentChangeServiceRestImpl extends RootServiceRestImpl implements
    */
   @Override
   @GET
-  @Path("/concept/clear/{terminology}/{version}/{terminologyId}")
-  @ApiOperation(value = "Remove concept(s) by id, terminology, and version", notes = "Removes all concepts matching the specified parameters.")
+  @Path("/concept/clear/{terminology}/{version}")
+  @ApiOperation(value = "Clear concepts", notes = "Removes all concepts matching the specified parameters.")
   @Produces({
       MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML
   })
   public void clearConcepts(
-    @ApiParam(value = "Concept terminology name, e.g. SNOMEDCT", required = true) @PathParam("terminology") String terminology,
+    @ApiParam(value = "Concept terminology e.g. SNOMEDCT", required = true) @PathParam("terminology") String terminology,
     @ApiParam(value = "Concept terminology version, e.g. 20140731", required = true) @PathParam("version") String version,
     @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken)
     throws Exception {
-    authenticate(securityService, authToken, "clear concepts", UserRole.AUTHOR);
-
+    try {
+      authenticate(securityService, authToken, "clear concepts",
+          UserRole.ADMINISTRATOR);
+      // Remove concept
+      ContentService contentService = new ContentServiceJpa();
+      contentService.clearConcepts(terminology, version);
+      contentService.close();
+    } catch (Exception e) {
+      handleException(e, "trying to clear concepts");
+    }
   }
 
 }

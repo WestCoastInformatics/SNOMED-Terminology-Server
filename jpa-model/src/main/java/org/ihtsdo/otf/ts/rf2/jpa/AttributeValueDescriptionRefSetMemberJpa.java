@@ -8,7 +8,6 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
 import org.hibernate.envers.Audited;
-import org.hibernate.search.annotations.ContainedIn;
 import org.ihtsdo.otf.ts.rf2.AttributeValueConceptRefSetMember;
 import org.ihtsdo.otf.ts.rf2.AttributeValueDescriptionRefSetMember;
 import org.ihtsdo.otf.ts.rf2.Description;
@@ -26,9 +25,6 @@ public class AttributeValueDescriptionRefSetMemberJpa extends
 
   /** The description. */
   @ManyToOne(targetEntity = DescriptionJpa.class, optional = true)
-  // NOTE: this may apply only to LanguageRefSetMember given how
-  // description uses @IndexedEmbedded
-  @ContainedIn
   private Description description;
 
   /**
@@ -80,8 +76,23 @@ public class AttributeValueDescriptionRefSetMemberJpa extends
    * @return the description id
    */
   @XmlElement
-  public String getDescriptionId() {
+  private String getDescriptionId() {
     return description != null ? description.getTerminologyId() : null;
+  }
+  
+  /**
+   * Sets the description id.
+   *
+   * @param descriptionId the description id
+   */
+  @SuppressWarnings("unused")
+  private void setDescriptionId(String descriptionId) {
+    if (description == null) {
+      description = new DescriptionJpa();
+    }
+    description.setTerminologyId(descriptionId);
+    description.setTerminology(getTerminology());
+    description.setTerminologyVersion(getTerminologyVersion());
   }
 
   /*

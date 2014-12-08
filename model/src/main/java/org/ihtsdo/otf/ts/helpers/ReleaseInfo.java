@@ -106,7 +106,7 @@ public interface ReleaseInfo {
   public void setPlanned(boolean planned);
 
   /**
-   * Indicates whether or not the releasee published.
+   * Indicates whether or not the release published.
    *
    * @return the published flag
    */
@@ -118,4 +118,32 @@ public interface ReleaseInfo {
    * @param published the published flag
    */
   public void setPublished(boolean published);
+
+  /**
+   * Returns the terminology.
+   *
+   * @return the terminology
+   */
+  public String getTerminology();
+
+  /**
+   * Sets the terminology.
+   *
+   * @param terminology the terminology
+   */
+  public void setTerminology(String terminology);
+
+  /**
+   * Returns the terminology version.
+   *
+   * @return the terminology version
+   */
+  public String getTerminologyVersion();
+
+  /**
+   * Sets the terminology version.
+   *
+   * @param version the terminology version
+   */
+  public void setTerminologyVersion(String version);
 }

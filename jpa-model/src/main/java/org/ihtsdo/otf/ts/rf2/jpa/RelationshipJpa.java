@@ -192,7 +192,7 @@ public class RelationshipJpa extends AbstractComponent implements Relationship {
    */
   @XmlElement
   private String getSourceConceptId() {
-    return sourceConcept.getTerminologyId();
+    return (sourceConcept != null) ? sourceConcept.getObjectId() : "";
   }
 
   /**
@@ -202,7 +202,12 @@ public class RelationshipJpa extends AbstractComponent implements Relationship {
    */
   @SuppressWarnings("unused")
   private void setSourceConceptId(String sourceConceptId) {
-    // do nothing - for JAXB
+    if (sourceConcept == null) {
+      sourceConcept = new ConceptJpa();
+    }
+    sourceConcept.setTerminologyId(sourceConceptId);
+    sourceConcept.setTerminology(getTerminology());
+    sourceConcept.setTerminologyVersion(getTerminologyVersion());
   }
 
   /**
@@ -299,7 +304,7 @@ public class RelationshipJpa extends AbstractComponent implements Relationship {
    */
   @Override
   public String toString() {
-    return super.toString()
+    return super.toString() + "," +
         + (this.getSourceConcept() == null ? null : this.getSourceConcept()
             .getId())
         + ","

@@ -1,13 +1,18 @@
 package org.ihtsdo.otf.ts.jpa.services.handlers;
 
+import java.util.Properties;
+
 import org.ihtsdo.otf.ts.rf2.Concept;
 import org.ihtsdo.otf.ts.rf2.Description;
 import org.ihtsdo.otf.ts.rf2.Relationship;
 import org.ihtsdo.otf.ts.services.handlers.IdentifierAssignmentHandler;
 
 /**
- * Default implementation of {@link IdentifierAssignmentHandler}. This supports
- * "application-managed" identifier assignment.
+ * Snomed RF2 release implementation of {@link IdentifierAssignmentHandler}.
+ * NOTE: if identifiers need to be stable across daily builds, you could simply
+ * use this for normal editing and keep track of the sequences in the database
+ * by, say, extending RootServiceJpa. (although some complexities arise with
+ * dual independent review).
  */
 public class SnomedReleaseIdentifierAssignmentHandler extends
     SnomedUuidHashIdentifierAssignmentHandler {
@@ -24,21 +29,31 @@ public class SnomedReleaseIdentifierAssignmentHandler extends
   /** The is extension. */
   private boolean isExtension = false;
 
+  /** The namespace id. */
+  private String namespaceId = "";
+
   /**
    * Instantiates a {@link SnomedReleaseIdentifierAssignmentHandler} based on
    * counters. Subsequent assignments
-   *
-   * @param conceptSequence the concept sequence
-   * @param descriptionSequence the description sequence
-   * @param relationshipSequence the relationship sequence
-   * @param isExtension indicator of extension - for partition id
    */
-  public SnomedReleaseIdentifierAssignmentHandler(long conceptSequence,
-      long descriptionSequence, long relationshipSequence, boolean isExtension) {
-    this.conceptSequence = conceptSequence;
-    this.descriptionSequence = descriptionSequence;
-    this.relationshipSequence = relationshipSequence;
-    this.isExtension = isExtension;
+  public SnomedReleaseIdentifierAssignmentHandler() {
+    // do nothing
+  }
+
+  /*
+   * (non-Javadoc)
+   * 
+   * @see
+   * org.ihtsdo.otf.ts.helpers.Configurable#setProperties(java.util.Properties)
+   */
+  @Override
+  public void setProperties(Properties p) {
+    this.conceptSequence = Long.valueOf(p.getProperty("concept.max"));
+    this.descriptionSequence = Long.valueOf(p.getProperty("description.max"));
+    this.relationshipSequence =
+        Long.valueOf(p.getProperty("relationships.max"));
+    this.namespaceId = p.getProperty("namespace.id");
+    this.isExtension = (namespaceId == null || namespaceId.isEmpty());
   }
 
   /**
@@ -83,7 +98,7 @@ public class SnomedReleaseIdentifierAssignmentHandler extends
     // If already assigned, leave alone
     if (!isSctid(concept.getTerminologyId())) {
       long ct = incrementConceptSequence();
-      String num = ct + (isExtension ? "1" : "0") + "1";
+      String num = ct + namespaceId + (isExtension ? "1" : "0") + "1";
       String verhoeff = Verhoeff.generateVerhoeff(num);
       concept.setTerminology(num + verhoeff);
     }
@@ -102,7 +117,7 @@ public class SnomedReleaseIdentifierAssignmentHandler extends
     // If already assigned, leave alone
     if (!isSctid(description.getTerminologyId())) {
       long ct = incrementDescriptionSequence();
-      String num = ct + (isExtension ? "1" : "0") + "1";
+      String num = ct + namespaceId + (isExtension ? "1" : "0") + "1";
       String verhoeff = Verhoeff.generateVerhoeff(num);
       description.setTerminology(num + verhoeff);
     }
@@ -121,11 +136,11 @@ public class SnomedReleaseIdentifierAssignmentHandler extends
     // If already assigned, leave alone
     if (!isSctid(relationship.getTerminologyId())) {
       long ct = incrementRelationshipSequence();
-      String num = ct + (isExtension ? "1" : "0") + "1";
+      String num = ct + namespaceId + (isExtension ? "1" : "0") + "1";
       String verhoeff = Verhoeff.generateVerhoeff(num);
       relationship.setTerminology(num + verhoeff);
     }
     return relationship.getTerminologyId();
   }
-  
+
 }

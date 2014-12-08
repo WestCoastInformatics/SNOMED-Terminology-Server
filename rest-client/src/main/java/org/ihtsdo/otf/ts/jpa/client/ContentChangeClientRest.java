@@ -459,12 +459,12 @@ public class ContentChangeClientRest implements ContentChangeServiceRest {
    * java.lang.String, java.lang.String, java.lang.String, java.lang.String)
    */
   @Override
-  public void clearTransitiveClosure(String terminologyId, String terminology,
-    String version, String authToken) throws Exception {
+  public void clearTransitiveClosure(String terminology, String version,
+    String authToken) throws Exception {
     Client client = Client.create();
     WebResource resource =
         client.resource(config.getProperty("base.url") + "/transitive/clear/"
-            + terminology + "/" + version + "/" + terminologyId);
+            + terminology + "/" + version);
     ClientResponse response =
         resource.accept(MediaType.APPLICATION_XML)
             .header("Authorization", authToken).get(ClientResponse.class);
