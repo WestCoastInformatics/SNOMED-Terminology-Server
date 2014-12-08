@@ -34,9 +34,6 @@ public class ConceptReportHelper {
     for (Relationship r : c.getRelationships()) {
       builder.append("  REL = " + r).append(nl);
     }
-    for (Relationship r : c.getInverseRelationships()) {
-      builder.append("  INV_REL = " + r).append(nl);
-    }
     for (AttributeValueConceptRefSetMember member : c.getAttributeValueRefSetMembers()) {
       builder.append("  ATT_VALUE = " + member).append(nl);
     }

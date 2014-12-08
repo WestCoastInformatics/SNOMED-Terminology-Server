@@ -4,12 +4,16 @@
 package org.ihtsdo.otf.ts.rest;
 
 import org.ihtsdo.otf.ts.helpers.ConceptList;
+import org.ihtsdo.otf.ts.helpers.PfsParameter;
 import org.ihtsdo.otf.ts.helpers.PfsParameterJpa;
 import org.ihtsdo.otf.ts.helpers.SearchResultList;
 import org.ihtsdo.otf.ts.rf2.Concept;
 
+// TODO: Auto-generated Javadoc
 /**
  * Represents a content available via a REST service.
+ *
+ * @author ${author}
  */
 public interface ContentServiceRest {
 
@@ -68,5 +72,28 @@ public interface ContentServiceRest {
   public SearchResultList findConceptsForQuery(String terminology,
     String version, String searchString, PfsParameterJpa pfs, String authToken)
     throws Exception;
-
+  
+  /**
+   * Returns the concept children.
+   *
+   * @param terminologyId the terminology id
+   * @param terminology the terminology
+   * @param terminologyVersion the terminology version
+   * @param pfs the pfs
+   * @return the concept children
+   * @throws Exception 
+   */
+  public ConceptList getConceptChildren(String terminologyId, String terminology, String terminologyVersion, PfsParameter pfs, String authToken) throws Exception;
+  
+  /**
+   * Returns the concept descendants.
+   *
+   * @param terminologyId the terminology id
+   * @param terminology the terminology
+   * @param terminologyVersion the terminology version
+   * @param pfs the pfs
+   * @return the concept descendants
+   */
+  public ConceptList getConceptDescendants(String terminologyId, String terminology, String terminologyVersion, PfsParameter pfs, String authToken);
+  
 }

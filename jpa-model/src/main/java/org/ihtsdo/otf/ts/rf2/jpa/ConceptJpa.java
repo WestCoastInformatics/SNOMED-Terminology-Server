@@ -160,12 +160,6 @@ public class ConceptJpa extends AbstractComponent implements Concept {
     }
 
     if (deepCopy) {
-      inverseRelationships = new HashSet<>();
-      for (Relationship rel : concept.getInverseRelationships()) {
-        Relationship newRel = new RelationshipJpa(rel);
-        newRel.setSourceConcept(this);
-        inverseRelationships.add(newRel);
-      }
 
       attributeValueRefSetMembers = new HashSet<>();
       for (AttributeValueConceptRefSetMember member : concept
@@ -436,64 +430,6 @@ public class ConceptJpa extends AbstractComponent implements Concept {
     this.relationships = relationships;
     for (Relationship relationship : relationships) {
       relationship.setSourceConcept(this);
-    }
-  }
-
-  /*
-   * (non-Javadoc)
-   * 
-   * @see org.ihtsdo.otf.ts.rf2.Concept#getInverseRelationships()
-   */
-  @XmlTransient
-  @Override
-  public Set<Relationship> getInverseRelationships() {
-    if (inverseRelationships == null) {
-      inverseRelationships = new HashSet<>();
-    }
-    return inverseRelationships;
-  }
-
-  /*
-   * (non-Javadoc)
-   * 
-   * @see
-   * org.ihtsdo.otf.ts.rf2.Concept#addInverseRelationship(org.ihtsdo.otf.ts.
-   * rf2.Relationship)
-   */
-  @Override
-  public void addInverseRelationship(Relationship relationship) {
-    if (inverseRelationships == null) {
-      inverseRelationships = new HashSet<>();
-    }
-    relationship.setDestinationConcept(this);
-    inverseRelationships.add(relationship);
-  }
-
-  /*
-   * (non-Javadoc)
-   * 
-   * @see
-   * org.ihtsdo.otf.ts.rf2.Concept#removeInverseRelationship(org.ihtsdo.otf.
-   * ts.rf2.Relationship)
-   */
-  @Override
-  public void removeInverseRelationship(Relationship relationship) {
-    if (inverseRelationships == null) {
-      return;
-    }
-    inverseRelationships.remove(relationship);
-  }
-
-  /*
-   * (non-Javadoc)
-   * 
-   * @see org.ihtsdo.otf.ts.rf2.Concept#setInverseRelationships(java.util.Set)
-   */
-  @Override
-  public void setInverseRelationships(Set<Relationship> inverseRelationships) {
-    this.inverseRelationships = inverseRelationships;
-    for (Relationship relationship : inverseRelationships) {
-      relationship.setDestinationConcept(this);
     }
   }
 

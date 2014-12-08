@@ -4,15 +4,15 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
-import java.util.Set;
 
+import org.ihtsdo.otf.ts.helpers.ConceptList;
 import org.ihtsdo.otf.ts.helpers.PfsParameterJpa;
 import org.ihtsdo.otf.ts.helpers.SearchResult;
 import org.ihtsdo.otf.ts.helpers.SearchResultList;
 import org.ihtsdo.otf.ts.jpa.services.ContentServiceJpa;
 import org.ihtsdo.otf.ts.rf2.Concept;
+import org.ihtsdo.otf.ts.services.ContentService;
 import org.ihtsdo.otf.ts.services.MetadataService;
-import org.ihtsdo.otf.ts.services.helpers.GraphHelper;
 
 /**
  * Implementation of {@link MetadataService} for ClaML based terminologies.
@@ -538,16 +538,13 @@ public class ClamlMetadataServiceJpaHelper extends ContentServiceJpa implements
 
     // want all descendants, do not use pfs
     Concept concept = getConcept(id);
-
-    Set<Concept> descendants =
-        GraphHelper.getDescendantConcepts(concept,
-            getIsaRelationshipType(terminology, version));
-
-    for (Concept descendant : descendants) {
-      if (descendant.isActive()) {
-        map.put(new String(descendant.getTerminologyId()),
-            descendant.getDefaultPreferredName());
-      }
+    
+    ContentService contentService = new ContentServiceJpa();
+    ConceptList conceptList = contentService.getDescendantConcepts(concept, null, null);
+    
+    // convert concept list to map
+    for (Concept descendant : conceptList.getObjects()) {
+      map.put(descendant.getTerminologyId(), descendant.getDefaultPreferredName());
     }
 
     return map;

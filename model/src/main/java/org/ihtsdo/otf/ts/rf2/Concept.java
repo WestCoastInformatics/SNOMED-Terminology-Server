@@ -148,34 +148,6 @@ public interface Concept extends Component {
   public void setRelationships(Set<Relationship> relationships);
 
   /**
-   * Returns the inverse relationships.
-   * 
-   * @return the inverse relationships
-   */
-  public Set<Relationship> getInverseRelationships();
-
-  /**
-   * Adds the inverse relationship.
-   * 
-   * @param relationship the relationship
-   */
-  public void addInverseRelationship(Relationship relationship);
-
-  /**
-   * Removes the inverse relationship.
-   * 
-   * @param relationship the relationship
-   */
-  public void removeInverseRelationship(Relationship relationship);
-
-  /**
-   * Sets the inverse relationships.
-   * 
-   * @param inverseRelationships the inverse relationships
-   */
-  public void setInverseRelationships(Set<Relationship> inverseRelationships);
-
-  /**
    * Gets the default preferred name.
    * 
    * @return the default preferred name

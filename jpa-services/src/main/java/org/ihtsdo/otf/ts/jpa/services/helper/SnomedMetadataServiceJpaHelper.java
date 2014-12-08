@@ -1,16 +1,18 @@
 package org.ihtsdo.otf.ts.jpa.services.helper;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 
 import org.apache.log4j.Logger;
+import org.ihtsdo.otf.ts.helpers.ConceptList;
 import org.ihtsdo.otf.ts.jpa.services.ContentServiceJpa;
 import org.ihtsdo.otf.ts.rf2.Concept;
+import org.ihtsdo.otf.ts.services.ContentService;
 import org.ihtsdo.otf.ts.services.MetadataService;
-import org.ihtsdo.otf.ts.services.helpers.GraphHelper;
 
 /**
  * Implementation of {@link MetadataService} for SNOMEDCT.
@@ -651,9 +653,17 @@ public class SnomedMetadataServiceJpaHelper extends ContentServiceJpa implements
   private Set<Concept> getDescendantConcepts(String terminologyId,
     String terminology, String terminologyVersion, String typeId)
     throws Exception {
+    ContentService contentService = new ContentServiceJpa();
     Concept concept =
         getSingleConcept(terminologyId, terminology, terminologyVersion);
-    return GraphHelper.getDescendantConcepts(concept, typeId);
+    ConceptList conceptList = contentService.getDescendantConcepts(concept, typeId, null);
+    
+    // convert concept list to set
+    Set<Concept> concepts = new HashSet<>();
+    for (Concept c : conceptList.getObjects()) {
+      concepts.add(c);
+    }
+    return concepts;
 
   }
 

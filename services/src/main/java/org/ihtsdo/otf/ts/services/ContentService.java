@@ -24,8 +24,11 @@ import org.ihtsdo.otf.ts.services.handlers.ComputePreferredNameHandler;
 import org.ihtsdo.otf.ts.services.handlers.GraphResolutionHandler;
 import org.ihtsdo.otf.ts.services.handlers.IdentifierAssignmentHandler;
 
+// TODO: Auto-generated Javadoc
 /**
  * Generically represents a service for accessing content.
+ *
+ * @author ${author}
  */
 public interface ContentService extends RootService {
 
@@ -111,7 +114,26 @@ public interface ContentService extends RootService {
    * @throws Exception the exception
    */
   public void removeConcept(Long id) throws Exception;
-
+  
+  /**
+   * Find concepts.
+   *
+   * @param pfsParameter the pfs parameter
+   * @return the concept list
+   * @throws Exception 
+   */
+  public ConceptList getDescendantConcepts(Concept concept, String typeId, PfsParameter pfsParameter) throws Exception;
+  
+  /**
+   * Find children.
+   *
+   * @param concept the concept
+   * @param pfsParameter the pfs parameter
+   * @return the concept list
+   * @throws Exception 
+   */
+  public ConceptList getChildrenConcepts(Concept concept, String typeId, PfsParameter pfsParameter) throws Exception; 
+  
   /**
    * Returns the description.
    * 
@@ -802,7 +824,7 @@ public interface ContentService extends RootService {
     throws Exception;
 
   /**
-   * Removes all concepts and connected data structures
+   * Removes all concepts and connected data structures.
    *
    * @param terminology the terminology
    * @param version the terminology version
@@ -839,8 +861,10 @@ public interface ContentService extends RootService {
    * Computes preferred name.
    *
    * @param concept the concept
-   * @throws Exception 
+   * @throws Exception the exception
    */
   public void computePreferredName(Concept concept) throws Exception;
+
+ 
 
 }

@@ -7,6 +7,7 @@ import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
@@ -30,6 +31,7 @@ import org.ihtsdo.otf.ts.helpers.ConceptListJpa;
 import org.ihtsdo.otf.ts.helpers.ConfigUtility;
 import org.ihtsdo.otf.ts.helpers.LocalException;
 import org.ihtsdo.otf.ts.helpers.PfsParameter;
+import org.ihtsdo.otf.ts.helpers.PfsParameterJpa;
 import org.ihtsdo.otf.ts.helpers.ReleaseInfo;
 import org.ihtsdo.otf.ts.helpers.SearchResult;
 import org.ihtsdo.otf.ts.helpers.SearchResultJpa;
@@ -403,6 +405,196 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
     } catch (NoResultException e) {
       return null;
     }
+  }
+
+  @Override
+  public ConceptList getDescendantConcepts(Concept concept, String typeId, PfsParameter pfs) throws Exception {
+
+   // if pfs null, instantiate default pfs
+    // TODO just handle null-checks properly, don't set value of passed parameter
+   if (pfs == null)
+     pfs = new PfsParameterJpa();
+   
+   // two-step search method
+   // 1) get descendant concept terminology ids from transitive closure using HQL query
+   // 2) use lucene to search these ids with filter restrictions
+   // Motivation:  Want to leverage lucene query builder for filter terms
+   
+   // Step 1:  Construct the list of terminology ids for descendants
+   List<String> conceptIdsToProcess = new ArrayList<>();
+   Set<String> conceptIdsToSearch = new HashSet<>();
+   conceptIdsToProcess.add(concept.getTerminologyId());
+   
+   // while ids remain to process
+   while (conceptIdsToProcess.size() != 0) {
+     
+     String conceptId = conceptIdsToProcess.iterator().next();
+     
+     // add this id to the search list
+     conceptIdsToSearch.add(conceptId);
+     
+     // get the ids of all children of this concept
+     conceptIdsToProcess.addAll(this.getChildrenTerminologyIdsForConcept(conceptId, concept.getTerminology(), concept.getTerminologyVersion(), typeId));
+     
+     // remove this id from the processing list
+     conceptIdsToProcess.remove(conceptId);
+   }
+   
+   // Step 2:  Execute the lucene search
+   String queryStr = this.getLuceneFieldQueryTerm(null, new ArrayList<>(conceptIdsToSearch));
+   ConceptList descendantConcepts = this.getConceptsForLuceneQuery(concept.getTerminology(), concept.getTerminologyVersion(), queryStr, pfs);
+   
+   return descendantConcepts;
+  }
+
+  /* (non-Javadoc)
+   * @see org.ihtsdo.otf.ts.services.ContentService#findChildrenConcepts(org.ihtsdo.otf.ts.rf2.Concept, org.ihtsdo.otf.ts.helpers.PfsParameter)
+   */
+  @Override
+  public ConceptList getChildrenConcepts(Concept concept, String typeId, PfsParameter pfs) throws Exception {
+    
+    ConceptList childrenConcepts = new ConceptListJpa();
+ 
+    // if pfs null, instantiate default pfs
+    if (pfs == null)
+      pfs = new PfsParameterJpa();
+    
+    // two-step search method
+    // 1) get children concept terminology ids from transitive closure using HQL query
+    // 2) use lucene to search these ids with filter restrictions
+    // Motivation:  Want to leverage lucene query builder for filter terms
+    
+    // Step 1: get the children ids
+    List<String> childrenIds = this.getChildrenTerminologyIdsForConcept(concept.getTerminologyId(), concept.getTerminology(), concept.getTerminologyVersion(), typeId);
+    
+    // if no results, return empty concept list
+    if (childrenIds.size() == 0) {
+      childrenConcepts.setTotalCount(0);
+      return childrenConcepts;
+    }
+      
+    // Step 2: Execute the lucene query
+    String queryStr = this.getLuceneFieldQueryTerm(null, childrenIds);
+    childrenConcepts = this.getConceptsForLuceneQuery(concept.getTerminology(), concept.getTerminologyVersion(), queryStr, pfs);
+
+  
+    return childrenConcepts;
+  }
+  
+  /**
+   * Helper function for getDescendants and getChildren
+   * Returns a list of terminology ids for the direct
+   * children of a given concept for a given typeid
+   * @param concept
+   */
+  private List<String> getChildrenTerminologyIdsForConcept(String terminologyId, String terminology, String terminologyVersion, String typeId) {
+    javax.persistence.Query query =
+        manager
+            .createQuery("select tr from TransitiveRelationshipJpa tr, ConceptJpa super"
+                + " where super.version = :version "
+                + " and super.terminology = :terminology "
+                + " and super.terminologyId = :terminologyId"
+                + " and tr.superTypeConcept = super");
+    query.setParameter("terminology", terminology);
+    query.setParameter("version", terminologyVersion);
+    query.setParameter("terminologyId", terminologyId);
+    
+    // execute query
+    @SuppressWarnings("unchecked")
+    List<TransitiveRelationship> transitiveRelationships  = query.getResultList();
+    
+    // instantiate list of terminology ids
+    List<String> childrenIds = new ArrayList<>();
+    
+    // for each transitive relationship, get the relationship
+    for (TransitiveRelationship tr : transitiveRelationships) {
+      
+      Concept c = tr.getSubTypeConcept();
+      
+      // check each relationship for a match to this concept
+      for (Relationship r : c.getRelationships()) {
+        
+        // if this relationship:
+        // - is active
+        // - links to the parent concept
+        // - has the specified type id
+        // add it to the list of children terminology ids
+        if (r.isActive() && 
+            r.getSourceConcept().getTerminologyId().equals(terminologyId)
+            && r.getTypeId().equals(typeId)) {
+          childrenIds.add(c.getTerminologyId());
+        }
+      }
+    }  
+    
+    return childrenIds;
+  }
+  
+  /** 
+   * Helper function for getDescendants and getChildren
+   * Given a base query (must not specify fields),
+   * applies terminology, version, and pfs parameters
+   * and returns a concept list
+   * 
+   * @param terminology
+   * @param terminologyVersion
+   * @param query
+   * @param pfs
+   * @return
+   * @throws Exception
+   */
+  @SuppressWarnings("unchecked")
+  private ConceptList getConceptsForLuceneQuery(String terminology, String terminologyVersion, String query, PfsParameter pfs) throws Exception {
+    
+    ConceptList concepts = new ConceptListJpa();
+    
+    StringBuilder finalQuery = new StringBuilder();
+    
+    // get a query search substring (id1 OR id2 OR .. idN)
+    finalQuery.append(query);
+   
+    // append terminology and version to the query
+    finalQuery.append(" AND terminology:" + terminology
+        + " AND terminologyVersion:" + terminologyVersion);
+    
+    // if query restriction specified, add it
+    if (pfs != null && pfs.getQueryRestriction() != null) {
+      finalQuery.append(" AND ");
+      finalQuery.append(pfs.getQueryRestriction());
+    }
+    Logger.getLogger(this.getClass()).info("query " + finalQuery);
+    
+    // Prepare the query
+    FullTextEntityManager fullTextEntityManager =
+        Search.getFullTextEntityManager(manager);
+    SearchFactory searchFactory = fullTextEntityManager.getSearchFactory();
+    Query luceneQuery;
+    try {
+      QueryParser queryParser =
+          new QueryParser(Version.LUCENE_36, "all",
+              searchFactory.getAnalyzer(ConceptJpa.class));
+      luceneQuery = queryParser.parse(finalQuery.toString());
+    } catch (ParseException e) {
+      throw new LocalException(
+          "The specified search terms cannot be parsed.  Please check syntax and try again.");
+    }
+    FullTextQuery fullTextQuery =
+        fullTextEntityManager
+            .createFullTextQuery(luceneQuery, ConceptJpa.class);
+
+    concepts.setTotalCount(fullTextQuery.getResultSize());
+
+    // Apply paging and sorting parameters
+    applyPfsToLuceneQuery(ConceptJpa.class, fullTextQuery, pfs);
+    
+    // execute the query and set concept list results
+    concepts.setObjects(fullTextQuery.getResultList());
+    
+    fullTextEntityManager.close();
+    // closing fullTextEntityManager closes manager as well, recreate
+    manager = factory.createEntityManager();
+    
+    return concepts;
   }
 
   /*
@@ -3030,4 +3222,31 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
       return null;
     }
   }
+  
+  private String getLuceneFieldQueryTerm(String fieldName, List<String> values) {
+    
+    String searchString = "";
+    
+    // add field name if not-null
+    if (fieldName != null)
+      searchString = fieldName + ":";
+    
+    // open parentheses
+    searchString += "(";
+    
+    // cycle over the terminology ids
+    Iterator<String> iterator = values.iterator();
+    while (iterator.hasNext()) {
+      searchString += iterator.next();
+      
+      // if more terms, add OR
+      if (iterator.hasNext())
+        searchString += " OR ";
+    }
+    // close parentheses
+    searchString += ")";
+    
+    return searchString;
+  }
+
 }

@@ -12,6 +12,7 @@ import javax.ws.rs.core.Response;
 
 import org.apache.log4j.Logger;
 import org.ihtsdo.otf.ts.helpers.ConceptList;
+import org.ihtsdo.otf.ts.helpers.PfsParameter;
 import org.ihtsdo.otf.ts.helpers.PfsParameterJpa;
 import org.ihtsdo.otf.ts.helpers.SearchResultList;
 import org.ihtsdo.otf.ts.helpers.UserRole;
@@ -256,6 +257,22 @@ public class ContentServiceRestImpl extends RootServiceRestImpl implements
       handleException(e, "trying to find the concepts by query");
       return null;
     }
+  }
+
+  @Override
+  public ConceptList getConceptChildren(String terminologyId,
+    String terminology, String terminologyVersion, PfsParameter pfs,
+    String authToken) {
+    // TODO Auto-generated method stub
+    return null;
+  }
+
+  @Override
+  public ConceptList getConceptDescendants(String terminologyId,
+    String terminology, String terminologyVersion, PfsParameter pfs,
+    String authToken) {
+    // TODO Auto-generated method stub
+    return null;
   }
 
 }

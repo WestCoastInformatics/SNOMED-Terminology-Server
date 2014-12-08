@@ -9,6 +9,7 @@ import org.apache.log4j.Logger;
 import org.ihtsdo.otf.ts.helpers.ConceptList;
 import org.ihtsdo.otf.ts.helpers.ConceptListJpa;
 import org.ihtsdo.otf.ts.helpers.ConfigUtility;
+import org.ihtsdo.otf.ts.helpers.PfsParameter;
 import org.ihtsdo.otf.ts.helpers.PfsParameterJpa;
 import org.ihtsdo.otf.ts.helpers.SearchResultList;
 import org.ihtsdo.otf.ts.helpers.SearchResultListJpa;
@@ -160,5 +161,39 @@ public class ContentClientRest implements ContentServiceRest {
             SearchResultListJpa.class);
     return list;
   }
+
+  @Override
+  public ConceptList getConceptChildren(String terminologyId,
+    String terminology, String version, PfsParameter pfs, String authToken) throws Exception {
+    Client client = Client.create();
+    WebResource resource =
+        client.resource(config.getProperty("base.url") + "/content/concepts/"
+            + terminology + "/" + version + "/" + terminologyId);
+    ClientResponse response =
+        resource.accept(MediaType.APPLICATION_XML)
+            .header("Authorization", authToken).get(ClientResponse.class);
+
+    String resultString = response.getEntity(String.class);
+    if (response.getClientResponseStatus().getFamily() == Family.SUCCESSFUL) {
+      Logger.getLogger(this.getClass()).debug(resultString);
+    } else {
+      throw new Exception(resultString);
+    }
+
+    // converting to object
+    ConceptListJpa c =
+        (ConceptListJpa) ConfigUtility.getGraphForString(resultString,
+            ConceptListJpa.class);
+    return c;
+  }
+
+  @Override
+  public ConceptList getConceptDescendants(String terminologyId,
+    String terminology, String terminologyVersion, PfsParameter pfs,
+    String authToken) {
+    // TODO Auto-generated method stub
+    return null;
+  }
+
 
 }
