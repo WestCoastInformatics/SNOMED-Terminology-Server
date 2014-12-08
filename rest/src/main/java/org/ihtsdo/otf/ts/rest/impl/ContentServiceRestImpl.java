@@ -18,6 +18,9 @@ import org.ihtsdo.otf.ts.jpa.services.SecurityServiceJpa;
 import org.ihtsdo.otf.ts.jpa.services.helper.TerminologyUtility;
 import org.ihtsdo.otf.ts.rest.ContentServiceRest;
 import org.ihtsdo.otf.ts.rf2.Concept;
+import org.ihtsdo.otf.ts.rf2.Description;
+import org.ihtsdo.otf.ts.rf2.LanguageRefSetMember;
+import org.ihtsdo.otf.ts.rf2.Relationship;
 import org.ihtsdo.otf.ts.services.ContentService;
 import org.ihtsdo.otf.ts.services.SecurityService;
 
@@ -73,7 +76,8 @@ public class ContentServiceRestImpl extends RootServiceRestImpl implements
             + terminologyId);
 
     try {
-      authenticate(securityService, authToken, "retrieve the concept", UserRole.VIEWER);
+      authenticate(securityService, authToken, "retrieve the concept",
+          UserRole.VIEWER);
 
       ContentService contentService = new ContentServiceJpa();
       ConceptList cl =
@@ -122,7 +126,8 @@ public class ContentServiceRestImpl extends RootServiceRestImpl implements
             + terminologyId);
 
     try {
-      authenticate(securityService, authToken, "retrieve the concept", UserRole.VIEWER);
+      authenticate(securityService, authToken, "retrieve the concept",
+          UserRole.VIEWER);
 
       ContentService contentService = new ContentServiceJpa();
       Concept concept =
@@ -163,7 +168,8 @@ public class ContentServiceRestImpl extends RootServiceRestImpl implements
         "RESTful call (Content): /concept/id/" + id);
 
     try {
-      authenticate(securityService, authToken, "retrieve the concept", UserRole.VIEWER);
+      authenticate(securityService, authToken, "retrieve the concept",
+          UserRole.VIEWER);
 
       ContentService contentService = new ContentServiceJpa();
       Concept concept = contentService.getConcept(id);
@@ -207,8 +213,8 @@ public class ContentServiceRestImpl extends RootServiceRestImpl implements
         "RESTful call (Content): /concept/" + terminology + "/" + version
             + "/query/" + query);
     try {
-      authenticate(securityService, authToken, "find concepts by query", UserRole.VIEWER);
-
+      authenticate(securityService, authToken, "find concepts by query",
+          UserRole.VIEWER);
 
       ContentService contentService = new ContentServiceJpa();
       SearchResultList sr =
@@ -218,6 +224,257 @@ public class ContentServiceRestImpl extends RootServiceRestImpl implements
 
     } catch (Exception e) {
       handleException(e, "trying to find the concepts by query");
+      return null;
+    }
+  }
+
+  /*
+   * (non-Javadoc)
+   * 
+   * @see
+   * org.ihtsdo.otf.ts.rest.ContentServiceRest#getDescription(java.lang.Long,
+   * java.lang.String)
+   */
+  @Override
+  @GET
+  @Path("/description/id/{id}")
+  @ApiOperation(value = "Get description by id", notes = "Gets the description for the specified id.", response = Description.class)
+  @Produces({
+      MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML
+  })
+  public Description getDescription(
+    @ApiParam(value = "Description internal id, e.g. 2", required = true) @PathParam("id") Long id,
+    @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken) {
+    Logger.getLogger(ContentServiceRestImpl.class).info(
+        "RESTful call (Content): /description/id/" + id);
+
+    try {
+      authenticate(securityService, authToken, "retrieve the description",
+          UserRole.VIEWER);
+
+      ContentService contentService = new ContentServiceJpa();
+      Description description = contentService.getDescription(id);
+
+      if (description != null) {
+        contentService.getGraphResolutionHandler().resolve(description);
+      }
+      contentService.close();
+      return description;
+    } catch (Exception e) {
+      handleException(e, "trying to retrieve a description");
+      return null;
+    }
+  }
+
+  /*
+   * (non-Javadoc)
+   * 
+   * @see
+   * org.ihtsdo.otf.ts.rest.ContentServiceRest#getDescription(java.lang.String,
+   * java.lang.String, java.lang.String, java.lang.String)
+   */
+  @Override
+  @GET
+  @Path("/description/{terminology}/{version}/{terminologyId}")
+  @ApiOperation(value = "Get description by id, terminology, and version", notes = "Gets the description for the specified parameters. It assumes there is only one which may not be the case during dual independent review.", response = Description.class)
+  @Produces({
+      MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML
+  })
+  public Description getDescription(
+    @ApiParam(value = "Description terminology id, e.g. 100114019", required = true) @PathParam("terminologyId") String terminologyId,
+    @ApiParam(value = "Description terminology name, e.g. SNOMEDCT", required = true) @PathParam("terminology") String terminology,
+    @ApiParam(value = "Description terminology version, e.g. 20140731", required = true) @PathParam("version") String version,
+    @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken) {
+
+    Logger.getLogger(ContentServiceRestImpl.class).info(
+        "RESTful call (Content): /description/" + terminology + "/" + version
+            + "/" + terminologyId);
+
+    try {
+      authenticate(securityService, authToken, "retrieve the description",
+          UserRole.VIEWER);
+
+      ContentService contentService = new ContentServiceJpa();
+      Description description =
+          contentService.getDescription(terminologyId, terminology, version);
+
+      if (description != null) {
+        contentService.getGraphResolutionHandler().resolve(description);
+      }
+
+      contentService.close();
+      return description;
+    } catch (Exception e) {
+      handleException(e, "trying to retrieve a description");
+      return null;
+    }
+
+  }
+
+  /*
+   * (non-Javadoc)
+   * 
+   * @see
+   * org.ihtsdo.otf.ts.rest.ContentServiceRest#getRelationship(java.lang.Long,
+   * java.lang.String)
+   */
+  @Override
+  @GET
+  @Path("/relationship/id/{id}")
+  @ApiOperation(value = "Get relationship by id", notes = "Gets the relationship for the specified id.", response = Relationship.class)
+  @Produces({
+      MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML
+  })
+  public Relationship getRelationship(
+    @ApiParam(value = "Relationship internal id, e.g. 2", required = true) @PathParam("id") Long id,
+    @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken) {
+    Logger.getLogger(ContentServiceRestImpl.class).info(
+        "RESTful call (Content): /relationship/id/" + id);
+
+    try {
+      authenticate(securityService, authToken, "retrieve the relationship",
+          UserRole.VIEWER);
+
+      ContentService contentService = new ContentServiceJpa();
+      Relationship relationship = contentService.getRelationship(id);
+      if (relationship != null) {
+        contentService.getGraphResolutionHandler().resolve(relationship);
+      }
+      contentService.close();
+      return relationship;
+    } catch (Exception e) {
+      handleException(e, "trying to retrieve a relationship");
+      return null;
+    }
+  }
+
+  /*
+   * (non-Javadoc)
+   * 
+   * @see
+   * org.ihtsdo.otf.ts.rest.ContentServiceRest#getRelationship(java.lang.String,
+   * java.lang.String, java.lang.String, java.lang.String)
+   */
+  @Override
+  @GET
+  @Path("/relationship/{terminology}/{version}/{terminologyId}")
+  @ApiOperation(value = "Get relationship by id, terminology, and version", notes = "Gets the relationship for the specified parameters. It assumes there is only one which may not be the case during dual independent review.", response = Relationship.class)
+  @Produces({
+      MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML
+  })
+  public Relationship getRelationship(
+    @ApiParam(value = "Relationship terminology id, e.g. 100114019", required = true) @PathParam("terminologyId") String terminologyId,
+    @ApiParam(value = "Relationship terminology name, e.g. SNOMEDCT", required = true) @PathParam("terminology") String terminology,
+    @ApiParam(value = "Relationship terminology version, e.g. 20140731", required = true) @PathParam("version") String version,
+    @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken) {
+
+    Logger.getLogger(ContentServiceRestImpl.class).info(
+        "RESTful call (Content): /relationship/" + terminology + "/" + version
+            + "/" + terminologyId);
+
+    try {
+      authenticate(securityService, authToken, "retrieve the relationship",
+          UserRole.VIEWER);
+
+      ContentService contentService = new ContentServiceJpa();
+      Relationship relationship =
+          contentService.getRelationship(terminologyId, terminology, version);
+
+      if (relationship != null) {
+        contentService.getGraphResolutionHandler().resolve(relationship);
+      }
+
+      contentService.close();
+      return relationship;
+    } catch (Exception e) {
+      handleException(e, "trying to retrieve a relationship");
+      return null;
+    }
+
+  }
+
+  /*
+   * (non-Javadoc)
+   * 
+   * @see
+   * org.ihtsdo.otf.ts.rest.ContentServiceRest#getLanguageRefSetMember(java.
+   * lang.Long, java.lang.String)
+   */
+  @Override
+  @GET
+  @Path("/language/id/{id}")
+  @ApiOperation(value = "Get language refset member by id", notes = "Gets the language refset member for the specified id.", response = LanguageRefSetMember.class)
+  @Produces({
+      MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML
+  })
+  public LanguageRefSetMember getLanguageRefSetMember(
+    @ApiParam(value = "Language refset member internal id, e.g. 2", required = true) @PathParam("id") Long id,
+    @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken) {
+    Logger.getLogger(ContentServiceRestImpl.class).info(
+        "RESTful call (Content): /language/id/" + id);
+
+    try {
+      authenticate(securityService, authToken,
+          "retrieve the language refset member", UserRole.VIEWER);
+
+      ContentService contentService = new ContentServiceJpa();
+      LanguageRefSetMember languageRefSetMember =
+          contentService.getLanguageRefSetMember(id);
+
+      if (languageRefSetMember != null) {
+        contentService.getGraphResolutionHandler()
+            .resolve(languageRefSetMember);
+      }
+      contentService.close();
+      return languageRefSetMember;
+    } catch (Exception e) {
+      handleException(e, "trying to retrieve a language refset member");
+      return null;
+    }
+  }
+
+  /*
+   * (non-Javadoc)
+   * 
+   * @see
+   * org.ihtsdo.otf.ts.rest.ContentServiceRest#getLanguageRefSetMember(java.
+   * lang.String, java.lang.String, java.lang.String, java.lang.String)
+   */
+  @Override
+  @GET
+  @Path("/language/{terminology}/{version}/{terminologyId}")
+  @ApiOperation(value = "Get language refset member by id, terminology, and version", notes = "Gets the language refset member for the specified parameters. It assumes there is only one which may not be the case during dual independent review.", response = LanguageRefSetMember.class)
+  @Produces({
+      MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML
+  })
+  public LanguageRefSetMember getLanguageRefSetMember(
+    @ApiParam(value = "Language refset member terminology id, e.g. 100114019", required = true) @PathParam("terminologyId") String terminologyId,
+    @ApiParam(value = "Language refset member terminology name, e.g. SNOMEDCT", required = true) @PathParam("terminology") String terminology,
+    @ApiParam(value = "Language refset member terminology version, e.g. 20140731", required = true) @PathParam("version") String version,
+    @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken) {
+
+    Logger.getLogger(ContentServiceRestImpl.class).info(
+        "RESTful call (Content): /languag/" + terminology + "/" + version + "/"
+            + terminologyId);
+
+    try {
+      authenticate(securityService, authToken,
+          "retrieve the language refset member", UserRole.VIEWER);
+
+      ContentService contentService = new ContentServiceJpa();
+      LanguageRefSetMember languageRefSetMember =
+          contentService.getLanguageRefSetMember(terminologyId, terminology,
+              version);
+
+      if (languageRefSetMember != null) {
+        contentService.getGraphResolutionHandler()
+            .resolve(languageRefSetMember);
+      }
+
+      contentService.close();
+      return languageRefSetMember;
+    } catch (Exception e) {
+      handleException(e, "trying to retrieve a language refset member");
       return null;
     }
   }

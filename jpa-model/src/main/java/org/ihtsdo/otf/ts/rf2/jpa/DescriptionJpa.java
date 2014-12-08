@@ -283,7 +283,7 @@ public class DescriptionJpa extends AbstractComponent implements Description {
    */
   @XmlElement
   private String getConceptId() {
-    return concept != null ? concept.getObjectId() : "";
+    return concept != null ? concept.getTerminologyId() : "";
   }
 
   /**
@@ -518,11 +518,12 @@ public class DescriptionJpa extends AbstractComponent implements Description {
    */
   @Override
   public String toString() {
-    return super.toString() + ","
-        + +(getConcept() == null ? null : getConcept().getId()) + ","
-        + (getConcept() == null ? null : getConcept().getTerminologyId()) + ","
-        + getLanguageCode() + "," + getTypeId() + "," + getTerm() + ","
-        + getCaseSignificanceId();
+    return super.toString() + "," + getConcept().getTerminologyId();
+    // + +(getConcept() == null ? null : getConcept().getId()) + ","
+    // + (getConcept() == null ? null : getConcept().getTerminologyId());// +
+    // ","
+    // + getLanguageCode() + "," + getTypeId() + "," + getTerm() + ","
+    // + getCaseSignificanceId();
   }
 
   @Override

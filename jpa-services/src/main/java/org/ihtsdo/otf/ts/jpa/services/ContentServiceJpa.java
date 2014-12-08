@@ -41,6 +41,7 @@ import org.ihtsdo.otf.ts.helpers.PfsParameter;
 import org.ihtsdo.otf.ts.helpers.RefsetDescriptorRefSetMemberList;
 import org.ihtsdo.otf.ts.helpers.RefsetDescriptorRefSetMemberListJpa;
 import org.ihtsdo.otf.ts.helpers.ReleaseInfo;
+import org.ihtsdo.otf.ts.helpers.SearchCriteriaList;
 import org.ihtsdo.otf.ts.helpers.SearchResult;
 import org.ihtsdo.otf.ts.helpers.SearchResultJpa;
 import org.ihtsdo.otf.ts.helpers.SearchResultList;
@@ -2661,6 +2662,23 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
     manager = factory.createEntityManager();
 
     return results;
+  }
+
+  /*
+   * (non-Javadoc)
+   * 
+   * @see
+   * org.ihtsdo.otf.ts.services.ContentService#findConceptsForSearchCriteria
+   * (java.lang.String, java.lang.String, java.lang.String,
+   * org.ihtsdo.otf.ts.helpers.SearchCriteriaList,
+   * org.ihtsdo.otf.ts.helpers.PfsParameter)
+   */
+  @Override
+  public SearchResultList findConceptsForSearchCriteria(String terminology,
+    String version, String query, SearchCriteriaList criteria, PfsParameter pfs)
+    throws Exception {
+    throw new UnsupportedOperationException("TODO:");
+
   }
 
   /*

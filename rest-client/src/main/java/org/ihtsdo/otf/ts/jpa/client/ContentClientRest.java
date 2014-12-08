@@ -14,7 +14,13 @@ import org.ihtsdo.otf.ts.helpers.SearchResultList;
 import org.ihtsdo.otf.ts.helpers.SearchResultListJpa;
 import org.ihtsdo.otf.ts.rest.ContentServiceRest;
 import org.ihtsdo.otf.ts.rf2.Concept;
+import org.ihtsdo.otf.ts.rf2.Description;
+import org.ihtsdo.otf.ts.rf2.LanguageRefSetMember;
+import org.ihtsdo.otf.ts.rf2.Relationship;
 import org.ihtsdo.otf.ts.rf2.jpa.ConceptJpa;
+import org.ihtsdo.otf.ts.rf2.jpa.DescriptionJpa;
+import org.ihtsdo.otf.ts.rf2.jpa.LanguageRefSetMemberJpa;
+import org.ihtsdo.otf.ts.rf2.jpa.RelationshipJpa;
 
 import com.sun.jersey.api.client.Client;
 import com.sun.jersey.api.client.ClientResponse;
@@ -69,6 +75,13 @@ public class ContentClientRest implements ContentServiceRest {
     return c;
   }
 
+  /*
+   * (non-Javadoc)
+   * 
+   * @see
+   * org.ihtsdo.otf.ts.rest.ContentServiceRest#getSingleConcept(java.lang.String
+   * , java.lang.String, java.lang.String, java.lang.String)
+   */
   @Override
   public Concept getSingleConcept(String terminologyId, String terminology,
     String version, String authToken) throws Exception {
@@ -161,4 +174,196 @@ public class ContentClientRest implements ContentServiceRest {
     return list;
   }
 
+  /*
+   * (non-Javadoc)
+   * 
+   * @see
+   * org.ihtsdo.otf.ts.rest.ContentServiceRest#getDescription(java.lang.Long,
+   * java.lang.String)
+   */
+  @Override
+  public Description getDescription(Long id, String authToken) throws Exception {
+    Client client = Client.create();
+    WebResource resource =
+        client.resource(config.getProperty("base.url")
+            + "/content/description/id/" + id);
+    ClientResponse response =
+        resource.accept(MediaType.APPLICATION_XML)
+            .header("Authorization", authToken).get(ClientResponse.class);
+
+    String resultString = response.getEntity(String.class);
+    if (response.getClientResponseStatus().getFamily() == Family.SUCCESSFUL) {
+      Logger.getLogger(this.getClass()).debug(resultString);
+    } else {
+      throw new Exception(resultString);
+    }
+
+    // converting to object
+    DescriptionJpa description =
+        (DescriptionJpa) ConfigUtility.getGraphForString(resultString,
+            DescriptionJpa.class);
+    return description;
+  }
+
+  /*
+   * (non-Javadoc)
+   * 
+   * @see
+   * org.ihtsdo.otf.ts.rest.ContentServiceRest#getDescription(java.lang.String,
+   * java.lang.String, java.lang.String, java.lang.String)
+   */
+  @Override
+  public Description getDescription(String terminologyId, String terminology,
+    String version, String authToken) throws Exception {
+    Client client = Client.create();
+    WebResource resource =
+        client.resource(config.getProperty("base.url")
+            + "/content/description/" + terminology + "/" + version + "/"
+            + terminologyId);
+    ClientResponse response =
+        resource.accept(MediaType.APPLICATION_XML)
+            .header("Authorization", authToken).get(ClientResponse.class);
+
+    String resultString = response.getEntity(String.class);
+    if (response.getClientResponseStatus().getFamily() == Family.SUCCESSFUL) {
+      Logger.getLogger(this.getClass()).debug(resultString);
+    } else {
+      throw new Exception(resultString);
+    }
+
+    // converting to object
+    DescriptionJpa description =
+        (DescriptionJpa) ConfigUtility.getGraphForString(resultString,
+            DescriptionJpa.class);
+    return description;
+  }
+
+  /*
+   * (non-Javadoc)
+   * 
+   * @see
+   * org.ihtsdo.otf.ts.rest.ContentServiceRest#getRelationship(java.lang.Long,
+   * java.lang.String)
+   */
+  @Override
+  public Relationship getRelationship(Long id, String authToken)
+    throws Exception {
+    Client client = Client.create();
+    WebResource resource =
+        client.resource(config.getProperty("base.url")
+            + "/content/relationship/id/" + id);
+    ClientResponse response =
+        resource.accept(MediaType.APPLICATION_XML)
+            .header("Authorization", authToken).get(ClientResponse.class);
+
+    String resultString = response.getEntity(String.class);
+    if (response.getClientResponseStatus().getFamily() == Family.SUCCESSFUL) {
+      Logger.getLogger(this.getClass()).info(resultString);
+    } else {
+      throw new Exception(resultString);
+    }
+
+    // converting to object
+    RelationshipJpa relationship =
+        (RelationshipJpa) ConfigUtility.getGraphForString(resultString,
+            RelationshipJpa.class);
+    return relationship;
+  }
+
+  /*
+   * (non-Javadoc)
+   * 
+   * @see
+   * org.ihtsdo.otf.ts.rest.ContentServiceRest#getRelationship(java.lang.String,
+   * java.lang.String, java.lang.String, java.lang.String)
+   */
+  @Override
+  public Relationship getRelationship(String terminologyId, String terminology,
+    String version, String authToken) throws Exception {
+    Client client = Client.create();
+    WebResource resource =
+        client.resource(config.getProperty("base.url")
+            + "/content/relationship/" + terminology + "/" + version + "/"
+            + terminologyId);
+    ClientResponse response =
+        resource.accept(MediaType.APPLICATION_XML)
+            .header("Authorization", authToken).get(ClientResponse.class);
+
+    String resultString = response.getEntity(String.class);
+    if (response.getClientResponseStatus().getFamily() == Family.SUCCESSFUL) {
+      Logger.getLogger(this.getClass()).info(resultString);
+    } else {
+      throw new Exception(resultString);
+    }
+
+    // converting to object
+    RelationshipJpa relationship =
+        (RelationshipJpa) ConfigUtility.getGraphForString(resultString,
+            RelationshipJpa.class);
+    return relationship;
+  }
+
+  /*
+   * (non-Javadoc)
+   * 
+   * @see
+   * org.ihtsdo.otf.ts.rest.ContentServiceRest#getLanguageRefSetMember(java.
+   * lang.Long, java.lang.String)
+   */
+  @Override
+  public LanguageRefSetMember getLanguageRefSetMember(Long id, String authToken)
+    throws Exception {
+    Client client = Client.create();
+    WebResource resource =
+        client.resource(config.getProperty("base.url")
+            + "/content/language/id/" + id);
+    ClientResponse response =
+        resource.accept(MediaType.APPLICATION_XML)
+            .header("Authorization", authToken).get(ClientResponse.class);
+
+    String resultString = response.getEntity(String.class);
+    if (response.getClientResponseStatus().getFamily() == Family.SUCCESSFUL) {
+      Logger.getLogger(this.getClass()).debug(resultString);
+    } else {
+      throw new Exception(resultString);
+    }
+
+    // converting to object
+    LanguageRefSetMemberJpa languageRefSetMember =
+        (LanguageRefSetMemberJpa) ConfigUtility.getGraphForString(resultString,
+            LanguageRefSetMemberJpa.class);
+    return languageRefSetMember;
+  }
+
+  /*
+   * (non-Javadoc)
+   * 
+   * @see
+   * org.ihtsdo.otf.ts.rest.ContentServiceRest#getLanguageRefSetMember(java.
+   * lang.String, java.lang.String, java.lang.String, java.lang.String)
+   */
+  @Override
+  public LanguageRefSetMember getLanguageRefSetMember(String terminologyId,
+    String terminology, String version, String authToken) throws Exception {
+    Client client = Client.create();
+    WebResource resource =
+        client.resource(config.getProperty("base.url") + "/content/language/"
+            + terminology + "/" + version + "/" + terminologyId);
+    ClientResponse response =
+        resource.accept(MediaType.APPLICATION_XML)
+            .header("Authorization", authToken).get(ClientResponse.class);
+
+    String resultString = response.getEntity(String.class);
+    if (response.getClientResponseStatus().getFamily() == Family.SUCCESSFUL) {
+      Logger.getLogger(this.getClass()).debug(resultString);
+    } else {
+      throw new Exception(resultString);
+    }
+
+    // converting to object
+    LanguageRefSetMemberJpa languageRefSetMember =
+        (LanguageRefSetMemberJpa) ConfigUtility.getGraphForString(resultString,
+            LanguageRefSetMemberJpa.class);
+    return languageRefSetMember;
+  }
 }

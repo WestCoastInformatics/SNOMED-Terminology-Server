@@ -8,6 +8,7 @@ import org.ihtsdo.otf.ts.helpers.LanguageRefSetMemberList;
 import org.ihtsdo.otf.ts.helpers.ModuleDependencyRefSetMemberList;
 import org.ihtsdo.otf.ts.helpers.PfsParameter;
 import org.ihtsdo.otf.ts.helpers.RefsetDescriptorRefSetMemberList;
+import org.ihtsdo.otf.ts.helpers.SearchCriteriaList;
 import org.ihtsdo.otf.ts.helpers.SearchResultList;
 import org.ihtsdo.otf.ts.helpers.SimpleMapRefSetMemberList;
 import org.ihtsdo.otf.ts.helpers.SimpleRefSetMemberList;
@@ -810,6 +811,20 @@ public interface ContentService extends RootService {
   public SearchResultList findConceptsForQuery(String terminology,
     String version, String query, PfsParameter pfs) throws Exception;
 
+  /**
+   * Find concepts for search criteria.
+   *
+   * @param terminology the terminology
+   * @param version the version
+   * @param query the query
+   * @param criteria the criteria
+   * @param pfs the pfs
+   * @return the search result list
+   * @throws Exception the exception
+   */
+  public SearchResultList findConceptsForSearchCriteria(String terminology,
+    String version, String query, SearchCriteriaList criteria, PfsParameter pfs) throws Exception;
+  
   /**
    * Finds the descendants of a concept, subject to max results limitation in
    * PFS parameters object.
