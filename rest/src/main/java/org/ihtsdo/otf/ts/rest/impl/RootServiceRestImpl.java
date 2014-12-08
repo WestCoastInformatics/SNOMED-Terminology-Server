@@ -63,10 +63,22 @@ public class RootServiceRestImpl {
 
   }
   
-  public static void authenticate(SecurityService securityService, String authToken, String perform) throws Exception {
+  /**
+   * Authenticate.
+   *
+   * @param securityService the security service
+   * @param authToken the auth token
+   * @param perform the perform
+   * @throws Exception the exception
+   */
+  public static void authenticate(SecurityService securityService, String authToken, String perform, UserRole authRole) throws Exception {
     // authorize call
     UserRole role = securityService.getApplicationRoleForToken(authToken);
-    if (!role.hasPrivilegesOf(UserRole.VIEWER))
+    UserRole cmpRole = authRole;
+    if (cmpRole == null) {
+      cmpRole = UserRole.VIEWER;
+    }
+    if (!role.hasPrivilegesOf(cmpRole))
       throw new WebApplicationException(Response.status(401)
           .entity("User does not have permissions to " + perform + ".")
           .build());

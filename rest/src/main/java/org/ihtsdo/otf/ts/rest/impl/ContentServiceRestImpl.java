@@ -6,9 +6,7 @@ import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
-import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
 
 import org.apache.log4j.Logger;
 import org.ihtsdo.otf.ts.helpers.ConceptList;
@@ -17,13 +15,11 @@ import org.ihtsdo.otf.ts.helpers.PfsParameterJpa;
 import org.ihtsdo.otf.ts.helpers.SearchResultList;
 import org.ihtsdo.otf.ts.helpers.UserRole;
 import org.ihtsdo.otf.ts.jpa.services.ContentServiceJpa;
-import org.ihtsdo.otf.ts.jpa.services.MetadataServiceJpa;
 import org.ihtsdo.otf.ts.jpa.services.SecurityServiceJpa;
 import org.ihtsdo.otf.ts.jpa.services.helper.TerminologyUtility;
 import org.ihtsdo.otf.ts.rest.ContentServiceRest;
 import org.ihtsdo.otf.ts.rf2.Concept;
 import org.ihtsdo.otf.ts.services.ContentService;
-import org.ihtsdo.otf.ts.services.MetadataService;
 import org.ihtsdo.otf.ts.services.SecurityService;
 
 import com.wordnik.swagger.annotations.Api;
@@ -78,12 +74,7 @@ public class ContentServiceRestImpl extends RootServiceRestImpl implements
             + terminologyId);
 
     try {
-      // authorize call
-      UserRole role = securityService.getApplicationRoleForToken(authToken);
-      if (!role.hasPrivilegesOf(UserRole.VIEWER))
-        throw new WebApplicationException(Response.status(401)
-            .entity("User does not have permissions to retrieve the concept.")
-            .build());
+      authenticate(securityService, authToken, "retrieve the concept", UserRole.VIEWER);
 
       ContentService contentService = new ContentServiceJpa();
       ConceptList cl =
@@ -132,27 +123,17 @@ public class ContentServiceRestImpl extends RootServiceRestImpl implements
             + terminologyId);
 
     try {
-      // authorize call
-      UserRole role = securityService.getApplicationRoleForToken(authToken);
-      if (!role.hasPrivilegesOf(UserRole.VIEWER))
-        throw new WebApplicationException(Response.status(401)
-            .entity("User does not have permissions to retrieve the concept.")
-            .build());
+      authenticate(securityService, authToken, "retrieve the concept", UserRole.VIEWER);
 
       ContentService contentService = new ContentServiceJpa();
       Concept concept =
           contentService.getSingleConcept(terminologyId, terminology, version);
 
       if (concept != null) {
-        // TODO: cache this instead of recomputing it each time, possibly even
-        // internally
-        MetadataService metadataService = new MetadataServiceJpa();
         contentService.getGraphResolutionHandler().resolve(
             concept,
-            metadataService.getHierarchicalRelationshipTypes(
-                concept.getTerminology(), concept.getTerminologyVersion())
-                .keySet());
-        metadataService.close();
+            TerminologyUtility.getHierarchcialIsaRels(concept.getTerminology(),
+                concept.getTerminologyVersion()));
       }
 
       contentService.close();
@@ -183,26 +164,16 @@ public class ContentServiceRestImpl extends RootServiceRestImpl implements
         "RESTful call (Content): /concept/id/" + id);
 
     try {
-      // authorize call
-      UserRole role = securityService.getApplicationRoleForToken(authToken);
-      if (!role.hasPrivilegesOf(UserRole.VIEWER))
-        throw new WebApplicationException(Response.status(401)
-            .entity("User does not have permissions to retrieve the concept.")
-            .build());
+      authenticate(securityService, authToken, "retrieve the concept", UserRole.VIEWER);
 
       ContentService contentService = new ContentServiceJpa();
       Concept concept = contentService.getConcept(id);
 
       if (concept != null) {
-        // TODO: cache this instead of recomputing it each time, possibly even
-        // internally
-        MetadataService metadataService = new MetadataServiceJpa();
         contentService.getGraphResolutionHandler().resolve(
             concept,
-            metadataService.getHierarchicalRelationshipTypes(
-                concept.getTerminology(), concept.getTerminologyVersion())
-                .keySet());
-        metadataService.close();
+            TerminologyUtility.getHierarchcialIsaRels(concept.getTerminology(),
+                concept.getTerminologyVersion()));
       }
       contentService.close();
       return concept;
@@ -237,15 +208,8 @@ public class ContentServiceRestImpl extends RootServiceRestImpl implements
         "RESTful call (Content): /concept/" + terminology + "/" + version
             + "/query/" + query);
     try {
-      // authorize call
-      UserRole role = securityService.getApplicationRoleForToken(authToken);
-      if (!role.hasPrivilegesOf(UserRole.VIEWER))
-        throw new WebApplicationException(
-            Response
-                .status(401)
-                .entity(
-                    "User does not have permissions to find the concepts by query.")
-                .build());
+      authenticate(securityService, authToken, "find concepts by query", UserRole.VIEWER);
+
 
       ContentService contentService = new ContentServiceJpa();
       SearchResultList sr =

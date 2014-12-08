@@ -39,7 +39,6 @@ import org.ihtsdo.otf.ts.rf2.Relationship;
 import org.ihtsdo.otf.ts.rf2.SimpleMapRefSetMember;
 import org.ihtsdo.otf.ts.rf2.SimpleRefSetMember;
 
-// TODO: Auto-generated Javadoc
 /**
  * Jpa enabled implementation of {@link Concept}.
  */
@@ -243,8 +242,10 @@ public class ConceptJpa extends AbstractComponent implements Concept {
   public void setDefinitionStatusId(String definitionStatusId) {
     this.definitionStatusId = definitionStatusId;
   }
-  
-  /* (non-Javadoc)
+
+  /*
+   * (non-Javadoc)
+   * 
    * @see org.ihtsdo.otf.ts.rf2.Concept#isAnonymous()
    */
   @Override
@@ -252,13 +253,16 @@ public class ConceptJpa extends AbstractComponent implements Concept {
     return anonymous;
   }
 
-  /* (non-Javadoc)
+  /*
+   * (non-Javadoc)
+   * 
    * @see org.ihtsdo.otf.ts.rf2.Concept#setAnonymous(boolean)
    */
   @Override
   public void setAnonymous(boolean anonymous) {
     this.anonymous = anonymous;
   }
+
   /*
    * (non-Javadoc)
    * 
@@ -301,8 +305,10 @@ public class ConceptJpa extends AbstractComponent implements Concept {
   @Override
   public void setDescriptions(Set<Description> descriptions) {
     this.descriptions = descriptions;
-    for (Description description : descriptions) {
-      description.setConcept(this);
+    if (descriptions != null) {
+      for (Description description : descriptions) {
+        description.setConcept(this);
+      }
     }
   }
 
@@ -428,8 +434,10 @@ public class ConceptJpa extends AbstractComponent implements Concept {
   @Override
   public void setRelationships(Set<Relationship> relationships) {
     this.relationships = relationships;
-    for (Relationship relationship : relationships) {
-      relationship.setSourceConcept(this);
+    if (relationships != null) {
+      for (Relationship relationship : relationships) {
+        relationship.setSourceConcept(this);
+      }
     }
   }
 
@@ -455,8 +463,10 @@ public class ConceptJpa extends AbstractComponent implements Concept {
   @Override
   public void setSimpleRefSetMembers(Set<SimpleRefSetMember> simpleRefSetMembers) {
     this.simpleRefSetMembers = simpleRefSetMembers;
-    for (SimpleRefSetMember member : simpleRefSetMembers) {
-      member.setConcept(this);
+    if (simpleRefSetMembers != null) {
+      for (SimpleRefSetMember member : simpleRefSetMembers) {
+        member.setConcept(this);
+      }
     }
   }
 
@@ -514,8 +524,10 @@ public class ConceptJpa extends AbstractComponent implements Concept {
   public void setSimpleMapRefSetMembers(
     Set<SimpleMapRefSetMember> simpleMapRefSetMembers) {
     this.simpleMapRefSetMembers = simpleMapRefSetMembers;
-    for (SimpleMapRefSetMember member : simpleMapRefSetMembers) {
-      member.setConcept(this);
+    if (simpleMapRefSetMembers != null) {
+      for (SimpleMapRefSetMember member : simpleMapRefSetMembers) {
+        member.setConcept(this);
+      }
     }
   }
 
@@ -636,8 +648,10 @@ public class ConceptJpa extends AbstractComponent implements Concept {
   public void setAttributeValueRefSetMembers(
     Set<AttributeValueConceptRefSetMember> attributeValueRefSetMembers) {
     this.attributeValueRefSetMembers = attributeValueRefSetMembers;
-    for (AttributeValueConceptRefSetMember member : attributeValueRefSetMembers) {
-      member.setConcept(this);
+    if (attributeValueRefSetMembers != null) {
+      for (AttributeValueConceptRefSetMember member : attributeValueRefSetMembers) {
+        member.setConcept(this);
+      }
     }
   }
 
@@ -699,8 +713,10 @@ public class ConceptJpa extends AbstractComponent implements Concept {
   public void setAssociationReferenceRefSetMembers(
     Set<AssociationReferenceConceptRefSetMember> associationReferenceRefSetMembers) {
     this.associationReferenceRefSetMembers = associationReferenceRefSetMembers;
-    for (AssociationReferenceConceptRefSetMember member : associationReferenceRefSetMembers) {
-      member.setConcept(this);
+    if (associationReferenceRefSetMembers != null) {
+      for (AssociationReferenceConceptRefSetMember member : associationReferenceRefSetMembers) {
+        member.setConcept(this);
+      }
     }
   }
 
@@ -808,7 +824,9 @@ public class ConceptJpa extends AbstractComponent implements Concept {
         + getDefaultPreferredName();
   }
 
-  /* (non-Javadoc)
+  /*
+   * (non-Javadoc)
+   * 
    * @see org.ihtsdo.otf.ts.rf2.jpa.AbstractComponent#equals(java.lang.Object)
    */
   @Override
@@ -828,7 +846,9 @@ public class ConceptJpa extends AbstractComponent implements Concept {
     return true;
   }
 
-  /* (non-Javadoc)
+  /*
+   * (non-Javadoc)
+   * 
    * @see org.ihtsdo.otf.ts.rf2.jpa.AbstractComponent#hashCode()
    */
   @Override

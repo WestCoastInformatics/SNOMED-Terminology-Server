@@ -243,7 +243,12 @@ public class RelationshipJpa extends AbstractComponent implements Relationship {
    */
   @SuppressWarnings("unused")
   private void setDestinationConceptId(String destinationConceptId) {
-    // do nothing - here for JAXB
+    if (destinationConcept == null) {
+      destinationConcept = new ConceptJpa();
+    }
+    destinationConcept.setTerminologyId(destinationConceptId);
+    destinationConcept.setTerminology(getTerminology());
+    destinationConcept.setTerminologyVersion(getTerminologyVersion());
   }
 
   /**

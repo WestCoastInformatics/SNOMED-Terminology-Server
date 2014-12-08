@@ -700,7 +700,7 @@ public class HistoryClientRest implements HistoryServiceRest {
         resource.accept(MediaType.APPLICATION_XML)
             .header("Authorization", authToken)
             .header("Content-type", MediaType.APPLICATION_XML)
-            .post(ClientResponse.class, riString);
+            .put(ClientResponse.class, riString);
 
     String resultString = response.getEntity(String.class);
     if (response.getClientResponseStatus().getFamily() == Family.SUCCESSFUL) {
@@ -765,7 +765,7 @@ public class HistoryClientRest implements HistoryServiceRest {
 
     ClientResponse response =
         resource.accept(MediaType.APPLICATION_XML)
-            .header("Authorization", authToken).get(ClientResponse.class);
+            .header("Authorization", authToken).delete(ClientResponse.class);
 
     String resultString = response.getEntity(String.class);
     if (response.getClientResponseStatus().getFamily() == Family.SUCCESSFUL) {
