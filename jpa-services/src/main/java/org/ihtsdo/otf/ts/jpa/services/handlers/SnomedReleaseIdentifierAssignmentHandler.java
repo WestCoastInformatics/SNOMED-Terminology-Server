@@ -100,7 +100,7 @@ public class SnomedReleaseIdentifierAssignmentHandler extends
       long ct = incrementConceptSequence();
       String num = ct + namespaceId + (isExtension ? "1" : "0") + "1";
       String verhoeff = Verhoeff.generateVerhoeff(num);
-      concept.setTerminology(num + verhoeff);
+      return num + verhoeff;
     }
     return concept.getTerminologyId();
   }
@@ -119,7 +119,7 @@ public class SnomedReleaseIdentifierAssignmentHandler extends
       long ct = incrementDescriptionSequence();
       String num = ct + namespaceId + (isExtension ? "1" : "0") + "1";
       String verhoeff = Verhoeff.generateVerhoeff(num);
-      description.setTerminology(num + verhoeff);
+      return num + verhoeff;
     }
     return description.getTerminologyId();
   }
@@ -138,7 +138,7 @@ public class SnomedReleaseIdentifierAssignmentHandler extends
       long ct = incrementRelationshipSequence();
       String num = ct + namespaceId + (isExtension ? "1" : "0") + "1";
       String verhoeff = Verhoeff.generateVerhoeff(num);
-      relationship.setTerminology(num + verhoeff);
+      return num + verhoeff;
     }
     return relationship.getTerminologyId();
   }

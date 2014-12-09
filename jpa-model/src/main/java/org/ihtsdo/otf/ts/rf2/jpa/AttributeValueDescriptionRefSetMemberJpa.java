@@ -70,30 +70,54 @@ public class AttributeValueDescriptionRefSetMemberJpa extends
 
   }
 
+
   /**
    * Returns the description id. Used for XML/JSON serialization.
    * 
    * @return the description id
    */
   @XmlElement
-  private String getDescriptionId() {
-    return description != null ? description.getTerminologyId() : null;
+  private Long getDescriptionId() {
+    return description != null ? description.getId() : null;
   }
-  
+
   /**
    * Sets the description id.
    *
    * @param descriptionId the description id
    */
   @SuppressWarnings("unused")
-  private void setDescriptionId(String descriptionId) {
+  private void setDescriptionId(Long descriptionId) {
+    if (description == null) {
+      description = new DescriptionJpa();
+    }
+    description.setId(descriptionId);
+  }
+
+  /**
+   * Returns the description terminology id. Used for XML/JSON serialization.
+   * 
+   * @return the description terminology id
+   */
+  @XmlElement
+  private String getDescriptionTerminologyId() {
+    return description != null ? description.getTerminologyId() : "";
+  }
+
+  /**
+   * Sets the description terminology id.
+   *
+   * @param descriptionId the description terminology id
+   */
+  @SuppressWarnings("unused")
+  private void setDescriptionTerminologyId(String descriptionId) {
     if (description == null) {
       description = new DescriptionJpa();
     }
     description.setTerminologyId(descriptionId);
     description.setTerminology(getTerminology());
     description.setTerminologyVersion(getTerminologyVersion());
-  }
+  }  
 
   /*
    * (non-Javadoc)
@@ -157,6 +181,15 @@ public class AttributeValueDescriptionRefSetMemberJpa extends
     } else if (!description.equals(other.description))
       return false;
     return true;
+  }
+
+  /* (non-Javadoc)
+   * @see org.ihtsdo.otf.ts.rf2.jpa.AbstractComponent#toString()
+   */
+  @Override
+  public String toString() {
+    return super.toString() + ", " + getDescriptionId() + ", "
+        + getDescriptionTerminologyId() + ", " + getValueId();
   }
 
 }

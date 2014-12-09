@@ -81,6 +81,7 @@
                 </goals>
                 <configuration>
                   <releaseVersion>${release.version}</releaseVersion>
+                  <terminology>${terminology}</terminology>
                   <validate>${validate}</validate>
                   <workflowStatusValues>${workflow.status.values}</workflowStatusValues>
                   <saveIdentifiers>${save.identifiers}</saveIdentifiers>

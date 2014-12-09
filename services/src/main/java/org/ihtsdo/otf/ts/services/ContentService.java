@@ -321,7 +321,7 @@ public interface ContentService extends RootService {
    * @throws Exception if anything goes wrong
    */
   public AttributeValueRefSetMember<? extends Component> getAttributeValueRefSetMember(
-      String terminologyId, String terminology, String version) throws Exception;
+    String terminologyId, String terminology, String version) throws Exception;
 
   /**
    * Returns the attribute value ref set members for the specified refset id.
@@ -334,7 +334,8 @@ public interface ContentService extends RootService {
    * @throws Exception the exception
    */
   public AttributeValueRefSetMemberList findAttributeValueRefSetMembers(
-      String refsetId, String terminology, String version, PfsParameter pfs) throws Exception;
+    String refsetId, String terminology, String version, PfsParameter pfs)
+    throws Exception;
 
   /**
    * Adds the attribute value refset member.
@@ -384,10 +385,11 @@ public interface ContentService extends RootService {
    * @throws Exception if anything goes wrong
    */
   public AssociationReferenceRefSetMember<? extends Component> getAssociationReferenceRefSetMember(
-      String terminologyId, String terminology, String version) throws Exception;
+    String terminologyId, String terminology, String version) throws Exception;
 
   /**
-   * Returns the association reference ref set members for the specified refset id.
+   * Returns the association reference ref set members for the specified refset
+   * id.
    *
    * @param refsetId the refset id
    * @param terminology the terminology
@@ -397,7 +399,8 @@ public interface ContentService extends RootService {
    * @throws Exception the exception
    */
   public AssociationReferenceRefSetMemberList findAssociationReferenceRefSetMembers(
-      String refsetId, String terminology, String version, PfsParameter pfs) throws Exception;
+    String refsetId, String terminology, String version, PfsParameter pfs)
+    throws Exception;
 
   /**
    * Adds the association reference refset member.
@@ -460,8 +463,9 @@ public interface ContentService extends RootService {
    * @return the complex map ref set members
    * @throws Exception the exception
    */
-  public ComplexMapRefSetMemberList findComplexMapRefSetMembers(String refsetId,
-    String terminology, String version, PfsParameter pfs) throws Exception;
+  public ComplexMapRefSetMemberList findComplexMapRefSetMembers(
+    String refsetId, String terminology, String version, PfsParameter pfs)
+    throws Exception;
 
   /**
    * Adds the complex map refset member.
@@ -823,8 +827,9 @@ public interface ContentService extends RootService {
    * @throws Exception the exception
    */
   public SearchResultList findConceptsForSearchCriteria(String terminology,
-    String version, String query, SearchCriteriaList criteria, PfsParameter pfs) throws Exception;
-  
+    String version, String query, SearchCriteriaList criteria, PfsParameter pfs)
+    throws Exception;
+
   /**
    * Finds the descendants of a concept, subject to max results limitation in
    * PFS parameters object.
@@ -947,4 +952,18 @@ public interface ContentService extends RootService {
    */
   public void computePreferredName(Concept concept) throws Exception;
 
+  /**
+   * Indicates whether or not to assign last modified when changing terminology
+   * components. Supports a loader that wants to disable this feature.
+   *
+   * @return <code>true</code> if so, <code>false</code> otherwise
+   */
+  public boolean isLastModifiedFlag();
+
+  /**
+   * Sets the last modified flag.
+   *
+   * @param lastModifiedFlag the last modified flag
+   */
+  public void setLastModifiedFlag(boolean lastModifiedFlag);
 }

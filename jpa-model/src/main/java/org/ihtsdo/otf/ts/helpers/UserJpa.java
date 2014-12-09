@@ -109,7 +109,7 @@ public class UserJpa implements User {
   @XmlID
   @Override
   public String getObjectId() {
-    return id.toString();
+    return (id == null ? "" : id.toString());
   }
 
   /*

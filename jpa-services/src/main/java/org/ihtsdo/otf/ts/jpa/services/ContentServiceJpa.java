@@ -222,6 +222,9 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
     }
   }
 
+  /** The last modified flag. */
+  private boolean lastModifiedFlag = false;
+
   /*
    * (non-Javadoc)
    * 
@@ -434,8 +437,37 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
     Logger.getLogger(ContentServiceJpa.class).debug(
         "Content Service - add concept " + concept.getTerminologyId());
     // Assign id
-    concept.setTerminologyId(idHandlerMap.get(concept.getTerminology())
-        .getTerminologyId(concept));
+    IdentifierAssignmentHandler idHandler =
+        idHandlerMap.get(concept.getTerminology());
+    String id = idHandler.getTerminologyId(concept);
+    concept.setTerminologyId(id);
+    // Process Cascade.ALL data structures
+    Date date = new Date();
+    for (Description description : concept.getDescriptions()) {
+      id = idHandler.getTerminologyId(description);
+      description.setTerminologyId(id);
+      if (lastModifiedFlag) {
+        description.setLastModified(date);
+        description.setLastModifiedBy(concept.getLastModifiedBy());
+      }
+      for (LanguageRefSetMember member : description.getLanguageRefSetMembers()) {
+        id = idHandler.getTerminologyId(member);
+        member.setTerminologyId(id);
+        if (lastModifiedFlag) {
+          member.setLastModifiedBy(concept.getLastModifiedBy());
+          member.setLastModified(date);
+        }
+      }
+    }
+    for (Relationship relationship : concept.getRelationships()) {
+      id = idHandler.getTerminologyId(relationship);
+      relationship.setTerminologyId(idHandler.getTerminologyId(relationship));
+      if (lastModifiedFlag) {
+        relationship.setLastModifiedBy(concept.getLastModifiedBy());
+        relationship.setLastModified(date);
+      }
+
+    }
 
     // Add component
     Concept newConcept = addComponent(concept);
@@ -497,28 +529,9 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
   public void removeConcept(Long id) throws Exception {
     Logger.getLogger(ContentServiceJpa.class).debug(
         "Content Service - remove concept " + id);
-    tx = manager.getTransaction();
-    // retrieve this concept
-    Concept concept = manager.find(ConceptJpa.class, id);
-    // Set modification date
-    concept.setLastModified(new Date());
-    if (getTransactionPerOperation()) {
-      // remove specialist
-      tx.begin();
-      if (manager.contains(concept)) {
-        manager.remove(concept);
-      } else {
-        manager.remove(manager.merge(concept));
-      }
-      tx.commit();
+    // Remove the component
+    Concept concept = removeComponent(id, ConceptJpa.class);
 
-    } else {
-      if (manager.contains(concept)) {
-        manager.remove(concept);
-      } else {
-        manager.remove(manager.merge(concept));
-      }
-    }
     if (listenersEnabled) {
       for (WorkflowListener listener : listeners) {
         listener.conceptRemoved(concept);
@@ -588,8 +601,19 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
     Logger.getLogger(ContentServiceJpa.class).debug(
         "Content Service - add description " + description.getTerminologyId());
     // Assign id
-    description.setTerminologyId(idHandlerMap.get(description.getTerminology())
-        .getTerminologyId(description));
+    IdentifierAssignmentHandler idHandler =
+        idHandlerMap.get(description.getTerminology());
+    description.setTerminologyId(idHandler.getTerminologyId(description));
+
+    // Process Cascade.ALL data structures
+    Date date = new Date();
+    for (LanguageRefSetMember member : description.getLanguageRefSetMembers()) {
+      member.setTerminologyId(idHandler.getTerminologyId(member));
+      if (lastModifiedFlag) {
+        member.setLastModifiedBy(description.getLastModifiedBy());
+        member.setLastModified(date);
+      }
+    }
 
     // Add component
     Description newDescription = addComponent(description);
@@ -649,28 +673,9 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
   public void removeDescription(Long id) throws Exception {
     Logger.getLogger(ContentServiceJpa.class).debug(
         "Content Service - remove description " + id);
-    tx = manager.getTransaction();
-    // retrieve this description
-    Description description = manager.find(DescriptionJpa.class, id);
-    // Set modification date
-    description.setLastModified(new Date());
+    // Remove the component
+    Description description = removeComponent(id, DescriptionJpa.class);
 
-    if (getTransactionPerOperation()) {
-      // remove description
-      tx.begin();
-      if (manager.contains(description)) {
-        manager.remove(description);
-      } else {
-        manager.remove(manager.merge(description));
-      }
-      tx.commit();
-    } else {
-      if (manager.contains(description)) {
-        manager.remove(description);
-      } else {
-        manager.remove(manager.merge(description));
-      }
-    }
     if (listenersEnabled) {
       for (WorkflowListener listener : listeners) {
         listener.descriptionRemoved(description);
@@ -804,27 +809,9 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
   public void removeRelationship(Long id) throws Exception {
     Logger.getLogger(ContentServiceJpa.class).debug(
         "Content Service - remove relationship " + id);
-    tx = manager.getTransaction();
-    // retrieve this relationship
-    Relationship relationship = manager.find(RelationshipJpa.class, id);
-    // Set modification date
-    relationship.setLastModified(new Date());
-    if (getTransactionPerOperation()) {
-      // remove relationship
-      tx.begin();
-      if (manager.contains(relationship)) {
-        manager.remove(relationship);
-      } else {
-        manager.remove(manager.merge(relationship));
-      }
-      tx.commit();
-    } else {
-      if (manager.contains(relationship)) {
-        manager.remove(relationship);
-      } else {
-        manager.remove(manager.merge(relationship));
-      }
-    }
+    // Remove the component
+    Relationship relationship = removeComponent(id, RelationshipJpa.class);
+
     if (listenersEnabled) {
       for (WorkflowListener listener : listeners) {
         listener.relationshipRemoved(relationship);
@@ -899,29 +886,9 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
   public void removeTransitiveRelationship(Long id) throws Exception {
     Logger.getLogger(ContentServiceJpa.class).debug(
         "Content Service - remove transitive relationship " + id);
+    // Remove the component
+    removeComponent(id, TransitiveRelationshipJpa.class);
 
-    tx = manager.getTransaction();
-    // retrieve this transitiveRelationship
-    TransitiveRelationship relationship =
-        manager.find(TransitiveRelationshipJpa.class, id);
-    // Set modification date
-    relationship.setLastModified(new Date());
-    if (getTransactionPerOperation()) {
-      // remove transitiveRelationship
-      tx.begin();
-      if (manager.contains(relationship)) {
-        manager.remove(relationship);
-      } else {
-        manager.remove(manager.merge(relationship));
-      }
-      tx.commit();
-    } else {
-      if (manager.contains(relationship)) {
-        manager.remove(relationship);
-      } else {
-        manager.remove(manager.merge(relationship));
-      }
-    }
     // no notifications
   }
 
@@ -1278,9 +1245,10 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
     Logger.getLogger(ContentServiceJpa.class).debug(
         "Content Service - remove association reference refset member " + id);
 
+    RefSetMember<? extends Component> member =
+        getAssociationReferenceRefSetMember(id);
     // Remove the component
-    RefSetMember<?> member =
-        removeComponent(id, AbstractAssociationReferenceRefSetMemberJpa.class);
+    removeComponent(id, member.getClass());
 
     // Inform listeners
     if (listenersEnabled) {
@@ -1622,29 +1590,9 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
   public void removeLanguageRefSetMember(Long id) throws Exception {
     Logger.getLogger(ContentServiceJpa.class).debug(
         "Content Service - remove language refset member " + id);
-    tx = manager.getTransaction();
-    // retrieve this language ref set member
-    LanguageRefSetMember member =
-        manager.find(LanguageRefSetMemberJpa.class, id);
-    // Set modification date
-    member.setLastModified(new Date());
+    // Remove the component
+    RefSetMember<?> member = removeComponent(id, LanguageRefSetMemberJpa.class);
 
-    if (getTransactionPerOperation()) {
-      // remove language ref set member
-      tx.begin();
-      if (manager.contains(member)) {
-        manager.remove(member);
-      } else {
-        manager.remove(manager.merge(member));
-      }
-      tx.commit();
-    } else {
-      if (manager.contains(member)) {
-        manager.remove(member);
-      } else {
-        manager.remove(manager.merge(member));
-      }
-    }
     if (listenersEnabled) {
       for (WorkflowListener listener : listeners) {
         listener.refSetMemberRemoved(member);
@@ -1810,28 +1758,10 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
   public void removeSimpleMapRefSetMember(Long id) throws Exception {
     Logger.getLogger(ContentServiceJpa.class).debug(
         "Content Service - remove simple map refset member " + id);
-    tx = manager.getTransaction();
-    // retrieve this simple map ref set member
-    SimpleMapRefSetMember member =
-        manager.find(SimpleMapRefSetMemberJpa.class, id);
-    // Set modification date
-    member.setLastModified(new Date());
-    if (getTransactionPerOperation()) {
-      // remove simple map ref set member
-      tx.begin();
-      if (manager.contains(member)) {
-        manager.remove(member);
-      } else {
-        manager.remove(manager.merge(member));
-      }
-      tx.commit();
-    } else {
-      if (manager.contains(member)) {
-        manager.remove(member);
-      } else {
-        manager.remove(manager.merge(member));
-      }
-    }
+    // Remove the component
+    RefSetMember<?> member =
+        removeComponent(id, SimpleMapRefSetMemberJpa.class);
+
     if (listenersEnabled) {
       for (WorkflowListener listener : listeners) {
         listener.refSetMemberRemoved(member);
@@ -1997,27 +1927,9 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
   public void removeSimpleRefSetMember(Long id) throws Exception {
     Logger.getLogger(ContentServiceJpa.class).debug(
         "Content Service - remove simple refset member " + id);
-    tx = manager.getTransaction();
-    // retrieve this simple ref set member
-    SimpleRefSetMember member = manager.find(SimpleRefSetMemberJpa.class, id);
-    // Set modification date
-    member.setLastModified(new Date());
-    if (getTransactionPerOperation()) {
-      // remove simple ref set member
-      tx.begin();
-      if (manager.contains(member)) {
-        manager.remove(member);
-      } else {
-        manager.remove(manager.merge(member));
-      }
-      tx.commit();
-    } else {
-      if (manager.contains(member)) {
-        manager.remove(member);
-      } else {
-        manager.remove(manager.merge(member));
-      }
-    }
+    // Remove the component
+    RefSetMember<?> member = removeComponent(id, SimpleRefSetMemberJpa.class);
+
     if (listenersEnabled) {
       for (WorkflowListener listener : listeners) {
         listener.refSetMemberRemoved(member);
@@ -2185,28 +2097,10 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
   public void removeRefsetDescriptorRefSetMember(Long id) throws Exception {
     Logger.getLogger(ContentServiceJpa.class).debug(
         "Content Service - remove refset descriptor refset member " + id);
-    tx = manager.getTransaction();
-    // retrieve this refset descriptor ref set member
-    RefsetDescriptorRefSetMember member =
-        manager.find(RefsetDescriptorRefSetMemberJpa.class, id);
-    // Set modification date
-    member.setLastModified(new Date());
-    if (getTransactionPerOperation()) {
-      // remove refset descriptor ref set member
-      tx.begin();
-      if (manager.contains(member)) {
-        manager.remove(member);
-      } else {
-        manager.remove(manager.merge(member));
-      }
-      tx.commit();
-    } else {
-      if (manager.contains(member)) {
-        manager.remove(member);
-      } else {
-        manager.remove(manager.merge(member));
-      }
-    }
+    // Remove the component
+    RefSetMember<?> member =
+        removeComponent(id, RefsetDescriptorRefSetMemberJpa.class);
+
     if (listenersEnabled) {
       for (WorkflowListener listener : listeners) {
         listener.refSetMemberRemoved(member);
@@ -2373,28 +2267,10 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
   public void removeDescriptionTypeRefSetMember(Long id) throws Exception {
     Logger.getLogger(ContentServiceJpa.class).debug(
         "Content Service - remove description type refset member " + id);
-    tx = manager.getTransaction();
-    // retrieve this description type ref set member
-    DescriptionTypeRefSetMember member =
-        manager.find(DescriptionTypeRefSetMemberJpa.class, id);
-    // Set modification date
-    member.setLastModified(new Date());
-    if (getTransactionPerOperation()) {
-      // remove description type ref set member
-      tx.begin();
-      if (manager.contains(member)) {
-        manager.remove(member);
-      } else {
-        manager.remove(manager.merge(member));
-      }
-      tx.commit();
-    } else {
-      if (manager.contains(member)) {
-        manager.remove(member);
-      } else {
-        manager.remove(manager.merge(member));
-      }
-    }
+    // Remove the component
+    RefSetMember<?> member =
+        removeComponent(id, DescriptionTypeRefSetMemberJpa.class);
+
     if (listenersEnabled) {
       for (WorkflowListener listener : listeners) {
         listener.refSetMemberRemoved(member);
@@ -2560,28 +2436,10 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
   public void removeModuleDependencyRefSetMember(Long id) throws Exception {
     Logger.getLogger(ContentServiceJpa.class).debug(
         "Content Service - remove module dependency refset member " + id);
-    tx = manager.getTransaction();
-    // retrieve this module dependency ref set member
-    ModuleDependencyRefSetMember member =
-        manager.find(ModuleDependencyRefSetMemberJpa.class, id);
-    // Set modification date
-    member.setLastModified(new Date());
-    if (getTransactionPerOperation()) {
-      // remove module dependency ref set member
-      tx.begin();
-      if (manager.contains(member)) {
-        manager.remove(member);
-      } else {
-        manager.remove(manager.merge(member));
-      }
-      tx.commit();
-    } else {
-      if (manager.contains(member)) {
-        manager.remove(member);
-      } else {
-        manager.remove(manager.merge(member));
-      }
-    }
+    // Remove the component
+    RefSetMember<?> member =
+        removeComponent(id, ModuleDependencyRefSetMemberJpa.class);
+
     if (listenersEnabled) {
       for (WorkflowListener listener : listeners) {
         listener.refSetMemberRemoved(member);
@@ -2908,24 +2766,31 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
     Logger.getLogger(this.getClass()).info(
         "Content Service - Removing transitive closure data for " + terminology
             + ", " + version);
-    if (getTransactionPerOperation()) {
-      // remove simple ref set member
-      tx.begin();
-    }
+    try {
+      if (getTransactionPerOperation()) {
+        // remove simple ref set member
+        tx.begin();
+      }
 
-    javax.persistence.Query query =
-        manager.createQuery("DELETE From TransitiveRelationshipJpa "
-            + " c where terminology = :terminology "
-            + " and terminologyVersion = :terminologyVersion");
-    query.setParameter("terminology", terminology);
-    query.setParameter("terminologyVersion", version);
-    int deleteRecords = query.executeUpdate();
-    Logger.getLogger(this.getClass()).info(
-        "    TransitiveRelationshipJpa records deleted: " + deleteRecords);
+      javax.persistence.Query query =
+          manager.createQuery("DELETE From TransitiveRelationshipJpa "
+              + " c where terminology = :terminology "
+              + " and terminologyVersion = :terminologyVersion");
+      query.setParameter("terminology", terminology);
+      query.setParameter("terminologyVersion", version);
+      int deleteRecords = query.executeUpdate();
+      Logger.getLogger(this.getClass()).info(
+          "    TransitiveRelationshipJpa records deleted: " + deleteRecords);
 
-    if (getTransactionPerOperation()) {
-      // remove simple ref set member
-      tx.commit();
+      if (getTransactionPerOperation()) {
+        // remove simple ref set member
+        tx.commit();
+      }
+    } catch (Exception e) {
+      if (tx.isActive()) {
+        tx.rollback();
+      }
+      throw e;
     }
   }
 
@@ -2938,40 +2803,47 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
    */
   @Override
   public void clearConcepts(String terminology, String version) {
-    if (getTransactionPerOperation()) {
-      // remove simple ref set member
-      tx.begin();
-    }
+    try {
+      if (getTransactionPerOperation()) {
+        // remove simple ref set member
+        tx.begin();
+      }
 
-    String[] types =
-        new String[] {
-            "DescriptionTypeRefSetMemberJpa",
-            "ModuleDependencyRefSetMemberJpa",
-            "RefsetDescriptorRefSetMemberJpa", "SimpleRefSetMemberJpa",
-            "SimpleMapRefSetMemberJpa", "ComplexMapRefSetMemberJpa",
-            "AttributeValueConceptRefSetMemberJpa",
-            "AssociationReferenceConceptRefSetMemberJpa",
-            "AttributeValueDescriptionRefSetMemberJpa",
-            "AssociationReferenceDescriptionRefSetMemberJpa",
-            "LanguageRefSetMemberJpa", "DescriptionJpa", "RelationshipJpa",
-            "TransitiveRelationshipJpa", "ConceptJpa"
-        };
+      String[] types =
+          new String[] {
+              "DescriptionTypeRefSetMemberJpa",
+              "ModuleDependencyRefSetMemberJpa",
+              "RefsetDescriptorRefSetMemberJpa", "SimpleRefSetMemberJpa",
+              "SimpleMapRefSetMemberJpa", "ComplexMapRefSetMemberJpa",
+              "AttributeValueConceptRefSetMemberJpa",
+              "AssociationReferenceConceptRefSetMemberJpa",
+              "AttributeValueDescriptionRefSetMemberJpa",
+              "AssociationReferenceDescriptionRefSetMemberJpa",
+              "LanguageRefSetMemberJpa", "DescriptionJpa", "RelationshipJpa",
+              "TransitiveRelationshipJpa", "ConceptJpa"
+          };
 
-    for (String type : types) {
-      javax.persistence.Query query =
-          manager.createQuery("DELETE From " + type
-              + " c where terminology = :terminology "
-              + " and terminologyVersion = :terminologyVersion");
-      query.setParameter("terminology", terminology);
-      query.setParameter("terminologyVersion", version);
-      int deleteRecords = query.executeUpdate();
-      Logger.getLogger(this.getClass()).info(
-          "    " + type + " records deleted: " + deleteRecords);
-    }
+      for (String type : types) {
+        javax.persistence.Query query =
+            manager.createQuery("DELETE From " + type
+                + " c where terminology = :terminology "
+                + " and terminologyVersion = :terminologyVersion");
+        query.setParameter("terminology", terminology);
+        query.setParameter("terminologyVersion", version);
+        int deleteRecords = query.executeUpdate();
+        Logger.getLogger(this.getClass()).info(
+            "    " + type + " records deleted: " + deleteRecords);
+      }
 
-    if (getTransactionPerOperation()) {
-      // remove simple ref set member
-      tx.commit();
+      if (getTransactionPerOperation()) {
+        // remove simple ref set member
+        tx.commit();
+      }
+    } catch (Exception e) {
+      if (tx.isActive()) {
+        tx.rollback();
+      }
+      throw e;
     }
 
   }
@@ -3067,7 +2939,7 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
   protected javax.persistence.Query applyPfsToQuery(String queryStr,
     PfsParameter pfs) {
     String localQueryStr = queryStr;
-    if (pfs.getSortField() != null) {
+    if (pfs != null && pfs.getSortField() != null) {
       localQueryStr += " order by a." + pfs.getSortField();
     }
     javax.persistence.Query query = manager.createQuery(localQueryStr);
@@ -3122,12 +2994,24 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
    */
   @Override
   public void computePreferredName(Concept concept) throws Exception {
-    graphResolver.resolve(concept, TerminologyUtility.getHierarchcialIsaRels(
-        concept.getTerminology(), concept.getTerminologyVersion()));
-    final String pn =
-        pnHandlerMap.get(concept.getTerminologyId()).computePreferredName(
-            concept.getDescriptions());
-    concept.setDefaultPreferredName(pn);
+    try {
+      graphResolver.resolve(concept, TerminologyUtility.getHierarchcialIsaRels(
+          concept.getTerminology(), concept.getTerminologyVersion()));
+      ComputePreferredNameHandler handler =
+          pnHandlerMap.get(concept.getTerminology());
+      if (handler == null) {
+        throw new Exception(
+            "Compute preferred name handler is not configured for "
+                + concept.getTerminology());
+      }
+      final String pn = handler.computePreferredName(concept.getDescriptions());
+      concept.setDefaultPreferredName(pn);
+    } catch (Exception e) {
+      if (tx.isActive()) {
+        tx.rollback();
+      }
+      throw e;
+    }
   }
 
   /*
@@ -3159,22 +3043,31 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
    * @throws Exception the exception
    */
   private <T extends Component> T addComponent(T component) throws Exception {
+    try {
+      // Set last modified date
+      if (lastModifiedFlag) {
+        component.setLastModified(new Date());
+      }
 
-    // Set last modified date
-    component.setLastModified(new Date());
+      // Leave effective time alone
 
-    // Leave effective time alone
-
-    // add
-    if (getTransactionPerOperation()) {
-      tx = manager.getTransaction();
-      tx.begin();
-      manager.persist(component);
-      tx.commit();
-    } else {
-      manager.persist(component);
+      // add
+      if (getTransactionPerOperation()) {
+        tx = manager.getTransaction();
+        tx.begin();
+        manager.persist(component);
+        tx.commit();
+      } else {
+        manager.persist(component);
+      }
+      return component;
+    } catch (Exception e) {
+      if (tx.isActive()) {
+        tx.rollback();
+      }
+      throw e;
     }
-    return component;
+
   }
 
   /**
@@ -3186,25 +3079,34 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
    */
   private <T extends Component> void updateComponent(T component)
     throws Exception {
+    try {
+      // Set modification date
+      if (lastModifiedFlag) {
+        component.setLastModified(new Date());
+      }
 
-    // Set modification date
-    component.setLastModified(new Date());
+      // set effective time to nnull unless this is the planned effective time
+      if (component.getEffectiveTime() != null
+          && !component.getEffectiveTime().equals(plannedEffectiveTime)) {
+        component.setEffectiveTime(null);
+      }
 
-    // set effective time to nnull unless this is the planned effective time
-    if (component.getEffectiveTime() != null
-        && !component.getEffectiveTime().equals(plannedEffectiveTime)) {
-      component.setEffectiveTime(null);
+      // update
+      if (getTransactionPerOperation()) {
+        tx = manager.getTransaction();
+        tx.begin();
+        manager.merge(component);
+        tx.commit();
+      } else {
+        manager.merge(component);
+      }
+    } catch (Exception e) {
+      if (tx.isActive()) {
+        tx.rollback();
+      }
+      throw e;
     }
 
-    // update
-    if (getTransactionPerOperation()) {
-      tx = manager.getTransaction();
-      tx.begin();
-      manager.merge(component);
-      tx.commit();
-    } else {
-      manager.merge(component);
-    }
   }
 
   /**
@@ -3218,31 +3120,40 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
    */
   private <T extends Component> T removeComponent(Long id, Class<T> clazz)
     throws Exception {
-    // Get transaction and object
-    tx = manager.getTransaction();
-    T component = manager.find(clazz, id);
+    try {
+      // Get transaction and object
+      tx = manager.getTransaction();
+      T component = manager.find(clazz, id);
 
-    // Set modification date
-    component.setLastModified(new Date());
+      // Set modification date
+      if (lastModifiedFlag) {
+        component.setLastModified(new Date());
+      }
 
-    // Remove
-    if (getTransactionPerOperation()) {
-      // remove refset member
-      tx.begin();
-      if (manager.contains(component)) {
-        manager.remove(component);
+      // Remove
+      if (getTransactionPerOperation()) {
+        // remove refset member
+        tx.begin();
+        if (manager.contains(component)) {
+          manager.remove(component);
+        } else {
+          manager.remove(manager.merge(component));
+        }
+        tx.commit();
       } else {
-        manager.remove(manager.merge(component));
+        if (manager.contains(component)) {
+          manager.remove(component);
+        } else {
+          manager.remove(manager.merge(component));
+        }
       }
-      tx.commit();
-    } else {
-      if (manager.contains(component)) {
-        manager.remove(component);
-      } else {
-        manager.remove(manager.merge(component));
+      return component;
+    } catch (Exception e) {
+      if (tx.isActive()) {
+        tx.rollback();
       }
+      throw e;
     }
-    return component;
   }
 
   /**
@@ -3264,4 +3175,23 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
     }
   }
 
+  /*
+   * (non-Javadoc)
+   * 
+   * @see org.ihtsdo.otf.ts.services.ContentService#isLastModifiedFlag()
+   */
+  @Override
+  public boolean isLastModifiedFlag() {
+    return lastModifiedFlag;
+  }
+
+  /*
+   * (non-Javadoc)
+   * 
+   * @see org.ihtsdo.otf.ts.services.ContentService#setLastModifiedFlag(boolean)
+   */
+  @Override
+  public void setLastModifiedFlag(boolean lastModifiedFlag) {
+    this.lastModifiedFlag = lastModifiedFlag;
+  }
 }

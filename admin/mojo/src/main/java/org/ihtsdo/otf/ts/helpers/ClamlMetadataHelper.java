@@ -6,7 +6,6 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import org.apache.commons.lang3.time.FastDateFormat;
 import org.ihtsdo.otf.ts.rf2.Concept;
 import org.ihtsdo.otf.ts.rf2.Description;
 import org.ihtsdo.otf.ts.rf2.Relationship;
@@ -19,9 +18,6 @@ import org.ihtsdo.otf.ts.services.ContentService;
  * Helper class for creating metadata for non-RF2 terminologies.
  */
 public class ClamlMetadataHelper {
-
-  /** The date format. */
-  private static final FastDateFormat format = FastDateFormat.getInstance("yyyyMMdd");
 
   /** The effective time. */
   private String effectiveTime;
@@ -521,7 +517,7 @@ public class ClamlMetadataHelper {
     concept.setTerminologyId(terminologyId);
     concept.setTerminology(terminology);
     concept.setTerminologyVersion(terminologyVersion);
-    concept.setEffectiveTime(format.parse(effectiveTime));
+    concept.setEffectiveTime(ConfigUtility.DATE_FORMAT.parse(effectiveTime));
     concept.setDefaultPreferredName(defaultPreferredName);
     concept.setActive(true);
     concept.setLastModified(new Date());
@@ -538,7 +534,7 @@ public class ClamlMetadataHelper {
     // Create a preferred name description
     Description desc = new DescriptionJpa();
     desc.setTerminologyId(terminologyId);
-    desc.setEffectiveTime(format.parse(effectiveTime));
+    desc.setEffectiveTime(ConfigUtility.DATE_FORMAT.parse(effectiveTime));
     desc.setActive(true);
     desc.setLastModified(new Date());
     desc.setLastModifiedBy("loader");
@@ -582,7 +578,7 @@ public class ClamlMetadataHelper {
     }
     Relationship relationship = new RelationshipJpa();
     relationship.setTerminologyId(terminologyId);
-    relationship.setEffectiveTime(format.parse(effectiveTime));
+    relationship.setEffectiveTime(ConfigUtility.DATE_FORMAT.parse(effectiveTime));
     relationship.setActive(true);
     relationship.setLastModified(new Date());
     relationship.setLastModifiedBy("loader");

@@ -73,7 +73,7 @@ public class UserImpl implements User {
 
   @Override
   public String getObjectId() {
-    return null;
+    return "";
   }
 
   /*

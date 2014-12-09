@@ -1,9 +1,11 @@
 package org.ihtsdo.otf.ts.rest;
 
+import org.ihtsdo.otf.ts.rf2.AssociationReferenceConceptRefSetMember;
 import org.ihtsdo.otf.ts.rf2.Concept;
 import org.ihtsdo.otf.ts.rf2.Description;
 import org.ihtsdo.otf.ts.rf2.LanguageRefSetMember;
 import org.ihtsdo.otf.ts.rf2.Relationship;
+import org.ihtsdo.otf.ts.rf2.jpa.AssociationReferenceConceptRefSetMemberJpa;
 import org.ihtsdo.otf.ts.rf2.jpa.ConceptJpa;
 import org.ihtsdo.otf.ts.rf2.jpa.DescriptionJpa;
 import org.ihtsdo.otf.ts.rf2.jpa.LanguageRefSetMemberJpa;
@@ -135,6 +137,38 @@ public interface ContentChangeServiceRest {
   public void removeLanguageRefSetMember(Long id, String authToken)
     throws Exception;
 
+
+  /**
+   * Adds the association reference refset member.
+   *
+   * @param member the member
+   * @param authToken the auth token
+   * @return the AssociationReference refset member
+   * @throws Exception the exception
+   */
+  public AssociationReferenceConceptRefSetMember addAssociationConceptReferenceRefSetMember(
+    AssociationReferenceConceptRefSetMemberJpa member, String authToken) throws Exception;
+
+  /**
+   * Update association reference refset member.
+   *
+   * @param member the member
+   * @param authToken the auth token
+   * @throws Exception the exception
+   */
+  public void updateAssociationReferenceConceptRefSetMember(AssociationReferenceConceptRefSetMemberJpa member,
+    String authToken) throws Exception;
+
+  /**
+   * Removes the association reference refset member.
+   *
+   * @param id the id
+   * @param authToken the auth token
+   * @throws Exception the exception
+   */
+  public void removeAssociationReferenceRefSetMember(Long id, String authToken)
+    throws Exception;
+  
   /**
    * Compute transitive closure.
    *

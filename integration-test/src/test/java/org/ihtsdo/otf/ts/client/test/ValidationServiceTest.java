@@ -141,7 +141,7 @@ public class ValidationServiceTest {
     // Remove isa relationships
     Set<Relationship> relationships = new HashSet<>(concept.getRelationships());
     for (Relationship relationship : relationships) {
-      if (TerminologyUtility.isHierarchicalIsaRel(relationship)) {
+      if (TerminologyUtility.isHierarchicalIsaRelationship(relationship)) {
         concept.removeRelationship(relationship);
       }
     }

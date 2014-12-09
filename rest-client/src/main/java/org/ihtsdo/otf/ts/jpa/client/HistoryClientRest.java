@@ -64,7 +64,7 @@ public class HistoryClientRest implements HistoryServiceRest {
     String date, PfsParameterJpa pfs, String authToken) throws Exception {
     Client client = Client.create();
     WebResource resource =
-        client.resource(config.getProperty("base.url") + "/history/concepts/"
+        client.resource(config.getProperty("base.url") + "/history/concept/"
             + terminology + "/" + date);
     String pfsString =
         (pfs != null ? ConfigUtility.getStringForGraph(pfs) : null);
@@ -103,7 +103,7 @@ public class HistoryClientRest implements HistoryServiceRest {
     Client client = Client.create();
     WebResource resource =
         client.resource(config.getProperty("base.url")
-            + "/history/concepts/revisions/" + id + "/" + startDate + "/"
+            + "/history/concept/revisions/" + id + "/" + startDate + "/"
             + endDate + "/all");
 
     String pfsString =
@@ -129,8 +129,12 @@ public class HistoryClientRest implements HistoryServiceRest {
     return list;
   }
 
-  /* (non-Javadoc)
-   * @see org.ihtsdo.otf.ts.rest.HistoryServiceRest#findConceptReleaseRevision(java.lang.String, java.lang.String, java.lang.String)
+  /*
+   * (non-Javadoc)
+   * 
+   * @see
+   * org.ihtsdo.otf.ts.rest.HistoryServiceRest#findConceptReleaseRevision(java
+   * .lang.String, java.lang.String, java.lang.String)
    */
   @Override
   public Concept findConceptReleaseRevision(String id, String release,
@@ -138,7 +142,7 @@ public class HistoryClientRest implements HistoryServiceRest {
     Client client = Client.create();
     WebResource resource =
         client.resource(config.getProperty("base.url")
-            + "/history/concepts/revisions/" + id + "/" + release);
+            + "/history/concept/revisions/" + id + "/" + release);
 
     ClientResponse response =
         resource.accept(MediaType.APPLICATION_XML)
@@ -173,7 +177,7 @@ public class HistoryClientRest implements HistoryServiceRest {
     Client client = Client.create();
     WebResource resource =
         client.resource(config.getProperty("base.url")
-            + "/history/descriptions/" + terminology + "/" + date);
+            + "/history/description/" + terminology + "/" + date);
     String pfsString =
         (pfs != null ? ConfigUtility.getStringForGraph(pfs) : null);
     ClientResponse response =
@@ -211,7 +215,7 @@ public class HistoryClientRest implements HistoryServiceRest {
     Client client = Client.create();
     WebResource resource =
         client.resource(config.getProperty("base.url")
-            + "/history/descriptions/revisions/" + id + "/" + startDate + "/"
+            + "/history/description/revisions/" + id + "/" + startDate + "/"
             + endDate + "/all");
 
     String pfsString =
@@ -237,16 +241,20 @@ public class HistoryClientRest implements HistoryServiceRest {
     return list;
   }
 
-  /* (non-Javadoc)
-   * @see org.ihtsdo.otf.ts.rest.HistoryServiceRest#findDescriptionReleaseRevision(java.lang.String, java.lang.String, java.lang.String)
+  /*
+   * (non-Javadoc)
+   * 
+   * @see
+   * org.ihtsdo.otf.ts.rest.HistoryServiceRest#findDescriptionReleaseRevision
+   * (java.lang.String, java.lang.String, java.lang.String)
    */
   @Override
-  public Description findDescriptionReleaseRevision(String id,
-    String release, String authToken) throws Exception {
+  public Description findDescriptionReleaseRevision(String id, String release,
+    String authToken) throws Exception {
     Client client = Client.create();
     WebResource resource =
         client.resource(config.getProperty("base.url")
-            + "/history/descriptions/revisions/" + id + "/" + release);
+            + "/history/description/revisions/" + id + "/" + release);
 
     ClientResponse response =
         resource.accept(MediaType.APPLICATION_XML)
@@ -282,7 +290,7 @@ public class HistoryClientRest implements HistoryServiceRest {
     Client client = Client.create();
     WebResource resource =
         client.resource(config.getProperty("base.url")
-            + "/history/relationships/" + terminology + "/" + date);
+            + "/history/relationship/" + terminology + "/" + date);
     String pfsString =
         (pfs != null ? ConfigUtility.getStringForGraph(pfs) : null);
     ClientResponse response =
@@ -321,7 +329,7 @@ public class HistoryClientRest implements HistoryServiceRest {
     Client client = Client.create();
     WebResource resource =
         client.resource(config.getProperty("base.url")
-            + "/history/relationships/revisions/" + id + "/" + startDate + "/"
+            + "/history/relationship/revisions/" + id + "/" + startDate + "/"
             + endDate + "/all");
 
     String pfsString =
@@ -347,18 +355,20 @@ public class HistoryClientRest implements HistoryServiceRest {
     return list;
   }
 
-
-  /* (non-Javadoc)
-   * @see org.ihtsdo.otf.ts.rest.HistoryServiceRest#findRelationshipReleaseRevision(java.lang.String, java.lang.String, java.lang.String)
+  /*
+   * (non-Javadoc)
+   * 
+   * @see
+   * org.ihtsdo.otf.ts.rest.HistoryServiceRest#findRelationshipReleaseRevision
+   * (java.lang.String, java.lang.String, java.lang.String)
    */
   @Override
   public Relationship findRelationshipReleaseRevision(String id,
-    String release, String authToken)
-    throws Exception {
+    String release, String authToken) throws Exception {
     Client client = Client.create();
     WebResource resource =
         client.resource(config.getProperty("base.url")
-            + "/history/relationships/revisions/" + id + "/" + release);
+            + "/history/relationship/revisions/" + id + "/" + release);
 
     ClientResponse response =
         resource.accept(MediaType.APPLICATION_XML)
@@ -393,7 +403,7 @@ public class HistoryClientRest implements HistoryServiceRest {
     throws Exception {
     Client client = Client.create();
     WebResource resource =
-        client.resource(config.getProperty("base.url") + "/history/languages/"
+        client.resource(config.getProperty("base.url") + "/history/language/"
             + terminology + "/" + date);
     String pfsString =
         (pfs != null ? ConfigUtility.getStringForGraph(pfs) : null);
@@ -433,7 +443,7 @@ public class HistoryClientRest implements HistoryServiceRest {
     Client client = Client.create();
     WebResource resource =
         client.resource(config.getProperty("base.url")
-            + "/history/languages/revisions/" + id + "/" + startDate + "/"
+            + "/history/language/revisions/" + id + "/" + startDate + "/"
             + endDate + "/all");
 
     String pfsString =
@@ -459,18 +469,20 @@ public class HistoryClientRest implements HistoryServiceRest {
     return list;
   }
 
-
-  /* (non-Javadoc)
-   * @see org.ihtsdo.otf.ts.rest.HistoryServiceRest#findLanguageRefSetMemberReleaseRevision(java.lang.String, java.lang.String, java.lang.String)
+  /*
+   * (non-Javadoc)
+   * 
+   * @see org.ihtsdo.otf.ts.rest.HistoryServiceRest#
+   * findLanguageRefSetMemberReleaseRevision(java.lang.String, java.lang.String,
+   * java.lang.String)
    */
   @Override
   public LanguageRefSetMember findLanguageRefSetMemberReleaseRevision(
-    String id, String release,
-    String authToken) throws Exception {
+    String id, String release, String authToken) throws Exception {
     Client client = Client.create();
     WebResource resource =
         client.resource(config.getProperty("base.url")
-            + "/history/languages/revisions/" + id + "/" + release);
+            + "/history/language/revisions/" + id + "/" + release);
 
     ClientResponse response =
         resource.accept(MediaType.APPLICATION_XML)
@@ -485,8 +497,8 @@ public class HistoryClientRest implements HistoryServiceRest {
 
     // converting to object
     LanguageRefSetMemberJpa member =
-        (LanguageRefSetMemberJpa) ConfigUtility.getGraphForString(
-            resultString, LanguageRefSetMemberJpa.class);
+        (LanguageRefSetMemberJpa) ConfigUtility.getGraphForString(resultString,
+            LanguageRefSetMemberJpa.class);
 
     return member;
   }
@@ -504,7 +516,7 @@ public class HistoryClientRest implements HistoryServiceRest {
     String date, PfsParameterJpa pfs, String authToken) throws Exception {
     Client client = Client.create();
     WebResource resource =
-        client.resource(config.getProperty("base.url") + "/history/concepts/"
+        client.resource(config.getProperty("base.url") + "/history/concept/"
             + terminology + "/" + date + "/deep");
     String pfsString =
         (pfs != null ? ConfigUtility.getStringForGraph(pfs) : null);
@@ -534,20 +546,28 @@ public class HistoryClientRest implements HistoryServiceRest {
    * 
    * @see
    * org.ihtsdo.otf.ts.rest.HistoryServiceRest#getReleaseHistory(java.lang.String
-   * )
+   * , java.lang.String)
    */
   @Override
-  public ReleaseInfoList getReleaseHistory(String authToken) throws Exception {
+  public ReleaseInfoList getReleaseHistory(String terminology, String authToken)
+    throws Exception {
     Client client = Client.create();
     WebResource resource =
-        client.resource(config.getProperty("base.url") + "/release/history");
+        client.resource(config.getProperty("base.url") + "/history/releases/"
+            + terminology);
     ClientResponse response =
         resource.accept(MediaType.APPLICATION_XML)
             .header("Authorization", authToken).get(ClientResponse.class);
-
+    if (response.getStatus() == 204) {
+      return null;
+    }
     String resultString = response.getEntity(String.class);
     if (response.getClientResponseStatus().getFamily() == Family.SUCCESSFUL) {
       Logger.getLogger(this.getClass()).debug(resultString);
+    }
+    // handle null response
+    else if (response.getStatus() == 204) {
+      return null;
     } else {
       throw new Exception(resultString);
     }
@@ -567,25 +587,33 @@ public class HistoryClientRest implements HistoryServiceRest {
    * .String)
    */
   @Override
-  public ReleaseInfo getCurrentReleaseInfo(String authToken) throws Exception {
+  public ReleaseInfo getCurrentReleaseInfo(String terminology, String authToken)
+    throws Exception {
     Client client = Client.create();
     WebResource resource =
-        client.resource(config.getProperty("base.url") + "/release/current");
+        client.resource(config.getProperty("base.url") + "/history/release/"
+            + terminology + "/current");
     ClientResponse response =
         resource.accept(MediaType.APPLICATION_XML)
             .header("Authorization", authToken).get(ClientResponse.class);
-
+    if (response.getStatus() == 204) {
+      return null;
+    }
     String resultString = response.getEntity(String.class);
     if (response.getClientResponseStatus().getFamily() == Family.SUCCESSFUL) {
       Logger.getLogger(this.getClass()).debug(resultString);
+    }
+    // handle null response
+    else if (response.getStatus() == 204) {
+      return null;
     } else {
       throw new Exception(resultString);
     }
 
     // converting to object
-    ReleaseInfo info =
-        (ReleaseInfo) ConfigUtility.getGraphForString(resultString,
-            ReleaseInfo.class);
+    ReleaseInfoJpa info =
+        (ReleaseInfoJpa) ConfigUtility.getGraphForString(resultString,
+            ReleaseInfoJpa.class);
     return info;
   }
 
@@ -594,28 +622,36 @@ public class HistoryClientRest implements HistoryServiceRest {
    * 
    * @see
    * org.ihtsdo.otf.ts.rest.HistoryServiceRest#getPreviousReleaseInfo(java.lang
-   * .String)
+   * .String, java.lang.String)
    */
   @Override
-  public ReleaseInfo getPreviousReleaseInfo(String authToken) throws Exception {
+  public ReleaseInfo getPreviousReleaseInfo(String terminology, String authToken)
+    throws Exception {
     Client client = Client.create();
     WebResource resource =
-        client.resource(config.getProperty("base.url") + "/release/previous");
+        client.resource(config.getProperty("base.url") + "/history/release/"
+            + terminology + "/previous");
     ClientResponse response =
         resource.accept(MediaType.APPLICATION_XML)
             .header("Authorization", authToken).get(ClientResponse.class);
-
+    if (response.getStatus() == 204) {
+      return null;
+    }
     String resultString = response.getEntity(String.class);
     if (response.getClientResponseStatus().getFamily() == Family.SUCCESSFUL) {
       Logger.getLogger(this.getClass()).debug(resultString);
+    }
+    // handle null response
+    else if (response.getStatus() == 204) {
+      return null;
     } else {
       throw new Exception(resultString);
     }
 
     // converting to object
-    ReleaseInfo info =
-        (ReleaseInfo) ConfigUtility.getGraphForString(resultString,
-            ReleaseInfo.class);
+    ReleaseInfoJpa info =
+        (ReleaseInfoJpa) ConfigUtility.getGraphForString(resultString,
+            ReleaseInfoJpa.class);
     return info;
   }
 
@@ -624,28 +660,36 @@ public class HistoryClientRest implements HistoryServiceRest {
    * 
    * @see
    * org.ihtsdo.otf.ts.rest.HistoryServiceRest#getPlannedReleaseInfo(java.lang
-   * .String)
+   * .String, java.lang.String)
    */
   @Override
-  public ReleaseInfo getPlannedReleaseInfo(String authToken) throws Exception {
+  public ReleaseInfo getPlannedReleaseInfo(String terminology, String authToken)
+    throws Exception {
     Client client = Client.create();
     WebResource resource =
-        client.resource(config.getProperty("base.url") + "/release/planned");
+        client.resource(config.getProperty("base.url") + "/history/release/"
+            + terminology + "/planned");
     ClientResponse response =
         resource.accept(MediaType.APPLICATION_XML)
             .header("Authorization", authToken).get(ClientResponse.class);
-
+    if (response.getStatus() == 204) {
+      return null;
+    }
     String resultString = response.getEntity(String.class);
     if (response.getClientResponseStatus().getFamily() == Family.SUCCESSFUL) {
       Logger.getLogger(this.getClass()).debug(resultString);
+    }
+    // handle null response
+    else if (response.getStatus() == 204) {
+      return null;
     } else {
       throw new Exception(resultString);
     }
 
     // converting to object
-    ReleaseInfo info =
-        (ReleaseInfo) ConfigUtility.getGraphForString(resultString,
-            ReleaseInfo.class);
+    ReleaseInfoJpa info =
+        (ReleaseInfoJpa) ConfigUtility.getGraphForString(resultString,
+            ReleaseInfoJpa.class);
     return info;
   }
 
@@ -654,18 +698,21 @@ public class HistoryClientRest implements HistoryServiceRest {
    * 
    * @see
    * org.ihtsdo.otf.ts.rest.HistoryServiceRest#getReleaseInfo(java.lang.String,
-   * java.lang.String)
+   * java.lang.String, java.lang.String)
    */
   @Override
-  public ReleaseInfo getReleaseInfo(String release, String authToken)
-    throws Exception {
+  public ReleaseInfo getReleaseInfo(String terminology, String name,
+    String authToken) throws Exception {
     Client client = Client.create();
     WebResource resource =
-        client.resource(config.getProperty("base.url") + "/release/" + release);
+        client.resource(config.getProperty("base.url") + "/history/release/"
+            + terminology + "/" + name);
     ClientResponse response =
         resource.accept(MediaType.APPLICATION_XML)
             .header("Authorization", authToken).get(ClientResponse.class);
-
+    if (response.getStatus() == 204) {
+      return null;
+    }
     String resultString = response.getEntity(String.class);
     if (response.getClientResponseStatus().getFamily() == Family.SUCCESSFUL) {
       Logger.getLogger(this.getClass()).debug(resultString);
@@ -676,7 +723,7 @@ public class HistoryClientRest implements HistoryServiceRest {
     // converting to object
     ReleaseInfoJpa info =
         (ReleaseInfoJpa) ConfigUtility.getGraphForString(resultString,
-            ReleaseInfo.class);
+            ReleaseInfoJpa.class);
     return info;
   }
 
@@ -688,12 +735,12 @@ public class HistoryClientRest implements HistoryServiceRest {
    * .ts.helpers.ReleaseInfo, java.lang.String)
    */
   @Override
-  public ReleaseInfo addReleaseInfo(ReleaseInfo releaseInfo, String authToken)
+  public ReleaseInfo addReleaseInfo(ReleaseInfoJpa releaseInfo, String authToken)
     throws Exception {
     Client client = Client.create();
     WebResource resource =
-        client.resource(config.getProperty("base.url")
-            + "/history/release/add " + releaseInfo.getName());
+        client
+            .resource(config.getProperty("base.url") + "/history/release/add");
     String riString =
         (releaseInfo != null ? ConfigUtility.getStringForGraph(releaseInfo)
             : null);
@@ -726,12 +773,12 @@ public class HistoryClientRest implements HistoryServiceRest {
    * otf.ts.helpers.ReleaseInfo, java.lang.String)
    */
   @Override
-  public void updateReleaseInfo(ReleaseInfo releaseInfo, String authToken)
+  public void updateReleaseInfo(ReleaseInfoJpa releaseInfo, String authToken)
     throws Exception {
     Client client = Client.create();
     WebResource resource =
         client.resource(config.getProperty("base.url")
-            + "/history/release/update " + releaseInfo.getName());
+            + "/history/release/update");
     String riString =
         (releaseInfo != null ? ConfigUtility.getStringForGraph(releaseInfo)
             : null);
@@ -741,11 +788,10 @@ public class HistoryClientRest implements HistoryServiceRest {
             .header("Content-type", MediaType.APPLICATION_XML)
             .post(ClientResponse.class, riString);
 
-    String resultString = response.getEntity(String.class);
     if (response.getClientResponseStatus().getFamily() == Family.SUCCESSFUL) {
-      Logger.getLogger(this.getClass()).debug(resultString);
+      // do nothing
     } else {
-      throw new Exception(resultString);
+      throw new Exception("Unexpected status " + response.getStatus());
     }
 
   }
@@ -768,12 +814,12 @@ public class HistoryClientRest implements HistoryServiceRest {
         resource.accept(MediaType.APPLICATION_XML)
             .header("Authorization", authToken).delete(ClientResponse.class);
 
-    String resultString = response.getEntity(String.class);
     if (response.getClientResponseStatus().getFamily() == Family.SUCCESSFUL) {
-      Logger.getLogger(this.getClass()).debug(resultString);
+      // do nothing
     } else {
-      throw new Exception(resultString);
+      throw new Exception("Unexpected status " + response.getStatus());
     }
+
   }
 
 }

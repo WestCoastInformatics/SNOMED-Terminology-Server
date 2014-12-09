@@ -1,7 +1,6 @@
 package org.ihtsdo.otf.ts.rest.impl;
 
 import javax.ws.rs.DELETE;
-import javax.ws.rs.GET;
 import javax.ws.rs.HeaderParam;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
@@ -17,16 +16,19 @@ import org.ihtsdo.otf.ts.jpa.services.ContentServiceJpa;
 import org.ihtsdo.otf.ts.jpa.services.SecurityServiceJpa;
 import org.ihtsdo.otf.ts.jpa.services.helper.TerminologyUtility;
 import org.ihtsdo.otf.ts.rest.ContentChangeServiceRest;
+import org.ihtsdo.otf.ts.rf2.AssociationReferenceConceptRefSetMember;
 import org.ihtsdo.otf.ts.rf2.Concept;
 import org.ihtsdo.otf.ts.rf2.Description;
 import org.ihtsdo.otf.ts.rf2.LanguageRefSetMember;
 import org.ihtsdo.otf.ts.rf2.Relationship;
+import org.ihtsdo.otf.ts.rf2.jpa.AssociationReferenceConceptRefSetMemberJpa;
 import org.ihtsdo.otf.ts.rf2.jpa.ConceptJpa;
 import org.ihtsdo.otf.ts.rf2.jpa.DescriptionJpa;
 import org.ihtsdo.otf.ts.rf2.jpa.LanguageRefSetMemberJpa;
 import org.ihtsdo.otf.ts.rf2.jpa.RelationshipJpa;
 import org.ihtsdo.otf.ts.services.ContentService;
 import org.ihtsdo.otf.ts.services.SecurityService;
+import org.ihtsdo.otf.ts.services.helpers.ConceptReportHelper;
 
 import com.wordnik.swagger.annotations.Api;
 import com.wordnik.swagger.annotations.ApiOperation;
@@ -53,7 +55,6 @@ public class ContentChangeServiceRestImpl extends RootServiceRestImpl implements
    */
   public ContentChangeServiceRestImpl() throws Exception {
     securityService = new SecurityServiceJpa();
-
   }
 
   /*
@@ -76,14 +77,22 @@ public class ContentChangeServiceRestImpl extends RootServiceRestImpl implements
     throws Exception {
     Logger.getLogger(ContentChangeServiceRestImpl.class).info(
         "RESTful call PUT (ContentChange): /concept/add " + concept);
+    Logger.getLogger(ContentChangeServiceRestImpl.class).debug(
+        ConceptReportHelper.getConceptReport(concept));
+
     try {
       authenticate(securityService, authToken, "add concept", UserRole.AUTHOR);
 
       // Create service and configure transaction scope
       ContentService contentService = new ContentServiceJpa();
       contentService.setTransactionPerOperation(false);
+      contentService.beginTransaction();
+
       // Run graph resolver
       if (concept != null) {
+        // Set the lastModifiedBy
+        concept.setLastModifiedBy(securityService
+            .getUsernameForToken(authToken));
         contentService.getGraphResolutionHandler().resolve(
             concept,
             TerminologyUtility.getHierarchcialIsaRels(concept.getTerminology(),
@@ -91,8 +100,6 @@ public class ContentChangeServiceRestImpl extends RootServiceRestImpl implements
       } else {
         throw new Exception("Unexpected null concept");
       }
-      // Set the lastModifiedBy
-      concept.setLastModifiedBy(securityService.getUsernameForToken(authToken));
 
       // Add concept and compute preferred name
       Concept newConcept = contentService.addConcept(concept);
@@ -129,6 +136,9 @@ public class ContentChangeServiceRestImpl extends RootServiceRestImpl implements
     throws Exception {
     Logger.getLogger(ContentChangeServiceRestImpl.class).info(
         "RESTful call POST (ContentChange): /concept/update " + concept);
+    Logger.getLogger(ContentChangeServiceRestImpl.class).debug(
+        ConceptReportHelper.getConceptReport(concept));
+
     try {
       authenticate(securityService, authToken, "update concept",
           UserRole.AUTHOR);
@@ -136,6 +146,8 @@ public class ContentChangeServiceRestImpl extends RootServiceRestImpl implements
       // Create service and configure transaction scope
       ContentService contentService = new ContentServiceJpa();
       contentService.setTransactionPerOperation(false);
+      contentService.beginTransaction();
+
       // Run graph resolver
       if (concept != null) {
         contentService.getGraphResolutionHandler().resolve(
@@ -145,8 +157,10 @@ public class ContentChangeServiceRestImpl extends RootServiceRestImpl implements
       } else {
         throw new Exception("Unexpected null concept");
       }
-      // compute preferred name and udpate concept
+      // compute preferred name and update concept
       contentService.computePreferredName(concept);
+      concept.setTerminologyId(contentService.getIdentifierAssignmentHandler(
+          concept.getTerminology()).getTerminologyId(concept));
       contentService.updateConcept(concept);
 
       // Commit, close, and return
@@ -210,8 +224,54 @@ public class ContentChangeServiceRestImpl extends RootServiceRestImpl implements
     throws Exception {
     Logger.getLogger(ContentChangeServiceRestImpl.class).info(
         "RESTful call PUT (ContentChange): /description/add " + description);
-    authenticate(securityService, authToken, "add description", UserRole.AUTHOR);
-    return null;
+    if (description != null) {
+      Logger.getLogger(ContentChangeServiceRestImpl.class).debug(
+          ConceptReportHelper.getConceptReport(description.getConcept()));
+      Logger.getLogger(ContentChangeServiceRestImpl.class).debug(
+          ConceptReportHelper.getDescriptionReport(description));
+    }
+
+    try {
+      authenticate(securityService, authToken, "add concept", UserRole.AUTHOR);
+
+      // Create service and configure transaction scope
+      ContentService contentService = new ContentServiceJpa();
+      contentService.setTransactionPerOperation(false);
+      contentService.beginTransaction();
+
+      // Run graph resolver
+      if (description != null) {
+        // Set the lastModifiedBy
+        description.setLastModifiedBy(securityService
+            .getUsernameForToken(authToken));
+        contentService.getGraphResolutionHandler().resolve(description);
+      } else {
+        throw new Exception("Unexpected null description");
+      }
+
+      // Add description and compute concept preferred name and id
+      Description newDescription = contentService.addDescription(description);
+      Concept concept =
+          contentService.getConcept(description.getConcept().getId());
+      contentService.getGraphResolutionHandler().resolve(
+          concept,
+          TerminologyUtility.getHierarchcialIsaRels(concept.getTerminology(),
+              concept.getTerminologyVersion()));
+      contentService.computePreferredName(concept);
+      concept.setTerminologyId(contentService.getIdentifierAssignmentHandler(
+          newDescription.getTerminology()).getTerminologyId(concept));
+      contentService.setLastModifiedFlag(false);
+      contentService.updateConcept(concept);
+      contentService.setLastModifiedFlag(true);
+
+      // Commit, close, and return
+      contentService.commit();
+      contentService.close();
+      return newDescription;
+    } catch (Exception e) {
+      handleException(e, "trying to add a description");
+      return null;
+    }
   }
 
   /*
@@ -232,10 +292,53 @@ public class ContentChangeServiceRestImpl extends RootServiceRestImpl implements
     @ApiParam(value = "Description, e.g. newDescription", required = true) DescriptionJpa description,
     @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken)
     throws Exception {
-    Logger.getLogger(ContentChangeServiceRestImpl.class).info(
-        "RESTful call PUT (ContentChange): /description/update " + description);
-    authenticate(securityService, authToken, "update description",
-        UserRole.AUTHOR);
+    Logger.getLogger(ContentChangeServiceRestImpl.class)
+        .info(
+            "RESTful call POST (ContentChange): /description/update "
+                + description);
+    if (description != null) {
+      Logger.getLogger(ContentChangeServiceRestImpl.class).debug(
+          ConceptReportHelper.getConceptReport(description.getConcept()));
+      Logger.getLogger(ContentChangeServiceRestImpl.class).debug(
+          ConceptReportHelper.getDescriptionReport(description));
+    }
+
+    try {
+      authenticate(securityService, authToken, "update description",
+          UserRole.AUTHOR);
+
+      // Create service and configure transaction scope
+      ContentService contentService = new ContentServiceJpa();
+      contentService.setTransactionPerOperation(false);
+      contentService.beginTransaction();
+
+      // Run graph resolver
+      if (description != null) {
+        contentService.getGraphResolutionHandler().resolve(description);
+      } else {
+        throw new Exception("Unexpected null description");
+      }
+      // update description and compute concept preferred name
+      contentService.updateDescription(description);
+
+      Concept concept =
+          contentService.getConcept(description.getConcept().getId());
+      contentService.getGraphResolutionHandler().resolve(
+          concept,
+          TerminologyUtility.getHierarchcialIsaRels(concept.getTerminology(),
+              concept.getTerminologyVersion()));
+      contentService.computePreferredName(concept);
+      concept.setTerminologyId(contentService.getIdentifierAssignmentHandler(
+          description.getTerminology()).getTerminologyId(concept));
+      contentService.updateConcept(concept);
+
+      // Commit, close, and return
+      contentService.commit();
+      contentService.close();
+
+    } catch (Exception e) {
+      handleException(e, "trying to update a description");
+    }
 
   }
 
@@ -258,10 +361,37 @@ public class ContentChangeServiceRestImpl extends RootServiceRestImpl implements
     @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken)
     throws Exception {
     Logger.getLogger(ContentChangeServiceRestImpl.class).info(
-        "RESTful call PUT (ContentChange): /description/remove/id/" + id);
-    authenticate(securityService, authToken, "remove description",
-        UserRole.AUTHOR);
+        "RESTful call POST (ContentChange): /description/remove/" + id);
 
+    try {
+      authenticate(securityService, authToken, "remove description",
+          UserRole.AUTHOR);
+
+      // Create service and configure transaction scope
+      ContentService contentService = new ContentServiceJpa();
+      contentService.setTransactionPerOperation(false);
+      contentService.beginTransaction();
+
+      Description description = contentService.getDescription(id);
+      contentService.removeDescription(id);
+
+      Concept concept = description.getConcept();
+      contentService.getGraphResolutionHandler().resolve(
+          concept,
+          TerminologyUtility.getHierarchcialIsaRels(concept.getTerminology(),
+              concept.getTerminologyVersion()));
+      contentService.computePreferredName(concept);
+      concept.setTerminologyId(contentService.getIdentifierAssignmentHandler(
+          description.getTerminology()).getTerminologyId(concept));
+      contentService.updateConcept(concept);
+
+      // Commit, close, and return
+      contentService.commit();
+      contentService.close();
+
+    } catch (Exception e) {
+      handleException(e, "trying to remove a description");
+    }
   }
 
   /*
@@ -416,12 +546,164 @@ public class ContentChangeServiceRestImpl extends RootServiceRestImpl implements
   /*
    * (non-Javadoc)
    * 
+   * @see org.ihtsdo.otf.ts.rest.ContentChangeServiceRest#
+   * addAssociationConceptReferenceRefSetMember
+   * (org.ihtsdo.otf.ts.rf2.jpa.AssociationReferenceConceptRefSetMemberJpa,
+   * java.lang.String)
+   */
+  @Override
+  @PUT
+  @Path("/associationReference/add")
+  @ApiOperation(value = "Add new association reference refset member", notes = "Creates a new association reference refset member.", response = AssociationReferenceConceptRefSetMember.class)
+  @Produces({
+      MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML
+  })
+  public AssociationReferenceConceptRefSetMember addAssociationConceptReferenceRefSetMember(
+    @ApiParam(value = "Association reference refset member, e.g. a new association reference refset member", required = true) AssociationReferenceConceptRefSetMemberJpa member,
+    @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken)
+    throws Exception {
+
+    Logger.getLogger(ContentChangeServiceRestImpl.class)
+        .info(
+            "RESTful call PUT (ContentChange): /associationReference/add "
+                + member);
+
+    try {
+      authenticate(securityService, authToken, "add concept", UserRole.AUTHOR);
+
+      // Create service and configure transaction scope
+      ContentService contentService = new ContentServiceJpa();
+      contentService.setTransactionPerOperation(false);
+      contentService.beginTransaction();
+
+      // Run graph resolver
+      if (member != null) {
+        // Set the lastModifiedBy
+        member
+            .setLastModifiedBy(securityService.getUsernameForToken(authToken));
+        contentService.getGraphResolutionHandler().resolve(member);
+      } else {
+        throw new Exception(
+            "Unexpected null AssociationReferenceConceptRefSetMember");
+      }
+
+      // Add AssociationReferenceConceptRefSetMember and compute concept
+      // preferred name and id
+      AssociationReferenceConceptRefSetMember newMember =
+          (AssociationReferenceConceptRefSetMember) contentService
+              .addAssociationReferenceRefSetMember(member);
+
+      // Commit, close, and return
+      contentService.commit();
+      contentService.close();
+      return newMember;
+    } catch (Exception e) {
+      handleException(e,
+          "trying to add a AssociationReferenceConceptRefSetMember");
+      return null;
+    }
+  }
+
+  /*
+   * (non-Javadoc)
+   * 
+   * @see org.ihtsdo.otf.ts.rest.ContentChangeServiceRest#
+   * updateAssociationReferenceConceptRefSetMember(org.ihtsdo
+   * .otf.ts.rf2.jpa.AssociationReferenceConceptRefSetMemberJpa,
+   * java.lang.String)
+   */
+  @Override
+  @POST
+  @Path("/ssociationReference/update")
+  @ApiOperation(value = "Update association reference refset member", notes = "Updates the specified AssociationReferenceConceptRefSetMember.")
+  @Produces({
+      MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML
+  })
+  public void updateAssociationReferenceConceptRefSetMember(
+    @ApiParam(value = "Association reference refset member, e.g. new association reference refset member", required = true) AssociationReferenceConceptRefSetMemberJpa member,
+    @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken)
+    throws Exception {
+    Logger.getLogger(ContentChangeServiceRestImpl.class).info(
+        "RESTful call POST (ContentChange): /associationReference/update "
+            + member);
+    try {
+      authenticate(securityService, authToken,
+          "update association reference refset member", UserRole.AUTHOR);
+
+      // Create service and configure transaction scope
+      ContentService contentService = new ContentServiceJpa();
+      contentService.setTransactionPerOperation(false);
+      contentService.beginTransaction();
+
+      // Run graph resolver
+      if (member != null) {
+        contentService.getGraphResolutionHandler().resolve(member);
+      } else {
+        throw new Exception(
+            "Unexpected null association reference refset member");
+      }
+      // update AssociationReferenceConceptRefSetMember and compute concept
+      // preferred name
+      contentService.updateAssociationReferenceRefSetMember(member);
+
+      // Commit, close, and return
+      contentService.commit();
+      contentService.close();
+
+    } catch (Exception e) {
+      handleException(e,
+          "trying to update a association reference refset member");
+    }
+
+  }
+
+  /*
+   * (non-Javadoc)
+   * 
+   * @see org.ihtsdo.otf.ts.rest.ContentChangeServiceRest#
+   * removeAssociationReferenceConceptRefSetMember(java. lang.Long,
+   * java.lang.String)
+   */
+  @Override
+  @DELETE
+  @Path("/associationReference/remove/{id}")
+  @ApiOperation(value = "Remove association reference refset member by id", notes = "Removes the association reference refset member for the specified id.")
+  @Produces({
+      MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML
+  })
+  public void removeAssociationReferenceRefSetMember(
+    @ApiParam(value = "Association reference refset member internal id, e.g. 2", required = true) @PathParam("id") Long id,
+    @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken)
+    throws Exception {
+    Logger.getLogger(ContentChangeServiceRestImpl.class)
+        .info(
+            "RESTful call POST (ContentChange): /associationReference/remove/"
+                + id);
+
+    try {
+      authenticate(securityService, authToken,
+          "remove association reference refset member", UserRole.AUTHOR);
+
+      // Create service and configure transaction scope
+      ContentService contentService = new ContentServiceJpa();
+      contentService.setTransactionPerOperation(false);
+      contentService.removeAssociationReferenceRefSetMember(id);
+      contentService.close();
+    } catch (Exception e) {
+      handleException(e,
+          "trying to remove a AssociationReferenceConceptRefSetMember");
+    }
+  }
+
+  /*
+   * (non-Javadoc)
+   * 
    * @see
    * org.ihtsdo.otf.ts.rest.ContentChangeServiceRest#computeTransitiveClosure
    * (java.lang.String, java.lang.String, java.lang.String, java.lang.String)
    */
   @Override
-  @GET
+  @POST
   @Path("/transitive/compute/{terminology}/{version}/{rootId}")
   @ApiOperation(value = "Compute transitive closure by id, terminology, and version", notes = "Computes transitive closure for the specified parameters.")
   @Produces({
@@ -458,7 +740,7 @@ public class ContentChangeServiceRestImpl extends RootServiceRestImpl implements
    * java.lang.String, java.lang.String, java.lang.String, java.lang.String)
    */
   @Override
-  @GET
+  @POST
   @Path("/transitive/clear/{terminology}/{version}")
   @ApiOperation(value = "Remove transitive closure by terminology, and version", notes = "Removes all transitive closure relationships matching the specified parameters.")
   @Produces({
@@ -489,7 +771,7 @@ public class ContentChangeServiceRestImpl extends RootServiceRestImpl implements
    * .String, java.lang.String, java.lang.String)
    */
   @Override
-  @GET
+  @POST
   @Path("/concept/clear/{terminology}/{version}")
   @ApiOperation(value = "Clear concepts", notes = "Removes all concepts matching the specified parameters.")
   @Produces({

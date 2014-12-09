@@ -6,6 +6,7 @@ package org.ihtsdo.otf.ts.rest;
 import org.ihtsdo.otf.ts.helpers.ConceptList;
 import org.ihtsdo.otf.ts.helpers.PfsParameterJpa;
 import org.ihtsdo.otf.ts.helpers.SearchResultList;
+import org.ihtsdo.otf.ts.rf2.AssociationReferenceConceptRefSetMember;
 import org.ihtsdo.otf.ts.rf2.Concept;
 import org.ihtsdo.otf.ts.rf2.Description;
 import org.ihtsdo.otf.ts.rf2.LanguageRefSetMember;
@@ -44,6 +45,19 @@ public interface ContentServiceRest {
    * @throws Exception the exception
    */
   public ConceptList getConcepts(String terminologyId, String terminology,
+    String version, String authToken) throws Exception;
+
+  /**
+   * Returns the concept for user.
+   *
+   * @param terminologyId the terminology id
+   * @param terminology the terminology
+   * @param version the version
+   * @param authToken the auth token
+   * @return the concept for user
+   * @throws Exception the exception
+   */
+  public Concept getConceptForUser(String terminologyId, String terminology,
     String version, String authToken) throws Exception;
 
   /**
@@ -146,6 +160,31 @@ public interface ContentServiceRest {
    */
   public LanguageRefSetMember getLanguageRefSetMember(Long id, String authToken) throws Exception;
  
+  
+ 
+  /**
+   * Returns the association reference concept ref set member.
+   *
+   * @param terminologyId the terminology id
+   * @param terminology the terminology
+   * @param version the version
+   * @param authToken the auth token
+   * @return the association reference concept ref set member
+   * @throws Exception the exception
+   */
+  public AssociationReferenceConceptRefSetMember getAssociationReferenceConceptRefSetMember(
+    String terminologyId, String terminology, String version, String authToken)
+    throws Exception;
+
+  /**
+   * Returns the association reference concept ref set member.
+   *
+   * @param id the id
+   * @param authToken the auth token
+   * @return the association reference concept ref set member
+   * @throws Exception the exception
+   */
+  public AssociationReferenceConceptRefSetMember getAssociationReferenceConceptRefSetMember(Long id, String authToken) throws Exception;
   
   
 }

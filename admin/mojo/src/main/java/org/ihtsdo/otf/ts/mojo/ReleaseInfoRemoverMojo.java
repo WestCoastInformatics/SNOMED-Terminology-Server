@@ -33,11 +33,19 @@ import org.ihtsdo.otf.ts.services.HistoryService;
 public class ReleaseInfoRemoverMojo extends AbstractMojo {
 
   /**
+   * The terminology
+   * 
+   * @parameter
+   * @required
+   */
+  private String terminology = null;
+
+  /**
    * A comma-separated list of release info names to remove
    * 
    * @parameter
    */
-  private String releaseInfoValues;
+  private String releaseInfoNames;
 
   /**
    * Instantiates a {@link ReleaseInfoRemoverMojo} from the specified
@@ -57,15 +65,15 @@ public class ReleaseInfoRemoverMojo extends AbstractMojo {
     getLog().info("Starting removing ReleaseInfos");
     try {
       HistoryService service = new HistoryServiceJpa();
-      if (releaseInfoValues == null || releaseInfoValues.isEmpty()) {
-        for (ReleaseInfo releaseInfo : service.getReleaseHistory().getObjects()) {
+      if (releaseInfoNames == null || releaseInfoNames.isEmpty()) {
+        for (ReleaseInfo releaseInfo : service.getReleaseHistory(terminology).getObjects()) {
           getLog().info("  Removing " + releaseInfo.getName());
           service.removeReleaseInfo(releaseInfo.getId());
         }
       } else {
-        for (String releaseInfoValue : releaseInfoValues.split(",")) {
+        for (String releaseInfoValue : releaseInfoNames.split(",")) {
           getLog().info("  Removing " + releaseInfoValue);
-          service.removeReleaseInfo(service.getReleaseInfo(releaseInfoValue)
+          service.removeReleaseInfo(service.getReleaseInfo(terminology,releaseInfoValue)
               .getId());
         }
       }

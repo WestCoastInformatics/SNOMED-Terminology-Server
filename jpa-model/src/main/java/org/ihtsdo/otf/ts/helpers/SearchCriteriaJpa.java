@@ -84,7 +84,7 @@ public class SearchCriteriaJpa implements SearchCriteria {
    */
   @XmlID
   public String getObjectId() {
-    return this.id.toString();
+    return (id == null ? "" : id.toString());
   }
 
   /**

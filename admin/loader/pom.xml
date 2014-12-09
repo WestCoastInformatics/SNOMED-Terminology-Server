@@ -44,7 +44,33 @@
       </build>
     </profile>
 
-   <!-- Load SNOMED, specify -Drun.config=... -->
+    <!-- Load SNOMED delta, specify -Drun.config=... -->
+    <profile>
+      <id>SNOMEDCT-Delta</id>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.ihtsdo.otf.term-server</groupId>
+            <artifactId>term-server-admin-mojo</artifactId>
+            <version>${project.version}</version>
+            <executions>
+              <execution>
+                <id>load-rf2-delta</id>
+                <phase>package</phase>
+                <goals>
+                  <goal>load-rf2-delta</goal>
+                </goals>
+                <configuration>
+                  <terminology>SNOMEDCT</terminology>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+
+    <!-- Load SNOMED, specify -Drun.config=... -->
     <profile>
       <id>SNOMEDCT-Closure</id>
       <build>

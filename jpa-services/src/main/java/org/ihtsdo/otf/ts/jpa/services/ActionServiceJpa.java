@@ -132,7 +132,7 @@ public class ActionServiceJpa extends RootServiceJpa implements ActionService {
    */
   @Override
   public float getProgress(String sessionToken) throws Exception {
-    tokenCheck(sessionToken);
+    tokenCheck(sessionToken);    
     if (tokenProgressMap.containsKey(sessionToken)) {
       return tokenProgressMap.get(sessionToken);
     } else {
@@ -284,6 +284,23 @@ public class ActionServiceJpa extends RootServiceJpa implements ActionService {
       throw new LocalException("Session token has expired");
     }
     tokenTimeoutMap.put(token, new Date(new Date().getTime() + timeout));
+  }
+
+  /* (non-Javadoc)
+   * @see org.ihtsdo.otf.ts.services.ActionService#addNewInferredRelationships(java.lang.String)
+   */
+  @Override
+  public void addNewInferredRelationships(String sessionToken) throws Exception {
+    // takes cached new inferred relationships and inserts them (as an atomic operation).
+  }
+
+  /* (non-Javadoc)
+   * @see org.ihtsdo.otf.ts.services.ActionService#retireOldInferredRelationships(java.lang.String)
+   */
+  @Override
+  public void retireOldInferredRelationships(String sessionToken)
+    throws Exception {
+    // removes cached old inferred relationships and inserts them.
   }
 
 }

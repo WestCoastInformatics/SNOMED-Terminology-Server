@@ -12,7 +12,6 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Properties;
 
-import org.apache.commons.lang3.time.FastDateFormat;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoFailureException;
 import org.ihtsdo.otf.ts.helpers.ConfigUtility;
@@ -64,9 +63,6 @@ public class TerminologyRf2SnapshotLoaderMojo extends AbstractMojo {
 
   /** The version. */
   private String version = null;
-
-  /** The date format. */
-  private final FastDateFormat format = FastDateFormat.getInstance("yyyyMMdd");
 
   /** The concepts by concept. */
   private BufferedReader conceptsByConcept;
@@ -311,6 +307,8 @@ public class TerminologyRf2SnapshotLoaderMojo extends AbstractMojo {
             hierRelTypeMap.keySet().iterator().next().toString();
         metadataService.close();
         ContentService contentService = new ContentServiceJpa();
+        contentService.setLastModifiedFlag(false);
+
         // Walk up tree to the root
         // ASSUMPTION: single root
         String conceptId = isaRelType;
@@ -820,6 +818,7 @@ public class TerminologyRf2SnapshotLoaderMojo extends AbstractMojo {
 
     // begin transaction
     final ContentService contentService = new ContentServiceJpa();
+    contentService.setLastModifiedFlag(false);
     contentService.setTransactionPerOperation(false);
     contentService.beginTransaction();
 
@@ -831,7 +830,8 @@ public class TerminologyRf2SnapshotLoaderMojo extends AbstractMojo {
       if (!fields[0].equals("id")) { // header
 
         concept.setTerminologyId(fields[0]);
-        concept.setEffectiveTime(format.parse(fields[1]));
+        concept.setEffectiveTime(ConfigUtility.DATE_FORMAT.parse(fields[1]));
+        concept.setLastModified(ConfigUtility.DATE_FORMAT.parse(fields[1]));
         concept.setActive(fields[2].equals("1") ? true : false);
         concept.setModuleId(fields[3]);
         concept.setDefinitionStatusId(fields[4]);
@@ -881,6 +881,7 @@ public class TerminologyRf2SnapshotLoaderMojo extends AbstractMojo {
 
     // Begin transaction
     final ContentService contentService = new ContentServiceJpa();
+    contentService.setLastModifiedFlag(false);
     contentService.setTransactionPerOperation(false);
     contentService.beginTransaction();
 
@@ -895,7 +896,8 @@ public class TerminologyRf2SnapshotLoaderMojo extends AbstractMojo {
         // Configure relationship
         final Relationship relationship = new RelationshipJpa();
         relationship.setTerminologyId(fields[0]);
-        relationship.setEffectiveTime(format.parse(fields[1]));
+        relationship.setEffectiveTime(ConfigUtility.DATE_FORMAT.parse(fields[1]));
+        relationship.setLastModified(ConfigUtility.DATE_FORMAT.parse(fields[1]));
         relationship.setActive(fields[2].equals("1") ? true : false); // active
         relationship.setModuleId(fields[3]); // moduleId
 
@@ -966,6 +968,7 @@ public class TerminologyRf2SnapshotLoaderMojo extends AbstractMojo {
 
     // Begin transaction
     final ContentService contentService = new ContentServiceJpa();
+    contentService.setLastModifiedFlag(false);
     contentService.setTransactionPerOperation(false);
     contentService.beginTransaction();
 
@@ -1072,6 +1075,7 @@ public class TerminologyRf2SnapshotLoaderMojo extends AbstractMojo {
 
     // Begin transaction
     ContentService contentService = new ContentServiceJpa();
+    contentService.setLastModifiedFlag(false);
     contentService.setTransactionPerOperation(false);
     contentService.beginTransaction();
 
@@ -1131,7 +1135,8 @@ public class TerminologyRf2SnapshotLoaderMojo extends AbstractMojo {
         final Description description = new DescriptionJpa();
         description.setTerminologyId("-1");
         description.setTerminologyId(fields[0]);
-        description.setEffectiveTime(format.parse(fields[1]));
+        description.setEffectiveTime(ConfigUtility.DATE_FORMAT.parse(fields[1]));
+        description.setLastModified(ConfigUtility.DATE_FORMAT.parse(fields[1]));
         description.setActive(fields[2].equals("1") ? true : false);
         description.setModuleId(fields[3]);
 
@@ -1188,7 +1193,8 @@ public class TerminologyRf2SnapshotLoaderMojo extends AbstractMojo {
 
         // Universal RefSet attributes
         member.setTerminologyId(fields[0]);
-        member.setEffectiveTime(format.parse(fields[1]));
+        member.setEffectiveTime(ConfigUtility.DATE_FORMAT.parse(fields[1]));
+        member.setLastModified(ConfigUtility.DATE_FORMAT.parse(fields[1]));
         member.setActive(fields[2].equals("1") ? true : false);
         member.setModuleId(fields[3]);
         member.setRefSetId(fields[4]);
@@ -1240,6 +1246,7 @@ public class TerminologyRf2SnapshotLoaderMojo extends AbstractMojo {
 
     // Begin transaction
     ContentService contentService = new ContentServiceJpa();
+    contentService.setLastModifiedFlag(false);
     contentService.setTransactionPerOperation(false);
     contentService.beginTransaction();
 
@@ -1255,9 +1262,9 @@ public class TerminologyRf2SnapshotLoaderMojo extends AbstractMojo {
 
         // Universal RefSet attributes
         member.setTerminologyId(fields[0]);
-        member.setEffectiveTime(format.parse(fields[1]));
+        member.setEffectiveTime(ConfigUtility.DATE_FORMAT.parse(fields[1]));
+        member.setLastModified(ConfigUtility.DATE_FORMAT.parse(fields[1]));
         member.setActive(fields[2].equals("1") ? true : false);
-        member.setLastModified(new Date());
         member.setLastModifiedBy("loader");
         member.setModuleId(fields[3]);
         member.setRefSetId(fields[4]);
@@ -1314,6 +1321,7 @@ public class TerminologyRf2SnapshotLoaderMojo extends AbstractMojo {
 
     // begin transaction
     ContentService contentService = new ContentServiceJpa();
+    contentService.setLastModifiedFlag(false);
     contentService.setTransactionPerOperation(false);
     contentService.beginTransaction();
 
@@ -1328,10 +1336,9 @@ public class TerminologyRf2SnapshotLoaderMojo extends AbstractMojo {
 
         // Universal RefSet attributes
         member.setTerminologyId(fields[0]);
-        member.setEffectiveTime(format.parse(fields[1]));
+        member.setEffectiveTime(ConfigUtility.DATE_FORMAT.parse(fields[1]));
+        member.setLastModified(ConfigUtility.DATE_FORMAT.parse(fields[1]));
         member.setActive(fields[2].equals("1") ? true : false);
-        member.setLastModified(new Date());
-        member.setLastModifiedBy("loader");
         member.setModuleId(fields[3]);
         member.setRefSetId(fields[4]);
 
@@ -1388,6 +1395,7 @@ public class TerminologyRf2SnapshotLoaderMojo extends AbstractMojo {
 
     // begin transaction
     final ContentService contentService = new ContentServiceJpa();
+    contentService.setLastModifiedFlag(false);
     contentService.setTransactionPerOperation(false);
     contentService.beginTransaction();
 
@@ -1401,7 +1409,8 @@ public class TerminologyRf2SnapshotLoaderMojo extends AbstractMojo {
 
         // Universal RefSet attributes
         member.setTerminologyId(fields[0]);
-        member.setEffectiveTime(format.parse(fields[1]));
+        member.setEffectiveTime(ConfigUtility.DATE_FORMAT.parse(fields[1]));
+        member.setLastModified(ConfigUtility.DATE_FORMAT.parse(fields[1]));
         member.setActive(fields[2].equals("1") ? true : false);
         member.setModuleId(fields[3]);
         member.setRefSetId(fields[4]);
@@ -1459,6 +1468,7 @@ public class TerminologyRf2SnapshotLoaderMojo extends AbstractMojo {
 
     // begin transaction
     final ContentService contentService = new ContentServiceJpa();
+    contentService.setLastModifiedFlag(false);
     contentService.setTransactionPerOperation(false);
     contentService.beginTransaction();
 
@@ -1472,7 +1482,8 @@ public class TerminologyRf2SnapshotLoaderMojo extends AbstractMojo {
 
         // Universal RefSet attributes
         member.setTerminologyId(fields[0]);
-        member.setEffectiveTime(format.parse(fields[1]));
+        member.setEffectiveTime(ConfigUtility.DATE_FORMAT.parse(fields[1]));
+        member.setLastModified(ConfigUtility.DATE_FORMAT.parse(fields[1]));
         member.setActive(fields[2].equals("1") ? true : false);
         member.setModuleId(fields[3]);
         member.setRefSetId(fields[4]);
@@ -1530,6 +1541,7 @@ public class TerminologyRf2SnapshotLoaderMojo extends AbstractMojo {
 
     // begin transaction
     final ContentService contentService = new ContentServiceJpa();
+    contentService.setLastModifiedFlag(false);
     contentService.setTransactionPerOperation(false);
     contentService.beginTransaction();
 
@@ -1542,7 +1554,8 @@ public class TerminologyRf2SnapshotLoaderMojo extends AbstractMojo {
         final ComplexMapRefSetMember member = new ComplexMapRefSetMemberJpa();
 
         member.setTerminologyId(fields[0]);
-        member.setEffectiveTime(format.parse(fields[1]));
+        member.setEffectiveTime(ConfigUtility.DATE_FORMAT.parse(fields[1]));
+        member.setLastModified(ConfigUtility.DATE_FORMAT.parse(fields[1]));
         member.setActive(fields[2].equals("1") ? true : false);
         member.setModuleId(fields[3]);
         member.setRefSetId(fields[4]);
@@ -1610,6 +1623,7 @@ public class TerminologyRf2SnapshotLoaderMojo extends AbstractMojo {
 
     // begin transaction
     final ContentService contentService = new ContentServiceJpa();
+    contentService.setLastModifiedFlag(false);
     contentService.setTransactionPerOperation(false);
     contentService.beginTransaction();
 
@@ -1622,7 +1636,8 @@ public class TerminologyRf2SnapshotLoaderMojo extends AbstractMojo {
         final ComplexMapRefSetMember member = new ComplexMapRefSetMemberJpa();
 
         member.setTerminologyId(fields[0]);
-        member.setEffectiveTime(format.parse(fields[1]));
+        member.setEffectiveTime(ConfigUtility.DATE_FORMAT.parse(fields[1]));
+        member.setLastModified(ConfigUtility.DATE_FORMAT.parse(fields[1]));
         member.setActive(fields[2].equals("1") ? true : false);
         member.setModuleId(fields[3]);
         member.setRefSetId(fields[4]);

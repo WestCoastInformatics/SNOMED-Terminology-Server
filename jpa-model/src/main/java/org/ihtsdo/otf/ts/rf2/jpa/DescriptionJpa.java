@@ -282,8 +282,8 @@ public class DescriptionJpa extends AbstractComponent implements Description {
    * @return the concept id
    */
   @XmlElement
-  private String getConceptId() {
-    return concept != null ? concept.getTerminologyId() : "";
+  private Long getConceptId() {
+    return concept != null ? concept.getId() : null;
   }
 
   /**
@@ -292,7 +292,30 @@ public class DescriptionJpa extends AbstractComponent implements Description {
    * @param conceptId the concept id
    */
   @SuppressWarnings("unused")
-  private void setConceptId(String conceptId) {
+  private void setConceptId(Long conceptId) {
+    if (concept == null) {
+      concept = new ConceptJpa();
+    }
+    concept.setId(conceptId);
+  }
+
+  /**
+   * Returns the concept terminology id. Used for XML/JSON serialization.
+   * 
+   * @return the concept terminology id
+   */
+  @XmlElement
+  private String getConceptTerminologyId() {
+    return concept != null ? concept.getTerminologyId() : "";
+  }
+
+  /**
+   * Sets the concept terminology id.
+   *
+   * @param conceptId the concept terminology id
+   */
+  @SuppressWarnings("unused")
+  private void setConceptTerminologyId(String conceptId) {
     if (concept == null) {
       concept = new ConceptJpa();
     }
@@ -518,12 +541,9 @@ public class DescriptionJpa extends AbstractComponent implements Description {
    */
   @Override
   public String toString() {
-    return super.toString() + "," + getConcept().getTerminologyId();
-    // + +(getConcept() == null ? null : getConcept().getId()) + ","
-    // + (getConcept() == null ? null : getConcept().getTerminologyId());// +
-    // ","
-    // + getLanguageCode() + "," + getTypeId() + "," + getTerm() + ","
-    // + getCaseSignificanceId();
+    return super.toString() + "," + getConceptId() + ","
+        + getConceptTerminologyId() + ", " + getLanguageCode() + ","
+        + getTypeId() + "," + getTerm() + "," + getCaseSignificanceId();
   }
 
   @Override

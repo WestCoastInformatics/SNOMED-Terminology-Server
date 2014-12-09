@@ -53,6 +53,21 @@ IF %ERRORLEVEL% NEQ 0 (set error=1
 goto trailer)
 del /Q mvn.log
 
+echo     Start SNOMED editing ...%date% %time%
+cd %SERVER_HOME%/admin/release
+call %MVN_HOME%/bin/mvn -PStartEditingCycle -Drelease.version=20150131 -Dterminology=SNOMEDCT -Dterminology.version=20140731 -Drun.config=%SERVER_CONFIG% install 1> mvn.log
+IF %ERRORLEVEL% NEQ 0 (set error=1
+goto trailer)
+del /Q mvn.log
+
+echo     Start ICD9CM editing ...%date% %time%
+cd %SERVER_HOME%/admin/release
+call %MVN_HOME%/bin/mvn -PStartEditingCycle -Drelease.version=2015 -Dterminology=ICD9CM -Dterminology.version=2013 -Drun.config=%SERVER_CONFIG% install 1> mvn.log
+IF %ERRORLEVEL% NEQ 0 (set error=1
+goto trailer)
+del /Q mvn.log
+
+
 :trailer
 echo ------------------------------------------------
 IF %error% NEQ 0 (

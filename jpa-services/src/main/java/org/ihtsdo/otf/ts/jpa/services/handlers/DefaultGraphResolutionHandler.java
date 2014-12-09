@@ -23,12 +23,17 @@ public class DefaultGraphResolutionHandler implements GraphResolutionHandler {
   @Override
   public void resolve(Concept concept, Set<String> isaRelTypeIds) {
     if (concept != null) {
+      boolean nullId = concept.getId() == null;
       // Make sure to read descriptions and relationships (prevents
       // serialization error)
       int ct = 0;
       for (Description description : concept.getDescriptions()) {
         ct++;
         description.setConcept(concept);
+        // if the concept is "new", then the description must be too
+        if (nullId) {
+          description.setId(null);
+        }
         resolve(description);
       }
       concept.setDescriptionCount(ct);
@@ -37,6 +42,10 @@ public class DefaultGraphResolutionHandler implements GraphResolutionHandler {
       int ct2 = 0;
       for (Relationship relationship : concept.getRelationships()) {
         ct++;
+        // if the concept is "new", then the relationship must be too
+        if (nullId) {
+          relationship.setId(null);
+        }
         relationship.setSourceConcept(concept);
         relationship.getDestinationConcept().getDefaultPreferredName();
         if (isaRelTypeIds != null && isaRelTypeIds.contains(relationship.getTypeId())) {
@@ -62,9 +71,14 @@ public class DefaultGraphResolutionHandler implements GraphResolutionHandler {
   @Override
   public void resolve(Description description) {
     if (description != null) {
+      boolean nullId = description.getId() == null;
       int ct = 0;
       for (LanguageRefSetMember member : description
           .getLanguageRefSetMembers()) {
+        // if the description is "new", then the language refset member must be too
+        if (nullId) {
+          member.setId(null);
+        }
         ct++;
         member.setDescription(description);
       }

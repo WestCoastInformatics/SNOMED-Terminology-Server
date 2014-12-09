@@ -56,6 +56,28 @@ if ($status != 0) then
     exit 1
 endif
 
+echo "    Start SNOMEDCT editing ...`/bin/date`"
+cd $SERVER_HOME/admin/release
+mvn -PStartEditingCycle -Drun.config=$SERVER_CONFIG \
+  -Drelease.version=20150131 -Dterminology=SNOMEDCT \
+  -Dterminology.version=20140731 install >&! mvn.log
+if ($status != 0) then
+    echo "ERROR starting editing for SNOMEDCT"
+    cat mvn.log
+    exit 1
+endif
+
+echo "    Start ICD9CM editing ...`/bin/date`"
+cd $SERVER_HOME/admin/release
+mvn -PStartEditingCycle -Drun.config=$SERVER_CONFIG \
+  -Drelease.version=2015 -Dterminology=ICD9CM \
+  -Dterminology.version=2013 install >&! mvn.log
+if ($status != 0) then
+    echo "ERROR starting editing for ICD9CM"
+    cat mvn.log
+    exit 1
+endif
+
 echo "------------------------------------------------"
 echo "Finished ...`/bin/date`"
 echo "------------------------------------------------"

@@ -24,8 +24,17 @@ public class ReleaseRf2BeginMojo extends AbstractMojo {
    * The release version
    * 
    * @parameter releaseVersion
+   * @required
    */
   private String releaseVersion = null;
+
+  /**
+   * The terminology
+   * 
+   * @parameter terminology
+   * @required
+   */
+  private String terminology = null;
 
   /**
    * The validation flag.
@@ -60,14 +69,10 @@ public class ReleaseRf2BeginMojo extends AbstractMojo {
       // log start
       getLog().info("Starting Release");
       getLog().info("  releaseVersion = " + releaseVersion);
+      getLog().info("  terminology = " + terminology);
       getLog().info("  validate = " + validate);
       getLog().info("  workflowStatusValues = " + workflowStatusValues);
       getLog().info("  saveIdentfiers = " + saveIdentifiers);
-
-      // Check preconditions
-      if (releaseVersion == null) {
-        throw new Exception("A release version must be specified.");
-      }
 
       // Perform the operation
       Set<String> statusSet = new HashSet<>();
@@ -77,7 +82,7 @@ public class ReleaseRf2BeginMojo extends AbstractMojo {
         }
       }
       ReleaseRf2BeginAlgorithm algorithm =
-          new ReleaseRf2BeginAlgorithm(releaseVersion, validate, statusSet,
+          new ReleaseRf2BeginAlgorithm(releaseVersion, terminology, validate, statusSet,
               saveIdentifiers.toLowerCase().equals("true"));
       try {
         algorithm.compute();

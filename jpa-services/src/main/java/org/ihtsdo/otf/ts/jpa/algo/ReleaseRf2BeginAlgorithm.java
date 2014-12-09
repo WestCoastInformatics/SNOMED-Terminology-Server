@@ -38,6 +38,9 @@ public class ReleaseRf2BeginAlgorithm extends ContentServiceJpa implements
   /** The release version. */
   private String releaseVersion = null;
 
+  /**  The terminology. */
+  private String terminology = null;
+
   /** The validate flag. */
   private boolean validate = false;
 
@@ -60,16 +63,18 @@ public class ReleaseRf2BeginAlgorithm extends ContentServiceJpa implements
    * Instantiates an empty {@link ReleaseRf2BeginAlgorithm}.
    *
    * @param releaseVersion the release version
+   * @param terminology the terminology
    * @param validate the validate
    * @param workflowStatusValues the workflow status values
    * @param saveIdentifiers the save identifiers
    * @throws Exception if anything goes wrong
    */
-  public ReleaseRf2BeginAlgorithm(String releaseVersion, boolean validate,
-      Set<String> workflowStatusValues, boolean saveIdentifiers)
-      throws Exception {
+  public ReleaseRf2BeginAlgorithm(String releaseVersion, String terminology,
+      boolean validate, Set<String> workflowStatusValues,
+      boolean saveIdentifiers) throws Exception {
     super();
     this.releaseVersion = releaseVersion;
+    this.terminology = terminology;
     this.validate = validate;
     this.workflowStatusValues = workflowStatusValues;
     this.saveIdentifiers = saveIdentifiers;
@@ -101,7 +106,7 @@ public class ReleaseRf2BeginAlgorithm extends ContentServiceJpa implements
     //
     fireProgressEvent(1, "  Check assumptions");
     HistoryService historyService = new HistoryServiceJpa();
-    ReleaseInfo info = historyService.getReleaseInfo(releaseVersion);
+    ReleaseInfo info = historyService.getReleaseInfo(terminology, releaseVersion);
     // must exist
     if (info == null) {
       throw new Exception(
@@ -123,7 +128,7 @@ public class ReleaseRf2BeginAlgorithm extends ContentServiceJpa implements
     //
     // Get all concepts that have changed
     //
-    ReleaseInfo previousInfo = historyService.getPreviousReleaseInfo();
+    ReleaseInfo previousInfo = historyService.getPreviousReleaseInfo(terminology);
     Date previousDate =
         previousInfo == null ? ConfigUtility.DATE_FORMAT.parse("20140101")
             : previousInfo.getReleaseFinishDate();

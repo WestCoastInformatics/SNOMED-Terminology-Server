@@ -89,6 +89,8 @@ public class ReleaseInfoJpa implements ReleaseInfo {
     releaseFinishDate = releaseInfo.getReleaseFinishDate();
     planned = releaseInfo.isPlanned();
     published = releaseInfo.isPublished();
+    terminology = releaseInfo.getTerminology();
+    terminologyVersion = releaseInfo.getTerminologyVersion();
   }
 
   /**
@@ -98,7 +100,7 @@ public class ReleaseInfoJpa implements ReleaseInfo {
    */
   @XmlID
   public String getObjectId() {
-    return this.id.toString();
+    return (id == null ? "" : id.toString());
   }
 
   /**
@@ -327,9 +329,6 @@ public class ReleaseInfoJpa implements ReleaseInfo {
     int result = 1;
     result =
         prime * result + ((description == null) ? 0 : description.hashCode());
-    result =
-        prime * result
-            + ((effectiveTime == null) ? 0 : effectiveTime.hashCode());
     result = prime * result + ((name == null) ? 0 : name.hashCode());
     result = prime * result + (planned ? 1231 : 1237);
     result = prime * result + (published ? 1231 : 1237);
@@ -361,11 +360,6 @@ public class ReleaseInfoJpa implements ReleaseInfo {
         return false;
     } else if (!description.equals(other.description))
       return false;
-    if (effectiveTime == null) {
-      if (other.effectiveTime != null)
-        return false;
-    } else if (!effectiveTime.equals(other.effectiveTime))
-      return false;
     if (name == null) {
       if (other.name != null)
         return false;
@@ -388,4 +382,14 @@ public class ReleaseInfoJpa implements ReleaseInfo {
     return true;
   }
 
+  /*
+   * (non-Javadoc)
+   * 
+   * @see java.lang.Object#toString()
+   */
+  @Override
+  public String toString() {
+    return name + ", " + description + ", " + effectiveTime + ", " + planned
+        + ", " + published + ", " + terminology + ", " + terminologyVersion;
+  }
 }

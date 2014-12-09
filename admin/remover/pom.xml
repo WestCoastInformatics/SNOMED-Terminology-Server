@@ -17,7 +17,10 @@
 
   <!-- Mojo properties -->
   <properties>
-    <release.info.values></release.info.values>
+    <!-- The terminology -->
+    <terminology></terminology>
+    <!-- the release info names to remove -->
+    <release.info.names></release.info.names>
   </properties>
 
   <profiles>
@@ -91,9 +94,34 @@
                   <goal>remove-release-info</goal>
                 </goals>
                 <configuration>
+                  <!-- the terminology -->
+                  <terminology>${terminology}</terminology>
                   <!-- Leave blank to remove all -->
-                  <releaseInfoValues>${release.info.values}</releaseInfoValues>
+                  <releaseInfoNames>${release.info.names}</releaseInfoNames>
                 </configuration>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+
+    <!-- Demo data remover -->
+    <profile>
+      <id>Demo</id>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.ihtsdo.otf.term-server</groupId>
+            <artifactId>term-server-admin-mojo</artifactId>
+            <version>${project.version}</version>
+            <executions>
+              <execution>
+                <id>remove-demo</id>
+                <phase>package</phase>
+                <goals>
+                  <goal>remove-demo</goal>
+                </goals>
               </execution>
             </executions>
           </plugin>

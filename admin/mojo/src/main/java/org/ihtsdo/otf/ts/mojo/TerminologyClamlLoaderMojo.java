@@ -24,7 +24,6 @@ import java.util.Stack;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 
-import org.apache.commons.lang3.time.FastDateFormat;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
@@ -59,10 +58,6 @@ public class TerminologyClamlLoaderMojo extends AbstractMojo {
   // NOTE: default visibility is used instead of private
   // so that the inner class parser does not require
   // the use of synthetic accessors
-
-  /** The date format. */
-  final static FastDateFormat dateFormat = FastDateFormat
-      .getInstance("yyyyMMdd");
 
   /**
    * Name of terminology to be loaded.
@@ -557,7 +552,7 @@ public class TerminologyClamlLoaderMojo extends AbstractMojo {
           // For the first label in the code, create the concept
           if (!conceptMap.containsKey(code)) {
             concept.setTerminologyId(code);
-            concept.setEffectiveTime(dateFormat.parse(effectiveTime));
+            concept.setEffectiveTime(ConfigUtility.DATE_FORMAT.parse(effectiveTime));
             concept.setActive(true);
             concept.setLastModified(new Date());
             concept.setLastModifiedBy("loader");
@@ -581,7 +576,7 @@ public class TerminologyClamlLoaderMojo extends AbstractMojo {
           // Add description to concept for this rubric
           Description desc = new DescriptionJpa();
           desc.setTerminologyId(rubricId);
-          desc.setEffectiveTime(dateFormat.parse(effectiveTime));
+          desc.setEffectiveTime(ConfigUtility.DATE_FORMAT.parse(effectiveTime));
           desc.setActive(true);
           desc.setLastModified(new Date());
           desc.setLastModifiedBy("loader");
@@ -702,7 +697,7 @@ public class TerminologyClamlLoaderMojo extends AbstractMojo {
             member.setActive(true);
             member.setLastModified(new Date());
             member.setLastModifiedBy("loader");
-            member.setEffectiveTime(dateFormat.parse(effectiveTime));
+            member.setEffectiveTime(ConfigUtility.DATE_FORMAT.parse(effectiveTime));
             member.setModuleId(conceptMap.get("defaultModule")
                 .getTerminologyId());
             member.setTerminology(terminology);
@@ -817,7 +812,7 @@ public class TerminologyClamlLoaderMojo extends AbstractMojo {
                 relationship.setTerminologyId(new Integer(relIdCounter++)
                     .toString());
               }
-              relationship.setEffectiveTime(dateFormat.parse(effectiveTime));
+              relationship.setEffectiveTime(ConfigUtility.DATE_FORMAT.parse(effectiveTime));
               relationship.setActive(true);
               relationship.setLastModified(new Date());
               relationship.setLastModifiedBy("loader");
@@ -870,7 +865,7 @@ public class TerminologyClamlLoaderMojo extends AbstractMojo {
       String code = modifier + modifierCode;
       if (!conceptMap.containsKey(code)) {
         concept.setTerminologyId(modifier + modifierCode);
-        concept.setEffectiveTime(dateFormat.parse(effectiveTime));
+        concept.setEffectiveTime(ConfigUtility.DATE_FORMAT.parse(effectiveTime));
         concept.setActive(true);
         concept.setLastModified(new Date());
         concept.setLastModifiedBy("loader");
@@ -891,7 +886,7 @@ public class TerminologyClamlLoaderMojo extends AbstractMojo {
       // add description to concept
       Description desc = new DescriptionJpa();
       desc.setTerminologyId(rubricId);
-      desc.setEffectiveTime(dateFormat.parse(effectiveTime));
+      desc.setEffectiveTime(ConfigUtility.DATE_FORMAT.parse(effectiveTime));
       desc.setActive(true);
       desc.setLastModified(new Date());
       desc.setLastModifiedBy("loader");

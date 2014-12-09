@@ -3,6 +3,7 @@ package org.ihtsdo.otf.ts.rest.impl;
 import javax.ws.rs.GET;
 import javax.ws.rs.HeaderParam;
 import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.WebApplicationException;
@@ -135,7 +136,7 @@ public class ActionServiceRestImpl extends RootServiceRestImpl implements
    * java.lang.String)
    */
   @Override
-  @GET
+  @POST
   @Path("/cancel/{sessionToken}")
   @ApiOperation(value = "Cancel session operation", notes = "Cancels the current activity for the specified session token.")
   @Produces({
@@ -172,7 +173,7 @@ public class ActionServiceRestImpl extends RootServiceRestImpl implements
    * , java.lang.String)
    */
   @Override
-  @GET
+  @POST
   @Path("/classify/{sessionToken}/prepare")
   @ApiOperation(value = "Prepare classification data", notes = "Prepares classification data for the specified session token.")
   @Produces({
@@ -211,7 +212,7 @@ public class ActionServiceRestImpl extends RootServiceRestImpl implements
    * java.lang.String)
    */
   @Override
-  @GET
+  @POST
   @Path("/classify/{sessionToken}")
   @ApiOperation(value = "Classification", notes = "Classifies data for the specified session token.")
   @Produces({
@@ -247,7 +248,7 @@ public class ActionServiceRestImpl extends RootServiceRestImpl implements
    * String, java.lang.String)
    */
   @Override
-  @GET
+  @POST
   @Path("/classify/{sessionToken}/incremental")
   @ApiOperation(value = "Incremental classification", notes = "Incrementally classifies data for the specified session token.")
   @Produces({
@@ -319,6 +320,7 @@ public class ActionServiceRestImpl extends RootServiceRestImpl implements
       return null;
     }
   }
+
 
   /*
    * (non-Javadoc)
@@ -408,4 +410,80 @@ public class ActionServiceRestImpl extends RootServiceRestImpl implements
     }
   }
 
+  @Override
+  @POST
+  @Path("/classify/{sessionToken}/old/retire")
+  @ApiOperation(value = "Retire inferred relationships no longer active after classification", notes = "Retires inferred relationships no longer active after classification for the specified session token.", response = RelationshipList.class)
+  @Produces({
+      MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML
+  })
+  public void retireOldInferredRelationships(
+    @ApiParam(value = "Session token, e.g. value from /action/configure", required = true) @HeaderParam("sessionToken") String sessionToken,
+    @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken) {
+
+    Logger.getLogger(ContentServiceRestImpl.class).info(
+        "RESTful call (Action): /classify/" + sessionToken + "/old/retire");
+
+    try {
+      // authorize call
+      UserRole role = securityService.getApplicationRoleForToken(authToken);
+      if (!role.hasPrivilegesOf(UserRole.AUTHOR))
+        throw new WebApplicationException(
+            Response
+                .status(401)
+                .entity(
+                    "User does not have permissions to retire old inferred relationship.")
+                .build());
+
+      ActionService actionService = new ActionServiceJpa();
+      actionService.retireOldInferredRelationships(sessionToken);
+      actionService.close();
+
+    } catch (Exception e) {
+      handleException(e, "trying to get old inferred relationship for "
+          + sessionToken);
+
+    }
+  }
+
+  /*
+   * (non-Javadoc)
+   * 
+   * @see
+   * org.ihtsdo.otf.ts.rest.ActionServiceRest#addNewInferredRelationships(java
+   * .lang.String, java.lang.String)
+   */
+  @Override
+  @PUT
+  @Path("/classify/{sessionToken}/new/add")
+  @ApiOperation(value = "Add new inferred relationships after classification", notes = "Adds new inferred relationships after classification for the specified session token.", response = RelationshipList.class)
+  @Produces({
+      MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML
+  })
+  public void addNewInferredRelationships(
+    @ApiParam(value = "Session token, e.g. value from /action/configure", required = true) @HeaderParam("sessionToken") String sessionToken,
+    @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken) {
+
+    Logger.getLogger(ContentServiceRestImpl.class).info(
+        "RESTful call (Action): /classify/" + sessionToken + "/new");
+
+    try {
+      // authorize call
+      UserRole role = securityService.getApplicationRoleForToken(authToken);
+      if (!role.hasPrivilegesOf(UserRole.AUTHOR))
+        throw new WebApplicationException(
+            Response
+                .status(401)
+                .entity(
+                    "User does not have permissions to get new inferred relationship.")
+                .build());
+
+      ActionService actionService = new ActionServiceJpa();
+      actionService.addNewInferredRelationships(sessionToken);
+      actionService.close();
+    } catch (Exception e) {
+      handleException(e, "trying to get new inferred relationship for "
+          + sessionToken);
+    }
+  }
 }

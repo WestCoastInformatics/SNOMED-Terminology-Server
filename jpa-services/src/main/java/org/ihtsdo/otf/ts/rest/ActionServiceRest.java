@@ -96,4 +96,22 @@ public interface ActionServiceRest {
    */
   public RelationshipList getNewInferredRelationships(String sessionToken, String authToken) throws Exception;
 
+  /**
+   * Retire old inferred relationships. Removes inferred relationships never inserted.
+   *
+   * @param sessionToken the session token
+   * @param authToken the auth token
+   * @throws Exception the exception
+   */
+  public void retireOldInferredRelationships(String sessionToken, String authToken) throws Exception;
+  
+  /**
+   * Adds the new inferred relationships.
+   *
+   * @param sessionToken the session token
+   * @param authToken the auth token
+   * @throws Exception the exception
+   */
+  public void addNewInferredRelationships(String sessionToken, String authToken) throws Exception;
+
 }

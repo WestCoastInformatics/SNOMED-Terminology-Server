@@ -12,20 +12,31 @@ import org.ihtsdo.otf.ts.services.helpers.UserImpl;
  */
 public class DefaultSecurityServiceHandler implements SecurityServiceHandler {
 
-  /**  The properties. */
-  //private Properties properties;
-  
-  /* (non-Javadoc)
-   * @see org.ihtsdo.otf.mapping.services.SecurityServiceHandler#authenticate(java.lang.String, java.lang.String, java.util.Properties)
+  /** The properties. */
+  // private Properties properties;
+
+  /*
+   * (non-Javadoc)
+   * 
+   * @see
+   * org.ihtsdo.otf.mapping.services.SecurityServiceHandler#authenticate(java
+   * .lang.String, java.lang.String, java.util.Properties)
    */
   @Override
   public User authenticate(String username, String password) throws Exception {
 
     User user = new UserImpl();
-    user.setUserName("guest");
-    user.setName("Guest");
-    user.setApplicationRole(UserRole.VIEWER);
-    user.setEmail("guest@example.com");
+    if (username.equals("admin")) {
+      user.setUserName("admin");
+      user.setName("Admin");
+      user.setApplicationRole(UserRole.ADMINISTRATOR);
+      user.setEmail("guest@example.com");
+    } else {
+      user.setUserName("guest");
+      user.setName("Guest");
+      user.setApplicationRole(UserRole.VIEWER);
+      user.setEmail("guest@example.com");
+    }
 
     return user;
   }
@@ -51,11 +62,14 @@ public class DefaultSecurityServiceHandler implements SecurityServiceHandler {
     return user;
   }
 
-  /* (non-Javadoc)
-   * @see org.ihtsdo.otf.ts.helpers.Configurable#setProperties(java.util.Properties)
+  /*
+   * (non-Javadoc)
+   * 
+   * @see
+   * org.ihtsdo.otf.ts.helpers.Configurable#setProperties(java.util.Properties)
    */
   @Override
   public void setProperties(Properties properties) {
-    //this.properties = properties;
+    // this.properties = properties;
   }
 }

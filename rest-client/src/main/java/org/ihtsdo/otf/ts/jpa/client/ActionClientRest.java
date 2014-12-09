@@ -66,8 +66,11 @@ public class ActionClientRest implements ActionServiceRest {
     return resultString;
   }
 
-  /* (non-Javadoc)
-   * @see org.ihtsdo.otf.ts.rest.ActionServiceRest#getProgress(java.lang.String, java.lang.String)
+  /*
+   * (non-Javadoc)
+   * 
+   * @see org.ihtsdo.otf.ts.rest.ActionServiceRest#getProgress(java.lang.String,
+   * java.lang.String)
    */
   @Override
   public float getProgress(String sessionToken, String authToken)
@@ -104,7 +107,7 @@ public class ActionClientRest implements ActionServiceRest {
             + sessionToken);
     ClientResponse response =
         resource.accept(MediaType.APPLICATION_XML)
-            .header("Authorization", authToken).get(ClientResponse.class);
+            .header("Authorization", authToken).post(ClientResponse.class);
 
     String resultString = response.getEntity(String.class);
     if (response.getClientResponseStatus().getFamily() == Family.SUCCESSFUL) {
@@ -130,7 +133,7 @@ public class ActionClientRest implements ActionServiceRest {
             + sessionToken + "/prepare");
     ClientResponse response =
         resource.accept(MediaType.APPLICATION_XML)
-            .header("Authorization", authToken).get(ClientResponse.class);
+            .header("Authorization", authToken).post(ClientResponse.class);
 
     String resultString = response.getEntity(String.class);
     if (response.getClientResponseStatus().getFamily() == Family.SUCCESSFUL) {
@@ -140,8 +143,11 @@ public class ActionClientRest implements ActionServiceRest {
     }
   }
 
-  /* (non-Javadoc)
-   * @see org.ihtsdo.otf.ts.rest.ActionServiceRest#classify(java.lang.String, java.lang.String)
+  /*
+   * (non-Javadoc)
+   * 
+   * @see org.ihtsdo.otf.ts.rest.ActionServiceRest#classify(java.lang.String,
+   * java.lang.String)
    */
   @Override
   public void classify(String sessionToken, String authToken) throws Exception {
@@ -151,7 +157,7 @@ public class ActionClientRest implements ActionServiceRest {
             + sessionToken);
     ClientResponse response =
         resource.accept(MediaType.APPLICATION_XML)
-            .header("Authorization", authToken).get(ClientResponse.class);
+            .header("Authorization", authToken).post(ClientResponse.class);
 
     String resultString = response.getEntity(String.class);
     if (response.getClientResponseStatus().getFamily() == Family.SUCCESSFUL) {
@@ -177,7 +183,7 @@ public class ActionClientRest implements ActionServiceRest {
             + sessionToken + "/incremental");
     ClientResponse response =
         resource.accept(MediaType.APPLICATION_XML)
-            .header("Authorization", authToken).get(ClientResponse.class);
+            .header("Authorization", authToken).post(ClientResponse.class);
 
     String resultString = response.getEntity(String.class);
     if (response.getClientResponseStatus().getFamily() == Family.SUCCESSFUL) {
@@ -282,5 +288,54 @@ public class ActionClientRest implements ActionServiceRest {
         (RelationshipListJpa) ConfigUtility.getGraphForString(resultString,
             RelationshipListJpa.class);
     return result;
+  }
+
+  /*
+   * (non-Javadoc)
+   * 
+   * @see
+   * org.ihtsdo.otf.ts.rest.ActionServiceRest#retireOldInferredRelationships
+   * (java.lang.String, java.lang.String)
+   */
+  @Override
+  public void retireOldInferredRelationships(String sessionToken,
+    String authToken) throws Exception {
+    Client client = Client.create();
+    WebResource resource =
+        client.resource(config.getProperty("base.url") + "/action/classify/"
+            + sessionToken + "/old/retire");
+    ClientResponse response =
+        resource.accept(MediaType.APPLICATION_XML)
+            .header("Authorization", authToken).post(ClientResponse.class);
+    if (response.getClientResponseStatus().getFamily() == Family.SUCCESSFUL) {
+      // do nothing
+    } else {
+      throw new Exception("Unexpected status " + response.getStatus());
+    }
+  }
+
+  /*
+   * (non-Javadoc)
+   * 
+   * @see
+   * org.ihtsdo.otf.ts.rest.ActionServiceRest#addNewInferredRelationships(java
+   * .lang.String, java.lang.String)
+   */
+  @Override
+  public void addNewInferredRelationships(String sessionToken, String authToken)
+    throws Exception {
+    Client client = Client.create();
+    WebResource resource =
+        client.resource(config.getProperty("base.url") + "/action/classify/"
+            + sessionToken + "/new");
+    ClientResponse response =
+        resource.accept(MediaType.APPLICATION_XML)
+            .header("Authorization", authToken).put(ClientResponse.class);
+
+    if (response.getClientResponseStatus().getFamily() == Family.SUCCESSFUL) {
+      // do nothing
+    } else {
+      throw new Exception("Unexpected status " + response.getStatus());
+    }
   }
 }

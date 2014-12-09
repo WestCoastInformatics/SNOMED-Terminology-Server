@@ -17,6 +17,7 @@ import org.ihtsdo.otf.ts.jpa.services.ContentServiceJpa;
 import org.ihtsdo.otf.ts.jpa.services.SecurityServiceJpa;
 import org.ihtsdo.otf.ts.jpa.services.helper.TerminologyUtility;
 import org.ihtsdo.otf.ts.rest.ContentServiceRest;
+import org.ihtsdo.otf.ts.rf2.AssociationReferenceConceptRefSetMember;
 import org.ihtsdo.otf.ts.rf2.Concept;
 import org.ihtsdo.otf.ts.rf2.Description;
 import org.ihtsdo.otf.ts.rf2.LanguageRefSetMember;
@@ -94,6 +95,59 @@ public class ContentServiceRestImpl extends RootServiceRestImpl implements
       }
       contentService.close();
       return cl;
+    } catch (Exception e) {
+      handleException(e, "trying to retrieve a concept");
+      return null;
+    }
+
+  }
+
+  /*
+   * (non-Javadoc)
+   * 
+   * @see
+   * org.ihtsdo.otf.mapping.rest.ContentServiceRest#getConcept(java.lang.String,
+   * java.lang.String, java.lang.String, java.lang.String)
+   */
+  @Override
+  @GET
+  @Path("/concept/{terminology}/{version}/{terminologyId}/foruser")
+  @ApiOperation(value = "Get concept by id, terminology, and version for the current user", notes = "Gets the concepts matching the specified parameters where the current user is the last modified by.", response = Concept.class)
+  @Produces({
+      MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML
+  })
+  public Concept getConceptForUser(
+    @ApiParam(value = "Concept terminology id, e.g. 102751005", required = true) @PathParam("terminologyId") String terminologyId,
+    @ApiParam(value = "Concept terminology name, e.g. SNOMEDCT", required = true) @PathParam("terminology") String terminology,
+    @ApiParam(value = "Concept terminology version, e.g. 20140731", required = true) @PathParam("version") String version,
+    @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken) {
+
+    Logger.getLogger(ContentServiceRestImpl.class).info(
+        "RESTful call (Content): /concept/" + terminology + "/" + version + "/"
+            + terminologyId);
+
+    try {
+      authenticate(securityService, authToken, "retrieve the concept",
+          UserRole.VIEWER);
+
+      String username = securityService.getUsernameForToken(authToken);
+      ContentService contentService = new ContentServiceJpa();
+      ConceptList cl =
+          contentService.getConcepts(terminologyId, terminology, version);
+
+      for (Concept concept : cl.getObjects()) {
+        if (concept != null && concept.getLastModified().equals(username)) {
+          contentService.getGraphResolutionHandler().resolve(
+              concept,
+              TerminologyUtility.getHierarchcialIsaRels(
+                  concept.getTerminology(), concept.getTerminologyVersion()));
+
+          contentService.close();
+          return concept;
+        }
+      }
+      contentService.close();
+      return null;
     } catch (Exception e) {
       handleException(e, "trying to retrieve a concept");
       return null;
@@ -418,15 +472,13 @@ public class ContentServiceRestImpl extends RootServiceRestImpl implements
           "retrieve the language refset member", UserRole.VIEWER);
 
       ContentService contentService = new ContentServiceJpa();
-      LanguageRefSetMember languageRefSetMember =
-          contentService.getLanguageRefSetMember(id);
+      LanguageRefSetMember member = contentService.getLanguageRefSetMember(id);
 
-      if (languageRefSetMember != null) {
-        contentService.getGraphResolutionHandler()
-            .resolve(languageRefSetMember);
+      if (member != null) {
+        contentService.getGraphResolutionHandler().resolve(member);
       }
       contentService.close();
-      return languageRefSetMember;
+      return member;
     } catch (Exception e) {
       handleException(e, "trying to retrieve a language refset member");
       return null;
@@ -454,27 +506,113 @@ public class ContentServiceRestImpl extends RootServiceRestImpl implements
     @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken) {
 
     Logger.getLogger(ContentServiceRestImpl.class).info(
-        "RESTful call (Content): /languag/" + terminology + "/" + version + "/"
-            + terminologyId);
+        "RESTful call (Content): /language/" + terminology + "/" + version
+            + "/" + terminologyId);
 
     try {
       authenticate(securityService, authToken,
           "retrieve the language refset member", UserRole.VIEWER);
 
       ContentService contentService = new ContentServiceJpa();
-      LanguageRefSetMember languageRefSetMember =
+      LanguageRefSetMember member =
           contentService.getLanguageRefSetMember(terminologyId, terminology,
               version);
 
-      if (languageRefSetMember != null) {
-        contentService.getGraphResolutionHandler()
-            .resolve(languageRefSetMember);
+      if (member != null) {
+        contentService.getGraphResolutionHandler().resolve(member);
       }
 
       contentService.close();
-      return languageRefSetMember;
+      return member;
     } catch (Exception e) {
       handleException(e, "trying to retrieve a language refset member");
+      return null;
+    }
+  }
+
+  /*
+   * (non-Javadoc)
+   * 
+   * @see org.ihtsdo.otf.ts.rest.ContentServiceRest#
+   * getAssociationReferenceConceptRefSetMember(java. lang.Long,
+   * java.lang.String)
+   */
+  @Override
+  @GET
+  @Path("/associationReference/id/{id}")
+  @ApiOperation(value = "Get association reference refset member by id", notes = "Gets the association reference  refset member for the specified id.", response = AssociationReferenceConceptRefSetMember.class)
+  @Produces({
+      MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML
+  })
+  public AssociationReferenceConceptRefSetMember getAssociationReferenceConceptRefSetMember(
+    @ApiParam(value = "association reference refset member internal id, e.g. 2", required = true) @PathParam("id") Long id,
+    @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken) {
+    Logger.getLogger(ContentServiceRestImpl.class).info(
+        "RESTful call (Content): /associationReference/id/" + id);
+
+    try {
+      authenticate(securityService, authToken,
+          "retrieve the association reference refset member", UserRole.VIEWER);
+
+      ContentService contentService = new ContentServiceJpa();
+      AssociationReferenceConceptRefSetMember member =
+          (AssociationReferenceConceptRefSetMember) contentService
+              .getAssociationReferenceRefSetMember(id);
+
+      if (member != null) {
+        contentService.getGraphResolutionHandler().resolve(member);
+      }
+      contentService.close();
+      return member;
+    } catch (Exception e) {
+      handleException(e,
+          "trying to retrieve a association reference refset member");
+      return null;
+    }
+  }
+
+  /*
+   * (non-Javadoc)
+   * 
+   * @see org.ihtsdo.otf.ts.rest.ContentServiceRest#
+   * getAssociationReferenceConceptRefSetMember(java. lang.String,
+   * java.lang.String, java.lang.String, java.lang.String)
+   */
+  @Override
+  @GET
+  @Path("/associationReference/{terminology}/{version}/{terminologyId}")
+  @ApiOperation(value = "Get association reference refset member by id, terminology, and version", notes = "Gets the association reference refset member for the specified parameters. It assumes there is only one which may not be the case during dual independent review.", response = AssociationReferenceConceptRefSetMember.class)
+  @Produces({
+      MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML
+  })
+  public AssociationReferenceConceptRefSetMember getAssociationReferenceConceptRefSetMember(
+    @ApiParam(value = "AssociationReferenceConcept refset member terminology id, e.g. 100114019", required = true) @PathParam("terminologyId") String terminologyId,
+    @ApiParam(value = "AssociationReferenceConcept refset member terminology name, e.g. SNOMEDCT", required = true) @PathParam("terminology") String terminology,
+    @ApiParam(value = "AssociationReferenceConcept refset member terminology version, e.g. 20140731", required = true) @PathParam("version") String version,
+    @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken) {
+
+    Logger.getLogger(ContentServiceRestImpl.class).info(
+        "RESTful call (Content): /associationReference/" + terminology + "/"
+            + version + "/" + terminologyId);
+
+    try {
+      authenticate(securityService, authToken,
+          "retrieve the association reference refset member", UserRole.VIEWER);
+
+      ContentService contentService = new ContentServiceJpa();
+      AssociationReferenceConceptRefSetMember member =
+          (AssociationReferenceConceptRefSetMember) contentService
+              .getAssociationReferenceRefSetMember(terminologyId, terminology,
+                  version);
+
+      if (member != null) {
+        contentService.getGraphResolutionHandler().resolve(member);
+      }
+
+      contentService.close();
+      return member;
+    } catch (Exception e) {
+      handleException(e, "trying to retrieve a association reference refset member");
       return null;
     }
   }

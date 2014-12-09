@@ -540,7 +540,7 @@ public class ClamlMetadataServiceJpaHelper extends ContentServiceJpa implements
     Concept concept = getConcept(id);
 
     Set<Concept> descendants =
-        GraphHelper.getDescendantConcepts(concept,
+        GraphHelper.getDescendantConcepts(this,concept,
             getIsaRelationshipType(terminology, version));
 
     for (Concept descendant : descendants) {

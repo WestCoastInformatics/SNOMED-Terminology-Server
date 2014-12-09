@@ -12,7 +12,6 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Properties;
 
-import org.apache.commons.lang3.time.FastDateFormat;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoFailureException;
 import org.ihtsdo.otf.ts.helpers.ConfigUtility;
@@ -72,9 +71,6 @@ public class TerminologyRf2FullLoaderMojo extends AbstractMojo {
 
   /** The dpn acceptability id. */
   private Long dpnAcceptabilityId;
-
-  /** The date format. */
-  private final FastDateFormat dt = FastDateFormat.getInstance("yyyyMMdd");
 
   /** The concepts by concept. */
   private BufferedReader conceptsByConcept;
@@ -896,7 +892,7 @@ public class TerminologyRf2FullLoaderMojo extends AbstractMojo {
       if (!fields[0].equals("id")) { // header
 
         concept.setTerminologyId(fields[0]);
-        concept.setEffectiveTime(dt.parse(fields[1]));
+        concept.setEffectiveTime(ConfigUtility.DATE_FORMAT.parse(fields[1]));
         concept.setActive(fields[2].equals("1") ? true : false);
         concept.setModuleId(fields[3]);
         concept.setDefinitionStatusId(fields[4]);
@@ -960,7 +956,7 @@ public class TerminologyRf2FullLoaderMojo extends AbstractMojo {
         // Configure relationship
         final Relationship relationship = new RelationshipJpa();
         relationship.setTerminologyId(fields[0]);
-        relationship.setEffectiveTime(dt.parse(fields[1]));
+        relationship.setEffectiveTime(ConfigUtility.DATE_FORMAT.parse(fields[1]));
         relationship.setActive(fields[2].equals("1") ? true : false); // active
         relationship.setModuleId(fields[3]); // moduleId
 
@@ -1196,7 +1192,7 @@ public class TerminologyRf2FullLoaderMojo extends AbstractMojo {
         final Description description = new DescriptionJpa();
         description.setTerminologyId("-1");
         description.setTerminologyId(fields[0]);
-        description.setEffectiveTime(dt.parse(fields[1]));
+        description.setEffectiveTime(ConfigUtility.DATE_FORMAT.parse(fields[1]));
         description.setActive(fields[2].equals("1") ? true : false);
         description.setModuleId(fields[3]);
 
@@ -1253,7 +1249,7 @@ public class TerminologyRf2FullLoaderMojo extends AbstractMojo {
 
         // Universal RefSet attributes
         member.setTerminologyId(fields[0]);
-        member.setEffectiveTime(dt.parse(fields[1]));
+        member.setEffectiveTime(ConfigUtility.DATE_FORMAT.parse(fields[1]));
         member.setActive(fields[2].equals("1") ? true : false);
         member.setModuleId(fields[3]);
         member.setRefSetId(fields[4]);
@@ -1320,7 +1316,7 @@ public class TerminologyRf2FullLoaderMojo extends AbstractMojo {
 
         // Universal RefSet attributes
         member.setTerminologyId(fields[0]);
-        member.setEffectiveTime(dt.parse(fields[1]));
+        member.setEffectiveTime(ConfigUtility.DATE_FORMAT.parse(fields[1]));
         member.setActive(fields[2].equals("1") ? true : false);
         member.setLastModified(new Date());
         member.setLastModifiedBy("loader");
@@ -1393,7 +1389,7 @@ public class TerminologyRf2FullLoaderMojo extends AbstractMojo {
 
         // Universal RefSet attributes
         member.setTerminologyId(fields[0]);
-        member.setEffectiveTime(dt.parse(fields[1]));
+        member.setEffectiveTime(ConfigUtility.DATE_FORMAT.parse(fields[1]));
         member.setActive(fields[2].equals("1") ? true : false);
         member.setLastModified(new Date());
         member.setLastModifiedBy("loader");
@@ -1466,7 +1462,7 @@ public class TerminologyRf2FullLoaderMojo extends AbstractMojo {
 
         // Universal RefSet attributes
         member.setTerminologyId(fields[0]);
-        member.setEffectiveTime(dt.parse(fields[1]));
+        member.setEffectiveTime(ConfigUtility.DATE_FORMAT.parse(fields[1]));
         member.setActive(fields[2].equals("1") ? true : false);
         member.setModuleId(fields[3]);
         member.setRefSetId(fields[4]);
@@ -1537,7 +1533,7 @@ public class TerminologyRf2FullLoaderMojo extends AbstractMojo {
 
         // Universal RefSet attributes
         member.setTerminologyId(fields[0]);
-        member.setEffectiveTime(dt.parse(fields[1]));
+        member.setEffectiveTime(ConfigUtility.DATE_FORMAT.parse(fields[1]));
         member.setActive(fields[2].equals("1") ? true : false);
         member.setModuleId(fields[3]);
         member.setRefSetId(fields[4]);
@@ -1607,7 +1603,7 @@ public class TerminologyRf2FullLoaderMojo extends AbstractMojo {
         final ComplexMapRefSetMember member = new ComplexMapRefSetMemberJpa();
 
         member.setTerminologyId(fields[0]);
-        member.setEffectiveTime(dt.parse(fields[1]));
+        member.setEffectiveTime(ConfigUtility.DATE_FORMAT.parse(fields[1]));
         member.setActive(fields[2].equals("1") ? true : false);
         member.setModuleId(fields[3]);
         member.setRefSetId(fields[4]);
@@ -1687,7 +1683,7 @@ public class TerminologyRf2FullLoaderMojo extends AbstractMojo {
         final ComplexMapRefSetMember member = new ComplexMapRefSetMemberJpa();
 
         member.setTerminologyId(fields[0]);
-        member.setEffectiveTime(dt.parse(fields[1]));
+        member.setEffectiveTime(ConfigUtility.DATE_FORMAT.parse(fields[1]));
         member.setActive(fields[2].equals("1") ? true : false);
         member.setModuleId(fields[3]);
         member.setRefSetId(fields[4]);
