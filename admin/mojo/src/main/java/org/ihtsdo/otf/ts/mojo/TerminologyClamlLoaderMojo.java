@@ -163,8 +163,10 @@ public class TerminologyClamlLoaderMojo extends AbstractMojo {
         final Long rootIdLong =
             contentService.getSingleConcept(rootId, terminology,
                 terminologyVersion).getId();
+        getLog().info("  computing for " + rootId);
         algo.setRootId(rootIdLong);
-        algo.compute();
+        //TODO: put this back in
+        //algo.compute();
       }
       algo.close();
 

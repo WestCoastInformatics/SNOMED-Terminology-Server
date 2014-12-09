@@ -653,7 +653,7 @@ public class SnomedMetadataServiceJpaHelper extends ContentServiceJpa implements
     throws Exception {
     Concept concept =
         getSingleConcept(terminologyId, terminology, terminologyVersion);
-    return GraphHelper.getDescendantConcepts(concept, typeId);
+    return GraphHelper.getDescendantConcepts(this, concept, typeId);
 
   }
 

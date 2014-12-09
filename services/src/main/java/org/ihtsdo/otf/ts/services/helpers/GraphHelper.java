@@ -19,7 +19,7 @@ public class GraphHelper {
    * Returns the descendant concepts.
    *
    * @param service the service
-   * @param freshRootConcept the root concept
+   * @param rootConcept the root concept
    * @param typeId the type id
    * @return the descendant concepts
    * @throws Exception the exception

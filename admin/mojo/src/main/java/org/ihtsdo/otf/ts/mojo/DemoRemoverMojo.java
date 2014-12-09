@@ -19,9 +19,6 @@ package org.ihtsdo.otf.ts.mojo;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoFailureException;
 import org.ihtsdo.otf.ts.jpa.services.ContentServiceJpa;
-import org.ihtsdo.otf.ts.jpa.services.helper.TerminologyUtility;
-import org.ihtsdo.otf.ts.rf2.Concept;
-import org.ihtsdo.otf.ts.rf2.Relationship;
 import org.ihtsdo.otf.ts.services.ContentService;
 
 /**
@@ -52,17 +49,18 @@ public class DemoRemoverMojo extends AbstractMojo {
     getLog().info("Starting demo cleanup");
     try {
       ContentService service = new ContentServiceJpa();
-     
+
+      service.removeConcept(153882L);
       // Remove any children of
-      Concept concept =
-          service.getSingleConcept("10001005", "SNOMEDCT", "20140731");
-      for (Relationship rel : concept.getInverseRelationships()) {
-        if (TerminologyUtility.isHierarchicalIsaRelationship(rel)) {
-          getLog().info(
-              "  Removing " + rel.getSourceConcept().getTerminologyId());
-          service.removeConcept(rel.getSourceConcept().getId());
-        }
-      }
+//      Concept concept =
+//          service.getSingleConcept("10001005", "SNOMEDCT", "20140731");
+//      for (Relationship rel : concept.getInverseRelationships()) {
+//        if (TerminologyUtility.isHierarchicalIsaRelationship(rel)) {
+//          getLog().info(
+//              "  Removing " + rel.getSourceConcept().getTerminologyId());
+//          service.removeConcept(rel.getSourceConcept().getId());
+//        }
+//      }
       
       service.close();
       getLog().info("done ...");

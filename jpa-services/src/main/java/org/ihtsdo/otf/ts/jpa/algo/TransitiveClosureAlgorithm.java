@@ -119,7 +119,7 @@ public class TransitiveClosureAlgorithm extends ContentServiceJpa implements
     Logger.getLogger(this.getClass()).info(
         "Start computing transitive closure ... " + new Date());
     fireProgressEvent(0, "Starting...");
-    
+
     // Disable transaction per operation
     boolean currentTransactionStrategy = getTransactionPerOperation();
     if (getTransactionPerOperation()) {
@@ -134,8 +134,9 @@ public class TransitiveClosureAlgorithm extends ContentServiceJpa implements
     Logger.getLogger(this.getClass()).info(
         "  Initialize relationships ... " + new Date());
 
-    // NOTE: assumes single hierarchical rel
-    String inferredCharType = "900000000000011006";
+    String inferredCharType =
+        TerminologyUtility.getInferredType(terminology, terminologyVersion);
+    
     String isaRel =
         TerminologyUtility
             .getHierarchcialIsaRels(terminology, terminologyVersion).iterator()
@@ -180,8 +181,9 @@ public class TransitiveClosureAlgorithm extends ContentServiceJpa implements
     fireProgressEvent(5, "Initialize concepts");
     Logger.getLogger(this.getClass()).info(
         "  Initialize concepts ... " + new Date());
-    Map<Long,Concept> conceptMap = new HashMap<>();
-    for (Concept concept : getAllConcepts(terminology, terminologyVersion).getObjects()) {
+    Map<Long, Concept> conceptMap = new HashMap<>();
+    for (Concept concept : getAllConcepts(terminology, terminologyVersion)
+        .getObjects()) {
       conceptMap.put(concept.getId(), concept);
     }
     // detatch concepts
@@ -208,14 +210,16 @@ public class TransitiveClosureAlgorithm extends ContentServiceJpa implements
         continue;
       }
       ct++;
-      int ctProgress = (int)((((ct*100)/progressMax)*.92)+8);
+      int ctProgress = (int) ((((ct * 100) / progressMax) * .92) + 8);
       if (ctProgress > progress) {
-//        Logger.getLogger(this.getClass()).info("ct = " + ct);
-//        Logger.getLogger(this.getClass()).info("progressMax = " + progressMax);
-//        Logger.getLogger(this.getClass()).info("progress = " + progress);
-//        Logger.getLogger(this.getClass()).info("ctProgress = " + ctProgress);
+        // Logger.getLogger(this.getClass()).info("ct = " + ct);
+        // Logger.getLogger(this.getClass()).info("progressMax = " +
+        // progressMax);
+        // Logger.getLogger(this.getClass()).info("progress = " + progress);
+        // Logger.getLogger(this.getClass()).info("ctProgress = " + ctProgress);
         progress = ctProgress;
-        fireProgressEvent((int)((progress*.92)+8), "Creating transitive closure relationships");
+        fireProgressEvent((int) ((progress * .92) + 8),
+            "Creating transitive closure relationships");
       }
       final Set<Long> descs = getDescendants(code, parChd);
       for (final Long desc : descs) {
@@ -259,7 +263,8 @@ public class TransitiveClosureAlgorithm extends ContentServiceJpa implements
    * @return the descendants
    * @throws Exception the exception
    */
-  private Set<Long> getDescendants(Long par, Map<Long, Set<Long>> parChd) throws Exception {
+  private Set<Long> getDescendants(Long par, Map<Long, Set<Long>> parChd)
+    throws Exception {
     Logger.getLogger(this.getClass()).debug("  Get descendants for " + par);
 
     if (requestCancel) {

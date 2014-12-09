@@ -129,6 +129,9 @@ public class TerminologyUtility {
         if (map.get(key).equals("Inferred relationship")) {
           inferredType = key;
         }
+        if (map.get(key).equals("Default characteristic type")) {
+          inferredType = key;
+        }
       }
     }
   }
