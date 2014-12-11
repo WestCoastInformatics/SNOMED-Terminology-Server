@@ -10,7 +10,6 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
-import java.util.Properties;
 
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoFailureException;
@@ -60,6 +59,13 @@ public class TerminologyRf2SnapshotLoaderMojo extends AbstractMojo {
    * @required
    */
   private String terminology;
+
+  /**
+   * Input directory.
+   * @parameter
+   * @required
+   */
+  private String inputDir;
 
   /** The version. */
   private String version = null;
@@ -122,23 +128,19 @@ public class TerminologyRf2SnapshotLoaderMojo extends AbstractMojo {
    */
   @Override
   public void execute() throws MojoFailureException {
-    getLog().info("Starting loading RF2 data ...");
-
+    getLog().info("Starting load of RF2 snapshot");
+    getLog().info("  terminolgoy = " + terminology);
+    getLog().info("  inputDir = " + inputDir);
     try {
 
       // Track system level information
       long startTimeOrig = System.nanoTime();
 
-      // Load config properties
-      Properties config = ConfigUtility.getConfigProperties();
-
-      // Set the input directory
-      String coreInputDirString =
-          config.getProperty("loader." + terminology + ".input.data");
-      File coreInputDir = new File(coreInputDirString);
+      // Check the input directory
+      File coreInputDir = new File(inputDir);
       if (!coreInputDir.exists()) {
-        throw new MojoFailureException("Specified loader." + terminology
-            + ".input.data directory does not exist: " + coreInputDirString);
+        throw new MojoFailureException(
+            "Specified input directory does not exist");
       }
 
       //
@@ -330,8 +332,9 @@ public class TerminologyRf2SnapshotLoaderMojo extends AbstractMojo {
           rootId = conceptId;
           break;
         }
-        Long rootIdLong = contentService.getSingleConcept(rootId, terminology,
-            terminologyVersion).getId();
+        Long rootIdLong =
+            contentService.getSingleConcept(rootId, terminology,
+                terminologyVersion).getId();
 
         contentService.close();
         getLog().info(
@@ -542,14 +545,12 @@ public class TerminologyRf2SnapshotLoaderMojo extends AbstractMojo {
         "    Terminology dir = " + coreTerminologyInputDir.toString() + " "
             + coreTerminologyInputDir.exists());
 
-    coreRelInputFile =
-        findFile(coreTerminologyInputDir, "sct2_Relationship_");
+    coreRelInputFile = findFile(coreTerminologyInputDir, "sct2_Relationship_");
 
     coreStatedRelInputFile =
         findFile(coreTerminologyInputDir, "sct2_StatedRelationship_");
 
-    coreConceptInputFile =
-        findFile(coreTerminologyInputDir, "sct2_Concept_");
+    coreConceptInputFile = findFile(coreTerminologyInputDir, "sct2_Concept_");
 
     coreDescriptionInputFile =
         findFile(coreTerminologyInputDir, "sct2_Description_");
@@ -564,15 +565,13 @@ public class TerminologyRf2SnapshotLoaderMojo extends AbstractMojo {
         "    Refset/Content dir = " + coreContentInputDir.toString() + " "
             + coreContentInputDir.exists());
 
-    coreSimpleRefsetInputFile =
-        findFile(coreContentInputDir, "Refset_Simple");
+    coreSimpleRefsetInputFile = findFile(coreContentInputDir, "Refset_Simple");
 
     coreAttributeValueRefsetInputFile =
         findFile(coreContentInputDir, "AttributeValue");
 
     coreAssociationReferenceRefsetInputFile =
         findFile(coreContentInputDir, "AssociationReference");
-
 
     // Refset/Map dir
     File coreCrossmapInputDir = new File(coreRefsetInputDir, "/Map/");
@@ -586,9 +585,7 @@ public class TerminologyRf2SnapshotLoaderMojo extends AbstractMojo {
     coreExtendedMapRefsetInputFile =
         findFile(coreCrossmapInputDir, "ExtendedMap");
 
-    coreSimpleMapRefsetInputFile =
-        findFile(coreCrossmapInputDir, "SimpleMap");
-
+    coreSimpleMapRefsetInputFile = findFile(coreCrossmapInputDir, "SimpleMap");
 
     // Refset/Langauge dir
     File coreLanguageInputDir = new File(coreRefsetInputDir, "/Language/");
@@ -596,9 +593,7 @@ public class TerminologyRf2SnapshotLoaderMojo extends AbstractMojo {
         "    Refset/Language dir = " + coreLanguageInputDir.toString() + " "
             + coreLanguageInputDir.exists());
 
-    coreLanguageRefsetInputFile =
-        findFile(coreLanguageInputDir, "Language");
-
+    coreLanguageRefsetInputFile = findFile(coreLanguageInputDir, "Language");
 
     // Refset/Metadata dir
     File coreMetadataInputDir = new File(coreRefsetInputDir, "/Metadata/");
@@ -606,7 +601,6 @@ public class TerminologyRf2SnapshotLoaderMojo extends AbstractMojo {
         "    Refset/Metadata dir = " + coreMetadataInputDir.toString() + " "
             + coreMetadataInputDir.exists());
 
-    
     // Initialize files
     File conceptsByConceptFile = new File(outputDir, "conceptsByConcept.sort");
     File descriptionsByConceptFile =
@@ -672,7 +666,8 @@ public class TerminologyRf2SnapshotLoaderMojo extends AbstractMojo {
 
     // Sort and combine relationships files
     sortRf2File(coreRelInputFile, relationshipsBySourceConceptFile, 4);
-    sortRf2File(coreStatedRelInputFile, statedRelationshipsBySourceConceptFile, 4);
+    sortRf2File(coreStatedRelInputFile, statedRelationshipsBySourceConceptFile,
+        4);
     // merge the two relationship files
     getLog().info("        Merging relationship files...");
     File mergedDesc =
@@ -704,13 +699,16 @@ public class TerminologyRf2SnapshotLoaderMojo extends AbstractMojo {
     sortRf2File(coreSimpleMapRefsetInputFile, simpleMapRefsetsByConceptFile, 5);
 
     // Sort complex map file
-    sortRf2File(coreComplexMapRefsetInputFile, complexMapRefsetsByConceptFile, 5);
+    sortRf2File(coreComplexMapRefsetInputFile, complexMapRefsetsByConceptFile,
+        5);
 
     // sort extended map file
-    sortRf2File(coreExtendedMapRefsetInputFile, extendedMapRefsetsByConceptFile, 5);
+    sortRf2File(coreExtendedMapRefsetInputFile,
+        extendedMapRefsetsByConceptFile, 5);
 
     // Sort language file
-    sortRf2File(coreLanguageRefsetInputFile, languageRefsetsByDescriptionFile, 5);
+    sortRf2File(coreLanguageRefsetInputFile, languageRefsetsByDescriptionFile,
+        5);
 
   }
 
@@ -896,8 +894,10 @@ public class TerminologyRf2SnapshotLoaderMojo extends AbstractMojo {
         // Configure relationship
         final Relationship relationship = new RelationshipJpa();
         relationship.setTerminologyId(fields[0]);
-        relationship.setEffectiveTime(ConfigUtility.DATE_FORMAT.parse(fields[1]));
-        relationship.setLastModified(ConfigUtility.DATE_FORMAT.parse(fields[1]));
+        relationship.setEffectiveTime(ConfigUtility.DATE_FORMAT
+            .parse(fields[1]));
+        relationship
+            .setLastModified(ConfigUtility.DATE_FORMAT.parse(fields[1]));
         relationship.setActive(fields[2].equals("1") ? true : false); // active
         relationship.setModuleId(fields[3]); // moduleId
 
@@ -1135,7 +1135,8 @@ public class TerminologyRf2SnapshotLoaderMojo extends AbstractMojo {
         final Description description = new DescriptionJpa();
         description.setTerminologyId("-1");
         description.setTerminologyId(fields[0]);
-        description.setEffectiveTime(ConfigUtility.DATE_FORMAT.parse(fields[1]));
+        description
+            .setEffectiveTime(ConfigUtility.DATE_FORMAT.parse(fields[1]));
         description.setLastModified(ConfigUtility.DATE_FORMAT.parse(fields[1]));
         description.setActive(fields[2].equals("1") ? true : false);
         description.setModuleId(fields[3]);

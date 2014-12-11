@@ -25,9 +25,9 @@
 
   <profiles>
 
-    <!-- Remove SNOMED, specify -Drun.config=... -->
+    <!-- Remove terminology, specify -Drun.config=... -Dterminology=... -->
     <profile>
-      <id>SNOMEDCT</id>
+      <id>Terminology</id>
       <build>
         <plugins>
           <plugin>
@@ -42,7 +42,7 @@
                   <goal>remove-terminology</goal>
                 </goals>
                 <configuration>
-                  <terminology>SNOMEDCT</terminology>
+                  <terminology>${terminology}</terminology>
                 </configuration>
               </execution>
             </executions>
@@ -51,33 +51,7 @@
       </build>
     </profile>
 
-    <!-- Remove ICD9CM, specify -Drun.config=... -->
-    <profile>
-      <id>ICD9CM</id>
-      <build>
-        <plugins>
-          <plugin>
-            <groupId>org.ihtsdo.otf.term-server</groupId>
-            <artifactId>term-server-admin-mojo</artifactId>
-            <version>${project.version}</version>
-            <executions>
-              <execution>
-                <id>remove-terminology</id>
-                <phase>package</phase>
-                <goals>
-                  <goal>remove-terminology</goal>
-                </goals>
-                <configuration>
-                  <terminology>ICD9CM</terminology>
-                </configuration>
-              </execution>
-            </executions>
-          </plugin>
-        </plugins>
-      </build>
-    </profile>
-
-    <!-- Remove ICD9CM, specify -Drun.config=... -->
+    <!-- Remove release info, specify -Drun.config=... -Dterminology=... -->
     <profile>
       <id>ReleaseInfo</id>
       <build>
@@ -106,7 +80,7 @@
       </build>
     </profile>
 
-    <!-- Demo data remover -->
+    <!-- Demo data remover, specify -Drun.config=... -->
     <profile>
       <id>Demo</id>
       <build>

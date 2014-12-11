@@ -17,7 +17,6 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Properties;
 import java.util.Set;
 import java.util.Stack;
 
@@ -66,6 +65,13 @@ public class TerminologyClamlLoaderMojo extends AbstractMojo {
    */
   String terminology;
 
+  /**
+   * Input file.
+   * @parameter
+   * @required
+   */
+  String inputFile;
+
   /** The effective time. */
   String effectiveTime;
 
@@ -81,14 +87,10 @@ public class TerminologyClamlLoaderMojo extends AbstractMojo {
   /** The content service. */
   ContentService contentService;
 
-  /**
-   * child to parent code map NOTE: this assumes a single superclass
-   **/
+  /** child to parent code map NOTE: this assumes a single superclass. */
   Map<String, String> childToParentCodeMap;
 
-  /**
-   * Indicates subclass relationships NOTE: this assumes a single superclass
-   **/
+  /** Indicates subclass relationships NOTE: this assumes a single superclass. */
   Map<String, Boolean> parentCodeHasChildrenMap;
 
   /** The helper. */
@@ -101,27 +103,24 @@ public class TerminologyClamlLoaderMojo extends AbstractMojo {
   @SuppressWarnings("null")
   @Override
   public void execute() throws MojoExecutionException {
-    getLog().info("Starting loading " + terminology + " data ...");
+    getLog().info("Starting load of ClaML");
+    getLog().info("  terminology = " + terminology);
+    getLog().info("  inputFile = " + inputFile);
 
     FileInputStream fis = null;
     InputStream inputStream = null;
     Reader reader = null;
     try {
 
-      // create Entity manager
-      Properties config = ConfigUtility.getConfigProperties();
+      // Configure and create entity manager
       contentService = new ContentServiceJpa();
       contentService.setTransactionPerOperation(false);
       contentService.beginTransaction();
 
-      // set the input directory
-      String inputFile =
-          config.getProperty("loader." + terminology + ".input.data");
+      // Check the input directory
       if (!new File(inputFile).exists()) {
-        throw new MojoFailureException("Specified loader." + terminology
-            + ".input.data directory does not exist: " + inputFile);
+        throw new MojoFailureException("Specified input file does not exist");
       }
-      getLog().info("inputFile: " + inputFile);
 
       // open input file and get effective time and version
       findVersion(inputFile);
@@ -159,15 +158,7 @@ public class TerminologyClamlLoaderMojo extends AbstractMojo {
       algo.setTerminology(terminology);
       algo.setTerminologyVersion(terminologyVersion);
       algo.reset();
-      for (String rootId : roots) {
-        final Long rootIdLong =
-            contentService.getSingleConcept(rootId, terminology,
-                terminologyVersion).getId();
-        getLog().info("  computing for " + rootId);
-        algo.setRootId(rootIdLong);
-        //TODO: put this back in
-        //algo.compute();
-      }
+      algo.compute();
       algo.close();
 
       contentService.close();
@@ -554,7 +545,8 @@ public class TerminologyClamlLoaderMojo extends AbstractMojo {
           // For the first label in the code, create the concept
           if (!conceptMap.containsKey(code)) {
             concept.setTerminologyId(code);
-            concept.setEffectiveTime(ConfigUtility.DATE_FORMAT.parse(effectiveTime));
+            concept.setEffectiveTime(ConfigUtility.DATE_FORMAT
+                .parse(effectiveTime));
             concept.setActive(true);
             concept.setLastModified(new Date());
             concept.setLastModifiedBy("loader");
@@ -699,7 +691,8 @@ public class TerminologyClamlLoaderMojo extends AbstractMojo {
             member.setActive(true);
             member.setLastModified(new Date());
             member.setLastModifiedBy("loader");
-            member.setEffectiveTime(ConfigUtility.DATE_FORMAT.parse(effectiveTime));
+            member.setEffectiveTime(ConfigUtility.DATE_FORMAT
+                .parse(effectiveTime));
             member.setModuleId(conceptMap.get("defaultModule")
                 .getTerminologyId());
             member.setTerminology(terminology);
@@ -814,7 +807,8 @@ public class TerminologyClamlLoaderMojo extends AbstractMojo {
                 relationship.setTerminologyId(new Integer(relIdCounter++)
                     .toString());
               }
-              relationship.setEffectiveTime(ConfigUtility.DATE_FORMAT.parse(effectiveTime));
+              relationship.setEffectiveTime(ConfigUtility.DATE_FORMAT
+                  .parse(effectiveTime));
               relationship.setActive(true);
               relationship.setLastModified(new Date());
               relationship.setLastModifiedBy("loader");
@@ -867,7 +861,8 @@ public class TerminologyClamlLoaderMojo extends AbstractMojo {
       String code = modifier + modifierCode;
       if (!conceptMap.containsKey(code)) {
         concept.setTerminologyId(modifier + modifierCode);
-        concept.setEffectiveTime(ConfigUtility.DATE_FORMAT.parse(effectiveTime));
+        concept
+            .setEffectiveTime(ConfigUtility.DATE_FORMAT.parse(effectiveTime));
         concept.setActive(true);
         concept.setLastModified(new Date());
         concept.setLastModifiedBy("loader");

@@ -15,12 +15,47 @@
   <description>Used for loading terminologies, including SNOMED and ICD9CM.</description>
   <packaging>pom</packaging>
 
+  <properties>
+    <!-- The terminology -->
+    <terminology></terminology>
+    <!-- The input directory for RF2 loads -->
+    <input.dir></input.dir>
+    <!-- The input file for ClaML loads -->
+    <input.file></input.file>
+  </properties>
 
   <profiles>
 
-    <!-- Load SNOMED, specify -Drun.config=... -->
+    <!-- Load RF2 full, specify -Drun.config=... -Dterminology=... -->
     <profile>
-      <id>SNOMEDCT</id>
+      <id>RF2-full</id>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.ihtsdo.otf.term-server</groupId>
+            <artifactId>term-server-admin-mojo</artifactId>
+            <version>${project.version}</version>
+            <executions>
+              <execution>
+                <id>load-rf2-full</id>
+                <phase>package</phase>
+                <goals>
+                  <goal>load-rf2-full</goal>
+                </goals>
+                <configuration>
+                  <terminology>${terminology}</terminology>
+                  <inputDir>${input.dir}</inputDir>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+
+    <!-- Load RF2 snapshot, specify -Drun.config=... -Dterminology=... -->
+    <profile>
+      <id>RF2-snapshot</id>
       <build>
         <plugins>
           <plugin>
@@ -35,7 +70,8 @@
                   <goal>load-rf2-snapshot</goal>
                 </goals>
                 <configuration>
-                  <terminology>SNOMEDCT</terminology>
+                  <terminology>${terminology}</terminology>
+                  <inputDir>${input.dir}</inputDir>
                 </configuration>
               </execution>
             </executions>
@@ -44,9 +80,9 @@
       </build>
     </profile>
 
-    <!-- Load SNOMED delta, specify -Drun.config=... -->
+    <!-- Load RF2 delta, specify -Drun.config=... -Dterminology=... -->
     <profile>
-      <id>SNOMEDCT-Delta</id>
+      <id>RF2-delta</id>
       <build>
         <plugins>
           <plugin>
@@ -61,7 +97,8 @@
                   <goal>load-rf2-delta</goal>
                 </goals>
                 <configuration>
-                  <terminology>SNOMEDCT</terminology>
+                  <terminology>${terminology}</terminology>
+                  <inputDir>${input.dir}</inputDir>
                 </configuration>
               </execution>
             </executions>
@@ -70,60 +107,9 @@
       </build>
     </profile>
 
-    <!-- Load SNOMED, specify -Drun.config=... -->
+    <!-- Load ClaML, specify -Drun.config=... -Dterminology=... -->
     <profile>
-      <id>SNOMEDCT-Closure</id>
-      <build>
-        <plugins>
-          <plugin>
-            <groupId>org.ihtsdo.otf.term-server</groupId>
-            <artifactId>term-server-admin-mojo</artifactId>
-            <version>${project.version}</version>
-            <executions>
-              <execution>
-                <id>compute-transitive-closure</id>
-                <phase>package</phase>
-                <goals>
-                  <goal>compute-transitive-closure</goal>
-                </goals>
-                <configuration>
-                  <terminology>SNOMEDCT</terminology>
-                </configuration>
-              </execution>
-            </executions>
-          </plugin>
-        </plugins>
-      </build>
-    </profile>
-    <!-- Load SNOMED delta, specify -Drun.config=... -->
-    <profile>
-      <id>SNOMEDCTDelta</id>
-      <build>
-        <plugins>
-          <plugin>
-            <groupId>org.ihtsdo.otf.term-server</groupId>
-            <artifactId>term-server-admin-mojo</artifactId>
-            <version>${project.version}</version>
-            <executions>
-              <execution>
-                <id>load-rf2-delta</id>
-                <phase>package</phase>
-                <goals>
-                  <goal>load-rf2-delta</goal>
-                </goals>
-                <configuration>
-                  <terminology>SNOMEDCT</terminology>
-                </configuration>
-              </execution>
-            </executions>
-          </plugin>
-        </plugins>
-      </build>
-    </profile>
-
-    <!-- Load ICD9CM, specify -Drun.config=... -->
-    <profile>
-      <id>ICD9CM</id>
+      <id>ClaML</id>
       <build>
         <plugins>
           <plugin>
@@ -138,7 +124,34 @@
                   <goal>load-claml</goal>
                 </goals>
                 <configuration>
-                  <terminology>ICD9CM</terminology>
+                  <terminology>${terminology}</terminology>
+                  <inputFile>${input.file}</inputFile>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+
+    <!-- Compute transitive closure, specify -Drun.config=... -Dterminology=... -->
+    <profile>
+      <id>TransitiveClosure</id>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.ihtsdo.otf.term-server</groupId>
+            <artifactId>term-server-admin-mojo</artifactId>
+            <version>${project.version}</version>
+            <executions>
+              <execution>
+                <id>compute-transitive-closure</id>
+                <phase>package</phase>
+                <goals>
+                  <goal>compute-transitive-closure</goal>
+                </goals>
+                <configuration>
+                  <terminology>${terminology}</terminology>
                 </configuration>
               </execution>
             </executions>

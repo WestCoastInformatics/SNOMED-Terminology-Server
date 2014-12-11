@@ -57,7 +57,8 @@ public class TerminologyRemoverMojo extends AbstractMojo {
    */
   @Override
   public void execute() throws MojoFailureException {
-    getLog().info("Starting removing " + terminology + " data ...");
+    getLog().info("Starting removing terminology");
+    getLog().info("  terminology = " + terminology);
     try {
       MetadataService metadataService = new MetadataServiceJpa();
       String terminologyVersion = metadataService.getLatestVersion(terminology);

@@ -60,6 +60,13 @@ public class TerminologyRf2FullLoaderMojo extends AbstractMojo {
    */
   private String terminology;
 
+  /**
+   * Input directory.
+   * @parameter
+   * @required
+   */
+  private String inputDir;
+
   /** The version. */
   private String version = null;
 
@@ -130,8 +137,10 @@ public class TerminologyRf2FullLoaderMojo extends AbstractMojo {
    */
   @Override
   public void execute() throws MojoFailureException {
-    getLog().info("Starting loading RF2 data ...");
-
+    getLog().info("Starting load of RF2 full");
+    getLog().info("  terminolgoy = " + terminology);
+    getLog().info("  inputDir = " + inputDir);
+    
     try {
 
       // Track system level information
@@ -140,13 +149,10 @@ public class TerminologyRf2FullLoaderMojo extends AbstractMojo {
       // Load config properties
       Properties config = ConfigUtility.getConfigProperties();
 
-      // Set the input directory
-      String coreInputDirString =
-          config.getProperty("loader." + terminology + ".input.data");
-      File coreInputDir = new File(coreInputDirString);
+      // Check the input directory
+      File coreInputDir = new File(inputDir);
       if (!coreInputDir.exists()) {
-        throw new MojoFailureException("Specified loader." + terminology
-            + ".input.data directory does not exist: " + coreInputDirString);
+        throw new MojoFailureException("Specified input directory does not exist");
       }
 
       // Set the parameters for determining defaultPreferredNames

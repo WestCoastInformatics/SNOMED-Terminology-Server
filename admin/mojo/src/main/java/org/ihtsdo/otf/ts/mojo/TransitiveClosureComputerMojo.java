@@ -1,12 +1,9 @@
 package org.ihtsdo.otf.ts.mojo;
 
-import java.io.File;
 import java.util.Map;
-import java.util.Properties;
 
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoFailureException;
-import org.ihtsdo.otf.ts.helpers.ConfigUtility;
 import org.ihtsdo.otf.ts.jpa.algo.TransitiveClosureAlgorithm;
 import org.ihtsdo.otf.ts.jpa.services.ContentServiceJpa;
 import org.ihtsdo.otf.ts.jpa.services.MetadataServiceJpa;
@@ -16,7 +13,8 @@ import org.ihtsdo.otf.ts.services.ContentService;
 import org.ihtsdo.otf.ts.services.MetadataService;
 
 /**
- * Goal which loads an RF2 Snapshot of SNOMED CT data into a database.
+ * Goal which recomputes transitive closure for the latest version
+ * of a specified terminology.
  * 
  * See admin/loader/pom.xml for sample usage
  * 
@@ -32,9 +30,6 @@ public class TransitiveClosureComputerMojo extends AbstractMojo {
    * @required
    */
   private String terminology;
-
-  /** The version. */
-  private String version = null;
 
   /**
    * Instantiates a {@link TransitiveClosureComputerMojo} from the specified
@@ -52,53 +47,13 @@ public class TransitiveClosureComputerMojo extends AbstractMojo {
    */
   @Override
   public void execute() throws MojoFailureException {
-    getLog().info("Starting computation of transitive closure ...");
+    getLog().info("Starting computation of transitive closure");
+    getLog().info("  terminology = " + terminology);
 
     try {
 
       // Track system level information
       long startTimeOrig = System.nanoTime();
-
-      // Load config properties
-      Properties config = ConfigUtility.getConfigProperties();
-
-      // Set the input directory
-      String coreInputDirString =
-          config.getProperty("loader." + terminology + ".input.data");
-      File coreInputDir = new File(coreInputDirString);
-      if (!coreInputDir.exists()) {
-        throw new MojoFailureException("Specified loader." + terminology
-            + ".input.data directory does not exist: " + coreInputDirString);
-      }
-
-      //
-      // Determine version
-      //
-      File coreConceptInputFile = null;
-      File coreTerminologyInputDir = new File(coreInputDir, "/Terminology/");
-      for (File f : coreTerminologyInputDir.listFiles()) {
-        if (f.getName().contains("sct2_Concept_")) {
-          if (coreConceptInputFile != null)
-            throw new MojoFailureException("Multiple Concept Files!");
-          coreConceptInputFile = f;
-        }
-      }
-      if (coreConceptInputFile != null) {
-        int index = coreConceptInputFile.getName().indexOf(".txt");
-        version = coreConceptInputFile.getName().substring(index - 8, index);
-        getLog().info("  terminology = " + terminology);
-        getLog().info("  version = " + version);
-      } else {
-        throw new MojoFailureException(
-            "Could not find concept file to determine version");
-      }
-
-      // Log memory usage
-      Runtime runtime = Runtime.getRuntime();
-      getLog().info("MEMORY USAGE:");
-      getLog().info(" Total: " + runtime.totalMemory());
-      getLog().info(" Free:  " + runtime.freeMemory());
-      getLog().info(" Max:   " + runtime.maxMemory());
 
       try {
 

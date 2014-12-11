@@ -58,11 +58,16 @@ public class TerminologyRf2DeltaLoader extends AbstractMojo {
    */
   private String terminology;
 
+  /**
+   * The input directory
+   * 
+   * @parameter
+   * @required
+   */
+  private String inputDir;
+
   /** The terminology version. */
   private String terminologyVersion;
-
-  /** The input directory. */
-  private File deltaDir;
 
   /** the defaultPreferredNames type id. */
   private String dpnTypeId;
@@ -146,46 +151,48 @@ public class TerminologyRf2DeltaLoader extends AbstractMojo {
   public void execute() throws MojoFailureException {
 
     try {
-      getLog().info("Run delta loader ...");
+      getLog().info("Starting RF2 delta loader");
+      getLog().info("  terminology = " + terminology);
+      getLog().info("  inputDir = " + inputDir);
+
       // Create and configure services and variables and open files
       setup();
 
-      // Precache all existing concept entires (not connected data like
-      // rels/descs)
-      getLog().info(
-          "Cache concepts for " + terminology + "/" + terminologyVersion);
+      // Precache all existing concept entires
+      // (not connected data like rels/descs)
+      getLog().info("  Cache concepts");
       ConceptList conceptList =
           historyService.getAllConcepts(terminology, terminologyVersion);
       for (Concept c : conceptList.getObjects()) {
         existingConceptCache.put(c.getTerminologyId(), c);
       }
-      getLog().info("  count = " + conceptList.getCount());
+      getLog().info("    count = " + conceptList.getCount());
 
       // Precache the description, langauge refset, and relationship id lists
       // THIS IS FOR DEBUG/QUALITY ASSURANCE
-      getLog().info("Constructing terminology id sets for quality assurance");
-      getLog().info("Cache description ids");
+      getLog().info("  Construct terminology id sets for quality assurance");
+      getLog().info("  Cache description ids");
       existingDescriptionIds =
           new HashSet<>(historyService.getAllDescriptionTerminologyIds(
               terminology, terminologyVersion).getObjects());
-      getLog().info("  count = " + existingDescriptionIds.size());
-      getLog().info("Cache language refset member ids");
+      getLog().info("    count = " + existingDescriptionIds.size());
+      getLog().info("  Cache language refset member ids");
       existingLanguageRefSetMemberIds =
           new HashSet<>(historyService
               .getAllLanguageRefSetMemberTerminologyIds(terminology,
                   terminologyVersion).getObjects());
-      getLog().info("  count = " + existingLanguageRefSetMemberIds.size());
-      getLog().info("Cache relationship ids");
+      getLog().info("    count = " + existingLanguageRefSetMemberIds.size());
+      getLog().info("  Cache relationship ids");
       existingRelationshipIds =
           new HashSet<>(historyService.getAllRelationshipTerminologyIds(
               terminology, terminologyVersion).getObjects());
-      getLog().info("  count = " + existingRelationshipIds.size());
+      getLog().info("    count = " + existingRelationshipIds.size());
 
       // Load delta data
       loadDelta();
 
       // Compute the number of modified objects of each type
-      getLog().info("Computing number of modified objects...");
+      getLog().info("  Computing number of modified objects...");
       int nConceptsUpdated = 0;
       int nDescriptionsUpdated = 0;
       int nLanguagesUpdated = 0;
@@ -293,17 +300,13 @@ public class TerminologyRf2DeltaLoader extends AbstractMojo {
     // initialize the transactions
     historyService.beginTransaction();
 
-    // set the delta file directory=
-    deltaDir =
-        new File(config.getProperty("loader." + terminology + ".delta.data"));
-    if (!deltaDir.exists()) {
-      throw new MojoFailureException("Specified loader." + terminology
-          + ".input.delta.data directory does not exist: "
-          + deltaDir.getAbsolutePath());
+    // Check the delta file directory=
+    if (!new File(inputDir).exists()) {
+      throw new MojoFailureException("Specified input dir does not exist");
     }
 
     // get the first file for determining
-    File files[] = deltaDir.listFiles();
+    File files[] = new File(inputDir).listFiles();
     if (files.length == 0)
       throw new MojoFailureException(
           "Could not determine terminology version, no files exist");
@@ -371,7 +374,7 @@ public class TerminologyRf2DeltaLoader extends AbstractMojo {
     getLog().info("Opening readers for Terminology files...");
 
     // concepts file
-    for (File f : deltaDir.listFiles()) {
+    for (File f : new File(inputDir).listFiles()) {
       if (f.getName().contains("_Concept_Delta_")) {
         getLog().info("  Concept file:      " + f.getName());
         conceptReader = new BufferedReader(new FileReader(f));
@@ -483,7 +486,7 @@ public class TerminologyRf2DeltaLoader extends AbstractMojo {
     // deltas that no longer exist in the delta
     getLog().info("    Retire non-existent concepts..");
     // TODO - bring this back once algo is worked out
-    //retireRemovedConcepts();
+    // retireRemovedConcepts();
 
     // Compute transitive closure
     MetadataService metadataService = new MetadataServiceJpa();
@@ -535,8 +538,8 @@ public class TerminologyRf2DeltaLoader extends AbstractMojo {
         contentService
             .getSingleConcept(rootId, terminology, terminologyVersion).getId();
     algo.setRootId(rootIdLong);
-    //TODO: turn this back on
-    //algo.compute();
+    // TODO: turn this back on
+    // algo.compute();
     algo.close();
 
     contentService.close();
@@ -593,7 +596,8 @@ public class TerminologyRf2DeltaLoader extends AbstractMojo {
 
         // If concept is new, add it
         if (concept == null) {
-          getLog().info("        add concept " + newConcept.getTerminologyId() + ".");
+          getLog().info(
+              "        add concept " + newConcept.getTerminologyId() + ".");
           newConcept = historyService.addConcept(newConcept);
           getLog().info(ConceptReportHelper.getConceptReport(newConcept));
           objectsAdded++;
@@ -841,7 +845,8 @@ public class TerminologyRf2DeltaLoader extends AbstractMojo {
           getLog().info(
               "        add language "
                   + newLanguageRefSetMember.getTerminologyId());
-          newLanguageRefSetMember = historyService.addLanguageRefSetMember(newLanguageRefSetMember);
+          newLanguageRefSetMember =
+              historyService.addLanguageRefSetMember(newLanguageRefSetMember);
           cacheLanguageRefSetMember(newLanguageRefSetMember);
           objectsAdded++;
         }

@@ -136,11 +136,13 @@ public class TransitiveClosureAlgorithm extends ContentServiceJpa implements
 
     String inferredCharType =
         TerminologyUtility.getInferredType(terminology, terminologyVersion);
+    Logger.getLogger(this.getClass()).info("    inferredType = " + inferredCharType);
     
     String isaRel =
         TerminologyUtility
             .getHierarchcialIsaRels(terminology, terminologyVersion).iterator()
             .next();
+    Logger.getLogger(this.getClass()).info("    isaRel = " + isaRel);
 
     // Skip non isa
     // Skip non-inferred
@@ -206,7 +208,7 @@ public class TransitiveClosureAlgorithm extends ContentServiceJpa implements
         rollback();
         throw new CancelException("Transitive closure computation cancelled.");
       }
-      if (rootId.equals(code)) {
+      if (rootId != null && rootId.equals(code)) {
         continue;
       }
       ct++;

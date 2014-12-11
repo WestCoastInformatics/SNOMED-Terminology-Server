@@ -272,7 +272,7 @@ public class DemoServiceTest {
     System.out.println("\nPause to show concept in Swagger API");
     in.readLine();
 
-    // un-retire the concept and remove the "reason for inactivation"
+    // un-retire the concept and retire the "reason for inactivation"
     Logger.getLogger(this.getClass()).info("  Unretire concept");
     concept = contentClient.getConcept(concept.getId(), authToken);
     concept.setActive(true);
