@@ -8,6 +8,8 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.UUID;
 
+import org.apache.log4j.Logger;
+import org.ihtsdo.classifier.ClassificationRunner;
 import org.ihtsdo.otf.ts.helpers.ConfigUtility;
 import org.ihtsdo.otf.ts.helpers.KeyValuesMap;
 import org.ihtsdo.otf.ts.helpers.LocalException;
@@ -19,7 +21,7 @@ import org.ihtsdo.otf.ts.services.handlers.WorkflowListener;
 /**
  * JPA enabled implementation of {@link ActionService}.
  */
-public class ActionServiceJpa extends RootServiceJpa implements ActionService {
+public class ActionServiceJpa extends ContentServiceJpa implements ActionService {
 
   /** The token login time map. */
   private static Map<String, Date> tokenTimeoutMap = new HashMap<>();
@@ -35,6 +37,9 @@ public class ActionServiceJpa extends RootServiceJpa implements ActionService {
 
   /** The token workflow status set map. */
   private static Map<String, StringList> tokenWorkflowStatusMap =
+      new HashMap<>();
+
+  private static Map<String, ClassificationRunner> tokenClassifierMap =
       new HashMap<>();
 
   /** The listeners enabled. */
@@ -166,15 +171,21 @@ public class ActionServiceJpa extends RootServiceJpa implements ActionService {
         listener.preClassificationStarted();
       }
     }
-
+    
+    ClassificationRunner classifier = new ClassificationRunner();
+    // TODO: figure out how to initialize it
+    String terminology = null;
+    String version = null;
+    classifier.loadConcepts(getAllConcepts(terminology,version));
+    classifier.setRelationshipIds(getAllRelationshipIds(terminology, version));
+    tokenClassifierMap.put(sessionToken, classifier);
     if (listenersEnabled) {
       for (WorkflowListener listener : listeners) {
         listener.preClassificationFinished();
       }
     }
 
-    throw new UnsupportedOperationException();
-
+    
   }
 
   /*
@@ -190,15 +201,14 @@ public class ActionServiceJpa extends RootServiceJpa implements ActionService {
         listener.classificationStarted();
       }
     }
-
+    ClassificationRunner runner = tokenClassifierMap.get(sessionToken);
+    if(runner != null)
+      runner.execute();
     if (listenersEnabled) {
       for (WorkflowListener listener : listeners) {
         listener.classificationFinished();
       }
     }
-
-    throw new UnsupportedOperationException();
-
   }
 
   /*
@@ -237,7 +247,11 @@ public class ActionServiceJpa extends RootServiceJpa implements ActionService {
   public KeyValuesMap getClassificationEquivalents(String sessionToken)
     throws Exception {
     tokenCheck(sessionToken);
+    ClassificationRunner runner = tokenClassifierMap.get(sessionToken);
+//    if(runner != null)
+//      runner.execute();
     throw new UnsupportedOperationException();
+
   }
 
   /*
@@ -285,4 +299,21 @@ public class ActionServiceJpa extends RootServiceJpa implements ActionService {
     tokenTimeoutMap.put(token, new Date(new Date().getTime() + timeout));
   }
 
+  public List<String> getAllRelationshipIds(String terminology,
+      String version) {
+      Logger.getLogger(ContentServiceJpa.class).debug(
+          "Content Service - get all relationship terminology ids " + terminology
+              + "/" + version);
+      javax.persistence.Query query =
+          manager
+              .createQuery(
+                  "select distinct typeId from RelationshipJpa c where terminology=:terminology and terminologyVersion=:version")
+              .setParameter("terminology", terminology)
+              .setParameter("version", version);
+
+      @SuppressWarnings("unchecked")
+      List<String> relationshipIds = query.getResultList();
+      return relationshipIds;
+
+    }
 }

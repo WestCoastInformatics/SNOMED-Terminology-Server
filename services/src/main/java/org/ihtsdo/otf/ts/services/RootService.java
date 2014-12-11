@@ -59,4 +59,11 @@ public interface RootService {
 	 * @throws Exception the exception
 	 */
 	public void close() throws Exception;
+
+    /**
+     * Clears the manager.
+     *
+     * @throws Exception the exception
+     */
+    public void clear() throws Exception;
 }

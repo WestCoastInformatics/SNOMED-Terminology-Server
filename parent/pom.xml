@@ -50,6 +50,7 @@
     <junit.version>4.11</junit.version>
     <cglib.version>2.2.2</cglib.version>
     <javax.mail.version>1.5.2</javax.mail.version>
+    <snorocket.snapi.version>1.1.20</snorocket.snapi.version>
   </properties>
 
   <dependencyManagement>
@@ -229,6 +230,13 @@
         <groupId>org.apache.commons</groupId>
         <artifactId>commons-lang3</artifactId>
         <version>${apache.commons.lang3.version}</version>
+      </dependency>
+      
+      <!-- Classifier -->
+      <dependency>
+          <groupId>au.csiro</groupId>
+          <artifactId>snorocket-snapi</artifactId>
+          <version>${snorocket.snapi.version}</version>
       </dependency>
 
     </dependencies>
