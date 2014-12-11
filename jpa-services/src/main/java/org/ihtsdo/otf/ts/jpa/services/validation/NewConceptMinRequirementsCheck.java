@@ -75,65 +75,81 @@ public class NewConceptMinRequirementsCheck implements ValidationCheck {
   public ValidationResult validate(Concept c) {
     ValidationResult result = new ValidationResultJpa();
 
-    // Verify there is at least one parent
-    boolean isaRelFound = false;
-    for (Relationship r : c.getRelationships()) {
-      if (r.getTypeId().equals(isaRel)) {
-        isaRelFound = true;
-        break;
-      }
-    }
-    if (!isaRelFound) {
-      result.addError("Concept " + c.getTerminologyId()
-          + " missing isa relationship: " + isaRel);
-    }
+    if (c.isActive()) {
 
-    // Verify there is at least one active FN
-    // Verify there is at least one active PT marked as prefered.
-    boolean fnFound = false;
-    boolean ptFound = false;
-    for (Description d : c.getDescriptions()) {
-      if (!d.isActive()) {
-        continue;
-      }
-      for (LanguageRefSetMember member : d.getLanguageRefSetMembers()) {
-        if (!member.isActive()) {
-          continue;
-        }
-        if (!member.getRefSetId().equals(languageId)) {
-          continue;
-        }
-        if (!member.getAcceptabilityId().equals(preferredId)) {
-          continue;
-        }
-        if (d.getTypeId().equals(fnType)) {
-          fnFound = true;
-          if (fnFound)
-            break;
-        }
-        if (d.getTypeId().equals(ptType)) {
-          ptFound = true;
-          if (ptFound)
-            break;
+      // Verify there is at least one parent
+      boolean isaRelFound = false;
+      for (Relationship r : c.getRelationships()) {
+        if (r.getTypeId().equals(isaRel)) {
+          isaRelFound = true;
+          break;
         }
       }
+      if (!isaRelFound) {
+        result.addError("Concept " + c.getTerminologyId()
+            + " missing isa relationship: " + isaRel);
+      }
 
-    }
-    if (!fnFound) {
-      Logger.getLogger(this.getClass()).info(
-          "Concept is missing an active preferred FN description: " + fnType
-              + ", " + preferredId + ", " + languageId);
-      result.addError("Concept is missing an active preferred FN description: "
-          + fnType + ", " + preferredId + ", " + languageId);
-    }
-    if (!ptFound) {
-      Logger.getLogger(this.getClass()).info(
-          "Concept is missing a active preferred SY description: " + ptType
-              + ", " + preferredId + ", " + languageId);
-      result.addError("Concept is missing a active preferred SY description: "
-          + ptType + ", " + preferredId + ", " + languageId);
+      // Verify there is at least one active FN
+      // Verify there is at least one active PT marked as prefered.
+      boolean fnFound = false;
+      boolean ptFound = false;
+      for (Description d : c.getDescriptions()) {
+        if (!d.isActive()) {
+          continue;
+        }
+        for (LanguageRefSetMember member : d.getLanguageRefSetMembers()) {
+          if (!member.isActive()) {
+            continue;
+          }
+          if (!member.getRefSetId().equals(languageId)) {
+            continue;
+          }
+          if (!member.getAcceptabilityId().equals(preferredId)) {
+            continue;
+          }
+          if (d.getTypeId().equals(fnType)) {
+            fnFound = true;
+            if (fnFound)
+              break;
+          }
+          if (d.getTypeId().equals(ptType)) {
+            ptFound = true;
+            if (ptFound)
+              break;
+          }
+        }
+
+      }
+      if (!fnFound) {
+        Logger.getLogger(this.getClass()).info(
+            "Concept is missing an active preferred FN description: " + fnType
+                + ", " + preferredId + ", " + languageId);
+        result
+            .addError("Concept is missing an active preferred FN description: "
+                + fnType + ", " + preferredId + ", " + languageId);
+      }
+      if (!ptFound) {
+        Logger.getLogger(this.getClass()).info(
+            "Concept is missing a active preferred SY description: " + ptType
+                + ", " + preferredId + ", " + languageId);
+        result
+            .addError("Concept is missing a active preferred SY description: "
+                + ptType + ", " + preferredId + ", " + languageId);
+      }
     }
 
+    // An inactive concept should have only inactive relationships
+    else {
+      for (Relationship r : c.getRelationships()) {
+        if (r.isActive()) {
+          result
+              .addError("Inactive concept should have only inactive relationships: "
+                  + c.getTerminologyId());
+          break;
+        }
+      }
+    }
     return result;
   }
 
