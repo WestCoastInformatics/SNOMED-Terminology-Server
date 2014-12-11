@@ -311,16 +311,6 @@ public class TerminologyRf2DeltaLoader extends AbstractMojo {
       throw new MojoFailureException(
           "Could not determine terminology version, no files exist");
 
-    // get version from file name, with expected format
-    // '...INT_YYYYMMDD.txt'
-    String fileName = files[0].getName();
-    if (fileName.matches("sct2_*_INT_*.txt")) {
-      throw new MojoFailureException(
-          "Terminology filenames do not match pattern 'sct2_(ComponentName)_INT_(Date).txt");
-    }
-    terminologyVersion =
-        fileName.substring(fileName.length() - 12, fileName.length() - 4);
-
     //
     // Verify that there is a release info for this version that is
     // marked as "isPlanned"

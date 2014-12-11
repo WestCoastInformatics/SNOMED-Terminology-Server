@@ -61,14 +61,18 @@ public class TerminologyRf2SnapshotLoaderMojo extends AbstractMojo {
   private String terminology;
 
   /**
+   * The terminology version.
+   * @parameter
+   * @required
+   */
+  private String terminologyVersion;
+
+  /**
    * Input directory.
    * @parameter
    * @required
    */
   private String inputDir;
-
-  /** The version. */
-  private String version = null;
 
   /** The concepts by concept. */
   private BufferedReader conceptsByConcept;
@@ -146,24 +150,8 @@ public class TerminologyRf2SnapshotLoaderMojo extends AbstractMojo {
       //
       // Determine version
       //
-      File coreConceptInputFile = null;
-      File coreTerminologyInputDir = new File(coreInputDir, "/Terminology/");
-      for (File f : coreTerminologyInputDir.listFiles()) {
-        if (f.getName().contains("sct2_Concept_")) {
-          if (coreConceptInputFile != null)
-            throw new MojoFailureException("Multiple Concept Files!");
-          coreConceptInputFile = f;
-        }
-      }
-      if (coreConceptInputFile != null) {
-        int index = coreConceptInputFile.getName().indexOf(".txt");
-        version = coreConceptInputFile.getName().substring(index - 8, index);
-        getLog().info("  terminology = " + terminology);
-        getLog().info("  version = " + version);
-      } else {
-        throw new MojoFailureException(
-            "Could not find concept file to determine version");
-      }
+      getLog().info("  terminology = " + terminology);
+      getLog().info("  version = " + terminologyVersion);
 
       getLog().info(
           "  Objects committed in blocks of " + Integer.toString(commitCt));
@@ -834,7 +822,7 @@ public class TerminologyRf2SnapshotLoaderMojo extends AbstractMojo {
         concept.setModuleId(fields[3]);
         concept.setDefinitionStatusId(fields[4]);
         concept.setTerminology(terminology);
-        concept.setTerminologyVersion(version);
+        concept.setTerminologyVersion(terminologyVersion);
         concept.setDefaultPreferredName("null");
         concept.setLastModifiedBy("loader");
         concept.setWorkflowStatus("PUBLISHED");
@@ -905,7 +893,7 @@ public class TerminologyRf2SnapshotLoaderMojo extends AbstractMojo {
         relationship.setTypeId(fields[7]); // typeId
         relationship.setCharacteristicTypeId(fields[8]); // characteristicTypeId
         relationship.setTerminology(terminology);
-        relationship.setTerminologyVersion(version);
+        relationship.setTerminologyVersion(terminologyVersion);
         relationship.setModifierId(fields[9]);
         relationship.setLastModifiedBy("loader");
 
@@ -1146,7 +1134,7 @@ public class TerminologyRf2SnapshotLoaderMojo extends AbstractMojo {
         description.setTerm(fields[7]);
         description.setCaseSignificanceId(fields[8]);
         description.setTerminology(terminology);
-        description.setTerminologyVersion(version);
+        description.setTerminologyVersion(terminologyVersion);
         description.setLastModifiedBy("loader");
 
         // set concept from cache
@@ -1205,7 +1193,7 @@ public class TerminologyRf2SnapshotLoaderMojo extends AbstractMojo {
 
         // Terminology attributes
         member.setTerminology(terminology);
-        member.setTerminologyVersion(version);
+        member.setTerminologyVersion(terminologyVersion);
         member.setLastModifiedBy("loader");
 
         // Set a dummy description with terminology id only
@@ -1275,7 +1263,7 @@ public class TerminologyRf2SnapshotLoaderMojo extends AbstractMojo {
 
         // Terminology attributes
         member.setTerminology(terminology);
-        member.setTerminologyVersion(version);
+        member.setTerminologyVersion(terminologyVersion);
         member.setLastModifiedBy("loader");
 
         // Retrieve concept -- firstToken is referencedComponentId
@@ -1348,7 +1336,7 @@ public class TerminologyRf2SnapshotLoaderMojo extends AbstractMojo {
 
         // Terminology attributes
         member.setTerminology(terminology);
-        member.setTerminologyVersion(version);
+        member.setTerminologyVersion(terminologyVersion);
         member.setLastModifiedBy("loader");
 
         // Retrieve concept -- firstToken is referencedComponentId
@@ -1421,7 +1409,7 @@ public class TerminologyRf2SnapshotLoaderMojo extends AbstractMojo {
 
         // Terminology attributes
         member.setTerminology(terminology);
-        member.setTerminologyVersion(version);
+        member.setTerminologyVersion(terminologyVersion);
         member.setLastModifiedBy("loader");
 
         // Retrieve Concept -- firstToken is referencedComonentId
@@ -1494,7 +1482,7 @@ public class TerminologyRf2SnapshotLoaderMojo extends AbstractMojo {
 
         // Terminology attributes
         member.setTerminology(terminology);
-        member.setTerminologyVersion(version);
+        member.setTerminologyVersion(terminologyVersion);
         member.setLastModifiedBy("loader");
 
         // Retrieve concept -- firstToken is referencedComponentId
@@ -1572,7 +1560,7 @@ public class TerminologyRf2SnapshotLoaderMojo extends AbstractMojo {
 
         // Terminology attributes
         member.setTerminology(terminology);
-        member.setTerminologyVersion(version);
+        member.setTerminologyVersion(terminologyVersion);
         member.setLastModifiedBy("loader");
 
         // set Concept
@@ -1654,7 +1642,7 @@ public class TerminologyRf2SnapshotLoaderMojo extends AbstractMojo {
 
         // Terminology attributes
         member.setTerminology(terminology);
-        member.setTerminologyVersion(version);
+        member.setTerminologyVersion(terminologyVersion);
         member.setLastModifiedBy("loader");
 
         // set Concept

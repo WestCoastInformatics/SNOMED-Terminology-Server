@@ -18,6 +18,8 @@
   <properties>
     <!-- The terminology -->
     <terminology></terminology>
+    <!-- The terminology version -->
+    <terminology.version>latest</terminology.version>
     <!-- The input directory for RF2 loads -->
     <input.dir></input.dir>
     <!-- The input file for ClaML loads -->
@@ -71,6 +73,7 @@
                 </goals>
                 <configuration>
                   <terminology>${terminology}</terminology>
+                  <terminologyVersion>${terminology.version}</terminologyVersion>
                   <inputDir>${input.dir}</inputDir>
                 </configuration>
               </execution>
