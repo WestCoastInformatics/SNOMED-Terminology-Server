@@ -6,11 +6,9 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
-import java.util.Set;
 
 import javax.persistence.NoResultException;
 
@@ -25,16 +23,34 @@ import org.hibernate.search.SearchFactory;
 import org.hibernate.search.jpa.FullTextEntityManager;
 import org.hibernate.search.jpa.FullTextQuery;
 import org.hibernate.search.jpa.Search;
+import org.ihtsdo.otf.ts.helpers.AssociationReferenceRefSetMemberList;
+import org.ihtsdo.otf.ts.helpers.AssociationReferenceRefSetMemberListJpa;
+import org.ihtsdo.otf.ts.helpers.AttributeValueRefSetMemberList;
+import org.ihtsdo.otf.ts.helpers.AttributeValueRefSetMemberListJpa;
+import org.ihtsdo.otf.ts.helpers.ComplexMapRefSetMemberList;
+import org.ihtsdo.otf.ts.helpers.ComplexMapRefSetMemberListJpa;
 import org.ihtsdo.otf.ts.helpers.ConceptList;
 import org.ihtsdo.otf.ts.helpers.ConceptListJpa;
 import org.ihtsdo.otf.ts.helpers.ConfigUtility;
+import org.ihtsdo.otf.ts.helpers.LanguageRefSetMemberList;
+import org.ihtsdo.otf.ts.helpers.LanguageRefSetMemberListJpa;
 import org.ihtsdo.otf.ts.helpers.LocalException;
+import org.ihtsdo.otf.ts.helpers.ModuleDependencyRefSetMemberList;
+import org.ihtsdo.otf.ts.helpers.ModuleDependencyRefSetMemberListJpa;
 import org.ihtsdo.otf.ts.helpers.PfsParameter;
+import org.ihtsdo.otf.ts.helpers.RefsetDescriptorRefSetMemberList;
+import org.ihtsdo.otf.ts.helpers.RefsetDescriptorRefSetMemberListJpa;
 import org.ihtsdo.otf.ts.helpers.ReleaseInfo;
+import org.ihtsdo.otf.ts.helpers.SearchCriteriaList;
 import org.ihtsdo.otf.ts.helpers.SearchResult;
 import org.ihtsdo.otf.ts.helpers.SearchResultJpa;
 import org.ihtsdo.otf.ts.helpers.SearchResultList;
 import org.ihtsdo.otf.ts.helpers.SearchResultListJpa;
+import org.ihtsdo.otf.ts.helpers.SimpleMapRefSetMemberList;
+import org.ihtsdo.otf.ts.helpers.SimpleMapRefSetMemberListJpa;
+import org.ihtsdo.otf.ts.helpers.SimpleRefSetMemberList;
+import org.ihtsdo.otf.ts.helpers.SimpleRefSetMemberListJpa;
+import org.ihtsdo.otf.ts.helpers.StringList;
 import org.ihtsdo.otf.ts.jpa.services.helper.TerminologyUtility;
 import org.ihtsdo.otf.ts.rf2.AssociationReferenceConceptRefSetMember;
 import org.ihtsdo.otf.ts.rf2.AssociationReferenceRefSetMember;
@@ -54,6 +70,7 @@ import org.ihtsdo.otf.ts.rf2.SimpleMapRefSetMember;
 import org.ihtsdo.otf.ts.rf2.SimpleRefSetMember;
 import org.ihtsdo.otf.ts.rf2.TransitiveRelationship;
 import org.ihtsdo.otf.ts.rf2.jpa.AbstractAssociationReferenceRefSetMemberJpa;
+import org.ihtsdo.otf.ts.rf2.jpa.AbstractAttributeValueRefSetMemberJpa;
 import org.ihtsdo.otf.ts.rf2.jpa.AssociationReferenceConceptRefSetMemberJpa;
 import org.ihtsdo.otf.ts.rf2.jpa.AttributeValueConceptRefSetMemberJpa;
 import org.ihtsdo.otf.ts.rf2.jpa.ComplexMapRefSetMemberJpa;
@@ -128,25 +145,25 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
   }
 
   /** The id assignment handler . */
-  public static IdentifierAssignmentHandler idHandler = null;
+  public static Map<String, IdentifierAssignmentHandler> idHandlerMap =
+      new HashMap<>();
   static {
     Properties config;
     try {
       config = ConfigUtility.getConfigProperties();
       String key = "identifier.assignment.handler";
-      String handlerName = config.getProperty(key);
-      if (handlerName == null || handlerName.isEmpty()) {
-        throw new Exception("Undefined identifier assignment handler");
+      for (String handlerName : config.getProperty(key).split(",")) {
+        if (handlerName.isEmpty())
+          continue;
+        // Add handlers to map
+        IdentifierAssignmentHandler handlerService =
+            ConfigUtility.newStandardHandlerInstanceWithConfiguration(key,
+                handlerName, IdentifierAssignmentHandler.class);
+        idHandlerMap.put(handlerName, handlerService);
       }
-      // Set handler up
-      IdentifierAssignmentHandler handler =
-          ConfigUtility.newStandardHandlerInstanceWithConfiguration(key,
-              handlerName, IdentifierAssignmentHandler.class);
-      idHandler = handler;
-
     } catch (Exception e) {
       e.printStackTrace();
-      idHandler = null;
+      idHandlerMap = null;
     }
   }
 
@@ -191,7 +208,7 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
           "Graph resolver did not properly initialize, serious error.");
     }
 
-    if (idHandler == null) {
+    if (idHandlerMap == null) {
       throw new Exception(
           "Identifier assignment handler did not properly initialize, serious error.");
     }
@@ -204,6 +221,9 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
       plannedEffectiveTime = getPlannedEffectiveTime();
     }
   }
+
+  /** The last modified flag. */
+  private boolean lastModifiedFlag = false;
 
   /*
    * (non-Javadoc)
@@ -417,18 +437,48 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
     Logger.getLogger(ContentServiceJpa.class).debug(
         "Content Service - add concept " + concept.getTerminologyId());
     // Assign id
-    concept.setTerminologyId(idHandler.getTerminologyId(concept));
+    IdentifierAssignmentHandler idHandler =
+        idHandlerMap.get(concept.getTerminology());
+    String id = idHandler.getTerminologyId(concept);
+    concept.setTerminologyId(id);
+    // Process Cascade.ALL data structures
+    Date date = new Date();
+    for (Description description : concept.getDescriptions()) {
+      id = idHandler.getTerminologyId(description);
+      description.setTerminologyId(id);
+      if (lastModifiedFlag) {
+        description.setLastModified(date);
+        description.setLastModifiedBy(concept.getLastModifiedBy());
+      }
+      for (LanguageRefSetMember member : description.getLanguageRefSetMembers()) {
+        id = idHandler.getTerminologyId(member);
+        member.setTerminologyId(id);
+        if (lastModifiedFlag) {
+          member.setLastModifiedBy(concept.getLastModifiedBy());
+          member.setLastModified(date);
+        }
+      }
+    }
+    for (Relationship relationship : concept.getRelationships()) {
+      id = idHandler.getTerminologyId(relationship);
+      relationship.setTerminologyId(idHandler.getTerminologyId(relationship));
+      if (lastModifiedFlag) {
+        relationship.setLastModifiedBy(concept.getLastModifiedBy());
+        relationship.setLastModified(date);
+      }
+
+    }
 
     // Add component
-    concept = addComponent(concept);
+    Concept newConcept = addComponent(concept);
 
     // Inform listeners
     if (listenersEnabled) {
       for (WorkflowListener listener : listeners) {
-        listener.conceptAdded(concept);
+        listener.conceptAdded(newConcept);
       }
     }
-    return concept;
+    return newConcept;
   }
 
   /*
@@ -444,6 +494,8 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
         "Content Service - update concept " + concept.getTerminologyId());
 
     // Id assignment should not change
+    final IdentifierAssignmentHandler idHandler =
+        idHandlerMap.get(concept.getTerminology());
     if (!idHandler.allowConceptIdChangeOnUpdate()) {
       Concept concept2 = getConcept(concept.getId());
       if (!idHandler.getTerminologyId(concept).equals(
@@ -477,28 +529,9 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
   public void removeConcept(Long id) throws Exception {
     Logger.getLogger(ContentServiceJpa.class).debug(
         "Content Service - remove concept " + id);
-    tx = manager.getTransaction();
-    // retrieve this concept
-    Concept concept = manager.find(ConceptJpa.class, id);
-    // Set modification date
-    concept.setLastModified(new Date());
-    if (getTransactionPerOperation()) {
-      // remove specialist
-      tx.begin();
-      if (manager.contains(concept)) {
-        manager.remove(concept);
-      } else {
-        manager.remove(manager.merge(concept));
-      }
-      tx.commit();
+    // Remove the component
+    Concept concept = removeComponent(id, ConceptJpa.class);
 
-    } else {
-      if (manager.contains(concept)) {
-        manager.remove(concept);
-      } else {
-        manager.remove(manager.merge(concept));
-      }
-    }
     if (listenersEnabled) {
       for (WorkflowListener listener : listeners) {
         listener.conceptRemoved(concept);
@@ -568,18 +601,30 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
     Logger.getLogger(ContentServiceJpa.class).debug(
         "Content Service - add description " + description.getTerminologyId());
     // Assign id
+    IdentifierAssignmentHandler idHandler =
+        idHandlerMap.get(description.getTerminology());
     description.setTerminologyId(idHandler.getTerminologyId(description));
 
+    // Process Cascade.ALL data structures
+    Date date = new Date();
+    for (LanguageRefSetMember member : description.getLanguageRefSetMembers()) {
+      member.setTerminologyId(idHandler.getTerminologyId(member));
+      if (lastModifiedFlag) {
+        member.setLastModifiedBy(description.getLastModifiedBy());
+        member.setLastModified(date);
+      }
+    }
+
     // Add component
-    description = addComponent(description);
+    Description newDescription = addComponent(description);
 
     // Inform listeners
     if (listenersEnabled) {
       for (WorkflowListener listener : listeners) {
-        listener.descriptionAdded(description);
+        listener.descriptionAdded(newDescription);
       }
     }
-    return description;
+    return newDescription;
   }
 
   /*
@@ -595,6 +640,8 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
         "Content Service - update description "
             + description.getTerminologyId());
     // Id assignment should not change
+    final IdentifierAssignmentHandler idHandler =
+        idHandlerMap.get(description.getTerminology());
     if (!idHandler.allowIdChangeOnUpdate()) {
       Description description2 = getDescription(description.getId());
       if (!idHandler.getTerminologyId(description).equals(
@@ -626,28 +673,9 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
   public void removeDescription(Long id) throws Exception {
     Logger.getLogger(ContentServiceJpa.class).debug(
         "Content Service - remove description " + id);
-    tx = manager.getTransaction();
-    // retrieve this description
-    Description description = manager.find(DescriptionJpa.class, id);
-    // Set modification date
-    description.setLastModified(new Date());
+    // Remove the component
+    Description description = removeComponent(id, DescriptionJpa.class);
 
-    if (getTransactionPerOperation()) {
-      // remove description
-      tx.begin();
-      if (manager.contains(description)) {
-        manager.remove(description);
-      } else {
-        manager.remove(manager.merge(description));
-      }
-      tx.commit();
-    } else {
-      if (manager.contains(description)) {
-        manager.remove(description);
-      } else {
-        manager.remove(manager.merge(description));
-      }
-    }
     if (listenersEnabled) {
       for (WorkflowListener listener : listeners) {
         listener.descriptionRemoved(description);
@@ -720,18 +748,19 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
             "Content Service - add relationship "
                 + relationship.getTerminologyId());
     // Assign id
-    relationship.setTerminologyId(idHandler.getTerminologyId(relationship));
+    relationship.setTerminologyId(idHandlerMap.get(
+        relationship.getTerminology()).getTerminologyId(relationship));
 
     // Add component
-    relationship = addComponent(relationship);
+    Relationship newRelationship = addComponent(relationship);
 
     // Inform listeners
     if (listenersEnabled) {
       for (WorkflowListener listener : listeners) {
-        listener.relationshipAdded(relationship);
+        listener.relationshipAdded(newRelationship);
       }
     }
-    return relationship;
+    return newRelationship;
   }
 
   /*
@@ -747,6 +776,8 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
         "Content Service - update relationship "
             + relationship.getTerminologyId());
     // Id assignment should not change
+    final IdentifierAssignmentHandler idHandler =
+        idHandlerMap.get(relationship.getTerminology());
     if (!idHandler.allowIdChangeOnUpdate()) {
       Relationship relationship2 = getRelationship(relationship.getId());
       if (!idHandler.getTerminologyId(relationship).equals(
@@ -778,27 +809,9 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
   public void removeRelationship(Long id) throws Exception {
     Logger.getLogger(ContentServiceJpa.class).debug(
         "Content Service - remove relationship " + id);
-    tx = manager.getTransaction();
-    // retrieve this relationship
-    Relationship relationship = manager.find(RelationshipJpa.class, id);
-    // Set modification date
-    relationship.setLastModified(new Date());
-    if (getTransactionPerOperation()) {
-      // remove relationship
-      tx.begin();
-      if (manager.contains(relationship)) {
-        manager.remove(relationship);
-      } else {
-        manager.remove(manager.merge(relationship));
-      }
-      tx.commit();
-    } else {
-      if (manager.contains(relationship)) {
-        manager.remove(relationship);
-      } else {
-        manager.remove(manager.merge(relationship));
-      }
-    }
+    // Remove the component
+    Relationship relationship = removeComponent(id, RelationshipJpa.class);
+
     if (listenersEnabled) {
       for (WorkflowListener listener : listeners) {
         listener.relationshipRemoved(relationship);
@@ -821,13 +834,13 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
             + relationship.getSuperTypeConcept() + "/"
             + relationship.getSubTypeConcept());
     // Assign id
-    relationship.setTerminologyId(idHandler.getTerminologyId(relationship));
+    relationship.setTerminologyId(idHandlerMap.get(
+        relationship.getTerminology()).getTerminologyId(relationship));
 
     // Add component
-    relationship = addComponent(relationship);
+    return addComponent(relationship);
 
     // no listener
-    return relationship;
   }
 
   /*
@@ -845,6 +858,8 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
             + relationship.getSuperTypeConcept() + "/"
             + relationship.getSubTypeConcept());
     // Id assignment should not change
+    final IdentifierAssignmentHandler idHandler =
+        idHandlerMap.get(relationship.getTerminology());
     if (!idHandler.allowIdChangeOnUpdate()) {
       Relationship relationship2 = getRelationship(relationship.getId());
       if (!idHandler.getTerminologyId(relationship).equals(
@@ -871,29 +886,9 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
   public void removeTransitiveRelationship(Long id) throws Exception {
     Logger.getLogger(ContentServiceJpa.class).debug(
         "Content Service - remove transitive relationship " + id);
+    // Remove the component
+    removeComponent(id, TransitiveRelationshipJpa.class);
 
-    tx = manager.getTransaction();
-    // retrieve this transitiveRelationship
-    TransitiveRelationship relationship =
-        manager.find(TransitiveRelationshipJpa.class, id);
-    // Set modification date
-    relationship.setLastModified(new Date());
-    if (getTransactionPerOperation()) {
-      // remove transitiveRelationship
-      tx.begin();
-      if (manager.contains(relationship)) {
-        manager.remove(relationship);
-      } else {
-        manager.remove(manager.merge(relationship));
-      }
-      tx.commit();
-    } else {
-      if (manager.contains(relationship)) {
-        manager.remove(relationship);
-      } else {
-        manager.remove(manager.merge(relationship));
-      }
-    }
     // no notifications
   }
 
@@ -952,6 +947,43 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
    * (non-Javadoc)
    * 
    * @see
+   * org.ihtsdo.otf.ts.services.ContentService#getAttributeValueRefSetMembers
+   * (java.lang.String, java.lang.String, java.lang.String,
+   * org.ihtsdo.otf.ts.helpers.PfsParameter)
+   */
+  @SuppressWarnings("unchecked")
+  @Override
+  public AttributeValueRefSetMemberList findAttributeValueRefSetMembers(
+    String refsetId, String terminology, String version, PfsParameter pfs)
+    throws Exception {
+    Logger.getLogger(ContentServiceJpa.class).debug(
+        "Content Service - get association reference refset members "
+            + refsetId + "/" + terminology + "/" + version);
+    javax.persistence.Query query =
+        applyPfsToQuery("select a from AttributeValueRefSetMemberJpa a "
+            + "where refSetId = :refsetId "
+            + "and terminologyVersion = :version "
+            + "and terminology = :terminology", pfs);
+    try {
+      query.setParameter("refsetId", refsetId);
+      query.setParameter("terminology", terminology);
+      query.setParameter("version", version);
+      AttributeValueRefSetMemberList list =
+          new AttributeValueRefSetMemberListJpa();
+      // unknown total count, TODO: may need "count" methods
+      list.setTotalCount(-1);
+      list.setObjects(query.getResultList());
+
+      return list;
+    } catch (NoResultException e) {
+      return null;
+    }
+  }
+
+  /*
+   * (non-Javadoc)
+   * 
+   * @see
    * org.ihtsdo.otf.mapping.services.ContentService#addAttributeValueRefSetMember
    * (org.ihtsdo.otf.mapping.rf2.AttributeValueRefSetMember)
    */
@@ -969,18 +1001,20 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
         "Content Service - add attribute value refset member"
             + member.getTerminologyId());
     // Assign id
-    member.setTerminologyId(idHandler.getTerminologyId(member));
+    member.setTerminologyId(idHandlerMap.get(member.getTerminology())
+        .getTerminologyId(member));
 
     // Add component
-    member = addComponent(member);
+    AttributeValueRefSetMember<? extends Component> newMember =
+        addComponent(member);
 
     // Inform listeners
     if (listenersEnabled) {
       for (WorkflowListener listener : listeners) {
-        listener.refSetMemberAdded(member);
+        listener.refSetMemberAdded(newMember);
       }
     }
-    return member;
+    return newMember;
   }
 
   /*
@@ -997,6 +1031,8 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
         "Content Service - update attribute value refset member "
             + member.getTerminologyId());
     // Id assignment should not change
+    final IdentifierAssignmentHandler idHandler =
+        idHandlerMap.get(member.getTerminology());
     if (!idHandler.allowIdChangeOnUpdate()) {
       AttributeValueRefSetMember<? extends Component> member2 =
           getAttributeValueRefSetMember(member.getId());
@@ -1031,7 +1067,7 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
         "Content Service - remove attribute value refset member " + id);
     // Remove the component
     RefSetMember<?> member =
-        removeComponent(id, AbstractAssociationReferenceRefSetMemberJpa.class);
+        removeComponent(id, AbstractAttributeValueRefSetMemberJpa.class);
 
     // Inform listeners
     if (listenersEnabled) {
@@ -1062,9 +1098,47 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
    * (non-Javadoc)
    * 
    * @see
+   * org.ihtsdo.otf.ts.services.ContentService#getAssociationReferenceRefSetMembers
+   * (java.lang.String, java.lang.String, java.lang.String,
+   * org.ihtsdo.otf.ts.helpers.PfsParameter)
+   */
+  @SuppressWarnings("unchecked")
+  @Override
+  public AssociationReferenceRefSetMemberList findAssociationReferenceRefSetMembers(
+    String refsetId, String terminology, String version, PfsParameter pfs)
+    throws Exception {
+    Logger.getLogger(ContentServiceJpa.class).debug(
+        "Content Service - get association reference refset members "
+            + refsetId + "/" + terminology + "/" + version);
+    javax.persistence.Query query =
+        applyPfsToQuery("select a from AssociationReferenceRefSetMemberJpa a "
+            + "where refSetId = :refsetId "
+            + "and terminologyVersion = :version "
+            + "and terminology = :terminology", pfs);
+    try {
+      query.setParameter("refsetId", refsetId);
+      query.setParameter("terminology", terminology);
+      query.setParameter("version", version);
+      AssociationReferenceRefSetMemberList list =
+          new AssociationReferenceRefSetMemberListJpa();
+      // unknown total count, TODO: may need "count" methods
+      list.setTotalCount(-1);
+      list.setObjects(query.getResultList());
+
+      return list;
+    } catch (NoResultException e) {
+      return null;
+    }
+  }
+
+  /*
+   * (non-Javadoc)
+   * 
+   * @see
    * org.ihtsdo.otf.ts.services.ContentService#getAssociationReferenceRefSetMember
    * (java.lang.String, java.lang.String, java.lang.String)
    */
+  @SuppressWarnings("unchecked")
   @Override
   public AssociationReferenceRefSetMember<? extends Component> getAssociationReferenceRefSetMember(
     String terminologyId, String terminology, String version) throws Exception {
@@ -1082,7 +1156,6 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
       query.setParameter("terminologyId", terminologyId);
       query.setParameter("terminology", terminology);
       query.setParameter("version", version);
-      @SuppressWarnings("unchecked")
       AssociationReferenceRefSetMember<? extends Component> c =
           (AssociationReferenceRefSetMember<? extends Component>) query
               .getSingleResult();
@@ -1107,18 +1180,20 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
         "Content Service - add association reference refset member"
             + member.getTerminologyId());
     // Assign id
-    member.setTerminologyId(idHandler.getTerminologyId(member));
+    member.setTerminologyId(idHandlerMap.get(member.getTerminology())
+        .getTerminologyId(member));
 
     // Add component
-    member = addComponent(member);
+    AssociationReferenceRefSetMember<? extends Component> newMember =
+        addComponent(member);
 
     // Inform listeners
     if (listenersEnabled) {
       for (WorkflowListener listener : listeners) {
-        listener.refSetMemberAdded(member);
+        listener.refSetMemberAdded(newMember);
       }
     }
-    return member;
+    return newMember;
   }
 
   /*
@@ -1136,6 +1211,8 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
         "Content Service - update association reference refset member "
             + member.getTerminologyId());
     // Id assignment should not change
+    final IdentifierAssignmentHandler idHandler =
+        idHandlerMap.get(member.getTerminology());
     if (!idHandler.allowIdChangeOnUpdate()) {
       AssociationReferenceRefSetMember<? extends Component> member2 =
           getAssociationReferenceRefSetMember(member.getId());
@@ -1168,9 +1245,10 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
     Logger.getLogger(ContentServiceJpa.class).debug(
         "Content Service - remove association reference refset member " + id);
 
+    RefSetMember<? extends Component> member =
+        getAssociationReferenceRefSetMember(id);
     // Remove the component
-    RefSetMember<?> member =
-        removeComponent(id, AbstractAssociationReferenceRefSetMemberJpa.class);
+    removeComponent(id, member.getClass());
 
     // Inform listeners
     if (listenersEnabled) {
@@ -1233,6 +1311,42 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
    * (non-Javadoc)
    * 
    * @see
+   * org.ihtsdo.otf.ts.services.ContentService#getComplexMapRefSetMembers(java
+   * .lang.String, java.lang.String, java.lang.String,
+   * org.ihtsdo.otf.ts.helpers.PfsParameter)
+   */
+  @SuppressWarnings("unchecked")
+  @Override
+  public ComplexMapRefSetMemberList findComplexMapRefSetMembers(
+    String refsetId, String terminology, String version, PfsParameter pfs)
+    throws Exception {
+    Logger.getLogger(ContentServiceJpa.class).debug(
+        "Content Service - get association reference refset members "
+            + refsetId + "/" + terminology + "/" + version);
+    javax.persistence.Query query =
+        applyPfsToQuery("select a from ComplexMapRefSetMemberJpa a "
+            + "where refSetId = :refsetId "
+            + "and terminologyVersion = :version "
+            + "and terminology = :terminology", pfs);
+    try {
+      query.setParameter("refsetId", refsetId);
+      query.setParameter("terminology", terminology);
+      query.setParameter("version", version);
+      ComplexMapRefSetMemberList list = new ComplexMapRefSetMemberListJpa();
+      // unknown total count, TODO: may need "count" methods
+      list.setTotalCount(-1);
+      list.setObjects(query.getResultList());
+
+      return list;
+    } catch (NoResultException e) {
+      return null;
+    }
+  }
+
+  /*
+   * (non-Javadoc)
+   * 
+   * @see
    * org.ihtsdo.otf.mapping.services.ContentService#addComplexMapRefSetMember
    * (org.ihtsdo.otf.mapping.rf2.ComplexMapRefSetMember)
    */
@@ -1243,19 +1357,20 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
         "Content Service - add complex map refset member"
             + member.getTerminologyId());
     // Assign id
-    member.setTerminologyId(idHandler.getTerminologyId(member));
+    member.setTerminologyId(idHandlerMap.get(member.getTerminology())
+        .getTerminologyId(member));
 
     // Add component
-    member = addComponent(member);
+    ComplexMapRefSetMember newMember = addComponent(member);
 
     // Inform listeners
     if (listenersEnabled) {
       for (WorkflowListener listener : listeners) {
-        listener.refSetMemberAdded(member);
+        listener.refSetMemberAdded(newMember);
       }
     }
 
-    return member;
+    return newMember;
   }
 
   /*
@@ -1272,6 +1387,8 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
         "Content Service - update complex map refset member "
             + member.getTerminologyId());
     // Id assignment should not change
+    final IdentifierAssignmentHandler idHandler =
+        idHandlerMap.get(member.getTerminology());
     if (!idHandler.allowIdChangeOnUpdate()) {
       ComplexMapRefSetMember member2 =
           getComplexMapRefSetMember(member.getId());
@@ -1366,6 +1483,41 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
    * (non-Javadoc)
    * 
    * @see
+   * org.ihtsdo.otf.ts.services.ContentService#getLanguageRefSetMembers(java
+   * .lang.String, java.lang.String, java.lang.String,
+   * org.ihtsdo.otf.ts.helpers.PfsParameter)
+   */
+  @SuppressWarnings("unchecked")
+  @Override
+  public LanguageRefSetMemberList findLanguageRefSetMembers(String refsetId,
+    String terminology, String version, PfsParameter pfs) throws Exception {
+    Logger.getLogger(ContentServiceJpa.class).debug(
+        "Content Service - get association reference refset members "
+            + refsetId + "/" + terminology + "/" + version);
+    javax.persistence.Query query =
+        applyPfsToQuery("select a from LanguageRefSetMemberJpa a "
+            + "where refSetId = :refsetId "
+            + "and terminologyVersion = :version "
+            + "and terminology = :terminology", pfs);
+    try {
+      query.setParameter("refsetId", refsetId);
+      query.setParameter("terminology", terminology);
+      query.setParameter("version", version);
+      LanguageRefSetMemberList list = new LanguageRefSetMemberListJpa();
+      // unknown total count, TODO: may need "count" methods
+      list.setTotalCount(-1);
+      list.setObjects(query.getResultList());
+
+      return list;
+    } catch (NoResultException e) {
+      return null;
+    }
+  }
+
+  /*
+   * (non-Javadoc)
+   * 
+   * @see
    * org.ihtsdo.otf.mapping.services.ContentService#addLanguageRefSetMember(
    * org.ihtsdo.otf.mapping.rf2.LanguageRefSetMember)
    */
@@ -1376,18 +1528,19 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
         "Content Service - add language refset member"
             + member.getTerminologyId());
     // Assign id
-    member.setTerminologyId(idHandler.getTerminologyId(member));
+    member.setTerminologyId(idHandlerMap.get(member.getTerminology())
+        .getTerminologyId(member));
 
     // Add component
-    member = addComponent(member);
+    LanguageRefSetMember newMember = addComponent(member);
 
     // Inform listeners
     if (listenersEnabled) {
       for (WorkflowListener listener : listeners) {
-        listener.refSetMemberAdded(member);
+        listener.refSetMemberAdded(newMember);
       }
     }
-    return member;
+    return newMember;
   }
 
   /*
@@ -1404,6 +1557,8 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
         "Content Service - update language refset member "
             + member.getTerminologyId());
     // Id assignment should not change
+    final IdentifierAssignmentHandler idHandler =
+        idHandlerMap.get(member.getTerminology());
     if (!idHandler.allowIdChangeOnUpdate()) {
       LanguageRefSetMember member2 = getLanguageRefSetMember(member.getId());
       if (!idHandler.getTerminologyId(member).equals(
@@ -1435,29 +1590,9 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
   public void removeLanguageRefSetMember(Long id) throws Exception {
     Logger.getLogger(ContentServiceJpa.class).debug(
         "Content Service - remove language refset member " + id);
-    tx = manager.getTransaction();
-    // retrieve this language ref set member
-    LanguageRefSetMember member =
-        manager.find(LanguageRefSetMemberJpa.class, id);
-    // Set modification date
-    member.setLastModified(new Date());
+    // Remove the component
+    RefSetMember<?> member = removeComponent(id, LanguageRefSetMemberJpa.class);
 
-    if (getTransactionPerOperation()) {
-      // remove language ref set member
-      tx.begin();
-      if (manager.contains(member)) {
-        manager.remove(member);
-      } else {
-        manager.remove(manager.merge(member));
-      }
-      tx.commit();
-    } else {
-      if (manager.contains(member)) {
-        manager.remove(member);
-      } else {
-        manager.remove(manager.merge(member));
-      }
-    }
     if (listenersEnabled) {
       for (WorkflowListener listener : listeners) {
         listener.refSetMemberRemoved(member);
@@ -1516,6 +1651,41 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
    * (non-Javadoc)
    * 
    * @see
+   * org.ihtsdo.otf.ts.services.ContentService#getSimpleMapRefSetMembers(java
+   * .lang.String, java.lang.String, java.lang.String,
+   * org.ihtsdo.otf.ts.helpers.PfsParameter)
+   */
+  @SuppressWarnings("unchecked")
+  @Override
+  public SimpleMapRefSetMemberList findSimpleMapRefSetMembers(String refsetId,
+    String terminology, String version, PfsParameter pfs) throws Exception {
+    Logger.getLogger(ContentServiceJpa.class).debug(
+        "Content Service - get association reference refset members "
+            + refsetId + "/" + terminology + "/" + version);
+    javax.persistence.Query query =
+        applyPfsToQuery("select a from SimpleMapRefSetMemberJpa a "
+            + "where refSetId = :refsetId "
+            + "and terminologyVersion = :version "
+            + "and terminology = :terminology", pfs);
+    try {
+      query.setParameter("refsetId", refsetId);
+      query.setParameter("terminology", terminology);
+      query.setParameter("version", version);
+      SimpleMapRefSetMemberList list = new SimpleMapRefSetMemberListJpa();
+      // unknown total count, TODO: may need "count" methods
+      list.setTotalCount(-1);
+      list.setObjects(query.getResultList());
+
+      return list;
+    } catch (NoResultException e) {
+      return null;
+    }
+  }
+
+  /*
+   * (non-Javadoc)
+   * 
+   * @see
    * org.ihtsdo.otf.mapping.services.ContentService#addSimpleMapRefSetMember
    * (org.ihtsdo.otf.mapping.rf2.SimpleMapRefSetMember)
    */
@@ -1526,18 +1696,19 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
         "Content Service - add simple map refset member"
             + member.getTerminologyId());
     // Assign id
-    member.setTerminologyId(idHandler.getTerminologyId(member));
+    member.setTerminologyId(idHandlerMap.get(member.getTerminology())
+        .getTerminologyId(member));
 
     // Add component
-    member = addComponent(member);
+    SimpleMapRefSetMember newMember = addComponent(member);
 
     // Inform listeners
     if (listenersEnabled) {
       for (WorkflowListener listener : listeners) {
-        listener.refSetMemberAdded(member);
+        listener.refSetMemberAdded(newMember);
       }
     }
-    return member;
+    return newMember;
   }
 
   /*
@@ -1554,6 +1725,8 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
         "Content Service - update simple map refset member "
             + member.getTerminologyId());
     // Id assignment should not change
+    final IdentifierAssignmentHandler idHandler =
+        idHandlerMap.get(member.getTerminology());
     if (!idHandler.allowIdChangeOnUpdate()) {
       SimpleMapRefSetMember member2 = getSimpleMapRefSetMember(member.getId());
       if (!idHandler.getTerminologyId(member).equals(
@@ -1585,28 +1758,10 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
   public void removeSimpleMapRefSetMember(Long id) throws Exception {
     Logger.getLogger(ContentServiceJpa.class).debug(
         "Content Service - remove simple map refset member " + id);
-    tx = manager.getTransaction();
-    // retrieve this simple map ref set member
-    SimpleMapRefSetMember member =
-        manager.find(SimpleMapRefSetMemberJpa.class, id);
-    // Set modification date
-    member.setLastModified(new Date());
-    if (getTransactionPerOperation()) {
-      // remove simple map ref set member
-      tx.begin();
-      if (manager.contains(member)) {
-        manager.remove(member);
-      } else {
-        manager.remove(manager.merge(member));
-      }
-      tx.commit();
-    } else {
-      if (manager.contains(member)) {
-        manager.remove(member);
-      } else {
-        manager.remove(manager.merge(member));
-      }
-    }
+    // Remove the component
+    RefSetMember<?> member =
+        removeComponent(id, SimpleMapRefSetMemberJpa.class);
+
     if (listenersEnabled) {
       for (WorkflowListener listener : listeners) {
         listener.refSetMemberRemoved(member);
@@ -1664,6 +1819,41 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
    * (non-Javadoc)
    * 
    * @see
+   * org.ihtsdo.otf.ts.services.ContentService#getSimpleRefSetMembers(java.lang
+   * .String, java.lang.String, java.lang.String,
+   * org.ihtsdo.otf.ts.helpers.PfsParameter)
+   */
+  @SuppressWarnings("unchecked")
+  @Override
+  public SimpleRefSetMemberList findSimpleRefSetMembers(String refsetId,
+    String terminology, String version, PfsParameter pfs) throws Exception {
+    Logger.getLogger(ContentServiceJpa.class).debug(
+        "Content Service - get association reference refset members "
+            + refsetId + "/" + terminology + "/" + version);
+    javax.persistence.Query query =
+        applyPfsToQuery("select a from SimpleRefSetMemberJpa a "
+            + "where refSetId = :refsetId "
+            + "and terminologyVersion = :version "
+            + "and terminology = :terminology", pfs);
+    try {
+      query.setParameter("refsetId", refsetId);
+      query.setParameter("terminology", terminology);
+      query.setParameter("version", version);
+      SimpleRefSetMemberList list = new SimpleRefSetMemberListJpa();
+      // unknown total count, TODO: may need "count" methods
+      list.setTotalCount(-1);
+      list.setObjects(query.getResultList());
+
+      return list;
+    } catch (NoResultException e) {
+      return null;
+    }
+  }
+
+  /*
+   * (non-Javadoc)
+   * 
+   * @see
    * org.ihtsdo.otf.mapping.services.ContentService#addSimpleRefSetMember(org
    * .ihtsdo.otf.mapping.rf2.SimpleRefSetMember)
    */
@@ -1674,19 +1864,20 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
         "Content Service - add simple refset member"
             + member.getTerminologyId());
     // Assign id
-    member.setTerminologyId(idHandler.getTerminologyId(member));
+    member.setTerminologyId(idHandlerMap.get(member.getTerminology())
+        .getTerminologyId(member));
 
     // Add component
-    member = addComponent(member);
+    SimpleRefSetMember newMember = addComponent(member);
 
     // Inform listeners
     if (listenersEnabled) {
       for (WorkflowListener listener : listeners) {
-        listener.refSetMemberAdded(member);
+        listener.refSetMemberAdded(newMember);
       }
     }
 
-    return member;
+    return newMember;
   }
 
   /*
@@ -1703,6 +1894,8 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
         "Content Service - update simple refset member "
             + member.getTerminologyId());
     // Id assignment should not change
+    final IdentifierAssignmentHandler idHandler =
+        idHandlerMap.get(member.getTerminology());
     if (!idHandler.allowIdChangeOnUpdate()) {
       SimpleRefSetMember member2 = getSimpleRefSetMember(member.getId());
       if (!idHandler.getTerminologyId(member).equals(
@@ -1734,27 +1927,9 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
   public void removeSimpleRefSetMember(Long id) throws Exception {
     Logger.getLogger(ContentServiceJpa.class).debug(
         "Content Service - remove simple refset member " + id);
-    tx = manager.getTransaction();
-    // retrieve this simple ref set member
-    SimpleRefSetMember member = manager.find(SimpleRefSetMemberJpa.class, id);
-    // Set modification date
-    member.setLastModified(new Date());
-    if (getTransactionPerOperation()) {
-      // remove simple ref set member
-      tx.begin();
-      if (manager.contains(member)) {
-        manager.remove(member);
-      } else {
-        manager.remove(manager.merge(member));
-      }
-      tx.commit();
-    } else {
-      if (manager.contains(member)) {
-        manager.remove(member);
-      } else {
-        manager.remove(manager.merge(member));
-      }
-    }
+    // Remove the component
+    RefSetMember<?> member = removeComponent(id, SimpleRefSetMemberJpa.class);
+
     if (listenersEnabled) {
       for (WorkflowListener listener : listeners) {
         listener.refSetMemberRemoved(member);
@@ -1819,7 +1994,7 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
    * java.lang.String, java.lang.String)
    */
   @Override
-  public List<RefsetDescriptorRefSetMember> getRefsetDescriptorRefSetMembersForRefset(
+  public RefsetDescriptorRefSetMemberList getRefsetDescriptorRefSetMembersForRefset(
     String terminologyId, String terminology, String version) {
     Logger.getLogger(ContentServiceJpa.class).debug(
         "Content Service - get refset descriptor refset member for refset "
@@ -1834,7 +2009,11 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
       query.setParameter("version", version);
       @SuppressWarnings("unchecked")
       List<RefsetDescriptorRefSetMember> results = query.getResultList();
-      return results;
+      RefsetDescriptorRefSetMemberList list =
+          new RefsetDescriptorRefSetMemberListJpa();
+      list.setObjects(results);
+      list.setTotalCount(list.getCount());
+      return list;
     } catch (NoResultException e) {
       return null;
     }
@@ -1854,19 +2033,20 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
         "Content Service - add refset descriptor refset member"
             + member.getTerminologyId());
     // Assign id
-    member.setTerminologyId(idHandler.getTerminologyId(member));
+    member.setTerminologyId(idHandlerMap.get(member.getTerminology())
+        .getTerminologyId(member));
 
     // Add component
-    member = addComponent(member);
+    RefsetDescriptorRefSetMember newMember = addComponent(member);
 
     // Inform listeners
     if (listenersEnabled) {
       for (WorkflowListener listener : listeners) {
-        listener.refSetMemberAdded(member);
+        listener.refSetMemberAdded(newMember);
       }
     }
 
-    return member;
+    return newMember;
   }
 
   /*
@@ -1883,6 +2063,8 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
         "Content Service - update refset descriptor refset member "
             + member.getTerminologyId());
     // Id assignment should not change
+    final IdentifierAssignmentHandler idHandler =
+        idHandlerMap.get(member.getTerminology());
     if (!idHandler.allowIdChangeOnUpdate()) {
       RefsetDescriptorRefSetMember member2 =
           getRefsetDescriptorRefSetMember(member.getId());
@@ -1915,28 +2097,10 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
   public void removeRefsetDescriptorRefSetMember(Long id) throws Exception {
     Logger.getLogger(ContentServiceJpa.class).debug(
         "Content Service - remove refset descriptor refset member " + id);
-    tx = manager.getTransaction();
-    // retrieve this refset descriptor ref set member
-    RefsetDescriptorRefSetMember member =
-        manager.find(RefsetDescriptorRefSetMemberJpa.class, id);
-    // Set modification date
-    member.setLastModified(new Date());
-    if (getTransactionPerOperation()) {
-      // remove refset descriptor ref set member
-      tx.begin();
-      if (manager.contains(member)) {
-        manager.remove(member);
-      } else {
-        manager.remove(manager.merge(member));
-      }
-      tx.commit();
-    } else {
-      if (manager.contains(member)) {
-        manager.remove(member);
-      } else {
-        manager.remove(manager.merge(member));
-      }
-    }
+    // Remove the component
+    RefSetMember<?> member =
+        removeComponent(id, RefsetDescriptorRefSetMemberJpa.class);
+
     if (listenersEnabled) {
       for (WorkflowListener listener : listeners) {
         listener.refSetMemberRemoved(member);
@@ -2039,19 +2203,20 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
         "Content Service - add description type refset member"
             + member.getTerminologyId());
     // Assign id
-    member.setTerminologyId(idHandler.getTerminologyId(member));
+    member.setTerminologyId(idHandlerMap.get(member.getTerminology())
+        .getTerminologyId(member));
 
     // Add component
-    member = addComponent(member);
+    DescriptionTypeRefSetMember newMember = addComponent(member);
 
     // Inform listeners
     if (listenersEnabled) {
       for (WorkflowListener listener : listeners) {
-        listener.refSetMemberAdded(member);
+        listener.refSetMemberAdded(newMember);
       }
     }
 
-    return member;
+    return newMember;
   }
 
   /*
@@ -2068,6 +2233,8 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
         "Content Service - update description type refset member "
             + member.getTerminologyId());
     // Id assignment should not change
+    final IdentifierAssignmentHandler idHandler =
+        idHandlerMap.get(member.getTerminology());
     if (!idHandler.allowIdChangeOnUpdate()) {
       DescriptionTypeRefSetMember member2 =
           getDescriptionTypeRefSetMember(member.getId());
@@ -2100,28 +2267,10 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
   public void removeDescriptionTypeRefSetMember(Long id) throws Exception {
     Logger.getLogger(ContentServiceJpa.class).debug(
         "Content Service - remove description type refset member " + id);
-    tx = manager.getTransaction();
-    // retrieve this description type ref set member
-    DescriptionTypeRefSetMember member =
-        manager.find(DescriptionTypeRefSetMemberJpa.class, id);
-    // Set modification date
-    member.setLastModified(new Date());
-    if (getTransactionPerOperation()) {
-      // remove description type ref set member
-      tx.begin();
-      if (manager.contains(member)) {
-        manager.remove(member);
-      } else {
-        manager.remove(manager.merge(member));
-      }
-      tx.commit();
-    } else {
-      if (manager.contains(member)) {
-        manager.remove(member);
-      } else {
-        manager.remove(manager.merge(member));
-      }
-    }
+    // Remove the component
+    RefSetMember<?> member =
+        removeComponent(id, DescriptionTypeRefSetMemberJpa.class);
+
     if (listenersEnabled) {
       for (WorkflowListener listener : listeners) {
         listener.refSetMemberRemoved(member);
@@ -2186,7 +2335,7 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
    * java.lang.String, java.lang.String)
    */
   @Override
-  public List<ModuleDependencyRefSetMember> getModuleDependencyRefSetMembersForModule(
+  public ModuleDependencyRefSetMemberList getModuleDependencyRefSetMembersForModule(
     String terminologyId, String terminology, String version) throws Exception {
     Logger.getLogger(ContentServiceJpa.class).debug(
         "Content Service - get module dependency refset member for module "
@@ -2200,7 +2349,11 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
       query.setParameter("version", version);
       @SuppressWarnings("unchecked")
       List<ModuleDependencyRefSetMember> results = query.getResultList();
-      return results;
+      ModuleDependencyRefSetMemberList list =
+          new ModuleDependencyRefSetMemberListJpa();
+      list.setObjects(results);
+      list.setTotalCount(list.getCount());
+      return list;
     } catch (NoResultException e) {
       return null;
     }
@@ -2220,18 +2373,19 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
         "Content Service - add module dependency refset member"
             + member.getTerminologyId());
     // Assign id
-    member.setTerminologyId(idHandler.getTerminologyId(member));
+    member.setTerminologyId(idHandlerMap.get(member.getTerminology())
+        .getTerminologyId(member));
 
     // Add component
-    member = addComponent(member);
+    ModuleDependencyRefSetMember newMember = addComponent(member);
 
     // Inform listeners
     if (listenersEnabled) {
       for (WorkflowListener listener : listeners) {
-        listener.refSetMemberAdded(member);
+        listener.refSetMemberAdded(newMember);
       }
     }
-    return member;
+    return newMember;
   }
 
   /*
@@ -2248,6 +2402,8 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
         "Content Service - update module dependency refset member "
             + member.getTerminologyId());
     // Id assignment should not change
+    final IdentifierAssignmentHandler idHandler =
+        idHandlerMap.get(member.getTerminology());
     if (!idHandler.allowIdChangeOnUpdate()) {
       ModuleDependencyRefSetMember member2 =
           getModuleDependencyRefSetMember(member.getId());
@@ -2280,28 +2436,10 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
   public void removeModuleDependencyRefSetMember(Long id) throws Exception {
     Logger.getLogger(ContentServiceJpa.class).debug(
         "Content Service - remove module dependency refset member " + id);
-    tx = manager.getTransaction();
-    // retrieve this module dependency ref set member
-    ModuleDependencyRefSetMember member =
-        manager.find(ModuleDependencyRefSetMemberJpa.class, id);
-    // Set modification date
-    member.setLastModified(new Date());
-    if (getTransactionPerOperation()) {
-      // remove module dependency ref set member
-      tx.begin();
-      if (manager.contains(member)) {
-        manager.remove(member);
-      } else {
-        manager.remove(manager.merge(member));
-      }
-      tx.commit();
-    } else {
-      if (manager.contains(member)) {
-        manager.remove(member);
-      } else {
-        manager.remove(manager.merge(member));
-      }
-    }
+    // Remove the component
+    RefSetMember<?> member =
+        removeComponent(id, ModuleDependencyRefSetMemberJpa.class);
+
     if (listenersEnabled) {
       for (WorkflowListener listener : listeners) {
         listener.refSetMemberRemoved(member);
@@ -2382,6 +2520,23 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
     manager = factory.createEntityManager();
 
     return results;
+  }
+
+  /*
+   * (non-Javadoc)
+   * 
+   * @see
+   * org.ihtsdo.otf.ts.services.ContentService#findConceptsForSearchCriteria
+   * (java.lang.String, java.lang.String, java.lang.String,
+   * org.ihtsdo.otf.ts.helpers.SearchCriteriaList,
+   * org.ihtsdo.otf.ts.helpers.PfsParameter)
+   */
+  @Override
+  public SearchResultList findConceptsForSearchCriteria(String terminology,
+    String version, String query, SearchCriteriaList criteria, PfsParameter pfs)
+    throws Exception {
+    throw new UnsupportedOperationException("TODO:");
+
   }
 
   /*
@@ -2522,7 +2677,7 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
    */
   @SuppressWarnings("unchecked")
   @Override
-  public Set<String> getAllRelationshipTerminologyIds(String terminology,
+  public StringList getAllRelationshipTerminologyIds(String terminology,
     String version) {
     Logger.getLogger(ContentServiceJpa.class).debug(
         "Content Service - get all relationship terminology ids " + terminology
@@ -2535,8 +2690,10 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
             .setParameter("version", version);
 
     List<String> terminologyIds = query.getResultList();
-    Set<String> terminologyIdSet = new HashSet<>(terminologyIds);
-    return terminologyIdSet;
+    StringList list = new StringList();
+    list.setObjects(terminologyIds);
+    list.setTotalCount(list.getCount());
+    return list;
 
   }
 
@@ -2549,7 +2706,7 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
    */
   @SuppressWarnings("unchecked")
   @Override
-  public Set<String> getAllDescriptionTerminologyIds(String terminology,
+  public StringList getAllDescriptionTerminologyIds(String terminology,
     String version) {
     Logger.getLogger(ContentServiceJpa.class).debug(
         "Content Service - get all description terminology ids " + terminology
@@ -2562,9 +2719,10 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
             .setParameter("version", version);
 
     List<String> terminologyIds = query.getResultList();
-    Set<String> terminologyIdSet = new HashSet<>(terminologyIds);
-    return terminologyIdSet;
-
+    StringList list = new StringList();
+    list.setObjects(terminologyIds);
+    list.setTotalCount(list.getCount());
+    return list;
   }
 
   /*
@@ -2576,7 +2734,7 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
    */
   @SuppressWarnings("unchecked")
   @Override
-  public Set<String> getAllLanguageRefSetMemberTerminologyIds(
+  public StringList getAllLanguageRefSetMemberTerminologyIds(
     String terminology, String version) {
     Logger.getLogger(ContentServiceJpa.class).debug(
         "Content Service - get all language refset member terminology ids "
@@ -2589,9 +2747,10 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
             .setParameter("version", version);
 
     List<String> terminologyIds = query.getResultList();
-    Set<String> terminologyIdSet = new HashSet<>(terminologyIds);
-    return terminologyIdSet;
-
+    StringList list = new StringList();
+    list.setObjects(terminologyIds);
+    list.setTotalCount(list.getCount());
+    return list;
   }
 
   /*
@@ -2607,51 +2766,32 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
     Logger.getLogger(this.getClass()).info(
         "Content Service - Removing transitive closure data for " + terminology
             + ", " + version);
-
-    // if currently in transaction-per-operation mode, temporarily set to
-    // false
-    boolean currentTransactionStrategy = getTransactionPerOperation();
-    if (getTransactionPerOperation()) {
-      this.setTransactionPerOperation(false);
-    }
-
-    int results = 0; // progress tracker
-    int commitSize = 5000; // retrieval/delete batch size
-
-    javax.persistence.Query query =
-        manager
-            .createQuery("select tr from TransitiveRelationshipJpa tr where terminology = :terminology and terminologyVersion = :version");
-    query.setParameter("terminology", terminology);
-    query.setParameter("version", version);
-    query.setFirstResult(0);
-    query.setMaxResults(commitSize);
-
-    boolean resultsFound = true;
-
-    while (resultsFound) {
-
-      @SuppressWarnings("unchecked")
-      List<TransitiveRelationship> transitiveRels = query.getResultList();
-
-      if (transitiveRels.size() == 0)
-        resultsFound = false;
-
-      this.beginTransaction();
-      for (TransitiveRelationship tr : transitiveRels) {
-        results++;
-        removeTransitiveRelationship(tr.getId());
+    try {
+      if (getTransactionPerOperation()) {
+        // remove simple ref set member
+        tx.begin();
       }
-      this.commit();
+
+      javax.persistence.Query query =
+          manager.createQuery("DELETE From TransitiveRelationshipJpa "
+              + " c where terminology = :terminology "
+              + " and terminologyVersion = :terminologyVersion");
+      query.setParameter("terminology", terminology);
+      query.setParameter("terminologyVersion", version);
+      int deleteRecords = query.executeUpdate();
       Logger.getLogger(this.getClass()).info(
-          "  " + results + " transitive closure rels deleted");
+          "    TransitiveRelationshipJpa records deleted: " + deleteRecords);
+
+      if (getTransactionPerOperation()) {
+        // remove simple ref set member
+        tx.commit();
+      }
+    } catch (Exception e) {
+      if (tx.isActive()) {
+        tx.rollback();
+      }
+      throw e;
     }
-
-    Logger.getLogger(this.getClass()).info(
-        "Finished:  deleted " + results + " transitive closure rels");
-
-    // set the transaction strategy based on status starting this routine
-    setTransactionPerOperation(currentTransactionStrategy);
-
   }
 
   /*
@@ -2663,84 +2803,47 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
    */
   @Override
   public void clearConcepts(String terminology, String version) {
-    if (getTransactionPerOperation()) {
-      // remove simple ref set member
-      tx.begin();
-    }
-    // Truncate refsets
-    javax.persistence.Query query =
-        manager
-            .createQuery("DELETE From SimpleRefSetMemberJpa rs where terminology = :terminology");
-    query.setParameter("terminology", terminology);
-    int deleteRecords = query.executeUpdate();
-    Logger.getLogger(this.getClass()).info(
-        "    simple_ref_set records deleted: " + deleteRecords);
+    try {
+      if (getTransactionPerOperation()) {
+        // remove simple ref set member
+        tx.begin();
+      }
 
-    query =
-        manager
-            .createQuery("DELETE From SimpleMapRefSetMemberJpa rs where terminology = :terminology");
-    query.setParameter("terminology", terminology);
-    deleteRecords = query.executeUpdate();
-    Logger.getLogger(this.getClass()).info(
-        "    simple_map_ref_set records deleted: " + deleteRecords);
+      String[] types =
+          new String[] {
+              "DescriptionTypeRefSetMemberJpa",
+              "ModuleDependencyRefSetMemberJpa",
+              "RefsetDescriptorRefSetMemberJpa", "SimpleRefSetMemberJpa",
+              "SimpleMapRefSetMemberJpa", "ComplexMapRefSetMemberJpa",
+              "AttributeValueConceptRefSetMemberJpa",
+              "AssociationReferenceConceptRefSetMemberJpa",
+              "AttributeValueDescriptionRefSetMemberJpa",
+              "AssociationReferenceDescriptionRefSetMemberJpa",
+              "LanguageRefSetMemberJpa", "DescriptionJpa", "RelationshipJpa",
+              "TransitiveRelationshipJpa", "ConceptJpa"
+          };
 
-    query =
-        manager
-            .createQuery("DELETE From ComplexMapRefSetMemberJpa rs where terminology = :terminology");
-    query.setParameter("terminology", terminology);
-    deleteRecords = query.executeUpdate();
-    Logger.getLogger(this.getClass()).info(
-        "    complex_map_ref_set records deleted: " + deleteRecords);
+      for (String type : types) {
+        javax.persistence.Query query =
+            manager.createQuery("DELETE From " + type
+                + " c where terminology = :terminology "
+                + " and terminologyVersion = :terminologyVersion");
+        query.setParameter("terminology", terminology);
+        query.setParameter("terminologyVersion", version);
+        int deleteRecords = query.executeUpdate();
+        Logger.getLogger(this.getClass()).info(
+            "    " + type + " records deleted: " + deleteRecords);
+      }
 
-    query =
-        manager
-            .createQuery("DELETE From AttributeValueRefSetMemberJpa rs where terminology = :terminology");
-    query.setParameter("terminology", terminology);
-    deleteRecords = query.executeUpdate();
-    Logger.getLogger(this.getClass()).info(
-        "    attribute_value_ref_set records deleted: " + deleteRecords);
-
-    query =
-        manager
-            .createQuery("DELETE From LanguageRefSetMemberJpa rs where terminology = :terminology");
-    query.setParameter("terminology", terminology);
-    deleteRecords = query.executeUpdate();
-    Logger.getLogger(this.getClass()).info(
-        "    language_ref_set records deleted: " + deleteRecords);
-
-    // Truncate Terminology Elements
-    query =
-        manager
-            .createQuery("DELETE From DescriptionJpa d where terminology = :terminology");
-    query.setParameter("terminology", terminology);
-    deleteRecords = query.executeUpdate();
-    Logger.getLogger(this.getClass()).info(
-        "    description records deleted: " + deleteRecords);
-    query =
-        manager
-            .createQuery("DELETE From RelationshipJpa r where terminology = :terminology");
-    query.setParameter("terminology", terminology);
-    deleteRecords = query.executeUpdate();
-    Logger.getLogger(this.getClass()).info(
-        "    relationship records deleted: " + deleteRecords);
-    query =
-        manager
-            .createQuery("DELETE From TransitiveRelationshipJpa c where terminology = :terminology");
-    query.setParameter("terminology", terminology);
-    deleteRecords = query.executeUpdate();
-    Logger.getLogger(this.getClass()).info(
-        "    transitive relationships records deleted: " + deleteRecords);
-    query =
-        manager
-            .createQuery("DELETE From ConceptJpa c where terminology = :terminology");
-    query.setParameter("terminology", terminology);
-    deleteRecords = query.executeUpdate();
-    Logger.getLogger(this.getClass()).info(
-        "    concept records deleted: " + deleteRecords);
-
-    if (getTransactionPerOperation()) {
-      // remove simple ref set member
-      tx.commit();
+      if (getTransactionPerOperation()) {
+        // remove simple ref set member
+        tx.commit();
+      }
+    } catch (Exception e) {
+      if (tx.isActive()) {
+        tx.rollback();
+      }
+      throw e;
     }
 
   }
@@ -2836,7 +2939,7 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
   protected javax.persistence.Query applyPfsToQuery(String queryStr,
     PfsParameter pfs) {
     String localQueryStr = queryStr;
-    if (pfs.getSortField() != null) {
+    if (pfs != null && pfs.getSortField() != null) {
       localQueryStr += " order by a." + pfs.getSortField();
     }
     javax.persistence.Query query = manager.createQuery(localQueryStr);
@@ -2864,8 +2967,9 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
    * org.ihtsdo.otf.ts.services.ContentService#getIdentifierAssignmentHandler()
    */
   @Override
-  public IdentifierAssignmentHandler getIdentifierAssignmentHandler() {
-    return idHandler;
+  public IdentifierAssignmentHandler getIdentifierAssignmentHandler(
+    String terminology) {
+    return idHandlerMap.get(terminology);
   }
 
   /*
@@ -2890,12 +2994,24 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
    */
   @Override
   public void computePreferredName(Concept concept) throws Exception {
-    graphResolver.resolve(concept, TerminologyUtility.getHierarchcialIsaRels(
-        concept.getTerminology(), concept.getTerminologyVersion()));
-    final String pn =
-        pnHandlerMap.get(concept.getTerminologyId()).computePreferredName(
-            concept.getDescriptions());
-    concept.setDefaultPreferredName(pn);
+    try {
+      graphResolver.resolve(concept, TerminologyUtility.getHierarchcialIsaRels(
+          concept.getTerminology(), concept.getTerminologyVersion()));
+      ComputePreferredNameHandler handler =
+          pnHandlerMap.get(concept.getTerminology());
+      if (handler == null) {
+        throw new Exception(
+            "Compute preferred name handler is not configured for "
+                + concept.getTerminology());
+      }
+      final String pn = handler.computePreferredName(concept.getDescriptions());
+      concept.setDefaultPreferredName(pn);
+    } catch (Exception e) {
+      if (tx.isActive()) {
+        tx.rollback();
+      }
+      throw e;
+    }
   }
 
   /*
@@ -2921,27 +3037,37 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
   /**
    * Adds the component.
    *
+   * @param <T> the
    * @param component the component
-   * @return
    * @return the component
+   * @throws Exception the exception
    */
   private <T extends Component> T addComponent(T component) throws Exception {
+    try {
+      // Set last modified date
+      if (lastModifiedFlag) {
+        component.setLastModified(new Date());
+      }
 
-    // Set last modified date
-    component.setLastModified(new Date());
+      // Leave effective time alone
 
-    // Leave effective time alone
-
-    // add
-    if (getTransactionPerOperation()) {
-      tx = manager.getTransaction();
-      tx.begin();
-      manager.persist(component);
-      tx.commit();
-    } else {
-      manager.persist(component);
+      // add
+      if (getTransactionPerOperation()) {
+        tx = manager.getTransaction();
+        tx.begin();
+        manager.persist(component);
+        tx.commit();
+      } else {
+        manager.persist(component);
+      }
+      return component;
+    } catch (Exception e) {
+      if (tx.isActive()) {
+        tx.rollback();
+      }
+      throw e;
     }
-    return component;
+
   }
 
   /**
@@ -2949,30 +3075,38 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
    *
    * @param <T> the generic type
    * @param component the component
-   * @return the t
    * @throws Exception the exception
    */
   private <T extends Component> void updateComponent(T component)
     throws Exception {
+    try {
+      // Set modification date
+      if (lastModifiedFlag) {
+        component.setLastModified(new Date());
+      }
 
-    // Set modification date
-    component.setLastModified(new Date());
+      // set effective time to nnull unless this is the planned effective time
+      if (component.getEffectiveTime() != null
+          && !component.getEffectiveTime().equals(plannedEffectiveTime)) {
+        component.setEffectiveTime(null);
+      }
 
-    // set effective time to nnull unless this is the planned effective time
-    if (component.getEffectiveTime() != null
-        && !component.getEffectiveTime().equals(plannedEffectiveTime)) {
-      component.setEffectiveTime(null);
+      // update
+      if (getTransactionPerOperation()) {
+        tx = manager.getTransaction();
+        tx.begin();
+        manager.merge(component);
+        tx.commit();
+      } else {
+        manager.merge(component);
+      }
+    } catch (Exception e) {
+      if (tx.isActive()) {
+        tx.rollback();
+      }
+      throw e;
     }
 
-    // update
-    if (getTransactionPerOperation()) {
-      tx = manager.getTransaction();
-      tx.begin();
-      manager.merge(component);
-      tx.commit();
-    } else {
-      manager.merge(component);
-    }
   }
 
   /**
@@ -2981,35 +3115,45 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
    * @param <T> the generic type
    * @param id the id
    * @param clazz the clazz
+   * @return the component
    * @throws Exception the exception
    */
   private <T extends Component> T removeComponent(Long id, Class<T> clazz)
     throws Exception {
-    // Get transaction and object
-    tx = manager.getTransaction();
-    T component = manager.find(clazz, id);
+    try {
+      // Get transaction and object
+      tx = manager.getTransaction();
+      T component = manager.find(clazz, id);
 
-    // Set modification date
-    component.setLastModified(new Date());
+      // Set modification date
+      if (lastModifiedFlag) {
+        component.setLastModified(new Date());
+      }
 
-    // Remove
-    if (getTransactionPerOperation()) {
-      // remove refset member
-      tx.begin();
-      if (manager.contains(component)) {
-        manager.remove(component);
+      // Remove
+      if (getTransactionPerOperation()) {
+        // remove refset member
+        tx.begin();
+        if (manager.contains(component)) {
+          manager.remove(component);
+        } else {
+          manager.remove(manager.merge(component));
+        }
+        tx.commit();
       } else {
-        manager.remove(manager.merge(component));
+        if (manager.contains(component)) {
+          manager.remove(component);
+        } else {
+          manager.remove(manager.merge(component));
+        }
       }
-      tx.commit();
-    } else {
-      if (manager.contains(component)) {
-        manager.remove(component);
-      } else {
-        manager.remove(manager.merge(component));
+      return component;
+    } catch (Exception e) {
+      if (tx.isActive()) {
+        tx.rollback();
       }
+      throw e;
     }
-    return component;
   }
 
   /**
@@ -3029,5 +3173,25 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
     } catch (NoResultException e) {
       return null;
     }
+  }
+
+  /*
+   * (non-Javadoc)
+   * 
+   * @see org.ihtsdo.otf.ts.services.ContentService#isLastModifiedFlag()
+   */
+  @Override
+  public boolean isLastModifiedFlag() {
+    return lastModifiedFlag;
+  }
+
+  /*
+   * (non-Javadoc)
+   * 
+   * @see org.ihtsdo.otf.ts.services.ContentService#setLastModifiedFlag(boolean)
+   */
+  @Override
+  public void setLastModifiedFlag(boolean lastModifiedFlag) {
+    this.lastModifiedFlag = lastModifiedFlag;
   }
 }

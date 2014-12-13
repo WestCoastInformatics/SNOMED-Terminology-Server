@@ -1,9 +1,10 @@
 package org.ihtsdo.otf.ts.services;
 
-import org.ihtsdo.otf.ts.helpers.KeyValuesMap;
+import org.ihtsdo.otf.ts.helpers.KeyValuePairLists;
 import org.ihtsdo.otf.ts.helpers.RelationshipList;
 import org.ihtsdo.otf.ts.helpers.StringList;
 
+// TODO: Auto-generated Javadoc
 /**
  * Generically represents a service for performing maintenance actions.
  */
@@ -77,7 +78,7 @@ public interface ActionService extends RootService {
    * @return the classification equivalents
    * @throws Exception the exception
    */
-  public KeyValuesMap getClassificationEquivalents(String sessionToken) throws Exception;
+  public KeyValuePairLists getClassificationEquivalents(String sessionToken) throws Exception;
 
   /**
    * Gets the old inferred relationships.
@@ -98,5 +99,23 @@ public interface ActionService extends RootService {
   public RelationshipList getNewInferredRelationships(String sessionToken) throws Exception;
 
 
+  /**
+   * Adds the new inferred relationships.
+   *
+   * @param sessionToken the session token
+   * @throws Exception the exception
+   */
+  public void addNewInferredRelationships(String sessionToken) throws Exception;
+
+  /**
+   * Retire old inferred relationships.  Removes not-yet-published inferred relationships.
+   *
+   * @param sessionToken the session token
+   * @throws Exception the exception
+   */
+  public void retireOldInferredRelationships(String sessionToken) throws Exception;
+
+  
+  
   
 }

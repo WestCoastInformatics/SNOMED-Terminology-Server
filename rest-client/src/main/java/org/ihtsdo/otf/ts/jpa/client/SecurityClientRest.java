@@ -61,7 +61,7 @@ public class SecurityClientRest implements SecurityServiceRest {
    * @see org.ihtsdo.otf.ts.rest.SecurityServiceRest#logout(java.lang.String)
    */
   @Override
-  public void logout(String authToken) throws Exception {
+  public boolean logout(String authToken) throws Exception {
     Client client = Client.create();
     WebResource resource =
         client.resource(config.getProperty("base.url") + "/security/logout/"
@@ -75,6 +75,7 @@ public class SecurityClientRest implements SecurityServiceRest {
     } else {
       throw new Exception(resultString);
     }
+    return resultString.toLowerCase().equals("true");
 
   }
 

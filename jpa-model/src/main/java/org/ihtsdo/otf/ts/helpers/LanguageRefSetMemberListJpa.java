@@ -4,7 +4,6 @@ import java.util.List;
 
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlTransient;
 
 import org.ihtsdo.otf.ts.rf2.LanguageRefSetMember;
 import org.ihtsdo.otf.ts.rf2.jpa.LanguageRefSetMemberJpa;
@@ -24,15 +23,6 @@ public class LanguageRefSetMemberListJpa extends
   @XmlElement(type = LanguageRefSetMemberJpa.class, name = "languageRefSetMember")
   public List<LanguageRefSetMember> getObjects() {
     return super.getObjects();
-  }
-
-  /* (non-Javadoc)
-   * @see org.ihtsdo.otf.ts.helpers.AbstractResultList#getIterable()
-   */
-  @XmlTransient
-  @Override
-  public Iterable<LanguageRefSetMember> getIterable() {
-    return super.getIterable();
   }
 
 }

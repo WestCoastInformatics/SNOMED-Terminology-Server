@@ -43,13 +43,6 @@ public interface ResultList<T> {
    * @return <code>true</code> if so; <code>false</code> otherwise
    */
   public boolean contains(T element);
-
-  /**
-   * Returns the iterable.
-   * 
-   * @return the iterable
-   */
-  public Iterable<T> getIterable();
   
   /**
    * Adds the object.

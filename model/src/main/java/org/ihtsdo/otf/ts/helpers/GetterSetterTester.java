@@ -190,6 +190,7 @@ public class GetterSetterTester {
      * @param a
      * @return object
      */
+    @Override
     public Object invoke(Object o, Method m, Object[] a) {
       return null;
     }
@@ -331,6 +332,7 @@ public class GetterSetterTester {
    * @throws IllegalAccessException
    * @throws InvocationTargetException
    */
+  @SuppressWarnings("static-method")
   private Object makeEnum(Class<?> clazz1) throws SecurityException,
     NoSuchMethodException, IllegalArgumentException, IllegalAccessException,
     InvocationTargetException {

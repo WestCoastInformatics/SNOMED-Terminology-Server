@@ -126,13 +126,57 @@ public class AssociationReferenceDescriptionRefSetMemberJpa extends
 
   }
 
+  @Override
+  public String toString() {
+    return super.toString() + ", " + getDescriptionId() + ", "
+        + getDescriptionTerminologyId() + ", " + getTargetComponentId();
+  }
+  
   /**
    * Returns the description id. Used for XML/JSON serialization.
    * 
    * @return the description id
    */
   @XmlElement
-  public String getDescriptionId() {
-    return description != null ? description.getTerminologyId() : null;
+  private Long getDescriptionId() {
+    return description != null ? description.getId() : null;
   }
+
+  /**
+   * Sets the description id.
+   *
+   * @param descriptionId the description id
+   */
+  @SuppressWarnings("unused")
+  private void setDescriptionId(Long descriptionId) {
+    if (description == null) {
+      description = new DescriptionJpa();
+    }
+    description.setId(descriptionId);
+  }
+
+  /**
+   * Returns the description terminology id. Used for XML/JSON serialization.
+   * 
+   * @return the description terminology id
+   */
+  @XmlElement
+  private String getDescriptionTerminologyId() {
+    return description != null ? description.getTerminologyId() : "";
+  }
+
+  /**
+   * Sets the description terminology id.
+   *
+   * @param descriptionId the description terminology id
+   */
+  @SuppressWarnings("unused")
+  private void setDescriptionTerminologyId(String descriptionId) {
+    if (description == null) {
+      description = new DescriptionJpa();
+    }
+    description.setTerminologyId(descriptionId);
+    description.setTerminology(getTerminology());
+    description.setTerminologyVersion(getTerminologyVersion());
+  }  
 }

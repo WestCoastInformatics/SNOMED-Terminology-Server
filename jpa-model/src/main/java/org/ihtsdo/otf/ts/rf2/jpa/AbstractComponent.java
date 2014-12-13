@@ -31,11 +31,12 @@ public abstract class AbstractComponent implements Component {
   private Long id;
 
   /** The effective time. e.g. publication time. */
-  @Column(nullable = false)
+  @Column(nullable = true)
   @Temporal(TemporalType.TIMESTAMP)
-  private Date effectiveTime;
+  private Date effectiveTime = null;
 
   /** The last modified. */
+  @Column(nullable = false)
   @Temporal(TemporalType.TIMESTAMP)
   private Date lastModified = new Date();
 
@@ -124,7 +125,7 @@ public abstract class AbstractComponent implements Component {
   @Override
   @XmlID
   public String getObjectId() {
-    return this.id.toString();
+    return (id == null ? "" : id.toString());
   }
 
   /*
@@ -143,6 +144,7 @@ public abstract class AbstractComponent implements Component {
    * @see org.ihtsdo.otf.ts.rf2.Component#getEffectiveTime()
    */
   @Override
+  @Field(index = Index.YES, analyze = Analyze.NO, store = Store.NO)
   public Date getEffectiveTime() {
     return effectiveTime;
   }
@@ -162,6 +164,7 @@ public abstract class AbstractComponent implements Component {
    * 
    * @see org.ihtsdo.otf.ts.rf2.Component#getLastModified()
    */
+  @Field(index = Index.YES, analyze = Analyze.NO, store = Store.NO)
   @Override
   public Date getLastModified() {
     return lastModified;
@@ -182,6 +185,7 @@ public abstract class AbstractComponent implements Component {
    * 
    * @see org.ihtsdo.otf.ts.rf2.Component#getLastModifiedBy()
    */
+  @Field(index = Index.YES, analyze = Analyze.NO, store = Store.NO)
   @Override
   public String getLastModifiedBy() {
     return lastModifiedBy;
@@ -222,6 +226,7 @@ public abstract class AbstractComponent implements Component {
    * 
    * @see org.ihtsdo.otf.ts.rf2.Component#getModuleId()
    */
+  @Field(index = Index.YES, analyze = Analyze.NO, store = Store.NO)
   @Override
   public String getModuleId() {
     return moduleId;
@@ -316,6 +321,7 @@ public abstract class AbstractComponent implements Component {
    * 
    * @see org.ihtsdo.otf.ts.rf2.Component#getTerminology()
    */
+  @Field(index = Index.YES, analyze = Analyze.NO, store = Store.NO)
   @Override
   public String getTerminology() {
     return terminology;
@@ -361,10 +367,9 @@ public abstract class AbstractComponent implements Component {
   @Override
   public String toString() {
 
-    return this.getId() + "," + this.getTerminology() + ","
-        + this.getTerminologyId() + "," + this.getTerminologyVersion() + ","
-        + this.getEffectiveTime() + "," + this.isActive() + ","
-        + this.getModuleId(); // end of basic component fields
+    return id + "," + terminology + "," + terminologyId + ","
+        + terminologyVersion + "," + effectiveTime + "," + active + ","
+        + moduleId + ", " + lastModifiedBy + ", " + lastModified + " ";
   }
 
   /*
@@ -373,6 +378,7 @@ public abstract class AbstractComponent implements Component {
    * @see org.ihtsdo.otf.ts.rf2.Component#getLabel()
    */
   @Override
+  @Field(index = Index.YES, analyze = Analyze.YES, store = Store.NO)
   public String getLabel() {
     return label;
   }

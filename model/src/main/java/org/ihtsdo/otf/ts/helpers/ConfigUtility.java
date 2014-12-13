@@ -17,6 +17,13 @@ import java.util.Comparator;
 import java.util.Properties;
 import java.util.Scanner;
 
+import javax.mail.Authenticator;
+import javax.mail.Message;
+import javax.mail.PasswordAuthentication;
+import javax.mail.Session;
+import javax.mail.Transport;
+import javax.mail.internet.InternetAddress;
+import javax.mail.internet.MimeMessage;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
@@ -45,11 +52,11 @@ import org.xml.sax.SAXException;
  */
 public class ConfigUtility {
 
+  /** The date format. */
+  public final static FastDateFormat DATE_FORMAT = FastDateFormat.getInstance("yyyyMMdd");
+
   /** The config. */
   public static Properties config = null;
-
-  /** The test config. */
-  public static Properties testConfig = null;
 
   /** The transformer for DOM -> XML. */
   private static Transformer transformer;
@@ -91,27 +98,6 @@ public class ConfigUtility {
       Logger.getLogger(ConfigUtility.class).info("  properties = " + config);
     }
     return config;
-  }
-
-  /**
-   * Returns the config properties.
-   * @return the config properties
-   *
-   * @throws Exception the exception
-   */
-  public static Properties getTestConfigProperties() throws Exception {
-    if (testConfig == null) {
-      String configFileName = System.getProperty("run.config.test");
-      Logger.getLogger(ConfigUtility.class.getName()).info(
-          "  run.config.test = " + configFileName);
-      testConfig = new Properties();
-      FileReader in = new FileReader(new File(configFileName));
-      testConfig.load(in);
-      in.close();
-      Logger.getLogger(ConfigUtility.class)
-          .info("  properties = " + testConfig);
-    }
-    return testConfig;
   }
 
   /**
@@ -386,6 +372,7 @@ public class ConfigUtility {
    * @return the sorted {@link File}
    * @throws IOException Signals that an I/O exception has occurred.
    */
+  @SuppressWarnings("null")
   public static File mergeSortedFiles(File files1, File files2,
     Comparator<String> comp, File dir, String headerLine) throws IOException {
 
@@ -448,4 +435,70 @@ public class ConfigUtility {
     return (path.delete());
   }
 
+  /**
+   * Sends email.
+   *
+   * @param subject the subject
+   * @param from the from
+   * @param recipients the recipients
+   * @param body the body
+   * @param details the details
+   * @param authFlag the auth flag
+   * @throws Exception the exception
+   */
+  public static void sendEmail(String subject, String from, String recipients,
+    String body, Properties details, boolean authFlag) throws Exception {
+    Session session = null;
+    if (authFlag) {
+      Authenticator auth = new SMTPAuthenticator();
+      session = Session.getInstance(details, auth);
+    } else {
+      session = Session.getInstance(details);
+    }
+
+    MimeMessage msg = new MimeMessage(session);
+    msg.setText(body.toString());
+    msg.setSubject(subject);
+    msg.setFrom(new InternetAddress(from));
+    String[] recipientsArray = recipients.split(";");
+    for (String recipient : recipientsArray) {
+      msg.addRecipient(Message.RecipientType.TO, new InternetAddress(recipient));
+    }
+    Transport.send(msg);
+  }
+
+  /**
+   * SMTPAuthenticator.
+   */
+  public static class SMTPAuthenticator extends javax.mail.Authenticator {
+
+    /**
+     * Instantiates an empty {@link SMTPAuthenticator}.
+     */
+    public SMTPAuthenticator() {
+      // do nothing
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see javax.mail.Authenticator#getPasswordAuthentication()
+     */
+    @Override
+    public PasswordAuthentication getPasswordAuthentication() {
+      Properties config = null;
+      try {
+        config = ConfigUtility.getConfigProperties();
+      } catch (Exception e) {
+        // do nothing
+      }
+      if (config == null) {
+        return null;
+      } else {
+        return new PasswordAuthentication(config.getProperty("mail.smtp.user"),
+            config.getProperty("mail.smtp.password"));
+      }
+    }
+  }
+  
 }

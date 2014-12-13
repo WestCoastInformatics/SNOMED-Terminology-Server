@@ -76,7 +76,7 @@ public class SecurityServiceRestImpl extends RootServiceRestImpl implements
       MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML
   })
   @ApiOperation(value = "Logs out an auth token.", notes = "Performs logout on specified auth token.", response = String.class)
-  public void logout(
+  public boolean logout(
     @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @PathParam("authToken") String authToken) {
 
     Logger.getLogger(SecurityServiceRestImpl.class).info(
@@ -84,11 +84,13 @@ public class SecurityServiceRestImpl extends RootServiceRestImpl implements
     try {
       SecurityService securityService = new SecurityServiceJpa();
       securityService.logout(authToken);
+      return true;
     } catch (LocalException e) {
       throw new WebApplicationException(Response.status(401)
           .entity(e.getMessage()).build());
     } catch (Exception e) {
       handleException(e, "trying to authenticate a user");
+      return false;
     }
 
   }

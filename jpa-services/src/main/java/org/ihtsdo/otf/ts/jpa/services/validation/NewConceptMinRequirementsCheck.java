@@ -2,6 +2,7 @@ package org.ihtsdo.otf.ts.jpa.services.validation;
 
 import java.util.Properties;
 
+import org.apache.log4j.Logger;
 import org.ihtsdo.otf.ts.helpers.ValidationResult;
 import org.ihtsdo.otf.ts.helpers.ValidationResultJpa;
 import org.ihtsdo.otf.ts.rf2.Concept;
@@ -31,6 +32,9 @@ public class NewConceptMinRequirementsCheck implements ValidationCheck {
   /** US Language. */
   private static String languageId = "900000000000509007";
 
+  /** The configured. */
+  private static boolean configured = false;
+
   /*
    * (non-Javadoc)
    * 
@@ -39,21 +43,27 @@ public class NewConceptMinRequirementsCheck implements ValidationCheck {
    */
   @Override
   public void setProperties(Properties p) {
-    String prop = p.getProperty("isaRel");
-    if (prop != null) {
-      setIsaProperty(prop);
+    if (!configured) {
+      setAllProperties(p);
     }
   }
 
   /**
-   * Sets the isa property.
+   * Sets the properties
    *
-   * @param isaRel the new isa property
+   * @param properties the properties
    */
-  public static void setIsaProperty(String isaRel) {
-    NewConceptMinRequirementsCheck.isaRel = isaRel;    
+  public static void setAllProperties(Properties properties) {
+    NewConceptMinRequirementsCheck.isaRel = properties.getProperty("isaRel");
+    NewConceptMinRequirementsCheck.fnType = properties.getProperty("fnType");
+    NewConceptMinRequirementsCheck.ptType = properties.getProperty("ptType");
+    NewConceptMinRequirementsCheck.preferredId =
+        properties.getProperty("preferredId");
+    NewConceptMinRequirementsCheck.languageId =
+        properties.getProperty("languageId");
+
   }
-  
+
   /*
    * (non-Javadoc)
    * 
@@ -65,58 +75,81 @@ public class NewConceptMinRequirementsCheck implements ValidationCheck {
   public ValidationResult validate(Concept c) {
     ValidationResult result = new ValidationResultJpa();
 
-    // Verify there is at least one parent
-    boolean isaRelFound = false;
-    for (Relationship r : c.getRelationships()) {
-      if (r.getTypeId().equals(isaRel)) {
-        isaRelFound = true;
-        break;
-      }
-    }
-    if (!isaRelFound) {
-      result.addError("Concept missing isa relationship: " + isaRel);
-    }
+    if (c.isActive()) {
 
-    // Verify there is at least one active FN
-    // Verify there is at least one active PT marked as prefered.
-    boolean fnFound = false;
-    boolean ptFound = false;
-    for (Description d : c.getDescriptions()) {
-      if (!d.isActive()) {
-        continue;
-      }
-      for (LanguageRefSetMember member : d.getLanguageRefSetMembers()) {
-        if (!member.isActive()) {
-          continue;
-        }
-        if (!member.getRefSetId().equals(languageId)) {
-          continue;
-        }
-        if (!member.getAcceptabilityId().equals(preferredId)) {
-          continue;
-        }
-        if (d.getTypeId().equals(fnType)) {
-          fnFound = true;
-          if (ptFound)
-            break;
-        }
-        if (d.getTypeId().equals(ptType)) {
-          ptFound = true;
-          if (fnFound)
-            break;
+      // Verify there is at least one parent
+      boolean isaRelFound = false;
+      for (Relationship r : c.getRelationships()) {
+        if (r.getTypeId().equals(isaRel)) {
+          isaRelFound = true;
+          break;
         }
       }
+      if (!isaRelFound) {
+        result.addError("Concept " + c.getTerminologyId()
+            + " missing isa relationship: " + isaRel);
+      }
 
-    }
-    if (!fnFound) {
-      result.addError("Concept is missing an active preferred FN description: "
-          + fnType + ", " + preferredId + ", " + languageId);
-    }
-    if (!ptFound) {
-      result.addError("Concept is missing a active preferred SY description: "
-          + ptType + ", " + preferredId + ", " + languageId);
+      // Verify there is at least one active FN
+      // Verify there is at least one active PT marked as prefered.
+      boolean fnFound = false;
+      boolean ptFound = false;
+      for (Description d : c.getDescriptions()) {
+        if (!d.isActive()) {
+          continue;
+        }
+        for (LanguageRefSetMember member : d.getLanguageRefSetMembers()) {
+          if (!member.isActive()) {
+            continue;
+          }
+          if (!member.getRefSetId().equals(languageId)) {
+            continue;
+          }
+          if (!member.getAcceptabilityId().equals(preferredId)) {
+            continue;
+          }
+          if (d.getTypeId().equals(fnType)) {
+            fnFound = true;
+            if (fnFound)
+              break;
+          }
+          if (d.getTypeId().equals(ptType)) {
+            ptFound = true;
+            if (ptFound)
+              break;
+          }
+        }
+
+      }
+      if (!fnFound) {
+        Logger.getLogger(this.getClass()).info(
+            "Concept is missing an active preferred FN description: " + fnType
+                + ", " + preferredId + ", " + languageId);
+        result
+            .addError("Concept is missing an active preferred FN description: "
+                + fnType + ", " + preferredId + ", " + languageId);
+      }
+      if (!ptFound) {
+        Logger.getLogger(this.getClass()).info(
+            "Concept is missing a active preferred SY description: " + ptType
+                + ", " + preferredId + ", " + languageId);
+        result
+            .addError("Concept is missing a active preferred SY description: "
+                + ptType + ", " + preferredId + ", " + languageId);
+      }
     }
 
+    // An inactive concept should have only inactive relationships
+    else {
+      for (Relationship r : c.getRelationships()) {
+        if (r.isActive()) {
+          result
+              .addError("Inactive concept should have only inactive relationships: "
+                  + c.getTerminologyId());
+          break;
+        }
+      }
+    }
     return result;
   }
 

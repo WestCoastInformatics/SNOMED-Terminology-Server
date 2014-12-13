@@ -8,13 +8,6 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Properties;
 
-import javax.mail.Authenticator;
-import javax.mail.Message;
-import javax.mail.PasswordAuthentication;
-import javax.mail.Session;
-import javax.mail.Transport;
-import javax.mail.internet.InternetAddress;
-import javax.mail.internet.MimeMessage;
 import javax.ws.rs.WebApplicationException;
 
 import org.apache.log4j.Logger;
@@ -106,7 +99,7 @@ public class ExceptionHandler {
           "Sending error email : " + props);
       if (config.getProperty("mail.enabled") != null
           && config.getProperty("mail.enabled").equals("true")) {
-        sendEmail(subject, from, recipients, body.toString(), props,
+        ConfigUtility.sendEmail(subject, from, recipients, body.toString(), props,
         		"true".equals(props.get("mail.smtp.auth")));   
       } else {
         Logger.getLogger(ExceptionHandler.class).info(
@@ -118,72 +111,6 @@ public class ExceptionHandler {
           "Unable to handle exception");
     }
 
-  }
-
-  /**
-   * Sends email.
-   *
-   * @param subject the subject
-   * @param from the from
-   * @param recipients the recipients
-   * @param body the body
-   * @param details the details
-   * @param authFlag the auth flag
-   * @throws Exception the exception
-   */
-  public static void sendEmail(String subject, String from, String recipients,
-    String body, Properties details, boolean authFlag) throws Exception {
-    Session session = null;
-    if (authFlag) {
-	  Authenticator auth = new SMTPAuthenticator();
-	  session = Session.getInstance(details, auth);
-	} else {
-	  session = Session.getInstance(details);
-	}
-
-    MimeMessage msg = new MimeMessage(session);
-    msg.setText(body.toString());
-    msg.setSubject(subject);
-    msg.setFrom(new InternetAddress(from));
-    String[] recipientsArray = recipients.split(";");
-    for (String recipient : recipientsArray) {
-      msg.addRecipient(Message.RecipientType.TO, new InternetAddress(recipient));
-    }
-    Transport.send(msg);
-  }
-
-  /**
-   * SMTPAuthenticator.
-   */
-  public static class SMTPAuthenticator extends javax.mail.Authenticator {
-
-    /**
-     * Instantiates an empty {@link SMTPAuthenticator}.
-     */
-    public SMTPAuthenticator() {
-      // do nothing
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see javax.mail.Authenticator#getPasswordAuthentication()
-     */
-    @Override
-    public PasswordAuthentication getPasswordAuthentication() {
-      Properties config = null;
-      try {
-        config = ConfigUtility.getConfigProperties();
-      } catch (Exception e) {
-        // do nothing
-      }
-      if (config == null) {
-        return null;
-      } else {
-        return new PasswordAuthentication(config.getProperty("mail.smtp.user"),
-            config.getProperty("mail.smtp.password"));
-      }
-    }
   }
 
 }

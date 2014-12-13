@@ -10,9 +10,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
-import java.util.Properties;
 
-import org.apache.commons.lang3.time.FastDateFormat;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoFailureException;
 import org.ihtsdo.otf.ts.helpers.ConfigUtility;
@@ -47,25 +45,7 @@ import com.google.common.io.Files;
 /**
  * Goal which loads an RF2 Snapshot of SNOMED CT data into a database.
  * 
- * <pre>
- *     <plugin>
- *       <groupId>org.ihtsdo.otf.mapping</groupId>
- *       <artifactId>mapping-admin-mojo</artifactId>
- *       <version>${project.version}</version>
- *       <executions>
- *         <execution>
- *           <id>load-rf2-snapshot</id>
- *           <phase>package</phase>
- *           <goals>
- *             <goal>load-rf2-snapshot</goal>
- *           </goals>
- *           <configuration>
- *             <terminology>SNOMEDCT</terminology>
- *           </configuration>
- *         </execution>
- *       </executions>
- *     </plugin>
- * </pre>
+ * See admin/loader/pom.xml for sample usage
  * 
  * @goal load-rf2-snapshot
  * 
@@ -80,11 +60,19 @@ public class TerminologyRf2SnapshotLoaderMojo extends AbstractMojo {
    */
   private String terminology;
 
-  /** The version. */
-  private String version = null;
+  /**
+   * The terminology version.
+   * @parameter
+   * @required
+   */
+  private String terminologyVersion;
 
-  /** The date format. */
-  private final FastDateFormat format = FastDateFormat.getInstance("yyyyMMdd");
+  /**
+   * Input directory.
+   * @parameter
+   * @required
+   */
+  private String inputDir;
 
   /** The concepts by concept. */
   private BufferedReader conceptsByConcept;
@@ -144,46 +132,26 @@ public class TerminologyRf2SnapshotLoaderMojo extends AbstractMojo {
    */
   @Override
   public void execute() throws MojoFailureException {
-    getLog().info("Starting loading RF2 data ...");
-
+    getLog().info("Starting load of RF2 snapshot");
+    getLog().info("  terminolgoy = " + terminology);
+    getLog().info("  inputDir = " + inputDir);
     try {
 
       // Track system level information
       long startTimeOrig = System.nanoTime();
 
-      // Load config properties
-      Properties config = ConfigUtility.getConfigProperties();
-
-      // Set the input directory
-      String coreInputDirString =
-          config.getProperty("loader." + terminology + ".input.data");
-      File coreInputDir = new File(coreInputDirString);
+      // Check the input directory
+      File coreInputDir = new File(inputDir);
       if (!coreInputDir.exists()) {
-        throw new MojoFailureException("Specified loader." + terminology
-            + ".input.data directory does not exist: " + coreInputDirString);
+        throw new MojoFailureException(
+            "Specified input directory does not exist");
       }
 
       //
       // Determine version
       //
-      File coreConceptInputFile = null;
-      File coreTerminologyInputDir = new File(coreInputDir, "/Terminology/");
-      for (File f : coreTerminologyInputDir.listFiles()) {
-        if (f.getName().contains("sct2_Concept_")) {
-          if (coreConceptInputFile != null)
-            throw new MojoFailureException("Multiple Concept Files!");
-          coreConceptInputFile = f;
-        }
-      }
-      if (coreConceptInputFile != null) {
-        int index = coreConceptInputFile.getName().indexOf(".txt");
-        version = coreConceptInputFile.getName().substring(index - 8, index);
-        getLog().info("  terminology = " + terminology);
-        getLog().info("  version = " + version);
-      } else {
-        throw new MojoFailureException(
-            "Could not find concept file to determine version");
-      }
+      getLog().info("  terminology = " + terminology);
+      getLog().info("  version = " + terminologyVersion);
 
       getLog().info(
           "  Objects committed in blocks of " + Integer.toString(commitCt));
@@ -329,6 +297,8 @@ public class TerminologyRf2SnapshotLoaderMojo extends AbstractMojo {
             hierRelTypeMap.keySet().iterator().next().toString();
         metadataService.close();
         ContentService contentService = new ContentServiceJpa();
+        contentService.setLastModifiedFlag(false);
+
         // Walk up tree to the root
         // ASSUMPTION: single root
         String conceptId = isaRelType;
@@ -350,8 +320,11 @@ public class TerminologyRf2SnapshotLoaderMojo extends AbstractMojo {
           rootId = conceptId;
           break;
         }
-        contentService.close();
+        Long rootIdLong =
+            contentService.getSingleConcept(rootId, terminology,
+                terminologyVersion).getId();
 
+        contentService.close();
         getLog().info(
             "  Compute transitive closure from  " + rootId + "/" + terminology
                 + "/" + terminologyVersion);
@@ -359,7 +332,7 @@ public class TerminologyRf2SnapshotLoaderMojo extends AbstractMojo {
         algo.setTerminology(terminology);
         algo.setTerminologyVersion(terminologyVersion);
         algo.reset();
-        algo.setRootId(rootId);
+        algo.setRootId(rootIdLong);
         algo.compute();
         algo.close();
 
@@ -389,9 +362,9 @@ public class TerminologyRf2SnapshotLoaderMojo extends AbstractMojo {
   private void openSortedFileReaders(File outputDir) throws IOException {
     File conceptsByConceptFile = new File(outputDir, "conceptsByConcept.sort");
     File descriptionsByConceptFile =
-        new File(outputDir, "descriptionsByConcept.sort");
+        new File(outputDir, "descriptionsAllByConcept.sort");
     File relationshipsBySourceConceptFile =
-        new File(outputDir, "relationshipsBySourceConcept.sort");
+        new File(outputDir, "relationshipsAllBySourceConcept.sort");
     File languageRefsetsByDescriptionFile =
         new File(outputDir, "languageRefsetsByDescription.sort");
     File attributeValueRefsetsByRefCompIdFile =
@@ -539,105 +512,39 @@ public class TerminologyRf2SnapshotLoaderMojo extends AbstractMojo {
     }
 
     //
-    // Setup files
+    // Setup files - NOTE, identifier file is not supported
     //
     File coreRelInputFile = null;
     File coreStatedRelInputFile = null;
     File coreConceptInputFile = null;
     File coreDescriptionInputFile = null;
     File coreSimpleRefsetInputFile = null;
-    File coreAttributeValueInputFile = null;
-    File coreAssociationReferenceInputFile = null;
-    File coreComplexMapInputFile = null;
-    File coreExtendedMapInputFile = null;
-    File coreSimpleMapInputFile = null;
-    File coreLanguageInputFile = null;
-    File coreIdentifierInputFile = null;
+    File coreAttributeValueRefsetInputFile = null;
+    File coreAssociationReferenceRefsetInputFile = null;
+    File coreComplexMapRefsetInputFile = null;
+    File coreExtendedMapRefsetInputFile = null;
+    File coreSimpleMapRefsetInputFile = null;
+    File coreLanguageRefsetInputFile = null;
     File coreTextDefinitionInputFile = null;
 
-    // Termionlogy dir
+    // Terminology dir
     File coreTerminologyInputDir = new File(coreInputDir, "/Terminology/");
     getLog().info(
         "    Terminology dir = " + coreTerminologyInputDir.toString() + " "
             + coreTerminologyInputDir.exists());
 
-    // Relationships file
-    for (File f : coreTerminologyInputDir.listFiles()) {
-      if (f.getName().contains("sct2_Relationship_")) {
-        if (coreRelInputFile != null)
-          throw new MojoFailureException("Multiple Relationships Files!");
-        coreRelInputFile = f;
-      }
-    }
-    getLog().info(
-        "      Relationships file = " + coreRelInputFile.toString() + " "
-            + coreRelInputFile.exists());
+    coreRelInputFile = findFile(coreTerminologyInputDir, "sct2_Relationship_");
 
-    // Stated relationships file
-    for (File f : coreTerminologyInputDir.listFiles()) {
-      if (f.getName().contains("sct2_StatedRelationship_")) {
-        if (coreStatedRelInputFile != null)
-          throw new MojoFailureException("Multiple Stated Relationships Files!");
-        coreStatedRelInputFile = f;
-      }
-    }
-    getLog().info(
-        "      Stated relationships file = "
-            + coreStatedRelInputFile.toString() + " "
-            + coreStatedRelInputFile.exists());
+    coreStatedRelInputFile =
+        findFile(coreTerminologyInputDir, "sct2_StatedRelationship_");
 
-    // Concepts file
-    for (File f : coreTerminologyInputDir.listFiles()) {
-      if (f.getName().contains("sct2_Concept_")) {
-        if (coreConceptInputFile != null)
-          throw new MojoFailureException("Multiple Concept Files!");
-        coreConceptInputFile = f;
-      }
-    }
-    getLog().info(
-        "      Concepts file = " + coreConceptInputFile.toString() + " "
-            + coreConceptInputFile.exists());
+    coreConceptInputFile = findFile(coreTerminologyInputDir, "sct2_Concept_");
 
-    // Descriptions file
-    for (File f : coreTerminologyInputDir.listFiles()) {
-      if (f.getName().contains("sct2_Description_")) {
-        if (coreDescriptionInputFile != null)
-          throw new MojoFailureException("Multiple Description Files!");
-        coreDescriptionInputFile = f;
-      }
-    }
-    getLog().info(
-        "      Descriptions file = " + coreDescriptionInputFile.toString()
-            + " " + coreDescriptionInputFile.exists());
+    coreDescriptionInputFile =
+        findFile(coreTerminologyInputDir, "sct2_Description_");
 
-    // Identifier file
-    for (File f : coreTerminologyInputDir.listFiles()) {
-      if (f.getName().contains("sct2_Identifier_")) {
-        if (coreIdentifierInputFile != null)
-          throw new MojoFailureException("Multiple Identifier Files!");
-        coreIdentifierInputFile = f;
-      }
-    }
-    if (coreIdentifierInputFile != null) {
-      getLog().info(
-          "      Identifiers file = " + coreIdentifierInputFile.toString()
-              + " " + coreIdentifierInputFile.exists());
-    }
-
-    // Text definition file
-    for (File f : coreTerminologyInputDir.listFiles()) {
-      if (f.getName().contains("sct2_TextDefinition_")) {
-        if (coreTextDefinitionInputFile != null)
-          throw new MojoFailureException("Multiple TextDefinition Files!");
-        coreTextDefinitionInputFile = f;
-      }
-    }
-    if (coreTextDefinitionInputFile != null) {
-      getLog().info(
-          "      Text definitions file = "
-              + coreTextDefinitionInputFile.toString() + " "
-              + coreTextDefinitionInputFile.exists());
-    }
+    coreTextDefinitionInputFile =
+        findFile(coreTerminologyInputDir, "sct2_TextDefinition_");
 
     // Refset/Content dir
     File coreRefsetInputDir = new File(coreInputDir, "/Refset/");
@@ -646,44 +553,13 @@ public class TerminologyRf2SnapshotLoaderMojo extends AbstractMojo {
         "    Refset/Content dir = " + coreContentInputDir.toString() + " "
             + coreContentInputDir.exists());
 
-    // Simple refset file
-    for (File f : coreContentInputDir.listFiles()) {
-      if (f.getName().contains("Refset_Simple")) {
-        if (coreSimpleRefsetInputFile != null)
-          throw new MojoFailureException("Multiple Simple Refset Files!");
-        coreSimpleRefsetInputFile = f;
-      }
-    }
-    getLog().info(
-        "      Simple refset file = " + coreSimpleRefsetInputFile.toString()
-            + " " + coreSimpleRefsetInputFile.exists());
+    coreSimpleRefsetInputFile = findFile(coreContentInputDir, "Refset_Simple");
 
-    // Attribute value file
-    for (File f : coreContentInputDir.listFiles()) {
-      if (f.getName().contains("AttributeValue")) {
-        if (coreAttributeValueInputFile != null)
-          throw new MojoFailureException("Multiple Attribute Value Files!");
-        coreAttributeValueInputFile = f;
-      }
-    }
-    getLog().info(
-        "      Attribute value file = "
-            + coreAttributeValueInputFile.toString() + " "
-            + coreAttributeValueInputFile.exists());
+    coreAttributeValueRefsetInputFile =
+        findFile(coreContentInputDir, "AttributeValue");
 
-    // Association reference file
-    for (File f : coreContentInputDir.listFiles()) {
-      if (f.getName().contains("AssociationReference")) {
-        if (coreAssociationReferenceInputFile != null)
-          throw new MojoFailureException(
-              "Multiple Association Reference Files!");
-        coreAssociationReferenceInputFile = f;
-      }
-    }
-    getLog().info(
-        "  Core Association Reference Input File = "
-            + coreAssociationReferenceInputFile.toString() + " "
-            + coreAssociationReferenceInputFile.exists());
+    coreAssociationReferenceRefsetInputFile =
+        findFile(coreContentInputDir, "AssociationReference");
 
     // Refset/Map dir
     File coreCrossmapInputDir = new File(coreRefsetInputDir, "/Map/");
@@ -691,45 +567,13 @@ public class TerminologyRf2SnapshotLoaderMojo extends AbstractMojo {
         "    Refset/Map dir = " + coreCrossmapInputDir.toString() + " "
             + coreCrossmapInputDir.exists());
 
-    // Complex map file
-    for (File f : coreCrossmapInputDir.listFiles()) {
-      if (f.getName().contains("ComplexMap")) {
-        if (coreComplexMapInputFile != null)
-          throw new MojoFailureException("Multiple Complex Map Files!");
-        coreComplexMapInputFile = f;
-      }
-    }
-    if (coreComplexMapInputFile != null) {
-      getLog().info(
-          "        Complex map file = " + coreComplexMapInputFile.toString()
-              + " " + coreComplexMapInputFile.exists());
-    }
+    coreComplexMapRefsetInputFile =
+        findFile(coreCrossmapInputDir, "ComplexMap");
 
-    // Extended map file
-    for (File f : coreCrossmapInputDir.listFiles()) {
-      if (f.getName().contains("ExtendedMap")) {
-        if (coreExtendedMapInputFile != null)
-          throw new MojoFailureException("Multiple Extended Map Files!");
-        coreExtendedMapInputFile = f;
-      }
-    }
-    if (coreComplexMapInputFile != null) {
-      getLog().info(
-          "      Extended map file = " + coreComplexMapInputFile.toString()
-              + " " + coreComplexMapInputFile.exists());
-    }
+    coreExtendedMapRefsetInputFile =
+        findFile(coreCrossmapInputDir, "ExtendedMap");
 
-    // Simple map file
-    for (File f : coreCrossmapInputDir.listFiles()) {
-      if (f.getName().contains("SimpleMap")) {
-        if (coreSimpleMapInputFile != null)
-          throw new MojoFailureException("Multiple Simple Map Files!");
-        coreSimpleMapInputFile = f;
-      }
-    }
-    getLog().info(
-        "      Simple map file = " + coreSimpleMapInputFile.toString() + " "
-            + coreSimpleMapInputFile.exists());
+    coreSimpleMapRefsetInputFile = findFile(coreCrossmapInputDir, "SimpleMap");
 
     // Refset/Langauge dir
     File coreLanguageInputDir = new File(coreRefsetInputDir, "/Language/");
@@ -737,17 +581,7 @@ public class TerminologyRf2SnapshotLoaderMojo extends AbstractMojo {
         "    Refset/Language dir = " + coreLanguageInputDir.toString() + " "
             + coreLanguageInputDir.exists());
 
-    // Language file
-    for (File f : coreLanguageInputDir.listFiles()) {
-      if (f.getName().contains("Language")) {
-        if (coreLanguageInputFile != null)
-          throw new MojoFailureException("Multiple Language Files!");
-        coreLanguageInputFile = f;
-      }
-    }
-    getLog().info(
-        "      Language file = " + coreLanguageInputFile.toString() + " "
-            + coreLanguageInputFile.exists());
+    coreLanguageRefsetInputFile = findFile(coreLanguageInputDir, "Language");
 
     // Refset/Metadata dir
     File coreMetadataInputDir = new File(coreRefsetInputDir, "/Metadata/");
@@ -765,6 +599,10 @@ public class TerminologyRf2SnapshotLoaderMojo extends AbstractMojo {
         new File(outputDir, "descriptionsAllByConcept.sort");
     File relationshipsBySourceConceptFile =
         new File(outputDir, "relationshipsBySourceConcept.sort");
+    File statedRelationshipsBySourceConceptFile =
+        new File(outputDir, "statedRelationshipsBySourceConcept.sort");
+    File relationshipsAllBySourceConceptFile =
+        new File(outputDir, "relationshipsAllBySourceConcept.sort");
     File languageRefsetsByDescriptionFile =
         new File(outputDir, "languageRefsetsByDescription.sort");
     File attributeValueRefsetsByConceptFile =
@@ -814,32 +652,78 @@ public class TerminologyRf2SnapshotLoaderMojo extends AbstractMojo {
       Files.copy(descriptionsAllByConceptFile, descriptionsByConceptFile);
     }
 
-    // Sort relationships file
+    // Sort and combine relationships files
     sortRf2File(coreRelInputFile, relationshipsBySourceConceptFile, 4);
+    sortRf2File(coreStatedRelInputFile, statedRelationshipsBySourceConceptFile,
+        4);
+    // merge the two relationship files
+    getLog().info("        Merging relationship files...");
+    File mergedDesc =
+        ConfigUtility.mergeSortedFiles(relationshipsBySourceConceptFile,
+            statedRelationshipsBySourceConceptFile, new Comparator<String>() {
+              @Override
+              public int compare(String s1, String s2) {
+                String v1[] = s1.split("\t");
+                String v2[] = s2.split("\t");
+                return v1[0].compareTo(v2[0]);
+              }
+            }, outputDir, ""); // header line
+
+    // rename the temporary file
+    Files.move(mergedDesc, relationshipsAllBySourceConceptFile);
 
     // Sort attribute value file
-    sortRf2File(coreAttributeValueInputFile,
+    sortRf2File(coreAttributeValueRefsetInputFile,
         attributeValueRefsetsByConceptFile, 5);
 
     // Sort association reference input file by referenced component id
-    sortRf2File(coreAssociationReferenceInputFile,
+    sortRf2File(coreAssociationReferenceRefsetInputFile,
         associationReferenceRefsetsByRefCompIdFile, 5);
 
     // Sort simple file
     sortRf2File(coreSimpleRefsetInputFile, simpleRefsetsByConceptFile, 5);
 
     // Sort simple map file
-    sortRf2File(coreSimpleMapInputFile, simpleMapRefsetsByConceptFile, 5);
+    sortRf2File(coreSimpleMapRefsetInputFile, simpleMapRefsetsByConceptFile, 5);
 
     // Sort complex map file
-    sortRf2File(coreComplexMapInputFile, complexMapRefsetsByConceptFile, 5);
+    sortRf2File(coreComplexMapRefsetInputFile, complexMapRefsetsByConceptFile,
+        5);
 
     // sort extended map file
-    sortRf2File(coreExtendedMapInputFile, extendedMapRefsetsByConceptFile, 5);
+    sortRf2File(coreExtendedMapRefsetInputFile,
+        extendedMapRefsetsByConceptFile, 5);
 
     // Sort language file
-    sortRf2File(coreLanguageInputFile, languageRefsetsByDescriptionFile, 5);
+    sortRf2File(coreLanguageRefsetInputFile, languageRefsetsByDescriptionFile,
+        5);
 
+  }
+
+  /**
+   * Find file.
+   *
+   * @param dir the dir
+   * @param prefix the prefix
+   * @return the file
+   * @throws Exception the exception
+   */
+  private File findFile(File dir, String prefix) throws Exception {
+    File file = null;
+    // file
+    for (File f : dir.listFiles()) {
+      if (f.getName().contains(prefix)) {
+        if (file != null)
+          throw new MojoFailureException("Multiple " + prefix + " files");
+        file = f;
+      }
+    }
+    if (file == null) {
+      throw new MojoFailureException("Missing " + prefix + " file");
+    }
+    getLog().info(
+        "      " + prefix + " = " + file.toString() + " " + file.exists());
+    return file;
   }
 
   /**
@@ -920,6 +804,7 @@ public class TerminologyRf2SnapshotLoaderMojo extends AbstractMojo {
 
     // begin transaction
     final ContentService contentService = new ContentServiceJpa();
+    contentService.setLastModifiedFlag(false);
     contentService.setTransactionPerOperation(false);
     contentService.beginTransaction();
 
@@ -931,12 +816,13 @@ public class TerminologyRf2SnapshotLoaderMojo extends AbstractMojo {
       if (!fields[0].equals("id")) { // header
 
         concept.setTerminologyId(fields[0]);
-        concept.setEffectiveTime(format.parse(fields[1]));
+        concept.setEffectiveTime(ConfigUtility.DATE_FORMAT.parse(fields[1]));
+        concept.setLastModified(ConfigUtility.DATE_FORMAT.parse(fields[1]));
         concept.setActive(fields[2].equals("1") ? true : false);
         concept.setModuleId(fields[3]);
         concept.setDefinitionStatusId(fields[4]);
         concept.setTerminology(terminology);
-        concept.setTerminologyVersion(version);
+        concept.setTerminologyVersion(terminologyVersion);
         concept.setDefaultPreferredName("null");
         concept.setLastModifiedBy("loader");
         concept.setWorkflowStatus("PUBLISHED");
@@ -981,6 +867,7 @@ public class TerminologyRf2SnapshotLoaderMojo extends AbstractMojo {
 
     // Begin transaction
     final ContentService contentService = new ContentServiceJpa();
+    contentService.setLastModifiedFlag(false);
     contentService.setTransactionPerOperation(false);
     contentService.beginTransaction();
 
@@ -995,7 +882,10 @@ public class TerminologyRf2SnapshotLoaderMojo extends AbstractMojo {
         // Configure relationship
         final Relationship relationship = new RelationshipJpa();
         relationship.setTerminologyId(fields[0]);
-        relationship.setEffectiveTime(format.parse(fields[1]));
+        relationship.setEffectiveTime(ConfigUtility.DATE_FORMAT
+            .parse(fields[1]));
+        relationship
+            .setLastModified(ConfigUtility.DATE_FORMAT.parse(fields[1]));
         relationship.setActive(fields[2].equals("1") ? true : false); // active
         relationship.setModuleId(fields[3]); // moduleId
 
@@ -1003,7 +893,7 @@ public class TerminologyRf2SnapshotLoaderMojo extends AbstractMojo {
         relationship.setTypeId(fields[7]); // typeId
         relationship.setCharacteristicTypeId(fields[8]); // characteristicTypeId
         relationship.setTerminology(terminology);
-        relationship.setTerminologyVersion(version);
+        relationship.setTerminologyVersion(terminologyVersion);
         relationship.setModifierId(fields[9]);
         relationship.setLastModifiedBy("loader");
 
@@ -1066,6 +956,7 @@ public class TerminologyRf2SnapshotLoaderMojo extends AbstractMojo {
 
     // Begin transaction
     final ContentService contentService = new ContentServiceJpa();
+    contentService.setLastModifiedFlag(false);
     contentService.setTransactionPerOperation(false);
     contentService.beginTransaction();
 
@@ -1172,6 +1063,7 @@ public class TerminologyRf2SnapshotLoaderMojo extends AbstractMojo {
 
     // Begin transaction
     ContentService contentService = new ContentServiceJpa();
+    contentService.setLastModifiedFlag(false);
     contentService.setTransactionPerOperation(false);
     contentService.beginTransaction();
 
@@ -1189,8 +1081,8 @@ public class TerminologyRf2SnapshotLoaderMojo extends AbstractMojo {
       } else {
         dbConcept.setDefaultPreferredName("No default preferred name found");
       }
-// TODO: need to deal with this
-      //contentService.updateConcept(dbConcept);
+      // TODO: need to deal with this
+      // contentService.updateConcept(dbConcept);
       if (++objectCt % commitCt == 0) {
         getLog().info("    commit = " + objectCt);
         contentService.commit();
@@ -1231,7 +1123,9 @@ public class TerminologyRf2SnapshotLoaderMojo extends AbstractMojo {
         final Description description = new DescriptionJpa();
         description.setTerminologyId("-1");
         description.setTerminologyId(fields[0]);
-        description.setEffectiveTime(format.parse(fields[1]));
+        description
+            .setEffectiveTime(ConfigUtility.DATE_FORMAT.parse(fields[1]));
+        description.setLastModified(ConfigUtility.DATE_FORMAT.parse(fields[1]));
         description.setActive(fields[2].equals("1") ? true : false);
         description.setModuleId(fields[3]);
 
@@ -1240,7 +1134,7 @@ public class TerminologyRf2SnapshotLoaderMojo extends AbstractMojo {
         description.setTerm(fields[7]);
         description.setCaseSignificanceId(fields[8]);
         description.setTerminology(terminology);
-        description.setTerminologyVersion(version);
+        description.setTerminologyVersion(terminologyVersion);
         description.setLastModifiedBy("loader");
 
         // set concept from cache
@@ -1288,7 +1182,8 @@ public class TerminologyRf2SnapshotLoaderMojo extends AbstractMojo {
 
         // Universal RefSet attributes
         member.setTerminologyId(fields[0]);
-        member.setEffectiveTime(format.parse(fields[1]));
+        member.setEffectiveTime(ConfigUtility.DATE_FORMAT.parse(fields[1]));
+        member.setLastModified(ConfigUtility.DATE_FORMAT.parse(fields[1]));
         member.setActive(fields[2].equals("1") ? true : false);
         member.setModuleId(fields[3]);
         member.setRefSetId(fields[4]);
@@ -1298,7 +1193,7 @@ public class TerminologyRf2SnapshotLoaderMojo extends AbstractMojo {
 
         // Terminology attributes
         member.setTerminology(terminology);
-        member.setTerminologyVersion(version);
+        member.setTerminologyVersion(terminologyVersion);
         member.setLastModifiedBy("loader");
 
         // Set a dummy description with terminology id only
@@ -1340,6 +1235,7 @@ public class TerminologyRf2SnapshotLoaderMojo extends AbstractMojo {
 
     // Begin transaction
     ContentService contentService = new ContentServiceJpa();
+    contentService.setLastModifiedFlag(false);
     contentService.setTransactionPerOperation(false);
     contentService.beginTransaction();
 
@@ -1355,9 +1251,9 @@ public class TerminologyRf2SnapshotLoaderMojo extends AbstractMojo {
 
         // Universal RefSet attributes
         member.setTerminologyId(fields[0]);
-        member.setEffectiveTime(format.parse(fields[1]));
+        member.setEffectiveTime(ConfigUtility.DATE_FORMAT.parse(fields[1]));
+        member.setLastModified(ConfigUtility.DATE_FORMAT.parse(fields[1]));
         member.setActive(fields[2].equals("1") ? true : false);
-        member.setLastModified(new Date());
         member.setLastModifiedBy("loader");
         member.setModuleId(fields[3]);
         member.setRefSetId(fields[4]);
@@ -1367,7 +1263,7 @@ public class TerminologyRf2SnapshotLoaderMojo extends AbstractMojo {
 
         // Terminology attributes
         member.setTerminology(terminology);
-        member.setTerminologyVersion(version);
+        member.setTerminologyVersion(terminologyVersion);
         member.setLastModifiedBy("loader");
 
         // Retrieve concept -- firstToken is referencedComponentId
@@ -1414,6 +1310,7 @@ public class TerminologyRf2SnapshotLoaderMojo extends AbstractMojo {
 
     // begin transaction
     ContentService contentService = new ContentServiceJpa();
+    contentService.setLastModifiedFlag(false);
     contentService.setTransactionPerOperation(false);
     contentService.beginTransaction();
 
@@ -1428,10 +1325,9 @@ public class TerminologyRf2SnapshotLoaderMojo extends AbstractMojo {
 
         // Universal RefSet attributes
         member.setTerminologyId(fields[0]);
-        member.setEffectiveTime(format.parse(fields[1]));
+        member.setEffectiveTime(ConfigUtility.DATE_FORMAT.parse(fields[1]));
+        member.setLastModified(ConfigUtility.DATE_FORMAT.parse(fields[1]));
         member.setActive(fields[2].equals("1") ? true : false);
-        member.setLastModified(new Date());
-        member.setLastModifiedBy("loader");
         member.setModuleId(fields[3]);
         member.setRefSetId(fields[4]);
 
@@ -1440,7 +1336,7 @@ public class TerminologyRf2SnapshotLoaderMojo extends AbstractMojo {
 
         // Terminology attributes
         member.setTerminology(terminology);
-        member.setTerminologyVersion(version);
+        member.setTerminologyVersion(terminologyVersion);
         member.setLastModifiedBy("loader");
 
         // Retrieve concept -- firstToken is referencedComponentId
@@ -1488,6 +1384,7 @@ public class TerminologyRf2SnapshotLoaderMojo extends AbstractMojo {
 
     // begin transaction
     final ContentService contentService = new ContentServiceJpa();
+    contentService.setLastModifiedFlag(false);
     contentService.setTransactionPerOperation(false);
     contentService.beginTransaction();
 
@@ -1501,7 +1398,8 @@ public class TerminologyRf2SnapshotLoaderMojo extends AbstractMojo {
 
         // Universal RefSet attributes
         member.setTerminologyId(fields[0]);
-        member.setEffectiveTime(format.parse(fields[1]));
+        member.setEffectiveTime(ConfigUtility.DATE_FORMAT.parse(fields[1]));
+        member.setLastModified(ConfigUtility.DATE_FORMAT.parse(fields[1]));
         member.setActive(fields[2].equals("1") ? true : false);
         member.setModuleId(fields[3]);
         member.setRefSetId(fields[4]);
@@ -1511,7 +1409,7 @@ public class TerminologyRf2SnapshotLoaderMojo extends AbstractMojo {
 
         // Terminology attributes
         member.setTerminology(terminology);
-        member.setTerminologyVersion(version);
+        member.setTerminologyVersion(terminologyVersion);
         member.setLastModifiedBy("loader");
 
         // Retrieve Concept -- firstToken is referencedComonentId
@@ -1559,6 +1457,7 @@ public class TerminologyRf2SnapshotLoaderMojo extends AbstractMojo {
 
     // begin transaction
     final ContentService contentService = new ContentServiceJpa();
+    contentService.setLastModifiedFlag(false);
     contentService.setTransactionPerOperation(false);
     contentService.beginTransaction();
 
@@ -1572,7 +1471,8 @@ public class TerminologyRf2SnapshotLoaderMojo extends AbstractMojo {
 
         // Universal RefSet attributes
         member.setTerminologyId(fields[0]);
-        member.setEffectiveTime(format.parse(fields[1]));
+        member.setEffectiveTime(ConfigUtility.DATE_FORMAT.parse(fields[1]));
+        member.setLastModified(ConfigUtility.DATE_FORMAT.parse(fields[1]));
         member.setActive(fields[2].equals("1") ? true : false);
         member.setModuleId(fields[3]);
         member.setRefSetId(fields[4]);
@@ -1582,7 +1482,7 @@ public class TerminologyRf2SnapshotLoaderMojo extends AbstractMojo {
 
         // Terminology attributes
         member.setTerminology(terminology);
-        member.setTerminologyVersion(version);
+        member.setTerminologyVersion(terminologyVersion);
         member.setLastModifiedBy("loader");
 
         // Retrieve concept -- firstToken is referencedComponentId
@@ -1630,6 +1530,7 @@ public class TerminologyRf2SnapshotLoaderMojo extends AbstractMojo {
 
     // begin transaction
     final ContentService contentService = new ContentServiceJpa();
+    contentService.setLastModifiedFlag(false);
     contentService.setTransactionPerOperation(false);
     contentService.beginTransaction();
 
@@ -1642,7 +1543,8 @@ public class TerminologyRf2SnapshotLoaderMojo extends AbstractMojo {
         final ComplexMapRefSetMember member = new ComplexMapRefSetMemberJpa();
 
         member.setTerminologyId(fields[0]);
-        member.setEffectiveTime(format.parse(fields[1]));
+        member.setEffectiveTime(ConfigUtility.DATE_FORMAT.parse(fields[1]));
+        member.setLastModified(ConfigUtility.DATE_FORMAT.parse(fields[1]));
         member.setActive(fields[2].equals("1") ? true : false);
         member.setModuleId(fields[3]);
         member.setRefSetId(fields[4]);
@@ -1658,7 +1560,7 @@ public class TerminologyRf2SnapshotLoaderMojo extends AbstractMojo {
 
         // Terminology attributes
         member.setTerminology(terminology);
-        member.setTerminologyVersion(version);
+        member.setTerminologyVersion(terminologyVersion);
         member.setLastModifiedBy("loader");
 
         // set Concept
@@ -1710,6 +1612,7 @@ public class TerminologyRf2SnapshotLoaderMojo extends AbstractMojo {
 
     // begin transaction
     final ContentService contentService = new ContentServiceJpa();
+    contentService.setLastModifiedFlag(false);
     contentService.setTransactionPerOperation(false);
     contentService.beginTransaction();
 
@@ -1722,7 +1625,8 @@ public class TerminologyRf2SnapshotLoaderMojo extends AbstractMojo {
         final ComplexMapRefSetMember member = new ComplexMapRefSetMemberJpa();
 
         member.setTerminologyId(fields[0]);
-        member.setEffectiveTime(format.parse(fields[1]));
+        member.setEffectiveTime(ConfigUtility.DATE_FORMAT.parse(fields[1]));
+        member.setLastModified(ConfigUtility.DATE_FORMAT.parse(fields[1]));
         member.setActive(fields[2].equals("1") ? true : false);
         member.setModuleId(fields[3]);
         member.setRefSetId(fields[4]);
@@ -1738,7 +1642,7 @@ public class TerminologyRf2SnapshotLoaderMojo extends AbstractMojo {
 
         // Terminology attributes
         member.setTerminology(terminology);
-        member.setTerminologyVersion(version);
+        member.setTerminologyVersion(terminologyVersion);
         member.setLastModifiedBy("loader");
 
         // set Concept

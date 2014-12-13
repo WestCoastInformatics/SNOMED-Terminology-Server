@@ -4,7 +4,6 @@ import java.util.List;
 
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlTransient;
 
 /**
  * JAXB-enabled implementation of {@link ReleaseInfoList}.
@@ -32,15 +31,6 @@ public class ReleaseInfoListJpa extends AbstractResultList<ReleaseInfo>
   public String toString() {
     return "ReleaseInfoListJpa [releaseInfos=" + getObjects()
         + ", getCount()=" + getCount() + "]";
-  }
-
-  /* (non-Javadoc)
-   * @see org.ihtsdo.otf.ts.helpers.AbstractResultList#getIterable()
-   */
-  @XmlTransient
-  @Override
-  public Iterable<ReleaseInfo> getIterable() {
-    return super.getIterable();
   }
 
 }

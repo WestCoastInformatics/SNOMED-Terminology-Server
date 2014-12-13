@@ -31,7 +31,6 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Set;
 
 import org.apache.log4j.Logger;
 import org.ihtsdo.classifier.model.Concept;
@@ -41,7 +40,6 @@ import org.ihtsdo.classifier.model.Relationship;
 import org.ihtsdo.classifier.model.RelationshipGroup;
 import org.ihtsdo.classifier.model.RelationshipGroupList;
 import org.ihtsdo.classifier.model.StringIDConcept;
-import org.ihtsdo.classifier.utils.GetDescendants;
 import org.ihtsdo.classifier.utils.I_Constants;
 import org.ihtsdo.otf.ts.helpers.ConceptList;
 
@@ -68,22 +66,27 @@ public class ClassificationRunner {
   /** The output tmp. */
   private File tempRelationshipStore;
 
+  private int[] roles;
 
-  public ClassificationRunner() {
+
+  public ClassificationRunner(List<StringIDConcept> cEditSnoCons, List<Relationship> cEditRelationships, org.ihtsdo.otf.ts.rf2.Concept rootConcept, org.ihtsdo.otf.ts.rf2.Concept isaConcept, org.ihtsdo.otf.ts.rf2.Concept roleRootConcept, int[] roles) {
     logger = Logger.getLogger("org.ihtsdo.classifier.ClassificationRunner");
+    this.cEditSnoCons = cEditSnoCons;
+    this.cEditRelationships = cEditRelationships;
+    this.rootConcept = rootConcept;
+    this.isa = Integer.parseInt(isaConcept.getObjectId());
+    this.roleRootConcept = roleRootConcept;
+    this.roles = roles;
   }
 
   /** The edited snomed concepts. */
-  private ArrayList<StringIDConcept> cEditSnoCons;
+  private List<StringIDConcept> cEditSnoCons;
 
   /** The edit snomed rels. */
-  private ArrayList<Relationship> cEditRelationships;
+  private List<Relationship> cEditRelationships;
 
   /** The con ref list. */
   private HashMap<Integer, String> conRefList;
-
-  /** The con str list. */
-  private HashMap<String, Integer> conStrList;
 
   /** The logger. */
   private Logger logger;
@@ -116,7 +119,17 @@ public class ClassificationRunner {
   /** The retired set. */
   private HashSet<String> retiredSet;
 
-  private List<String> relationshipIds;
+  private org.ihtsdo.otf.ts.rf2.Concept rootConcept;
+  
+  private org.ihtsdo.otf.ts.rf2.Concept roleRootConcept;
+
+  private ProcessEquiv equivalents = new ProcessEquiv();
+
+  
+ 
+  public EquivalentClasses getEquivalentClasses() {
+    return equivalents.getEquivalentClasses();
+  }
 
   /**
    * Execute the classification.
@@ -127,14 +140,12 @@ public class ClassificationRunner {
     cEditSnoCons = new ArrayList<StringIDConcept>();
     cEditRelationships = new ArrayList<Relationship>();
     conRefList = new HashMap<Integer, String>();
-    conStrList = new HashMap<String, Integer>();
 
 
 //    HashSet<String> parentConcepts = new HashSet<String>();
 //    parentConcepts.add(I_Constants.ATTRIBUTE_ROOT_CONCEPT); // concept model
 //                                                            // attribute
 
-    int[] roles = getRoles();
     int ridx = roles.length;
     if (roles.length > 100) {
       String errStr =
@@ -160,17 +171,16 @@ public class ClassificationRunner {
     }
     // Fill array to make binary search work correctly.
     Arrays.fill(intArray, cidx, intArray.length, Integer.MAX_VALUE);
-    int root = conStrList.get(I_Constants.SNOMED_ROOT_CONCEPT);
+    int root = Integer.parseInt(rootConcept.getObjectId());
     Snorocket_123 rocket_123 =
         new Snorocket_123(intArray, cidx, roles, ridx, root);
 
     // SnomedMetadata :: ISA
-    isa = conStrList.get(GetDescendants.ISA_SCTID);
     rocket_123.setIsaNid(isa);
 
     // SnomedMetadata :: ROLE_ROOTS
     rocket_123.setRoleRoot(isa, true); // @@@
-    int roleRoot = conStrList.get(I_Constants.ATTRIBUTE_ROOT_CONCEPT);
+    int roleRoot = Integer.parseInt(roleRootConcept.getObjectId());
     rocket_123.setRoleRoot(roleRoot, false);
 
     // SET DEFINED CONCEPTS
@@ -204,7 +214,6 @@ public class ClassificationRunner {
 
     cEditRelationships = null; // :MEMORY:
 
-    conStrList = null; // :MEMORY:
     System.gc();
 
     // RUN CLASSIFIER
@@ -217,13 +226,9 @@ public class ClassificationRunner {
     // GET CLASSIFER EQUIVALENTS
     logger.info("::: GET EQUIVALENT CONCEPTS...");
     startTime = System.currentTimeMillis();
-    ProcessEquiv pe = new ProcessEquiv();
-    rocket_123.getEquivalents(pe);
+    rocket_123.getEquivalents(equivalents);
     logger.info("\r\n::: [SnorocketMojo] ProcessEquiv() count="
-        + pe.countConSet + " time= " + toStringLapseSec(startTime));
-    pe.getEquivalentClasses();
-    EquivalentClasses.writeEquivConcept(pe.getEquivalentClasses(),
-        equivalencyReport);
+        + equivalents.countConSet + " time= " + toStringLapseSec(startTime));
 
     // GET CLASSIFER RESULTS
     cRocketRelationships = new ArrayList<Relationship>();
@@ -245,9 +250,7 @@ public class ClassificationRunner {
 
     cEditSnoCons = new ArrayList<StringIDConcept>();
     conRefList = new HashMap<Integer, String>();
-    conStrList = new HashMap<String, Integer>();
     cEditSnoCons = null;
-    conStrList = null;
   }
 
   /**
@@ -314,36 +317,6 @@ public class ClassificationRunner {
     return s.toString();
   }
 
-  /**
-   * Gets the roles.
-   *
-   * @param parentConcepts the parent concepts
-   * @return the roles
-   * @throws Exception the exception
-   */
-  private int[] getRoles() throws IOException,
-    ClassificationException {
-    HashSet<String> roles = new HashSet<String>();
-    
-    roles.addAll(relationshipIds);
-  
-    roles.add(GetDescendants.ISA_SCTID);
-    int[] result = new int[roles.size()];
-    int resIdx = 0;
-    for (String role : roles) {
-      Integer integer = conStrList.get(role);
-      if (integer != null) {
-        result[resIdx] = integer;
-      } else {
-        throw new ClassificationException("No entry for " + role
-            + " in conStrList.");
-      }
-      resIdx++;
-    }
-    roles = null;
-    Arrays.sort(result);
-    return result;
-  }
 
 
   /**
@@ -1018,13 +991,5 @@ public class ClassificationRunner {
         }
       }
     }
-  }
-
-  public List<String> getRelationshipIds() {
-    return relationshipIds;
-  }
-
-  public void setRelationshipIds(List<String> relationshipIds) {
-    this.relationshipIds = relationshipIds;
   }
 }

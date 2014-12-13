@@ -64,14 +64,6 @@ public abstract class AbstractResultList<T> implements ResultList<T> {
   }
 
   /* (non-Javadoc)
-   * @see org.ihtsdo.otf.ts.helpers.ResultList#getIterable()
-   */
-  @Override
-  public Iterable<T> getIterable() {
-    return objects;
-  }
-
-  /* (non-Javadoc)
    * @see org.ihtsdo.otf.ts.helpers.ResultList#addObject(java.lang.Object)
    */
   @Override

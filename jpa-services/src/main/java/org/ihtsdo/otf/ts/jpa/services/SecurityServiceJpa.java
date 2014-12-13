@@ -142,8 +142,6 @@ public class SecurityServiceJpa extends RootServiceJpa implements
     // Check auth token against the username map
     if (tokenUsernameMap.containsKey(parsedToken)) {
       String username = tokenUsernameMap.get(parsedToken);
-      Logger.getLogger(this.getClass()).info(
-          "User = " + username + " Token = " + parsedToken);
 
       // Validate that the user has not timed out.
       if (handler.timeoutUser(username)) {

@@ -13,8 +13,16 @@ import org.ihtsdo.otf.ts.helpers.PfsParameterJpa;
 import org.ihtsdo.otf.ts.helpers.SearchResultList;
 import org.ihtsdo.otf.ts.helpers.SearchResultListJpa;
 import org.ihtsdo.otf.ts.rest.ContentServiceRest;
+import org.ihtsdo.otf.ts.rf2.AssociationReferenceConceptRefSetMember;
 import org.ihtsdo.otf.ts.rf2.Concept;
+import org.ihtsdo.otf.ts.rf2.Description;
+import org.ihtsdo.otf.ts.rf2.LanguageRefSetMember;
+import org.ihtsdo.otf.ts.rf2.Relationship;
+import org.ihtsdo.otf.ts.rf2.jpa.AssociationReferenceConceptRefSetMemberJpa;
 import org.ihtsdo.otf.ts.rf2.jpa.ConceptJpa;
+import org.ihtsdo.otf.ts.rf2.jpa.DescriptionJpa;
+import org.ihtsdo.otf.ts.rf2.jpa.LanguageRefSetMemberJpa;
+import org.ihtsdo.otf.ts.rf2.jpa.RelationshipJpa;
 
 import com.sun.jersey.api.client.Client;
 import com.sun.jersey.api.client.ClientResponse;
@@ -63,12 +71,51 @@ public class ContentClientRest implements ContentServiceRest {
     }
 
     // converting to object
-    ConceptListJpa c =
+    ConceptListJpa list =
         (ConceptListJpa) ConfigUtility.getGraphForString(resultString,
             ConceptListJpa.class);
-    return c;
+    return list;
   }
 
+  /*
+   * (non-Javadoc)
+   * 
+   * @see
+   * org.ihtsdo.otf.ts.rest.ContentServiceRest#getConceptForUser(java.lang.String
+   * , java.lang.String, java.lang.String, java.lang.String)
+   */
+  @Override
+  public Concept getConceptForUser(String terminologyId, String terminology,
+    String version, String authToken) throws Exception {
+    Client client = Client.create();
+    WebResource resource =
+        client.resource(config.getProperty("base.url") + "/content/concept/"
+            + terminology + "/" + version + "/" + terminologyId + "/foruser");
+    ClientResponse response =
+        resource.accept(MediaType.APPLICATION_XML)
+            .header("Authorization", authToken).get(ClientResponse.class);
+
+    String resultString = response.getEntity(String.class);
+    if (response.getClientResponseStatus().getFamily() == Family.SUCCESSFUL) {
+      Logger.getLogger(this.getClass()).debug(resultString);
+    } else {
+      throw new Exception(resultString);
+    }
+
+    // converting to object
+    ConceptJpa concept =
+        (ConceptJpa) ConfigUtility.getGraphForString(resultString,
+            ConceptJpa.class);
+    return concept;
+  }
+
+  /*
+   * (non-Javadoc)
+   * 
+   * @see
+   * org.ihtsdo.otf.ts.rest.ContentServiceRest#getSingleConcept(java.lang.String
+   * , java.lang.String, java.lang.String, java.lang.String)
+   */
   @Override
   public Concept getSingleConcept(String terminologyId, String terminology,
     String version, String authToken) throws Exception {
@@ -161,4 +208,264 @@ public class ContentClientRest implements ContentServiceRest {
     return list;
   }
 
+  /*
+   * (non-Javadoc)
+   * 
+   * @see
+   * org.ihtsdo.otf.ts.rest.ContentServiceRest#getDescription(java.lang.Long,
+   * java.lang.String)
+   */
+  @Override
+  public Description getDescription(Long id, String authToken) throws Exception {
+    Client client = Client.create();
+    WebResource resource =
+        client.resource(config.getProperty("base.url")
+            + "/content/description/id/" + id);
+    ClientResponse response =
+        resource.accept(MediaType.APPLICATION_XML)
+            .header("Authorization", authToken).get(ClientResponse.class);
+
+    String resultString = response.getEntity(String.class);
+    if (response.getClientResponseStatus().getFamily() == Family.SUCCESSFUL) {
+      Logger.getLogger(this.getClass()).debug(resultString);
+    } else {
+      throw new Exception(resultString);
+    }
+
+    // converting to object
+    DescriptionJpa description =
+        (DescriptionJpa) ConfigUtility.getGraphForString(resultString,
+            DescriptionJpa.class);
+    return description;
+  }
+
+  /*
+   * (non-Javadoc)
+   * 
+   * @see
+   * org.ihtsdo.otf.ts.rest.ContentServiceRest#getDescription(java.lang.String,
+   * java.lang.String, java.lang.String, java.lang.String)
+   */
+  @Override
+  public Description getDescription(String terminologyId, String terminology,
+    String version, String authToken) throws Exception {
+    Client client = Client.create();
+    WebResource resource =
+        client.resource(config.getProperty("base.url")
+            + "/content/description/" + terminology + "/" + version + "/"
+            + terminologyId);
+    ClientResponse response =
+        resource.accept(MediaType.APPLICATION_XML)
+            .header("Authorization", authToken).get(ClientResponse.class);
+
+    String resultString = response.getEntity(String.class);
+    if (response.getClientResponseStatus().getFamily() == Family.SUCCESSFUL) {
+      Logger.getLogger(this.getClass()).debug(resultString);
+    } else {
+      throw new Exception(resultString);
+    }
+
+    // converting to object
+    DescriptionJpa description =
+        (DescriptionJpa) ConfigUtility.getGraphForString(resultString,
+            DescriptionJpa.class);
+    return description;
+  }
+
+  /*
+   * (non-Javadoc)
+   * 
+   * @see
+   * org.ihtsdo.otf.ts.rest.ContentServiceRest#getRelationship(java.lang.Long,
+   * java.lang.String)
+   */
+  @Override
+  public Relationship getRelationship(Long id, String authToken)
+    throws Exception {
+    Client client = Client.create();
+    WebResource resource =
+        client.resource(config.getProperty("base.url")
+            + "/content/relationship/id/" + id);
+    ClientResponse response =
+        resource.accept(MediaType.APPLICATION_XML)
+            .header("Authorization", authToken).get(ClientResponse.class);
+
+    String resultString = response.getEntity(String.class);
+    if (response.getClientResponseStatus().getFamily() == Family.SUCCESSFUL) {
+      Logger.getLogger(this.getClass()).debug(resultString);
+    } else {
+      throw new Exception(resultString);
+    }
+
+    // converting to object
+    RelationshipJpa relationship =
+        (RelationshipJpa) ConfigUtility.getGraphForString(resultString,
+            RelationshipJpa.class);
+    return relationship;
+  }
+
+  /*
+   * (non-Javadoc)
+   * 
+   * @see
+   * org.ihtsdo.otf.ts.rest.ContentServiceRest#getRelationship(java.lang.String,
+   * java.lang.String, java.lang.String, java.lang.String)
+   */
+  @Override
+  public Relationship getRelationship(String terminologyId, String terminology,
+    String version, String authToken) throws Exception {
+    Client client = Client.create();
+    WebResource resource =
+        client.resource(config.getProperty("base.url")
+            + "/content/relationship/" + terminology + "/" + version + "/"
+            + terminologyId);
+    ClientResponse response =
+        resource.accept(MediaType.APPLICATION_XML)
+            .header("Authorization", authToken).get(ClientResponse.class);
+
+    String resultString = response.getEntity(String.class);
+    if (response.getClientResponseStatus().getFamily() == Family.SUCCESSFUL) {
+      Logger.getLogger(this.getClass()).debug(resultString);
+    } else {
+      throw new Exception(resultString);
+    }
+
+    // converting to object
+    RelationshipJpa relationship =
+        (RelationshipJpa) ConfigUtility.getGraphForString(resultString,
+            RelationshipJpa.class);
+    return relationship;
+  }
+
+  /*
+   * (non-Javadoc)
+   * 
+   * @see
+   * org.ihtsdo.otf.ts.rest.ContentServiceRest#getLanguageRefSetMember(java.
+   * lang.Long, java.lang.String)
+   */
+  @Override
+  public LanguageRefSetMember getLanguageRefSetMember(Long id, String authToken)
+    throws Exception {
+    Client client = Client.create();
+    WebResource resource =
+        client.resource(config.getProperty("base.url")
+            + "/content/language/id/" + id);
+    ClientResponse response =
+        resource.accept(MediaType.APPLICATION_XML)
+            .header("Authorization", authToken).get(ClientResponse.class);
+
+    String resultString = response.getEntity(String.class);
+    if (response.getClientResponseStatus().getFamily() == Family.SUCCESSFUL) {
+      Logger.getLogger(this.getClass()).debug(resultString);
+    } else {
+      throw new Exception(resultString);
+    }
+
+    // converting to object
+    LanguageRefSetMemberJpa member =
+        (LanguageRefSetMemberJpa) ConfigUtility.getGraphForString(resultString,
+            LanguageRefSetMemberJpa.class);
+    return member;
+  }
+
+  /*
+   * (non-Javadoc)
+   * 
+   * @see
+   * org.ihtsdo.otf.ts.rest.ContentServiceRest#getLanguageRefSetMember(java.
+   * lang.String, java.lang.String, java.lang.String, java.lang.String)
+   */
+  @Override
+  public LanguageRefSetMember getLanguageRefSetMember(String terminologyId,
+    String terminology, String version, String authToken) throws Exception {
+    Client client = Client.create();
+    WebResource resource =
+        client.resource(config.getProperty("base.url") + "/content/language/"
+            + terminology + "/" + version + "/" + terminologyId);
+    ClientResponse response =
+        resource.accept(MediaType.APPLICATION_XML)
+            .header("Authorization", authToken).get(ClientResponse.class);
+
+    String resultString = response.getEntity(String.class);
+    if (response.getClientResponseStatus().getFamily() == Family.SUCCESSFUL) {
+      Logger.getLogger(this.getClass()).debug(resultString);
+    } else {
+      throw new Exception(resultString);
+    }
+
+    // converting to object
+    LanguageRefSetMemberJpa member =
+        (LanguageRefSetMemberJpa) ConfigUtility.getGraphForString(resultString,
+            LanguageRefSetMemberJpa.class);
+    return member;
+  }
+
+  /*
+   * (non-Javadoc)
+   * 
+   * @see org.ihtsdo.otf.ts.rest.ContentServiceRest#
+   * getAssociationReferenceConceptRefSetMember(java.lang.Long,
+   * java.lang.String)
+   */
+  @Override
+  public AssociationReferenceConceptRefSetMember getAssociationReferenceConceptRefSetMember(
+    Long id, String authToken) throws Exception {
+    Client client = Client.create();
+    WebResource resource =
+        client.resource(config.getProperty("base.url")
+            + "/content/associationReference/id/" + id);
+    ClientResponse response =
+        resource.accept(MediaType.APPLICATION_XML)
+            .header("Authorization", authToken).get(ClientResponse.class);
+
+    String resultString = response.getEntity(String.class);
+    if (response.getClientResponseStatus().getFamily() == Family.SUCCESSFUL) {
+      Logger.getLogger(this.getClass()).debug(resultString);
+    } else {
+      throw new Exception(resultString);
+    }
+
+    // converting to object
+    AssociationReferenceConceptRefSetMemberJpa member =
+        (AssociationReferenceConceptRefSetMemberJpa) ConfigUtility
+            .getGraphForString(resultString,
+                AssociationReferenceConceptRefSetMemberJpa.class);
+    return member;
+  }
+
+  /*
+   * (non-Javadoc)
+   * 
+   * @see org.ihtsdo.otf.ts.rest.ContentServiceRest#
+   * getAssociationReferenceConceptRefSetMember(java. lang.String,
+   * java.lang.String, java.lang.String, java.lang.String)
+   */
+  @Override
+  public AssociationReferenceConceptRefSetMember getAssociationReferenceConceptRefSetMember(
+    String terminologyId, String terminology, String version, String authToken)
+    throws Exception {
+    Client client = Client.create();
+    WebResource resource =
+        client.resource(config.getProperty("base.url")
+            + "/content/associationReference/" + terminology + "/" + version
+            + "/" + terminologyId);
+    ClientResponse response =
+        resource.accept(MediaType.APPLICATION_XML)
+            .header("Authorization", authToken).get(ClientResponse.class);
+
+    String resultString = response.getEntity(String.class);
+    if (response.getClientResponseStatus().getFamily() == Family.SUCCESSFUL) {
+      Logger.getLogger(this.getClass()).debug(resultString);
+    } else {
+      throw new Exception(resultString);
+    }
+
+    // converting to object
+    AssociationReferenceConceptRefSetMemberJpa member =
+        (AssociationReferenceConceptRefSetMemberJpa) ConfigUtility
+            .getGraphForString(resultString,
+                AssociationReferenceConceptRefSetMemberJpa.class);
+    return member;
+  }
 }

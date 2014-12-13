@@ -282,8 +282,8 @@ public class DescriptionJpa extends AbstractComponent implements Description {
    * @return the concept id
    */
   @XmlElement
-  private String getConceptId() {
-    return concept != null ? concept.getTerminologyId() : null;
+  private Long getConceptId() {
+    return concept != null ? concept.getId() : null;
   }
 
   /**
@@ -292,8 +292,36 @@ public class DescriptionJpa extends AbstractComponent implements Description {
    * @param conceptId the concept id
    */
   @SuppressWarnings("unused")
-  private void setConceptId(String conceptId) {
-    // do nothing - here for JAXB
+  private void setConceptId(Long conceptId) {
+    if (concept == null) {
+      concept = new ConceptJpa();
+    }
+    concept.setId(conceptId);
+  }
+
+  /**
+   * Returns the concept terminology id. Used for XML/JSON serialization.
+   * 
+   * @return the concept terminology id
+   */
+  @XmlElement
+  private String getConceptTerminologyId() {
+    return concept != null ? concept.getTerminologyId() : "";
+  }
+
+  /**
+   * Sets the concept terminology id.
+   *
+   * @param conceptId the concept terminology id
+   */
+  @SuppressWarnings("unused")
+  private void setConceptTerminologyId(String conceptId) {
+    if (concept == null) {
+      concept = new ConceptJpa();
+    }
+    concept.setTerminologyId(conceptId);
+    concept.setTerminology(getTerminology());
+    concept.setTerminologyVersion(getTerminologyVersion());
   }
 
   /**
@@ -338,11 +366,12 @@ public class DescriptionJpa extends AbstractComponent implements Description {
   @Override
   public void setLanguageRefSetMembers(
     Set<LanguageRefSetMember> languageRefSetMembers) {
-    this.languageRefSetMembers = languageRefSetMembers;
     if (languageRefSetMembers != null) {
+      this.languageRefSetMembers = new HashSet<>();
       for (LanguageRefSetMember member : languageRefSetMembers) {
         member.setDescription(this);
       }
+      this.languageRefSetMembers.addAll(languageRefSetMembers);
     }
   }
 
@@ -398,9 +427,12 @@ public class DescriptionJpa extends AbstractComponent implements Description {
   @Override
   public void setAttributeValueRefSetMembers(
     Set<AttributeValueDescriptionRefSetMember> attributeValueRefSetMembers) {
-    this.attributeValueRefSetMembers = attributeValueRefSetMembers;
-    for (AttributeValueDescriptionRefSetMember member : attributeValueRefSetMembers) {
-      member.setDescription(this);
+    if (attributeValueRefSetMembers != null) {
+      this.attributeValueRefSetMembers = new HashSet<>();
+      for (AttributeValueDescriptionRefSetMember member : attributeValueRefSetMembers) {
+        member.setDescription(this);
+      }
+      this.attributeValueRefSetMembers.addAll(attributeValueRefSetMembers);
     }
   }
 
@@ -461,9 +493,13 @@ public class DescriptionJpa extends AbstractComponent implements Description {
   @Override
   public void setAssociationReferenceRefSetMembers(
     Set<AssociationReferenceDescriptionRefSetMember> associationReferenceRefSetMembers) {
-    this.associationReferenceRefSetMembers = associationReferenceRefSetMembers;
-    for (AssociationReferenceDescriptionRefSetMember member : associationReferenceRefSetMembers) {
-      member.setDescription(this);
+    if (associationReferenceRefSetMembers != null) {
+      this.associationReferenceRefSetMembers = new HashSet<>();
+      for (AssociationReferenceDescriptionRefSetMember member : associationReferenceRefSetMembers) {
+        member.setDescription(this);
+      }
+      this.associationReferenceRefSetMembers
+          .addAll(associationReferenceRefSetMembers);
     }
   }
 
@@ -505,10 +541,9 @@ public class DescriptionJpa extends AbstractComponent implements Description {
    */
   @Override
   public String toString() {
-    return super.toString()
-        + (getConcept() == null ? null : getConcept().getTerminologyId()) + ","
-        + getLanguageCode() + "," + getTypeId() + "," + getTerm() + ","
-        + getCaseSignificanceId();
+    return super.toString() + "," + getConceptId() + ","
+        + getConceptTerminologyId() + ", " + getLanguageCode() + ","
+        + getTypeId() + "," + getTerm() + "," + getCaseSignificanceId();
   }
 
   @Override

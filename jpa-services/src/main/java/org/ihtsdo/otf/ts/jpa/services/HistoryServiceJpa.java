@@ -7,9 +7,7 @@ import java.util.List;
 import java.util.Set;
 
 import javax.persistence.NoResultException;
-import javax.persistence.TemporalType;
 
-import org.apache.commons.lang3.time.FastDateFormat;
 import org.apache.log4j.Logger;
 import org.apache.lucene.search.Query;
 import org.hibernate.envers.AuditReader;
@@ -22,6 +20,7 @@ import org.hibernate.search.jpa.Search;
 import org.hibernate.search.query.dsl.QueryBuilder;
 import org.ihtsdo.otf.ts.helpers.ConceptList;
 import org.ihtsdo.otf.ts.helpers.ConceptListJpa;
+import org.ihtsdo.otf.ts.helpers.ConfigUtility;
 import org.ihtsdo.otf.ts.helpers.DescriptionList;
 import org.ihtsdo.otf.ts.helpers.DescriptionListJpa;
 import org.ihtsdo.otf.ts.helpers.LanguageRefSetMemberList;
@@ -49,10 +48,6 @@ import org.ihtsdo.otf.ts.services.HistoryService;
 public class HistoryServiceJpa extends ContentServiceJpa implements
     HistoryService {
 
-  /** The date format. */
-  private final static FastDateFormat format = FastDateFormat
-      .getInstance("yyyyMMdd");
-
   /**
    * Instantiates an empty {@link HistoryServiceJpa}.
    *
@@ -74,11 +69,12 @@ public class HistoryServiceJpa extends ContentServiceJpa implements
   public ConceptList findConceptsModifiedSinceDate(String terminology,
     Date date, PfsParameter pfs) throws Exception {
     Logger.getLogger(ContentServiceJpa.class).debug(
-        "History Service - find concepts modified since date" + terminology
+        "History Service - find concepts modified since date " + terminology
             + "," + date);
     int[] totalCt = new int[1];
     List<ConceptJpa> results =
-        findModifiedSinceDate(ConceptJpa.class, terminology, date, pfs, totalCt);
+        findModifiedSinceDateFromLucene(ConceptJpa.class, terminology, date,
+            pfs, totalCt);
     ConceptList resultList = new ConceptListJpa();
     resultList.setTotalCount(totalCt[0]);
     for (ConceptJpa concept : results) {
@@ -123,10 +119,9 @@ public class HistoryServiceJpa extends ContentServiceJpa implements
   @Override
   public Concept findConceptReleaseRevision(Long id, Date release)
     throws Exception {
-    Logger.getLogger(ContentServiceJpa.class)
-        .debug(
-            "History Service - find concept release revision " + id + ","
-                + format.format(release));
+    Logger.getLogger(ContentServiceJpa.class).debug(
+        "History Service - find concept release revision " + id + ","
+            + ConfigUtility.DATE_FORMAT.format(release));
 
     ConceptJpa revision = findReleaseRevision(id, release, ConceptJpa.class);
     return revision;
@@ -139,22 +134,22 @@ public class HistoryServiceJpa extends ContentServiceJpa implements
    * org.ihtsdo.otf.mapping.services.ContentService#getDescriptionsModifiedSinceDate
    * (java.lang.String, java.util.Date)
    */
-  @SuppressWarnings("unchecked")
   @Override
   public DescriptionList findDescriptionsModifiedSinceDate(String terminology,
-    Date date, PfsParameter pfs) {
+    Date date, PfsParameter pfs) throws Exception {
     Logger.getLogger(ContentServiceJpa.class).debug(
         "History Service - find descriptions modified since date "
             + terminology + ", " + date);
-    DescriptionList results = new DescriptionListJpa();
-    javax.persistence.Query query =
-        applyPfsToQuery("select a from DescriptionJpa a"
-            + " where effectiveTime >= :releaseDate"
-            + " and terminology = :terminology", pfs);
-    query.setParameter("releaseDate", date);
-    query.setParameter("terminology", terminology);
-    results.setObjects(query.getResultList());
-    return results;
+    int[] totalCt = new int[1];
+    List<DescriptionJpa> results =
+        findModifiedSinceDateFromQuery(DescriptionJpa.class, terminology, date,
+            pfs, totalCt);
+    DescriptionList resultList = new DescriptionListJpa();
+    resultList.setTotalCount(totalCt[0]);
+    for (DescriptionJpa description : results) {
+      resultList.addObject(description);
+    }
+    return resultList;
   }
 
   /*
@@ -207,22 +202,22 @@ public class HistoryServiceJpa extends ContentServiceJpa implements
    * @see org.ihtsdo.otf.mapping.services.ContentService#
    * getRelationshipsModifiedSinceDate(java.lang.String, java.util.Date)
    */
-  @SuppressWarnings("unchecked")
   @Override
   public RelationshipList findRelationshipsModifiedSinceDate(
-    String terminology, Date date, PfsParameter pfs) {
+    String terminology, Date date, PfsParameter pfs) throws Exception {
     Logger.getLogger(ContentServiceJpa.class).debug(
         "History Service - find relationships modified since date "
             + terminology + ", " + date);
-    RelationshipList results = new RelationshipListJpa();
-    javax.persistence.Query query =
-        applyPfsToQuery("select a from RelationshipJpa a"
-            + " where effectiveTime >= :releaseDate"
-            + " and terminology = :terminology", pfs);
-    query.setParameter("releaseDate", date);
-    query.setParameter("terminology", terminology);
-    results.setObjects(query.getResultList());
-    return results;
+    int[] totalCt = new int[1];
+    List<RelationshipJpa> results =
+        findModifiedSinceDateFromQuery(RelationshipJpa.class, terminology,
+            date, pfs, totalCt);
+    RelationshipList resultList = new RelationshipListJpa();
+    resultList.setTotalCount(totalCt[0]);
+    for (RelationshipJpa relationship : results) {
+      resultList.addObject(relationship);
+    }
+    return resultList;
   }
 
   /*
@@ -275,22 +270,22 @@ public class HistoryServiceJpa extends ContentServiceJpa implements
    * @see org.ihtsdo.otf.mapping.services.ContentService#
    * getLanguageRefSetMembersModifiedSinceDate(java.lang.String, java.util.Date)
    */
-  @SuppressWarnings("unchecked")
   @Override
   public LanguageRefSetMemberList findLanguageRefSetMembersModifiedSinceDate(
-    String terminology, Date date, PfsParameter pfs) {
+    String terminology, Date date, PfsParameter pfs) throws Exception {
     Logger.getLogger(ContentServiceJpa.class).debug(
-        "History Service - find language refset members modified since "
+        "History Service - find language refset members modified since date "
             + terminology + ", " + date);
-    LanguageRefSetMemberList results = new LanguageRefSetMemberListJpa();
-    javax.persistence.Query query =
-        applyPfsToQuery("select a from LanguageRefSetMemberJpa a"
-            + " where effectiveTime >= :releaseDate"
-            + " and terminology = :terminology", pfs);
-    query.setParameter("releaseDate", date);
-    query.setParameter("terminology", terminology);
-    results.setObjects(query.getResultList());
-    return results;
+    int[] totalCt = new int[1];
+    List<LanguageRefSetMemberJpa> results =
+        findModifiedSinceDateFromQuery(LanguageRefSetMemberJpa.class,
+            terminology, date, pfs, totalCt);
+    LanguageRefSetMemberList resultList = new LanguageRefSetMemberListJpa();
+    resultList.setTotalCount(totalCt[0]);
+    for (LanguageRefSetMemberJpa member : results) {
+      resultList.addObject(member);
+    }
+    return resultList;
   }
 
   /*
@@ -340,20 +335,24 @@ public class HistoryServiceJpa extends ContentServiceJpa implements
   /*
    * (non-Javadoc)
    * 
-   * @see org.ihtsdo.otf.ts.services.HistoryService#getReleaseHistory()
+   * @see
+   * org.ihtsdo.otf.ts.services.HistoryService#getReleaseHistory(java.lang.String
+   * )
    */
-  public ReleaseInfoList getReleaseHistory() throws Exception {
+  @SuppressWarnings("unchecked")
+  @Override
+  public ReleaseInfoList getReleaseHistory(String terminology) throws Exception {
     Logger.getLogger(ContentServiceJpa.class).debug(
-        "History Service - get release history");
+        "History Service - get release history " + terminology);
     javax.persistence.Query query =
         manager
-            .createQuery("select a from ReleaseInfoJpa a order by a.effectiveTime");
+            .createQuery("select a from ReleaseInfoJpa a where terminology = :terminology order by a.effectiveTime");
     /*
      * Try to retrieve the single expected result If zero or more than one
      * result are returned, log error and set result to null
      */
     try {
-      @SuppressWarnings("unchecked")
+      query.setParameter("terminology", terminology);
       List<ReleaseInfo> releaseInfos = query.getResultList();
       ReleaseInfoList releaseInfoList = new ReleaseInfoListJpa();
       releaseInfoList.setObjects(releaseInfos);
@@ -366,15 +365,19 @@ public class HistoryServiceJpa extends ContentServiceJpa implements
   /*
    * (non-Javadoc)
    * 
-   * @see org.ihtsdo.otf.ts.services.HistoryService#getCurrentReleaseInfo()
+   * @see
+   * org.ihtsdo.otf.ts.services.HistoryService#getCurrentReleaseInfo(java.lang
+   * .String)
    */
-  public ReleaseInfo getCurrentReleaseInfo() throws Exception {
+  @Override
+  public ReleaseInfo getCurrentReleaseInfo(String terminology) throws Exception {
     Logger.getLogger(ContentServiceJpa.class).debug(
-        "History Service - get current release info");
-    List<ReleaseInfo> results = getReleaseHistory().getObjects();
-    // get max release that is published
+        "History Service - get current release info " + terminology);
+    List<ReleaseInfo> results = getReleaseHistory(terminology).getObjects();
+    // get max release that is published and not planned
     for (int i = results.size() - 1; i >= 0; i--) {
-      if (results.get(i).isPublished() && !results.get(i).isPlanned()) {
+      if (results.get(i).isPublished() && !results.get(i).isPlanned()
+          && results.get(i).getTerminology().equals(terminology)) {
         return results.get(i);
       }
     }
@@ -384,15 +387,20 @@ public class HistoryServiceJpa extends ContentServiceJpa implements
   /*
    * (non-Javadoc)
    * 
-   * @see org.ihtsdo.otf.ts.services.HistoryService#getPreviousReleaseInfo()
+   * @see
+   * org.ihtsdo.otf.ts.services.HistoryService#getPreviousReleaseInfo(java.lang
+   * .String)
    */
-  public ReleaseInfo getPreviousReleaseInfo() throws Exception {
+  @Override
+  public ReleaseInfo getPreviousReleaseInfo(String terminology)
+    throws Exception {
     Logger.getLogger(ContentServiceJpa.class).debug(
-        "History Service - get previous release info");
-    List<ReleaseInfo> results = getReleaseHistory().getObjects();
+        "History Service - get previous release info " + terminology);
+    List<ReleaseInfo> results = getReleaseHistory(terminology).getObjects();
     // get one before the max release that is published
     for (int i = results.size() - 1; i >= 0; i--) {
-      if (results.get(i).isPublished() && !results.get(i).isPlanned()) {
+      if (results.get(i).isPublished() && !results.get(i).isPlanned()
+          && results.get(i).getTerminology().equals(terminology)) {
         if (i > 0) {
           return results.get(i - 1);
         } else {
@@ -406,16 +414,19 @@ public class HistoryServiceJpa extends ContentServiceJpa implements
   /*
    * (non-Javadoc)
    * 
-   * @see org.ihtsdo.otf.ts.services.HistoryService#getPlannedReleaseInfo()
+   * @see
+   * org.ihtsdo.otf.ts.services.HistoryService#getPlannedReleaseInfo(java.lang
+   * .String)
    */
   @Override
-  public ReleaseInfo getPlannedReleaseInfo() throws Exception {
+  public ReleaseInfo getPlannedReleaseInfo(String terminology) throws Exception {
     Logger.getLogger(ContentServiceJpa.class).debug(
-        "History Service - get planned release info");
-    List<ReleaseInfo> results = getReleaseHistory().getObjects();
+        "History Service - get planned release info " + terminology);
+    List<ReleaseInfo> results = getReleaseHistory(terminology).getObjects();
     // get one before the max release that is published
     for (int i = results.size() - 1; i >= 0; i--) {
-      if (!results.get(i).isPublished() && results.get(i).isPlanned()) {
+      if (!results.get(i).isPublished() && results.get(i).isPlanned()
+          && results.get(i).getTerminology().equals(terminology)) {
         return results.get(i);
       }
     }
@@ -426,21 +437,24 @@ public class HistoryServiceJpa extends ContentServiceJpa implements
    * (non-Javadoc)
    * 
    * @see
-   * org.ihtsdo.otf.ts.services.HistoryService#getReleaseInfo(java.lang.String)
+   * org.ihtsdo.otf.ts.services.HistoryService#getReleaseInfo(java.lang.String,
+   * java.lang.String)
    */
-  public ReleaseInfo getReleaseInfo(String release) throws ParseException {
+  @Override
+  public ReleaseInfo getReleaseInfo(String terminology, String name)
+    throws ParseException {
     Logger.getLogger(ContentServiceJpa.class).debug(
-        "History Service - get release info " + release);
+        "History Service - get release info " + terminology + ", " + name);
     javax.persistence.Query query =
-        manager
-            .createQuery("select r from ReleaseInfoJpa r where effectiveTime = :effectiveTime");
+        manager.createQuery("select r from ReleaseInfoJpa r "
+            + "where name = :name " + "and terminology = :terminology");
     /*
      * Try to retrieve the single expected result If zero or more than one
      * result are returned, log error and set result to null
      */
     try {
-      query.setParameter("effectiveTime", format.parse(release),
-          TemporalType.DATE);
+      query.setParameter("name", name);
+      query.setParameter("terminology", terminology);
       return (ReleaseInfo) query.getSingleResult();
     } catch (NoResultException e) {
       return null;
@@ -501,14 +515,18 @@ public class HistoryServiceJpa extends ContentServiceJpa implements
   public ReleaseInfo addReleaseInfo(ReleaseInfo releaseInfo) throws Exception {
     Logger.getLogger(ContentServiceJpa.class).debug(
         "History Service - add release info " + releaseInfo.getName());
-
-    if (getTransactionPerOperation()) {
-      tx = manager.getTransaction();
-      tx.begin();
-      manager.persist(releaseInfo);
-      tx.commit();
-    } else {
-      manager.persist(releaseInfo);
+    try {
+      if (getTransactionPerOperation()) {
+        tx = manager.getTransaction();
+        tx.begin();
+        manager.persist(releaseInfo);
+        tx.commit();
+      } else {
+        manager.persist(releaseInfo);
+      }
+    } catch (Exception e) {
+      if (tx.isActive()) { tx.rollback();} 
+      throw e;
     }
 
     return releaseInfo;
@@ -525,13 +543,18 @@ public class HistoryServiceJpa extends ContentServiceJpa implements
   public void updateReleaseInfo(ReleaseInfo releaseInfo) throws Exception {
     Logger.getLogger(ContentServiceJpa.class).debug(
         "History Service - update release info " + releaseInfo.getName());
-    if (getTransactionPerOperation()) {
-      tx = manager.getTransaction();
-      tx.begin();
-      manager.merge(releaseInfo);
-      tx.commit();
-    } else {
-      manager.merge(releaseInfo);
+    try {
+      if (getTransactionPerOperation()) {
+        tx = manager.getTransaction();
+        tx.begin();
+        manager.merge(releaseInfo);
+        tx.commit();
+      } else {
+        manager.merge(releaseInfo);
+      }
+    } catch (Exception e) {
+      if (tx.isActive()) { tx.rollback();} 
+      throw e;
     }
   }
 
@@ -548,23 +571,28 @@ public class HistoryServiceJpa extends ContentServiceJpa implements
     tx = manager.getTransaction();
     // retrieve this release info
     ReleaseInfo releaseInfo = manager.find(ReleaseInfoJpa.class, id);
-
-    if (getTransactionPerOperation()) {
-      // remove description
-      tx.begin();
-      if (manager.contains(releaseInfo)) {
-        manager.remove(releaseInfo);
+    try {
+      if (getTransactionPerOperation()) {
+        // remove description
+        tx.begin();
+        if (manager.contains(releaseInfo)) {
+          manager.remove(releaseInfo);
+        } else {
+          manager.remove(manager.merge(releaseInfo));
+        }
+        tx.commit();
       } else {
-        manager.remove(manager.merge(releaseInfo));
+        if (manager.contains(releaseInfo)) {
+          manager.remove(releaseInfo);
+        } else {
+          manager.remove(manager.merge(releaseInfo));
+        }
       }
-      tx.commit();
-    } else {
-      if (manager.contains(releaseInfo)) {
-        manager.remove(releaseInfo);
-      } else {
-        manager.remove(manager.merge(releaseInfo));
-      }
+    } catch (Exception e) {
+      if (tx.isActive()) { tx.rollback();} 
+      throw e;
     }
+
   }
 
   /**
@@ -580,8 +608,9 @@ public class HistoryServiceJpa extends ContentServiceJpa implements
    * @throws Exception the exception
    */
   @SuppressWarnings("unchecked")
-  private <T> List<T> findModifiedSinceDate(Class<T> clazz, String terminology,
-    Date date, PfsParameter pfs, int[] totalCt) throws Exception {
+  private <T> List<T> findModifiedSinceDateFromLucene(Class<T> clazz,
+    String terminology, Date date, PfsParameter pfs, int[] totalCt)
+    throws Exception {
 
     // Use latest date of the type
     Date minDate = date;
@@ -595,6 +624,8 @@ public class HistoryServiceJpa extends ContentServiceJpa implements
               "terminology", terminology);
       Date tempDate = (Date) query.getSingleResult();
       minDate = tempDate;
+      Logger.getLogger(ContentServiceJpa.class).debug(
+          "  date is null, use " + minDate);
     }
     FullTextEntityManager fullTextEntityManager =
         Search.getFullTextEntityManager(manager);
@@ -607,7 +638,7 @@ public class HistoryServiceJpa extends ContentServiceJpa implements
       luceneQuery =
           qb.bool()
               .must(
-                  qb.keyword().onField("lastModified").matching(minDate)
+                  qb.range().onField("lastModified").above(minDate)
                       .createQuery())
               .must(
                   qb.keyword().onField("terminology").matching(terminology)
@@ -616,7 +647,7 @@ public class HistoryServiceJpa extends ContentServiceJpa implements
       luceneQuery =
           qb.bool()
               .must(
-                  qb.keyword().onField("lastModified").matching(minDate)
+                  qb.range().onField("lastModified").above(minDate)
                       .createQuery())
               .must(
                   qb.keyword().onField("terminology").matching(terminology)
@@ -644,6 +675,57 @@ public class HistoryServiceJpa extends ContentServiceJpa implements
   }
 
   /**
+   * Find modified since date.
+   *
+   * @param <T> the generic type
+   * @param clazz the clazz
+   * @param terminology the terminology
+   * @param date the date
+   * @param pfs the pfs parameter
+   * @param totalCt the total ct
+   * @return the list
+   * @throws Exception the exception
+   */
+  @SuppressWarnings("unchecked")
+  private <T> List<T> findModifiedSinceDateFromQuery(Class<T> clazz,
+    String terminology, Date date, PfsParameter pfs, int[] totalCt)
+    throws Exception {
+
+    // Use latest date of the type
+    Date minDate = date;
+    if (date == null) {
+      javax.persistence.Query query;
+      // if no date provided, get the latest modified concepts
+      query =
+          manager.createQuery(
+              "select max(c.effectiveTime) from " + clazz.getName() + " c"
+                  + " where terminology = :terminology").setParameter(
+              "terminology", terminology);
+      Date tempDate = (Date) query.getSingleResult();
+      minDate = tempDate;
+      Logger.getLogger(ContentServiceJpa.class).debug(
+          "  date is null, use " + minDate);
+    }
+
+    javax.persistence.Query query =
+        manager.createQuery("select count(a.id) from " + clazz.getName() + " a"
+            + " where lastModified >= :date"
+            + " and terminology = :terminology");
+    query.setParameter("date", minDate);
+    query.setParameter("terminology", terminology);
+    long ct = (long) query.getSingleResult();
+    totalCt[0] = (int) ct;
+
+    query =
+        applyPfsToQuery("select a from " + clazz.getName() + " a"
+            + " where lastModified >= :date"
+            + " and terminology = :terminology", pfs);
+    query.setParameter("date", minDate);
+    query.setParameter("terminology", terminology);
+    return query.getResultList();
+  }
+
+  /**
    * Find revisions.
    *
    * @param <T> the generic type
@@ -664,13 +746,16 @@ public class HistoryServiceJpa extends ContentServiceJpa implements
         .forRevisionsOfEntity(clazz, true, false)
 
         // search by id
-        .add(AuditEntity.id().eq(id))
+        .add(AuditEntity.id().eq(id));
+    if (startDate != null) {
+      // search by lower bound on last modified
+      query.add(AuditEntity.property("lastModified").ge(startDate));
+    }
 
-        // search by lower bound on last modified
-        .add(AuditEntity.property("lastModified").ge(startDate))
-
-        // search by upper bound on last modified
-        .add(AuditEntity.property("lastModified").le(endDate));
+    if (endDate != null) {
+      // search by upper bound on last modified
+      query.add(AuditEntity.property("lastModified").le(endDate));
+    }
 
     if (pfs != null && pfs.getSortField() != null) {
       query = query.addOrder(AuditEntity.property(pfs.getSortField()).asc());

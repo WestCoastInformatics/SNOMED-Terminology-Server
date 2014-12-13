@@ -17,29 +17,7 @@
 
   <profiles>
 
-    <!-- QA database structures - run a series of query validations, specify -Drun.config-... -->
-    <!-- TODO: this needs to be implemented -->
-    <profile>
-      <id>QaDatabase</id>
-      <build>
-        <plugins>
-          <plugin>
-            <groupId>org.ihtsdo.otf.term-server</groupId>
-            <artifactId>term-server-admin-mojo</artifactId>
-            <version>${project.version}</version>
-            <executions>
-              <execution>
-                <id>qa-database</id>
-                <phase>package</phase>
-                <goals>
-                  <goal>qa-database</goal>
-                </goals>
-              </execution>
-            </executions>
-          </plugin>
-        </plugins>
-      </build>
-    </profile>
+<!-- TBD -->
 
   </profiles>
 </project>

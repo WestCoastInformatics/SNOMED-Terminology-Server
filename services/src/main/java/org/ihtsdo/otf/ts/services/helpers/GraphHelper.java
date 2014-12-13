@@ -8,6 +8,7 @@ import java.util.Set;
 
 import org.ihtsdo.otf.ts.rf2.Concept;
 import org.ihtsdo.otf.ts.rf2.Relationship;
+import org.ihtsdo.otf.ts.services.ContentService;
 
 /**
  * Helper class for walking graphs of objects.
@@ -16,21 +17,22 @@ public class GraphHelper {
 
   /**
    * Returns the descendant concepts.
-   * 
+   *
+   * @param service the service
    * @param rootConcept the root concept
    * @param typeId the type id
    * @return the descendant concepts
    * @throws Exception the exception
    */
-  public static Set<Concept> getDescendantConcepts(Concept rootConcept,
+  public static Set<Concept> getDescendantConcepts(ContentService service, Concept rootConcept,
     String typeId) throws Exception {
 
     Queue<Concept> conceptQueue = new LinkedList<>();
     Set<Concept> conceptSet = new HashSet<>();
-
+    Concept freshRootConcept = service.getConcept(rootConcept.getId());
     // if non-null result, seed the queue with this concept
-    if (rootConcept != null) {
-      conceptQueue.add(rootConcept);
+    if (freshRootConcept != null) {
+      conceptQueue.add(freshRootConcept);
     }
 
     // while concepts remain to be checked, continue

@@ -11,21 +11,11 @@
   </parent>
 
   <artifactId>term-server-config</artifactId>
+  <packaging>pom</packaging>
   <name>Terminology server configuration project.</name>
   <description>Sample data and template configuration files.</description>
 
-  <!-- Declare Project Dependency Versions -->
-  <dependencies>
-
-    <!-- Model interfaces. -->
-    <dependency>
-      <groupId>org.ihtsdo.otf.term-server</groupId>
-      <artifactId>term-server-model</artifactId>
-    </dependency>
-
-  </dependencies>
-
-
+  <!-- Assemble and attach resources -->
   <build>
     <plugins>
       <!-- Assemble resources into term-server-config*.zip -->
@@ -51,5 +41,11 @@
     </plugins>
   </build>
 
+  <!-- Config-specific modules -->
+  <!-- Create your own version of one of these projects for custom config -->
+  <modules>
+    <module>dev-windows</module>
+    <module>prod</module>
+  </modules>
 
 </project>

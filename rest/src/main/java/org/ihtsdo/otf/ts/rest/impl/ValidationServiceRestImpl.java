@@ -7,11 +7,12 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
 import org.apache.log4j.Logger;
-import org.ihtsdo.otf.ts.helpers.KeyValuePairList;
 import org.ihtsdo.otf.ts.helpers.UserRole;
 import org.ihtsdo.otf.ts.helpers.ValidationResult;
+import org.ihtsdo.otf.ts.jpa.services.ContentServiceJpa;
 import org.ihtsdo.otf.ts.jpa.services.SecurityServiceJpa;
 import org.ihtsdo.otf.ts.jpa.services.ValidationServiceJpa;
+import org.ihtsdo.otf.ts.jpa.services.helper.TerminologyUtility;
 import org.ihtsdo.otf.ts.rest.ValidationServiceRest;
 import org.ihtsdo.otf.ts.rf2.jpa.ConceptJpa;
 import org.ihtsdo.otf.ts.services.SecurityService;
@@ -54,7 +55,7 @@ public class ValidationServiceRestImpl extends RootServiceRestImpl implements
   @Override
   @POST
   @Path("/concept")
-  @ApiOperation(value = "Validate concept", notes = "Performs validation checks on the concept and returns the results", response = KeyValuePairList.class)
+  @ApiOperation(value = "Validate concept", notes = "Performs validation checks on the concept and returns the results", response = ValidationResult.class)
   @Produces({
       MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML
   })
@@ -68,8 +69,15 @@ public class ValidationServiceRestImpl extends RootServiceRestImpl implements
 
     String user = "";
     try {
-      authenticate(securityService, authToken, "validate the concept", UserRole.VIEWER);
+      authenticate(securityService, authToken, "validate the concept",
+          UserRole.VIEWER);
 
+      // Run graph resolution handler
+      new ContentServiceJpa().getGraphResolutionHandler().resolve(
+          concept,
+          TerminologyUtility.getHierarchcialIsaRels(concept.getTerminology(),
+              concept.getTerminologyVersion()));
+      // Validate concept
       ValidationService service = new ValidationServiceJpa();
       ValidationResult result = service.validateConcept(concept);
       service.close();

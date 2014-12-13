@@ -15,7 +15,7 @@
   <description>Conceptual model for RF2 data objects.</description>
 
   <dependencies>
-  
+
     <!-- Logging -->
     <dependency>
       <groupId>org.slf4j</groupId>
@@ -25,6 +25,18 @@
     <dependency>
       <groupId>org.apache.commons</groupId>
       <artifactId>commons-lang3</artifactId>
+    </dependency>
+
+    <!-- Mail -->
+    <dependency>
+      <groupId>com.sun.mail</groupId>
+      <artifactId>javax.mail</artifactId>
+    </dependency>
+
+    <!-- JUnit -->
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
     </dependency>
   </dependencies>
 </project>

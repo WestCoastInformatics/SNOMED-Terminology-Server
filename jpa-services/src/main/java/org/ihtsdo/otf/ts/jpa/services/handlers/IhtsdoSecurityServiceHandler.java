@@ -2,9 +2,9 @@ package org.ihtsdo.otf.ts.jpa.services.handlers;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.UUID;
 import java.util.Map.Entry;
 import java.util.Properties;
+import java.util.UUID;
 
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response.Status.Family;
@@ -26,7 +26,7 @@ import com.sun.jersey.api.representation.Form;
  */
 public class IhtsdoSecurityServiceHandler implements SecurityServiceHandler {
 
-  /**  The properties. */
+  /** The properties. */
   private Properties properties;
 
   /**
@@ -35,10 +35,12 @@ public class IhtsdoSecurityServiceHandler implements SecurityServiceHandler {
   public IhtsdoSecurityServiceHandler() {
     // do nothing
   }
-  
+
   @Override
   @SuppressWarnings("unchecked")
   public User authenticate(String username, String password) throws Exception {
+    Logger.getLogger(this.getClass()).info(
+        "Authenticating " + username + "/*********");
 
     Form form = new Form();
     form.add("username", username);
@@ -52,10 +54,8 @@ public class IhtsdoSecurityServiceHandler implements SecurityServiceHandler {
     String resultString = "";
     if (response.getClientResponseStatus().getFamily() == Family.SUCCESSFUL) {
       resultString = response.getEntity(String.class);
-      Logger.getLogger(this.getClass()).info(resultString);
     } else {
       resultString = response.getEntity(String.class);
-      Logger.getLogger(this.getClass()).info(resultString);
       throw new LocalException("Incorrect user name or password.");
     }
 
@@ -119,8 +119,11 @@ public class IhtsdoSecurityServiceHandler implements SecurityServiceHandler {
     return token;
   }
 
-  /* (non-Javadoc)
-   * @see org.ihtsdo.otf.ts.helpers.Configurable#setProperties(java.util.Properties)
+  /*
+   * (non-Javadoc)
+   * 
+   * @see
+   * org.ihtsdo.otf.ts.helpers.Configurable#setProperties(java.util.Properties)
    */
   @Override
   public void setProperties(Properties properties) {

@@ -7,7 +7,6 @@ import javax.persistence.UniqueConstraint;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.hibernate.envers.Audited;
-import org.hibernate.search.annotations.ContainedIn;
 import org.ihtsdo.otf.ts.rf2.Concept;
 import org.ihtsdo.otf.ts.rf2.TransitiveRelationship;
 
@@ -31,7 +30,6 @@ public class TransitiveRelationshipJpa extends AbstractComponent implements
 
   /** The subtype concept. */
   @ManyToOne(targetEntity = ConceptJpa.class, optional = false)
-  @ContainedIn
   private Concept subTypeConcept;
 
   /** The supertype concept. */

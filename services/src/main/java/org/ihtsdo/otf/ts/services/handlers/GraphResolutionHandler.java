@@ -28,7 +28,7 @@ public interface GraphResolutionHandler extends Configurable {
   
   /**
    * Resolve descriptions.
-   *
+   * 
    * @param description the description
    */
   public void resolve(Description description);

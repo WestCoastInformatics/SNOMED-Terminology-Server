@@ -5,8 +5,8 @@
   </formats>
   <fileSets>
     <fileSet>
-      <directory>src/main/resources</directory>
-      <outputDirectory>/resources</outputDirectory>
+      <directory>src/main/resources/data</directory>
+      <outputDirectory>/</outputDirectory>
       <useDefaultExcludes>true</useDefaultExcludes>
     </fileSet>
   </fileSets>

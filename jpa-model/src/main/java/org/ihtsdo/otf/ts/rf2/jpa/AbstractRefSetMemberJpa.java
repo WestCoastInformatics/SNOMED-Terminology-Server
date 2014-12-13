@@ -19,7 +19,6 @@ public abstract class AbstractRefSetMemberJpa<T extends Component> extends
   /** The ref set id */
   @Column(nullable = false)
   String refSetId;
-
   
   /**
    * Instantiates an empty {@link AbstractRefSetMemberJpa}.

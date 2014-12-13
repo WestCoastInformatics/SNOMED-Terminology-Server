@@ -8,6 +8,7 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -18,6 +19,7 @@ import org.ihtsdo.otf.ts.rf2.Concept;
 import org.ihtsdo.otf.ts.rf2.Relationship;
 import org.ihtsdo.otf.ts.services.MetadataService;
 
+// TODO: Auto-generated Javadoc
 /**
  * Loads and serves configuration.
  */
@@ -25,6 +27,12 @@ public class TerminologyUtility {
 
   /** The isa rels map. */
   public static Map<String, Set<String>> isaRelsMap = new HashMap<>();
+
+  /**  The stated characteristic type value. */
+  public static String statedType;
+
+  /**  The stated inferred type value. */
+  public static String inferredType;
 
   /**
    * Returns the hierarchcial isa rels.
@@ -47,11 +55,38 @@ public class TerminologyUtility {
    * @return <code>true</code> if so, <code>false</code> otherwise
    * @throws Exception the exception
    */
-  public static boolean isHierarchicalIsaRel(Relationship relationship) throws Exception{
+  public static boolean isHierarchicalIsaRelationship(Relationship relationship)
+    throws Exception {
     Set<String> isaRels =
         cacheIsaRels(relationship.getTerminology(),
             relationship.getTerminologyVersion());
     return relationship != null && isaRels.contains(relationship.getTypeId());
+  }
+
+  /**
+   * Indicates whether or not stated relationship is the case.
+   *
+   * @param relationship the relationship
+   * @return <code>true</code> if so, <code>false</code> otherwise
+   * @throws Exception the exception
+   */
+  public static boolean isStatedRelationship(Relationship relationship) throws Exception {
+    cacheCharacteristicTypes(relationship.getTerminology(),
+        relationship.getTerminologyVersion());
+    return relationship != null && statedType.equals(relationship.getCharacteristicTypeId());
+  }
+
+  /**
+   * Indicates whether or not inferred relationship is the case.
+   *
+   * @param relationship the relationship
+   * @return <code>true</code> if so, <code>false</code> otherwise
+   * @throws Exception the exception
+   */
+  public static boolean isInferredRelationship(Relationship relationship) throws Exception {
+    cacheCharacteristicTypes(relationship.getTerminology(),
+        relationship.getTerminologyVersion());
+    return relationship != null && inferredType.equals(relationship.getCharacteristicTypeId());
   }
 
   /**
@@ -74,6 +109,62 @@ public class TerminologyUtility {
   }
 
   /**
+   * Cache characteristic types.
+   *
+   * @param terminology the terminology
+   * @param version the version
+   * @throws Exception the exception
+   */
+  private static void cacheCharacteristicTypes(String terminology,
+    String version) throws Exception {
+    if (statedType == null) {
+      MetadataService metadataService = new MetadataServiceJpa();
+      Map<String, String> map =
+          metadataService.getRelationshipCharacteristicTypes(terminology,
+              version);
+      for (String key : map.keySet()) {
+        if (map.get(key).equals("Stated relationship")) {
+          statedType = key;
+        }
+        if (map.get(key).equals("Inferred relationship")) {
+          inferredType = key;
+        }
+        if (map.get(key).equals("Default characteristic type")) {
+          inferredType = key;
+        }
+      }
+    }
+  }
+
+  /**
+   * Returns the stated type.
+   *
+   * @param terminology the terminology
+   * @param version the version
+   * @return the stated type
+   * @throws Exception the exception
+   */
+  public static String getStatedType(String terminology, String version)
+    throws Exception {
+    cacheCharacteristicTypes(terminology, version);
+    return statedType;
+  }
+
+  /**
+   * Returns the inferred type.
+   *
+   * @param terminology the terminology
+   * @param version the version
+   * @return the inferred type
+   * @throws Exception the exception
+   */
+  public static String getInferredType(String terminology, String version)
+    throws Exception {
+    cacheCharacteristicTypes(terminology, version);
+    return inferredType;
+  }
+
+  /**
    * Returns the active parent concepts.
    *
    * @param concept the concept
@@ -91,6 +182,48 @@ public class TerminologyUtility {
       }
     }
     return results;
+  }
+
+  /**
+   * Returns the active stated relationships.
+   *
+   * @param concept the concept
+   * @return the active stated relationships
+   * @throws Exception the exception
+   */
+  public static Set<Relationship> getActiveStatedRelationships(Concept concept)
+    throws Exception {
+    Set<Relationship> rels = new HashSet<>();
+    for (Relationship rel : concept.getRelationships()) {
+      if (rel.isActive()
+          && rel.getTypeId().equals(
+              getStatedType(concept.getTerminology(),
+                  concept.getTerminologyVersion()))) {
+        rels.add(rel);
+      }
+    }
+    return rels;
+  }
+
+  /**
+   * Returns the active inferred relationships.
+   *
+   * @param concept the concept
+   * @return the active inferred relationships
+   * @throws Exception the exception
+   */
+  public static Set<Relationship> getActiveInferredRelationships(Concept concept)
+    throws Exception {
+    Set<Relationship> rels = new HashSet<>();
+    for (Relationship rel : concept.getRelationships()) {
+      if (rel.isActive()
+          && rel.getTypeId().equals(
+              getInferredType(concept.getTerminology(),
+                  concept.getTerminologyVersion()))) {
+        rels.add(rel);
+      }
+    }
+    return rels;
   }
 
   /**

@@ -1,9 +1,11 @@
 package org.ihtsdo.otf.ts.rest;
 
+import org.ihtsdo.otf.ts.rf2.AssociationReferenceConceptRefSetMember;
 import org.ihtsdo.otf.ts.rf2.Concept;
 import org.ihtsdo.otf.ts.rf2.Description;
 import org.ihtsdo.otf.ts.rf2.LanguageRefSetMember;
 import org.ihtsdo.otf.ts.rf2.Relationship;
+import org.ihtsdo.otf.ts.rf2.jpa.AssociationReferenceConceptRefSetMemberJpa;
 import org.ihtsdo.otf.ts.rf2.jpa.ConceptJpa;
 import org.ihtsdo.otf.ts.rf2.jpa.DescriptionJpa;
 import org.ihtsdo.otf.ts.rf2.jpa.LanguageRefSetMemberJpa;
@@ -22,7 +24,7 @@ public interface ContentChangeServiceRest {
    * @return the concept
    * @throws Exception the exception
    */
-  public Concept addConcept(ConceptJpa concept,  String authToken)
+  public Concept addConcept(ConceptJpa concept, String authToken)
     throws Exception;
 
   /**
@@ -42,31 +44,28 @@ public interface ContentChangeServiceRest {
    * @param authToken the auth token
    * @throws Exception the exception
    */
-  public void removeConcept(Long id, String authToken)
-    throws Exception;
+  public void removeConcept(Long id, String authToken) throws Exception;
 
   /**
    * Adds the description.
    *
    * @param description the description
-   * @param user the user
    * @param authToken the auth token
    * @return the description
    * @throws Exception the exception
    */
-  public Description addDescription(DescriptionJpa description, 
-    String authToken) throws Exception;
+  public Description addDescription(DescriptionJpa description, String authToken)
+    throws Exception;
 
   /**
    * Update description.
    *
    * @param description the description
-   * @param user the user
    * @param authToken the auth token
    * @throws Exception the exception
    */
-  public void updateDescription(DescriptionJpa description, 
-    String authToken) throws Exception;
+  public void updateDescription(DescriptionJpa description, String authToken)
+    throws Exception;
 
   /**
    * Removes the description.
@@ -75,8 +74,7 @@ public interface ContentChangeServiceRest {
    * @param authToken the auth token
    * @throws Exception the exception
    */
-  public void removeDescription(Long id, String authToken)
-    throws Exception;
+  public void removeDescription(Long id, String authToken) throws Exception;
 
   /**
    * Adds the relationship.
@@ -93,12 +91,11 @@ public interface ContentChangeServiceRest {
    * Update relationship.
    *
    * @param relationship the relationship
-   * @param user the user
    * @param authToken the auth token
    * @throws Exception the exception
    */
-  public void updateRelationship(RelationshipJpa relationship, 
-    String authToken) throws Exception;
+  public void updateRelationship(RelationshipJpa relationship, String authToken)
+    throws Exception;
 
   /**
    * Removes the relationship.
@@ -107,8 +104,7 @@ public interface ContentChangeServiceRest {
    * @param authToken the auth token
    * @throws Exception the exception
    */
-  public void removeRelationship(Long id, String authToken)
-    throws Exception;
+  public void removeRelationship(Long id, String authToken) throws Exception;
 
   /**
    * Adds the language refset member.
@@ -119,8 +115,7 @@ public interface ContentChangeServiceRest {
    * @throws Exception the exception
    */
   public LanguageRefSetMember addLanguageRefSetMember(
-    LanguageRefSetMemberJpa member, String authToken)
-    throws Exception;
+    LanguageRefSetMemberJpa member, String authToken) throws Exception;
 
   /**
    * Update language refset member.
@@ -142,6 +137,38 @@ public interface ContentChangeServiceRest {
   public void removeLanguageRefSetMember(Long id, String authToken)
     throws Exception;
 
+
+  /**
+   * Adds the association reference refset member.
+   *
+   * @param member the member
+   * @param authToken the auth token
+   * @return the AssociationReference refset member
+   * @throws Exception the exception
+   */
+  public AssociationReferenceConceptRefSetMember addAssociationConceptReferenceRefSetMember(
+    AssociationReferenceConceptRefSetMemberJpa member, String authToken) throws Exception;
+
+  /**
+   * Update association reference refset member.
+   *
+   * @param member the member
+   * @param authToken the auth token
+   * @throws Exception the exception
+   */
+  public void updateAssociationReferenceConceptRefSetMember(AssociationReferenceConceptRefSetMemberJpa member,
+    String authToken) throws Exception;
+
+  /**
+   * Removes the association reference refset member.
+   *
+   * @param id the id
+   * @param authToken the auth token
+   * @throws Exception the exception
+   */
+  public void removeAssociationReferenceRefSetMember(Long id, String authToken)
+    throws Exception;
+  
   /**
    * Compute transitive closure.
    *
@@ -152,31 +179,28 @@ public interface ContentChangeServiceRest {
    * @throws Exception the exception
    */
   public void computeTransitiveClosure(String terminologyId,
-    String terminology, String version, String authToken)
-    throws Exception;
+    String terminology, String version, String authToken) throws Exception;
 
   /**
    * Clear transitive closure.
    *
-   * @param terminologyId the terminology id
    * @param terminology the terminology
    * @param version the terminology version
    * @param authToken the auth token
    * @throws Exception the exception
    */
-  public void clearTransitiveClosure(String terminologyId, String terminology,
-    String version, String authToken) throws Exception;
+  public void clearTransitiveClosure(String terminology, String version,
+    String authToken) throws Exception;
 
   /**
    * Removes all concepts and connected data structures.
    *
    * @param terminology the terminology
    * @param version the terminology version
-   * @param user the user
    * @param authToken the auth token
    * @throws Exception the exception
    */
-  public void clearConcepts(String terminology, String version, 
-    String authToken) throws Exception;
+  public void clearConcepts(String terminology, String version, String authToken)
+    throws Exception;
 
 }
