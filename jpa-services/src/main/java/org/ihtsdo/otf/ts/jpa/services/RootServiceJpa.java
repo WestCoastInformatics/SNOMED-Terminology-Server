@@ -191,4 +191,16 @@ public class RootServiceJpa implements RootService {
     }
   }
 
+  /*
+   * (non-Javadoc)
+   * 
+   * @see org.ihtsdo.otf.mapping.services.RootService#clear()
+   */
+  @Override
+  public void clear() throws Exception {
+    if (manager.isOpen()) {
+      manager.clear();
+    }
+  }
+
 }

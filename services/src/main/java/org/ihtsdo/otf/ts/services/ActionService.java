@@ -1,6 +1,6 @@
 package org.ihtsdo.otf.ts.services;
 
-import org.ihtsdo.otf.ts.helpers.KeyValuesMap;
+import org.ihtsdo.otf.ts.helpers.KeyValuePairLists;
 import org.ihtsdo.otf.ts.helpers.RelationshipList;
 import org.ihtsdo.otf.ts.helpers.StringList;
 
@@ -78,7 +78,7 @@ public interface ActionService extends RootService {
    * @return the classification equivalents
    * @throws Exception the exception
    */
-  public KeyValuesMap getClassificationEquivalents(String sessionToken) throws Exception;
+  public KeyValuePairLists getClassificationEquivalents(String sessionToken) throws Exception;
 
   /**
    * Gets the old inferred relationships.
