@@ -1,4 +1,4 @@
-package org.ihtsdo.otf.ts.helpers;
+package org.ihtsdo.otf.ts.jpa.algo;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;

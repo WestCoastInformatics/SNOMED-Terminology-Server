@@ -103,7 +103,8 @@ public class ContentChangeServiceRestImpl extends RootServiceRestImpl implements
 
       // Add concept and compute preferred name
       Concept newConcept = contentService.addConcept(concept);
-      contentService.computePreferredName(newConcept);
+      newConcept.setDefaultPreferredName(contentService
+          .getComputedPreferredName(newConcept));
 
       // Commit, close, and return
       contentService.commit();
@@ -158,7 +159,8 @@ public class ContentChangeServiceRestImpl extends RootServiceRestImpl implements
         throw new Exception("Unexpected null concept");
       }
       // compute preferred name and update concept
-      contentService.computePreferredName(concept);
+      concept.setDefaultPreferredName(contentService
+          .getComputedPreferredName(concept));
       concept.setTerminologyId(contentService.getIdentifierAssignmentHandler(
           concept.getTerminology()).getTerminologyId(concept));
       contentService.updateConcept(concept);
@@ -257,7 +259,8 @@ public class ContentChangeServiceRestImpl extends RootServiceRestImpl implements
           concept,
           TerminologyUtility.getHierarchcialIsaRels(concept.getTerminology(),
               concept.getTerminologyVersion()));
-      contentService.computePreferredName(concept);
+      concept.setDefaultPreferredName(contentService
+          .getComputedPreferredName(concept));
       concept.setTerminologyId(contentService.getIdentifierAssignmentHandler(
           newDescription.getTerminology()).getTerminologyId(concept));
       contentService.setLastModifiedFlag(false);
@@ -327,7 +330,8 @@ public class ContentChangeServiceRestImpl extends RootServiceRestImpl implements
           concept,
           TerminologyUtility.getHierarchcialIsaRels(concept.getTerminology(),
               concept.getTerminologyVersion()));
-      contentService.computePreferredName(concept);
+      concept.setDefaultPreferredName(contentService
+          .getComputedPreferredName(concept));
       concept.setTerminologyId(contentService.getIdentifierAssignmentHandler(
           description.getTerminology()).getTerminologyId(concept));
       contentService.updateConcept(concept);
@@ -380,7 +384,8 @@ public class ContentChangeServiceRestImpl extends RootServiceRestImpl implements
           concept,
           TerminologyUtility.getHierarchcialIsaRels(concept.getTerminology(),
               concept.getTerminologyVersion()));
-      contentService.computePreferredName(concept);
+      concept.setDefaultPreferredName(contentService
+          .getComputedPreferredName(concept));
       concept.setTerminologyId(contentService.getIdentifierAssignmentHandler(
           description.getTerminology()).getTerminologyId(concept));
       contentService.updateConcept(concept);
@@ -712,7 +717,7 @@ public class ContentChangeServiceRestImpl extends RootServiceRestImpl implements
   public void computeTransitiveClosure(
     @ApiParam(value = "Root concept terminology id, e.g. 138875005", required = true) @PathParam("rootId") String rootId,
     @ApiParam(value = "Concept terminology, e.g. SNOMEDCT", required = true) @PathParam("terminology") String terminology,
-    @ApiParam(value = "Concept terminology version, e.g. 20140731", required = true) @PathParam("version") String version,
+    @ApiParam(value = "Concept terminology version, e.g. latest", required = true) @PathParam("version") String version,
     @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken)
     throws Exception {
     try {
@@ -748,7 +753,7 @@ public class ContentChangeServiceRestImpl extends RootServiceRestImpl implements
   })
   public void clearTransitiveClosure(
     @ApiParam(value = "Concept terminology, e.g. SNOMEDCT", required = true) @PathParam("terminology") String terminology,
-    @ApiParam(value = "Concept terminology version, e.g. 20140731", required = true) @PathParam("version") String version,
+    @ApiParam(value = "Concept terminology version, e.g. latest", required = true) @PathParam("version") String version,
     @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken)
     throws Exception {
     try {
@@ -779,7 +784,7 @@ public class ContentChangeServiceRestImpl extends RootServiceRestImpl implements
   })
   public void clearConcepts(
     @ApiParam(value = "Concept terminology e.g. SNOMEDCT", required = true) @PathParam("terminology") String terminology,
-    @ApiParam(value = "Concept terminology version, e.g. 20140731", required = true) @PathParam("version") String version,
+    @ApiParam(value = "Concept terminology version, e.g. latest", required = true) @PathParam("version") String version,
     @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken)
     throws Exception {
     try {

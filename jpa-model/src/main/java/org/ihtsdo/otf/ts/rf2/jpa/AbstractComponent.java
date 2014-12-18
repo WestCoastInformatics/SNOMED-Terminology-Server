@@ -9,7 +9,6 @@ import javax.persistence.MappedSuperclass;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.xml.bind.annotation.XmlID;
-import javax.xml.bind.annotation.XmlTransient;
 
 import org.hibernate.envers.Audited;
 import org.hibernate.search.annotations.Analyze;
@@ -102,7 +101,6 @@ public abstract class AbstractComponent implements Component {
    * @see org.ihtsdo.otf.ts.rf2.Component#getId()
    */
   @Override
-  @XmlTransient
   public Long getId() {
     return this.id;
   }
@@ -126,16 +124,6 @@ public abstract class AbstractComponent implements Component {
   @XmlID
   public String getObjectId() {
     return (id == null ? "" : id.toString());
-  }
-
-  /*
-   * (non-Javadoc)
-   * 
-   * @see org.ihtsdo.otf.ts.rf2.Component#setId(java.lang.Long)
-   */
-  @Override
-  public void setObjectId(String id) {
-    this.id = Long.valueOf(id);
   }
 
   /*

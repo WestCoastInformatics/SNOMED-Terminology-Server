@@ -9,7 +9,6 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.xml.bind.annotation.XmlID;
 import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlTransient;
 
 import org.hibernate.envers.Audited;
 import org.hibernate.search.annotations.Analyze;
@@ -96,7 +95,6 @@ public class UserJpa implements User {
    * @return the id
    */
   @Override
-  @XmlTransient
   public Long getId() {
     return id;
   }

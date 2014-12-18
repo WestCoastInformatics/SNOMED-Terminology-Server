@@ -62,7 +62,7 @@ public class HistoryServiceTest {
     info.setPlanned(true);
     info.setPublished(false);
     info.setTerminology("SNOMEDCT");
-    info.setTerminologyVersion("20140731");
+    info.setTerminologyVersion("latest");
     client.addReleaseInfo(info, authToken);
     ReleaseInfo info2 = client.getReleaseInfo("SNOMEDCT", "2014test", authToken);
     Assert.assertEquals(info, info2);

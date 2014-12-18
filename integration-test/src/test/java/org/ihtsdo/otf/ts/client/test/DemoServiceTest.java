@@ -87,10 +87,10 @@ public class DemoServiceTest {
     Logger.getLogger(this.getClass())
         .info("  Read 10001005 - Bacterial sepsis");
     Concept parent =
-        contentClient.getSingleConcept("10001005", "SNOMEDCT", "20140731",
+        contentClient.getSingleConcept("10001005", "SNOMEDCT", "latest",
             authToken);
     Concept concept =
-        contentClient.getSingleConcept("10001005", "SNOMEDCT", "20140731",
+        contentClient.getSingleConcept("10001005", "SNOMEDCT", "latest",
             authToken);
     Logger.getLogger(this.getClass()).info("  Clear id and effectiveTime");
     concept.setWorkflowStatus(null);

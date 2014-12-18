@@ -66,7 +66,7 @@ public class MetadataServiceRestImpl extends RootServiceRestImpl implements
   })
   public KeyValuePairLists getMetadata(
     @ApiParam(value = "Terminology name, e.g. SNOMEDCT", required = true) @PathParam("terminology") String terminology,
-    @ApiParam(value = "Terminology version, e.g. 20140731", required = true) @PathParam("version") String version,
+    @ApiParam(value = "Terminology version, e.g. latest", required = true) @PathParam("version") String version,
     @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken) {
 
     Logger.getLogger(MetadataServiceRestImpl.class).info(

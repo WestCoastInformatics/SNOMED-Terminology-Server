@@ -36,7 +36,7 @@
           <plugin>
             <groupId>org.ihtsdo.otf.term-server</groupId>
             <artifactId>term-server-admin-mojo</artifactId>
-            <version>${project.version}</version>
+            <version>${releaseVersion}</version>
             <executions>
               <execution>
                 <id>load-rf2-full</id>
@@ -46,6 +46,7 @@
                 </goals>
                 <configuration>
                   <terminology>${terminology}</terminology>
+                  <terminologyVersion>${terminology.version}</terminologyVersion>
                   <inputDir>${input.dir}</inputDir>
                 </configuration>
               </execution>
@@ -63,7 +64,7 @@
           <plugin>
             <groupId>org.ihtsdo.otf.term-server</groupId>
             <artifactId>term-server-admin-mojo</artifactId>
-            <version>${project.version}</version>
+            <version>${releaseVersion}</version>
             <executions>
               <execution>
                 <id>load-rf2-snapshot</id>
@@ -91,7 +92,7 @@
           <plugin>
             <groupId>org.ihtsdo.otf.term-server</groupId>
             <artifactId>term-server-admin-mojo</artifactId>
-            <version>${project.version}</version>
+            <version>${releaseVersion}</version>
             <executions>
               <execution>
                 <id>load-rf2-delta</id>
@@ -118,7 +119,7 @@
           <plugin>
             <groupId>org.ihtsdo.otf.term-server</groupId>
             <artifactId>term-server-admin-mojo</artifactId>
-            <version>${project.version}</version>
+            <version>${releaseVersion}</version>
             <executions>
               <execution>
                 <id>load-claml</id>
@@ -145,7 +146,7 @@
           <plugin>
             <groupId>org.ihtsdo.otf.term-server</groupId>
             <artifactId>term-server-admin-mojo</artifactId>
-            <version>${project.version}</version>
+            <version>${releaseVersion}</version>
             <executions>
               <execution>
                 <id>compute-transitive-closure</id>

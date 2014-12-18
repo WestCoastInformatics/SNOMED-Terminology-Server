@@ -12,7 +12,6 @@ import javax.persistence.TemporalType;
 import javax.persistence.UniqueConstraint;
 import javax.xml.bind.annotation.XmlID;
 import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlTransient;
 
 import org.hibernate.envers.Audited;
 
@@ -103,14 +102,6 @@ public class ReleaseInfoJpa implements ReleaseInfo {
     return (id == null ? "" : id.toString());
   }
 
-  /**
-   * Sets the object id.
-   *
-   * @param id the object id
-   */
-  public void setObjectId(String id) {
-    this.id = Long.valueOf(id);
-  }
 
   /*
    * (non-Javadoc)
@@ -118,7 +109,6 @@ public class ReleaseInfoJpa implements ReleaseInfo {
    * @see org.ihtsdo.otf.ts.helpers.ReleaseInfo#getId()
    */
   @Override
-  @XmlTransient
   public Long getId() {
     return id;
   }

@@ -61,9 +61,9 @@ public class ContentServiceTest {
   @Test
   public void test001GetSingleConceptSNOMEDCT() throws Exception {
     Logger.getLogger(this.getClass()).info(
-        "TEST - " + "10013000, SNOMEDCT, 20140731, " + authToken);
+        "TEST - " + "10013000, SNOMEDCT, latest, " + authToken);
     Concept c =
-        client.getSingleConcept("10013000", "SNOMEDCT", "20140731", authToken);
+        client.getSingleConcept("10013000", "SNOMEDCT", "latest", authToken);
     Logger.getLogger(this.getClass()).info(
         ConceptReportHelper.getConceptReport(c));
     getConceptAssertions(c);
@@ -76,7 +76,7 @@ public class ContentServiceTest {
   @Test
   public void test004GetConcept() throws Exception {
     Concept c =
-        client.getSingleConcept("10013000", "SNOMEDCT", "20140731", authToken);
+        client.getSingleConcept("10013000", "SNOMEDCT", "latest", authToken);
     Logger.getLogger(this.getClass()).info("TEST - " + c.getId());
     c = client.getConcept(c.getId(), authToken);
     Logger.getLogger(this.getClass()).info(
@@ -156,9 +156,9 @@ public class ContentServiceTest {
   @Test
   public void test002GetConceptsSNOMEDCT() throws Exception {
     Logger.getLogger(this.getClass()).info(
-        "TEST - " + "10013000, SNOMEDCT, 20140731, " + authToken);
+        "TEST - " + "10013000, SNOMEDCT, latest, " + authToken);
     ConceptList c =
-        client.getConcepts("10013000", "SNOMEDCT", "20140731", authToken);
+        client.getConcepts("10013000", "SNOMEDCT", "latest", authToken);
     assertNotNull(c);
     assertEquals(c.getTotalCount(), 1);
     assertNotEquals(c.getObjects().get(0).getDefaultPreferredName(),
@@ -193,9 +193,9 @@ public class ContentServiceTest {
   @Test
   public void test003FindConceptsSNOMEDCT() throws Exception {
     Logger.getLogger(this.getClass()).info(
-        "TEST - " + "SNOMEDCT, 20140731, sulphur, " + authToken);
+        "TEST - " + "SNOMEDCT, latest, sulphur, " + authToken);
     SearchResultList results =
-        client.findConceptsForQuery("SNOMEDCT", "20140731", "sulphur",
+        client.findConceptsForQuery("SNOMEDCT", "latest", "sulphur",
             new PfsParameterJpa(), authToken);
     for (SearchResult result : results.getObjects())
       Logger.getLogger(this.getClass()).info(result);
@@ -223,9 +223,9 @@ public class ContentServiceTest {
   @Test
   public void test005GetDescriptionSNOMED() throws Exception {
     Logger.getLogger(this.getClass()).info(
-        "TEST - " + "100114019, SNOMEDCT, 20140731, " + authToken);
+        "TEST - " + "100114019, SNOMEDCT, latest, " + authToken);
     Description description =
-        client.getDescription("100114019", "SNOMEDCT", "20140731", authToken);
+        client.getDescription("100114019", "SNOMEDCT", "latest", authToken);
     assertNotNull(description);
     assertEquals(description.getTerm(), "Histidine");
     // TODO: need more tests
@@ -256,9 +256,9 @@ public class ContentServiceTest {
   @Test
   public void test006GetDescriptionSNOMED() throws Exception {
     Logger.getLogger(this.getClass()).info(
-        "TEST - " + "100114019, SNOMEDCT, 20140731, " + authToken);
+        "TEST - " + "100114019, SNOMEDCT, latest, " + authToken);
     Description description =
-        client.getDescription("100114019", "SNOMEDCT", "20140731", authToken);
+        client.getDescription("100114019", "SNOMEDCT", "latest", authToken);
     description = client.getDescription(description.getId(), authToken);
     assertNotNull(description);
     assertEquals(description.getTerm(), "Histidine");
@@ -289,17 +289,17 @@ public class ContentServiceTest {
   @Test
   public void test007GetRelationshipSNOMED() throws Exception {
     Logger.getLogger(this.getClass()).info(
-        "TEST - " + "3244643023, SNOMEDCT, 20140731, " + authToken);
+        "TEST - " + "3244643023, SNOMEDCT, latest, " + authToken);
     Relationship relationship =
-        client.getRelationship("3244643023", "SNOMEDCT", "20140731", authToken);
+        client.getRelationship("3244643023", "SNOMEDCT", "latest", authToken);
     assertNotNull(relationship);
     Concept source =
         client.getSingleConcept(relationship.getSourceConcept()
-            .getTerminologyId(), "SNOMEDCT", "20140731", authToken);
+            .getTerminologyId(), "SNOMEDCT", "latest", authToken);
     assertNotNull(source);
     Concept destination =
         client.getSingleConcept(relationship.getDestinationConcept()
-            .getTerminologyId(), "SNOMEDCT", "20140731", authToken);
+            .getTerminologyId(), "SNOMEDCT", "latest", authToken);
     assertNotNull(destination);
     assertEquals(relationship.getSourceConcept().getTerminologyId(),
         source.getTerminologyId());
@@ -325,18 +325,18 @@ public class ContentServiceTest {
   @Test
   public void test008GetRelationshipSNOMED() throws Exception {
     Logger.getLogger(this.getClass()).info(
-        "TEST - " + "3244643023, SNOMEDCT, 20140731, " + authToken);
+        "TEST - " + "3244643023, SNOMEDCT, latest, " + authToken);
     Relationship relationship =
-        client.getRelationship("3244643023", "SNOMEDCT", "20140731", authToken);
+        client.getRelationship("3244643023", "SNOMEDCT", "latest", authToken);
     relationship = client.getRelationship(relationship.getId(), authToken);
     assertNotNull(relationship);
     Concept source =
         client.getSingleConcept(relationship.getSourceConcept()
-            .getTerminologyId(), "SNOMEDCT", "20140731", authToken);
+            .getTerminologyId(), "SNOMEDCT", "latest", authToken);
     assertNotNull(source);
     Concept destination =
         client.getSingleConcept(relationship.getDestinationConcept()
-            .getTerminologyId(), "SNOMEDCT", "20140731", authToken);
+            .getTerminologyId(), "SNOMEDCT", "latest", authToken);
     assertNotNull(destination);
     assertEquals(relationship.getSourceConcept().getTerminologyId(),
         source.getTerminologyId());
@@ -353,13 +353,13 @@ public class ContentServiceTest {
   @Test
   public void test009GetLanguageRefSetMemberSNOMED() throws Exception {
     Logger.getLogger(this.getClass()).info(
-        "TEST - " + "82671181-8241-5e3e-923e-1d756c6ca9ec, SNOMEDCT, 20140731, " + authToken);
+        "TEST - " + "82671181-8241-5e3e-923e-1d756c6ca9ec, SNOMEDCT, latest, " + authToken);
     LanguageRefSetMember member =
-        client.getLanguageRefSetMember("82671181-8241-5e3e-923e-1d756c6ca9ec", "SNOMEDCT", "20140731", authToken);
+        client.getLanguageRefSetMember("82671181-8241-5e3e-923e-1d756c6ca9ec", "SNOMEDCT", "latest", authToken);
     assertNotNull(member);
     Description description = client.getDescription(
         member.getDescription().getTerminologyId(),
-        "SNOMEDCT", "20140731", authToken);
+        "SNOMEDCT", "latest", authToken);
     assertNotNull(description);
     assertEquals("100114019", description.getTerminologyId());
     assertEquals("900000000000548007", member.getAcceptabilityId());
@@ -382,14 +382,14 @@ public class ContentServiceTest {
   @Test
   public void test010GetLanguageRefSetMemberSNOMED() throws Exception {
     Logger.getLogger(this.getClass()).info(
-        "TEST - " + "82671181-8241-5e3e-923e-1d756c6ca9ec, SNOMEDCT, 20140731, " + authToken);
+        "TEST - " + "82671181-8241-5e3e-923e-1d756c6ca9ec, SNOMEDCT, latest, " + authToken);
     LanguageRefSetMember member =
-        client.getLanguageRefSetMember("82671181-8241-5e3e-923e-1d756c6ca9ec", "SNOMEDCT", "20140731", authToken);
+        client.getLanguageRefSetMember("82671181-8241-5e3e-923e-1d756c6ca9ec", "SNOMEDCT", "latest", authToken);
     member = client.getLanguageRefSetMember(member.getId(), authToken);
     assertNotNull(member);
     Description description = client.getDescription(
         member.getDescription().getTerminologyId(),
-        "SNOMEDCT", "20140731", authToken);
+        "SNOMEDCT", "latest", authToken);
     assertNotNull(description);
     assertEquals("100114019", description.getTerminologyId());
     assertEquals("900000000000548007", member.getAcceptabilityId());

@@ -60,12 +60,12 @@ public class ValidationServiceTest {
   @Test
   public void testNewConceptMinRequirementsCheck() throws Exception {
     Logger.getLogger(this.getClass()).info(
-        "TEST - 10013000, SNOMEDCT, 20140731, " + authToken);
+        "TEST - 10013000, SNOMEDCT, latest, " + authToken);
 
     // Test that this concept is valid
     ConceptJpa concept =
         (ConceptJpa) contentClient.getSingleConcept("10013000", "SNOMEDCT",
-            "20140731", authToken);
+            "latest", authToken);
     Logger.getLogger(this.getClass()).info(
         ConceptReportHelper.getConceptReport(concept));
     ValidationResult result = client.validateConcept(concept, authToken);

@@ -9,7 +9,6 @@ import org.hibernate.envers.Audited;
 import org.ihtsdo.otf.ts.rf2.Description;
 import org.ihtsdo.otf.ts.rf2.DescriptionRefSetMember;
 
-// TODO: Auto-generated Javadoc
 /**
  * Abstract implementation of {@link DescriptionRefSetMember}.
  */

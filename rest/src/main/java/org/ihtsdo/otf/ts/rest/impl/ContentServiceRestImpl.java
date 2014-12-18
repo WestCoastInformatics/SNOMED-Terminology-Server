@@ -69,7 +69,7 @@ public class ContentServiceRestImpl extends RootServiceRestImpl implements
   public ConceptList getConcepts(
     @ApiParam(value = "Concept terminology id, e.g. 102751005", required = true) @PathParam("terminologyId") String terminologyId,
     @ApiParam(value = "Concept terminology name, e.g. SNOMEDCT", required = true) @PathParam("terminology") String terminology,
-    @ApiParam(value = "Concept terminology version, e.g. 20140731", required = true) @PathParam("version") String version,
+    @ApiParam(value = "Concept terminology version, e.g. latest", required = true) @PathParam("version") String version,
     @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken) {
 
     Logger.getLogger(ContentServiceRestImpl.class).info(
@@ -119,7 +119,7 @@ public class ContentServiceRestImpl extends RootServiceRestImpl implements
   public Concept getConceptForUser(
     @ApiParam(value = "Concept terminology id, e.g. 102751005", required = true) @PathParam("terminologyId") String terminologyId,
     @ApiParam(value = "Concept terminology name, e.g. SNOMEDCT", required = true) @PathParam("terminology") String terminology,
-    @ApiParam(value = "Concept terminology version, e.g. 20140731", required = true) @PathParam("version") String version,
+    @ApiParam(value = "Concept terminology version, e.g. latest", required = true) @PathParam("version") String version,
     @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken) {
 
     Logger.getLogger(ContentServiceRestImpl.class).info(
@@ -172,7 +172,7 @@ public class ContentServiceRestImpl extends RootServiceRestImpl implements
   public Concept getSingleConcept(
     @ApiParam(value = "Concept terminology id, e.g. 102751005", required = true) @PathParam("terminologyId") String terminologyId,
     @ApiParam(value = "Concept terminology name, e.g. SNOMEDCT", required = true) @PathParam("terminology") String terminology,
-    @ApiParam(value = "Concept terminology version, e.g. 20140731", required = true) @PathParam("version") String version,
+    @ApiParam(value = "Concept terminology version, e.g. latest", required = true) @PathParam("version") String version,
     @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken) {
 
     Logger.getLogger(ContentServiceRestImpl.class).info(
@@ -258,7 +258,7 @@ public class ContentServiceRestImpl extends RootServiceRestImpl implements
   @ApiOperation(value = "Find concepts matching a search query.", notes = "Gets a list of search results that match the lucene query.", response = String.class)
   public SearchResultList findConceptsForQuery(
     @ApiParam(value = "Terminology, e.g. SNOMEDCT", required = true) @PathParam("terminology") String terminology,
-    @ApiParam(value = "Terminology version, e.g. 20140731", required = true) @PathParam("version") String version,
+    @ApiParam(value = "Terminology version, e.g. latest", required = true) @PathParam("version") String version,
     @ApiParam(value = "Query, e.g. 'sulfur'", required = true) @PathParam("query") String query,
     @ApiParam(value = "PFS Parameter, e.g. '{ \"startIndex\":\"1\", \"maxResults\":\"5\" }'", required = false) PfsParameterJpa pfs,
     @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken) {
@@ -337,7 +337,7 @@ public class ContentServiceRestImpl extends RootServiceRestImpl implements
   public Description getDescription(
     @ApiParam(value = "Description terminology id, e.g. 100114019", required = true) @PathParam("terminologyId") String terminologyId,
     @ApiParam(value = "Description terminology name, e.g. SNOMEDCT", required = true) @PathParam("terminology") String terminology,
-    @ApiParam(value = "Description terminology version, e.g. 20140731", required = true) @PathParam("version") String version,
+    @ApiParam(value = "Description terminology version, e.g. latest", required = true) @PathParam("version") String version,
     @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken) {
 
     Logger.getLogger(ContentServiceRestImpl.class).info(
@@ -419,7 +419,7 @@ public class ContentServiceRestImpl extends RootServiceRestImpl implements
   public Relationship getRelationship(
     @ApiParam(value = "Relationship terminology id, e.g. 100114019", required = true) @PathParam("terminologyId") String terminologyId,
     @ApiParam(value = "Relationship terminology name, e.g. SNOMEDCT", required = true) @PathParam("terminology") String terminology,
-    @ApiParam(value = "Relationship terminology version, e.g. 20140731", required = true) @PathParam("version") String version,
+    @ApiParam(value = "Relationship terminology version, e.g. latest", required = true) @PathParam("version") String version,
     @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken) {
 
     Logger.getLogger(ContentServiceRestImpl.class).info(
@@ -502,7 +502,7 @@ public class ContentServiceRestImpl extends RootServiceRestImpl implements
   public LanguageRefSetMember getLanguageRefSetMember(
     @ApiParam(value = "Language refset member terminology id, e.g. 100114019", required = true) @PathParam("terminologyId") String terminologyId,
     @ApiParam(value = "Language refset member terminology name, e.g. SNOMEDCT", required = true) @PathParam("terminology") String terminology,
-    @ApiParam(value = "Language refset member terminology version, e.g. 20140731", required = true) @PathParam("version") String version,
+    @ApiParam(value = "Language refset member terminology version, e.g. latest", required = true) @PathParam("version") String version,
     @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken) {
 
     Logger.getLogger(ContentServiceRestImpl.class).info(
@@ -588,7 +588,7 @@ public class ContentServiceRestImpl extends RootServiceRestImpl implements
   public AssociationReferenceConceptRefSetMember getAssociationReferenceConceptRefSetMember(
     @ApiParam(value = "AssociationReferenceConcept refset member terminology id, e.g. 100114019", required = true) @PathParam("terminologyId") String terminologyId,
     @ApiParam(value = "AssociationReferenceConcept refset member terminology name, e.g. SNOMEDCT", required = true) @PathParam("terminology") String terminology,
-    @ApiParam(value = "AssociationReferenceConcept refset member terminology version, e.g. 20140731", required = true) @PathParam("version") String version,
+    @ApiParam(value = "AssociationReferenceConcept refset member terminology version, e.g. latest", required = true) @PathParam("version") String version,
     @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken) {
 
     Logger.getLogger(ContentServiceRestImpl.class).info(

@@ -50,6 +50,10 @@
             <additionalClasspathElement>src/main/resources</additionalClasspathElement>
           </additionalClasspathElements>
           <skipTests>${skipTests}</skipTests>
+          <excludes>
+            <!-- Skip demo tests -->
+            <exclude>**/*Demo*.java</exclude>
+          </excludes>
         </configuration>
       </plugin>
     </plugins>

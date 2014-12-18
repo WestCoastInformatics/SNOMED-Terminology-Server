@@ -11,8 +11,8 @@ echo "------------------------------------------------"
 echo "Starting ...`/bin/date`"
 echo "------------------------------------------------"
 echo "SERVER_CODE = $SERVER_CODE"
-echo "SERVER_DATA = $SERVER_CODE"
-echo "SERVER_CONFIG = $SERVER_CODE"
+echo "SERVER_DATA = $SERVER_DATA"
+echo "SERVER_CONFIG = $SERVER_CONFIG"
 
 echo "    Run updatedb with hibernate.hbm2ddl.auto = create ...`/bin/date`"
 cd $SERVER_HOME/admin/updatedb
@@ -34,7 +34,7 @@ endif
 
 echo "    Load SNOMEDCT ...`/bin/date`"
 cd $SERVER_HOME/admin/loader
-mvn -PRF2-snapshot -Drun.config=$SERVER_CONFIG -Dterminology=SNOMEDCT -Dinput.dir=$SERVER_DATA/snomedct-20140731-data install >&! mvn.log
+mvn -PRF2-snapshot -Drun.config=$SERVER_CONFIG -Dterminology=SNOMEDCT -Dinput.dir=$SERVER_DATA/snomedct-20140731-mini install >&! mvn.log
 if ($status != 0) then
     echo "ERROR loading SNOMEDCT"
     cat mvn.log
@@ -64,7 +64,7 @@ endif
 echo "    Start ICD9CM editing ...`/bin/date`"
 cd $SERVER_HOME/admin/release
 mvn -PStartEditingCycle -Drun.config=$SERVER_CONFIG \
-  -Drelease.version=2015 -Dterminology=ICD9CM \
+  -Drelease.version=20150101 -Dterminology=ICD9CM \
   -Dterminology.version=2013 install >&! mvn.log
 if ($status != 0) then
     echo "ERROR starting editing for ICD9CM"

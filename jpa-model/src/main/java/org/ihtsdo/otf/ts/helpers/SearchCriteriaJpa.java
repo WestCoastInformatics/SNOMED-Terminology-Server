@@ -87,15 +87,6 @@ public class SearchCriteriaJpa implements SearchCriteria {
     return (id == null ? "" : id.toString());
   }
 
-  /**
-   * Sets the object id.
-   *
-   * @param id the object id
-   */
-  public void setObjectId(String id) {
-    this.id = Long.valueOf(id);
-  }
-
   /*
    * (non-Javadoc)
    * 

@@ -41,7 +41,7 @@
           <plugin>
             <groupId>org.ihtsdo.otf.term-server</groupId>
             <artifactId>term-server-admin-mojo</artifactId>
-            <version>${project.version}</version>
+            <version>${releaseVersion}</version>
             <executions>
               <execution>
                 <id>updatedb</id>

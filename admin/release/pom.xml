@@ -42,7 +42,7 @@
           <plugin>
             <groupId>org.ihtsdo.otf.term-server</groupId>
             <artifactId>term-server-admin-mojo</artifactId>
-            <version>${project.version}</version>
+            <version>${releaseVersion}</version>
             <executions>
               <execution>
                 <id>start-editing-cycle</id>
@@ -71,7 +71,7 @@
           <plugin>
             <groupId>org.ihtsdo.otf.term-server</groupId>
             <artifactId>term-server-admin-mojo</artifactId>
-            <version>${project.version}</version>
+            <version>${releaseVersion}</version>
             <executions>
               <execution>
                 <id>release-rf2-begin</id>

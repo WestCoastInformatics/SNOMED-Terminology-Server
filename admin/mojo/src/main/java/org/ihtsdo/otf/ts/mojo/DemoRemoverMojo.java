@@ -53,7 +53,7 @@ public class DemoRemoverMojo extends AbstractMojo {
       service.removeConcept(153882L);
       // Remove any children of
 //      Concept concept =
-//          service.getSingleConcept("10001005", "SNOMEDCT", "20140731");
+//          service.getSingleConcept("10001005", "SNOMEDCT", "latest");
 //      for (Relationship rel : concept.getInverseRelationships()) {
 //        if (TerminologyUtility.isHierarchicalIsaRelationship(rel)) {
 //          getLog().info(

@@ -119,7 +119,7 @@ public class EqualsHashcodeTest {
   @SuppressWarnings("static-method")
   private void setComponentFields(Component c) throws ParseException {
     c.setActive(true);
-    c.setEffectiveTime(ConfigUtility.DATE_FORMAT.parse("20140731"));
+    c.setEffectiveTime(ConfigUtility.DATE_FORMAT.parse("20150131"));
     c.setId(1L);
     c.setLabel("label");
     c.setLastModified(new Date());
@@ -127,7 +127,7 @@ public class EqualsHashcodeTest {
     c.setModuleId("moduleId");
     c.setTerminology("SNOMEDCT");
     c.setTerminologyId("12345");
-    c.setTerminologyVersion("20140731");
+    c.setTerminologyVersion("latest");
   }
 
   /**
@@ -141,7 +141,7 @@ public class EqualsHashcodeTest {
     c.setEffectiveTime(ConfigUtility.DATE_FORMAT.parse("20150131"));
     c.setId(2L);
     c.setLabel("label2");
-    c.setLastModified(ConfigUtility.DATE_FORMAT.parse("20140731"));
+    c.setLastModified(ConfigUtility.DATE_FORMAT.parse("20140131"));
     c.setLastModifiedBy("tester2");
   }
 

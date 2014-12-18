@@ -61,7 +61,7 @@ del /Q mvn.log
 
 echo     Start ICD9CM editing ...%date% %time%
 cd %SERVER_CODE%/admin/release
-call mvn -PStartEditingCycle -Drelease.version=2015 -Dterminology=ICD9CM -Dterminology.version=2013 -Drun.config=%SERVER_CONFIG% install 1> mvn.log
+call mvn -PStartEditingCycle -Drelease.version=20150101 -Dterminology=ICD9CM -Dterminology.version=2013 -Drun.config=%SERVER_CONFIG% install 1> mvn.log
 IF %ERRORLEVEL% NEQ 0 (set error=1
 goto trailer)
 del /Q mvn.log

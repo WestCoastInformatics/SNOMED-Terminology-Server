@@ -2993,7 +2993,7 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
    * .otf.ts.rf2.Concept)
    */
   @Override
-  public void computePreferredName(Concept concept) throws Exception {
+  public String getComputedPreferredName(Concept concept) throws Exception {
     try {
       graphResolver.resolve(concept, TerminologyUtility.getHierarchcialIsaRels(
           concept.getTerminology(), concept.getTerminologyVersion()));
@@ -3005,7 +3005,7 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
                 + concept.getTerminology());
       }
       final String pn = handler.computePreferredName(concept.getDescriptions());
-      concept.setDefaultPreferredName(pn);
+      return pn;
     } catch (Exception e) {
       if (tx.isActive()) {
         tx.rollback();

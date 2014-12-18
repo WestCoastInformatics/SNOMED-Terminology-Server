@@ -945,12 +945,13 @@ public interface ContentService extends RootService {
     String terminology) throws Exception;
 
   /**
-   * Computes preferred name.
+   * Returns the computed preferred name.
    *
    * @param concept the concept
+   * @return the computed preferred name
    * @throws Exception the exception
    */
-  public void computePreferredName(Concept concept) throws Exception;
+  public String getComputedPreferredName(Concept concept) throws Exception;
 
   /**
    * Indicates whether or not to assign last modified when changing terminology
