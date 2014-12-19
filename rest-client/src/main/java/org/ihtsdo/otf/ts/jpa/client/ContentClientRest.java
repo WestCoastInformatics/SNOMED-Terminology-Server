@@ -9,6 +9,7 @@ import org.apache.log4j.Logger;
 import org.ihtsdo.otf.ts.helpers.ConceptList;
 import org.ihtsdo.otf.ts.helpers.ConceptListJpa;
 import org.ihtsdo.otf.ts.helpers.ConfigUtility;
+import org.ihtsdo.otf.ts.helpers.PfsParameter;
 import org.ihtsdo.otf.ts.helpers.PfsParameterJpa;
 import org.ihtsdo.otf.ts.helpers.SearchResultList;
 import org.ihtsdo.otf.ts.helpers.SearchResultListJpa;
@@ -207,6 +208,24 @@ public class ContentClientRest implements ContentServiceRest {
             SearchResultListJpa.class);
     return list;
   }
+  
+  @Override
+  public ConceptList getConceptDescendants(String terminologyId,
+    String terminology, String terminologyVersion, PfsParameter pfs,
+    String authToken) {
+    // TODO Auto-generated method stub
+    return null;
+  }
+  
+  @Override
+  public ConceptList getConceptChildren(String terminologyId,
+    String terminology, String terminologyVersion, PfsParameter pfs,
+    String authToken) throws Exception {
+    // TODO Auto-generated method stub
+    return null;
+  }
+
+
 
   /*
    * (non-Javadoc)
@@ -468,4 +487,6 @@ public class ContentClientRest implements ContentServiceRest {
                 AssociationReferenceConceptRefSetMemberJpa.class);
     return member;
   }
+
+
 }

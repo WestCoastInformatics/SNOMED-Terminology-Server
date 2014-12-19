@@ -28,7 +28,6 @@ import org.ihtsdo.otf.ts.helpers.RelationshipList;
 import org.ihtsdo.otf.ts.helpers.StringList;
 import org.ihtsdo.otf.ts.jpa.services.helper.TerminologyUtility;
 import org.ihtsdo.otf.ts.rf2.Concept;
-import org.ihtsdo.otf.ts.rf2.Relationship;
 import org.ihtsdo.otf.ts.services.ActionService;
 import org.ihtsdo.otf.ts.services.handlers.WorkflowListener;
 
@@ -247,7 +246,7 @@ public class ActionServiceJpa extends ContentServiceJpa implements ActionService
     return result;
   }
 
-  
+  // TODO:  This function doesn't actually do anything...?
   private void getRoleDescendants(Integer topObjId, Integer oid, Set<Integer> descendants, String terminology, String version)
       throws Exception {
 
@@ -268,15 +267,25 @@ public class ActionServiceJpa extends ContentServiceJpa implements ActionService
         descendants.add(oid);
       }
       
-      for ( Relationship r : concept.getInverseRelationships()) {
+     // TODO:  Check how this is intended to work, r.getObjectId() will return hibernate ids, not terminology ids
+      for (Concept childConcept : getChildrenConcepts(concept, null).getObjects()) {
+        getRoleDescendants(topObjId, Integer.valueOf(childConcept.getTerminologyId()), descendants, terminology, version);
+      }
+      
+      /*
+       * Old code for resolution of TODO
+       * for ( Relationship r : concept.getInverseRelationships()) {
         if(r.isActive() && TerminologyUtility.isHierarchicalIsaRelationship(r))
           getRoleDescendants(topObjId, Integer.valueOf(r.getObjectId()), descendants, terminology, version);
-      }
+      }*/
     }
 
+  // TODO:  Left int[]/Integer values here, converted to string when getting role descendants
   private int[] getRoles(String terminology, String version, Concept isaConcept) throws Exception {
     Set<Integer> roles = new HashSet<>();
     Integer attributeRoot = Integer.valueOf(I_Constants.ATTRIBUTE_ROOT_CONCEPT);
+    
+    // TODO:  Does this actually perform any function? roles shouldn't be updated by this call
     getRoleDescendants(attributeRoot, attributeRoot, roles, terminology, version); 
     roles.add(Integer.valueOf(isaConcept.getObjectId()));
     int[] result=new int[roles.size()];

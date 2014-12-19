@@ -35,11 +35,11 @@ public class TerminologyUtility {
   public static String inferredType;
 
   /**
-   * Returns the hierarchcial isa rels.
+   * Returns the hierarchical isa rels.
    *
    * @param terminology the terminology
    * @param version the version
-   * @return the hierarchcial isa rels
+   * @return the hierarchical isa rels
    * @throws Exception the exception
    */
   public static Set<String> getHierarchcialIsaRels(String terminology,

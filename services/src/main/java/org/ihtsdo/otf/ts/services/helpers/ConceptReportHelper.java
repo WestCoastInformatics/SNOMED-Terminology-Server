@@ -38,9 +38,11 @@ public class ConceptReportHelper {
     for (Relationship r : c.getRelationships()) {
       builder.append("  REL = " + r).append(nl);
     }
-    for (Relationship r : c.getInverseRelationships()) {
-      builder.append("  inverseRel = " + r).append(nl);
+
+    for (AttributeValueConceptRefSetMember member : c.getAttributeValueRefSetMembers()) {
+      builder.append("  ATT_VALUE = " + member).append(nl);
     }
+
     for (AssociationReferenceConceptRefSetMember member : c
         .getAssociationReferenceRefSetMembers()) {
       builder.append("  AssociationReference = " + member).append(nl);
@@ -48,6 +50,7 @@ public class ConceptReportHelper {
     for (AttributeValueConceptRefSetMember member : c
         .getAttributeValueRefSetMembers()) {
       builder.append("  AttributeValue = " + member).append(nl);
+
     }
     for (ComplexMapRefSetMember member : c.getComplexMapRefSetMembers()) {
       builder.append("  ComplexMap = " + member).append(nl);

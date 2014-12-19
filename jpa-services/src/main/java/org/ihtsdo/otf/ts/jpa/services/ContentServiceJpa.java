@@ -6,9 +6,12 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.Set;
 
 import javax.persistence.NoResultException;
 
@@ -423,6 +426,128 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
     } catch (NoResultException e) {
       return null;
     }
+  }
+
+  @Override
+  public ConceptList getDescendantConcepts(Concept concept, PfsParameter pfs)
+    throws Exception {
+
+    // set of descendants to ensure uniqueness despite multiple paths
+    Set<Concept> descendants = new HashSet<>();
+  
+    // for all children, get the descendants
+    for (Concept childConcept : getChildrenConcepts(concept, null).getObjects()) {
+      
+      // add this child to the descendant list
+      descendants.add(childConcept);
+      
+      // get the descendants of this child
+      descendants.addAll(getDescendantConcepts(childConcept, null).getObjects());
+    }
+    
+    // construct ConceptList for return
+    ConceptList descendantConcepts = new ConceptListJpa();
+    
+    // add the descendants of this concept
+    descendantConcepts.setObjects(new ArrayList<>(descendants));
+    
+    // if paging/filtering/sorting required
+    if (pfs != null) {
+
+      // filtering -- not supported
+      
+      // sorting
+      Comparator<Concept> comparator = getPfsComparator(Concept.class, pfs);
+      if (comparator != null) {
+        descendantConcepts.sortBy(comparator);
+      }
+
+      // paging
+      if (pfs.getStartIndex() != -1 && pfs.getMaxResults() != -1) {
+
+        descendantConcepts.setObjects(descendantConcepts.getObjects().subList(
+            Math.min(pfs.getStartIndex(), descendantConcepts.getTotalCount()),
+            Math.min(pfs.getStartIndex() + pfs.getMaxResults(),
+                descendantConcepts.getTotalCount())));
+      }
+    }
+
+    // return descendants of this concept
+    return descendantConcepts;
+  }
+
+  /*
+   * (non-Javadoc)
+   * 
+   * @see
+   * org.ihtsdo.otf.ts.services.ContentService#findChildrenConcepts(org.ihtsdo
+   * .otf.ts.rf2.Concept, org.ihtsdo.otf.ts.helpers.PfsParameter)
+   */
+  @Override
+  public ConceptList getChildrenConcepts(Concept concept, PfsParameter pfs) throws Exception {
+
+    ConceptList childrenConcepts = new ConceptListJpa();
+
+    // construct query
+    javax.persistence.Query query =
+        manager
+            .createQuery("select super from TransitiveRelationshipJpa tr, ConceptJpa super"
+                + " where super.version = :version "
+                + " and super.terminology = :terminology "
+                + " and super.terminologyId = :terminologyId"
+                + " and tr.superTypeConcept = super");
+    query.setParameter("terminology", concept.getTerminology());
+    query.setParameter("version", concept.getTerminologyVersion());
+    query.setParameter("terminologyId", concept.getTerminologyId());
+
+    // execute query
+    @SuppressWarnings("unchecked")
+    List<Concept> descendantConcepts = query.getResultList();
+
+    // cycle over descendant concepts
+    for (Concept c : descendantConcepts) {
+
+      // cycle over this concepts relationships
+      for (Relationship r : c.getRelationships()) {
+
+        // if active relationship, points to specified concept, and is a
+        // hierarchical relationship
+        if (r.isActive()
+            && r.getSourceConcept().getId().equals(concept.getId())
+            && TerminologyUtility.isHierarchicalIsaRelationship(r)) {
+
+          // add to children list
+          childrenConcepts.addObject(c);
+        }
+      }
+    }
+
+    // set total count
+    childrenConcepts.setTotalCount(childrenConcepts.getCount());
+
+    // if paging/filtering/sorting required
+    if (pfs != null) {
+
+      // filtering -- not supported
+      
+      // sorting
+      Comparator<Concept> comparator = getPfsComparator(Concept.class, pfs);
+      if (comparator != null) {
+        childrenConcepts.sortBy(comparator);
+      }
+
+      // paging
+      if (pfs.getStartIndex() != -1 && pfs.getMaxResults() != -1) {
+
+        childrenConcepts.setObjects(childrenConcepts.getObjects().subList(
+            Math.min(pfs.getStartIndex(), childrenConcepts.getTotalCount()),
+            Math.min(pfs.getStartIndex() + pfs.getMaxResults(),
+                childrenConcepts.getTotalCount())));
+      }
+    }
+
+    return childrenConcepts;
+
   }
 
   /*
@@ -3175,6 +3300,33 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
     }
   }
 
+  // TODO: Currently unused, but may be useful later
+  private String getLuceneFieldQueryTerm(String fieldName, List<String> values) {
+
+    String searchString = "";
+
+    // add field name if not-null
+    if (fieldName != null)
+      searchString = fieldName + ":";
+
+    // open parentheses
+    searchString += "(";
+
+    // cycle over the terminology ids
+    Iterator<String> iterator = values.iterator();
+    while (iterator.hasNext()) {
+      searchString += iterator.next();
+
+      // if more terms, add OR
+      if (iterator.hasNext())
+        searchString += " OR ";
+    }
+    // close parentheses
+    searchString += ")";
+
+    return searchString;
+  }
+
   /*
    * (non-Javadoc)
    * 
@@ -3194,4 +3346,5 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
   public void setLastModifiedFlag(boolean lastModifiedFlag) {
     this.lastModifiedFlag = lastModifiedFlag;
   }
+
 }

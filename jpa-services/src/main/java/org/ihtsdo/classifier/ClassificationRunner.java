@@ -43,11 +43,6 @@ import org.ihtsdo.classifier.model.StringIDConcept;
 import org.ihtsdo.classifier.utils.I_Constants;
 import org.ihtsdo.otf.ts.helpers.ConceptList;
 
-import au.csiro.snorocket.core.IFactory_123;
-import au.csiro.snorocket.snapi.I_Snorocket_123.I_Callback;
-import au.csiro.snorocket.snapi.I_Snorocket_123.I_EquivalentCallback;
-import au.csiro.snorocket.snapi.Snorocket_123;
-
 /**
  * The Class ClassificationRunner. This class is responsible to classify stated
  * relationships from RF2 format using snorocket reasoner. Output results are
