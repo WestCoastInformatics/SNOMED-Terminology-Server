@@ -85,13 +85,23 @@
       <artifactId>jackson-module-jaxb-annotations</artifactId>
     </dependency>
 
+	<dependency>
+		<groupId>au.csiro</groupId>
+		<artifactId>snorocket-snapi</artifactId>
+	</dependency>
+
     <!-- Unit tests -->
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
     </dependency>
 
-
+    <!-- Guava -->
+    <dependency>
+      <groupId>com.google.guava</groupId>
+      <artifactId>guava</artifactId>
+      <version>10.0.1</version>
+    </dependency>
   </dependencies>
 
 </project>

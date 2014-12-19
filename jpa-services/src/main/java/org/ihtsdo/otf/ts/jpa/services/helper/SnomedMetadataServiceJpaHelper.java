@@ -656,8 +656,9 @@ public class SnomedMetadataServiceJpaHelper extends ContentServiceJpa implements
     ContentService contentService = new ContentServiceJpa();
     Concept concept =
         getSingleConcept(terminologyId, terminology, terminologyVersion);
-    ConceptList conceptList = contentService.getDescendantConcepts(concept, typeId, null);
-    
+    ConceptList conceptList =
+        contentService.getDescendantConcepts(concept, typeId, null);
+
     // convert concept list to set
     Set<Concept> concepts = new HashSet<>();
     for (Concept c : conceptList.getObjects()) {

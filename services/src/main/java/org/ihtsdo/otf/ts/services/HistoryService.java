@@ -177,43 +177,48 @@ public interface HistoryService extends ContentService {
   /**
    * Returns the release history.
    *
+   * @param terminology the terminology
    * @return the release history
    * @throws Exception the exception
    */
-  public ReleaseInfoList getReleaseHistory() throws Exception;
+  public ReleaseInfoList getReleaseHistory(String terminology) throws Exception;
 
   /**
    * Returns the current published release info.
    *
+   * @param terminology the terminology
    * @return the current release info
    * @throws Exception the exception
    */
-  public ReleaseInfo getCurrentReleaseInfo() throws Exception;
+  public ReleaseInfo getCurrentReleaseInfo(String terminology) throws Exception;
 
   /**
    * Returns the previous published release info.
    *
+   * @param terminology the terminology
    * @return the previous release info
    * @throws Exception the exception
    */
-  public ReleaseInfo getPreviousReleaseInfo() throws Exception;
+  public ReleaseInfo getPreviousReleaseInfo(String terminology) throws Exception;
 
   /**
    * Gets the planned release info. (planned not published)
    *
+   * @param terminology the terminology
    * @return the planned release info
    * @throws Exception the exception
    */
-  public ReleaseInfo getPlannedReleaseInfo() throws Exception;
+  public ReleaseInfo getPlannedReleaseInfo(String terminology) throws Exception;
 
   /**
    * Returns the release info.
    *
-   * @param release the release
+   * @param terminology the terminology
+   * @param name the name
    * @return the release info
    * @throws Exception the exception
    */
-  public ReleaseInfo getReleaseInfo(String release) throws Exception;
+  public ReleaseInfo getReleaseInfo(String terminology, String name) throws Exception;
 
   /**
    * Adds the release info.

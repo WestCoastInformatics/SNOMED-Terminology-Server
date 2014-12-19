@@ -26,25 +26,7 @@ import org.ihtsdo.otf.ts.services.MetadataService;
 /**
  * Goal which removes a terminology from a database.
  * 
- * <pre>
- *     <plugin>
- *       <groupId>org.ihtsdo.otf.mapping</groupId>
- *       <artifactId>mapping-admin-mojo</artifactId>
- *       <version>${project.version}</version>
- *       <executions>
- *         <execution>
- *           <id>remove-terminology</id>
- *           <phase>package</phase>
- *           <goals>
- *             <goal>remove-terminology</goal>
- *           </goals>
- *           <configuration>
- *             <terminology>SNOMEDCT</terminology>
- *           </configuration>
- *         </execution>
- *       </executions>
- *     </plugin>
- * </pre>
+ * See admin/remover/pom.xml for sample usage
  * 
  * @goal remove-terminology
  * 
@@ -75,7 +57,8 @@ public class TerminologyRemoverMojo extends AbstractMojo {
    */
   @Override
   public void execute() throws MojoFailureException {
-    getLog().info("Starting removing " + terminology + " data ...");
+    getLog().info("Starting removing terminology");
+    getLog().info("  terminology = " + terminology);
     try {
       MetadataService metadataService = new MetadataServiceJpa();
       String terminologyVersion = metadataService.getLatestVersion(terminology);

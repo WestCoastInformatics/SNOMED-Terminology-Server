@@ -50,7 +50,9 @@ public class SnomedUuidHashIdentifierAssignmentHandler implements
   @Override
   public String getTerminologyId(Concept concept) throws Exception {
     // If the concept already has an sctid return it
+    Logger.getLogger(this.getClass()).debug("assigning concept id");
     if (isSctid(concept.getTerminologyId())) {
+      Logger.getLogger(this.getClass()).debug("  SCTID found");
       return concept.getTerminologyId();
     }
     StringBuilder sb = new StringBuilder();
@@ -68,7 +70,7 @@ public class SnomedUuidHashIdentifierAssignmentHandler implements
     }
     sb.append(concept.getDefaultPreferredName());
     String id = TerminologyUtility.getUuid(sb.toString()).toString();
-    concept.setTerminologyId(id);
+    Logger.getLogger(this.getClass()).debug("  setting id " + id);
     return id;
   }
 
@@ -85,10 +87,9 @@ public class SnomedUuidHashIdentifierAssignmentHandler implements
     }
     // otherwise return the uuid - for identity comparisons
     String value =
-        description.getConcept().getId() + description.getTypeId()
+        description.getConcept().getTerminologyId() + description.getTypeId()
             + description.getTerm();
     String id = TerminologyUtility.getUuid(value).toString();
-    description.setTerminologyId(id);
     return id;
   }
 
@@ -106,12 +107,11 @@ public class SnomedUuidHashIdentifierAssignmentHandler implements
     }
     // always return the uuid - for identity comparisons
     String value =
-        relationship.getSourceConcept().getId()
+        relationship.getSourceConcept().getTerminologyId()
             + relationship.getDestinationConcept().getId()
             + relationship.getTypeId() + relationship.getCharacteristicTypeId()
             + (relationship.getRelationshipGroup() == 0 ? "false" : "true");
     String id = TerminologyUtility.getUuid(value).toString();
-    relationship.setTerminologyId(id);
     return id;
   }
 
@@ -127,7 +127,6 @@ public class SnomedUuidHashIdentifierAssignmentHandler implements
         member.getRefSetId() + member.getComponent().getId()
             + member.getTargetComponentId();
     String id = TerminologyUtility.getUuid(value).toString();
-    member.setTerminologyId(id);
     return id;
   }
 
@@ -140,7 +139,6 @@ public class SnomedUuidHashIdentifierAssignmentHandler implements
     AttributeValueRefSetMember<? extends Component> member) throws Exception {
     String value = member.getRefSetId() + member.getComponent().getId();
     String id = TerminologyUtility.getUuid(value).toString();
-    member.setTerminologyId(id);
     return id;
   }
 
@@ -155,7 +153,6 @@ public class SnomedUuidHashIdentifierAssignmentHandler implements
         member.getRefSetId() + member.getComponent().getId()
             + member.getMapRule() + member.getMapTarget();
     String id = TerminologyUtility.getUuid(value).toString();
-    member.setTerminologyId(id);
     return id;
   }
 
@@ -168,7 +165,6 @@ public class SnomedUuidHashIdentifierAssignmentHandler implements
     throws Exception {
     String value = member.getRefSetId() + member.getComponent().getId();
     String id = TerminologyUtility.getUuid(value).toString();
-    member.setTerminologyId(id);
     return id;
   }
 
@@ -177,9 +173,9 @@ public class SnomedUuidHashIdentifierAssignmentHandler implements
    */
   @Override
   public String getTerminologyId(LanguageRefSetMember member) throws Exception {
-    String value = member.getRefSetId() + member.getComponent().getId();
+    String value =
+        member.getRefSetId() + member.getComponent().getTerminologyId();
     String id = TerminologyUtility.getUuid(value).toString();
-    member.setTerminologyId(id);
     return id;
   }
 
@@ -191,7 +187,6 @@ public class SnomedUuidHashIdentifierAssignmentHandler implements
     throws Exception {
     String value = member.getRefSetId() + member.getComponent().getId();
     String id = TerminologyUtility.getUuid(value).toString();
-    member.setTerminologyId(id);
     return id;
   }
 
@@ -207,7 +202,6 @@ public class SnomedUuidHashIdentifierAssignmentHandler implements
             + member.getAttributeDescription() + member.getAttributeType()
             + member.getAttributeType();
     String id = TerminologyUtility.getUuid(value).toString();
-    member.setTerminologyId(id);
     return id;
   }
 
@@ -221,7 +215,6 @@ public class SnomedUuidHashIdentifierAssignmentHandler implements
         member.getRefSetId() + member.getComponent().getId()
             + member.getMapTarget();
     String id = TerminologyUtility.getUuid(value).toString();
-    member.setTerminologyId(id);
     return id;
   }
 
@@ -232,7 +225,6 @@ public class SnomedUuidHashIdentifierAssignmentHandler implements
   public String getTerminologyId(SimpleRefSetMember member) throws Exception {
     String value = member.getRefSetId() + member.getComponent().getId();
     String id = TerminologyUtility.getUuid(value).toString();
-    member.setTerminologyId(id);
     return id;
   }
 
@@ -247,7 +239,6 @@ public class SnomedUuidHashIdentifierAssignmentHandler implements
         relationship.getSuperTypeConcept() + ","
             + relationship.getSubTypeConcept();
     String id = TerminologyUtility.getUuid(value).toString();
-    relationship.setTerminologyId(id);
     return id;
   }
 
@@ -288,8 +279,10 @@ public class SnomedUuidHashIdentifierAssignmentHandler implements
       if (Verhoeff.validateVerhoeff(str)) {
         return true;
       } else {
+        String vc = Verhoeff.generateVerhoeff(str.substring(0,str.length()-2));
         Logger.getLogger(this.getClass()).info(
-            "Unexpected numeric identifier with bad Verhoeff digit " + str);
+            "Unexpected numeric identifier with bad Verhoeff digit " + str + ", should be "  +vc);
+        return true;
       }
     }
     return false;

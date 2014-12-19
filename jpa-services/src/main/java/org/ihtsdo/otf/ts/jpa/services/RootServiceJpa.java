@@ -159,6 +159,26 @@ public class RootServiceJpa implements RootService {
     }
   }
 
+  /* (non-Javadoc)
+   * @see org.ihtsdo.otf.ts.services.RootService#rollback()
+   */
+  @Override
+  public void rollback() throws Exception {
+
+    if (getTransactionPerOperation()) {
+      throw new IllegalStateException(
+          "Error attempting to rollback a transaction when using transactions per operation mode.");
+    } else if (tx != null && !tx.isActive()) {
+      throw new IllegalStateException(
+          "Error attempting to rollback a transaction when there "
+              + "is no active transaction");
+    } else if (tx != null) {
+      tx.rollback();
+      manager.clear();
+    }
+  }
+  
+  
   /*
    * (non-Javadoc)
    * 
@@ -168,6 +188,18 @@ public class RootServiceJpa implements RootService {
   public void close() throws Exception {
     if (manager.isOpen()) {
       manager.close();
+    }
+  }
+
+  /*
+   * (non-Javadoc)
+   * 
+   * @see org.ihtsdo.otf.mapping.services.RootService#clear()
+   */
+  @Override
+  public void clear() throws Exception {
+    if (manager.isOpen()) {
+      manager.clear();
     }
   }
 

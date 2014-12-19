@@ -12,8 +12,6 @@ import org.ihtsdo.otf.ts.services.handlers.WorkflowListener;
 /**
  * A sample validation check for a new concept meeting the minimum qualifying
  * criteria.
- *
- * @see DefaultWorkflowEvent
  */
 public class DefaultWorkflowListener implements WorkflowListener {
 

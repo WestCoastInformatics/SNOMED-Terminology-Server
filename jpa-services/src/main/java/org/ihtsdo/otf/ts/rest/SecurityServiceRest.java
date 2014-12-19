@@ -18,9 +18,10 @@ public interface SecurityServiceRest {
   /**
    * Logout.
    *
+   * @return indicator of successful logout
    * @param authToken the auth token
    * @throws Exception the exception
    */
-  public void logout(String authToken) throws Exception;
+  public boolean logout(String authToken) throws Exception;
 
 }

@@ -15,18 +15,56 @@
   <description>Used for loading terminologies, including SNOMED and ICD9CM.</description>
   <packaging>pom</packaging>
 
+  <properties>
+    <!-- The terminology -->
+    <terminology></terminology>
+    <!-- The terminology version -->
+    <terminology.version>latest</terminology.version>
+    <!-- The input directory for RF2 loads -->
+    <input.dir></input.dir>
+    <!-- The input file for ClaML loads -->
+    <input.file></input.file>
+  </properties>
 
   <profiles>
 
-    <!-- Load SNOMED, specify -Drun.config=... -->
+    <!-- Load RF2 full, specify -Drun.config=... -Dterminology=... -->
     <profile>
-      <id>SNOMEDCT</id>
+      <id>RF2-full</id>
       <build>
         <plugins>
           <plugin>
             <groupId>org.ihtsdo.otf.term-server</groupId>
             <artifactId>term-server-admin-mojo</artifactId>
-            <version>${project.version}</version>
+            <version>${releaseVersion}</version>
+            <executions>
+              <execution>
+                <id>load-rf2-full</id>
+                <phase>package</phase>
+                <goals>
+                  <goal>load-rf2-full</goal>
+                </goals>
+                <configuration>
+                  <terminology>${terminology}</terminology>
+                  <terminologyVersion>${terminology.version}</terminologyVersion>
+                  <inputDir>${input.dir}</inputDir>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+
+    <!-- Load RF2 snapshot, specify -Drun.config=... -Dterminology=... -->
+    <profile>
+      <id>RF2-snapshot</id>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.ihtsdo.otf.term-server</groupId>
+            <artifactId>term-server-admin-mojo</artifactId>
+            <version>${releaseVersion}</version>
             <executions>
               <execution>
                 <id>load-rf2-snapshot</id>
@@ -35,7 +73,9 @@
                   <goal>load-rf2-snapshot</goal>
                 </goals>
                 <configuration>
-                  <terminology>SNOMEDCT</terminology>
+                  <terminology>${terminology}</terminology>
+                  <terminologyVersion>${terminology.version}</terminologyVersion>
+                  <inputDir>${input.dir}</inputDir>
                 </configuration>
               </execution>
             </executions>
@@ -44,15 +84,15 @@
       </build>
     </profile>
 
-    <!-- Load SNOMED delta, specify -Drun.config=... -->
+    <!-- Load RF2 delta, specify -Drun.config=... -Dterminology=... -->
     <profile>
-      <id>SNOMEDCTDelta</id>
+      <id>RF2-delta</id>
       <build>
         <plugins>
           <plugin>
             <groupId>org.ihtsdo.otf.term-server</groupId>
             <artifactId>term-server-admin-mojo</artifactId>
-            <version>${project.version}</version>
+            <version>${releaseVersion}</version>
             <executions>
               <execution>
                 <id>load-rf2-delta</id>
@@ -61,7 +101,8 @@
                   <goal>load-rf2-delta</goal>
                 </goals>
                 <configuration>
-                  <terminology>SNOMEDCT</terminology>
+                  <terminology>${terminology}</terminology>
+                  <inputDir>${input.dir}</inputDir>
                 </configuration>
               </execution>
             </executions>
@@ -70,15 +111,15 @@
       </build>
     </profile>
 
-    <!-- Load ICD10 -->
+    <!-- Load ClaML, specify -Drun.config=... -Dterminology=... -->
     <profile>
-      <id>ICD10</id>
+      <id>ClaML</id>
       <build>
         <plugins>
           <plugin>
             <groupId>org.ihtsdo.otf.term-server</groupId>
             <artifactId>term-server-admin-mojo</artifactId>
-            <version>${project.version}</version>
+            <version>${releaseVersion}</version>
             <executions>
               <execution>
                 <id>load-claml</id>
@@ -87,7 +128,8 @@
                   <goal>load-claml</goal>
                 </goals>
                 <configuration>
-                  <terminology>ICD10</terminology>
+                  <terminology>${terminology}</terminology>
+                  <inputFile>${input.file}</inputFile>
                 </configuration>
               </execution>
             </executions>
@@ -96,50 +138,24 @@
       </build>
     </profile>
 
-    <!-- Load ICD9CM, specify -Drun.config=... -->
+    <!-- Compute transitive closure, specify -Drun.config=... -Dterminology=... -->
     <profile>
-      <id>ICD9CM</id>
+      <id>TransitiveClosure</id>
       <build>
         <plugins>
           <plugin>
             <groupId>org.ihtsdo.otf.term-server</groupId>
             <artifactId>term-server-admin-mojo</artifactId>
-            <version>${project.version}</version>
+            <version>${releaseVersion}</version>
             <executions>
               <execution>
-                <id>load-claml</id>
+                <id>compute-transitive-closure</id>
                 <phase>package</phase>
                 <goals>
-                  <goal>load-claml</goal>
+                  <goal>compute-transitive-closure</goal>
                 </goals>
                 <configuration>
-                  <terminology>ICD9CM</terminology>
-                </configuration>
-              </execution>
-            </executions>
-          </plugin>
-        </plugins>
-      </build>
-    </profile>
-
-    <!-- Load ICPC, specify -Drun.config=... -->
-    <profile>
-      <id>ICPC</id>
-      <build>
-        <plugins>
-          <plugin>
-            <groupId>org.ihtsdo.otf.term-server</groupId>
-            <artifactId>term-server-admin-mojo</artifactId>
-            <version>${project.version}</version>
-            <executions>
-              <execution>
-                <id>load-claml</id>
-                <phase>package</phase>
-                <goals>
-                  <goal>load-claml</goal>
-                </goals>
-                <configuration>
-                  <terminology>ICPC</terminology>
+                  <terminology>${terminology}</terminology>
                 </configuration>
               </execution>
             </executions>

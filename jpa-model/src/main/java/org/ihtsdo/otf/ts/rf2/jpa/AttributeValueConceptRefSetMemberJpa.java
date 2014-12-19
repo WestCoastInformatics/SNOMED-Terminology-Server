@@ -45,7 +45,9 @@ public class AttributeValueConceptRefSetMemberJpa extends
     this.concept = member.getConcept();
   }
 
-  /* (non-Javadoc)
+  /*
+   * (non-Javadoc)
+   * 
    * @see org.ihtsdo.otf.ts.rf2.ConceptRefSetMember#getConcept()
    */
   @XmlTransient
@@ -85,6 +87,9 @@ public class AttributeValueConceptRefSetMemberJpa extends
     return result;
   }
 
+  /* (non-Javadoc)
+   * @see org.ihtsdo.otf.ts.rf2.jpa.AbstractAttributeValueRefSetMemberJpa#equals(java.lang.Object)
+   */
   @Override
   public boolean equals(Object obj) {
     if (this == obj)
@@ -103,6 +108,15 @@ public class AttributeValueConceptRefSetMemberJpa extends
     return true;
   }
 
+  /* (non-Javadoc)
+   * @see org.ihtsdo.otf.ts.rf2.jpa.AbstractComponent#toString()
+   */
+  @Override
+  public String toString() {
+    return super.toString() + ", " + getConceptId() + ", "
+        + getConceptTerminologyId() + ", " + getValueId();
+  }
+
   /**
    * {@inheritDoc}
    */
@@ -112,13 +126,52 @@ public class AttributeValueConceptRefSetMemberJpa extends
 
   }
 
+
   /**
    * Returns the concept id. Used for XML/JSON serialization.
    * 
    * @return the concept id
    */
   @XmlElement
-  public String getConceptId() {
-    return concept != null ? concept.getTerminologyId() : null;
+  private Long getConceptId() {
+    return concept != null ? concept.getId() : null;
+  }
+
+  /**
+   * Sets the concept id.
+   *
+   * @param conceptId the concept id
+   */
+  @SuppressWarnings("unused")
+  private void setConceptId(Long conceptId) {
+    if (concept == null) {
+      concept = new ConceptJpa();
+    }
+    concept.setId(conceptId);
+  }
+
+  /**
+   * Returns the concept terminology id. Used for XML/JSON serialization.
+   * 
+   * @return the concept terminology id
+   */
+  @XmlElement
+  private String getConceptTerminologyId() {
+    return concept != null ? concept.getTerminologyId() : "";
+  }
+
+  /**
+   * Sets the concept terminology id.
+   *
+   * @param conceptId the concept terminology id
+   */
+  @SuppressWarnings("unused")
+  private void setConceptTerminologyId(String conceptId) {
+    if (concept == null) {
+      concept = new ConceptJpa();
+    }
+    concept.setTerminologyId(conceptId);
+    concept.setTerminology(getTerminology());
+    concept.setTerminologyVersion(getTerminologyVersion());
   }
 }

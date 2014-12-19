@@ -18,26 +18,20 @@
   <properties>
     <!-- Indicate objects to index, leave blank for all objects -->
     <!-- Override this property setting on the command line -->
-    <indexedObjects></indexedObjects>
+    <indexed.objects></indexed.objects>
   </properties>
 
   <profiles>
-    <!-- Specify -Drun.config=... -->
+    <!-- Rebuild indexes, specify -Drun.config=... and -Dindexed.objects=... -->
     <profile>
-      <id>run</id>
-      <activation>
-        <property>
-          <name>run.config</name>
-        </property>
-      </activation>
+      <id>Reindex</id>
       <build>
         <plugins>
-
           <!-- Reindex -->
           <plugin>
             <groupId>org.ihtsdo.otf.term-server</groupId>
             <artifactId>term-server-admin-mojo</artifactId>
-            <version>${project.version}</version>
+            <version>${releaseVersion}</version>
             <executions>
               <execution>
                 <id>reindex</id>
@@ -47,7 +41,7 @@
                 </goals>
                 <configuration>
                   <!-- Specify -DindexedObjects=... -->
-                  <indexedObjects>${indexedObjects}</indexedObjects>
+                  <indexedObjects>${indexed.objects}</indexedObjects>
                 </configuration>
               </execution>
             </executions>

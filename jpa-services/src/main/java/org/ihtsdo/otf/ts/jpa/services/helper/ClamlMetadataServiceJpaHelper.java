@@ -543,6 +543,7 @@ public class ClamlMetadataServiceJpaHelper extends ContentServiceJpa implements
     ConceptList conceptList = contentService.getDescendantConcepts(concept, null, null);
     
     // convert concept list to map
+    // TODO:  Original call had isActive() check, but getDescendantConcepts only returns actives
     for (Concept descendant : conceptList.getObjects()) {
       map.put(descendant.getTerminologyId(), descendant.getDefaultPreferredName());
     }

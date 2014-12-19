@@ -15,27 +15,45 @@
   <description>Used for generating RF2 release file data</description>
   <packaging>pom</packaging>
 
+  <!-- Properties -->
+  <properties>
+    <!-- Default release version, specify with -DreleaseVersion= -->
+    <release.version></release.version>
+    <!-- Default terminology, specify with -Dterminology= -->
+    <terminology></terminology>
+    <!-- Default terminology version, specify with -DterminologyVersion= -->
+    <terminology.version></terminology.version>
+    <!-- Default validate flag value -->
+    <validate>false</validate>
+    <!-- Default workflow status values -->
+    <workflow.status.values></workflow.status.values>
+    <!-- Indicates whether ids should be saved -->
+    <save.identifiers>false</save.identifiers>
+  </properties>
+
+  <!-- Build Profiles -->
   <profiles>
 
-    <!-- Release SNOMED, specify -Drun.config=... -->
-    <!-- TODO: this needs to be implemented -->
+    <!-- Start editing cycle -->
     <profile>
-      <id>ReleaseSNOMED</id>
+      <id>StartEditingCycle</id>
       <build>
         <plugins>
           <plugin>
             <groupId>org.ihtsdo.otf.term-server</groupId>
             <artifactId>term-server-admin-mojo</artifactId>
-            <version>${project.version}</version>
+            <version>${releaseVersion}</version>
             <executions>
               <execution>
-                <id>release-rf2-delta</id>
+                <id>start-editing-cycle</id>
                 <phase>package</phase>
                 <goals>
-                  <goal>release-rf2-delta</goal>
+                  <goal>start-editing-cycle</goal>
                 </goals>
                 <configuration>
-                  <terminology>SNOMED</terminology>
+                  <releaseVersion>${release.version}</releaseVersion>
+                  <terminology>${terminology}</terminology>
+                  <terminologyVersion>${terminology.version}</terminologyVersion>
                 </configuration>
               </execution>
             </executions>
@@ -43,6 +61,38 @@
         </plugins>
       </build>
     </profile>
+
+
+    <!-- Begin an RF2 release -->
+    <profile>
+      <id>ReleaseRf2Begin</id>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.ihtsdo.otf.term-server</groupId>
+            <artifactId>term-server-admin-mojo</artifactId>
+            <version>${releaseVersion}</version>
+            <executions>
+              <execution>
+                <id>release-rf2-begin</id>
+                <phase>package</phase>
+                <goals>
+                  <goal>release-rf2-begin</goal>
+                </goals>
+                <configuration>
+                  <releaseVersion>${release.version}</releaseVersion>
+                  <terminology>${terminology}</terminology>
+                  <validate>${validate}</validate>
+                  <workflowStatusValues>${workflow.status.values}</workflowStatusValues>
+                  <saveIdentifiers>${save.identifiers}</saveIdentifiers>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+
 
   </profiles>
 </project>

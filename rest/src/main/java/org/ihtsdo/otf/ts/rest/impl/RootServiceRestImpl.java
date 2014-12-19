@@ -32,6 +32,10 @@ public class RootServiceRestImpl {
     } catch (Exception e1) {
       // do nothing
     }
+    // throw the exception as-is, e.g. for 401 errors
+    if (e instanceof WebApplicationException) {
+      throw (WebApplicationException)e;
+    }
     throw new WebApplicationException(Response
         .status(500)
         .entity(
@@ -69,9 +73,11 @@ public class RootServiceRestImpl {
    * @param securityService the security service
    * @param authToken the auth token
    * @param perform the perform
+   * @param authRole the auth role
    * @throws Exception the exception
    */
-  public static void authenticate(SecurityService securityService, String authToken, String perform, UserRole authRole) throws Exception {
+  public static void authenticate(SecurityService securityService,
+    String authToken, String perform, UserRole authRole) throws Exception {
     // authorize call
     UserRole role = securityService.getApplicationRoleForToken(authToken);
     UserRole cmpRole = authRole;

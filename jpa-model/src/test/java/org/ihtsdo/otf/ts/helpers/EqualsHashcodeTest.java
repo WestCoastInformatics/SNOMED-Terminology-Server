@@ -3,7 +3,6 @@ package org.ihtsdo.otf.ts.helpers;
 import java.text.ParseException;
 import java.util.Date;
 
-import org.apache.commons.lang3.time.FastDateFormat;
 import org.ihtsdo.otf.ts.rf2.Component;
 import org.ihtsdo.otf.ts.rf2.jpa.ConceptJpa;
 import org.ihtsdo.otf.ts.rf2.jpa.DescriptionJpa;
@@ -17,16 +16,12 @@ import org.junit.Test;
  */
 public class EqualsHashcodeTest {
 
-  /** The date format. */
-  private final static FastDateFormat format = FastDateFormat
-      .getInstance("yyyyMMdd");
-
   /**
    * Setup.
    */
   @Before
   public void setup() {
-
+    // do nothing
   }
 
   /**
@@ -121,9 +116,10 @@ public class EqualsHashcodeTest {
    * @param c the new component fields
    * @throws ParseException the parse exception
    */
+  @SuppressWarnings("static-method")
   private void setComponentFields(Component c) throws ParseException {
     c.setActive(true);
-    c.setEffectiveTime(format.parse("20140731"));
+    c.setEffectiveTime(ConfigUtility.DATE_FORMAT.parse("20150131"));
     c.setId(1L);
     c.setLabel("label");
     c.setLastModified(new Date());
@@ -131,7 +127,7 @@ public class EqualsHashcodeTest {
     c.setModuleId("moduleId");
     c.setTerminology("SNOMEDCT");
     c.setTerminologyId("12345");
-    c.setTerminologyVersion("20140731");
+    c.setTerminologyVersion("latest");
   }
 
   /**
@@ -140,11 +136,12 @@ public class EqualsHashcodeTest {
    * @param c the new component fields
    * @throws ParseException the parse exception
    */
+  @SuppressWarnings("static-method")
   private void changeComponentFieldsSame(Component c) throws ParseException {
-    c.setEffectiveTime(format.parse("20150131"));
+    c.setEffectiveTime(ConfigUtility.DATE_FORMAT.parse("20150131"));
     c.setId(2L);
     c.setLabel("label2");
-    c.setLastModified(format.parse("20140731"));
+    c.setLastModified(ConfigUtility.DATE_FORMAT.parse("20140131"));
     c.setLastModifiedBy("tester2");
   }
 
@@ -153,7 +150,7 @@ public class EqualsHashcodeTest {
    */
   @After
   public void teardown() {
-
+    // do nothing
   }
 
 }

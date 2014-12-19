@@ -18,7 +18,7 @@
     <!-- Set default maven settings -->
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-    <skipTests>true</skipTests>
+    <releaseVersion>${project.version}</releaseVersion>
 
     <!-- Set maven plugin versions -->
     <maven.compiler.plugin.version>3.0</maven.compiler.plugin.version>
@@ -50,6 +50,7 @@
     <junit.version>4.11</junit.version>
     <cglib.version>2.2.2</cglib.version>
     <javax.mail.version>1.5.2</javax.mail.version>
+    <snorocket.snapi.version>1.1.20</snorocket.snapi.version>
   </properties>
 
   <dependencyManagement>
@@ -58,27 +59,27 @@
       <dependency>
         <groupId>org.ihtsdo.otf.term-server</groupId>
         <artifactId>term-server-model</artifactId>
-        <version>${project.version}</version>
+        <version>${releaseVersion}</version>
       </dependency>
       <dependency>
         <groupId>org.ihtsdo.otf.term-server</groupId>
         <artifactId>term-server-jpa-model</artifactId>
-        <version>${project.version}</version>
+        <version>${releaseVersion}</version>
       </dependency>
       <dependency>
         <groupId>org.ihtsdo.otf.term-server</groupId>
         <artifactId>term-server-services</artifactId>
-        <version>${project.version}</version>
+        <version>${releaseVersion}</version>
       </dependency>
       <dependency>
         <groupId>org.ihtsdo.otf.term-server</groupId>
         <artifactId>term-server-jpa-services</artifactId>
-        <version>${project.version}</version>
+        <version>${releaseVersion}</version>
       </dependency>
       <dependency>
         <groupId>org.ihtsdo.otf.term-server</groupId>
         <artifactId>term-server-rest-client</artifactId>
-        <version>${project.version}</version>
+        <version>${releaseVersion}</version>
       </dependency>
 
       <!-- JPA dependencies -->
@@ -95,6 +96,11 @@
       <dependency>
         <groupId>org.hibernate</groupId>
         <artifactId>hibernate-core</artifactId>
+        <version>${hibernate.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.hibernate</groupId>
+        <artifactId>hibernate-c3p0</artifactId>
         <version>${hibernate.version}</version>
       </dependency>
       <dependency>
@@ -230,6 +236,18 @@
         <artifactId>commons-lang3</artifactId>
         <version>${apache.commons.lang3.version}</version>
       </dependency>
+      <dependency>
+        <groupId>com.google.guava</groupId>
+        <artifactId>guava</artifactId>
+        <version>10.0.1</version>
+      </dependency>
+      
+      <!-- Classifier -->
+      <dependency>
+          <groupId>au.csiro</groupId>
+          <artifactId>snorocket-snapi</artifactId>
+          <version>${snorocket.snapi.version}</version>
+      </dependency>
 
     </dependencies>
   </dependencyManagement>
@@ -242,6 +260,18 @@
       <plugins>
 
         <!-- Maven plugins -->
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-plugin-plugin</artifactId>
+          <version>3.3</version>
+        </plugin>
+
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-dependency-plugin</artifactId>
+          <version>2.9</version>
+        </plugin>
+
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-antrun-plugin</artifactId>
@@ -269,7 +299,7 @@
           <artifactId>maven-surefire-plugin</artifactId>
           <version>${maven.surefire.plugin.version}</version>
           <configuration>
-            <skipTests>${skipTests}</skipTests>
+            <skipTests>false</skipTests>
           </configuration>
         </plugin>
 

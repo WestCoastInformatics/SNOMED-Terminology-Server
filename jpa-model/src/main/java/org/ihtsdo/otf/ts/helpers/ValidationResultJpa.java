@@ -3,6 +3,7 @@ package org.ihtsdo.otf.ts.helpers;
 import java.util.HashSet;
 import java.util.Set;
 
+import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
 /**
@@ -32,6 +33,7 @@ public class ValidationResultJpa implements ValidationResult {
    * 
    * @see org.ihtsdo.otf.mapping.helpers.ValidationResult#getErrors()
    */
+  @XmlElement(type = String.class, name = "error")
   @Override
   public Set<String> getErrors() {
     return errors;
@@ -68,7 +70,7 @@ public class ValidationResultJpa implements ValidationResult {
   @Override
   public void addErrors(Set<String> errorSet) {
     if (this.errors != null) {
-      this.errors.addAll(errors);
+      this.errors.addAll(errorSet);
     } else {
       this.errors = new HashSet<>(errorSet);
     }
@@ -91,6 +93,7 @@ public class ValidationResultJpa implements ValidationResult {
    * 
    * @see org.ihtsdo.otf.mapping.helpers.ValidationResult#getWarnings()
    */
+  @XmlElement(type = String.class, name = "warning")
   @Override
   public Set<String> getWarnings() {
     return warnings;
@@ -145,12 +148,29 @@ public class ValidationResultJpa implements ValidationResult {
     this.warnings.remove(warning);
   }
 
+  /*
+   * (non-Javadoc)
+   * 
+   * @see
+   * org.ihtsdo.otf.ts.helpers.ValidationResult#merge(org.ihtsdo.otf.ts.helpers
+   * .ValidationResult)
+   */
   @Override
   public void merge(ValidationResult validationResult) {
 
     this.errors.addAll(validationResult.getErrors());
     this.warnings.addAll(validationResult.getWarnings());
 
+  }
+
+  /*
+   * (non-Javadoc)
+   * 
+   * @see java.lang.Object#toString()
+   */
+  @Override
+  public String toString() {
+    return "ERRORS: " + errors + ", WARNINGS: " + warnings;
   }
 
 }

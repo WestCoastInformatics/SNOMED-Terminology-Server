@@ -191,20 +191,48 @@ public class RelationshipJpa extends AbstractComponent implements Relationship {
    * @return the source concept id
    */
   @XmlElement
-  private String getSourceConceptId() {
-    return sourceConcept.getTerminologyId();
+  private Long getSourceId() {
+    return (sourceConcept != null) ? sourceConcept.getId() : null;
   }
 
   /**
-   * Sets the source concept id.
+   * Sets the source concept  id.
    *
-   * @param sourceConceptId the source concept id
+   * @param sourceId the source concept id
    */
   @SuppressWarnings("unused")
-  private void setSourceConceptId(String sourceConceptId) {
-    // do nothing - for JAXB
+  private void setSourceId(Long sourceId) {
+    if (sourceConcept == null) {
+      sourceConcept = new ConceptJpa();
+    }
+    sourceConcept.setId(sourceId);
   }
 
+  /**
+   * For serialization .
+   *
+   * @return the source concept terminology id
+   */
+  @XmlElement
+  private String getSourceTerminologyId() {
+    return (sourceConcept != null) ? sourceConcept.getTerminologyId() : "";
+  }
+
+  /**
+   * Sets the source concept terminology id.
+   *
+   * @param sourceTerminologyId the source concept id
+   */
+  @SuppressWarnings("unused")
+  private void setSourceTerminologyId(String sourceTerminologyId) {
+    if (sourceConcept == null) {
+      sourceConcept = new ConceptJpa();
+    }
+    sourceConcept.setTerminologyId(sourceTerminologyId);
+    sourceConcept.setTerminology(getTerminology());
+    sourceConcept.setTerminologyVersion(getTerminologyVersion());
+  }
+  
   /**
    * Returns the destination concept.
    * 
@@ -232,8 +260,33 @@ public class RelationshipJpa extends AbstractComponent implements Relationship {
    * @return the destination concept id
    */
   @XmlElement
-  private String getDestinationConceptId() {
-    return destinationConcept.getTerminologyId();
+  private Long getDestinationId() {
+    return (destinationConcept != null) ? destinationConcept.getId()
+        : null;
+  }
+
+  /**
+   * Sets the destination concept id.
+   *
+   * @param destinationId the destination id
+   */
+  @SuppressWarnings("unused")
+  private void setDestinationId(Long destinationId) {
+    if (destinationConcept == null) {
+      destinationConcept = new ConceptJpa();
+    }
+    destinationConcept.setId(destinationId);
+  }
+
+  /**
+   * For serialization.
+   *
+   * @return the destination concept terminology id
+   */
+  @XmlElement
+  private String getDestinationTerminologyId() {
+    return (destinationConcept != null) ? destinationConcept.getTerminologyId()
+        : "";
   }
 
   /**
@@ -242,7 +295,7 @@ public class RelationshipJpa extends AbstractComponent implements Relationship {
    * @param destinationConceptId the destination concept id
    */
   @SuppressWarnings("unused")
-  private void setDestinationConceptId(String destinationConceptId) {
+  private void setDestinationTerminologyId(String destinationConceptId) {
     if (destinationConcept == null) {
       destinationConcept = new ConceptJpa();
     }
@@ -257,7 +310,7 @@ public class RelationshipJpa extends AbstractComponent implements Relationship {
    * @return the destination concept preferred name
    */
   @XmlElement
-  private String getDestinationConceptPreferredName() {
+  private String getDestinationPreferredName() {
     return destinationConcept != null ? destinationConcept
         .getDefaultPreferredName() : null;
   }
@@ -268,7 +321,7 @@ public class RelationshipJpa extends AbstractComponent implements Relationship {
    * @param name the destination concept preferred name
    */
   @SuppressWarnings("unused")
-  private void setDestinationConceptPreferredName(String name) {
+  private void setDestinationPreferredName(String name) {
     // do nothing - here for JAXB
   }
 
@@ -299,12 +352,11 @@ public class RelationshipJpa extends AbstractComponent implements Relationship {
    */
   @Override
   public String toString() {
-    return super.toString()
-        + (this.getSourceConcept() == null ? null : this.getSourceConcept()
-            .getId())
-        + ","
-        + (this.getDestinationConcept() == null ? null : this
-            .getDestinationConcept().getId()) + ","
+    return super.toString() + ","
+        + getSourceId() + ","
+        + getSourceTerminologyId() + ","
+        + getDestinationId() + ","
+        + getDestinationTerminologyId() + ","
         + this.getRelationshipGroup() + "," + this.getTypeId() + ","
         + this.getCharacteristicTypeId() + "," + this.getModifierId(); // end of
                                                                        // relationship

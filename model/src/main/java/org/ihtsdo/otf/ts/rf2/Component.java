@@ -29,14 +29,6 @@ public interface Component {
   public String getObjectId();
 
   /**
-   * Sets the id as a string. This method is used for handling the identifier
-   * for XML transport.
-   * 
-   * @param id the id
-   */
-  public void setObjectId(String id);
-
-  /**
    * Returns the terminology.
    * 
    * @return the terminology

@@ -11,37 +11,7 @@ import org.ihtsdo.otf.ts.services.ContentService;
 /**
  * Loads unpublished complex maps.
  * 
- * Sample execution:
- * 
- * <pre>
- *     <profile>
- *       <id>Release</id>
- *       <build>
- *         <plugins>
- *           <plugin>
- *             <groupId>org.ihtsdo.otf.mapping</groupId>
- *             <artifactId>mapping-admin-mojo</artifactId>
- *             <version>${project.version}</version>
- *             <executions>
- *               <execution>
- *                 <id>release</id>
- *                 <phase>package</phase>
- *                 <goals>
- *                   <goal>release</goal>
- *                 </goals>
- *                 <configuration>
- *                   <refSetId>${refset.id}</refSetId>
- *                   <outputDirName>$(output.dir)</outputDirName>
- *                   <effectiveTime>${time}</effectiveTime>
- *                   <moduleId>${module.id}</moduleId>
- *                 </configuration>
- *               </execution>
- *             </executions>
- *           </plugin>
- *         </plugins>
- *       </build>
- *     </profile>
- * </pre>
+ * See admin/release/pom.xml for sample usage.
  * 
  * @goal release
  * @phase package

@@ -15,18 +15,25 @@
   <description>Used to remove loaded terminologies from the database.</description>
   <packaging>pom</packaging>
 
+  <!-- Mojo properties -->
+  <properties>
+    <!-- The terminology -->
+    <terminology></terminology>
+    <!-- the release info names to remove -->
+    <release.info.names></release.info.names>
+  </properties>
 
   <profiles>
 
-    <!-- Remove SNOMED, specify -Drun.config=... -->
+    <!-- Remove terminology, specify -Drun.config=... -Dterminology=... -->
     <profile>
-      <id>SNOMEDCT</id>
+      <id>Terminology</id>
       <build>
         <plugins>
           <plugin>
             <groupId>org.ihtsdo.otf.term-server</groupId>
             <artifactId>term-server-admin-mojo</artifactId>
-            <version>${project.version}</version>
+            <version>${releaseVersion}</version>
             <executions>
               <execution>
                 <id>remove-terminology</id>
@@ -35,7 +42,7 @@
                   <goal>remove-terminology</goal>
                 </goals>
                 <configuration>
-                  <terminology>SNOMEDCT</terminology>
+                  <terminology>${terminology}</terminology>
                 </configuration>
               </execution>
             </executions>
@@ -44,24 +51,27 @@
       </build>
     </profile>
 
-    <!-- Remove ICD10, specify -Drun.config=... -->
+    <!-- Remove release info, specify -Drun.config=... -Dterminology=... -->
     <profile>
-      <id>ICD10</id>
+      <id>ReleaseInfo</id>
       <build>
         <plugins>
           <plugin>
             <groupId>org.ihtsdo.otf.term-server</groupId>
             <artifactId>term-server-admin-mojo</artifactId>
-            <version>${project.version}</version>
+            <version>${releaseVersion}</version>
             <executions>
               <execution>
-                <id>remove-terminology</id>
+                <id>remove-release-info</id>
                 <phase>package</phase>
                 <goals>
-                  <goal>remove-terminology</goal>
+                  <goal>remove-release-info</goal>
                 </goals>
                 <configuration>
-                  <terminology>ICD10</terminology>
+                  <!-- the terminology -->
+                  <terminology>${terminology}</terminology>
+                  <!-- Leave blank to remove all -->
+                  <releaseInfoNames>${release.info.names}</releaseInfoNames>
                 </configuration>
               </execution>
             </executions>
@@ -70,51 +80,22 @@
       </build>
     </profile>
 
-    <!-- Remove ICD9CM, specify -Drun.config=... -->
+    <!-- Demo data remover, specify -Drun.config=... -->
     <profile>
-      <id>ICD9CM</id>
+      <id>Demo</id>
       <build>
         <plugins>
           <plugin>
             <groupId>org.ihtsdo.otf.term-server</groupId>
             <artifactId>term-server-admin-mojo</artifactId>
-            <version>${project.version}</version>
+            <version>${releaseVersion}</version>
             <executions>
               <execution>
-                <id>remove-terminology</id>
+                <id>remove-demo</id>
                 <phase>package</phase>
                 <goals>
-                  <goal>remove-terminology</goal>
+                  <goal>remove-demo</goal>
                 </goals>
-                <configuration>
-                  <terminology>ICD9CM</terminology>
-                </configuration>
-              </execution>
-            </executions>
-          </plugin>
-        </plugins>
-      </build>
-    </profile>
-
-    <!-- Remove ICPC, specify -Drun.config=... -->
-    <profile>
-      <id>ICPC</id>
-      <build>
-        <plugins>
-          <plugin>
-            <groupId>org.ihtsdo.otf.term-server</groupId>
-            <artifactId>term-server-admin-mojo</artifactId>
-            <version>${project.version}</version>
-            <executions>
-              <execution>
-                <id>remove-terminology</id>
-                <phase>package</phase>
-                <goals>
-                  <goal>remove-terminology</goal>
-                </goals>
-                <configuration>
-                  <terminology>ICPC</terminology>
-                </configuration>
               </execution>
             </executions>
           </plugin>

@@ -1,5 +1,6 @@
 package org.ihtsdo.otf.ts.jpa.services;
 
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -24,10 +25,12 @@ public class SecurityServiceJpa extends RootServiceJpa implements
     SecurityService {
 
   /** The token username . */
-  private static Map<String, String> tokenUsernameMap = new HashMap<>();
+  private static Map<String, String> tokenUsernameMap = Collections
+      .synchronizedMap(new HashMap<String, String>());
 
   /** The token login time . */
-  private static Map<String, Date> tokenTimeoutMap = new HashMap<>();
+  private static Map<String, Date> tokenTimeoutMap = Collections
+      .synchronizedMap(new HashMap<String, Date>());
 
   /** The handler. */
   private static SecurityServiceHandler handler = null;
@@ -142,8 +145,6 @@ public class SecurityServiceJpa extends RootServiceJpa implements
     // Check auth token against the username map
     if (tokenUsernameMap.containsKey(parsedToken)) {
       String username = tokenUsernameMap.get(parsedToken);
-      Logger.getLogger(this.getClass()).info(
-          "User = " + username + " Token = " + parsedToken);
 
       // Validate that the user has not timed out.
       if (handler.timeoutUser(username)) {

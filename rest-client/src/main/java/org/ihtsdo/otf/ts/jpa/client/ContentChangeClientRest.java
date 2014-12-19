@@ -8,10 +8,12 @@ import javax.ws.rs.core.Response.Status.Family;
 import org.apache.log4j.Logger;
 import org.ihtsdo.otf.ts.helpers.ConfigUtility;
 import org.ihtsdo.otf.ts.rest.ContentChangeServiceRest;
+import org.ihtsdo.otf.ts.rf2.AssociationReferenceConceptRefSetMember;
 import org.ihtsdo.otf.ts.rf2.Concept;
 import org.ihtsdo.otf.ts.rf2.Description;
 import org.ihtsdo.otf.ts.rf2.LanguageRefSetMember;
 import org.ihtsdo.otf.ts.rf2.Relationship;
+import org.ihtsdo.otf.ts.rf2.jpa.AssociationReferenceConceptRefSetMemberJpa;
 import org.ihtsdo.otf.ts.rf2.jpa.ConceptJpa;
 import org.ihtsdo.otf.ts.rf2.jpa.DescriptionJpa;
 import org.ihtsdo.otf.ts.rf2.jpa.LanguageRefSetMemberJpa;
@@ -55,6 +57,7 @@ public class ContentChangeClientRest implements ContentChangeServiceRest {
 
     String conceptString =
         (concept != null ? ConfigUtility.getStringForGraph(concept) : null);
+    Logger.getLogger(this.getClass()).info(conceptString);
     ClientResponse response =
         resource.accept(MediaType.APPLICATION_XML)
             .header("Authorization", authToken)
@@ -99,11 +102,10 @@ public class ContentChangeClientRest implements ContentChangeServiceRest {
             .header("Content-type", MediaType.APPLICATION_XML)
             .post(ClientResponse.class, conceptString);
 
-    String resultString = response.getEntity(String.class);
     if (response.getClientResponseStatus().getFamily() == Family.SUCCESSFUL) {
-      Logger.getLogger(this.getClass()).debug(resultString);
+      // do nothing
     } else {
-      throw new Exception(resultString);
+      throw new Exception("Unexpected status " + response.getStatus());
     }
 
   }
@@ -125,11 +127,10 @@ public class ContentChangeClientRest implements ContentChangeServiceRest {
         resource.accept(MediaType.APPLICATION_XML)
             .header("Authorization", authToken).delete(ClientResponse.class);
 
-    String resultString = response.getEntity(String.class);
     if (response.getClientResponseStatus().getFamily() == Family.SUCCESSFUL) {
-      Logger.getLogger(this.getClass()).debug(resultString);
+      // do nothing
     } else {
-      throw new Exception(resultString);
+      throw new Exception("Unexpected status " + response.getStatus());
     }
 
   }
@@ -197,11 +198,10 @@ public class ContentChangeClientRest implements ContentChangeServiceRest {
             .header("Content-type", MediaType.APPLICATION_XML)
             .post(ClientResponse.class, descriptionString);
 
-    String resultString = response.getEntity(String.class);
     if (response.getClientResponseStatus().getFamily() == Family.SUCCESSFUL) {
-      Logger.getLogger(this.getClass()).debug(resultString);
+      // do nothing
     } else {
-      throw new Exception(resultString);
+      throw new Exception("Unexpected status " + response.getStatus());
     }
 
   }
@@ -223,11 +223,10 @@ public class ContentChangeClientRest implements ContentChangeServiceRest {
         resource.accept(MediaType.APPLICATION_XML)
             .header("Authorization", authToken).delete(ClientResponse.class);
 
-    String resultString = response.getEntity(String.class);
     if (response.getClientResponseStatus().getFamily() == Family.SUCCESSFUL) {
-      Logger.getLogger(this.getClass()).debug(resultString);
+      // do nothing
     } else {
-      throw new Exception(resultString);
+      throw new Exception("Unexpected status " + response.getStatus());
     }
 
   }
@@ -295,11 +294,10 @@ public class ContentChangeClientRest implements ContentChangeServiceRest {
             .header("Content-type", MediaType.APPLICATION_XML)
             .post(ClientResponse.class, relationshipString);
 
-    String resultString = response.getEntity(String.class);
     if (response.getClientResponseStatus().getFamily() == Family.SUCCESSFUL) {
-      Logger.getLogger(this.getClass()).debug(resultString);
+      // do nothing
     } else {
-      throw new Exception(resultString);
+      throw new Exception("Unexpected status " + response.getStatus());
     }
 
   }
@@ -321,11 +319,10 @@ public class ContentChangeClientRest implements ContentChangeServiceRest {
         resource.accept(MediaType.APPLICATION_XML)
             .header("Authorization", authToken).delete(ClientResponse.class);
 
-    String resultString = response.getEntity(String.class);
     if (response.getClientResponseStatus().getFamily() == Family.SUCCESSFUL) {
-      Logger.getLogger(this.getClass()).debug(resultString);
+      // do nothing
     } else {
-      throw new Exception(resultString);
+      throw new Exception("Unexpected status " + response.getStatus());
     }
 
   }
@@ -390,11 +387,10 @@ public class ContentChangeClientRest implements ContentChangeServiceRest {
             .header("Content-type", MediaType.APPLICATION_XML)
             .post(ClientResponse.class, languageRefSetMemberString);
 
-    String resultString = response.getEntity(String.class);
     if (response.getClientResponseStatus().getFamily() == Family.SUCCESSFUL) {
-      Logger.getLogger(this.getClass()).debug(resultString);
+      // do nothing
     } else {
-      throw new Exception(resultString);
+      throw new Exception("Unexpected status " + response.getStatus());
     }
 
   }
@@ -417,12 +413,110 @@ public class ContentChangeClientRest implements ContentChangeServiceRest {
         resource.accept(MediaType.APPLICATION_XML)
             .header("Authorization", authToken).delete(ClientResponse.class);
 
+    if (response.getClientResponseStatus().getFamily() == Family.SUCCESSFUL) {
+      // do nothing
+    } else {
+      throw new Exception("Unexpected status " + response.getStatus());
+    }
+  }
+
+  /*
+   * (non-Javadoc)
+   * 
+   * @see org.ihtsdo.otf.ts.rest.ContentChangeServiceRest#
+   * addAssociationConceptReferenceRefSetMember
+   * (org.ihtsdo.otf.ts.rf2.jpa.AssociationReferenceConceptRefSetMemberJpa,
+   * java.lang.String)
+   */
+  @Override
+  public AssociationReferenceConceptRefSetMember addAssociationConceptReferenceRefSetMember(
+    AssociationReferenceConceptRefSetMemberJpa member, String authToken)
+    throws Exception {
+    Client client = Client.create();
+    WebResource resource =
+        client.resource(config.getProperty("base.url")
+            + "/edit/associationReference/add");
+
+    String memberString =
+        (member != null ? ConfigUtility.getStringForGraph(member) : null);
+    ClientResponse response =
+        resource.accept(MediaType.APPLICATION_XML)
+            .header("Authorization", authToken)
+            .header("Content-type", MediaType.APPLICATION_XML)
+            .put(ClientResponse.class, memberString);
+
     String resultString = response.getEntity(String.class);
     if (response.getClientResponseStatus().getFamily() == Family.SUCCESSFUL) {
       Logger.getLogger(this.getClass()).debug(resultString);
     } else {
       throw new Exception(resultString);
     }
+
+    // converting to object
+    AssociationReferenceConceptRefSetMemberJpa result =
+        (AssociationReferenceConceptRefSetMemberJpa) ConfigUtility
+            .getGraphForString(resultString,
+                AssociationReferenceConceptRefSetMemberJpa.class);
+
+    return result;
+  }
+
+  /**
+   * Update association reference concept ref set member.
+   *
+   * @param member the member
+   * @param authToken the auth token
+   * @throws Exception the exception
+   */
+  @Override
+  public void updateAssociationReferenceConceptRefSetMember(
+    AssociationReferenceConceptRefSetMemberJpa member, String authToken)
+    throws Exception {
+    Client client = Client.create();
+    WebResource resource =
+        client.resource(config.getProperty("base.url")
+            + "/edit/associationReference/update");
+
+    String memberString =
+        (member != null ? ConfigUtility.getStringForGraph(member) : null);
+    ClientResponse response =
+        resource.accept(MediaType.APPLICATION_XML)
+            .header("Authorization", authToken)
+            .header("Content-type", MediaType.APPLICATION_XML)
+            .post(ClientResponse.class, memberString);
+
+    if (response.getClientResponseStatus().getFamily() == Family.SUCCESSFUL) {
+      // do nothing
+    } else {
+      throw new Exception("Unexpected status " + response.getStatus());
+    }
+
+  }
+
+  /**
+   * Removes the association reference ref set member.
+   *
+   * @param id the id
+   * @param authToken the auth token
+   * @throws Exception the exception
+   */
+  @Override
+  public void removeAssociationReferenceRefSetMember(Long id, String authToken)
+    throws Exception {
+    Client client = Client.create();
+    WebResource resource =
+        client.resource(config.getProperty("base.url")
+            + "/edit/associationReference/remove/" + id);
+    ClientResponse response =
+        resource.accept(MediaType.APPLICATION_XML)
+            .header("Authorization", authToken).delete(ClientResponse.class);
+
+    if (response.getClientResponseStatus().getFamily() == Family.SUCCESSFUL) {
+      // do nothing
+    } else {
+      throw new Exception("Unexpected status " + response.getStatus());
+    }
+
   }
 
   /*
@@ -441,13 +535,12 @@ public class ContentChangeClientRest implements ContentChangeServiceRest {
             + terminology + "/" + version + "/" + terminologyId);
     ClientResponse response =
         resource.accept(MediaType.APPLICATION_XML)
-            .header("Authorization", authToken).get(ClientResponse.class);
+            .header("Authorization", authToken).post(ClientResponse.class);
 
-    String resultString = response.getEntity(String.class);
     if (response.getClientResponseStatus().getFamily() == Family.SUCCESSFUL) {
-      Logger.getLogger(this.getClass()).debug(resultString);
+      // do nothing
     } else {
-      throw new Exception(resultString);
+      throw new Exception("Unexpected status " + response.getStatus());
     }
   }
 
@@ -459,21 +552,20 @@ public class ContentChangeClientRest implements ContentChangeServiceRest {
    * java.lang.String, java.lang.String, java.lang.String, java.lang.String)
    */
   @Override
-  public void clearTransitiveClosure(String terminologyId, String terminology,
-    String version, String authToken) throws Exception {
+  public void clearTransitiveClosure(String terminology, String version,
+    String authToken) throws Exception {
     Client client = Client.create();
     WebResource resource =
         client.resource(config.getProperty("base.url") + "/transitive/clear/"
-            + terminology + "/" + version + "/" + terminologyId);
+            + terminology + "/" + version);
     ClientResponse response =
         resource.accept(MediaType.APPLICATION_XML)
-            .header("Authorization", authToken).get(ClientResponse.class);
+            .header("Authorization", authToken).post(ClientResponse.class);
 
-    String resultString = response.getEntity(String.class);
     if (response.getClientResponseStatus().getFamily() == Family.SUCCESSFUL) {
-      Logger.getLogger(this.getClass()).debug(resultString);
+      // do nothing
     } else {
-      throw new Exception(resultString);
+      throw new Exception("Unexpected status " + response.getStatus());
     }
   }
 
@@ -493,13 +585,12 @@ public class ContentChangeClientRest implements ContentChangeServiceRest {
             + terminology + "/" + version);
     ClientResponse response =
         resource.accept(MediaType.APPLICATION_XML)
-            .header("Authorization", authToken).get(ClientResponse.class);
+            .header("Authorization", authToken).post(ClientResponse.class);
 
-    String resultString = response.getEntity(String.class);
     if (response.getClientResponseStatus().getFamily() == Family.SUCCESSFUL) {
-      Logger.getLogger(this.getClass()).debug(resultString);
+      // do nothing
     } else {
-      throw new Exception(resultString);
+      throw new Exception("Unexpected status " + response.getStatus());
     }
   }
 
