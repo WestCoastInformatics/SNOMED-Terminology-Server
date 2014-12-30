@@ -228,4 +228,9 @@ public class DefaultWorkflowListener implements WorkflowListener {
   public void preClassificationFinished() throws Exception {
     // do nothing
   }
+
+  @Override
+  public void cancel() {
+    // do nothing    
+  }
 }

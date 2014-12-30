@@ -6,6 +6,8 @@ import java.io.FileReader;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.ihtsdo.otf.ts.services.helpers.PushBackReader;
+
 /**
  * Container for RF2 readers.
  */

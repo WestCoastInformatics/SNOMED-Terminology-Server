@@ -2,7 +2,7 @@ package org.ihtsdo.otf.ts.rest;
 
 import org.ihtsdo.otf.ts.helpers.KeyValuesMap;
 import org.ihtsdo.otf.ts.helpers.RelationshipList;
-import org.ihtsdo.otf.ts.helpers.StringList;
+import org.ihtsdo.otf.ts.jpa.ProjectJpa;
 
 /**
  * Represents an action service available via a REST service.
@@ -12,12 +12,12 @@ public interface ActionServiceRest {
   /**
    * Configure action service.
    *
-   * @param workflowStatusList the workflow status list
+   * @param project the project
    * @param authToken the auth token
    * @return the sessionToken
    * @throws Exception the exception
    */
-  public String configureActionService(StringList workflowStatusList, String authToken) throws Exception;
+  public String configureActionService(ProjectJpa project, String authToken) throws Exception;
 
   /**
    * Gets the progress for any currently-running operations for the specified session token.

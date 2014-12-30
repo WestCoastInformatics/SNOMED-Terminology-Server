@@ -1,59 +1,42 @@
+/*
+ * 
+ */
 package org.ihtsdo.otf.ts.jpa.services;
 
-
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
-import java.util.Set;
 import java.util.UUID;
 
-import org.ihtsdo.classifier.ClassificationRunner;
-import org.ihtsdo.classifier.model.ConceptGroup;
-import org.ihtsdo.classifier.model.EquivalentClasses;
-import org.ihtsdo.classifier.model.StringIDConcept;
-import org.ihtsdo.classifier.utils.GetDescendants;
-import org.ihtsdo.classifier.utils.I_Constants;
-import org.ihtsdo.otf.ts.helpers.ConceptList;
+import org.ihtsdo.otf.ts.Project;
 import org.ihtsdo.otf.ts.helpers.ConfigUtility;
-import org.ihtsdo.otf.ts.helpers.KeyValuePair;
-import org.ihtsdo.otf.ts.helpers.KeyValuePairList;
-import org.ihtsdo.otf.ts.helpers.KeyValuePairLists;
+import org.ihtsdo.otf.ts.helpers.KeyValuesMap;
 import org.ihtsdo.otf.ts.helpers.LocalException;
 import org.ihtsdo.otf.ts.helpers.RelationshipList;
-import org.ihtsdo.otf.ts.helpers.StringList;
-import org.ihtsdo.otf.ts.jpa.services.helper.TerminologyUtility;
-import org.ihtsdo.otf.ts.rf2.Concept;
+import org.ihtsdo.otf.ts.helpers.RelationshipListJpa;
+import org.ihtsdo.otf.ts.rf2.Relationship;
 import org.ihtsdo.otf.ts.services.ActionService;
+import org.ihtsdo.otf.ts.services.handlers.Classifier;
 import org.ihtsdo.otf.ts.services.handlers.WorkflowListener;
 
 /**
  * JPA enabled implementation of {@link ActionService}.
  */
-public class ActionServiceJpa extends ContentServiceJpa implements ActionService {
+public class ActionServiceJpa extends ContentServiceJpa implements
+    ActionService {
 
   /** The token login time map. */
-  private static Map<String, Date> tokenTimeoutMap = new HashMap<>();
-
-  /** The token login progressmap. */
-  private static Map<String, Float> tokenProgressMap = new HashMap<>();
+  private static Map<String, ActionServiceConfig> tokenConfigMap =
+      new HashMap<>();
 
   /** The Constant default timeout. */
   private final static long defaultTimeout = 7200000;
 
   /** The timeout. */
-  private static long timeout = -1;
-
-  /** The token workflow status set map. */
-  private static Map<String, StringList> tokenWorkflowStatusMap =
-      new HashMap<>();
-
-  private static Map<String, ClassificationRunner> tokenClassifierMap =
-      new HashMap<>();
+  private static long actualTimeout = -1;
 
   /** The listeners enabled. */
   private boolean listenersEnabled = true;
@@ -92,18 +75,18 @@ public class ActionServiceJpa extends ContentServiceJpa implements ActionService
       throw new Exception(
           "Listeners did not properly initialize, serious error.");
     }
-    if (timeout == -1) {
+    if (actualTimeout == -1) {
       Properties config = ConfigUtility.getConfigProperties();
       String prop = config.getProperty("action.service.timeout");
       if (prop != null) {
         try {
-          timeout = Long.valueOf(prop);
+          actualTimeout = Long.valueOf(prop);
         } catch (Exception e) {
-          timeout = defaultTimeout;
+          actualTimeout = defaultTimeout;
         }
       }
     } else {
-      timeout = defaultTimeout;
+      actualTimeout = defaultTimeout;
     }
   }
 
@@ -127,19 +110,12 @@ public class ActionServiceJpa extends ContentServiceJpa implements ActionService
     listenersEnabled = false;
   }
 
-  /*
-   * (non-Javadoc)
-   * 
-   * @see
-   * org.ihtsdo.otf.ts.services.ActionService#configureActionService(java.util
-   * .Set)
-   */
   @Override
-  public String configureActionService(StringList workflowStatusList)
-    throws Exception {
+  public String configureActionService(Project project) throws Exception {
     String token = UUID.randomUUID().toString();
-    tokenTimeoutMap.put(token, new Date(new Date().getTime() + timeout));
-    tokenWorkflowStatusMap.put(token, workflowStatusList);
+    ActionServiceConfig config = new ActionServiceConfig(project);
+    config.setTimeout(new Date(new Date().getTime() + actualTimeout));
+    tokenConfigMap.put(token, config);
     return token;
   }
 
@@ -151,8 +127,8 @@ public class ActionServiceJpa extends ContentServiceJpa implements ActionService
   @Override
   public float getProgress(String sessionToken) throws Exception {
     tokenCheck(sessionToken);
-    if (tokenProgressMap.containsKey(sessionToken)) {
-      return tokenProgressMap.get(sessionToken);
+    if (tokenConfigMap.containsKey(sessionToken)) {
+      return tokenConfigMap.get(sessionToken).getProgress();
     } else {
       return 0;
     }
@@ -166,7 +142,7 @@ public class ActionServiceJpa extends ContentServiceJpa implements ActionService
   @Override
   public void cancel(String sessionToken) throws Exception {
     tokenCheck(sessionToken);
-    throw new UnsupportedOperationException();
+    tokenConfigMap.get(sessionToken).setRequestCancel(true);
   }
 
   /*
@@ -176,126 +152,100 @@ public class ActionServiceJpa extends ContentServiceJpa implements ActionService
    * org.ihtsdo.otf.ts.services.ActionService#prepareToClassify(java.lang.String
    * )
    */
-  @SuppressWarnings("unchecked")
   @Override
   public void prepareToClassify(String sessionToken) throws Exception {
     tokenCheck(sessionToken);
+
+    /** The classifier. */
+    Classifier classifier = null;
+
+    try {
+      Properties config;
+      config = ConfigUtility.getConfigProperties();
+      String key = "classifier.handler";
+      String handlerName = config.getProperty(key);
+      if (handlerName == null || handlerName.isEmpty()) {
+        throw new Exception("Undefined classifier handler");
+      }
+      // Set handler up
+      Classifier handler =
+          ConfigUtility.newStandardHandlerInstanceWithConfiguration(key,
+              handlerName, Classifier.class);
+      classifier = handler;
+
+    } catch (Exception e) {
+      e.printStackTrace();
+      classifier = null;
+    }
+
+    if (classifier == null) {
+      throw new Exception("Unable to instantiate classifier");
+    }
+
     if (listenersEnabled) {
       for (WorkflowListener listener : listeners) {
         listener.preClassificationStarted();
       }
     }
-    // TODO: figure out how to initialize it
-    String terminology = null;
-    String version = null;
-    Map<String, List<?>> concepts = loadConcepts(getAllConcepts(terminology, version));
-    List<org.ihtsdo.classifier.model.StringIDConcept> cEditSnoCons = (List<StringIDConcept>) concepts.get(org.ihtsdo.classifier.model.StringIDConcept.class.getSimpleName());
-    List<org.ihtsdo.classifier.model.Relationship> cEditRelationships = (List<org.ihtsdo.classifier.model.Relationship>) concepts.get(org.ihtsdo.classifier.model.Relationship.class.getSimpleName());
-    ConceptList rootConcepts = getConcepts(I_Constants.SNOMED_ROOT_CONCEPT, terminology, version);
-    Concept rootConcept = rootConcepts.getObjects().get(0);
-    ConceptList isaConcepts = getConcepts(GetDescendants.ISA_SCTID, terminology, version);
-    Concept isaConcept = isaConcepts.getObjects().get(0);
-    ConceptList roleRootConcepts = getConcepts(I_Constants.ATTRIBUTE_ROOT_CONCEPT, terminology, version);
-    Concept roleRootConcept = roleRootConcepts.getObjects().get(0);
-    int[] roles =  getRoles(terminology, version, isaConcept);
-    ClassificationRunner classifier = new ClassificationRunner(cEditSnoCons, cEditRelationships, rootConcept, isaConcept, roleRootConcept, roles);
-    classifier.loadConcepts(getAllConcepts(terminology,version));
-    tokenClassifierMap.put(sessionToken, classifier);
+
+    ActionServiceConfig config = tokenConfigMap.get(sessionToken);
+    if (config == null) {
+      throw new Exception(
+          "Cannot pre-classify until configure has been called.");
+    }
+
+    classifier.setProject(config.getProject());
+
+    // TODO; get all this from metadata service
+    // Set the root id
+    String SNOMED_ROOT_CONCEPT = "138875005";
+    classifier.setRootId(Integer.valueOf(getSingleConcept(SNOMED_ROOT_CONCEPT,
+        config.getProject().getTerminology(),
+        config.getProject().getTerminologyVersion()).getObjectId()));
+
+    // Set the isa id
+    String ISA_SCTID = "116680003";
+    classifier.setIsaRelId(Integer.valueOf(getSingleConcept(ISA_SCTID,
+        config.getProject().getTerminology(),
+        config.getProject().getTerminologyVersion()).getObjectId()));
+
+    // Set attribure root
+    String ATTRIBUTE_ROOT_CONCEPT = "410662002";
+    classifier.setRoleRootId(Integer.valueOf(getSingleConcept(
+        ATTRIBUTE_ROOT_CONCEPT, config.getProject().getTerminology(),
+        config.getProject().getTerminologyVersion()).getObjectId()));
+
+    classifier.loadConcepts();
+
+    // Handle cancel
+    if (tokenConfigMap.get(sessionToken).isRequestCancel()) {
+      if (listenersEnabled) {
+        for (WorkflowListener listener : listeners) {
+          listener.cancel();
+        }
+      }
+      return;
+    }
+
+    classifier.loadRoles();
+
+    // Handle cancel
+    if (tokenConfigMap.get(sessionToken).isRequestCancel()) {
+      if (listenersEnabled) {
+        for (WorkflowListener listener : listeners) {
+          listener.cancel();
+        }
+      }
+      return;
+    }
+
+    tokenConfigMap.get(sessionToken).setClassifier(classifier);
     if (listenersEnabled) {
       for (WorkflowListener listener : listeners) {
         listener.preClassificationFinished();
       }
     }
 
-    
-  }
-  
-  private Map<String, List<?>> loadConcepts(ConceptList allConcepts) throws Exception {
-    HashMap<String, List<?>> result = new HashMap<>();
-    List<org.ihtsdo.classifier.model.StringIDConcept> cEditSnoCons = new ArrayList<>();
-    List<org.ihtsdo.classifier.model.Relationship> cEditRelationships = new ArrayList<>();
-    result.put(org.ihtsdo.classifier.model.StringIDConcept.class.getSimpleName(), cEditSnoCons);
-    result.put(org.ihtsdo.classifier.model.Relationship.class.getSimpleName(), cEditRelationships);
-    int count = 0;
-    for (org.ihtsdo.otf.ts.rf2.Concept concept : allConcepts.getObjects()) {
-      if(count++ % 2000 == 0)
-        manager.flush();
-      if (I_Constants.PUBLISHED.equals(concept.getWorkflowStatus())) {
-        // Add concept
-        StringIDConcept stringIdConcept =
-            new StringIDConcept(Integer.parseInt(concept.getObjectId()),
-                concept.getObjectId(), Boolean.parseBoolean(concept
-                    .getDefinitionStatusId()));
-        cEditSnoCons.add(stringIdConcept);
-        // Iterate through relationships
-        for (org.ihtsdo.otf.ts.rf2.Relationship relationship : concept
-            .getRelationships()) {
-          if (TerminologyUtility.isStatedRelationship(relationship)) {
-            org.ihtsdo.classifier.model.Relationship rel =
-                new org.ihtsdo.classifier.model.Relationship(Integer.parseInt(concept.getObjectId()),
-                    Integer.parseInt(relationship.getDestinationConcept()
-                        .getObjectId()), Integer.parseInt(relationship
-                            .getTypeId()), relationship.getRelationshipGroup(),
-                            relationship.getObjectId());
-            // add stated rels for classification
-            cEditRelationships.add(rel);
-          }
-        }
-      }
-    }
-    return result;
-  }
-
-  // TODO:  This function doesn't actually do anything...?
-  private void getRoleDescendants(Integer topObjId, Integer oid, Set<Integer> descendants, String terminology, String version)
-      throws Exception {
-
-      // return if seen already
-      if (descendants.contains(oid)) {
-        return;
-      }
-
-      // Process this concept
-      ConceptList concepts = getConcepts(oid.toString(), terminology, version);
-      Concept concept = concepts.getObjects().get(0);
-      // return if inactive
-      if (!concept.isActive()) {
-        return;
-      }
-
-      if (!oid.equals(topObjId)) {
-        descendants.add(oid);
-      }
-      
-     // TODO:  Check how this is intended to work, r.getObjectId() will return hibernate ids, not terminology ids
-      for (Concept childConcept : getChildrenConcepts(concept, null).getObjects()) {
-        getRoleDescendants(topObjId, Integer.valueOf(childConcept.getTerminologyId()), descendants, terminology, version);
-      }
-      
-      /*
-       * Old code for resolution of TODO
-       * for ( Relationship r : concept.getInverseRelationships()) {
-        if(r.isActive() && TerminologyUtility.isHierarchicalIsaRelationship(r))
-          getRoleDescendants(topObjId, Integer.valueOf(r.getObjectId()), descendants, terminology, version);
-      }*/
-    }
-
-  // TODO:  Left int[]/Integer values here, converted to string when getting role descendants
-  private int[] getRoles(String terminology, String version, Concept isaConcept) throws Exception {
-    Set<Integer> roles = new HashSet<>();
-    Integer attributeRoot = Integer.valueOf(I_Constants.ATTRIBUTE_ROOT_CONCEPT);
-    
-    // TODO:  Does this actually perform any function? roles shouldn't be updated by this call
-    getRoleDescendants(attributeRoot, attributeRoot, roles, terminology, version); 
-    roles.add(Integer.valueOf(isaConcept.getObjectId()));
-    int[] result=new int[roles.size()];
-    int resIdx=0;
-    for (Integer role:roles){
-        result[resIdx++] = role;
-        resIdx++;
-    }
-    Arrays.sort(result);
-    return result;
   }
 
   /*
@@ -311,9 +261,22 @@ public class ActionServiceJpa extends ContentServiceJpa implements ActionService
         listener.classificationStarted();
       }
     }
-    ClassificationRunner runner = tokenClassifierMap.get(sessionToken);
-    if(runner != null)
-      runner.execute();
+
+    Classifier runner = tokenConfigMap.get(sessionToken).getClassifier();
+    if (runner != null) {
+      runner.compute();
+    }
+
+    // Handle cancel
+    if (tokenConfigMap.get(sessionToken).isRequestCancel()) {
+      if (listenersEnabled) {
+        for (WorkflowListener listener : listeners) {
+          listener.cancel();
+        }
+      }
+      return;
+    }
+
     if (listenersEnabled) {
       for (WorkflowListener listener : listeners) {
         listener.classificationFinished();
@@ -337,6 +300,16 @@ public class ActionServiceJpa extends ContentServiceJpa implements ActionService
       }
     }
 
+    // Handle cancel
+    if (tokenConfigMap.get(sessionToken).isRequestCancel()) {
+      if (listenersEnabled) {
+        for (WorkflowListener listener : listeners) {
+          listener.cancel();
+        }
+      }
+      return;
+    }
+
     if (listenersEnabled) {
       for (WorkflowListener listener : listeners) {
         listener.classificationFinished();
@@ -350,29 +323,20 @@ public class ActionServiceJpa extends ContentServiceJpa implements ActionService
   /*
    * (non-Javadoc)
    * 
-   * @see org.ihtsdo.otf.ts.services.ActionService#getClassificationEquivalents
-   * (java.lang.String)
+   * @see
+   * org.ihtsdo.otf.ts.services.ActionService#getClassificationEquivalents(java
+   * .lang.String)
    */
   @Override
-  public KeyValuePairLists getClassificationEquivalents(String sessionToken)
+  public KeyValuesMap getClassificationEquivalents(String sessionToken)
     throws Exception {
     tokenCheck(sessionToken);
-    ClassificationRunner runner = tokenClassifierMap.get(sessionToken);
-    KeyValuePairLists result = new KeyValuePairLists();
-    if(runner != null) {
-      EquivalentClasses equivalents = runner.getEquivalentClasses();
-      KeyValuePairList list = new KeyValuePairList();
-      result.addKeyValuePairList(list);
-      int setNumber = 1;
-      for(ConceptGroup conceptGroup:equivalents) {
-        for(org.ihtsdo.classifier.model.Concept concept:conceptGroup) {
-          KeyValuePair pair = new KeyValuePair(String.valueOf(setNumber), String.valueOf(concept.id));
-          list.addKeyValuePair(pair);
-        }
-        setNumber++;
-      }
+    Classifier runner = tokenConfigMap.get(sessionToken).getClassifier();
+    if (runner != null) {
+      KeyValuesMap map = runner.getEquivalentClasses();
+      return map;
     }
-    return result;
+    return null;
   }
 
   /*
@@ -386,7 +350,12 @@ public class ActionServiceJpa extends ContentServiceJpa implements ActionService
   public RelationshipList getOldInferredRelationships(String sessionToken)
     throws Exception {
     tokenCheck(sessionToken);
-    throw new UnsupportedOperationException();
+    List<Relationship> rels =
+        tokenConfigMap.get(sessionToken).getClassifier()
+            .getOldInferredRelationships();
+    RelationshipList list = new RelationshipListJpa();
+    list.setObjects(rels);
+    return list;
   }
 
   /*
@@ -400,7 +369,12 @@ public class ActionServiceJpa extends ContentServiceJpa implements ActionService
   public RelationshipList getNewInferredRelationships(String sessionToken)
     throws Exception {
     tokenCheck(sessionToken);
-    throw new UnsupportedOperationException();
+    List<Relationship> rels =
+        tokenConfigMap.get(sessionToken).getClassifier()
+            .getNewInferredRelationships();
+    RelationshipList list = new RelationshipListJpa();
+    list.setObjects(rels);
+    return list;
   }
 
   /**
@@ -411,26 +385,142 @@ public class ActionServiceJpa extends ContentServiceJpa implements ActionService
    */
   @SuppressWarnings("static-method")
   private void tokenCheck(String token) throws Exception {
-    if (!tokenTimeoutMap.containsKey(token)) {
+    if (!tokenConfigMap.containsKey(token)) {
       throw new LocalException("Session token is invalid");
     }
-    if (tokenTimeoutMap.get(token).before(new Date())) {
-      tokenWorkflowStatusMap.remove(token);
+    if (tokenConfigMap.get(token).getTimeout().before(new Date())) {
+      tokenConfigMap.remove(token);
       throw new LocalException("Session token has expired");
     }
-    tokenTimeoutMap.put(token, new Date(new Date().getTime() + timeout));
+    tokenConfigMap.get(token).setTimeout(
+        new Date(new Date().getTime() + actualTimeout));
   }
 
   @Override
   public void addNewInferredRelationships(String sessionToken) throws Exception {
     // TODO Auto-generated method stub
-    
+
+    // Get the new inferred rels and add them
   }
 
   @Override
   public void retireOldInferredRelationships(String sessionToken)
     throws Exception {
     // TODO Auto-generated method stub
-    
+
+    // get the old inferred rels and retire them
   }
+
+  /**
+   * Local configuration object. NEVER expose this outside this class.
+   */
+  private class ActionServiceConfig {
+
+    /** The project. */
+    private Project project;
+
+    /** The progress. */
+    private int progress = -1;
+
+    /** The timeout. */
+    private Date timeout;
+
+    /** The classifier. */
+    private Classifier classifier;
+
+    /** The request cancel. */
+    private boolean requestCancel;
+
+    /**
+     * Instantiates a {@link ActionServiceConfig} from the specified parameters.
+     *
+     * @param project the project
+     */
+    ActionServiceConfig(Project project) {
+      this.project = project;
+    }
+
+    /**
+     * Returns the project.
+     *
+     * @return the project
+     */
+    public Project getProject() {
+      return project;
+    }
+
+    /**
+     * Returns the progress.
+     *
+     * @return the progress
+     */
+    public int getProgress() {
+      return progress;
+    }
+
+    /**
+     * Sets the progress.
+     *
+     * @param progress the progress
+     */
+    @SuppressWarnings("unused")
+    public void setProgress(int progress) {
+      this.progress = progress;
+    }
+
+    /**
+     * Returns the timeout.
+     *
+     * @return the timeout
+     */
+    public Date getTimeout() {
+      return timeout;
+    }
+
+    /**
+     * Sets the timeout.
+     *
+     * @param timeout the timeout
+     */
+    public void setTimeout(Date timeout) {
+      this.timeout = timeout;
+    }
+
+    /**
+     * Returns the classifier.
+     *
+     * @return the classifier
+     */
+    public Classifier getClassifier() {
+      return classifier;
+    }
+
+    /**
+     * Sets the classifier.
+     *
+     * @param classifier the classifier
+     */
+    public void setClassifier(Classifier classifier) {
+      this.classifier = classifier;
+    }
+
+    /**
+     * Indicates whether or not request cancel is the case.
+     *
+     * @return <code>true</code> if so, <code>false</code> otherwise
+     */
+    public boolean isRequestCancel() {
+      return requestCancel;
+    }
+
+    /**
+     * Sets the request cancel.
+     *
+     * @param requestCancel the request cancel
+     */
+    public void setRequestCancel(boolean requestCancel) {
+      this.requestCancel = requestCancel;
+    }
+  }
+
 }

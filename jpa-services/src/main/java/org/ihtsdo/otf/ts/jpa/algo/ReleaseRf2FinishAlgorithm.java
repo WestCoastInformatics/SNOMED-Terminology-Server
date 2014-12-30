@@ -5,9 +5,10 @@ import java.util.List;
 import java.util.Set;
 
 import org.apache.log4j.Logger;
+import org.ihtsdo.otf.ts.algo.Algorithm;
 import org.ihtsdo.otf.ts.jpa.services.ContentServiceJpa;
-import org.ihtsdo.otf.ts.jpa.services.helper.ProgressEvent;
-import org.ihtsdo.otf.ts.jpa.services.helper.ProgressListener;
+import org.ihtsdo.otf.ts.services.helpers.ProgressEvent;
+import org.ihtsdo.otf.ts.services.helpers.ProgressListener;
 
 /**
  * An algorithm for finishing an RF2 release. The following steps are included

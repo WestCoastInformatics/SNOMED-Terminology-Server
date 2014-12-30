@@ -8,7 +8,8 @@ import java.util.Properties;
 import java.util.Set;
 
 import org.apache.log4j.Logger;
-import org.ihtsdo.otf.ts.helpers.ConceptList;
+import org.ihtsdo.otf.ts.helpers.SearchResult;
+import org.ihtsdo.otf.ts.helpers.SearchResultList;
 import org.ihtsdo.otf.ts.jpa.services.ContentServiceJpa;
 import org.ihtsdo.otf.ts.rf2.Concept;
 import org.ihtsdo.otf.ts.services.ContentService;
@@ -650,19 +651,19 @@ public class SnomedMetadataServiceJpaHelper extends ContentServiceJpa implements
    * @return the descendant concepts
    * @throws Exception the exception
    */
+  @SuppressWarnings("static-method")
   private Set<Concept> getDescendantConcepts(String terminologyId,
     String terminology, String terminologyVersion, String typeId)
     throws Exception {
     ContentService contentService = new ContentServiceJpa();
-    Concept concept =
-        getSingleConcept(terminologyId, terminology, terminologyVersion);
-    ConceptList conceptList =
-        contentService.getDescendantConcepts(concept, typeId, null);
+    SearchResultList list =
+        contentService.findDescendantConcepts(terminologyId, terminology,
+            terminologyVersion, null);
 
     // convert concept list to set
     Set<Concept> concepts = new HashSet<>();
-    for (Concept c : conceptList.getObjects()) {
-      concepts.add(c);
+    for (SearchResult result : list.getObjects()) {
+      concepts.add(contentService.getConcept(result.getId()));
     }
     return concepts;
 

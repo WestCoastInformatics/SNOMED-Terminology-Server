@@ -9,10 +9,9 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
+import org.ihtsdo.otf.ts.algo.Algorithm;
 import org.ihtsdo.otf.ts.helpers.ConfigUtility;
 import org.ihtsdo.otf.ts.jpa.services.ContentServiceJpa;
-import org.ihtsdo.otf.ts.jpa.services.helper.ProgressEvent;
-import org.ihtsdo.otf.ts.jpa.services.helper.ProgressListener;
 import org.ihtsdo.otf.ts.rf2.AssociationReferenceRefSetMember;
 import org.ihtsdo.otf.ts.rf2.AttributeValueRefSetMember;
 import org.ihtsdo.otf.ts.rf2.ComplexMapRefSetMember;
@@ -39,6 +38,9 @@ import org.ihtsdo.otf.ts.rf2.jpa.SimpleMapRefSetMemberJpa;
 import org.ihtsdo.otf.ts.rf2.jpa.SimpleRefSetMemberJpa;
 import org.ihtsdo.otf.ts.services.ContentService;
 import org.ihtsdo.otf.ts.services.handlers.ComputePreferredNameHandler;
+import org.ihtsdo.otf.ts.services.helpers.ProgressEvent;
+import org.ihtsdo.otf.ts.services.helpers.ProgressListener;
+import org.ihtsdo.otf.ts.services.helpers.PushBackReader;
 
 /**
  * Implementation of an algorithm to import RF2 snapshot data.

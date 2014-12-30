@@ -4,14 +4,15 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.log4j.Logger;
+import org.ihtsdo.otf.ts.algo.Algorithm;
 import org.ihtsdo.otf.ts.helpers.ConfigUtility;
 import org.ihtsdo.otf.ts.helpers.ReleaseInfo;
 import org.ihtsdo.otf.ts.helpers.ReleaseInfoJpa;
 import org.ihtsdo.otf.ts.jpa.services.ContentServiceJpa;
 import org.ihtsdo.otf.ts.jpa.services.HistoryServiceJpa;
-import org.ihtsdo.otf.ts.jpa.services.helper.ProgressEvent;
-import org.ihtsdo.otf.ts.jpa.services.helper.ProgressListener;
 import org.ihtsdo.otf.ts.services.HistoryService;
+import org.ihtsdo.otf.ts.services.helpers.ProgressEvent;
+import org.ihtsdo.otf.ts.services.helpers.ProgressListener;
 
 /**
  * An algorithm for starting an editing cycle.

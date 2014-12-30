@@ -13,8 +13,8 @@ import javax.ws.rs.core.Response;
 import org.apache.log4j.Logger;
 import org.ihtsdo.otf.ts.helpers.KeyValuesMap;
 import org.ihtsdo.otf.ts.helpers.RelationshipList;
-import org.ihtsdo.otf.ts.helpers.StringList;
 import org.ihtsdo.otf.ts.helpers.UserRole;
+import org.ihtsdo.otf.ts.jpa.ProjectJpa;
 import org.ihtsdo.otf.ts.jpa.services.ActionServiceJpa;
 import org.ihtsdo.otf.ts.jpa.services.SecurityServiceJpa;
 import org.ihtsdo.otf.ts.rest.ActionServiceRest;
@@ -64,7 +64,7 @@ public class ActionServiceRestImpl extends RootServiceRestImpl implements
       MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML
   })
   public String configureActionService(
-    @ApiParam(value = "Workflow status list, e.g. '{ \"PUBLISHED\" }'", required = true) StringList workflowStatusList,
+    @ApiParam(value = "Project, e.g. the result of a content service get project call", required = true) ProjectJpa project,
     @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken) {
 
     Logger.getLogger(ContentServiceRestImpl.class).info(
@@ -82,7 +82,7 @@ public class ActionServiceRestImpl extends RootServiceRestImpl implements
                 .build());
 
       ActionService actionService = new ActionServiceJpa();
-      String token = actionService.configureActionService(workflowStatusList);
+      String token = actionService.configureActionService(project);
       actionService.close();
       return token;
     } catch (Exception e) {

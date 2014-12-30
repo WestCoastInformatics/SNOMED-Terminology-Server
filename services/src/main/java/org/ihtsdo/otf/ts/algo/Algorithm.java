@@ -1,6 +1,6 @@
-package org.ihtsdo.otf.ts.jpa.algo;
+package org.ihtsdo.otf.ts.algo;
 
-import org.ihtsdo.otf.ts.jpa.services.helper.ProgressReporter;
+import org.ihtsdo.otf.ts.services.helpers.ProgressReporter;
 
 /**
  * Generically represents an algortihm. Implementations must fully configure

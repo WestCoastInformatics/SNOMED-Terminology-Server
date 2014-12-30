@@ -1,5 +1,8 @@
 package org.ihtsdo.otf.ts.services;
 
+import java.util.Set;
+
+import org.ihtsdo.otf.ts.Project;
 import org.ihtsdo.otf.ts.helpers.AssociationReferenceRefSetMemberList;
 import org.ihtsdo.otf.ts.helpers.AttributeValueRefSetMemberList;
 import org.ihtsdo.otf.ts.helpers.ComplexMapRefSetMemberList;
@@ -31,11 +34,8 @@ import org.ihtsdo.otf.ts.services.handlers.ComputePreferredNameHandler;
 import org.ihtsdo.otf.ts.services.handlers.GraphResolutionHandler;
 import org.ihtsdo.otf.ts.services.handlers.IdentifierAssignmentHandler;
 
-// TODO: Auto-generated Javadoc
 /**
  * Generically represents a service for accessing content.
- *
- * @author ${author}
  */
 public interface ContentService extends RootService {
 
@@ -123,11 +123,12 @@ public interface ContentService extends RootService {
   public void removeConcept(Long id) throws Exception;
   
   /**
-   * Find concepts.
+   * Find descendants.
    *
+   * @param concept the concept
    * @param pfsParameter the pfs parameter
    * @return the concept list
-   * @throws Exception 
+   * @throws Exception the exception
    */
   public ConceptList getDescendantConcepts(Concept concept, PfsParameter pfsParameter) throws Exception;
   
@@ -135,11 +136,11 @@ public interface ContentService extends RootService {
    * Find children.
    *
    * @param concept the concept
-   * @param pfsParameter the pfs parameter
+   * @param pfs the pfs
    * @return the concept list
-   * @throws Exception 
+   * @throws Exception the exception
    */
-  public ConceptList getChildrenConcepts(Concept concept, PfsParameter pfs)
+  public ConceptList getChildConcepts(Concept concept, PfsParameter pfs)
       throws Exception;
   /**
    * Returns the description.
@@ -991,5 +992,13 @@ public interface ContentService extends RootService {
    */
   public void setLastModifiedFlag(boolean lastModifiedFlag);
 
-  
+  /**
+   * Returns the concepts in scope.
+   *
+   * @param project the project
+   * @return the concepts in scope
+   * @throws Exception the exception
+   */
+  public Set<Concept> getConceptsInScope(Project project) throws Exception;
+
 }

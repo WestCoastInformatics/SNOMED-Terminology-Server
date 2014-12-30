@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.apache.log4j.Logger;
+import org.ihtsdo.otf.ts.algo.Algorithm;
 import org.ihtsdo.otf.ts.helpers.CancelException;
 import org.ihtsdo.otf.ts.helpers.ConceptList;
 import org.ihtsdo.otf.ts.helpers.ConfigUtility;
@@ -16,11 +17,11 @@ import org.ihtsdo.otf.ts.helpers.ValidationResultJpa;
 import org.ihtsdo.otf.ts.jpa.services.ContentServiceJpa;
 import org.ihtsdo.otf.ts.jpa.services.HistoryServiceJpa;
 import org.ihtsdo.otf.ts.jpa.services.ValidationServiceJpa;
-import org.ihtsdo.otf.ts.jpa.services.helper.ProgressEvent;
-import org.ihtsdo.otf.ts.jpa.services.helper.ProgressListener;
 import org.ihtsdo.otf.ts.rf2.Concept;
 import org.ihtsdo.otf.ts.services.HistoryService;
 import org.ihtsdo.otf.ts.services.ValidationService;
+import org.ihtsdo.otf.ts.services.helpers.ProgressEvent;
+import org.ihtsdo.otf.ts.services.helpers.ProgressListener;
 
 // TODO: Auto-generated Javadoc
 /**

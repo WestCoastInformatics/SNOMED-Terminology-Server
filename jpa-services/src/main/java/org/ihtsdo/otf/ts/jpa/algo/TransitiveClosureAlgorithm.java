@@ -9,16 +9,17 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.log4j.Logger;
+import org.ihtsdo.otf.ts.algo.Algorithm;
 import org.ihtsdo.otf.ts.helpers.CancelException;
 import org.ihtsdo.otf.ts.jpa.services.ContentServiceJpa;
-import org.ihtsdo.otf.ts.jpa.services.helper.ProgressEvent;
-import org.ihtsdo.otf.ts.jpa.services.helper.ProgressListener;
 import org.ihtsdo.otf.ts.jpa.services.helper.TerminologyUtility;
 import org.ihtsdo.otf.ts.rf2.Concept;
 import org.ihtsdo.otf.ts.rf2.Relationship;
 import org.ihtsdo.otf.ts.rf2.TransitiveRelationship;
 import org.ihtsdo.otf.ts.rf2.jpa.TransitiveRelationshipJpa;
 import org.ihtsdo.otf.ts.services.ContentService;
+import org.ihtsdo.otf.ts.services.helpers.ProgressEvent;
+import org.ihtsdo.otf.ts.services.helpers.ProgressListener;
 
 /**
  * Implementation of an algorithm to compute transitive closure using the

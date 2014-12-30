@@ -1,4 +1,4 @@
-package org.ihtsdo.otf.ts.jpa.algo;
+package org.ihtsdo.otf.ts.services.helpers;
 
 import java.io.BufferedReader;
 import java.io.IOException;

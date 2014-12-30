@@ -157,4 +157,8 @@ public interface WorkflowListener extends Configurable {
    */
   public void refSetMemberUpdated(RefSetMember<? extends Component> member) throws Exception;
 
+  /**
+   * Notification of a cancelled operation.
+   */
+  public void cancel();
 }

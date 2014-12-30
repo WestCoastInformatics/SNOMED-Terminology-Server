@@ -1,13 +1,13 @@
 package org.ihtsdo.otf.ts.jpa.services;
 
 import java.lang.reflect.Field;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
@@ -26,6 +26,7 @@ import org.hibernate.search.SearchFactory;
 import org.hibernate.search.jpa.FullTextEntityManager;
 import org.hibernate.search.jpa.FullTextQuery;
 import org.hibernate.search.jpa.Search;
+import org.ihtsdo.otf.ts.Project;
 import org.ihtsdo.otf.ts.helpers.AssociationReferenceRefSetMemberList;
 import org.ihtsdo.otf.ts.helpers.AssociationReferenceRefSetMemberListJpa;
 import org.ihtsdo.otf.ts.helpers.AttributeValueRefSetMemberList;
@@ -434,28 +435,29 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
 
     // set of descendants to ensure uniqueness despite multiple paths
     Set<Concept> descendants = new HashSet<>();
-  
+
     // for all children, get the descendants
-    for (Concept childConcept : getChildrenConcepts(concept, null).getObjects()) {
-      
+    for (Concept childConcept : getChildConcepts(concept, null).getObjects()) {
+
       // add this child to the descendant list
       descendants.add(childConcept);
-      
+
       // get the descendants of this child
-      descendants.addAll(getDescendantConcepts(childConcept, null).getObjects());
+      descendants
+          .addAll(getDescendantConcepts(childConcept, null).getObjects());
     }
-    
+
     // construct ConceptList for return
     ConceptList descendantConcepts = new ConceptListJpa();
-    
+
     // add the descendants of this concept
     descendantConcepts.setObjects(new ArrayList<>(descendants));
-    
+
     // if paging/filtering/sorting required
     if (pfs != null) {
 
       // filtering -- not supported
-      
+
       // sorting
       Comparator<Concept> comparator = getPfsComparator(Concept.class, pfs);
       if (comparator != null) {
@@ -484,7 +486,8 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
    * .otf.ts.rf2.Concept, org.ihtsdo.otf.ts.helpers.PfsParameter)
    */
   @Override
-  public ConceptList getChildrenConcepts(Concept concept, PfsParameter pfs) throws Exception {
+  public ConceptList getChildConcepts(Concept concept, PfsParameter pfs)
+    throws Exception {
 
     ConceptList childrenConcepts = new ConceptListJpa();
 
@@ -529,7 +532,7 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
     if (pfs != null) {
 
       // filtering -- not supported
-      
+
       // sorting
       Comparator<Concept> comparator = getPfsComparator(Concept.class, pfs);
       if (comparator != null) {
@@ -1089,14 +1092,27 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
             + "where refSetId = :refsetId "
             + "and terminologyVersion = :version "
             + "and terminology = :terminology", pfs);
+    javax.persistence.Query ctQuery =
+        manager
+            .createQuery("select count(a) ct from AttributeValueRefSetMemberJpa a "
+                + "where refSetId = :refsetId "
+                + "and terminologyVersion = :version "
+                + "and terminology = :terminology");
     try {
+      AttributeValueRefSetMemberList list =
+          new AttributeValueRefSetMemberListJpa();
+
+      // execute count query
+      ctQuery.setParameter("refsetId", refsetId);
+      ctQuery.setParameter("terminology", terminology);
+      ctQuery.setParameter("version", version);
+      list.setTotalCount(((BigDecimal) ctQuery.getResultList().get(0))
+          .intValue());
+
+      // Get results
       query.setParameter("refsetId", refsetId);
       query.setParameter("terminology", terminology);
       query.setParameter("version", version);
-      AttributeValueRefSetMemberList list =
-          new AttributeValueRefSetMemberListJpa();
-      // unknown total count, TODO: may need "count" methods
-      list.setTotalCount(-1);
       list.setObjects(query.getResultList());
 
       return list;
@@ -1240,14 +1256,24 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
             + "where refSetId = :refsetId "
             + "and terminologyVersion = :version "
             + "and terminology = :terminology", pfs);
+    javax.persistence.Query ctQuery =
+        manager
+            .createQuery("select count(a) from AssociationReferenceRefSetMemberJpa a "
+                + "where refSetId = :refsetId "
+                + "and terminologyVersion = :version "
+                + "and terminology = :terminology");
     try {
+      AssociationReferenceRefSetMemberList list =
+          new AssociationReferenceRefSetMemberListJpa();
+      ctQuery.setParameter("refsetId", refsetId);
+      ctQuery.setParameter("terminology", terminology);
+      ctQuery.setParameter("version", version);
+      list.setTotalCount(((BigDecimal) ctQuery.getResultList().get(0))
+          .intValue());
+
       query.setParameter("refsetId", refsetId);
       query.setParameter("terminology", terminology);
       query.setParameter("version", version);
-      AssociationReferenceRefSetMemberList list =
-          new AssociationReferenceRefSetMemberListJpa();
-      // unknown total count, TODO: may need "count" methods
-      list.setTotalCount(-1);
       list.setObjects(query.getResultList());
 
       return list;
@@ -1453,13 +1479,22 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
             + "where refSetId = :refsetId "
             + "and terminologyVersion = :version "
             + "and terminology = :terminology", pfs);
+    javax.persistence.Query ctQuery =
+        manager.createQuery("select count(a) from ComplexMapRefSetMemberJpa a "
+            + "where refSetId = :refsetId "
+            + "and terminologyVersion = :version "
+            + "and terminology = :terminology");
     try {
+      ComplexMapRefSetMemberList list = new ComplexMapRefSetMemberListJpa();
+      ctQuery.setParameter("refsetId", refsetId);
+      ctQuery.setParameter("terminology", terminology);
+      ctQuery.setParameter("version", version);
+      list.setTotalCount(((BigDecimal) ctQuery.getResultList().get(0))
+          .intValue());
+
       query.setParameter("refsetId", refsetId);
       query.setParameter("terminology", terminology);
       query.setParameter("version", version);
-      ComplexMapRefSetMemberList list = new ComplexMapRefSetMemberListJpa();
-      // unknown total count, TODO: may need "count" methods
-      list.setTotalCount(-1);
       list.setObjects(query.getResultList());
 
       return list;
@@ -1624,13 +1659,23 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
             + "where refSetId = :refsetId "
             + "and terminologyVersion = :version "
             + "and terminology = :terminology", pfs);
+    javax.persistence.Query ctQuery =
+        manager.createQuery("select count(a) from LanguageRefSetMemberJpa a "
+            + "where refSetId = :refsetId "
+            + "and terminologyVersion = :version "
+            + "and terminology = :terminology");
     try {
+      LanguageRefSetMemberList list = new LanguageRefSetMemberListJpa();
+      ctQuery.setParameter("refsetId", refsetId);
+      ctQuery.setParameter("terminology", terminology);
+      ctQuery.setParameter("version", version);
+      list.setTotalCount(((BigDecimal) ctQuery.getResultList().get(0))
+          .intValue());
+
       query.setParameter("refsetId", refsetId);
       query.setParameter("terminology", terminology);
       query.setParameter("version", version);
-      LanguageRefSetMemberList list = new LanguageRefSetMemberListJpa();
-      // unknown total count, TODO: may need "count" methods
-      list.setTotalCount(-1);
+
       list.setObjects(query.getResultList());
 
       return list;
@@ -1792,13 +1837,22 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
             + "where refSetId = :refsetId "
             + "and terminologyVersion = :version "
             + "and terminology = :terminology", pfs);
+    javax.persistence.Query ctQuery =
+        manager.createQuery("select count(a) from SimpleMapRefSetMemberJpa a "
+            + "where refSetId = :refsetId "
+            + "and terminologyVersion = :version "
+            + "and terminology = :terminology");
     try {
+      SimpleMapRefSetMemberList list = new SimpleMapRefSetMemberListJpa();
+      ctQuery.setParameter("refsetId", refsetId);
+      ctQuery.setParameter("terminology", terminology);
+      ctQuery.setParameter("version", version);
+      list.setTotalCount(((BigDecimal) ctQuery.getResultList().get(0))
+          .intValue());
+
       query.setParameter("refsetId", refsetId);
       query.setParameter("terminology", terminology);
       query.setParameter("version", version);
-      SimpleMapRefSetMemberList list = new SimpleMapRefSetMemberListJpa();
-      // unknown total count, TODO: may need "count" methods
-      list.setTotalCount(-1);
       list.setObjects(query.getResultList());
 
       return list;
@@ -1960,13 +2014,22 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
             + "where refSetId = :refsetId "
             + "and terminologyVersion = :version "
             + "and terminology = :terminology", pfs);
+    javax.persistence.Query ctQuery =
+        manager.createQuery("select count(a) from SimpleRefSetMemberJpa a "
+            + "where refSetId = :refsetId "
+            + "and terminologyVersion = :version "
+            + "and terminology = :terminology");
     try {
+      SimpleRefSetMemberList list = new SimpleRefSetMemberListJpa();
+      ctQuery.setParameter("refsetId", refsetId);
+      ctQuery.setParameter("terminology", terminology);
+      ctQuery.setParameter("version", version);
+      list.setTotalCount(((BigDecimal) ctQuery.getResultList().get(0))
+          .intValue());
+
       query.setParameter("refsetId", refsetId);
       query.setParameter("terminology", terminology);
       query.setParameter("version", version);
-      SimpleRefSetMemberList list = new SimpleRefSetMemberListJpa();
-      // unknown total count, TODO: may need "count" methods
-      list.setTotalCount(-1);
       list.setObjects(query.getResultList());
 
       return list;
@@ -2603,7 +2666,7 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
       finalQuery.append(" AND ");
       finalQuery.append(pfs.getQueryRestriction());
     }
-    Logger.getLogger(this.getClass()).info("query " + finalQuery);
+    Logger.getLogger(getClass()).info("query " + finalQuery);
     // Prepare the query
     FullTextEntityManager fullTextEntityManager =
         Search.getFullTextEntityManager(manager);
@@ -2684,48 +2747,45 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
           "Query restriction is not implemented for this call: "
               + pfs.getQueryRestriction());
     }
-    SearchResultList searchResultList = new SearchResultListJpa();
-    javax.persistence.Query query =
+    SearchResultList list = new SearchResultListJpa();
+    String queryStr =
+        "select a from TransitiveRelationshipJpa tr, ConceptJpa super, ConceptJpa a "
+            + " where super.version = :version "
+            + " and super.terminology = :terminology "
+            + " and super.terminologyId = :terminologyId"
+            + " and tr.superTypeConcept = super"
+            + " and tr.subTypeConcept = sub";
+    javax.persistence.Query query = applyPfsToQuery(queryStr, pfs);
+
+    javax.persistence.Query ctQuery =
         manager
-            .createQuery("select sub from TransitiveRelationshipJpa tr, ConceptJpa super, ConceptJpa sub "
+            .createQuery("select a from TransitiveRelationshipJpa tr, ConceptJpa super"
                 + " where super.version = :version "
                 + " and super.terminology = :terminology "
                 + " and super.terminologyId = :terminologyId"
-                + " and tr.superTypeConcept = super"
-                + " and tr.subTypeConcept = sub");
+                + " and tr.superTypeConcept = super");
+
+    List<Concept> descendants = query.getResultList();
+    ctQuery.setParameter("terminology", terminology);
+    ctQuery.setParameter("version", version);
+    ctQuery.setParameter("terminologyId", terminologyId);
+    list.setTotalCount(((BigDecimal) ctQuery.getResultList().get(0)).intValue());
+
     query.setParameter("terminology", terminology);
     query.setParameter("version", version);
     query.setParameter("terminologyId", terminologyId);
 
-    // Get the descendants
-    List<Concept> descendants = query.getResultList();
-
-    searchResultList.setTotalCount(descendants.size());
-
-    // apply paging, and sorting if appropriate
-    Comparator<Concept> comp = getPfsComparator(Concept.class, pfs);
-    if (comp != null) {
-      Collections.sort(descendants, comp);
-    }
-    // get the start and end indexes based on paging parameters
-    int startIndex = 0;
-    int toIndex = descendants.size();
-    if (pfs != null) {
-      startIndex = pfs.getStartIndex();
-      toIndex = Math.min(descendants.size(), startIndex + pfs.getMaxResults());
-    }
-    // construct the search results
-    for (Concept c : descendants.subList(startIndex, toIndex)) {
+    for (Concept concept : descendants) {
       SearchResult searchResult = new SearchResultJpa();
-      searchResult.setId(c.getId());
-      searchResult.setTerminologyId(c.getTerminologyId());
-      searchResult.setTerminology(c.getTerminology());
-      searchResult.setTerminologyVersion(c.getTerminologyVersion());
-      searchResult.setValue(c.getDefaultPreferredName());
-      searchResultList.addObject(searchResult);
+      searchResult.setId(concept.getId());
+      searchResult.setTerminologyId(concept.getTerminologyId());
+      searchResult.setTerminology(concept.getTerminology());
+      searchResult.setTerminologyVersion(concept.getTerminologyVersion());
+      searchResult.setValue(concept.getDefaultPreferredName());
+      list.addObject(searchResult);
     }
     // return the search result list
-    return searchResultList;
+    return list;
   }
 
   /*
@@ -2888,7 +2948,7 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
   @Override
   public void clearTransitiveClosure(String terminology, String version)
     throws Exception {
-    Logger.getLogger(this.getClass()).info(
+    Logger.getLogger(getClass()).info(
         "Content Service - Removing transitive closure data for " + terminology
             + ", " + version);
     try {
@@ -2904,7 +2964,7 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
       query.setParameter("terminology", terminology);
       query.setParameter("terminologyVersion", version);
       int deleteRecords = query.executeUpdate();
-      Logger.getLogger(this.getClass()).info(
+      Logger.getLogger(getClass()).info(
           "    TransitiveRelationshipJpa records deleted: " + deleteRecords);
 
       if (getTransactionPerOperation()) {
@@ -2956,7 +3016,7 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
         query.setParameter("terminology", terminology);
         query.setParameter("terminologyVersion", version);
         int deleteRecords = query.executeUpdate();
-        Logger.getLogger(this.getClass()).info(
+        Logger.getLogger(getClass()).info(
             "    " + type + " records deleted: " + deleteRecords);
       }
 
@@ -2971,6 +3031,62 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
       throw e;
     }
 
+  }
+
+  /**
+   * Returns the concepts in scope.
+   *
+   * @param project the project
+   * @return the concepts in scope
+   * @throws Exception the exception
+   */
+  @Override
+  public Set<Concept> getConceptsInScope(Project project) throws Exception {
+    Logger.getLogger(getClass()).info(
+        "Content Service - get project scope - " + project);
+    if (project == null) {
+      throw new Exception("Unexpected null project");
+    }
+
+    Set<Concept> include = new HashSet<>();
+    for (String terminologyId : project.getScopeConcepts()) {
+      // get concept
+      Concept concept =
+          getSingleConcept(terminologyId, project.getTerminology(),
+              project.getTerminologyVersion());
+      include.add(concept);
+      // get descendants
+      if (project.getScopeDescendantsFlag()) {
+        for (SearchResult result : findDescendantConcepts(terminologyId,
+            project.getTerminology(), project.getTerminologyVersion(), null)
+            .getObjects()) {
+          include.add(getConcept(result.getId()));
+        }
+      }
+    }
+    Logger.getLogger(getClass()).info("  include count = " + include.size());
+
+    Set<Concept> exclude = new HashSet<>();
+    for (String terminologyId : project.getScopeExcludesConcepts()) {
+      // get concept
+      Concept concept =
+          getSingleConcept(terminologyId, project.getTerminology(),
+              project.getTerminologyVersion());
+      exclude.add(concept);
+      // get descendants
+      if (project.getScopeExcludesDescendantsFlag()) {
+        for (SearchResult result : findDescendantConcepts(terminologyId,
+            project.getTerminology(), project.getTerminologyVersion(), null)
+            .getObjects()) {
+          exclude.add(getConcept(result.getId()));
+        }
+      }
+    }
+    Logger.getLogger(getClass()).info("  exclude count = " + exclude.size());
+
+    include.removeAll(exclude);
+    Logger.getLogger(getClass()).info("  count = " + include.size());
+    return include;
   }
 
   /**
@@ -3298,33 +3414,6 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
     } catch (NoResultException e) {
       return null;
     }
-  }
-
-  // TODO: Currently unused, but may be useful later
-  private String getLuceneFieldQueryTerm(String fieldName, List<String> values) {
-
-    String searchString = "";
-
-    // add field name if not-null
-    if (fieldName != null)
-      searchString = fieldName + ":";
-
-    // open parentheses
-    searchString += "(";
-
-    // cycle over the terminology ids
-    Iterator<String> iterator = values.iterator();
-    while (iterator.hasNext()) {
-      searchString += iterator.next();
-
-      // if more terms, add OR
-      if (iterator.hasNext())
-        searchString += " OR ";
-    }
-    // close parentheses
-    searchString += ")";
-
-    return searchString;
   }
 
   /*

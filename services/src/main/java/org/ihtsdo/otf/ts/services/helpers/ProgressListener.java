@@ -1,4 +1,4 @@
-package org.ihtsdo.otf.ts.jpa.services.helper;
+package org.ihtsdo.otf.ts.services.helpers;
 
 /**
  * Generically listens for progress updates.
