@@ -16,12 +16,7 @@
  */
 package org.ihtsdo.otf.ts.classifier.model;
 
-import java.io.BufferedWriter;
-import java.io.FileWriter;
-import java.io.IOException;
 import java.util.ArrayList;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  * The Class EquivalentClasses.
@@ -52,38 +47,5 @@ public class EquivalentClasses extends ArrayList<ConceptGroup> {
 			count += this.get(i).size();
 		}
 		return count;
-	}
-
-	// dump equivalent concepts to file
-	/**
-	 * Write equiv concept.
-	 *
-	 * @param equivalentClasses the equiv concept
-	 * @param fName the f name
-	 */
-	public static void writeEquivConcept(EquivalentClasses equivalentClasses, String fName) {
-		BufferedWriter bw = null;
-		try {
-			bw = new BufferedWriter(new FileWriter(fName));
-			// "COMPARE" UUIDs, //NIDs, Initial Text
-			int setNumber = 1;
-			for (ConceptGroup eqc : equivalentClasses) {
-				for (Concept sc : eqc) {
-					bw.write(sc.id + "\tset=\t" + setNumber + "\t");
-					bw.write( "\r\n");
-				}
-				setNumber++;
-			}
-			bw.flush();
-			bw.close();
-		} catch (IOException ex) {
-			Logger.getLogger(EquivalentClasses.class.getName()).log(Level.SEVERE, null, ex);
-		} finally {
-			try {
-				bw.close();
-			} catch (IOException ex) {
-				Logger.getLogger(EquivalentClasses.class.getName()).log(Level.SEVERE, null, ex);
-			}
-		}
 	}
 }

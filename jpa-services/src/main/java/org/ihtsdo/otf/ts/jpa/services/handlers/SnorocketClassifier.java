@@ -68,11 +68,17 @@ public class SnorocketClassifier implements Classifier {
   /** The request cancel. */
   private boolean requestCancel = true;
 
-  /** The previous inferred relationships. */
-  private Set<String> previousInferredRelationships;
+  /** The isa. */
+  private int isaConcept;
 
-  /** The output rels. */
-  private Set<String> newInferredRelationships;
+  /** The root concept. */
+  private int rootConcept;
+
+  /** The role root concept. */
+  private int roleRootConcept;
+
+  /** The project. */
+  private Project project;
 
   /** The roles. */
   private int[] roles;
@@ -92,26 +98,17 @@ public class SnorocketClassifier implements Classifier {
   /** The logger. */
   Logger logger;
 
-  /** The c rocket sno rels. */
-  private List<Relationship> cRocketRelationships;
+  /** The previous inferred relationships. */
+  private List<Relationship> previousInferredRelationships;
 
-  /** The isa. */
-  private int isaConcept;
+  /** The new inferred relationships */
+  private List<Relationship> currentInferredRelationships;
 
   /** The retired set. */
-  private HashSet<String> retiredSet;
+  private Set<Relationship> oldInferredRelationships;
 
   /** The new set. */
-  private HashSet<String> newSet;
-
-  /** The root concept. */
-  private int rootConcept;
-
-  /** The role root concept. */
-  private int roleRootConcept;
-
-  /** The project. */
-  private Project project;
+  private Set<Relationship> newInferredRelationships;
 
   /** The equivalents. */
   private ProcessEquiv equivalents = new ProcessEquiv();
@@ -247,15 +244,24 @@ public class SnorocketClassifier implements Classifier {
     }
 
     // Get classifier results
-    cRocketRelationships = new ArrayList<Relationship>();
+    currentInferredRelationships = new ArrayList<Relationship>();
     logger.info("  Get classifier results...");
-    ProcessResults pr = new ProcessResults(cRocketRelationships);
+    ProcessResults pr = new ProcessResults(currentInferredRelationships);
     rocket_123.getDistributionFormRelationships(pr);
     logger.info("    count = " + pr.countRel);
 
-    // cRocketRelationships are the output inferred rels
-    // if we have the input inferred rels (as classifier rels), we can compare them 
+    // Handle cancel
+    if (requestCancel) {
+      return;
+    }
 
+    // Compare previous and curent rels
+    logger.info("  Compare relationships...");
+    compareAndWriteBack(previousInferredRelationships, currentInferredRelationships);
+    previousInferredRelationships = null;
+    currentInferredRelationships = null;
+
+    // At this point retiredSet and newSet correspond t o
     
     // Handle cancel
     if (requestCancel) {
@@ -368,7 +374,7 @@ public class SnorocketClassifier implements Classifier {
   private void compareAndWriteBack(List<Relationship> snorelA,
     List<Relationship> snorelB) throws Exception {
 
-    retiredSet = new HashSet<String>();
+    oldInferredRelationships = new HashSet<Relationship>();
     // STATISTICS COUNTERS
     int countConSeen = 0;
     int countSame = 0;
@@ -452,7 +458,7 @@ public class SnorocketClassifier implements Classifier {
               if (rel_B.typeId == isaConcept) {
                 countB_DiffISA++;
               }
-              retiredSet.add(rel_B.getRelId());
+              oldInferredRelationships.add(rel_B);
 
               if (itB.hasNext()) {
                 rel_B = itB.next();
@@ -469,7 +475,7 @@ public class SnorocketClassifier implements Classifier {
               if (rel_A.typeId == isaConcept) {
                 countA_DiffISA++;
               }
-              retiredSet.add(rel_A.getRelId());
+              oldInferredRelationships.add(rel_A);
               if (itA.hasNext()) {
                 rel_A = itA.next();
               } else {
@@ -489,7 +495,7 @@ public class SnorocketClassifier implements Classifier {
           if (rel_A.typeId == isaConcept) {
             countA_DiffISA++;
           }
-          retiredSet.add(rel_A.getRelId());
+          oldInferredRelationships.add(rel_A);
           if (itA.hasNext()) {
             rel_A = itA.next();
           } else {
@@ -505,7 +511,7 @@ public class SnorocketClassifier implements Classifier {
           if (rel_B.typeId == isaConcept) {
             countB_DiffISA++;
           }
-          newSet.add(rel_B.getRelId());
+          newInferredRelationships.add(rel_B);
           if (itB.hasNext()) {
             rel_B = itB.next();
           } else {
@@ -562,7 +568,7 @@ public class SnorocketClassifier implements Classifier {
           groupList_NotEqual = groupList_A.whichNotEqual(groupList_B);
           for (RelationshipGroup sg : groupList_NotEqual) {
             for (Relationship sr_A : sg) {
-              retiredSet.add(sr_A.getRelId());
+              oldInferredRelationships.add(sr_A);
             }
           }
           countA_Total += groupList_A.countRels();
@@ -579,11 +585,11 @@ public class SnorocketClassifier implements Classifier {
               rgNum = nextRoleGroupNumber(groupList_A, rgNum);
               for (Relationship sr_B : sg) {
                 sr_B.group = rgNum;
-                newSet.add(sr_B.getRelId());
+                newInferredRelationships.add(sr_B);
               }
             } else {
               for (Relationship sr_B : sg) {
-                newSet.add(sr_B.getRelId());
+                newInferredRelationships.add(sr_B);
               }
             }
           }
@@ -600,7 +606,7 @@ public class SnorocketClassifier implements Classifier {
           if (rel_B.typeId == isaConcept) {
             countB_DiffISA++;
           }
-          newSet.add(rel_B.getRelId());
+          newInferredRelationships.add(rel_B);
           if (itB.hasNext()) {
             rel_B = itB.next();
           } else {
@@ -619,7 +625,7 @@ public class SnorocketClassifier implements Classifier {
           if (rel_A.typeId == isaConcept) {
             countA_DiffISA++;
           }
-          retiredSet.add(rel_A.getRelId());
+          oldInferredRelationships.add(rel_A);
           if (itA.hasNext()) {
             rel_A = itA.next();
           } else {
@@ -656,7 +662,7 @@ public class SnorocketClassifier implements Classifier {
         countA_DiffISA++;
       }
       // COMPLETELY UPDATE ALL REMAINING REL_A AS RETIRED
-      retiredSet.add(rel_A.getRelId());
+      oldInferredRelationships.add(rel_A);
       if (itA.hasNext()) {
         rel_A = itA.next();
       } else {
@@ -672,7 +678,7 @@ public class SnorocketClassifier implements Classifier {
         countB_DiffISA++;
       }
       // COMPLETELY UPDATE ALL REMAINING REL_B AS NEW, CURRENT
-      newSet.add(rel_B.getRelId());
+      newInferredRelationships.add(rel_B);
       if (itB.hasNext()) {
         rel_B = itB.next();
       } else {
@@ -683,7 +689,7 @@ public class SnorocketClassifier implements Classifier {
   }
 
   /**
-   * Compare sno rel.
+   * Compare snomed relationships.
    *
    * @param inR the in r
    * @param outR the out r
@@ -782,10 +788,11 @@ public class SnorocketClassifier implements Classifier {
         // Iterate through active stated relationships relationships
         for (org.ihtsdo.otf.ts.rf2.Relationship relationship : concept
             .getRelationships()) {
+          // Convert stated rels for classification
           if (TerminologyUtility.isStatedRelationship(relationship)
               && relationship.isActive()) {
-            org.ihtsdo.otf.ts.classifier.model.Relationship rel =
-                new org.ihtsdo.otf.ts.classifier.model.Relationship(
+            Relationship rel =
+                new Relationship(
                     Integer.parseInt(concept.getObjectId()),
                     Integer.parseInt(relationship.getDestinationConcept()
                         .getObjectId()), Integer.parseInt(relationship
@@ -793,6 +800,18 @@ public class SnorocketClassifier implements Classifier {
                     relationship.getObjectId());
             // add stated rels for classification
             relationships.add(rel);
+          } 
+
+          // save inferred rels for comparison
+          else if (TerminologyUtility.isInferredRelationship(relationship) && relationship.isActive()) {
+            Relationship rel =
+                new Relationship(
+                    Integer.parseInt(concept.getObjectId()),
+                    Integer.parseInt(relationship.getDestinationConcept()
+                        .getObjectId()), Integer.parseInt(relationship
+                        .getTypeId()), relationship.getRelationshipGroup(),
+                    relationship.getObjectId());
+            previousInferredRelationships.add(rel);
           }
         }
       }
@@ -860,6 +879,10 @@ public class SnorocketClassifier implements Classifier {
     concepts = null;
     definedConcepts = null;
     relationships = null;
+    previousInferredRelationships = null;
+    currentInferredRelationships = null;
+    oldInferredRelationships = null;
+    newInferredRelationships = null;
   }
 
   /**

@@ -15,6 +15,7 @@ import org.ihtsdo.otf.ts.helpers.UserJpa;
 import org.ihtsdo.otf.ts.helpers.UserList;
 import org.ihtsdo.otf.ts.helpers.UserListJpa;
 import org.ihtsdo.otf.ts.helpers.UserRole;
+import org.ihtsdo.otf.ts.services.ContentService;
 import org.ihtsdo.otf.ts.services.SecurityService;
 import org.ihtsdo.otf.ts.services.handlers.SecurityServiceHandler;
 
@@ -183,6 +184,28 @@ public class SecurityServiceJpa extends RootServiceJpa implements
     return getUser(username.toLowerCase()).getApplicationRole();
   }
 
+  /* (non-Javadoc)
+   * @see org.ihtsdo.otf.ts.services.SecurityService#getProjectRoleForToken(java.lang.String, java.lang.Long)
+   */
+  @Override
+  public UserRole getProjectRoleForToken(String authToken, Long projectId)
+    throws Exception {
+    if (authToken == null) {
+      throw new LocalException(
+          "Attempt to access a service without an authorization token, the user is likely not logged in.");
+    }
+    if (projectId == null) {
+      throw new Exception("Unexpected null project id");
+    }
+    
+    String username = getUsernameForToken(authToken);
+    ContentService service = new ContentServiceJpa();
+    UserRole result =
+        service.getUserRoleForProject(username, projectId);
+    service.close();
+    return result;
+  }  
+  
   /*
    * (non-Javadoc)
    * 
@@ -229,15 +252,11 @@ public class SecurityServiceJpa extends RootServiceJpa implements
     return user;
   }
 
-  /*
-   * (non-Javadoc)
-   * 
-   * @see
-   * org.ihtsdo.otf.mapping.services.SecurityService#removeUser(java.lang.String
-   * )
+  /* (non-Javadoc)
+   * @see org.ihtsdo.otf.ts.services.SecurityService#removeUser(java.lang.Long)
    */
   @Override
-  public void removeUser(String id) {
+  public void removeUser(Long id) {
     tx = manager.getTransaction();
     // retrieve this user
     User mu = manager.find(UserJpa.class, id);
@@ -295,5 +314,7 @@ public class SecurityServiceJpa extends RootServiceJpa implements
     mapUserList.setTotalCount(m.size());
     return mapUserList;
   }
+
+
 
 }

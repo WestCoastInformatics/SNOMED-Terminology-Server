@@ -9,9 +9,11 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
 import org.apache.log4j.Logger;
+import org.ihtsdo.otf.ts.Project;
 import org.ihtsdo.otf.ts.helpers.ConceptList;
 import org.ihtsdo.otf.ts.helpers.PfsParameter;
 import org.ihtsdo.otf.ts.helpers.PfsParameterJpa;
+import org.ihtsdo.otf.ts.helpers.ProjectList;
 import org.ihtsdo.otf.ts.helpers.SearchResultList;
 import org.ihtsdo.otf.ts.helpers.UserRole;
 import org.ihtsdo.otf.ts.jpa.services.ContentServiceJpa;
@@ -629,7 +631,92 @@ public class ContentServiceRestImpl extends RootServiceRestImpl implements
       contentService.close();
       return member;
     } catch (Exception e) {
-      handleException(e, "trying to retrieve a association reference refset member");
+      handleException(e,
+          "trying to retrieve a association reference refset member");
+      return null;
+    }
+  }
+
+  @Override
+  @GET
+  @Path("/project/id/{id}/scope")
+  @ApiOperation(value = "Get project scope for the project id", notes = "Gets all concpets in scope for this project.", response = ConceptList.class)
+  @Produces({
+      MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML
+  })
+  public ConceptList getConceptsInScope(
+    @ApiParam(value = "Project internal id, e.g. 2", required = true) @PathParam("id") Long id,
+    @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken) {
+
+    Logger.getLogger(ContentServiceRestImpl.class).info(
+        "RESTful call (Content): /project/" + id + "/scope");
+
+    try {
+      authenticate(securityService, authToken, "get project scope",
+          UserRole.VIEWER);
+
+      ContentService contentService = new ContentServiceJpa();
+      ConceptList list =
+          contentService.getConceptsInScope(contentService
+              .getProject(id));
+      contentService.close();
+      return list;
+    } catch (Exception e) {
+      handleException(e, "trying to retrieve scope concepts for project "
+          + id);
+      return null;
+    }
+  }
+
+  @Override
+  @GET
+  @Path("/project/id/{id}")
+  @ApiOperation(value = "Get project for id", notes = "Gets the project for the specified id.", response = ConceptList.class)
+  @Produces({
+      MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML
+  })
+  public Project getProject(
+    @ApiParam(value = "Project internal id, e.g. 2", required = true) @PathParam("id") Long id,
+    @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken) {
+    Logger.getLogger(ContentServiceRestImpl.class).info(
+        "RESTful call (Content): /project/id/" + id);
+
+    try {
+      authenticate(securityService, authToken, "retrieve the project",
+          UserRole.VIEWER);
+
+      ContentService contentService = new ContentServiceJpa();
+      Project project = contentService.getProject(id);
+      contentService.close();
+      return project;
+    } catch (Exception e) {
+      handleException(e, "trying to retrieve a project");
+      return null;
+    }
+  }
+
+  @Override
+  @GET
+  @Path("/project/projects}")
+  @ApiOperation(value = "Get all projects", notes = "Gets all projects.", response = ConceptList.class)
+  @Produces({
+      MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML
+  })
+  public ProjectList getProjects(
+    @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken) {
+    Logger.getLogger(ContentServiceRestImpl.class).info(
+        "RESTful call (Content): /project/projects");
+
+    try {
+      authenticate(securityService, authToken, "retrieve projects",
+          UserRole.VIEWER);
+
+      ContentService contentService = new ContentServiceJpa();
+      ProjectList list = contentService.getProjects();
+      contentService.close();
+      return list;
+    } catch (Exception e) {
+      handleException(e, "trying to retrieve the projects");
       return null;
     }
   }

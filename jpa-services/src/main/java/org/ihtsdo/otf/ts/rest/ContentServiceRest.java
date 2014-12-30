@@ -3,9 +3,11 @@
  */
 package org.ihtsdo.otf.ts.rest;
 
+import org.ihtsdo.otf.ts.Project;
 import org.ihtsdo.otf.ts.helpers.ConceptList;
 import org.ihtsdo.otf.ts.helpers.PfsParameter;
 import org.ihtsdo.otf.ts.helpers.PfsParameterJpa;
+import org.ihtsdo.otf.ts.helpers.ProjectList;
 import org.ihtsdo.otf.ts.helpers.SearchResultList;
 import org.ihtsdo.otf.ts.rf2.AssociationReferenceConceptRefSetMember;
 import org.ihtsdo.otf.ts.rf2.Concept;
@@ -13,11 +15,8 @@ import org.ihtsdo.otf.ts.rf2.Description;
 import org.ihtsdo.otf.ts.rf2.LanguageRefSetMember;
 import org.ihtsdo.otf.ts.rf2.Relationship;
 
-// TODO: Auto-generated Javadoc
 /**
  * Represents a content available via a REST service.
- *
- * @author ${author}
  */
 public interface ContentServiceRest {
   
@@ -97,10 +96,13 @@ public interface ContentServiceRest {
    * @param terminology the terminology
    * @param terminologyVersion the terminology version
    * @param pfs the pfs
+   * @param authToken the auth token
    * @return the concept children
-   * @throws Exception 
+   * @throws Exception the exception
    */
-  public ConceptList getConceptChildren(String terminologyId, String terminology, String terminologyVersion, PfsParameter pfs, String authToken) throws Exception;
+  public ConceptList getConceptChildren(String terminologyId,
+    String terminology, String terminologyVersion, PfsParameter pfs,
+    String authToken) throws Exception;
   
   /**
    * Returns the concept descendants.
@@ -109,6 +111,7 @@ public interface ContentServiceRest {
    * @param terminology the terminology
    * @param terminologyVersion the terminology version
    * @param pfs the pfs
+   * @param authToken the auth token
    * @return the concept descendants
    */
   public ConceptList getConceptDescendants(String terminologyId, String terminology, String terminologyVersion, PfsParameter pfs, String authToken);
@@ -215,6 +218,32 @@ public interface ContentServiceRest {
    */
   public AssociationReferenceConceptRefSetMember getAssociationReferenceConceptRefSetMember(Long id, String authToken) throws Exception;
   
+  /**
+   * Returns the concepts in scope.
+   *
+   * @param projectId the project id
+   * @param authToken the auth token
+   * @return the concepts in scope
+   * @throws Exception the exception
+   */
+  public ConceptList getConceptsInScope(Long projectId, String authToken) throws Exception;
 
-  
+  /**
+   * Returns the project.
+   *
+   * @param id the id
+   * @param authToken the auth token
+   * @return the project
+   * @throws Exception the exception
+   */
+  public Project getProject(Long id, String authToken) throws Exception;
+
+  /**
+   * Returns the projects.
+   *
+   * @param authToken the auth token
+   * @return the projects
+   * @throws Exception the exception
+   */
+  public ProjectList getProjects(String authToken) throws Exception;
 }

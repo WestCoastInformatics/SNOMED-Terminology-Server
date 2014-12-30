@@ -44,9 +44,6 @@ public class RelationshipGroup extends ArrayList<Relationship> {
     
     /** The Constant serialVersionUID. */
     private static final long serialVersionUID = 1L;
-    
-    /** The Constant debug. */
-    private static final boolean debug = false; // :DEBUG:
 
     /**
      * Instantiates a new sno grp.
@@ -91,6 +88,7 @@ public class RelationshipGroup extends ArrayList<Relationship> {
         this.addAll(roleGroupB);
         // SORT BY [ROLE-C2-GROUP-C2]
         Comparator<Relationship> comp = new Comparator<Relationship>() {
+            @Override
             public int compare(Relationship o1, Relationship o2) {
                 int thisMore = 1;
                 int thisLess = -1;
@@ -122,6 +120,7 @@ public class RelationshipGroup extends ArrayList<Relationship> {
     public RelationshipGroup sortByType() {
         // SORT BY [ROLE-C2-GROUP-C2]
         Comparator<Relationship> comp = new Comparator<Relationship>() {
+            @Override
             public int compare(Relationship o1, Relationship o2) {
                 int thisMore = 1;
                 int thisLess = -1;

@@ -1,7 +1,5 @@
 package org.ihtsdo.otf.ts.services;
 
-import java.util.Set;
-
 import org.ihtsdo.otf.ts.Project;
 import org.ihtsdo.otf.ts.helpers.AssociationReferenceRefSetMemberList;
 import org.ihtsdo.otf.ts.helpers.AttributeValueRefSetMemberList;
@@ -10,12 +8,14 @@ import org.ihtsdo.otf.ts.helpers.ConceptList;
 import org.ihtsdo.otf.ts.helpers.LanguageRefSetMemberList;
 import org.ihtsdo.otf.ts.helpers.ModuleDependencyRefSetMemberList;
 import org.ihtsdo.otf.ts.helpers.PfsParameter;
+import org.ihtsdo.otf.ts.helpers.ProjectList;
 import org.ihtsdo.otf.ts.helpers.RefsetDescriptorRefSetMemberList;
 import org.ihtsdo.otf.ts.helpers.SearchCriteriaList;
 import org.ihtsdo.otf.ts.helpers.SearchResultList;
 import org.ihtsdo.otf.ts.helpers.SimpleMapRefSetMemberList;
 import org.ihtsdo.otf.ts.helpers.SimpleRefSetMemberList;
 import org.ihtsdo.otf.ts.helpers.StringList;
+import org.ihtsdo.otf.ts.helpers.UserRole;
 import org.ihtsdo.otf.ts.rf2.AssociationReferenceRefSetMember;
 import org.ihtsdo.otf.ts.rf2.AttributeValueRefSetMember;
 import org.ihtsdo.otf.ts.rf2.ComplexMapRefSetMember;
@@ -121,7 +121,7 @@ public interface ContentService extends RootService {
    * @throws Exception the exception
    */
   public void removeConcept(Long id) throws Exception;
-  
+
   /**
    * Find descendants.
    *
@@ -130,8 +130,9 @@ public interface ContentService extends RootService {
    * @return the concept list
    * @throws Exception the exception
    */
-  public ConceptList getDescendantConcepts(Concept concept, PfsParameter pfsParameter) throws Exception;
-  
+  public ConceptList getDescendantConcepts(Concept concept,
+    PfsParameter pfsParameter) throws Exception;
+
   /**
    * Find children.
    *
@@ -141,7 +142,8 @@ public interface ContentService extends RootService {
    * @throws Exception the exception
    */
   public ConceptList getChildConcepts(Concept concept, PfsParameter pfs)
-      throws Exception;
+    throws Exception;
+
   /**
    * Returns the description.
    * 
@@ -999,6 +1001,54 @@ public interface ContentService extends RootService {
    * @return the concepts in scope
    * @throws Exception the exception
    */
-  public Set<Concept> getConceptsInScope(Project project) throws Exception;
+  public ConceptList getConceptsInScope(Project project) throws Exception;
+
+  /**
+   * Returns the project.
+   *
+   * @param id the id
+   * @return the project
+   */
+  public Project getProject(Long id);
+
+  /**
+   * Adds the project.
+   *
+   * @param project the project
+   * @return the project
+   */
+  public Project addProject(Project project);
+
+  /**
+   * Update project.
+   *
+   * @param project the project
+   */
+  public void updateProject(Project project);
+
+  /**
+   * Removes the project.
+   *
+   * @param projectId the project id
+   */
+  public void removeProject(Long projectId);
+
+  /**
+   * Returns the projects.
+   *
+   * @return the projects
+   */
+  public ProjectList getProjects();
+
+  /**
+   * Returns the user role for project.
+   *
+   * @param username the username
+   * @param projectId the project id
+   * @return the user role for project
+   * @throws Exception the exception
+   */
+  public UserRole getUserRoleForProject(String username, Long projectId)
+    throws Exception;
 
 }

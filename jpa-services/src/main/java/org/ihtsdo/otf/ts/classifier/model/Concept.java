@@ -69,6 +69,7 @@ public class Concept implements Comparable<Object> {
     /* (non-Javadoc)
      * @see java.lang.Comparable#compareTo(java.lang.Object)
      */
+    @Override
     public int compareTo(Object object) {
         Concept other = (Concept) object;
         if (this.id > other.id) {

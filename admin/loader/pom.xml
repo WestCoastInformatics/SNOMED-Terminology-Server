@@ -16,10 +16,21 @@
   <packaging>pom</packaging>
 
   <properties>
+    <!-- The name -->
+    <name>Sample Project</name>
+    <!-- The description -->
+    <description></description>
+    <!-- The admin uer -->
+    <admin.user>admin</admin.user>
+    <!-- Scope flags -->
+    <scope.concepts>138875005</scope.concepts>
+    <scope.descendants.flag>true</scope.descendants.flag>
+    <scope.excludes.concepts></scope.excludes.concepts>
+    <scope.excludes.descendants.flag>true</scope.excludes.descendants.flag>
     <!-- The terminology -->
     <terminology></terminology>
     <!-- The terminology version -->
-    <terminology.version>latest</terminology.version>
+    <version>latest</version>
     <!-- The input directory for RF2 loads -->
     <input.dir></input.dir>
     <!-- The input file for ClaML loads -->
@@ -46,7 +57,7 @@
                 </goals>
                 <configuration>
                   <terminology>${terminology}</terminology>
-                  <terminologyVersion>${terminology.version}</terminologyVersion>
+                  <terminologyVersion>${version}</terminologyVersion>
                   <inputDir>${input.dir}</inputDir>
                 </configuration>
               </execution>
@@ -74,7 +85,7 @@
                 </goals>
                 <configuration>
                   <terminology>${terminology}</terminology>
-                  <terminologyVersion>${terminology.version}</terminologyVersion>
+                  <terminologyVersion>${version}</terminologyVersion>
                   <inputDir>${input.dir}</inputDir>
                 </configuration>
               </execution>
@@ -164,5 +175,38 @@
       </build>
     </profile>
 
+    <!-- Add a project, specify -Drun.config=... -Dterminology=... -->
+    <profile>
+      <id>AddProject</id>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.ihtsdo.otf.term-server</groupId>
+            <artifactId>term-server-admin-mojo</artifactId>
+            <version>${releaseVersion}</version>
+            <executions>
+              <execution>
+                <id>add-project</id>
+                <phase>package</phase>
+                <goals>
+                  <goal>add-project</goal>
+                </goals>
+                <configuration>
+                  <name>${name}</name>
+                  <description>${description}</description>
+                  <terminology>${terminology}</terminology>
+                  <terminologyVersion>${version}</terminologyVersion>
+                  <adminUser>${admin.user}</adminUser>
+                  <scopeConcepts>${scope.concepts}</scopeConcepts>
+                  <scopeDescendantsFlag>${scope.descendants.flag}</scopeDescendantsFlag>
+                  <scopeExcludesConcepts>${scope.excludes.concepts}</scopeExcludesConcepts>
+                  <scopeExcludesDescendantsFlag>${scope.excludes.descendants.flag}</scopeExcludesDescendantsFlag>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
   </profiles>
 </project>

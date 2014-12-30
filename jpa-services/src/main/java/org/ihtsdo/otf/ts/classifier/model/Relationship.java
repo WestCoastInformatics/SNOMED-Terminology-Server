@@ -101,6 +101,7 @@ public class Relationship implements Comparable<Object> {
     /* (non-Javadoc)
      * @see java.lang.Comparable#compareTo(java.lang.Object)
      */
+    @Override
     public int compareTo(Object o) {
         Relationship other = (Relationship) o;
         int thisMore = 1;
@@ -185,17 +186,7 @@ public class Relationship implements Comparable<Object> {
         return Integer.toString(group);
     }
 
-
-    /**
-     * To string4 file.
-     *
-     * @return the string
-     */
-    public String toString4File() {
-        return "relId     \t" + "sourceId      \t" + "destinationId      \t" + "typeId    \t" + "group";
-    }
-
-    /**
+     /**
      * Dump to file.
      *
      * @param srl the srl

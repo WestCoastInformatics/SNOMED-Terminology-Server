@@ -42,6 +42,8 @@ import org.ihtsdo.otf.ts.helpers.LocalException;
 import org.ihtsdo.otf.ts.helpers.ModuleDependencyRefSetMemberList;
 import org.ihtsdo.otf.ts.helpers.ModuleDependencyRefSetMemberListJpa;
 import org.ihtsdo.otf.ts.helpers.PfsParameter;
+import org.ihtsdo.otf.ts.helpers.ProjectList;
+import org.ihtsdo.otf.ts.helpers.ProjectListJpa;
 import org.ihtsdo.otf.ts.helpers.RefsetDescriptorRefSetMemberList;
 import org.ihtsdo.otf.ts.helpers.RefsetDescriptorRefSetMemberListJpa;
 import org.ihtsdo.otf.ts.helpers.ReleaseInfo;
@@ -55,6 +57,9 @@ import org.ihtsdo.otf.ts.helpers.SimpleMapRefSetMemberListJpa;
 import org.ihtsdo.otf.ts.helpers.SimpleRefSetMemberList;
 import org.ihtsdo.otf.ts.helpers.SimpleRefSetMemberListJpa;
 import org.ihtsdo.otf.ts.helpers.StringList;
+import org.ihtsdo.otf.ts.helpers.User;
+import org.ihtsdo.otf.ts.helpers.UserRole;
+import org.ihtsdo.otf.ts.jpa.ProjectJpa;
 import org.ihtsdo.otf.ts.jpa.services.helper.TerminologyUtility;
 import org.ihtsdo.otf.ts.rf2.AssociationReferenceConceptRefSetMember;
 import org.ihtsdo.otf.ts.rf2.AssociationReferenceRefSetMember;
@@ -3041,7 +3046,7 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
    * @throws Exception the exception
    */
   @Override
-  public Set<Concept> getConceptsInScope(Project project) throws Exception {
+  public ConceptList getConceptsInScope(Project project) throws Exception {
     Logger.getLogger(getClass()).info(
         "Content Service - get project scope - " + project);
     if (project == null) {
@@ -3086,7 +3091,198 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
 
     include.removeAll(exclude);
     Logger.getLogger(getClass()).info("  count = " + include.size());
-    return include;
+    ConceptList list = new ConceptListJpa();
+    list.setObjects(new ArrayList<>(include));
+    return list;
+  }
+
+  /*
+   * (non-Javadoc)
+   * 
+   * @see org.ihtsdo.otf.ts.services.ContentService#getProject(java.lang.Long)
+   */
+  @Override
+  public Project getProject(Long id) {
+    Logger.getLogger(ContentServiceJpa.class).debug(
+        "Content Service - get project " + id);
+    Project project = manager.find(ProjectJpa.class, id);
+    return project;
+  }
+
+  /*
+   * (non-Javadoc)
+   * 
+   * @see org.ihtsdo.otf.ts.services.ContentService#getProjects()
+   */
+  @Override
+  @SuppressWarnings("unchecked")
+  public ProjectList getProjects() {
+    Logger.getLogger(ContentServiceJpa.class).debug(
+        "Content Service - get projects");
+    javax.persistence.Query query =
+        manager.createQuery("select a from ProjectJpa a");
+    try {
+      List<Project> concepts = query.getResultList();
+      ProjectList list = new ProjectListJpa();
+      list.setObjects(concepts);
+      return list;
+    } catch (NoResultException e) {
+      return null;
+    }
+  }
+
+  /*
+   * (non-Javadoc)
+   * 
+   * @see
+   * org.ihtsdo.otf.ts.services.ContentService#getUserRoleForProject(java.lang
+   * .String, java.lang.Long)
+   */
+  @Override
+  public UserRole getUserRoleForProject(String username, Long projectId)
+    throws Exception {
+    Project project = getProject(projectId);
+    if (project == null) {
+      throw new Exception("No project found for " + projectId);
+    }
+
+    // check admin
+    for (User user : project.getAdministrators()) {
+      if (username.equals(user.getUserName())) {
+        return UserRole.ADMINISTRATOR;
+      }
+    }
+
+    // check lead
+    for (User user : project.getLeads()) {
+      if (username.equals(user.getUserName())) {
+        return UserRole.LEAD;
+      }
+    }
+
+    // check author
+    for (User user : project.getAuthors()) {
+      if (username.equals(user.getUserName())) {
+        return UserRole.AUTHOR;
+      }
+    }
+
+    return null;
+  }
+
+  /*
+   * (non-Javadoc)
+   * 
+   * @see
+   * org.ihtsdo.otf.ts.services.ContentService#addProject(org.ihtsdo.otf.ts.
+   * Project)
+   */
+  @Override
+  public Project addProject(Project project) {
+    Logger.getLogger(ContentServiceJpa.class).debug(
+        "Content Service - add project - " + project);
+    try {
+      // Set last modified date
+      if (lastModifiedFlag) {
+        project.setLastModified(new Date());
+      }
+
+      // add the project
+      if (getTransactionPerOperation()) {
+        tx = manager.getTransaction();
+        tx.begin();
+        manager.persist(project);
+        tx.commit();
+      } else {
+        manager.persist(project);
+      }
+      return project;
+    } catch (Exception e) {
+      if (tx.isActive()) {
+        tx.rollback();
+      }
+      throw e;
+    }
+  }
+
+  /*
+   * (non-Javadoc)
+   * 
+   * @see
+   * org.ihtsdo.otf.ts.services.ContentService#updateProject(org.ihtsdo.otf.
+   * ts.Project)
+   */
+  @Override
+  public void updateProject(Project project) {
+    Logger.getLogger(ContentServiceJpa.class).debug(
+        "Content Service - update project - " + project);
+
+    try {
+      // Set modification date
+      if (lastModifiedFlag) {
+        project.setLastModified(new Date());
+      }
+
+      // update
+      if (getTransactionPerOperation()) {
+        tx = manager.getTransaction();
+        tx.begin();
+        manager.merge(project);
+        tx.commit();
+      } else {
+        manager.merge(project);
+      }
+    } catch (Exception e) {
+      if (tx.isActive()) {
+        tx.rollback();
+      }
+      throw e;
+    }
+  }
+
+  /*
+   * (non-Javadoc)
+   * 
+   * @see
+   * org.ihtsdo.otf.ts.services.ContentService#removeProject(java.lang.Long)
+   */
+  @Override
+  public void removeProject(Long id) {
+    Logger.getLogger(ContentServiceJpa.class).debug(
+        "Content Service - remove project " + id);
+    try {
+      // Get transaction and object
+      tx = manager.getTransaction();
+      Project project = manager.find(ProjectJpa.class, id);
+
+      // Set modification date
+      if (lastModifiedFlag) {
+        project.setLastModified(new Date());
+      }
+
+      // Remove
+      if (getTransactionPerOperation()) {
+        // remove refset member
+        tx.begin();
+        if (manager.contains(project)) {
+          manager.remove(project);
+        } else {
+          manager.remove(manager.merge(project));
+        }
+        tx.commit();
+      } else {
+        if (manager.contains(project)) {
+          manager.remove(project);
+        } else {
+          manager.remove(manager.merge(project));
+        }
+      }
+    } catch (Exception e) {
+      if (tx.isActive()) {
+        tx.rollback();
+      }
+      throw e;
+    }
   }
 
   /**

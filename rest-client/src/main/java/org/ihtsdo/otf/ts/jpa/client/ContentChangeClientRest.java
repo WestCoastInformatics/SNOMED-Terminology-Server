@@ -6,7 +6,9 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response.Status.Family;
 
 import org.apache.log4j.Logger;
+import org.ihtsdo.otf.ts.Project;
 import org.ihtsdo.otf.ts.helpers.ConfigUtility;
+import org.ihtsdo.otf.ts.jpa.ProjectJpa;
 import org.ihtsdo.otf.ts.rest.ContentChangeServiceRest;
 import org.ihtsdo.otf.ts.rf2.AssociationReferenceConceptRefSetMember;
 import org.ihtsdo.otf.ts.rf2.Concept;
@@ -592,6 +594,99 @@ public class ContentChangeClientRest implements ContentChangeServiceRest {
     } else {
       throw new Exception("Unexpected status " + response.getStatus());
     }
+  }
+
+  /*
+   * (non-Javadoc)
+   * 
+   * @see
+   * org.ihtsdo.otf.ts.rest.ContentChangeServiceRest#addProject(org.ihtsdo.otf
+   * .ts.jpa.ProjectJpa, java.lang.String)
+   */
+  @Override
+  public Project addProject(ProjectJpa project, String authToken)
+    throws Exception {
+    Client client = Client.create();
+    WebResource resource =
+        client.resource(config.getProperty("base.url") + "/edit/project/add");
+
+    String projectString =
+        (project != null ? ConfigUtility.getStringForGraph(project) : null);
+    Logger.getLogger(this.getClass()).info(projectString);
+    ClientResponse response =
+        resource.accept(MediaType.APPLICATION_XML)
+            .header("Authorization", authToken)
+            .header("Content-type", MediaType.APPLICATION_XML)
+            .put(ClientResponse.class, projectString);
+
+    String resultString = response.getEntity(String.class);
+    if (response.getClientResponseStatus().getFamily() == Family.SUCCESSFUL) {
+      Logger.getLogger(this.getClass()).debug(resultString);
+    } else {
+      throw new Exception(resultString);
+    }
+
+    // converting to object
+    ProjectJpa result =
+        (ProjectJpa) ConfigUtility.getGraphForString(resultString,
+            ProjectJpa.class);
+
+    return result;
+  }
+
+  /*
+   * (non-Javadoc)
+   * 
+   * @see
+   * org.ihtsdo.otf.ts.rest.ContentChangeServiceRest#updateProject(org.ihtsdo
+   * .otf.ts.jpa.ProjectJpa, java.lang.String)
+   */
+  @Override
+  public void updateProject(ProjectJpa project, String authToken)
+    throws Exception {
+    Client client = Client.create();
+    WebResource resource =
+        client
+            .resource(config.getProperty("base.url") + "/edit/project/update");
+
+    String projectString =
+        (project != null ? ConfigUtility.getStringForGraph(project) : null);
+    ClientResponse response =
+        resource.accept(MediaType.APPLICATION_XML)
+            .header("Authorization", authToken)
+            .header("Content-type", MediaType.APPLICATION_XML)
+            .post(ClientResponse.class, projectString);
+
+    if (response.getClientResponseStatus().getFamily() == Family.SUCCESSFUL) {
+      // do nothing
+    } else {
+      throw new Exception("Unexpected status " + response.getStatus());
+    }
+  }
+
+  /*
+   * (non-Javadoc)
+   * 
+   * @see
+   * org.ihtsdo.otf.ts.rest.ContentChangeServiceRest#removeProject(java.lang
+   * .Long, java.lang.String)
+   */
+  @Override
+  public void removeProject(Long id, String authToken) throws Exception {
+    Client client = Client.create();
+    WebResource resource =
+        client.resource(config.getProperty("base.url")
+            + "/edit/project/remove/" + id);
+    ClientResponse response =
+        resource.accept(MediaType.APPLICATION_XML)
+            .header("Authorization", authToken).delete(ClientResponse.class);
+
+    if (response.getClientResponseStatus().getFamily() == Family.SUCCESSFUL) {
+      // do nothing
+    } else {
+      throw new Exception("Unexpected status " + response.getStatus());
+    }
+
   }
 
 }

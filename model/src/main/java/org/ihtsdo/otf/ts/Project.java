@@ -1,5 +1,6 @@
 package org.ihtsdo.otf.ts;
 
+import java.util.Date;
 import java.util.Set;
 
 import org.ihtsdo.otf.ts.helpers.User;
@@ -10,278 +11,319 @@ import org.ihtsdo.otf.ts.helpers.User;
 public interface Project {
 
   /**
-     * Returns the id.
-     * 
-     * @return the id
-     */
-    public Long getId();
+   * Returns the id.
+   * 
+   * @return the id
+   */
+  public Long getId();
 
-    /**
-     * Sets the id.
-     * 
-     * @param id the id
-     */
-    public void setId(Long id);
+  /**
+   * Sets the id.
+   * 
+   * @param id the id
+   */
+  public void setId(Long id);
 
-    /**
-     * Returns the id in string form.
-     * 
-     * @return the string object id
-     */
-    public String getObjectId();
+  /**
+   * Returns the id in string form.
+   * 
+   * @return the string object id
+   */
+  public String getObjectId();
 
-    /**
-     * Returns the name.
-     * 
-     * @return the name
-     */
-    public String getName();
+  /**
+   * Returns the name.
+   * 
+   * @return the name
+   */
+  public String getName();
 
-    /**
-     * Sets the name.
-     * 
-     * @param name the name
-     */
-    public void setName(String name);
+  /**
+   * Sets the name.
+   * 
+   * @param name the name
+   */
+  public void setName(String name);
 
-    /**
-     * Checks if the project is viewable by public roles.
-     *
-     * @return true, if is public
-     */
-    public boolean isPublic();
+  /**
+   * Returns the description.
+   * 
+   * @return the description
+   */
+  public String getDescription();
 
-    /**
-     * Sets whether the project is viewable by public roles.
-     *
-     * @param isPublic the new public
-     */
-    public void setPublic(boolean isPublic);
+  /**
+   * Sets the description.
+   * 
+   * @param description the description
+   */
+  public void setDescription(String description);
+  
+  /**
+   * Checks if the project is viewable by public roles.
+   *
+   * @return true, if is public
+   */
+  public boolean isPublic();
 
-    /**
-     * Returns the module id.
-     *
-     * @return the module id
-     */
-    public String getModuleId();
+  /**
+   * Sets whether the project is viewable by public roles.
+   *
+   * @param isPublic the new public
+   */
+  public void setPublic(boolean isPublic);
 
-    /**
-     * Sets the module id.
-     *
-     * @param moduleId the module id
-     */
-    public void setModuleId(String moduleId);
+  /**
+   * Returns the last modified.
+   * 
+   * @return the last modified
+   */
+  public Date getLastModified();
 
-    /**
-     * Returns the leads.
-     * 
-     * @return the leads
-     */
-    public Set<User> getLeads();
+  /**
+   * Sets the last modified.
+   * 
+   * @param lastModified the last modified
+   */
+  public void setLastModified(Date lastModified);
 
-    /**
-     * Sets the leads.
-     * 
-     * @param leads the leads
-     */
-    public void setLeads(Set<User> leads);
+  /**
+   * Returns the last modified by.
+   * 
+   * @return the last modified by
+   */
+  public String getLastModifiedBy();
 
-    /**
-     * Adds the lead.
-     * 
-     * @param lead the lead
-     */
-    public void addLead(User lead);
+  /**
+   * Sets the last modified by.
+   * 
+   * @param lastModifiedBy the last modified by
+   */
+  public void setLastModifiedBy(String lastModifiedBy);
 
-    /**
-     * Removes the lead.
-     * 
-     * @param lead the lead
-     */
-    public void removeLead(User lead);
+  /**
+   * Returns the module id.
+   *
+   * @return the module id
+   */
+  public String getModuleId();
 
-    /**
-     * Returns the administrators.
-     * 
-     * @return the administrators
-     */
-    public Set<User> getAdministrators();
+  /**
+   * Sets the module id.
+   *
+   * @param moduleId the module id
+   */
+  public void setModuleId(String moduleId);
 
-    /**
-     * Sets the administrators.
-     * @param administrators the administrators
-     */
-    public void setAdministrators(Set<User> administrators);
+  /**
+   * Returns the leads.
+   * 
+   * @return the leads
+   */
+  public Set<User> getLeads();
 
-    /**
-     * Adds the administrator.
-     * 
-     * @param administrator a administrator
-     */
-    public void addAdministrator(User administrator);
+  /**
+   * Sets the leads.
+   * 
+   * @param leads the leads
+   */
+  public void setLeads(Set<User> leads);
 
-    /**
-     * Removes the administrator.
-     * 
-     * @param administrator the administrator
-     */
-    public void removeAdministrator(User administrator);
+  /**
+   * Adds the lead.
+   * 
+   * @param lead the lead
+   */
+  public void addLead(User lead);
 
-    /**
-     * Returns the author.
-     * 
-     * @return the author.
-     */
-    public Set<User> getAuthors();
+  /**
+   * Removes the lead.
+   * 
+   * @param lead the lead
+   */
+  public void removeLead(User lead);
 
-    /**
-     * Sets the authors.
-     * 
-     * @param authors the authors
-     */
-    public void setAuthors(Set<User> authors);
+  /**
+   * Returns the administrators.
+   * 
+   * @return the administrators
+   */
+  public Set<User> getAdministrators();
 
-    /**
-     * Adds the author.
-     * 
-     * @param author the author
-     */
-    public void addAuthor(User author);
+  /**
+   * Sets the administrators.
+   * @param administrators the administrators
+   */
+  public void setAdministrators(Set<User> administrators);
 
-    /**
-     * Removes the author.
-     * 
-     * @param author the author
-     */
-    public void removeAuthor(User author);
+  /**
+   * Adds the administrator.
+   * 
+   * @param administrator a administrator
+   */
+  public void addAdministrator(User administrator);
 
-    /**
-     * Returns the terminology.
-     * 
-     * @return the terminology
-     */
-    public String getTerminology();
+  /**
+   * Removes the administrator.
+   * 
+   * @param administrator the administrator
+   */
+  public void removeAdministrator(User administrator);
 
-    /**
-     * Sets the terminology.
-     * 
-     * @param terminology the terminology
-     */
-    public void setTerminology(String terminology);
+  /**
+   * Returns the author.
+   * 
+   * @return the author.
+   */
+  public Set<User> getAuthors();
 
+  /**
+   * Sets the authors.
+   * 
+   * @param authors the authors
+   */
+  public void setAuthors(Set<User> authors);
 
-    /**
-     * Returns the terminology version.
-     * 
-     * @return the terminology version
-     */
-    public String getTerminologyVersion();
+  /**
+   * Adds the author.
+   * 
+   * @param author the author
+   */
+  public void addAuthor(User author);
 
-    /**
-     * Sets the terminology version.
-     * 
-     * @param version the terminology version
-     */
-    public void setTerminologyVersion(String version);
+  /**
+   * Removes the author.
+   * 
+   * @param author the author
+   */
+  public void removeAuthor(User author);
 
-    /**
-     * Returns the scope concepts.
-     * 
-     * @return the scope concepts
-     */
-    public Set<String> getScopeConcepts();
+  /**
+   * Returns the terminology.
+   * 
+   * @return the terminology
+   */
+  public String getTerminology();
 
-    /**
-     * Sets the scope concepts.
-     * 
-     * @param scopeConcepts the scope concepts
-     */
-    public void setScopeConcepts(Set<String> scopeConcepts);
+  /**
+   * Sets the terminology.
+   * 
+   * @param terminology the terminology
+   */
+  public void setTerminology(String terminology);
 
-    /**
-     * Indicates whether or not project scope includes descendants
-     * of scope concepts.
-     * 
-     * @return <code>true</code> if so, <code>false</code> otherwise
-     */
-    public boolean getScopeDescendantsFlag();
+  /**
+   * Returns the terminology version.
+   * 
+   * @return the terminology version
+   */
+  public String getTerminologyVersion();
 
-    /**
-     * Sets the scope descendants flag.
-     * 
-     * @param flag the scope descendants flag
-     */
-    public void setScopeDescendantsFlag(boolean flag);
+  /**
+   * Sets the terminology version.
+   * 
+   * @param version the terminology version
+   */
+  public void setTerminologyVersion(String version);
 
-    /**
-     * Returns the scope excludes concepts.
-     * 
-     * @return the scope excludes concepts
-     */
-    public Set<String> getScopeExcludesConcepts();
+  /**
+   * Returns the scope concepts.
+   * 
+   * @return the scope concepts
+   */
+  public Set<String> getScopeConcepts();
 
-    /**
-     * Sets the scope excludes concepts.
-     * 
-     * @param scopeExcludesConcepts the scope excludes concepts
-     */
-    public void setScopeExcludesConcepts(Set<String> scopeExcludesConcepts);
+  /**
+   * Sets the scope concepts.
+   * 
+   * @param scopeConcepts the scope concepts
+   */
+  public void setScopeConcepts(Set<String> scopeConcepts);
 
-    /**
-     * Indicates whether or not scope excludes descendants of the
-     * scope excludes concepts.
-     * 
-     * @return <code>true</code> if so, <code>false</code> otherwise
-     */
-    public boolean getScopeExcludesDescendantsFlag();
+  /**
+   * Indicates whether or not project scope includes descendants of scope
+   * concepts.
+   * 
+   * @return <code>true</code> if so, <code>false</code> otherwise
+   */
+  public boolean getScopeDescendantsFlag();
 
-    /**
-     * Sets the scope excludes descendants flag.
-     * 
-     * @param flag the scope excludes descendants flag
-     */
-    public void setScopeExcludesDescendantsFlag(boolean flag);
+  /**
+   * Sets the scope descendants flag.
+   * 
+   * @param flag the scope descendants flag
+   */
+  public void setScopeDescendantsFlag(boolean flag);
 
-    /**
-     * Adds the scope excludes concept.
-     *
-     * @param terminologyId the terminology id
-     */
-    public void addScopeExcludesConcept(String terminologyId);
+  /**
+   * Returns the scope excludes concepts.
+   * 
+   * @return the scope excludes concepts
+   */
+  public Set<String> getScopeExcludesConcepts();
 
-    /**
-     * Removes the scope excludes concept.
-     *
-     * @param terminologyId the terminology id
-     */
-    public void removeScopeExcludesConcept(String terminologyId);
+  /**
+   * Sets the scope excludes concepts.
+   * 
+   * @param scopeExcludesConcepts the scope excludes concepts
+   */
+  public void setScopeExcludesConcepts(Set<String> scopeExcludesConcepts);
 
-    /**
-     * Adds the scope concept.
-     *
-     * @param terminologyId the terminology id
-     */
-    public void addScopeConcept(String terminologyId);
+  /**
+   * Indicates whether or not scope excludes descendants of the scope excludes
+   * concepts.
+   * 
+   * @return <code>true</code> if so, <code>false</code> otherwise
+   */
+  public boolean getScopeExcludesDescendantsFlag();
 
-    /**
-     * Removes the scope concept.
-     *
-     * @param terminologyId the terminology id
-     */
-    public void removeScopeConcept(String terminologyId);
+  /**
+   * Sets the scope excludes descendants flag.
+   * 
+   * @param flag the scope excludes descendants flag
+   */
+  public void setScopeExcludesDescendantsFlag(boolean flag);
 
-    /**
-     * Returns the action workflow status values.
-     *
-     * @return the action workflow status values
-     */
-    public Set<String> getActionWorkflowStatusValues();
-    
-    /**
-     * Sets the action workflow status values.
-     *
-     * @param values the action workflow status values
-     */
-    public void setActionWorkflowStatusValues(Set<String> values);
-    
-  }
+  /**
+   * Adds the scope excludes concept.
+   *
+   * @param terminologyId the terminology id
+   */
+  public void addScopeExcludesConcept(String terminologyId);
+
+  /**
+   * Removes the scope excludes concept.
+   *
+   * @param terminologyId the terminology id
+   */
+  public void removeScopeExcludesConcept(String terminologyId);
+
+  /**
+   * Adds the scope concept.
+   *
+   * @param terminologyId the terminology id
+   */
+  public void addScopeConcept(String terminologyId);
+
+  /**
+   * Removes the scope concept.
+   *
+   * @param terminologyId the terminology id
+   */
+  public void removeScopeConcept(String terminologyId);
+
+  /**
+   * Returns the action workflow status values.
+   *
+   * @return the action workflow status values
+   */
+  public Set<String> getActionWorkflowStatusValues();
+
+  /**
+   * Sets the action workflow status values.
+   *
+   * @param values the action workflow status values
+   */
+  public void setActionWorkflowStatusValues(Set<String> values);
+
+}

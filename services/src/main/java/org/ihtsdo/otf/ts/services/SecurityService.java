@@ -27,10 +27,10 @@ public interface SecurityService extends RootService {
    * Logout.
    *
    * @param authToken the auth token
-   * @throws Exception 
+   * @throws Exception
    */
   public void logout(String authToken) throws Exception;
-  
+
   /**
    * Returns the username for token.
    * 
@@ -48,6 +48,17 @@ public interface SecurityService extends RootService {
    * @throws Exception the exception
    */
   public UserRole getApplicationRoleForToken(String authToken) throws Exception;
+
+  /**
+   * Returns the application role for token.
+   *
+   * @param authToken the auth token
+   * @param projectId the project id
+   * @return the application role
+   * @throws Exception the exception
+   */
+  public UserRole getProjectRoleForToken(String authToken, Long projectId)
+    throws Exception;
 
   /**
    * Get user by id.
@@ -87,7 +98,7 @@ public interface SecurityService extends RootService {
    *
    * @param id the id
    */
-  public void removeUser(String id);
+  public void removeUser(Long id);
 
   /**
    * Update user.

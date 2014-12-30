@@ -6,13 +6,17 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response.Status.Family;
 
 import org.apache.log4j.Logger;
+import org.ihtsdo.otf.ts.Project;
 import org.ihtsdo.otf.ts.helpers.ConceptList;
 import org.ihtsdo.otf.ts.helpers.ConceptListJpa;
 import org.ihtsdo.otf.ts.helpers.ConfigUtility;
 import org.ihtsdo.otf.ts.helpers.PfsParameter;
 import org.ihtsdo.otf.ts.helpers.PfsParameterJpa;
+import org.ihtsdo.otf.ts.helpers.ProjectList;
+import org.ihtsdo.otf.ts.helpers.ProjectListJpa;
 import org.ihtsdo.otf.ts.helpers.SearchResultList;
 import org.ihtsdo.otf.ts.helpers.SearchResultListJpa;
+import org.ihtsdo.otf.ts.jpa.ProjectJpa;
 import org.ihtsdo.otf.ts.rest.ContentServiceRest;
 import org.ihtsdo.otf.ts.rf2.AssociationReferenceConceptRefSetMember;
 import org.ihtsdo.otf.ts.rf2.Concept;
@@ -208,7 +212,7 @@ public class ContentClientRest implements ContentServiceRest {
             SearchResultListJpa.class);
     return list;
   }
-  
+
   @Override
   public ConceptList getConceptDescendants(String terminologyId,
     String terminology, String terminologyVersion, PfsParameter pfs,
@@ -216,7 +220,7 @@ public class ContentClientRest implements ContentServiceRest {
     // TODO Auto-generated method stub
     return null;
   }
-  
+
   @Override
   public ConceptList getConceptChildren(String terminologyId,
     String terminology, String terminologyVersion, PfsParameter pfs,
@@ -224,8 +228,6 @@ public class ContentClientRest implements ContentServiceRest {
     // TODO Auto-generated method stub
     return null;
   }
-
-
 
   /*
    * (non-Javadoc)
@@ -488,5 +490,86 @@ public class ContentClientRest implements ContentServiceRest {
     return member;
   }
 
+  /* (non-Javadoc)
+   * @see org.ihtsdo.otf.ts.rest.ContentServiceRest#getConceptsInScope(java.lang.Long, java.lang.String)
+   */
+  @Override
+  public ConceptList getConceptsInScope(Long projectId, String authToken)
+    throws Exception {
+    Client client = Client.create();
+    WebResource resource =
+        client.resource(config.getProperty("base.url") + "/content/project/id/"
+            + projectId + "/scope");
+    ClientResponse response =
+        resource.accept(MediaType.APPLICATION_XML)
+            .header("Authorization", authToken).get(ClientResponse.class);
+
+    String resultString = response.getEntity(String.class);
+    if (response.getClientResponseStatus().getFamily() == Family.SUCCESSFUL) {
+      Logger.getLogger(this.getClass()).debug(resultString);
+    } else {
+      throw new Exception(resultString);
+    }
+
+    // converting to object
+    ConceptListJpa list =
+        (ConceptListJpa) ConfigUtility.getGraphForString(resultString,
+            ConceptListJpa.class);
+    return list;
+  }
+
+  /* (non-Javadoc)
+   * @see org.ihtsdo.otf.ts.rest.ContentServiceRest#getProject(java.lang.Long, java.lang.String)
+   */
+  @Override
+  public Project getProject(Long id, String authToken) throws Exception {
+    Client client = Client.create();
+    WebResource resource =
+        client.resource(config.getProperty("base.url") + "/content/project/id/"
+            + id);
+    ClientResponse response =
+        resource.accept(MediaType.APPLICATION_XML)
+            .header("Authorization", authToken).get(ClientResponse.class);
+
+    String resultString = response.getEntity(String.class);
+    if (response.getClientResponseStatus().getFamily() == Family.SUCCESSFUL) {
+      Logger.getLogger(this.getClass()).debug(resultString);
+    } else {
+      throw new Exception(resultString);
+    }
+
+    // converting to object
+    ProjectJpa project =
+        (ProjectJpa) ConfigUtility.getGraphForString(resultString,
+            ProjectJpa.class);
+    return project;
+  }
+
+  /* (non-Javadoc)
+   * @see org.ihtsdo.otf.ts.rest.ContentServiceRest#getProjects(java.lang.String)
+   */
+  @Override
+  public ProjectList getProjects(String authToken) throws Exception {
+    Client client = Client.create();
+    WebResource resource =
+        client.resource(config.getProperty("base.url")
+            + "/content/project/projects");
+    ClientResponse response =
+        resource.accept(MediaType.APPLICATION_XML)
+            .header("Authorization", authToken).get(ClientResponse.class);
+
+    String resultString = response.getEntity(String.class);
+    if (response.getClientResponseStatus().getFamily() == Family.SUCCESSFUL) {
+      Logger.getLogger(this.getClass()).debug(resultString);
+    } else {
+      throw new Exception(resultString);
+    }
+
+    // converting to object
+    ProjectListJpa list =
+        (ProjectListJpa) ConfigUtility.getGraphForString(resultString,
+            ProjectListJpa.class);
+    return list;
+  }
 
 }

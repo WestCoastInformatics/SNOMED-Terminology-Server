@@ -1,5 +1,7 @@
 package org.ihtsdo.otf.ts.rest;
 
+import org.ihtsdo.otf.ts.Project;
+import org.ihtsdo.otf.ts.jpa.ProjectJpa;
 import org.ihtsdo.otf.ts.rf2.AssociationReferenceConceptRefSetMember;
 import org.ihtsdo.otf.ts.rf2.Concept;
 import org.ihtsdo.otf.ts.rf2.Description;
@@ -203,4 +205,34 @@ public interface ContentChangeServiceRest {
   public void clearConcepts(String terminology, String version, String authToken)
     throws Exception;
 
+
+  /**
+   * Adds the project.
+   *
+   * @param project the project
+   * @param authToken the auth token
+   * @return the project
+   * @throws Exception 
+   */
+  public Project addProject(ProjectJpa project, String authToken) throws Exception;
+  
+  /**
+   * Update project.
+   *
+   * @param project the project
+   * @param authToken the auth token
+   * @throws Exception the exception
+   */
+  public void updateProject(ProjectJpa project, String authToken) throws 
+  Exception;
+  
+  /**
+   * Removes the project.
+   *
+   * @param id the id
+   * @param authToken the auth token
+   * @throws Exception the exception
+   */
+  public void removeProject(Long id, String authToken) throws Exception;
+  
 }

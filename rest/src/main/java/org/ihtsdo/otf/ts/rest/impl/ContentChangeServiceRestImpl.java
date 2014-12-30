@@ -10,7 +10,9 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
 import org.apache.log4j.Logger;
+import org.ihtsdo.otf.ts.Project;
 import org.ihtsdo.otf.ts.helpers.UserRole;
+import org.ihtsdo.otf.ts.jpa.ProjectJpa;
 import org.ihtsdo.otf.ts.jpa.algo.TransitiveClosureAlgorithm;
 import org.ihtsdo.otf.ts.jpa.services.ContentServiceJpa;
 import org.ihtsdo.otf.ts.jpa.services.SecurityServiceJpa;
@@ -127,7 +129,7 @@ public class ContentChangeServiceRestImpl extends RootServiceRestImpl implements
   @Override
   @POST
   @Path("/concept/update")
-  @ApiOperation(value = "Update Concept", notes = "Updates the specified oncept.")
+  @ApiOperation(value = "Update Concept", notes = "Updates the specified concept.")
   @Produces({
       MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML
   })
@@ -799,4 +801,125 @@ public class ContentChangeServiceRestImpl extends RootServiceRestImpl implements
     }
   }
 
+  /* (non-Javadoc)
+   * @see org.ihtsdo.otf.ts.rest.ContentChangeServiceRest#addProject(org.ihtsdo.otf.ts.jpa.ProjectJpa, java.lang.String)
+   */
+  @Override
+  @PUT
+  @Path("/project/add")
+  @ApiOperation(value = "Add new project", notes = "Creates a new project.", response = Project.class)
+  @Produces({
+      MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML
+  })
+  public Project addProject(
+    @ApiParam(value = "Project, e.g. newProject", required = true) ProjectJpa project,
+    @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken)
+    throws Exception {
+    Logger.getLogger(ContentChangeServiceRestImpl.class).info(
+        "RESTful call PUT (ContentChange): /project/add " + project);
+    Logger.getLogger(ContentChangeServiceRestImpl.class)
+        .debug("    " + project);
+    try {
+      authenticate(securityService, authToken, "add project", UserRole.AUTHOR);
+
+      // Create service and configure transaction scope
+      ContentService contentService = new ContentServiceJpa();
+      contentService.setTransactionPerOperation(false);
+      contentService.beginTransaction();
+
+      // Run graph resolver
+      if (project != null) {
+        // Set the lastModifiedBy
+        project.setLastModifiedBy(securityService
+            .getUsernameForToken(authToken));
+      } else {
+        throw new Exception("Unexpected null project");
+      }
+
+      Project newProject = contentService.addProject(project);
+
+      // Commit, close, and return
+      contentService.commit();
+      contentService.close();
+      return newProject;
+    } catch (Exception e) {
+      handleException(e, "trying to add a project");
+      return null;
+    }
+
+  }
+
+  /* (non-Javadoc)
+   * @see org.ihtsdo.otf.ts.rest.ContentChangeServiceRest#updateProject(org.ihtsdo.otf.ts.jpa.ProjectJpa, java.lang.String)
+   */
+  @Override
+  @POST
+  @Path("/project/update")
+  @ApiOperation(value = "Update project", notes = "Updates the specified project.")
+  @Produces({
+      MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML
+  })
+  public void updateProject(
+    @ApiParam(value = "Project, e.g. newProject", required = true) ProjectJpa project,
+    @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken)
+    throws Exception {
+    Logger.getLogger(ContentChangeServiceRestImpl.class).info(
+        "RESTful call POST (ContentChange): /project/update " + project);
+    if (project != null) {
+      Logger.getLogger(ContentChangeServiceRestImpl.class).debug(
+          "    " + project);
+    }
+
+    try {
+      authenticate(securityService, authToken, "update project",
+          UserRole.AUTHOR);
+
+      // Create service and configure transaction scope
+      ContentService contentService = new ContentServiceJpa();
+      contentService.setTransactionPerOperation(false);
+      contentService.beginTransaction();
+
+      // update project
+      contentService.updateProject(project);
+      // Commit, close, and return
+      contentService.commit();
+      contentService.close();
+
+    } catch (Exception e) {
+      handleException(e, "trying to update a project");
+    }
+
+  }
+
+  /*
+   * (non-Javadoc)
+   * 
+   * @see
+   * org.ihtsdo.otf.ts.rest.ContentChangeServiceRest#removeProject(java.lang
+   * .Long, java.lang.String)
+   */
+  @Override
+  @DELETE
+  @Path("/project/remove/{id}")
+  @ApiOperation(value = "Remove project by id", notes = "Removes the project for the specified id.")
+  @Produces({
+      MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML
+  })
+  public void removeProject(
+    @ApiParam(value = "Project internal id, e.g. 2", required = true) @PathParam("id") Long id,
+    @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken)
+    throws Exception {
+    Logger.getLogger(ContentServiceRestImpl.class).info(
+        "RESTful DELETE call (ContentChange): /project/remove/id/" + id);
+    try {
+      authenticate(securityService, authToken, "remove project",
+          UserRole.AUTHOR);
+      // Remove project
+      ContentService contentService = new ContentServiceJpa();
+      contentService.removeProject(id);
+      contentService.close();
+    } catch (Exception e) {
+      handleException(e, "trying to remove a project");
+    }
+  }
 }
