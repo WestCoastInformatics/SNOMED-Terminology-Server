@@ -10,7 +10,7 @@ import org.ihtsdo.otf.ts.helpers.ConfigUtility;
 import org.ihtsdo.otf.ts.helpers.KeyValuesMap;
 import org.ihtsdo.otf.ts.helpers.RelationshipList;
 import org.ihtsdo.otf.ts.helpers.RelationshipListJpa;
-import org.ihtsdo.otf.ts.helpers.StringList;
+import org.ihtsdo.otf.ts.jpa.ProjectJpa;
 import org.ihtsdo.otf.ts.rest.ActionServiceRest;
 
 import com.sun.jersey.api.client.Client;
@@ -34,27 +34,24 @@ public class ActionClientRest implements ActionServiceRest {
     this.config = config;
   }
 
-  /*
-   * (non-Javadoc)
-   * 
-   * @see
-   * org.ihtsdo.otf.ts.rest.ActionServiceRest#configureActionService(org.ihtsdo
-   * .otf.ts.helpers.StringList, java.lang.String)
+
+  /* (non-Javadoc)
+   * @see org.ihtsdo.otf.ts.rest.ActionServiceRest#configureActionService(org.ihtsdo.otf.ts.jpa.ProjectJpa, java.lang.String)
    */
   @Override
-  public String configureActionService(StringList workflowStatusList,
+  public String configureActionService(ProjectJpa project,
     String authToken) throws Exception {
     Client client = Client.create();
     WebResource resource =
         client.resource(config.getProperty("base.url") + "/action/configure");
-    String wslString =
-        (workflowStatusList != null ? ConfigUtility
-            .getStringForGraph(workflowStatusList) : null);
+    String projectString =
+        (project != null ? ConfigUtility
+            .getStringForGraph(project) : null);
     ClientResponse response =
         resource.accept(MediaType.APPLICATION_XML)
             .header("Authorization", authToken)
             .header("Content-type", MediaType.APPLICATION_XML)
-            .post(ClientResponse.class, wslString);
+            .post(ClientResponse.class, projectString);
 
     String resultString = response.getEntity(String.class);
     if (response.getClientResponseStatus().getFamily() == Family.SUCCESSFUL) {
