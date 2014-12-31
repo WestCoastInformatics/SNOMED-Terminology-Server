@@ -36,8 +36,6 @@ import org.ihtsdo.otf.ts.classifier.model.RelationshipGroupList;
 import org.ihtsdo.otf.ts.classifier.model.StringIDConcept;
 import org.ihtsdo.otf.ts.helpers.ConceptList;
 import org.ihtsdo.otf.ts.helpers.KeyValuesMap;
-import org.ihtsdo.otf.ts.helpers.SearchResult;
-import org.ihtsdo.otf.ts.helpers.SearchResultList;
 import org.ihtsdo.otf.ts.jpa.services.ContentServiceJpa;
 import org.ihtsdo.otf.ts.jpa.services.helper.TerminologyUtility;
 import org.ihtsdo.otf.ts.services.ContentService;
@@ -120,8 +118,9 @@ public class SnorocketClassifier implements Classifier {
     logger = Logger.getLogger(getClass());
   }
 
-
-  /* (non-Javadoc)
+  /*
+   * (non-Javadoc)
+   * 
    * @see org.ihtsdo.classifier.Classifier#getEquivalentClasses()
    */
   @Override
@@ -137,7 +136,9 @@ public class SnorocketClassifier implements Classifier {
     return map;
   }
 
-  /* (non-Javadoc)
+  /*
+   * (non-Javadoc)
+   * 
    * @see org.ihtsdo.otf.ts.jpa.algo.Algorithm#compute()
    */
   @Override
@@ -257,12 +258,13 @@ public class SnorocketClassifier implements Classifier {
 
     // Compare previous and curent rels
     logger.info("  Compare relationships...");
-    compareAndWriteBack(previousInferredRelationships, currentInferredRelationships);
+    compareAndWriteBack(previousInferredRelationships,
+        currentInferredRelationships);
     previousInferredRelationships = null;
     currentInferredRelationships = null;
 
     // At this point retiredSet and newSet correspond t o
-    
+
     // Handle cancel
     if (requestCancel) {
       return;
@@ -792,21 +794,20 @@ public class SnorocketClassifier implements Classifier {
           if (TerminologyUtility.isStatedRelationship(relationship)
               && relationship.isActive()) {
             Relationship rel =
-                new Relationship(
-                    Integer.parseInt(concept.getObjectId()),
+                new Relationship(Integer.parseInt(concept.getObjectId()),
                     Integer.parseInt(relationship.getDestinationConcept()
                         .getObjectId()), Integer.parseInt(relationship
                         .getTypeId()), relationship.getRelationshipGroup(),
                     relationship.getObjectId());
             // add stated rels for classification
             relationships.add(rel);
-          } 
+          }
 
           // save inferred rels for comparison
-          else if (TerminologyUtility.isInferredRelationship(relationship) && relationship.isActive()) {
+          else if (TerminologyUtility.isInferredRelationship(relationship)
+              && relationship.isActive()) {
             Relationship rel =
-                new Relationship(
-                    Integer.parseInt(concept.getObjectId()),
+                new Relationship(Integer.parseInt(concept.getObjectId()),
                     Integer.parseInt(relationship.getDestinationConcept()
                         .getObjectId()), Integer.parseInt(relationship
                         .getTypeId()), relationship.getRelationshipGroup(),
@@ -851,17 +852,15 @@ public class SnorocketClassifier implements Classifier {
     ContentService service = new ContentServiceJpa();
     org.ihtsdo.otf.ts.rf2.Concept roleRoot =
         service.getConcept((long) roleRootConcept);
-    SearchResultList list =
-        service.findDescendantConcepts(roleRoot.getTerminologyId(),
-            roleRoot.getTerminology(), roleRoot.getTerminologyVersion(), null);
+    ConceptList list = service.getDescendantConcepts(roleRoot, null);
 
     roles = new int[list.getCount() + 1];
     // add isa
     roles[0] = isaConcept;
     // add others
     int resIdx = 1;
-    for (SearchResult result : list.getObjects()) {
-      roles[resIdx++] = Integer.valueOf(result.getId().toString());
+    for (org.ihtsdo.otf.ts.rf2.Concept concept : list.getObjects()) {
+      roles[resIdx++] = Integer.valueOf(concept.getId().toString());
       resIdx++;
     }
     Arrays.sort(roles);

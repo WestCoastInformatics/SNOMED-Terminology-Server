@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
+import org.ihtsdo.otf.ts.helpers.ConceptList;
 import org.ihtsdo.otf.ts.helpers.PfsParameterJpa;
 import org.ihtsdo.otf.ts.helpers.SearchResult;
 import org.ihtsdo.otf.ts.helpers.SearchResultList;
@@ -37,11 +38,10 @@ public class ClamlMetadataServiceJpaHelper extends ContentServiceJpa implements
    * @return the isa relationship type
    * @throws Exception the exception
    */
-  private String getIsaRelationshipType(String terminology,
-    String version) throws Exception {
+  private String getIsaRelationshipType(String terminology, String version)
+    throws Exception {
     SearchResultList results =
-        findConceptsForQuery(terminology, version, "Isa",
-            new PfsParameterJpa());
+        findConceptsForQuery(terminology, version, "Isa", new PfsParameterJpa());
     for (SearchResult result : results.getObjects()) {
       if (result.getTerminology().equals(terminology)
           && result.getTerminologyVersion().equals(version)
@@ -65,7 +65,7 @@ public class ClamlMetadataServiceJpaHelper extends ContentServiceJpa implements
     String version) {
     // no-op - this is just helper class
     return null;
-    }
+  }
 
   /*
    * (non-Javadoc)
@@ -160,8 +160,8 @@ public class ClamlMetadataServiceJpaHelper extends ContentServiceJpa implements
     throws NumberFormatException, Exception {
     Long rootId = null;
     SearchResultList results =
-        findConceptsForQuery(terminology, version,
-            "Simple refsets", new PfsParameterJpa());
+        findConceptsForQuery(terminology, version, "Simple refsets",
+            new PfsParameterJpa());
     for (SearchResult result : results.getObjects()) {
       if (result.getTerminology().equals(terminology)
           && result.getTerminologyVersion().equals(version)
@@ -202,8 +202,8 @@ public class ClamlMetadataServiceJpaHelper extends ContentServiceJpa implements
 
     Long rootId = null;
     SearchResultList results =
-        findConceptsForQuery(terminology, version,
-            "Definition status", new PfsParameterJpa());
+        findConceptsForQuery(terminology, version, "Definition status",
+            new PfsParameterJpa());
     for (SearchResult result : results.getObjects()) {
       if (result.getTerminology().equals(terminology)
           && result.getTerminologyVersion().equals(version)
@@ -215,7 +215,7 @@ public class ClamlMetadataServiceJpaHelper extends ContentServiceJpa implements
     if (rootId == null)
       throw new Exception("Definition status concept cannot be found.");
 
-    return getDescendantMap( rootId, terminology, version);
+    return getDescendantMap(rootId, terminology, version);
   }
 
   /*
@@ -230,8 +230,8 @@ public class ClamlMetadataServiceJpaHelper extends ContentServiceJpa implements
     String version) throws NumberFormatException, Exception {
     Long rootId = null;
     SearchResultList results =
-        findConceptsForQuery(terminology, version,
-            "Description type", new PfsParameterJpa());
+        findConceptsForQuery(terminology, version, "Description type",
+            new PfsParameterJpa());
     for (SearchResult result : results.getObjects()) {
       if (result.getTerminology().equals(terminology)
           && result.getTerminologyVersion().equals(version)
@@ -258,8 +258,8 @@ public class ClamlMetadataServiceJpaHelper extends ContentServiceJpa implements
     String version) throws NumberFormatException, Exception {
     Long rootId = null;
     SearchResultList results =
-        findConceptsForQuery(terminology, version,
-            "Case significance", new PfsParameterJpa());
+        findConceptsForQuery(terminology, version, "Case significance",
+            new PfsParameterJpa());
     for (SearchResult result : results.getObjects()) {
       if (result.getTerminology().equals(terminology)
           && result.getTerminologyVersion().equals(version)
@@ -287,8 +287,8 @@ public class ClamlMetadataServiceJpaHelper extends ContentServiceJpa implements
     // find all active descendants of 106237007
     Long rootId = null;
     SearchResultList results =
-        findConceptsForQuery(terminology, version,
-            "Relationship type", new PfsParameterJpa());
+        findConceptsForQuery(terminology, version, "Relationship type",
+            new PfsParameterJpa());
     for (SearchResult result : results.getObjects()) {
       if (result.getTerminology().equals(terminology)
           && result.getTerminologyVersion().equals(version)
@@ -316,9 +316,8 @@ public class ClamlMetadataServiceJpaHelper extends ContentServiceJpa implements
 
     // find all active descendants of 106237007
     Concept isaRel =
-        getSingleConcept(
-            getIsaRelationshipType(terminology, version).toString(),
-            terminology, version);
+        getSingleConcept(getIsaRelationshipType(terminology, version)
+            .toString(), terminology, version);
     // this can happen when loading a terminology
     if (isaRel == null) {
       return map;
@@ -340,8 +339,8 @@ public class ClamlMetadataServiceJpaHelper extends ContentServiceJpa implements
 
     Long rootId = null;
     SearchResultList results =
-        findConceptsForQuery(terminology, version,
-            "Characteristic type", new PfsParameterJpa());
+        findConceptsForQuery(terminology, version, "Characteristic type",
+            new PfsParameterJpa());
     for (SearchResult result : results.getObjects()) {
       if (result.getTerminology().equals(terminology)
           && result.getTerminologyVersion().equals(version)
@@ -531,23 +530,20 @@ public class ClamlMetadataServiceJpaHelper extends ContentServiceJpa implements
    * @return the descendant map
    * @throws Exception the exception
    */
-  private Map<String, String> getDescendantMap(
-    Long id, String terminology, String version) throws Exception {
+  private Map<String, String> getDescendantMap(Long id, String terminology,
+    String version) throws Exception {
     Map<String, String> map = new HashMap<>();
 
     // want all descendants, do not use pfs
     Concept concept = getConcept(id);
-    
+
     ContentService contentService = new ContentServiceJpa();
-    SearchResultList list = contentService.findDescendantConcepts(
-        concept.getTerminologyId(),
-        concept.getTerminology(),
-        concept.getTerminologyVersion(), null);
-    
+    ConceptList list = contentService.getDescendantConcepts(concept, null);
+
     // convert concept list to map
-    for (SearchResult result : list.getObjects()) {
-      // put id and preferred nmae
-      map.put(result.getTerminologyId(), result.getValue());
+    for (Concept desc : list.getObjects()) {
+      // put id and preferred name
+      map.put(desc.getTerminologyId(), desc.getDefaultPreferredName());
     }
 
     return map;

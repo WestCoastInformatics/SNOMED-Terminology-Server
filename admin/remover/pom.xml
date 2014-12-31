@@ -19,6 +19,8 @@
   <properties>
     <!-- The terminology -->
     <terminology></terminology>
+    <!-- The terminology version, default "latest" -->
+    <version>latest</version>
     <!-- the release info names to remove -->
     <release.info.names></release.info.names>
   </properties>
@@ -43,6 +45,7 @@
                 </goals>
                 <configuration>
                   <terminology>${terminology}</terminology>
+                  <terminologyVersion>${version}</terminologyVersion>
                 </configuration>
               </execution>
             </executions>

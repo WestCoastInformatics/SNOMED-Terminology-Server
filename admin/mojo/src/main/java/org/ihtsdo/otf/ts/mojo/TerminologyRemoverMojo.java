@@ -19,9 +19,7 @@ package org.ihtsdo.otf.ts.mojo;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoFailureException;
 import org.ihtsdo.otf.ts.jpa.services.ContentServiceJpa;
-import org.ihtsdo.otf.ts.jpa.services.MetadataServiceJpa;
 import org.ihtsdo.otf.ts.services.ContentService;
-import org.ihtsdo.otf.ts.services.MetadataService;
 
 /**
  * Goal which removes a terminology from a database.
@@ -42,6 +40,13 @@ public class TerminologyRemoverMojo extends AbstractMojo {
   private String terminology;
 
   /**
+   * Terminology version to remove.
+   * @parameter
+   * @required
+   */
+  private String terminologyVersion;
+
+  /**
    * Instantiates a {@link TerminologyRemoverMojo} from the specified
    * parameters.
    * 
@@ -59,15 +64,11 @@ public class TerminologyRemoverMojo extends AbstractMojo {
   public void execute() throws MojoFailureException {
     getLog().info("Starting removing terminology");
     getLog().info("  terminology = " + terminology);
+    getLog().info("  terminologyVersion = " + terminologyVersion);
     try {
-      MetadataService metadataService = new MetadataServiceJpa();
-      String terminologyVersion = metadataService.getLatestVersion(terminology);
-      metadataService.close();
-      if (terminologyVersion != null) {
-        ContentService contentService = new ContentServiceJpa();
-        contentService.clearConcepts(terminology, terminologyVersion);
-        contentService.close();
-      }
+      ContentService contentService = new ContentServiceJpa();
+      contentService.clearConcepts(terminology, terminologyVersion);
+      contentService.close();
       getLog().info("done ...");
     } catch (Exception e) {
       e.printStackTrace();

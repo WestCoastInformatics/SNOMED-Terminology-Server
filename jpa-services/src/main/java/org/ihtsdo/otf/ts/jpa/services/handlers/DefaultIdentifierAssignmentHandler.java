@@ -18,7 +18,6 @@ import org.ihtsdo.otf.ts.rf2.SimpleRefSetMember;
 import org.ihtsdo.otf.ts.rf2.TransitiveRelationship;
 import org.ihtsdo.otf.ts.services.handlers.IdentifierAssignmentHandler;
 
-// TODO: Auto-generated Javadoc
 /**
  * Default implementation of {@link IdentifierAssignmentHandler}. This supports
  * "application-managed" identifier assignment.

@@ -10,7 +10,6 @@ import org.ihtsdo.otf.ts.Project;
 import org.ihtsdo.otf.ts.helpers.ConceptList;
 import org.ihtsdo.otf.ts.helpers.ConceptListJpa;
 import org.ihtsdo.otf.ts.helpers.ConfigUtility;
-import org.ihtsdo.otf.ts.helpers.PfsParameter;
 import org.ihtsdo.otf.ts.helpers.PfsParameterJpa;
 import org.ihtsdo.otf.ts.helpers.ProjectList;
 import org.ihtsdo.otf.ts.helpers.ProjectListJpa;
@@ -213,20 +212,118 @@ public class ContentClientRest implements ContentServiceRest {
     return list;
   }
 
+  /*
+   * (non-Javadoc)
+   * 
+   * @see
+   * org.ihtsdo.otf.ts.rest.ContentServiceRest#getDescendantConcepts(java.lang
+   * .String, java.lang.String, java.lang.String,
+   * org.ihtsdo.otf.ts.helpers.PfsParameterJpa, java.lang.String)
+   */
   @Override
-  public ConceptList getConceptDescendants(String terminologyId,
-    String terminology, String terminologyVersion, PfsParameter pfs,
-    String authToken) {
-    // TODO Auto-generated method stub
-    return null;
+  public ConceptList getDescendantConcepts(String terminologyId,
+    String terminology, String version, PfsParameterJpa pfs, String authToken)
+    throws Exception {
+    Client client = Client.create();
+    WebResource resource =
+        client.resource(config.getProperty("base.url") + "/content/concepts/"
+            + terminology + "/" + version + "/" + terminologyId
+            + "/descendants");
+    String pfsString =
+        (pfs != null ? ConfigUtility.getStringForGraph(pfs) : null);
+    ClientResponse response =
+        resource.accept(MediaType.APPLICATION_XML)
+            .header("Authorization", authToken)
+            .header("Content-type", MediaType.APPLICATION_XML)
+            .post(ClientResponse.class, pfsString);
+
+    String resultString = response.getEntity(String.class);
+    if (response.getClientResponseStatus().getFamily() == Family.SUCCESSFUL) {
+      Logger.getLogger(this.getClass()).debug(resultString);
+    } else {
+      throw new Exception(resultString);
+    }
+
+    // converting to object
+    ConceptListJpa list =
+        (ConceptListJpa) ConfigUtility.getGraphForString(resultString,
+            ConceptListJpa.class);
+    return list;
   }
 
+  /*
+   * (non-Javadoc)
+   * 
+   * @see
+   * org.ihtsdo.otf.ts.rest.ContentServiceRest#getChildConcepts(java.lang.String
+   * , java.lang.String, java.lang.String,
+   * org.ihtsdo.otf.ts.helpers.PfsParameterJpa, java.lang.String)
+   */
   @Override
-  public ConceptList getConceptChildren(String terminologyId,
-    String terminology, String terminologyVersion, PfsParameter pfs,
-    String authToken) throws Exception {
-    // TODO Auto-generated method stub
-    return null;
+  public ConceptList getChildConcepts(String terminologyId, String terminology,
+    String version, PfsParameterJpa pfs, String authToken) throws Exception {
+    Client client = Client.create();
+    WebResource resource =
+        client.resource(config.getProperty("base.url") + "/content/concepts/"
+            + terminology + "/" + version + "/" + terminologyId + "/children");
+    String pfsString =
+        (pfs != null ? ConfigUtility.getStringForGraph(pfs) : null);
+    ClientResponse response =
+        resource.accept(MediaType.APPLICATION_XML)
+            .header("Authorization", authToken)
+            .header("Content-type", MediaType.APPLICATION_XML)
+            .post(ClientResponse.class, pfsString);
+
+    String resultString = response.getEntity(String.class);
+    if (response.getClientResponseStatus().getFamily() == Family.SUCCESSFUL) {
+      Logger.getLogger(this.getClass()).debug(resultString);
+    } else {
+      throw new Exception(resultString);
+    }
+
+    // converting to object
+    ConceptListJpa list =
+        (ConceptListJpa) ConfigUtility.getGraphForString(resultString,
+            ConceptListJpa.class);
+    return list;
+  }
+
+  /*
+   * (non-Javadoc)
+   * 
+   * @see
+   * org.ihtsdo.otf.ts.rest.ContentServiceRest#getAncestorConcepts(java.lang
+   * .String, java.lang.String, java.lang.String,
+   * org.ihtsdo.otf.ts.helpers.PfsParameterJpa, java.lang.String)
+   */
+  @Override
+  public ConceptList getAncestorConcepts(String terminologyId,
+    String terminology, String version, PfsParameterJpa pfs, String authToken)
+    throws Exception {
+    Client client = Client.create();
+    WebResource resource =
+        client.resource(config.getProperty("base.url") + "/content/concepts/"
+            + terminology + "/" + version + "/" + terminologyId + "/ancestors");
+    String pfsString =
+        (pfs != null ? ConfigUtility.getStringForGraph(pfs) : null);
+    ClientResponse response =
+        resource.accept(MediaType.APPLICATION_XML)
+            .header("Authorization", authToken)
+            .header("Content-type", MediaType.APPLICATION_XML)
+            .post(ClientResponse.class, pfsString);
+
+    String resultString = response.getEntity(String.class);
+    if (response.getClientResponseStatus().getFamily() == Family.SUCCESSFUL) {
+      Logger.getLogger(this.getClass()).debug(resultString);
+    } else {
+      throw new Exception(resultString);
+    }
+
+    // converting to object
+    ConceptListJpa list =
+        (ConceptListJpa) ConfigUtility.getGraphForString(resultString,
+            ConceptListJpa.class);
+    return list;
   }
 
   /*
@@ -490,8 +587,12 @@ public class ContentClientRest implements ContentServiceRest {
     return member;
   }
 
-  /* (non-Javadoc)
-   * @see org.ihtsdo.otf.ts.rest.ContentServiceRest#getConceptsInScope(java.lang.Long, java.lang.String)
+  /*
+   * (non-Javadoc)
+   * 
+   * @see
+   * org.ihtsdo.otf.ts.rest.ContentServiceRest#getConceptsInScope(java.lang.
+   * Long, java.lang.String)
    */
   @Override
   public ConceptList getConceptsInScope(Long projectId, String authToken)
@@ -518,8 +619,11 @@ public class ContentClientRest implements ContentServiceRest {
     return list;
   }
 
-  /* (non-Javadoc)
-   * @see org.ihtsdo.otf.ts.rest.ContentServiceRest#getProject(java.lang.Long, java.lang.String)
+  /*
+   * (non-Javadoc)
+   * 
+   * @see org.ihtsdo.otf.ts.rest.ContentServiceRest#getProject(java.lang.Long,
+   * java.lang.String)
    */
   @Override
   public Project getProject(Long id, String authToken) throws Exception {
@@ -545,8 +649,11 @@ public class ContentClientRest implements ContentServiceRest {
     return project;
   }
 
-  /* (non-Javadoc)
-   * @see org.ihtsdo.otf.ts.rest.ContentServiceRest#getProjects(java.lang.String)
+  /*
+   * (non-Javadoc)
+   * 
+   * @see
+   * org.ihtsdo.otf.ts.rest.ContentServiceRest#getProjects(java.lang.String)
    */
   @Override
   public ProjectList getProjects(String authToken) throws Exception {

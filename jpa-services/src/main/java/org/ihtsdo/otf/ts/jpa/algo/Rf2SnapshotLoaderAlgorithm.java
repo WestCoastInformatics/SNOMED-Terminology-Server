@@ -4,7 +4,6 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -187,6 +186,19 @@ public class Rf2SnapshotLoaderAlgorithm extends ContentServiceJpa implements
       Logger.getLogger(this.getClass()).info(
           "    elapsed time = " + getElapsedTime(startTime) + "s"
               + " (Ended at " + ft.format(new Date()) + ")");
+
+      //
+      // Persist concepts
+      //
+      final ContentService contentService = new ContentServiceJpa();
+      contentService.setLastModifiedFlag(false);
+      contentService.setTransactionPerOperation(false);
+      contentService.beginTransaction();
+      for (Concept concept : conceptCache.values()) {
+        contentService.addConcept(concept);
+      }
+      contentService.commit();
+      contentService.close();
 
       //
       // Load Simple RefSets (Content)
@@ -407,12 +419,6 @@ public class Rf2SnapshotLoaderAlgorithm extends ContentServiceJpa implements
     String line = "";
     objectCt = 0;
 
-    // begin transaction
-    final ContentService contentService = new ContentServiceJpa();
-    contentService.setLastModifiedFlag(false);
-    contentService.setTransactionPerOperation(false);
-    contentService.beginTransaction();
-
     PushBackReader reader = readers.getReader(Rf2Readers.Keys.CONCEPT);
     while ((line = reader.readLine()) != null) {
 
@@ -438,23 +444,16 @@ public class Rf2SnapshotLoaderAlgorithm extends ContentServiceJpa implements
         concept.setDefaultPreferredName("null");
         concept.setLastModifiedBy("loader");
         concept.setWorkflowStatus("PUBLISHED");
-        contentService.addConcept(concept);
 
         // copy concept to shed any hibernate stuff
         conceptCache.put(fields[0], concept);
 
-        // regularly commit at intervals
         if (++objectCt % commitCt == 0) {
-          Logger.getLogger(this.getClass()).info("    commit = " + objectCt);
-          contentService.commit();
-          contentService.beginTransaction();
+          Logger.getLogger(getClass()).info("    count = " + objectCt);
         }
+      
       }
     }
-
-    // commit any remaining objects
-    contentService.commit();
-    contentService.close();
 
     defaultPreferredNames.clear();
 
@@ -477,12 +476,6 @@ public class Rf2SnapshotLoaderAlgorithm extends ContentServiceJpa implements
 
     String line = "";
     objectCt = 0;
-
-    // Begin transaction
-    final ContentService contentService = new ContentServiceJpa();
-    contentService.setLastModifiedFlag(false);
-    contentService.setTransactionPerOperation(false);
-    contentService.beginTransaction();
 
     PushBackReader reader = readers.getReader(Rf2Readers.Keys.RELATIONSHIP);
     // Iterate over relationships
@@ -523,14 +516,6 @@ public class Rf2SnapshotLoaderAlgorithm extends ContentServiceJpa implements
           relationship.setSourceConcept(sourceConcept);
           relationship.setDestinationConcept(destinationConcept);
 
-          contentService.addRelationship(relationship);
-
-          // regularly commit at intervals
-          if (++objectCt % commitCt == 0) {
-            Logger.getLogger(this.getClass()).info("    commit = " + objectCt);
-            contentService.commit();
-            contentService.beginTransaction();
-          }
         } else {
           if (sourceConcept == null) {
             Logger.getLogger(this.getClass()).info(
@@ -544,13 +529,13 @@ public class Rf2SnapshotLoaderAlgorithm extends ContentServiceJpa implements
                     + fields[5]);
           }
 
+          if (++objectCt % commitCt == 0) {
+            Logger.getLogger(getClass()).info("    count = " + objectCt);
+          }
+
         }
       }
     }
-
-    // commit any remaining objects
-    contentService.commit();
-    contentService.close();
 
     // print memory information
     Runtime runtime = Runtime.getRuntime();
@@ -576,12 +561,10 @@ public class Rf2SnapshotLoaderAlgorithm extends ContentServiceJpa implements
 
     // Begin transaction
     final ContentService contentService = new ContentServiceJpa();
-    contentService.setLastModifiedFlag(false);
-    contentService.setTransactionPerOperation(false);
-    contentService.beginTransaction();
-
     ComputePreferredNameHandler pnHandler =
         contentService.getComputePreferredNameHandler(terminology);
+    contentService.close();
+
     // Load and persist first description
     description = getNextDescription(contentService);
 
@@ -644,27 +627,18 @@ public class Rf2SnapshotLoaderAlgorithm extends ContentServiceJpa implements
         language = getNextLanguage();
       }
 
-      // Persist the description
-      contentService.addDescription(description);
-
       // Pet the next description
       description = getNextDescription(contentService);
 
       // increment description count
       descCt++;
-
-      // regularly commit at intervals
+      
       if (descCt % commitCt == 0) {
-        Logger.getLogger(this.getClass()).info("    commit = " + descCt);
-        contentService.commit();
-        contentService.beginTransaction();
+        Logger.getLogger(getClass()).info("    count = " + objectCt);
       }
 
-    }
 
-    // commit any remaining objects
-    contentService.commit();
-    contentService.close();
+    }
 
     Logger.getLogger(this.getClass()).info(
         "      " + descCt + " descriptions loaded");
@@ -688,36 +662,20 @@ public class Rf2SnapshotLoaderAlgorithm extends ContentServiceJpa implements
    */
   private void setDefaultPreferredNames() throws Exception {
 
-    // Begin transaction
-    ContentService contentService = new ContentServiceJpa();
-    contentService.setLastModifiedFlag(false);
-    contentService.setTransactionPerOperation(false);
-    contentService.beginTransaction();
-
-    Iterator<Concept> conceptIterator = conceptCache.values().iterator();
     objectCt = 0;
-    while (conceptIterator.hasNext()) {
-      final Concept cachedConcept = conceptIterator.next();
-      final Concept dbConcept =
-          contentService.getConcept(cachedConcept.getId());
-      dbConcept.getDescriptions();
-      dbConcept.getRelationships();
-      if (defaultPreferredNames.get(dbConcept.getId()) != null) {
-        dbConcept.setDefaultPreferredName(defaultPreferredNames.get(dbConcept
+    for (Concept concept : conceptCache.values()) {
+      concept.getDescriptions();
+      concept.getRelationships();
+      if (defaultPreferredNames.get(concept.getId()) != null) {
+        concept.setDefaultPreferredName(defaultPreferredNames.get(concept
             .getId()));
       } else {
-        dbConcept.setDefaultPreferredName("No default preferred name found");
+        concept.setDefaultPreferredName("No default preferred name found");
       }
-      // TODO: need to deal with this
-      // contentService.updateConcept(dbConcept);
       if (++objectCt % commitCt == 0) {
-        Logger.getLogger(this.getClass()).info("    commit = " + objectCt);
-        contentService.commit();
-        contentService.beginTransaction();
+        Logger.getLogger(getClass()).info("    count = " + objectCt);
       }
     }
-    contentService.commit();
-    contentService.close();
 
     // Log memory information
     Runtime runtime = Runtime.getRuntime();

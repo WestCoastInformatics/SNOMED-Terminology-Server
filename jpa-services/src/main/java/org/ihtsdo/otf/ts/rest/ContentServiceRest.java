@@ -5,7 +5,6 @@ package org.ihtsdo.otf.ts.rest;
 
 import org.ihtsdo.otf.ts.Project;
 import org.ihtsdo.otf.ts.helpers.ConceptList;
-import org.ihtsdo.otf.ts.helpers.PfsParameter;
 import org.ihtsdo.otf.ts.helpers.PfsParameterJpa;
 import org.ihtsdo.otf.ts.helpers.ProjectList;
 import org.ihtsdo.otf.ts.helpers.SearchResultList;
@@ -19,7 +18,7 @@ import org.ihtsdo.otf.ts.rf2.Relationship;
  * Represents a content available via a REST service.
  */
 public interface ContentServiceRest {
-  
+
   /**
    * Returns the concept for search string.
    *
@@ -81,41 +80,57 @@ public interface ContentServiceRest {
   /**
    * Gets the concept for the specified identifier.
    *
-   * @param id the internal concept id.  Used when other REST APIs
-   * return information that includes internal identifiers.
+   * @param id the internal concept id. Used when other REST APIs return
+   *          information that includes internal identifiers.
    * @param authToken the auth token
    * @return the concept
    * @throws Exception the exception
    */
   public Concept getConcept(Long id, String authToken) throws Exception;
-  
+
   /**
    * Returns the concept children.
    *
    * @param terminologyId the terminology id
    * @param terminology the terminology
-   * @param terminologyVersion the terminology version
+   * @param version the terminology version
    * @param pfs the pfs
    * @param authToken the auth token
    * @return the concept children
    * @throws Exception the exception
    */
-  public ConceptList getConceptChildren(String terminologyId,
-    String terminology, String terminologyVersion, PfsParameter pfs,
-    String authToken) throws Exception;
-  
+  public ConceptList getChildConcepts(String terminologyId, String terminology,
+    String version, PfsParameterJpa pfs, String authToken) throws Exception;
+
   /**
    * Returns the concept descendants.
    *
    * @param terminologyId the terminology id
    * @param terminology the terminology
-   * @param terminologyVersion the terminology version
+   * @param version the terminology version
    * @param pfs the pfs
    * @param authToken the auth token
    * @return the concept descendants
+   * @throws Exception the exception
    */
-  public ConceptList getConceptDescendants(String terminologyId, String terminology, String terminologyVersion, PfsParameter pfs, String authToken);
+  public ConceptList getDescendantConcepts(String terminologyId,
+    String terminology, String version, PfsParameterJpa pfs, String authToken)
+    throws Exception;
 
+  /**
+   * Returns the ancestor concepts.
+   *
+   * @param terminologyId the terminology id
+   * @param terminology the terminology
+   * @param version the version
+   * @param pfs the pfs
+   * @param authToken the auth token
+   * @return the ancestor concepts
+   * @throws Exception the exception
+   */
+  public ConceptList getAncestorConcepts(String terminologyId,
+    String terminology, String version, PfsParameterJpa pfs, String authToken)
+    throws Exception;
 
   /**
    * Returns the description for the specified parameters.
@@ -133,15 +148,14 @@ public interface ContentServiceRest {
   /**
    * Gets the description for the specified identifier.
    *
-   * @param id the internal description id.  Used when other REST APIs
-   * return information that includes internal identifiers.
+   * @param id the internal description id. Used when other REST APIs return
+   *          information that includes internal identifiers.
    * @param authToken the auth token
    * @return the description
    * @throws Exception the exception
    */
   public Description getDescription(Long id, String authToken) throws Exception;
 
-  
   /**
    * Returns the relationship for the specified parameters.
    *
@@ -158,15 +172,15 @@ public interface ContentServiceRest {
   /**
    * Gets the relationship for the specified identifier.
    *
-   * @param id the internal relationship id.  Used when other REST APIs
-   * return information that includes internal identifiers.
+   * @param id the internal relationship id. Used when other REST APIs return
+   *          information that includes internal identifiers.
    * @param authToken the auth token
    * @return the relationship
    * @throws Exception the exception
    */
-  public Relationship getRelationship(Long id, String authToken) throws Exception;
-    
-  
+  public Relationship getRelationship(Long id, String authToken)
+    throws Exception;
+
   /**
    * Returns the language refset member for the specified parameters.
    *
@@ -177,22 +191,21 @@ public interface ContentServiceRest {
    * @return the language refset member
    * @throws Exception the exception
    */
-  public LanguageRefSetMember getLanguageRefSetMember(String terminologyId, String terminology,
-    String version, String authToken) throws Exception;
+  public LanguageRefSetMember getLanguageRefSetMember(String terminologyId,
+    String terminology, String version, String authToken) throws Exception;
 
   /**
    * Gets the language refset member for the specified identifier.
    *
-   * @param id the internal language refset member id.  Used when other REST APIs
-   * return information that includes internal identifiers.
+   * @param id the internal language refset member id. Used when other REST APIs
+   *          return information that includes internal identifiers.
    * @param authToken the auth token
    * @return the language refset member
    * @throws Exception the exception
    */
-  public LanguageRefSetMember getLanguageRefSetMember(Long id, String authToken) throws Exception;
- 
-  
- 
+  public LanguageRefSetMember getLanguageRefSetMember(Long id, String authToken)
+    throws Exception;
+
   /**
    * Returns the association reference concept ref set member.
    *
@@ -206,8 +219,7 @@ public interface ContentServiceRest {
   public AssociationReferenceConceptRefSetMember getAssociationReferenceConceptRefSetMember(
     String terminologyId, String terminology, String version, String authToken)
     throws Exception;
-  
-  
+
   /**
    * Returns the association reference concept ref set member.
    *
@@ -216,8 +228,9 @@ public interface ContentServiceRest {
    * @return the association reference concept ref set member
    * @throws Exception the exception
    */
-  public AssociationReferenceConceptRefSetMember getAssociationReferenceConceptRefSetMember(Long id, String authToken) throws Exception;
-  
+  public AssociationReferenceConceptRefSetMember getAssociationReferenceConceptRefSetMember(
+    Long id, String authToken) throws Exception;
+
   /**
    * Returns the concepts in scope.
    *
@@ -226,7 +239,8 @@ public interface ContentServiceRest {
    * @return the concepts in scope
    * @throws Exception the exception
    */
-  public ConceptList getConceptsInScope(Long projectId, String authToken) throws Exception;
+  public ConceptList getConceptsInScope(Long projectId, String authToken)
+    throws Exception;
 
   /**
    * Returns the project.

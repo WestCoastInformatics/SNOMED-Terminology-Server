@@ -23,7 +23,6 @@ import org.ihtsdo.otf.ts.services.ValidationService;
 import org.ihtsdo.otf.ts.services.helpers.ProgressEvent;
 import org.ihtsdo.otf.ts.services.helpers.ProgressListener;
 
-// TODO: Auto-generated Javadoc
 /**
  * An algorithm for performing an RF2 release. The following steps are included
  * 

@@ -123,7 +123,7 @@ public interface ContentService extends RootService {
   public void removeConcept(Long id) throws Exception;
 
   /**
-   * Find descendants.
+   * Get descendant concepts.
    *
    * @param concept the concept
    * @param pfsParameter the pfs parameter
@@ -134,7 +134,18 @@ public interface ContentService extends RootService {
     PfsParameter pfsParameter) throws Exception;
 
   /**
-   * Find children.
+   * Get ancestor concepts.
+   *
+   * @param concept the concept
+   * @param pfsParameter the pfs parameter
+   * @return the concept list
+   * @throws Exception the exception
+   */
+  public ConceptList getAncestorConcepts(Concept concept,
+    PfsParameter pfsParameter) throws Exception;
+
+  /**
+   * Get child concepts.
    *
    * @param concept the concept
    * @param pfs the pfs
@@ -854,34 +865,6 @@ public interface ContentService extends RootService {
   public SearchResultList findConceptsForSearchCriteria(String terminology,
     String version, String query, SearchCriteriaList criteria, PfsParameter pfs)
     throws Exception;
-
-  /**
-   * Finds the descendants of a concept, subject to max results limitation in
-   * PFS parameters object.
-   * 
-   * @param terminologyId the id
-   * @param terminology the terminology
-   * @param version the terminology version
-   * @param pfs the pfs parameter containing the max results restriction
-   * @return the set of concepts
-   * @throws Exception the exception
-   */
-  public SearchResultList findDescendantConcepts(String terminologyId,
-    String terminology, String version, PfsParameter pfs) throws Exception;
-
-  /**
-   * Finds the ancestor of a concept, subject to max results limitation in PFS
-   * parameters object.
-   * 
-   * @param terminologyId the id
-   * @param terminology the terminology
-   * @param version the terminology version
-   * @param pfs the pfs parameter containing the max results restriction
-   * @return the set of concepts
-   * @throws Exception the exception
-   */
-  public SearchResultList findAncestorConcepts(String terminologyId,
-    String terminology, String version, PfsParameter pfs) throws Exception;
 
   /**
    * Gets the all concepts.

@@ -11,7 +11,6 @@ import javax.ws.rs.core.MediaType;
 import org.apache.log4j.Logger;
 import org.ihtsdo.otf.ts.Project;
 import org.ihtsdo.otf.ts.helpers.ConceptList;
-import org.ihtsdo.otf.ts.helpers.PfsParameter;
 import org.ihtsdo.otf.ts.helpers.PfsParameterJpa;
 import org.ihtsdo.otf.ts.helpers.ProjectList;
 import org.ihtsdo.otf.ts.helpers.SearchResultList;
@@ -286,19 +285,123 @@ public class ContentServiceRestImpl extends RootServiceRestImpl implements
   }
 
   @Override
-  public ConceptList getConceptChildren(String terminologyId,
-    String terminology, String terminologyVersion, PfsParameter pfs,
-    String authToken) {
-    // TODO Auto-generated method stub
-    return null;
+  @POST
+  @Path("/concepts/{terminology}/{version}/{terminologyId}/children")
+  @ApiOperation(value = "Get children", notes = "Gets the child concepts for the specified id.", response = ConceptList.class)
+  @Produces({
+      MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML
+  })
+  public ConceptList getChildConcepts(
+    @ApiParam(value = "Concept terminology id, e.g. 102751005", required = true) @PathParam("terminologyId") String terminologyId,
+    @ApiParam(value = "Concept terminology name, e.g. SNOMEDCT", required = true) @PathParam("terminology") String terminology,
+    @ApiParam(value = "Concept terminology version, e.g. latest", required = true) @PathParam("version") String version,
+    @ApiParam(value = "PFS Parameter, e.g. '{ \"startIndex\":\"1\", \"maxResults\":\"5\" }'", required = false) PfsParameterJpa pfs,
+    @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken) {
+
+    Logger.getLogger(ContentServiceRestImpl.class).info(
+        "RESTful call (Content): /concept/" + terminology + "/" + version + "/"
+            + terminologyId + "/children");
+
+    try {
+      authenticate(securityService, authToken, "retrieve the child concepts",
+          UserRole.VIEWER);
+
+      ContentService contentService = new ContentServiceJpa();
+      Concept concept =
+          contentService.getSingleConcept(terminologyId, terminology, version);
+      ConceptList list = contentService.getChildConcepts(concept, pfs);
+      for (Concept c : list.getObjects()) {
+        contentService.getGraphResolutionHandler().resolve(
+            c,
+            TerminologyUtility.getHierarchcialIsaRels(c.getTerminology(),
+                c.getTerminologyVersion()));
+      }
+      contentService.close();
+      return list;
+    } catch (Exception e) {
+      handleException(e, "trying to retrieve child concepts");
+      return null;
+    }
   }
 
   @Override
-  public ConceptList getConceptDescendants(String terminologyId,
-    String terminology, String terminologyVersion, PfsParameter pfs,
-    String authToken) {
-    // TODO Auto-generated method stub
-    return null;
+  @POST
+  @Path("/concepts/{terminology}/{version}/{terminologyId}/descendants")
+  @ApiOperation(value = "Get descendants", notes = "Gets the descendant concepts for the specified id.", response = ConceptList.class)
+  @Produces({
+      MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML
+  })
+  public ConceptList getDescendantConcepts(
+    @ApiParam(value = "Concept terminology id, e.g. 102751005", required = true) @PathParam("terminologyId") String terminologyId,
+    @ApiParam(value = "Concept terminology name, e.g. SNOMEDCT", required = true) @PathParam("terminology") String terminology,
+    @ApiParam(value = "Concept terminology version, e.g. latest", required = true) @PathParam("version") String version,
+    @ApiParam(value = "PFS Parameter, e.g. '{ \"startIndex\":\"1\", \"maxResults\":\"5\" }'", required = false) PfsParameterJpa pfs,
+    @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken) {
+
+    Logger.getLogger(ContentServiceRestImpl.class).info(
+        "RESTful call (Content): /concept/" + terminology + "/" + version + "/"
+            + terminologyId + "/descendants");
+
+    try {
+      authenticate(securityService, authToken,
+          "retrieve the descendant concepts", UserRole.VIEWER);
+
+      ContentService contentService = new ContentServiceJpa();
+      Concept concept =
+          contentService.getSingleConcept(terminologyId, terminology, version);
+      ConceptList list = contentService.getDescendantConcepts(concept, pfs);
+      for (Concept c : list.getObjects()) {
+        contentService.getGraphResolutionHandler().resolve(
+            c,
+            TerminologyUtility.getHierarchcialIsaRels(c.getTerminology(),
+                c.getTerminologyVersion()));
+      }
+      contentService.close();
+      return list;
+    } catch (Exception e) {
+      handleException(e, "trying to retrieve descendant concepts");
+      return null;
+    }
+  }
+
+  @Override
+  @POST
+  @Path("/concepts/{terminology}/{version}/{terminologyId}/ancestors")
+  @ApiOperation(value = "Get ancestors", notes = "Gets the ancestor concepts for the specified id.", response = ConceptList.class)
+  @Produces({
+      MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML
+  })
+  public ConceptList getAncestorConcepts(
+    @ApiParam(value = "Concept terminology id, e.g. 102751005", required = true) @PathParam("terminologyId") String terminologyId,
+    @ApiParam(value = "Concept terminology name, e.g. SNOMEDCT", required = true) @PathParam("terminology") String terminology,
+    @ApiParam(value = "Concept terminology version, e.g. latest", required = true) @PathParam("version") String version,
+    @ApiParam(value = "PFS Parameter, e.g. '{ \"startIndex\":\"1\", \"maxResults\":\"5\" }'", required = false) PfsParameterJpa pfs,
+    @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken) {
+
+    Logger.getLogger(ContentServiceRestImpl.class).info(
+        "RESTful call (Content): /concept/" + terminology + "/" + version + "/"
+            + terminologyId + "/ancestors");
+
+    try {
+      authenticate(securityService, authToken,
+          "retrieve the ancestor concepts", UserRole.VIEWER);
+
+      ContentService contentService = new ContentServiceJpa();
+      Concept concept =
+          contentService.getSingleConcept(terminologyId, terminology, version);
+      ConceptList list = contentService.getAncestorConcepts(concept, pfs);
+      for (Concept c : list.getObjects()) {
+        contentService.getGraphResolutionHandler().resolve(
+            c,
+            TerminologyUtility.getHierarchcialIsaRels(c.getTerminology(),
+                c.getTerminologyVersion()));
+      }
+      contentService.close();
+      return list;
+    } catch (Exception e) {
+      handleException(e, "trying to retrieve ancestor concepts");
+      return null;
+    }
   }
 
   /*
@@ -657,13 +760,11 @@ public class ContentServiceRestImpl extends RootServiceRestImpl implements
 
       ContentService contentService = new ContentServiceJpa();
       ConceptList list =
-          contentService.getConceptsInScope(contentService
-              .getProject(id));
+          contentService.getConceptsInScope(contentService.getProject(id));
       contentService.close();
       return list;
     } catch (Exception e) {
-      handleException(e, "trying to retrieve scope concepts for project "
-          + id);
+      handleException(e, "trying to retrieve scope concepts for project " + id);
       return null;
     }
   }

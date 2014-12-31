@@ -3,7 +3,6 @@ package org.ihtsdo.otf.ts.jpa.services;
 import java.lang.reflect.Field;
 import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
@@ -434,55 +433,90 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
     }
   }
 
+  /* (non-Javadoc)
+   * @see org.ihtsdo.otf.ts.services.ContentService#getDescendantConcepts(org.ihtsdo.otf.ts.rf2.Concept, org.ihtsdo.otf.ts.helpers.PfsParameter)
+   */
+  @SuppressWarnings("unchecked")
   @Override
   public ConceptList getDescendantConcepts(Concept concept, PfsParameter pfs)
     throws Exception {
 
-    // set of descendants to ensure uniqueness despite multiple paths
-    Set<Concept> descendants = new HashSet<>();
-
-    // for all children, get the descendants
-    for (Concept childConcept : getChildConcepts(concept, null).getObjects()) {
-
-      // add this child to the descendant list
-      descendants.add(childConcept);
-
-      // get the descendants of this child
-      descendants
-          .addAll(getDescendantConcepts(childConcept, null).getObjects());
+    if (pfs != null && pfs.getQueryRestriction() != null) {
+      throw new IllegalArgumentException(
+          "Query restriction is not implemented for this call: "
+              + pfs.getQueryRestriction());
     }
+    ConceptList list = new ConceptListJpa();
+    String queryStr =
+        "select a from TransitiveRelationshipJpa tr, ConceptJpa super, ConceptJpa a "
+            + " where super.terminologyVersion = :version "
+            + " and super.terminology = :terminology "
+            + " and super.terminologyId = :terminologyId"
+            + " and tr.superTypeConcept = super"
+            + " and tr.subTypeConcept = a ";
+    javax.persistence.Query query = applyPfsToQuery(queryStr, pfs);
 
-    // construct ConceptList for return
-    ConceptList descendantConcepts = new ConceptListJpa();
+    javax.persistence.Query ctQuery =
+        manager
+            .createQuery("select tr from TransitiveRelationshipJpa tr, ConceptJpa super"
+                + " where super.terminologyVersion = :version "
+                + " and super.terminology = :terminology "
+                + " and super.terminologyId = :terminologyId"
+                + " and tr.superTypeConcept = super");
 
-    // add the descendants of this concept
-    descendantConcepts.setObjects(new ArrayList<>(descendants));
+    ctQuery.setParameter("terminology", concept.getTerminology());
+    ctQuery.setParameter("version", concept.getTerminologyVersion());
+    ctQuery.setParameter("terminologyId", concept.getTerminologyId());
+    list.setTotalCount(((BigDecimal) ctQuery.getResultList().get(0)).intValue());
 
-    // if paging/filtering/sorting required
-    if (pfs != null) {
-
-      // filtering -- not supported
-
-      // sorting
-      Comparator<Concept> comparator = getPfsComparator(Concept.class, pfs);
-      if (comparator != null) {
-        descendantConcepts.sortBy(comparator);
-      }
-
-      // paging
-      if (pfs.getStartIndex() != -1 && pfs.getMaxResults() != -1) {
-
-        descendantConcepts.setObjects(descendantConcepts.getObjects().subList(
-            Math.min(pfs.getStartIndex(), descendantConcepts.getTotalCount()),
-            Math.min(pfs.getStartIndex() + pfs.getMaxResults(),
-                descendantConcepts.getTotalCount())));
-      }
-    }
-
-    // return descendants of this concept
-    return descendantConcepts;
+    query.setParameter("terminology", concept.getTerminology());
+    query.setParameter("version", concept.getTerminologyVersion());
+    query.setParameter("terminologyId", concept.getTerminologyId());
+    List<Concept> descendants = query.getResultList();
+    list.setObjects(descendants);
+    return list;
   }
 
+  @SuppressWarnings("unchecked")
+  @Override
+  public ConceptList getAncestorConcepts(Concept concept, PfsParameter pfs)
+    throws Exception {
+
+    if (pfs != null && pfs.getQueryRestriction() != null) {
+      throw new IllegalArgumentException(
+          "Query restriction is not implemented for this call: "
+              + pfs.getQueryRestriction());
+    }
+    ConceptList list = new ConceptListJpa();
+    String queryStr =
+        "select a from TransitiveRelationshipJpa tr, ConceptJpa a, ConceptJpa sub "
+            + " where sub.terminologyVersion = :version "
+            + " and sub.terminology = :terminology "
+            + " and sub.terminologyId = :terminologyId"
+            + " and tr.superTypeConcept = a"
+            + " and tr.subTypeConcept = sub";
+    javax.persistence.Query query = applyPfsToQuery(queryStr, pfs);
+
+    javax.persistence.Query ctQuery =
+        manager
+            .createQuery("select tr from TransitiveRelationshipJpa tr, ConceptJpa sub"
+                + " where sub.terminologyVersion = :version "
+                + " and sub.terminology = :terminology "
+                + " and sub.terminologyId = :terminologyId"
+                + " and tr.subTypeConcept = super");
+
+    ctQuery.setParameter("terminology", concept.getTerminology());
+    ctQuery.setParameter("version", concept.getTerminologyVersion());
+    ctQuery.setParameter("terminologyId", concept.getTerminologyId());
+    list.setTotalCount(((BigDecimal) ctQuery.getResultList().get(0)).intValue());
+
+    query.setParameter("terminology", concept.getTerminology());
+    query.setParameter("version", concept.getTerminologyVersion());
+    query.setParameter("terminologyId", concept.getTerminologyId());
+    List<Concept> ancestors = query.getResultList();
+    list.setObjects(ancestors);
+    return list;
+  }
   /*
    * (non-Javadoc)
    * 
@@ -2732,131 +2766,6 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
 
   }
 
-  /*
-   * (non-Javadoc)
-   * 
-   * @see
-   * org.ihtsdo.otf.mapping.services.ContentService#getDescendants(java.lang
-   * .String, java.lang.String, java.lang.String, java.lang.String)
-   */
-  @SuppressWarnings("unchecked")
-  @Override
-  public SearchResultList findDescendantConcepts(String terminologyId,
-    String terminology, String version, PfsParameter pfs) throws Exception {
-    Logger.getLogger(ContentServiceJpa.class).debug(
-        "Content Service - find descendants " + terminologyId + "/"
-            + terminology + "/" + version);
-
-    if (pfs != null && pfs.getQueryRestriction() != null) {
-      throw new IllegalArgumentException(
-          "Query restriction is not implemented for this call: "
-              + pfs.getQueryRestriction());
-    }
-    SearchResultList list = new SearchResultListJpa();
-    String queryStr =
-        "select a from TransitiveRelationshipJpa tr, ConceptJpa super, ConceptJpa a "
-            + " where super.version = :version "
-            + " and super.terminology = :terminology "
-            + " and super.terminologyId = :terminologyId"
-            + " and tr.superTypeConcept = super"
-            + " and tr.subTypeConcept = sub";
-    javax.persistence.Query query = applyPfsToQuery(queryStr, pfs);
-
-    javax.persistence.Query ctQuery =
-        manager
-            .createQuery("select a from TransitiveRelationshipJpa tr, ConceptJpa super"
-                + " where super.version = :version "
-                + " and super.terminology = :terminology "
-                + " and super.terminologyId = :terminologyId"
-                + " and tr.superTypeConcept = super");
-
-    List<Concept> descendants = query.getResultList();
-    ctQuery.setParameter("terminology", terminology);
-    ctQuery.setParameter("version", version);
-    ctQuery.setParameter("terminologyId", terminologyId);
-    list.setTotalCount(((BigDecimal) ctQuery.getResultList().get(0)).intValue());
-
-    query.setParameter("terminology", terminology);
-    query.setParameter("version", version);
-    query.setParameter("terminologyId", terminologyId);
-
-    for (Concept concept : descendants) {
-      SearchResult searchResult = new SearchResultJpa();
-      searchResult.setId(concept.getId());
-      searchResult.setTerminologyId(concept.getTerminologyId());
-      searchResult.setTerminology(concept.getTerminology());
-      searchResult.setTerminologyVersion(concept.getTerminologyVersion());
-      searchResult.setValue(concept.getDefaultPreferredName());
-      list.addObject(searchResult);
-    }
-    // return the search result list
-    return list;
-  }
-
-  /*
-   * (non-Javadoc)
-   * 
-   * @see
-   * org.ihtsdo.otf.ts.services.ContentService#findAncestorConcepts(java.lang
-   * .String, java.lang.String, java.lang.String,
-   * org.ihtsdo.otf.ts.helpers.PfsParameter)
-   */
-  @SuppressWarnings("unchecked")
-  @Override
-  public SearchResultList findAncestorConcepts(String terminologyId,
-    String terminology, String version, PfsParameter pfs) throws Exception {
-    Logger.getLogger(ContentServiceJpa.class).debug(
-        "Content Service - find ancestors " + terminologyId + "/" + terminology
-            + "/" + version);
-
-    if (pfs != null && pfs.getQueryRestriction() != null) {
-      throw new IllegalArgumentException(
-          "Query restriction is not implemented for this call: "
-              + pfs.getQueryRestriction());
-    }
-    SearchResultList searchResultList = new SearchResultListJpa();
-    javax.persistence.Query query =
-        manager
-            .createQuery("select super from TransitiveRelationshipJpa tr, ConceptJpa super, ConceptJpa sub "
-                + " where sub.version = :version "
-                + " and sub.terminology = :terminology "
-                + " and sub.terminologyId = :terminologyId"
-                + " and tr.superTypeConcept = super"
-                + " and tr.subTypeConcept = sub");
-    query.setParameter("terminology", terminology);
-    query.setParameter("version", version);
-    query.setParameter("terminologyId", terminologyId);
-
-    // Get the ancestors
-    List<Concept> ancestors = query.getResultList();
-
-    searchResultList.setTotalCount(ancestors.size());
-
-    // apply paging, and sorting if appropriate
-    Comparator<Concept> comp = getPfsComparator(Concept.class, pfs);
-    if (comp != null) {
-      Collections.sort(ancestors, comp);
-    }
-    // get the start and end indexes based on paging parameters
-    int startIndex = 0;
-    int toIndex = ancestors.size();
-    if (pfs != null) {
-      startIndex = pfs.getStartIndex();
-      toIndex = Math.min(ancestors.size(), startIndex + pfs.getMaxResults());
-    }
-    // construct the search results
-    for (Concept c : ancestors.subList(startIndex, toIndex)) {
-      SearchResult searchResult = new SearchResultJpa();
-      searchResult.setId(c.getId());
-      searchResult.setTerminologyId(c.getTerminologyId());
-      searchResult.setTerminology(c.getTerminology());
-      searchResult.setTerminologyVersion(c.getTerminologyVersion());
-      searchResult.setValue(c.getDefaultPreferredName());
-      searchResultList.addObject(searchResult);
-    }
-    // return the search result list
-    return searchResultList;
-  }
 
   /*
    * (non-Javadoc)
@@ -3014,10 +2923,11 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
           };
 
       for (String type : types) {
+        Logger.getLogger(getClass()).info("  Remove " + type);
         javax.persistence.Query query =
-            manager.createQuery("DELETE From " + type
-                + " c where terminology = :terminology "
-                + " and terminologyVersion = :terminologyVersion");
+            manager.createQuery("DELETE FROM " + type
+                + " WHERE terminology = :terminology "
+                + " AND terminologyVersion = :terminologyVersion");
         query.setParameter("terminology", terminology);
         query.setParameter("terminologyVersion", version);
         int deleteRecords = query.executeUpdate();
@@ -3062,10 +2972,8 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
       include.add(concept);
       // get descendants
       if (project.getScopeDescendantsFlag()) {
-        for (SearchResult result : findDescendantConcepts(terminologyId,
-            project.getTerminology(), project.getTerminologyVersion(), null)
-            .getObjects()) {
-          include.add(getConcept(result.getId()));
+        for (Concept desc : getDescendantConcepts(concept, null).getObjects()) {
+          include.add(desc);
         }
       }
     }
@@ -3080,10 +2988,8 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
       exclude.add(concept);
       // get descendants
       if (project.getScopeExcludesDescendantsFlag()) {
-        for (SearchResult result : findDescendantConcepts(terminologyId,
-            project.getTerminology(), project.getTerminologyVersion(), null)
-            .getObjects()) {
-          exclude.add(getConcept(result.getId()));
+        for (Concept desc : getDescendantConcepts(concept, null).getObjects()) {
+          exclude.add(desc);
         }
       }
     }

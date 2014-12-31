@@ -235,7 +235,6 @@ public class ActionServiceJpa extends ContentServiceJpa implements
     // configure classifier
     classifier.setProject(config.getProject());
 
-    // TODO; get all this from metadata service
     // Set the root id
     String SNOMED_ROOT_CONCEPT = "138875005";
     classifier.setRootId(Integer.valueOf(getSingleConcept(SNOMED_ROOT_CONCEPT,

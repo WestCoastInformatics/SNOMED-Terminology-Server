@@ -5,9 +5,8 @@ import javax.persistence.Id;
 import javax.xml.bind.annotation.XmlID;
 import javax.xml.bind.annotation.XmlRootElement;
 
-// TODO: Auto-generated Javadoc
 /**
- * JAXB enabled implementation of a {@link ReleaseInfo}.
+ * JAXB enabled implementation of a {@link SearchCriteria}.
  */
 @XmlRootElement(name = "searchCriteria")
 public class SearchCriteriaJpa implements SearchCriteria {

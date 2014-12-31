@@ -19,7 +19,6 @@ import org.ihtsdo.otf.ts.rf2.Concept;
 import org.ihtsdo.otf.ts.rf2.Relationship;
 import org.ihtsdo.otf.ts.services.MetadataService;
 
-// TODO: Auto-generated Javadoc
 /**
  * Loads and serves configuration.
  */
