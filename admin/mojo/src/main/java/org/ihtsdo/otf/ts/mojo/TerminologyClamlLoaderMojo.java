@@ -66,6 +66,13 @@ public class TerminologyClamlLoaderMojo extends AbstractMojo {
   String terminology;
 
   /**
+   * Name of terminologyVersion to be loaded.
+   * @parameter
+   * @required
+   */
+  String terminologyVersion;
+
+  /**
    * Input file.
    * @parameter
    * @required
@@ -74,9 +81,6 @@ public class TerminologyClamlLoaderMojo extends AbstractMojo {
 
   /** The effective time. */
   String effectiveTime;
-
-  /** The terminology version. */
-  String terminologyVersion;
 
   /** The concept map. */
   Map<String, Concept> conceptMap;
@@ -105,6 +109,7 @@ public class TerminologyClamlLoaderMojo extends AbstractMojo {
   public void execute() throws MojoExecutionException {
     getLog().info("Starting load of ClaML");
     getLog().info("  terminology = " + terminology);
+    getLog().info("  terminologyVersion = " + terminologyVersion);
     getLog().info("  inputFile = " + inputFile);
 
     FileInputStream fis = null;
@@ -123,7 +128,7 @@ public class TerminologyClamlLoaderMojo extends AbstractMojo {
       }
 
       // open input file and get effective time and version
-      findVersion(inputFile);
+      findEffectiveTime(inputFile);
 
       // create Metadata
       getLog().info("  Create metadata classes");
@@ -1351,24 +1356,23 @@ public class TerminologyClamlLoaderMojo extends AbstractMojo {
    * 
    * @throws Exception the exception
    */
-  public void findVersion(String inputFile) throws Exception {
+  public void findEffectiveTime(String inputFile) throws Exception {
     BufferedReader br = new BufferedReader(new FileReader(inputFile));
     String line = null;
     while ((line = br.readLine()) != null) {
       if (line.contains("<Title")) {
         int versionIndex = line.indexOf("version=");
         if (line.contains("></Title>"))
-          terminologyVersion =
+          effectiveTime =
               line.substring(versionIndex + 9, line.indexOf("></Title>") - 1);
         else
-          terminologyVersion =
+          effectiveTime =
               line.substring(versionIndex + 9, versionIndex + 13);
-        effectiveTime = terminologyVersion + "0101";
+        effectiveTime = effectiveTime + "0101";
         break;
       }
     }
     br.close();
-    getLog().info("terminologyVersion: " + terminologyVersion);
     getLog().info("effectiveTime: " + effectiveTime);
   }
 }

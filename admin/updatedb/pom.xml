@@ -27,13 +27,7 @@
 
     <!-- Specify -Drun.config=... -->
     <profile>
-      <id>run</id>
-      <activation>
-        <property>
-          <name>run.config</name>
-        </property>
-      </activation>
-
+      <id>Updatedb</id>
       <build>
         <plugins>
 

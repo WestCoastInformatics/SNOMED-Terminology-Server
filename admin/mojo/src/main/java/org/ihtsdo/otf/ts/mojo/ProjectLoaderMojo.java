@@ -84,7 +84,7 @@ public class ProjectLoaderMojo extends AbstractMojo {
    * @parameter
    * @required
    */
-  private String scopeConcepts = null;
+  private String scopeConcepts= "";
   /**
    * The scope descendants flag
    * 
@@ -96,9 +96,9 @@ public class ProjectLoaderMojo extends AbstractMojo {
    * The scope excludes concepts.
    * 
    * @parameter
-   * @required
    */
-  private String scopeExcludesConcepts = null;
+  private String scopeExcludesConcepts = "";
+  
   /**
    * The scope excludes descendants flag
    * 
@@ -152,7 +152,7 @@ public class ProjectLoaderMojo extends AbstractMojo {
           throw new Exception("A project with this name and description already exists.");
         }
       }
-
+      // Add the project
       contentService.addProject(project);
       securityService.close();
       contentService.close();

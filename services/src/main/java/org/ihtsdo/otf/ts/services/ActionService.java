@@ -30,6 +30,13 @@ public interface ActionService extends RootService {
   public String configureActionService(Project project) throws Exception;
 
   /**
+   * Clear all resources for the specified token.
+   *
+   * @param sessionToken the session token
+   */
+  public void clear(String sessionToken);
+  
+  /**
    * Gets the progress for any currently-running operations for the specified
    * session token.
    *

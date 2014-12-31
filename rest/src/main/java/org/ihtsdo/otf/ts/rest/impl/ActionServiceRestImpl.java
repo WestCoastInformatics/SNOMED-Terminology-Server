@@ -91,6 +91,36 @@ public class ActionServiceRestImpl extends RootServiceRestImpl implements
     }
   }
 
+  @Override
+  @GET
+  @Path("/clear/{sessionToken}")
+  @ApiOperation(value = "Clear resources for a session", notes = "Clears all resources for the specified session token.")
+  public void clear(
+    @ApiParam(value = "Session token, e.g. value from /action/configure", required = true) @HeaderParam("sessionToken") String sessionToken,
+    @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken) {
+
+    Logger.getLogger(ContentServiceRestImpl.class).info(
+        "RESTful call (Action): /clear/" + sessionToken);
+
+    try {
+      // authorize call
+      UserRole role = securityService.getApplicationRoleForToken(authToken);
+      if (!role.hasPrivilegesOf(UserRole.AUTHOR))
+        throw new WebApplicationException(
+            Response
+                .status(401)
+                .entity(
+                    "User does not have permissions to clear the resources for a session token.")
+                .build());
+
+      ActionService actionService = new ActionServiceJpa();
+      actionService.clear(sessionToken);
+      actionService.close();
+    } catch (Exception e) {
+      handleException(e, "trying to clear resources");
+    }
+  }
+
   /*
    * (non-Javadoc)
    * 
@@ -320,7 +350,6 @@ public class ActionServiceRestImpl extends RootServiceRestImpl implements
       return null;
     }
   }
-
 
   /*
    * (non-Javadoc)

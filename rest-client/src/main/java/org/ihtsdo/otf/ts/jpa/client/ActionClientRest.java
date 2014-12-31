@@ -34,19 +34,21 @@ public class ActionClientRest implements ActionServiceRest {
     this.config = config;
   }
 
-
-  /* (non-Javadoc)
-   * @see org.ihtsdo.otf.ts.rest.ActionServiceRest#configureActionService(org.ihtsdo.otf.ts.jpa.ProjectJpa, java.lang.String)
+  /*
+   * (non-Javadoc)
+   * 
+   * @see
+   * org.ihtsdo.otf.ts.rest.ActionServiceRest#configureActionService(org.ihtsdo
+   * .otf.ts.jpa.ProjectJpa, java.lang.String)
    */
   @Override
-  public String configureActionService(ProjectJpa project,
-    String authToken) throws Exception {
+  public String configureActionService(ProjectJpa project, String authToken)
+    throws Exception {
     Client client = Client.create();
     WebResource resource =
         client.resource(config.getProperty("base.url") + "/action/configure");
     String projectString =
-        (project != null ? ConfigUtility
-            .getStringForGraph(project) : null);
+        (project != null ? ConfigUtility.getStringForGraph(project) : null);
     ClientResponse response =
         resource.accept(MediaType.APPLICATION_XML)
             .header("Authorization", authToken)
@@ -61,6 +63,25 @@ public class ActionClientRest implements ActionServiceRest {
     }
 
     return resultString;
+  }
+
+  @Override
+  public void clear(String sessionToken, String authToken) throws Exception {
+    Client client = Client.create();
+    WebResource resource =
+        client.resource(config.getProperty("base.url") + "/action/clear/");
+
+    ClientResponse response =
+        resource.accept(MediaType.APPLICATION_XML)
+            .header("Authorization", authToken).get(ClientResponse.class);
+
+    String resultString = response.getEntity(String.class);
+    if (response.getClientResponseStatus().getFamily() == Family.SUCCESSFUL) {
+      Logger.getLogger(this.getClass()).debug(resultString);
+    } else {
+      throw new Exception(resultString);
+    }
+
   }
 
   /*

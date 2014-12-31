@@ -4,6 +4,8 @@ import java.io.File;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.apache.log4j.Logger;
 import org.ihtsdo.otf.ts.helpers.ConfigUtility;
@@ -22,9 +24,9 @@ public class Rf2FileSorter {
   /** The file version. */
   private String fileVersion;
 
-  /**  The require all files. */
+  /** The require all files. */
   private boolean requireAllFiles = false;
-  
+
   /**
    * Instantiates an empty {@link Rf2FileSorter}.
    *
@@ -42,7 +44,7 @@ public class Rf2FileSorter {
   public void setSortByEffectiveTime(boolean sortByEffectiveTime) {
     this.sortByEffectiveTime = sortByEffectiveTime;
   }
-  
+
   /**
    * Sets the require all files flag.
    *
@@ -142,6 +144,19 @@ public class Rf2FileSorter {
       final File file = findFile(new File(inputDir + dirMap.get(key)), key);
       Logger.getLogger(this.getClass()).info("    file = " + file);
 
+      // Determine file version from filename
+      if (fileVersion == null) {
+        Matcher matcher =
+            Pattern.compile("\\d+").matcher(
+                file.getName().substring(file.getName().lastIndexOf('_')));
+        matcher.find();
+        fileVersion = matcher.group();
+        if (fileVersion == null) {
+          throw new Exception("Unable to determine file version from "
+              + file.getName());
+        }
+      }
+
       // Determine fields to sort by
       int[] fields = null;
       if (sortByEffectiveTime) {
@@ -155,10 +170,11 @@ public class Rf2FileSorter {
       }
       // Sort the file
       if (file != null) {
-      sortRf2File(file, new File(outputDir + "/" + fileMap.get(key)), fields);
+        sortRf2File(file, new File(outputDir + "/" + fileMap.get(key)), fields);
       } else {
         // otherwise just create an empty "sort" file
-        new File(inputDir + dirMap.get(key) + "/" + fileMap.get(key)).createNewFile();
+        new File(inputDir + dirMap.get(key) + "/" + fileMap.get(key))
+            .createNewFile();
       }
     }
 
@@ -228,7 +244,7 @@ public class Rf2FileSorter {
     }
     if (file == null) {
       if (requireAllFiles) {
-      throw new Exception("Missing " + prefix + " file");
+        throw new Exception("Missing " + prefix + " file");
       } else {
         return null;
       }

@@ -26,42 +26,49 @@ pause
 
 echo     Run updatedb with hibernate.hbm2ddl.auto = create ...%date% %time%
 cd %SERVER_CODE%/admin/updatedb
-call mvn -Drun.config=%SERVER_CONFIG% -Dhibernate.hbm2ddl.auto=create install 1> mvn.log
+call mvn install -PUpdatedb -Drun.config=%SERVER_CONFIG% -Dhibernate.hbm2ddl.auto=create 1> mvn.log
 IF %ERRORLEVEL% NEQ 0 (set error=1
 goto trailer)
 del /Q mvn.log
 
 echo     Clear indexes ...%date% %time%
 cd %SERVER_CODE%/admin/lucene
-call mvn -Drun.config=%SERVER_CONFIG% install 1> mvn.log
+call mvn install -Drun.config=%SERVER_CONFIG% 1> mvn.log
 IF %ERRORLEVEL% NEQ 0 (set error=1
 goto trailer)
 del /Q mvn.log
 
 echo     Load SNOMEDCT ...%date% %time%
 cd %SERVER_CODE%/admin/loader
-call mvn -PRF2-snapshot -Drun.config=%SERVER_CONFIG% -Dterminology=SNOMEDCT -Dinput.dir=%SERVER_DATA%/snomedct-20140731-mini install 1> mvn.log
+call mvn install -PRF2-snapshot -Drun.config=%SERVER_CONFIG% -Dterminology=SNOMEDCT -Dinput.dir=%SERVER_DATA%/snomedct-20140731-mini 1> mvn.log
 IF %ERRORLEVEL% NEQ 0 (set error=1
 goto trailer)
 del /Q mvn.log
 
 echo     Load ICD9CM ...%date% %time%
 cd %SERVER_CODE%/admin/loader
-call mvn -PClaML -Drun.config=%SERVER_CONFIG% -Dterminology=ICD9CM -Dinput.file=%SERVER_DATA%/icd9cm-2013.xml install 1> mvn.log
+call mvn install -PClaML -Drun.config=%SERVER_CONFIG% -Dterminology=ICD9CM -Dversion=2013 -Dinput.file=%SERVER_DATA%/icd9cm-2013.xml 1> mvn.log
+IF %ERRORLEVEL% NEQ 0 (set error=1
+goto trailer)
+del /Q mvn.log
+
+echo     Add SNOMED project ...%date% %time%
+cd %SERVER_CODE%/admin/loader
+call mvn install -PAddProject -Drun.config=%SERVER_CONFIG% -Dname="Sample Project" -Ddescription="Sample project." -Dterminology=SNOMEDCT -Dversion=latest -Dscope.concepts=138875005 -Dscope.descendants.flag=true -Dadmin.user=admin 1> mvn.log
 IF %ERRORLEVEL% NEQ 0 (set error=1
 goto trailer)
 del /Q mvn.log
 
 echo     Start SNOMED editing ...%date% %time%
 cd %SERVER_CODE%/admin/release
-call mvn -PStartEditingCycle -Drelease.version=20150131 -Dterminology=SNOMEDCT -Dterminology.version=20140731 -Drun.config=%SERVER_CONFIG% install 1> mvn.log
+call mvn install -PStartEditingCycle -Drelease.version=20150131 -Dterminology=SNOMEDCT -Dterminology.version=20140731 -Drun.config=%SERVER_CONFIG% 1> mvn.log
 IF %ERRORLEVEL% NEQ 0 (set error=1
 goto trailer)
 del /Q mvn.log
 
 echo     Start ICD9CM editing ...%date% %time%
 cd %SERVER_CODE%/admin/release
-call mvn -PStartEditingCycle -Drelease.version=20150101 -Dterminology=ICD9CM -Dterminology.version=2013 -Drun.config=%SERVER_CONFIG% install 1> mvn.log
+call mvn install -PStartEditingCycle -Drelease.version=20150101 -Dterminology=ICD9CM -Dterminology.version=2013 -Drun.config=%SERVER_CONFIG% 1> mvn.log
 IF %ERRORLEVEL% NEQ 0 (set error=1
 goto trailer)
 del /Q mvn.log

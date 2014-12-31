@@ -85,22 +85,16 @@ public class TerminologyRf2SnapshotLoaderMojo extends AbstractMojo {
       sorter.setRequireAllFiles(true);
       File outputDir = new File(inputDirFile, "/RF2-sorted-temp/");
       sorter.sortFiles(inputDirFile, outputDir);
+      String releaseVersion = sorter.getFileVersion();
+      getLog().info("  releaseVersion = " + releaseVersion);
 
       // Open readers
       Rf2Readers readers = new Rf2Readers(outputDir);
       readers.openReaders();
 
-
-      // check that release info does not already exist
+      // instantiate service
       HistoryService historyService = new HistoryServiceJpa();
-      String releaseVersion = sorter.getFileVersion();
-      ReleaseInfo releaseInfo =
-          historyService.getReleaseInfo(terminology, releaseVersion);
-      if (releaseInfo != null) {
-        throw new Exception("A release info already exists for "
-            + releaseVersion);
-      }
-      
+
       // Load snapshot
       Rf2SnapshotLoaderAlgorithm algorithm = new Rf2SnapshotLoaderAlgorithm();
       algorithm.setTerminology(terminology);
@@ -153,22 +147,25 @@ public class TerminologyRf2SnapshotLoaderMojo extends AbstractMojo {
       algo.compute();
 
       //
-      // Create ReleaseInfo for this release
+      // Create ReleaseInfo for this release if it does not already exist
       //
-      ReleaseInfo info = new ReleaseInfoJpa();
-      info.setName(releaseVersion);
-      info.setEffectiveTime(ConfigUtility.DATE_FORMAT.parse(releaseVersion));
-      info.setDescription(terminology + " " + releaseVersion + " release");
-      info.setPlanned(false);
-      info.setPublished(true);
-      info.setReleaseBeginDate(info.getEffectiveTime());
-      info.setReleaseFinishDate(info.getEffectiveTime());
-      info.setTerminology(terminology);
-      info.setTerminologyVersion(terminologyVersion);
-      historyService.addReleaseInfo(info);
-      historyService.commit();
-      
-      
+      ReleaseInfo info =
+          historyService.getReleaseInfo(terminology, releaseVersion);
+      if (info == null) {
+        info = new ReleaseInfoJpa();
+        info.setName(releaseVersion);
+        info.setEffectiveTime(ConfigUtility.DATE_FORMAT.parse(releaseVersion));
+        info.setDescription(terminology + " " + releaseVersion + " release");
+        info.setPlanned(false);
+        info.setPublished(true);
+        info.setReleaseBeginDate(info.getEffectiveTime());
+        info.setReleaseFinishDate(info.getEffectiveTime());
+        info.setTerminology(terminology);
+        info.setTerminologyVersion(terminologyVersion);
+        historyService.addReleaseInfo(info);
+        historyService.commit();
+      }
+
       // Clean-up
       readers.closeReaders();
       ConfigUtility
@@ -179,5 +176,4 @@ public class TerminologyRf2SnapshotLoaderMojo extends AbstractMojo {
       throw new MojoFailureException("Unexpected exception:", e);
     }
   }
-
 }

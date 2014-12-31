@@ -14,7 +14,6 @@ import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoFailureException;
 import org.ihtsdo.otf.ts.helpers.ConfigUtility;
 import org.ihtsdo.otf.ts.helpers.ReleaseInfo;
-import org.ihtsdo.otf.ts.helpers.ReleaseInfoJpa;
 import org.ihtsdo.otf.ts.jpa.algo.Rf2DeltaLoaderAlgorithm;
 import org.ihtsdo.otf.ts.jpa.algo.Rf2FileSorter;
 import org.ihtsdo.otf.ts.jpa.algo.Rf2Readers;
@@ -179,21 +178,23 @@ public class TerminologyRf2FullLoaderMojo extends AbstractMojo {
       algo.compute();
 
       //
-      // Create ReleaseInfo for this release
+      // Create ReleaseInfo for each release, unless already exists
       //
       for (String release : releases) {
-        ReleaseInfo info = new ReleaseInfoJpa();
-        info.setName(release);
-        info.setEffectiveTime(ConfigUtility.DATE_FORMAT.parse(release));
-        info.setDescription(terminology + " " + release + " release");
-        info.setPlanned(false);
-        info.setPublished(true);
-        info.setReleaseBeginDate(info.getEffectiveTime());
-        info.setReleaseFinishDate(info.getEffectiveTime());
-        info.setTerminology(terminology);
-        info.setTerminologyVersion(terminologyVersion);
-        historyService.addReleaseInfo(info);
-        historyService.commit();
+        ReleaseInfo info = historyService.getReleaseInfo(terminology, release);
+        if (info != null) {
+          info.setName(release);
+          info.setEffectiveTime(ConfigUtility.DATE_FORMAT.parse(release));
+          info.setDescription(terminology + " " + release + " release");
+          info.setPlanned(false);
+          info.setPublished(true);
+          info.setReleaseBeginDate(info.getEffectiveTime());
+          info.setReleaseFinishDate(info.getEffectiveTime());
+          info.setTerminology(terminology);
+          info.setTerminologyVersion(terminologyVersion);
+          historyService.addReleaseInfo(info);
+          historyService.commit();
+        }
       }
 
       // Clean-up

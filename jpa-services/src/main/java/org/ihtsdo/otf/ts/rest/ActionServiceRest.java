@@ -20,6 +20,15 @@ public interface ActionServiceRest {
   public String configureActionService(ProjectJpa project, String authToken) throws Exception;
 
   /**
+   * Clear all resources for the specified session token.
+   *
+   * @param sessionToken the session token
+   * @param authToken the auth token
+   * @throws Exception the exception
+   */
+  public void clear(String sessionToken, String authToken) throws Exception;
+  
+  /**
    * Gets the progress for any currently-running operations for the specified session token.
    *
    * @param sessionToken the session token

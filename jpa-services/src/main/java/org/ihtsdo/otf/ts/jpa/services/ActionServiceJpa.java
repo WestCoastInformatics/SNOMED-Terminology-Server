@@ -9,6 +9,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.Timer;
+import java.util.TimerTask;
 import java.util.UUID;
 
 import org.apache.log4j.Logger;
@@ -30,8 +32,7 @@ public class ActionServiceJpa extends ContentServiceJpa implements
     ActionService {
 
   /** The token login time map. */
-  private static Map<String, ActionServiceConfig> tokenConfigMap =
-      new HashMap<>();
+  static Map<String, ActionServiceConfig> tokenConfigMap = new HashMap<>();
 
   /** The Constant default timeout. */
   private final static long defaultTimeout = 7200000;
@@ -89,6 +90,23 @@ public class ActionServiceJpa extends ContentServiceJpa implements
     } else {
       actualTimeout = defaultTimeout;
     }
+
+    // Schedule a timer to run every 5 minutes to expire tokens
+    Timer timer = new Timer();
+    timer.schedule(new TimerTask() {
+
+      @Override
+      public void run() {
+        Logger.getLogger(getClass()).info("Action service - timeout check");
+        for (String token : tokenConfigMap.keySet()) {
+          if (tokenConfigMap.get(token).getTimeout().before(new Date())) {
+            Logger.getLogger(getClass()).info("  timeout - " + token);
+            tokenConfigMap.remove(token);
+          }
+        }
+      }
+
+    }, 1000 * 60 * 5);
   }
 
   /*
@@ -113,12 +131,24 @@ public class ActionServiceJpa extends ContentServiceJpa implements
 
   @Override
   public String configureActionService(Project project) throws Exception {
-    Logger.getLogger(getClass()).info("Action Service - configure - " + project);
+    Logger.getLogger(getClass())
+        .info("Action Service - configure - " + project);
     String token = UUID.randomUUID().toString();
     ActionServiceConfig config = new ActionServiceConfig(project);
     config.setTimeout(new Date(new Date().getTime() + actualTimeout));
     tokenConfigMap.put(token, config);
     return token;
+  }
+
+  /*
+   * (non-Javadoc)
+   * 
+   * @see org.ihtsdo.otf.ts.services.ActionService#clear(java.lang.String)
+   */
+  @Override
+  public void clear(String sessionToken) {
+    tokenConfigMap.remove(sessionToken);
+    System.gc();
   }
 
   /*
@@ -143,7 +173,8 @@ public class ActionServiceJpa extends ContentServiceJpa implements
    */
   @Override
   public void cancel(String sessionToken) throws Exception {
-    Logger.getLogger(getClass()).info("Action Service - cancel - " + sessionToken);
+    Logger.getLogger(getClass()).info(
+        "Action Service - cancel - " + sessionToken);
     tokenCheck(sessionToken);
     tokenConfigMap.get(sessionToken).setRequestCancel(true);
   }
@@ -157,7 +188,8 @@ public class ActionServiceJpa extends ContentServiceJpa implements
    */
   @Override
   public void prepareToClassify(String sessionToken) throws Exception {
-    Logger.getLogger(getClass()).info("Action Service - prepare to classify - " + sessionToken);
+    Logger.getLogger(getClass()).info(
+        "Action Service - prepare to classify - " + sessionToken);
     tokenCheck(sessionToken);
 
     // Instantiate classifier
@@ -185,7 +217,7 @@ public class ActionServiceJpa extends ContentServiceJpa implements
     if (classifier == null) {
       throw new Exception("Unable to instantiate classifier");
     }
-    
+
     // Inform listeners
     if (listenersEnabled) {
       for (WorkflowListener listener : listeners) {
@@ -264,7 +296,8 @@ public class ActionServiceJpa extends ContentServiceJpa implements
    */
   @Override
   public void classify(String sessionToken) throws Exception {
-    Logger.getLogger(getClass()).info("Action Service - classify - " + sessionToken);
+    Logger.getLogger(getClass()).info(
+        "Action Service - classify - " + sessionToken);
     tokenCheck(sessionToken);
     if (listenersEnabled) {
       for (WorkflowListener listener : listeners) {
@@ -303,7 +336,8 @@ public class ActionServiceJpa extends ContentServiceJpa implements
    */
   @Override
   public void incrementalClassify(String sessionToken) throws Exception {
-    Logger.getLogger(getClass()).info("Action Service - incremental classify - " + sessionToken);
+    Logger.getLogger(getClass()).info(
+        "Action Service - incremental classify - " + sessionToken);
     tokenCheck(sessionToken);
     if (listenersEnabled) {
       for (WorkflowListener listener : listeners) {
@@ -341,7 +375,8 @@ public class ActionServiceJpa extends ContentServiceJpa implements
   @Override
   public KeyValuesMap getClassificationEquivalents(String sessionToken)
     throws Exception {
-    Logger.getLogger(getClass()).info("Action Service - get classification equivalents - " + sessionToken);
+    Logger.getLogger(getClass()).info(
+        "Action Service - get classification equivalents - " + sessionToken);
     tokenCheck(sessionToken);
     Classifier runner = tokenConfigMap.get(sessionToken).getClassifier();
     if (runner != null) {
@@ -362,7 +397,8 @@ public class ActionServiceJpa extends ContentServiceJpa implements
   public RelationshipList getOldInferredRelationships(String sessionToken)
     throws Exception {
     tokenCheck(sessionToken);
-    Logger.getLogger(getClass()).info("Action Service - get old inferred relationships - " + sessionToken);
+    Logger.getLogger(getClass()).info(
+        "Action Service - get old inferred relationships - " + sessionToken);
     List<Relationship> rels =
         tokenConfigMap.get(sessionToken).getClassifier()
             .getOldInferredRelationships();
@@ -382,7 +418,8 @@ public class ActionServiceJpa extends ContentServiceJpa implements
   public RelationshipList getNewInferredRelationships(String sessionToken)
     throws Exception {
     tokenCheck(sessionToken);
-    Logger.getLogger(getClass()).info("Action Service - get new inferred relationships - " + sessionToken);
+    Logger.getLogger(getClass()).info(
+        "Action Service - get new inferred relationships - " + sessionToken);
     List<Relationship> rels =
         tokenConfigMap.get(sessionToken).getClassifier()
             .getNewInferredRelationships();
@@ -412,7 +449,8 @@ public class ActionServiceJpa extends ContentServiceJpa implements
 
   @Override
   public void addNewInferredRelationships(String sessionToken) throws Exception {
-    Logger.getLogger(getClass()).info("Action Service - add new inferred relationships - " + sessionToken);
+    Logger.getLogger(getClass()).info(
+        "Action Service - add new inferred relationships - " + sessionToken);
     tokenCheck(sessionToken);
     // TODO Auto-generated method stub
 
@@ -422,7 +460,8 @@ public class ActionServiceJpa extends ContentServiceJpa implements
   @Override
   public void retireOldInferredRelationships(String sessionToken)
     throws Exception {
-    Logger.getLogger(getClass()).info("Action Service - retire old inferred relationships - " + sessionToken);
+    Logger.getLogger(getClass()).info(
+        "Action Service - retire old inferred relationships - " + sessionToken);
     tokenCheck(sessionToken);
     // TODO Auto-generated method stub
 
