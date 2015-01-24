@@ -33,6 +33,12 @@ public class SnomedMetadataServiceJpaHelper extends ContentServiceJpa implements
   /** The Constant isaRelationshipType. */
   private final static String isaRelationshipType = "116680003";
 
+  /** The Constant statedType. */
+  private final static String statedCharacteristicType = "900000000000010007";
+
+  /** The Constant inferredType. */
+  private final static String inferredCharacteristicType = "900000000000011006";
+
   /*
    * (non-Javadoc)
    * 
@@ -513,12 +519,60 @@ public class SnomedMetadataServiceJpaHelper extends ContentServiceJpa implements
   /*
    * (non-Javadoc)
    * 
-   * @see org.ihtsdo.otf.mapping.services.MetadataService#
-   * getRelationshipCharacteristicTypes(java.lang.String, java.lang.String)
+   * @see
+   * org.ihtsdo.otf.ts.services.MetadataService#getInferredRelationshipTypes
+   * (java.lang.String, java.lang.String)
    */
   @Override
-  public Map<String, String> getRelationshipCharacteristicTypes(
-    String terminology, String version) throws NumberFormatException, Exception {
+  public Map<String, String> getInferredRelationshipTypes(String terminology,
+    String version) throws Exception {
+    Map<String, String> map = new HashMap<>();
+
+    // find all active descendants
+    Concept isaRel =
+        getSingleConcept(inferredCharacteristicType, terminology, version);
+    // this can happen when terminology data is being loaded
+    if (isaRel == null) {
+      return map;
+    }
+    map.put(new String(isaRel.getTerminologyId()),
+        isaRel.getDefaultPreferredName());
+    return map;
+  }
+
+  /*
+   * (non-Javadoc)
+   * 
+   * @see
+   * org.ihtsdo.otf.ts.services.MetadataService#getStatedRelationshipTypes(java
+   * .lang.String, java.lang.String)
+   */
+  @Override
+  public Map<String, String> getStatedRelationshipTypes(String terminology,
+    String version) throws Exception {
+    Map<String, String> map = new HashMap<>();
+
+    // find all active descendants
+    Concept isaRel =
+        getSingleConcept(statedCharacteristicType, terminology, version);
+    // this can happen when terminology data is being loaded
+    if (isaRel == null) {
+      return map;
+    }
+    map.put(new String(isaRel.getTerminologyId()),
+        isaRel.getDefaultPreferredName());
+    return map;
+  }
+
+  /*
+   * (non-Javadoc)
+   * 
+   * @see org.ihtsdo.otf.mapping.services.MetadataService#
+   * getCaracteristicTypes(java.lang.String, java.lang.String)
+   */
+  @Override
+  public Map<String, String> getCharacteristicTypes(String terminology,
+    String version) throws NumberFormatException, Exception {
     Map<String, String> map = new HashMap<>();
 
     // want all descendants, do not use pfs

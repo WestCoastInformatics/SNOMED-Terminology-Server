@@ -49,6 +49,7 @@ public class ActionClientRest implements ActionServiceRest {
         client.resource(config.getProperty("base.url") + "/action/configure");
     String projectString =
         (project != null ? ConfigUtility.getStringForGraph(project) : null);
+    Logger.getLogger(getClass()).debug(projectString);
     ClientResponse response =
         resource.accept(MediaType.APPLICATION_XML)
             .header("Authorization", authToken)

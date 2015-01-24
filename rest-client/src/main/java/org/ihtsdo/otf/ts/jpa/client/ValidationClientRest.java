@@ -49,6 +49,7 @@ public class ValidationClientRest implements ValidationServiceRest {
 
     String conceptString =
         (concept != null ? ConfigUtility.getStringForGraph(concept) : null);
+    Logger.getLogger(this.getClass()).info(conceptString);
     ClientResponse response =
         resource.accept(MediaType.APPLICATION_XML)
             .header("Authorization", authToken)

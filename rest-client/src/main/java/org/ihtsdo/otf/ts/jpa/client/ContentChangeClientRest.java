@@ -59,7 +59,7 @@ public class ContentChangeClientRest implements ContentChangeServiceRest {
 
     String conceptString =
         (concept != null ? ConfigUtility.getStringForGraph(concept) : null);
-    Logger.getLogger(this.getClass()).info(conceptString);
+    Logger.getLogger(getClass()).debug(conceptString);
     ClientResponse response =
         resource.accept(MediaType.APPLICATION_XML)
             .header("Authorization", authToken)
@@ -68,7 +68,7 @@ public class ContentChangeClientRest implements ContentChangeServiceRest {
 
     String resultString = response.getEntity(String.class);
     if (response.getClientResponseStatus().getFamily() == Family.SUCCESSFUL) {
-      Logger.getLogger(this.getClass()).debug(resultString);
+      Logger.getLogger(getClass()).debug(resultString);
     } else {
       throw new Exception(resultString);
     }
@@ -98,6 +98,7 @@ public class ContentChangeClientRest implements ContentChangeServiceRest {
 
     String conceptString =
         (concept != null ? ConfigUtility.getStringForGraph(concept) : null);
+    Logger.getLogger(getClass()).debug(conceptString);
     ClientResponse response =
         resource.accept(MediaType.APPLICATION_XML)
             .header("Authorization", authToken)
@@ -155,6 +156,7 @@ public class ContentChangeClientRest implements ContentChangeServiceRest {
     String descriptionString =
         (description != null ? ConfigUtility.getStringForGraph(description)
             : null);
+    Logger.getLogger(getClass()).debug(descriptionString);
     ClientResponse response =
         resource.accept(MediaType.APPLICATION_XML)
             .header("Authorization", authToken)
@@ -163,7 +165,7 @@ public class ContentChangeClientRest implements ContentChangeServiceRest {
 
     String resultString = response.getEntity(String.class);
     if (response.getClientResponseStatus().getFamily() == Family.SUCCESSFUL) {
-      Logger.getLogger(this.getClass()).debug(resultString);
+      Logger.getLogger(getClass()).debug(resultString);
     } else {
       throw new Exception(resultString);
     }
@@ -194,6 +196,7 @@ public class ContentChangeClientRest implements ContentChangeServiceRest {
     String descriptionString =
         (description != null ? ConfigUtility.getStringForGraph(description)
             : null);
+    Logger.getLogger(getClass()).debug(descriptionString);
     ClientResponse response =
         resource.accept(MediaType.APPLICATION_XML)
             .header("Authorization", authToken)
@@ -251,6 +254,7 @@ public class ContentChangeClientRest implements ContentChangeServiceRest {
     String relationshipString =
         (relationship != null ? ConfigUtility.getStringForGraph(relationship)
             : null);
+    Logger.getLogger(getClass()).debug(relationshipString);
     ClientResponse response =
         resource.accept(MediaType.APPLICATION_XML)
             .header("Authorization", authToken)
@@ -259,7 +263,7 @@ public class ContentChangeClientRest implements ContentChangeServiceRest {
 
     String resultString = response.getEntity(String.class);
     if (response.getClientResponseStatus().getFamily() == Family.SUCCESSFUL) {
-      Logger.getLogger(this.getClass()).debug(resultString);
+      Logger.getLogger(getClass()).debug(resultString);
     } else {
       throw new Exception(resultString);
     }
@@ -290,6 +294,7 @@ public class ContentChangeClientRest implements ContentChangeServiceRest {
     String relationshipString =
         (relationship != null ? ConfigUtility.getStringForGraph(relationship)
             : null);
+    Logger.getLogger(getClass()).debug(relationshipString);
     ClientResponse response =
         resource.accept(MediaType.APPLICATION_XML)
             .header("Authorization", authToken)
@@ -343,17 +348,18 @@ public class ContentChangeClientRest implements ContentChangeServiceRest {
     WebResource resource =
         client.resource(config.getProperty("base.url") + "/edit/language/add");
 
-    String languageRefSetMemberString =
+    String memberString =
         (member != null ? ConfigUtility.getStringForGraph(member) : null);
+    Logger.getLogger(getClass()).debug(memberString);
     ClientResponse response =
         resource.accept(MediaType.APPLICATION_XML)
             .header("Authorization", authToken)
             .header("Content-type", MediaType.APPLICATION_XML)
-            .put(ClientResponse.class, languageRefSetMemberString);
+            .put(ClientResponse.class, memberString);
 
     String resultString = response.getEntity(String.class);
     if (response.getClientResponseStatus().getFamily() == Family.SUCCESSFUL) {
-      Logger.getLogger(this.getClass()).debug(resultString);
+      Logger.getLogger(getClass()).debug(resultString);
     } else {
       throw new Exception(resultString);
     }
@@ -381,13 +387,14 @@ public class ContentChangeClientRest implements ContentChangeServiceRest {
         client.resource(config.getProperty("base.url")
             + "/edit/language/update");
 
-    String languageRefSetMemberString =
+    String memberString =
         (member != null ? ConfigUtility.getStringForGraph(member) : null);
+    Logger.getLogger(getClass()).debug(memberString);
     ClientResponse response =
         resource.accept(MediaType.APPLICATION_XML)
             .header("Authorization", authToken)
             .header("Content-type", MediaType.APPLICATION_XML)
-            .post(ClientResponse.class, languageRefSetMemberString);
+            .post(ClientResponse.class, memberString);
 
     if (response.getClientResponseStatus().getFamily() == Family.SUCCESSFUL) {
       // do nothing
@@ -441,6 +448,7 @@ public class ContentChangeClientRest implements ContentChangeServiceRest {
 
     String memberString =
         (member != null ? ConfigUtility.getStringForGraph(member) : null);
+    Logger.getLogger(getClass()).debug(memberString);
     ClientResponse response =
         resource.accept(MediaType.APPLICATION_XML)
             .header("Authorization", authToken)
@@ -449,7 +457,7 @@ public class ContentChangeClientRest implements ContentChangeServiceRest {
 
     String resultString = response.getEntity(String.class);
     if (response.getClientResponseStatus().getFamily() == Family.SUCCESSFUL) {
-      Logger.getLogger(this.getClass()).debug(resultString);
+      Logger.getLogger(getClass()).debug(resultString);
     } else {
       throw new Exception(resultString);
     }
@@ -481,6 +489,7 @@ public class ContentChangeClientRest implements ContentChangeServiceRest {
 
     String memberString =
         (member != null ? ConfigUtility.getStringForGraph(member) : null);
+    Logger.getLogger(getClass()).debug(memberString);
     ClientResponse response =
         resource.accept(MediaType.APPLICATION_XML)
             .header("Authorization", authToken)
@@ -612,7 +621,7 @@ public class ContentChangeClientRest implements ContentChangeServiceRest {
 
     String projectString =
         (project != null ? ConfigUtility.getStringForGraph(project) : null);
-    Logger.getLogger(this.getClass()).info(projectString);
+    Logger.getLogger(getClass()).debug(projectString);
     ClientResponse response =
         resource.accept(MediaType.APPLICATION_XML)
             .header("Authorization", authToken)
@@ -621,7 +630,7 @@ public class ContentChangeClientRest implements ContentChangeServiceRest {
 
     String resultString = response.getEntity(String.class);
     if (response.getClientResponseStatus().getFamily() == Family.SUCCESSFUL) {
-      Logger.getLogger(this.getClass()).debug(resultString);
+      Logger.getLogger(getClass()).debug(resultString);
     } else {
       throw new Exception(resultString);
     }
@@ -651,6 +660,7 @@ public class ContentChangeClientRest implements ContentChangeServiceRest {
 
     String projectString =
         (project != null ? ConfigUtility.getStringForGraph(project) : null);
+    Logger.getLogger(getClass()).debug(projectString);
     ClientResponse response =
         resource.accept(MediaType.APPLICATION_XML)
             .header("Authorization", authToken)

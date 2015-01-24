@@ -13,13 +13,8 @@ import org.ihtsdo.otf.ts.jpa.algo.Rf2DeltaLoaderAlgorithm;
 import org.ihtsdo.otf.ts.jpa.algo.Rf2FileSorter;
 import org.ihtsdo.otf.ts.jpa.algo.Rf2Readers;
 import org.ihtsdo.otf.ts.jpa.algo.TransitiveClosureAlgorithm;
-import org.ihtsdo.otf.ts.jpa.services.ContentServiceJpa;
 import org.ihtsdo.otf.ts.jpa.services.HistoryServiceJpa;
 import org.ihtsdo.otf.ts.jpa.services.MetadataServiceJpa;
-import org.ihtsdo.otf.ts.jpa.services.helper.TerminologyUtility;
-import org.ihtsdo.otf.ts.rf2.Concept;
-import org.ihtsdo.otf.ts.rf2.Relationship;
-import org.ihtsdo.otf.ts.services.ContentService;
 import org.ihtsdo.otf.ts.services.HistoryService;
 import org.ihtsdo.otf.ts.services.MetadataService;
 
@@ -121,47 +116,13 @@ public class TerminologyRf2DeltaLoader extends AbstractMojo {
       algorithm.compute();
 
       // Compute transitive closure
-      ContentService contentService = new ContentServiceJpa();
-      contentService.setLastModifiedFlag(false);
-
-      // Walk up tree to the root
-      String conceptId =
-          TerminologyUtility
-              .getHierarchcialIsaRels(terminology, terminologyVersion)
-              .iterator().next();
-      String rootId = null;
-      OUTER: while (true) {
-        Logger.getLogger(this.getClass()).info(
-            "  Walk up tree from " + conceptId);
-        Concept c =
-            contentService.getSingleConcept(conceptId, terminology,
-                terminologyVersion);
-        for (Relationship rel : c.getRelationships()) {
-          Logger.getLogger(this.getClass()).info(
-              "      rel = " + rel.getTerminologyId() + ", " + rel.isActive()
-                  + ", " + rel.getTypeId());
-          if (rel.isActive()
-              && TerminologyUtility.isHierarchicalIsaRelationship(rel)) {
-            conceptId = rel.getDestinationConcept().getTerminologyId();
-            continue OUTER;
-          }
-        }
-        rootId = conceptId;
-        break;
-      }
-      Long rootIdLong =
-          contentService.getSingleConcept(rootId, terminology,
-              terminologyVersion).getId();
-
-      contentService.close();
       Logger.getLogger(this.getClass()).info(
-          "  Compute transitive closure from  " + rootId + "/" + terminology
+          "  Compute transitive closure from  " + terminology
               + "/" + terminologyVersion);
       TransitiveClosureAlgorithm algo = new TransitiveClosureAlgorithm();
       algo.setTerminology(terminology);
       algo.setTerminologyVersion(terminologyVersion);
       algo.reset();
-      algo.setRootId(rootIdLong);
       algo.compute();
 
       // No changes to release info

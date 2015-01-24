@@ -11,7 +11,11 @@ import org.apache.log4j.Logger;
 import org.ihtsdo.otf.ts.algo.Algorithm;
 import org.ihtsdo.otf.ts.helpers.ConfigUtility;
 import org.ihtsdo.otf.ts.jpa.services.ContentServiceJpa;
+import org.ihtsdo.otf.ts.rf2.AssociationReferenceConceptRefSetMember;
+import org.ihtsdo.otf.ts.rf2.AssociationReferenceDescriptionRefSetMember;
 import org.ihtsdo.otf.ts.rf2.AssociationReferenceRefSetMember;
+import org.ihtsdo.otf.ts.rf2.AttributeValueConceptRefSetMember;
+import org.ihtsdo.otf.ts.rf2.AttributeValueDescriptionRefSetMember;
 import org.ihtsdo.otf.ts.rf2.AttributeValueRefSetMember;
 import org.ihtsdo.otf.ts.rf2.ComplexMapRefSetMember;
 import org.ihtsdo.otf.ts.rf2.Concept;
@@ -24,7 +28,9 @@ import org.ihtsdo.otf.ts.rf2.Relationship;
 import org.ihtsdo.otf.ts.rf2.SimpleMapRefSetMember;
 import org.ihtsdo.otf.ts.rf2.SimpleRefSetMember;
 import org.ihtsdo.otf.ts.rf2.jpa.AssociationReferenceConceptRefSetMemberJpa;
+import org.ihtsdo.otf.ts.rf2.jpa.AssociationReferenceDescriptionRefSetMemberJpa;
 import org.ihtsdo.otf.ts.rf2.jpa.AttributeValueConceptRefSetMemberJpa;
+import org.ihtsdo.otf.ts.rf2.jpa.AttributeValueDescriptionRefSetMemberJpa;
 import org.ihtsdo.otf.ts.rf2.jpa.ComplexMapRefSetMemberJpa;
 import org.ihtsdo.otf.ts.rf2.jpa.ConceptJpa;
 import org.ihtsdo.otf.ts.rf2.jpa.DescriptionJpa;
@@ -68,12 +74,19 @@ public class Rf2SnapshotLoaderAlgorithm extends ContentServiceJpa implements
   /** hash sets for retrieving concepts. */
   private Map<String, Concept> conceptCache = new HashMap<>(); // used to
 
+  /** hash sets for retrieving descriptions. */
+  private Map<String, Description> descriptionCache = new HashMap<>(); // used
+                                                                       // to
+
   /** hash set for storing default preferred names. */
   Map<Long, String> defaultPreferredNames = new HashMap<>();
 
   /** counter for objects created, reset in each load section. */
   int objectCt; //
 
+  /**  The content service. */
+  private ContentService contentService;
+  
   /**
    * Instantiates an empty {@link Rf2SnapshotLoaderAlgorithm}.
    * @throws Exception if anything goes wrong
@@ -146,6 +159,10 @@ public class Rf2SnapshotLoaderAlgorithm extends ContentServiceJpa implements
       // Track system level information
       long startTimeOrig = System.nanoTime();
 
+      contentService = new ContentServiceJpa();
+      contentService.setTransactionPerOperation(false);
+      contentService.beginTransaction();
+      
       //
       // Load concepts
       //
@@ -187,19 +204,10 @@ public class Rf2SnapshotLoaderAlgorithm extends ContentServiceJpa implements
           "    elapsed time = " + getElapsedTime(startTime) + "s"
               + " (Ended at " + ft.format(new Date()) + ")");
 
-      //
-      // Persist concepts
-      //
-      final ContentService contentService = new ContentServiceJpa();
-      contentService.setLastModifiedFlag(false);
-      contentService.setTransactionPerOperation(false);
-      contentService.beginTransaction();
-      for (Concept concept : conceptCache.values()) {
-        contentService.addConcept(concept);
-      }
+      // clear and commit
       contentService.commit();
-      contentService.close();
-
+      contentService.clear();
+      
       //
       // Load Simple RefSets (Content)
       //
@@ -448,10 +456,11 @@ public class Rf2SnapshotLoaderAlgorithm extends ContentServiceJpa implements
         // copy concept to shed any hibernate stuff
         conceptCache.put(fields[0], concept);
 
+        contentService.addConcept(concept);
         if (++objectCt % commitCt == 0) {
           Logger.getLogger(getClass()).info("    count = " + objectCt);
         }
-      
+
       }
     }
 
@@ -514,6 +523,7 @@ public class Rf2SnapshotLoaderAlgorithm extends ContentServiceJpa implements
         final Concept destinationConcept = conceptCache.get(fields[5]);
         if (sourceConcept != null && destinationConcept != null) {
           relationship.setSourceConcept(sourceConcept);
+          sourceConcept.addRelationship(relationship);
           relationship.setDestinationConcept(destinationConcept);
 
         } else {
@@ -529,11 +539,12 @@ public class Rf2SnapshotLoaderAlgorithm extends ContentServiceJpa implements
                     + fields[5]);
           }
 
-          if (++objectCt % commitCt == 0) {
-            Logger.getLogger(getClass()).info("    count = " + objectCt);
-          }
-
         }
+
+        if (++objectCt % commitCt == 0) {
+          Logger.getLogger(getClass()).info("    count = " + objectCt);
+        }
+
       }
     }
 
@@ -595,8 +606,9 @@ public class Rf2SnapshotLoaderAlgorithm extends ContentServiceJpa implements
 
       // Iterate over language ref sets until new description id found or end of
       // language ref sets found
-      while (language != null && language.getDescription().getTerminologyId()
-          .equals(description.getTerminologyId())) {
+      while (language != null
+          && language.getDescription().getTerminologyId()
+              .equals(description.getTerminologyId())) {
 
         // Set the description
         language.setDescription(description);
@@ -632,11 +644,10 @@ public class Rf2SnapshotLoaderAlgorithm extends ContentServiceJpa implements
 
       // increment description count
       descCt++;
-      
-      if (descCt % commitCt == 0) {
-        Logger.getLogger(getClass()).info("    count = " + objectCt);
-      }
 
+      if (descCt % commitCt == 0) {
+        Logger.getLogger(getClass()).info("    count = " + descCt);
+      }
 
     }
 
@@ -733,11 +744,16 @@ public class Rf2SnapshotLoaderAlgorithm extends ContentServiceJpa implements
 
         if (concept != null) {
           description.setConcept(concept);
+          concept.addDescription(description);
         } else {
           Logger.getLogger(this.getClass()).info(
               "Description " + description.getTerminologyId()
                   + " references non-existent concept " + fields[4]);
         }
+
+        // cache description
+        descriptionCache.put(fields[0], description);
+
         return description;
       }
 
@@ -836,8 +852,6 @@ public class Rf2SnapshotLoaderAlgorithm extends ContentServiceJpa implements
 
       line = line.replace("\r", "");
       String fields[] = line.split("\t");
-      AttributeValueRefSetMember<Concept> member =
-          new AttributeValueConceptRefSetMemberJpa();
 
       if (!fields[0].equals("id")) { // header
 
@@ -845,6 +859,23 @@ public class Rf2SnapshotLoaderAlgorithm extends ContentServiceJpa implements
         if (fields[1].compareTo(releaseVersion) > 0) {
           reader.push(line);
           break;
+        }
+
+        AttributeValueRefSetMember<?> member = null;
+
+        if (conceptCache.containsKey(fields[5])) {
+          member = new AttributeValueConceptRefSetMemberJpa();
+          // Retrieve concept -- firstToken is referencedComponentId
+          Concept concept = conceptCache.get(fields[5]);
+          ((AttributeValueConceptRefSetMember) member).setComponent(concept);
+        } else if (descriptionCache.containsKey(fields[5])) {
+          member = new AttributeValueDescriptionRefSetMemberJpa();
+          Description description = descriptionCache.get(fields[5]);
+          ((AttributeValueDescriptionRefSetMember) member)
+              .setComponent(description);
+        } else {
+          throw new Exception(
+              "Association reference member connected to nonexistent object");
         }
 
         // Universal RefSet attributes
@@ -864,22 +895,13 @@ public class Rf2SnapshotLoaderAlgorithm extends ContentServiceJpa implements
         member.setTerminologyVersion(terminologyVersion);
         member.setLastModifiedBy("loader");
 
-        // Retrieve concept -- firstToken is referencedComponentId
-        Concept concept = conceptCache.get(fields[5]);
-        if (concept != null) {
+        contentService.addAttributeValueRefSetMember(member);
 
-          member.setComponent(concept);
-          contentService.addAttributeValueRefSetMember(member);
-
-          // regularly commit at intervals
-          if (++objectCt % commitCt == 0) {
-            Logger.getLogger(this.getClass()).info("  commit = " + objectCt);
-            contentService.commit();
-            contentService.beginTransaction();
-          }
-        } else {
-          // This is a description attribute value refset and can be skipped
+        // regularly commit at intervals
+        if (++objectCt % commitCt == 0) {
+          Logger.getLogger(this.getClass()).info("  count = " + objectCt);
         }
+
       }
     }
 
@@ -920,10 +942,26 @@ public class Rf2SnapshotLoaderAlgorithm extends ContentServiceJpa implements
 
       line = line.replace("\r", "");
       String fields[] = line.split("\t");
-      AssociationReferenceRefSetMember<Concept> member =
-          new AssociationReferenceConceptRefSetMemberJpa();
 
       if (!fields[0].equals("id")) { // header
+
+        AssociationReferenceRefSetMember<?> member = null;
+
+        if (conceptCache.containsKey(fields[5])) {
+          member = new AssociationReferenceConceptRefSetMemberJpa();
+          // Retrieve concept -- firstToken is referencedComponentId
+          Concept concept = conceptCache.get(fields[5]);
+          ((AssociationReferenceConceptRefSetMember) member)
+              .setComponent(concept);
+        } else if (descriptionCache.containsKey(fields[5])) {
+          member = new AssociationReferenceDescriptionRefSetMemberJpa();
+          Description description = descriptionCache.get(fields[5]);
+          ((AssociationReferenceDescriptionRefSetMember) member)
+              .setComponent(description);
+        } else {
+          throw new Exception(
+              "Association reference member connected to nonexistent object");
+        }
 
         // Universal RefSet attributes
         member.setTerminologyId(fields[0]);
@@ -941,23 +979,13 @@ public class Rf2SnapshotLoaderAlgorithm extends ContentServiceJpa implements
         member.setTerminologyVersion(terminologyVersion);
         member.setLastModifiedBy("loader");
 
-        // Retrieve concept -- firstToken is referencedComponentId
-        Concept concept = conceptCache.get(fields[5]);
+        contentService.addAssociationReferenceRefSetMember(member);
 
-        if (concept != null) {
-
-          member.setComponent(concept);
-          contentService.addAssociationReferenceRefSetMember(member);
-
-          // regularly commit at intervals
-          if (++objectCt % commitCt == 0) {
-            Logger.getLogger(this.getClass()).info("  commit = " + objectCt);
-            contentService.commit();
-            contentService.beginTransaction();
-          }
-        } else {
-          // This is a description association reference and can be skipped
+        // regularly commit at intervals
+        if (++objectCt % commitCt == 0) {
+          Logger.getLogger(this.getClass()).info("  count = " + objectCt);
         }
+
       }
     }
 
@@ -1031,9 +1059,7 @@ public class Rf2SnapshotLoaderAlgorithm extends ContentServiceJpa implements
 
           // regularly commit at intervals
           if (++objectCt % commitCt == 0) {
-            Logger.getLogger(this.getClass()).info("    commit = " + objectCt);
-            contentService.commit();
-            contentService.beginTransaction();
+            Logger.getLogger(this.getClass()).info("    count = " + objectCt);
           }
         } else {
           Logger.getLogger(this.getClass()).info(
@@ -1106,9 +1132,8 @@ public class Rf2SnapshotLoaderAlgorithm extends ContentServiceJpa implements
 
           // regularly commit at intervals
           if (++objectCt % commitCt == 0) {
-            Logger.getLogger(this.getClass()).info("    commit = " + objectCt);
-            contentService.commit();
-            contentService.beginTransaction();
+            Logger.getLogger(this.getClass()).info("    count = " + objectCt);
+
           }
         } else {
           Logger.getLogger(this.getClass()).info(
@@ -1190,9 +1215,7 @@ public class Rf2SnapshotLoaderAlgorithm extends ContentServiceJpa implements
 
           // regularly commit at intervals
           if (++objectCt % commitCt == 0) {
-            Logger.getLogger(this.getClass()).info("    commit = " + objectCt);
-            contentService.commit();
-            contentService.beginTransaction();
+            Logger.getLogger(this.getClass()).info("    count = " + objectCt);
           }
         } else {
           Logger.getLogger(this.getClass()).info(
@@ -1277,9 +1300,8 @@ public class Rf2SnapshotLoaderAlgorithm extends ContentServiceJpa implements
 
           // regularly commit at intervals
           if (++objectCt % commitCt == 0) {
-            Logger.getLogger(this.getClass()).info("    commit = " + objectCt);
-            contentService.commit();
-            contentService.beginTransaction();
+            Logger.getLogger(this.getClass()).info("    count = " + objectCt);
+
           }
         } else {
           Logger.getLogger(this.getClass()).info(
@@ -1363,9 +1385,7 @@ public class Rf2SnapshotLoaderAlgorithm extends ContentServiceJpa implements
 
           // regularly commit at intervals
           if (++objectCt % commitCt == 0) {
-            Logger.getLogger(this.getClass()).info("    commit = " + objectCt);
-            contentService.commit();
-            contentService.beginTransaction();
+            Logger.getLogger(this.getClass()).info("    count = " + objectCt);
           }
         } else {
           throw new Exception("RefsetDescriptorRefSetMember "
@@ -1450,9 +1470,7 @@ public class Rf2SnapshotLoaderAlgorithm extends ContentServiceJpa implements
 
           // regularly commit at intervals
           if (++objectCt % commitCt == 0) {
-            Logger.getLogger(this.getClass()).info("    commit = " + objectCt);
-            contentService.commit();
-            contentService.beginTransaction();
+            Logger.getLogger(this.getClass()).info("    count = " + objectCt);
           }
         } else {
           throw new Exception("ModuleDependencyRefSetMember "
@@ -1535,9 +1553,7 @@ public class Rf2SnapshotLoaderAlgorithm extends ContentServiceJpa implements
 
           // regularly commit at intervals
           if (++objectCt % commitCt == 0) {
-            Logger.getLogger(this.getClass()).info("    commit = " + objectCt);
-            contentService.commit();
-            contentService.beginTransaction();
+            Logger.getLogger(this.getClass()).info("    count = " + objectCt);
           }
         } else {
           throw new Exception("DescriptionTypeRefSetMember "

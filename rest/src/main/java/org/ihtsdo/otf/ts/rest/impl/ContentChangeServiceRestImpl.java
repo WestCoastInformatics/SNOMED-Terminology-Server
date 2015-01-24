@@ -725,13 +725,10 @@ public class ContentChangeServiceRestImpl extends RootServiceRestImpl implements
     try {
       authenticate(securityService, authToken, "compute transitive closure",
           UserRole.ADMINISTRATOR);
-      ContentService service = new ContentServiceJpa();
       TransitiveClosureAlgorithm algo = new TransitiveClosureAlgorithm();
       algo.setTerminology(terminology);
       algo.setTerminologyVersion(version);
       algo.reset();
-      algo.setRootId(service.getSingleConcept(rootId, terminology, version)
-          .getId());
       algo.compute();
       algo.close();
     } catch (Exception e) {

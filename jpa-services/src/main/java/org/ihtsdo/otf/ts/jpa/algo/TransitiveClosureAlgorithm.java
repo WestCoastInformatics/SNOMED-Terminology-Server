@@ -34,9 +34,6 @@ public class TransitiveClosureAlgorithm extends ContentServiceJpa implements
   /** The request cancel flag. */
   boolean requestCancel = false;
 
-  /** The root id. */
-  private Long rootId;
-
   /** The terminology. */
   private String terminology;
 
@@ -55,15 +52,6 @@ public class TransitiveClosureAlgorithm extends ContentServiceJpa implements
    */
   public TransitiveClosureAlgorithm() throws Exception {
     super();
-  }
-
-  /**
-   * Sets the root id.
-   *
-   * @param rootId the root id
-   */
-  public void setRootId(Long rootId) {
-    this.rootId = rootId;
   }
 
   /**
@@ -91,7 +79,7 @@ public class TransitiveClosureAlgorithm extends ContentServiceJpa implements
    */
   @Override
   public void compute() throws Exception {
-    computeTransitiveClosure(rootId, terminology, terminologyVersion);
+    computeTransitiveClosure(terminology, terminologyVersion);
   }
 
   /*
@@ -107,12 +95,11 @@ public class TransitiveClosureAlgorithm extends ContentServiceJpa implements
   /**
    * Compute transitive closure.
    *
-   * @param rootId the root id
    * @param terminology the terminology
    * @param terminologyVersion the terminology version
    * @throws Exception the exception
    */
-  private void computeTransitiveClosure(Long rootId, String terminology,
+  private void computeTransitiveClosure(String terminology,
     String terminologyVersion) throws Exception {
     //
     // Check assumptions/prerequisites
@@ -209,9 +196,7 @@ public class TransitiveClosureAlgorithm extends ContentServiceJpa implements
         rollback();
         throw new CancelException("Transitive closure computation cancelled.");
       }
-      if (rootId != null && rootId.equals(code)) {
-        continue;
-      }
+
       ct++;
       int ctProgress = (int) ((((ct * 100) / progressMax) * .92) + 8);
       if (ctProgress > progress) {

@@ -120,7 +120,7 @@ public class MetadataServiceJpa extends RootServiceJpa implements
       idNameMapList.put(MetadataKeys.Map_Relations.toString(), mrIdNameMap);
     }
     Map<String, String> rctIdNameMap =
-        getRelationshipCharacteristicTypes(terminology, version);
+        getCharacteristicTypes(terminology, version);
     if (rctIdNameMap != null) {
       idNameMapList.put(
           MetadataKeys.Relationship_Characteristic_Types.toString(),
@@ -525,17 +525,47 @@ public class MetadataServiceJpa extends RootServiceJpa implements
     }
   }
 
+  /* (non-Javadoc)
+   * @see org.ihtsdo.otf.ts.services.MetadataService#getInferredRelationshipTypes(java.lang.String, java.lang.String)
+   */
+  @Override
+  public Map<String, String> getInferredRelationshipTypes(
+    String terminology, String version) throws Exception {
+    if (helperMap.containsKey(terminology)) {
+      return helperMap.get(terminology).getInferredRelationshipTypes(
+          terminology, version);
+    } else {
+      // return an empty map
+      return new HashMap<>();
+    }
+  }
+
+  /* (non-Javadoc)
+   * @see org.ihtsdo.otf.ts.services.MetadataService#getStatedRelationshipTypes(java.lang.String, java.lang.String)
+   */
+  @Override
+  public Map<String, String> getStatedRelationshipTypes(
+    String terminology, String version) throws Exception {
+    if (helperMap.containsKey(terminology)) {
+      return helperMap.get(terminology).getStatedRelationshipTypes(
+          terminology, version);
+    } else {
+      // return an empty map
+      return new HashMap<>();
+    }
+  }
+
   /*
    * (non-Javadoc)
    * 
    * @see org.ihtsdo.otf.mapping.services.MetadataService#
-   * getRelationshipCharacteristicTypes(java.lang.String, java.lang.String)
+   * getCharacteristicTypes(java.lang.String, java.lang.String)
    */
   @Override
-  public Map<String, String> getRelationshipCharacteristicTypes(
+  public Map<String, String> getCharacteristicTypes(
     String terminology, String version) throws Exception {
     if (helperMap.containsKey(terminology)) {
-      return helperMap.get(terminology).getRelationshipCharacteristicTypes(
+      return helperMap.get(terminology).getCharacteristicTypes(
           terminology, version);
     } else {
       // return an empty map

@@ -68,6 +68,7 @@ public class HistoryClientRest implements HistoryServiceRest {
             + terminology + "/" + date);
     String pfsString =
         (pfs != null ? ConfigUtility.getStringForGraph(pfs) : null);
+    Logger.getLogger(this.getClass()).debug(pfsString);
     ClientResponse response =
         resource.accept(MediaType.APPLICATION_XML)
             .header("Authorization", authToken)
@@ -108,6 +109,7 @@ public class HistoryClientRest implements HistoryServiceRest {
 
     String pfsString =
         (pfs != null ? ConfigUtility.getStringForGraph(pfs) : null);
+    Logger.getLogger(this.getClass()).debug(pfsString);
     ClientResponse response =
         resource.accept(MediaType.APPLICATION_XML)
             .header("Authorization", authToken)
@@ -180,6 +182,7 @@ public class HistoryClientRest implements HistoryServiceRest {
             + "/history/description/" + terminology + "/" + date);
     String pfsString =
         (pfs != null ? ConfigUtility.getStringForGraph(pfs) : null);
+    Logger.getLogger(this.getClass()).debug(pfsString);
     ClientResponse response =
         resource.accept(MediaType.APPLICATION_XML)
             .header("Authorization", authToken)
@@ -220,6 +223,7 @@ public class HistoryClientRest implements HistoryServiceRest {
 
     String pfsString =
         (pfs != null ? ConfigUtility.getStringForGraph(pfs) : null);
+    Logger.getLogger(this.getClass()).debug(pfsString);
     ClientResponse response =
         resource.accept(MediaType.APPLICATION_XML)
             .header("Authorization", authToken)
@@ -293,6 +297,7 @@ public class HistoryClientRest implements HistoryServiceRest {
             + "/history/relationship/" + terminology + "/" + date);
     String pfsString =
         (pfs != null ? ConfigUtility.getStringForGraph(pfs) : null);
+    Logger.getLogger(this.getClass()).debug(pfsString);
     ClientResponse response =
         resource.accept(MediaType.APPLICATION_XML)
             .header("Authorization", authToken)
@@ -334,6 +339,7 @@ public class HistoryClientRest implements HistoryServiceRest {
 
     String pfsString =
         (pfs != null ? ConfigUtility.getStringForGraph(pfs) : null);
+    Logger.getLogger(this.getClass()).debug(pfsString);
     ClientResponse response =
         resource.accept(MediaType.APPLICATION_XML)
             .header("Authorization", authToken)
@@ -407,6 +413,7 @@ public class HistoryClientRest implements HistoryServiceRest {
             + terminology + "/" + date);
     String pfsString =
         (pfs != null ? ConfigUtility.getStringForGraph(pfs) : null);
+    Logger.getLogger(this.getClass()).debug(pfsString);
     ClientResponse response =
         resource.accept(MediaType.APPLICATION_XML)
             .header("Authorization", authToken)
@@ -448,6 +455,7 @@ public class HistoryClientRest implements HistoryServiceRest {
 
     String pfsString =
         (pfs != null ? ConfigUtility.getStringForGraph(pfs) : null);
+    Logger.getLogger(this.getClass()).debug(pfsString);
     ClientResponse response =
         resource.accept(MediaType.APPLICATION_XML)
             .header("Authorization", authToken)
@@ -520,6 +528,7 @@ public class HistoryClientRest implements HistoryServiceRest {
             + terminology + "/" + date + "/deep");
     String pfsString =
         (pfs != null ? ConfigUtility.getStringForGraph(pfs) : null);
+    Logger.getLogger(this.getClass()).debug(pfsString);
     ClientResponse response =
         resource.accept(MediaType.APPLICATION_XML)
             .header("Authorization", authToken)
@@ -744,6 +753,7 @@ public class HistoryClientRest implements HistoryServiceRest {
     String riString =
         (releaseInfo != null ? ConfigUtility.getStringForGraph(releaseInfo)
             : null);
+    Logger.getLogger(this.getClass()).debug(riString);
     ClientResponse response =
         resource.accept(MediaType.APPLICATION_XML)
             .header("Authorization", authToken)
@@ -782,6 +792,7 @@ public class HistoryClientRest implements HistoryServiceRest {
     String riString =
         (releaseInfo != null ? ConfigUtility.getStringForGraph(releaseInfo)
             : null);
+    Logger.getLogger(this.getClass()).debug(riString);
     ClientResponse response =
         resource.accept(MediaType.APPLICATION_XML)
             .header("Authorization", authToken)

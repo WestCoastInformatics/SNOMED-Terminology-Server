@@ -433,8 +433,12 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
     }
   }
 
-  /* (non-Javadoc)
-   * @see org.ihtsdo.otf.ts.services.ContentService#getDescendantConcepts(org.ihtsdo.otf.ts.rf2.Concept, org.ihtsdo.otf.ts.helpers.PfsParameter)
+  /*
+   * (non-Javadoc)
+   * 
+   * @see
+   * org.ihtsdo.otf.ts.services.ContentService#getDescendantConcepts(org.ihtsdo
+   * .otf.ts.rf2.Concept, org.ihtsdo.otf.ts.helpers.PfsParameter)
    */
   @SuppressWarnings("unchecked")
   @Override
@@ -493,8 +497,7 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
             + " where sub.terminologyVersion = :version "
             + " and sub.terminology = :terminology "
             + " and sub.terminologyId = :terminologyId"
-            + " and tr.superTypeConcept = a"
-            + " and tr.subTypeConcept = sub";
+            + " and tr.superTypeConcept = a" + " and tr.subTypeConcept = sub";
     javax.persistence.Query query = applyPfsToQuery(queryStr, pfs);
 
     javax.persistence.Query ctQuery =
@@ -517,50 +520,39 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
     list.setObjects(ancestors);
     return list;
   }
-  /*
-   * (non-Javadoc)
-   * 
-   * @see
-   * org.ihtsdo.otf.ts.services.ContentService#findChildrenConcepts(org.ihtsdo
-   * .otf.ts.rf2.Concept, org.ihtsdo.otf.ts.helpers.PfsParameter)
+
+  /* (non-Javadoc)
+   * @see org.ihtsdo.otf.ts.services.ContentService#getChildConcepts(org.ihtsdo.otf.ts.rf2.Concept, org.ihtsdo.otf.ts.helpers.PfsParameter)
    */
+  @SuppressWarnings("unchecked")
   @Override
   public ConceptList getChildConcepts(Concept concept, PfsParameter pfs)
     throws Exception {
-
     ConceptList childrenConcepts = new ConceptListJpa();
 
     // construct query
     javax.persistence.Query query =
-        manager
-            .createQuery("select super from TransitiveRelationshipJpa tr, ConceptJpa super"
-                + " where super.version = :version "
-                + " and super.terminology = :terminology "
-                + " and super.terminologyId = :terminologyId"
-                + " and tr.superTypeConcept = super");
+        manager.createQuery("select r from RelationshipJpa r, ConceptJpa c"
+            + " where destinationConcept = c"
+            + " and c.terminology = :terminology "
+            + " and c.terminologyId = :terminologyId"
+            + " and c.terminologyVersion = :version");
+    query.setParameter("terminologyId", concept.getTerminologyId());
     query.setParameter("terminology", concept.getTerminology());
     query.setParameter("version", concept.getTerminologyVersion());
-    query.setParameter("terminologyId", concept.getTerminologyId());
 
     // execute query
-    @SuppressWarnings("unchecked")
-    List<Concept> descendantConcepts = query.getResultList();
+    List<Relationship> relationships = query.getResultList();
 
-    // cycle over descendant concepts
-    for (Concept c : descendantConcepts) {
+    // cycle over this concepts relationships
+    for (Relationship r : relationships) {
 
-      // cycle over this concepts relationships
-      for (Relationship r : c.getRelationships()) {
+      // if active hierarchcial relationship
+      // It's a set so dont worry about stated vs. inferred
+      if (r.isActive() && TerminologyUtility.isHierarchicalIsaRelationship(r)) {
 
-        // if active relationship, points to specified concept, and is a
-        // hierarchical relationship
-        if (r.isActive()
-            && r.getSourceConcept().getId().equals(concept.getId())
-            && TerminologyUtility.isHierarchicalIsaRelationship(r)) {
-
-          // add to children list
-          childrenConcepts.addObject(c);
-        }
+        // add to children list
+        childrenConcepts.addObject(r.getSourceConcept());
       }
     }
 
@@ -2765,7 +2757,6 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
     throw new UnsupportedOperationException("TODO:");
 
   }
-
 
   /*
    * (non-Javadoc)

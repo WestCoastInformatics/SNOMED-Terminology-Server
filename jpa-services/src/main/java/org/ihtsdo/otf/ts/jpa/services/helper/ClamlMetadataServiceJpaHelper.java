@@ -330,12 +330,52 @@ public class ClamlMetadataServiceJpaHelper extends ContentServiceJpa implements
   /*
    * (non-Javadoc)
    * 
-   * @see org.ihtsdo.otf.mapping.services.MetadataService#
-   * getRelationshipCharacteristicTypes(java.lang.String, java.lang.String)
+   * @see
+   * org.ihtsdo.otf.ts.services.MetadataService#getInferredRelationshipTypes
+   * (java.lang.String, java.lang.String)
    */
   @Override
-  public Map<String, String> getRelationshipCharacteristicTypes(
-    String terminology, String version) throws NumberFormatException, Exception {
+  public Map<String, String> getInferredRelationshipTypes(String terminology,
+    String version) throws NumberFormatException, Exception {
+    Map<String, String> map = new HashMap<>();
+
+    SearchResultList results =
+        findConceptsForQuery(terminology, version,
+            "Default characteristic type", new PfsParameterJpa());
+    for (SearchResult result : results.getObjects()) {
+      if (result.getTerminology().equals(terminology)
+          && result.getTerminologyVersion().equals(version)
+          && result.getValue().equals("Default characteristic type")) {
+
+        map.put(result.getTerminologyId(), result.getValue());
+        break;
+      }
+    }
+    return map;
+  }
+
+  /*
+   * (non-Javadoc)
+   * 
+   * @see
+   * org.ihtsdo.otf.ts.services.MetadataService#getStatedRelationshipTypes(java
+   * .lang.String, java.lang.String)
+   */
+  @Override
+  public Map<String, String> getStatedRelationshipTypes(String terminology,
+    String version) throws NumberFormatException, Exception {
+    return getInferredRelationshipTypes(terminology, version);
+  }
+
+  /*
+   * (non-Javadoc)
+   * 
+   * @see org.ihtsdo.otf.mapping.services.MetadataService#
+   * getCharacteristicTypes(java.lang.String, java.lang.String)
+   */
+  @Override
+  public Map<String, String> getCharacteristicTypes(String terminology,
+    String version) throws NumberFormatException, Exception {
 
     Long rootId = null;
     SearchResultList results =

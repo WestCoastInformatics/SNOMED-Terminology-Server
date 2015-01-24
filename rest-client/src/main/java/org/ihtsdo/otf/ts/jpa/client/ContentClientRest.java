@@ -192,6 +192,7 @@ public class ContentClientRest implements ContentServiceRest {
             + terminology + "/" + version + "/query/" + searchString);
     String pfsString =
         (pfs != null ? ConfigUtility.getStringForGraph(pfs) : null);
+    Logger.getLogger(this.getClass()).debug(pfsString);
     ClientResponse response =
         resource.accept(MediaType.APPLICATION_XML)
             .header("Authorization", authToken)
@@ -231,6 +232,7 @@ public class ContentClientRest implements ContentServiceRest {
             + "/descendants");
     String pfsString =
         (pfs != null ? ConfigUtility.getStringForGraph(pfs) : null);
+    Logger.getLogger(this.getClass()).debug(pfsString);
     ClientResponse response =
         resource.accept(MediaType.APPLICATION_XML)
             .header("Authorization", authToken)
@@ -268,6 +270,7 @@ public class ContentClientRest implements ContentServiceRest {
             + terminology + "/" + version + "/" + terminologyId + "/children");
     String pfsString =
         (pfs != null ? ConfigUtility.getStringForGraph(pfs) : null);
+    Logger.getLogger(this.getClass()).debug(pfsString);
     ClientResponse response =
         resource.accept(MediaType.APPLICATION_XML)
             .header("Authorization", authToken)
@@ -306,6 +309,7 @@ public class ContentClientRest implements ContentServiceRest {
             + terminology + "/" + version + "/" + terminologyId + "/ancestors");
     String pfsString =
         (pfs != null ? ConfigUtility.getStringForGraph(pfs) : null);
+    Logger.getLogger(this.getClass()).debug(pfsString);
     ClientResponse response =
         resource.accept(MediaType.APPLICATION_XML)
             .header("Authorization", authToken)

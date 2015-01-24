@@ -13,9 +13,6 @@ import org.ihtsdo.otf.ts.jpa.algo.Rf2Readers;
 import org.ihtsdo.otf.ts.jpa.algo.Rf2SnapshotLoaderAlgorithm;
 import org.ihtsdo.otf.ts.jpa.algo.TransitiveClosureAlgorithm;
 import org.ihtsdo.otf.ts.jpa.services.HistoryServiceJpa;
-import org.ihtsdo.otf.ts.jpa.services.helper.TerminologyUtility;
-import org.ihtsdo.otf.ts.rf2.Concept;
-import org.ihtsdo.otf.ts.rf2.Relationship;
 import org.ihtsdo.otf.ts.services.HistoryService;
 
 /**
@@ -92,8 +89,6 @@ public class TerminologyRf2SnapshotLoaderMojo extends AbstractMojo {
       Rf2Readers readers = new Rf2Readers(outputDir);
       readers.openReaders();
 
-      // instantiate service
-      HistoryService historyService = new HistoryServiceJpa();
 
       // Load snapshot
       Rf2SnapshotLoaderAlgorithm algorithm = new Rf2SnapshotLoaderAlgorithm();
@@ -103,52 +98,11 @@ public class TerminologyRf2SnapshotLoaderMojo extends AbstractMojo {
       algorithm.setReaders(readers);
       algorithm.compute();
 
-      // Compute transitive closure
-      historyService.setLastModifiedFlag(false);
-
-      // Walk up tree to the root
-      String conceptId =
-          TerminologyUtility
-              .getHierarchcialIsaRels(terminology, terminologyVersion)
-              .iterator().next();
-      String rootId = null;
-      OUTER: while (true) {
-        Logger.getLogger(this.getClass()).info(
-            "  Walk up tree from " + conceptId);
-        Concept c =
-            historyService.getSingleConcept(conceptId, terminology,
-                terminologyVersion);
-        for (Relationship rel : c.getRelationships()) {
-          Logger.getLogger(this.getClass()).info(
-              "      rel = " + rel.getTerminologyId() + ", " + rel.isActive()
-                  + ", " + rel.getTypeId());
-          if (rel.isActive()
-              && TerminologyUtility.isHierarchicalIsaRelationship(rel)) {
-            conceptId = rel.getDestinationConcept().getTerminologyId();
-            continue OUTER;
-          }
-        }
-        rootId = conceptId;
-        break;
-      }
-      Long rootIdLong =
-          historyService.getSingleConcept(rootId, terminology,
-              terminologyVersion).getId();
-
-      historyService.close();
-      Logger.getLogger(this.getClass()).info(
-          "  Compute transitive closure from  " + rootId + "/" + terminology
-              + "/" + terminologyVersion);
-      TransitiveClosureAlgorithm algo = new TransitiveClosureAlgorithm();
-      algo.setTerminology(terminology);
-      algo.setTerminologyVersion(terminologyVersion);
-      algo.reset();
-      algo.setRootId(rootIdLong);
-      algo.compute();
-
       //
       // Create ReleaseInfo for this release if it does not already exist
       //
+      HistoryService historyService = new HistoryServiceJpa();
+      historyService.setLastModifiedFlag(false);
       ReleaseInfo info =
           historyService.getReleaseInfo(terminology, releaseVersion);
       if (info == null) {
@@ -163,8 +117,18 @@ public class TerminologyRf2SnapshotLoaderMojo extends AbstractMojo {
         info.setTerminology(terminology);
         info.setTerminologyVersion(terminologyVersion);
         historyService.addReleaseInfo(info);
-        historyService.commit();
       }
+      historyService.close();
+
+      // Compute transitive closure
+      Logger.getLogger(this.getClass()).info(
+          "  Compute transitive closure from  " + terminology
+              + "/" + terminologyVersion);
+      TransitiveClosureAlgorithm algo = new TransitiveClosureAlgorithm();
+      algo.setTerminology(terminology);
+      algo.setTerminologyVersion(terminologyVersion);
+      algo.reset();
+      algo.compute();
 
       // Clean-up
       readers.closeReaders();

@@ -309,7 +309,31 @@ public interface MetadataService extends RootService, Configurable {
    * @throws Exception if anything goes wrong
    */
   public Map<String, String> getHierarchicalRelationshipTypes(
-    String terminology, String version) throws Exception;
+      String terminology, String version) throws Exception;
+
+  /**
+   * Returns the inferred relationship types.  This will correspond
+   * to one of the characteristic type ids.
+   *
+   * @param terminology the terminology
+   * @param version the version
+   * @return the inferred relationship types
+   * @throws Exception the exception
+   */
+  public Map<String, String> getInferredRelationshipTypes(
+      String terminology, String version) throws Exception;
+
+  /**
+   * Returns the inferred relationship types.  This will correspond
+   * to one of the characteristic type ids.
+   *
+   * @param terminology the terminology
+   * @param version the version
+   * @return the stated relationship types
+   * @throws Exception the exception
+   */
+  public Map<String, String> getStatedRelationshipTypes(
+      String terminology, String version) throws Exception;
 
   /**
    * Returns the relationship characteristic types.
@@ -319,7 +343,7 @@ public interface MetadataService extends RootService, Configurable {
    * @return the relationship characteristic types
    * @throws Exception if anything goes wrong
    */
-  public Map<String, String> getRelationshipCharacteristicTypes(
+  public Map<String, String> getCharacteristicTypes(
     String terminology, String version) throws Exception;
 
   /**

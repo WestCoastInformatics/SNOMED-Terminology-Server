@@ -246,6 +246,7 @@ public class SecurityClientRest implements SecurityServiceRest {
 
     String userString =
         (user != null ? ConfigUtility.getStringForGraph(user) : null);
+    Logger.getLogger(this.getClass()).info(userString);
     ClientResponse response =
         resource.accept(MediaType.APPLICATION_XML)
             .header("Authorization", authToken)
