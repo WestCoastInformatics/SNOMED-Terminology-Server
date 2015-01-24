@@ -144,6 +144,7 @@ public class ProjectLoaderMojo extends AbstractMojo {
       project.setScopeExcludesDescendantsFlag(scopeExcludesDescendantsFlag);
       project.setTerminology(terminology);
       project.setTerminologyVersion(terminologyVersion);
+      project.setLastModifiedBy("admin");
 
       // check for this project
       for (Project p : contentService.getProjects().getObjects()) {
