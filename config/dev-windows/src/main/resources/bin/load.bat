@@ -17,7 +17,7 @@ echo Starting ...%date% %time%
 echo ------------------------------------------------
 if DEFINED SERVER_CODE (echo SERVER_CODE = %SERVER_CODE%) else (echo SERVER_CODE must be defined
 goto trailer)
-if DEFINED SERVER_DATA(echo SERVER_DATA= %SERVER_DATA%) else (echo SERVER_DATA must be defined
+if DEFINED SERVER_DATA (echo SERVER_DATA= %SERVER_DATA%) else (echo SERVER_DATA must be defined
 goto trailer)
 if DEFINED SERVER_CONFIG (echo SERVER_CONFIG = %SERVER_CONFIG%) else (echo SERVER_CONFIG must be defined
 goto trailer)
