@@ -2,6 +2,7 @@ package org.ihtsdo.otf.ts.rf2;
 
 import java.util.Set;
 
+// TODO: Auto-generated Javadoc
 /**
  * Represents a concept in a terminology.
  */
@@ -13,14 +14,14 @@ public interface Concept extends Component {
    * @return the is anonymous
    */
   public boolean isAnonymous();
-  
+
   /**
    * Sets the anonymous flag.
    *
    * @param anonymous the new is anonymous
    */
   public void setAnonymous(boolean anonymous);
-  
+
   /**
    * Returns the workflow status.
    * 
@@ -62,7 +63,7 @@ public interface Concept extends Component {
    * @return the description count
    */
   public int getDescriptionCount();
-  
+
   /**
    * Sets the description count.
    *
@@ -104,7 +105,7 @@ public interface Concept extends Component {
    * @return the relationship count
    */
   public int getRelationshipCount();
-  
+
   /**
    * Sets the relationship count.
    *
@@ -118,7 +119,7 @@ public interface Concept extends Component {
    * @return the child count
    */
   public int getChildCount();
-  
+
   /**
    * Sets the child count.
    *
@@ -162,113 +163,114 @@ public interface Concept extends Component {
   public void setDefaultPreferredName(String defaultPreferredName);
 
   /**
-   * Returns the set of SimpleRefSetMembers
-   * 
+   * Returns the set of SimpleRefSetMembers.
+   *
    * @return the set of SimpleRefSetMembers
    */
   public Set<SimpleRefSetMember> getSimpleRefSetMembers();
 
   /**
-   * Sets the set of SimpleRefSetMembers
-   * 
+   * Sets the set of SimpleRefSetMembers.
+   *
    * @param simpleRefSetMembers the set of SimpleRefSetMembers
    */
   public void setSimpleRefSetMembers(Set<SimpleRefSetMember> simpleRefSetMembers);
 
   /**
-   * Adds a SimpleRefSetMember to the set of SimpleRefSetMembers
-   * 
+   * Adds a SimpleRefSetMember to the set of SimpleRefSetMembers.
+   *
    * @param simpleRefSetMember the SimpleRefSetMembers to be added
    */
   public void addSimpleRefSetMember(SimpleRefSetMember simpleRefSetMember);
 
   /**
-   * Removes a SimpleRefSetMember from the set of SimpleRefSetMembers
-   * 
+   * Removes a SimpleRefSetMember from the set of SimpleRefSetMembers.
+   *
    * @param simpleRefSetMember the SimpleRefSetMember to be removed
    */
   public void removeSimpleRefSetMember(SimpleRefSetMember simpleRefSetMember);
 
   /**
-   * Returns the set of SimpleMapRefSetMembers
-   * 
+   * Returns the set of SimpleMapRefSetMembers.
+   *
    * @return the set of SimpleMapRefSetMembers
    */
   public Set<SimpleMapRefSetMember> getSimpleMapRefSetMembers();
 
   /**
-   * Sets the set of SimpleMapRefSetMembers
-   * 
+   * Sets the set of SimpleMapRefSetMembers.
+   *
    * @param simpleMapRefSetMembers the set of SimpleMapRefSetMembers
    */
   public void setSimpleMapRefSetMembers(
     Set<SimpleMapRefSetMember> simpleMapRefSetMembers);
 
   /**
-   * Adds a SimpleMapRefSetMember to the set of SimpleMapRefSetMembers
-   * 
+   * Adds a SimpleMapRefSetMember to the set of SimpleMapRefSetMembers.
+   *
    * @param simpleMapRefSetMember the SimpleMapRefSetMembers to be added
    */
   public void addSimpleMapRefSetMember(
     SimpleMapRefSetMember simpleMapRefSetMember);
 
   /**
-   * Removes a SimpleMapRefSetMember from the set of SimpleMapRefSetMembers
-   * 
+   * Removes a SimpleMapRefSetMember from the set of SimpleMapRefSetMembers.
+   *
    * @param simpleMapRefSetMember the SimpleMapRefSetMember to be removed
    */
   public void removeSimpleMapRefSetMember(
     SimpleMapRefSetMember simpleMapRefSetMember);
 
   /**
-   * Returns the set of ComplexMapRefSetMembers
-   * 
+   * Returns the set of ComplexMapRefSetMembers.
+   *
    * @return the set of ComplexMapRefSetMembers
    */
   public Set<ComplexMapRefSetMember> getComplexMapRefSetMembers();
 
   /**
-   * Sets the set of ComplexMapRefSetMembers
-   * 
+   * Sets the set of ComplexMapRefSetMembers.
+   *
    * @param complexMapRefSetMembers the set of ComplexMapRefSetMembers
    */
   public void setComplexMapRefSetMembers(
     Set<ComplexMapRefSetMember> complexMapRefSetMembers);
 
   /**
-   * Adds a ComplexMapRefSetMember to the set of ComplexMapRefSetMembers
-   * 
+   * Adds a ComplexMapRefSetMember to the set of ComplexMapRefSetMembers.
+   *
    * @param complexMapRefSetMember the ComplexMapRefSetMembers to be added
    */
   public void addComplexMapRefSetMember(
     ComplexMapRefSetMember complexMapRefSetMember);
 
   /**
-   * Removes a ComplexMapRefSetMember from the set of ComplexMapRefSetMembers
-   * 
+   * Removes a ComplexMapRefSetMember from the set of ComplexMapRefSetMembers.
+   *
    * @param complexMapRefSetMember the ComplexMapRefSetMember to be removed
    */
   public void removeComplexMapRefSetMember(
     ComplexMapRefSetMember complexMapRefSetMember);
 
   /**
-   * Returns the set of AttributeValueRefSetMembers
-   * 
+   * Returns the set of AttributeValueRefSetMembers.
+   *
    * @return the set of AttributeValueRefSetMembers
    */
   public Set<AttributeValueConceptRefSetMember> getAttributeValueRefSetMembers();
 
   /**
-   * Sets the set of AttributeValueRefSetMembers
-   * 
+   * Sets the set of AttributeValueRefSetMembers.
+   *
    * @param attributeValueRefSetMembers the set of AttributeValueRefSetMembers
    */
   public void setAttributeValueRefSetMembers(
     Set<AttributeValueConceptRefSetMember> attributeValueRefSetMembers);
 
   /**
-   * Adds a AttributeValueRefSetMember to the set of AttributeValueRefSetMembers
-   * 
+   * Adds a AttributeValueRefSetMember to the set of
+   * AttributeValueRefSetMembers.
+   *
    * @param attributeValueRefSetMember the AttributeValueRefSetMembers to be
    *          added
    */
@@ -277,46 +279,47 @@ public interface Concept extends Component {
 
   /**
    * Removes a AttributeValueRefSetMember from the set of
-   * AttributeValueRefSetMembers
-   * 
+   * AttributeValueRefSetMembers.
+   *
    * @param attributeValueRefSetMember the AttributeValueRefSetMember to be
    *          removed
    */
   public void removeAttributeValueRefSetMember(
     AttributeValueConceptRefSetMember attributeValueRefSetMember);
 
-  
   /**
-   * Returns the set of AssociationReferenceRefSetMembers
-   * 
+   * Returns the set of AssociationReferenceRefSetMembers.
+   *
    * @return the set of AssociationReferenceRefSetMembers
    */
   public Set<AssociationReferenceConceptRefSetMember> getAssociationReferenceRefSetMembers();
 
   /**
-   * Sets the set of AssociationReferenceRefSetMembers
-   * 
-   * @param associationReferenceRefSetMembers the set of AssociationReferenceRefSetMembers
+   * Sets the set of AssociationReferenceRefSetMembers.
+   *
+   * @param associationReferenceRefSetMembers the set of
+   *          AssociationReferenceRefSetMembers
    */
   public void setAssociationReferenceRefSetMembers(
     Set<AssociationReferenceConceptRefSetMember> associationReferenceRefSetMembers);
 
   /**
-   * Adds a AssociationReferenceRefSetMember to the set of AssociationReferenceRefSetMembers
-   * 
-   * @param associationReferenceRefSetMember the AssociationReferenceRefSetMembers to be
-   *          added
+   * Adds a AssociationReferenceRefSetMember to the set of
+   * AssociationReferenceRefSetMembers.
+   *
+   * @param associationReferenceRefSetMember the
+   *          AssociationReferenceRefSetMembers to be added
    */
   public void addAssociationReferenceRefSetMember(
     AssociationReferenceConceptRefSetMember associationReferenceRefSetMember);
 
   /**
    * Removes a AssociationReferenceRefSetMember from the set of
-   * AssociationReferenceRefSetMembers
-   * 
-   * @param associationReferenceRefSetMember the AssociationReferenceRefSetMember to be
-   *          removed
+   * AssociationReferenceRefSetMembers.
+   *
+   * @param associationReferenceRefSetMember the
+   *          AssociationReferenceRefSetMember to be removed
    */
   public void removeAssociationReferenceRefSetMember(
-    AssociationReferenceConceptRefSetMember associationReferenceRefSetMember);  
+    AssociationReferenceConceptRefSetMember associationReferenceRefSetMember);
 }

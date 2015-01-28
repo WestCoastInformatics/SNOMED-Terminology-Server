@@ -47,6 +47,14 @@ public abstract class AbstractComponent implements Component {
   @Column(nullable = false)
   private boolean active;
 
+  /** The published flag. */
+  @Column(nullable = false)
+  private boolean published = false;
+
+  /** The publishable flag. */
+  @Column(nullable = false)
+  private boolean publishable = false;
+
   /** The module id. */
   @Column(nullable = false)
   private String moduleId;
@@ -207,6 +215,46 @@ public abstract class AbstractComponent implements Component {
   @Override
   public void setActive(boolean active) {
     this.active = active;
+  }
+
+  /*
+   * (non-Javadoc)
+   * 
+   * @see org.ihtsdo.otf.ts.rf2.Component#isPublished()
+   */
+  @Override
+  public boolean isPublished() {
+    return published;
+  }
+
+  /*
+   * (non-Javadoc)
+   * 
+   * @see org.ihtsdo.otf.ts.rf2.Component#setPublished(boolean)
+   */
+  @Override
+  public void setPublished(boolean published) {
+    this.published = published;
+  }
+
+  /*
+   * (non-Javadoc)
+   * 
+   * @see org.ihtsdo.otf.ts.rf2.Component#isPublishable()
+   */
+  @Override
+  public boolean isPublishable() {
+    return publishable;
+  }
+
+  /*
+   * (non-Javadoc)
+   * 
+   * @see org.ihtsdo.otf.ts.rf2.Component#setPublishable(boolean)
+   */
+  @Override
+  public void setPublishable(boolean publishable) {
+    this.publishable = publishable;
   }
 
   /*

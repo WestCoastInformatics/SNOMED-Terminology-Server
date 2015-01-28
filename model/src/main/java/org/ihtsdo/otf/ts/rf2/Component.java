@@ -99,6 +99,36 @@ public interface Component {
   public void setActive(boolean active);
 
   /**
+   * Indicates whether or not the component is published.
+   *
+   * @return true, if is published
+   */
+  public boolean isPublished();
+
+  /**
+   * Sets the published flag.
+   *
+   * @param published the new published
+   */
+  public void setPublished(boolean published);
+
+  /**
+   * Indicates whether or not the component should be published. This is a
+   * mechanism to have data in the server that can be ignored by publishing
+   * processes.
+   * 
+   * @return true, if is publishable
+   */
+  public boolean isPublishable();
+
+  /**
+   * Sets the publishable flag.
+   *
+   * @param publishable the new publishable
+   */
+  public void setPublishable(boolean publishable);
+
+  /**
    * Returns the module id.
    * 
    * @return the module id

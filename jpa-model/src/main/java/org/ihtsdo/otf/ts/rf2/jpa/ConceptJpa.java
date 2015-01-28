@@ -65,7 +65,7 @@ public class ConceptJpa extends AbstractComponent implements Concept {
   @Column(nullable = false)
   private String definitionStatusId;
 
-  /** The is anonymous. */
+  /** The anonymous flag. */
   @Column(nullable = false)
   private boolean anonymous = false;
 
