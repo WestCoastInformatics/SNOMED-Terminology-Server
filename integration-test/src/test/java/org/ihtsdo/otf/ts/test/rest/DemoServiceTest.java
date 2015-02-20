@@ -1,4 +1,4 @@
-package org.ihtsdo.otf.ts.client.test;
+package org.ihtsdo.otf.ts.test.rest;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;

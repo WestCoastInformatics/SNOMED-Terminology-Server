@@ -1,4 +1,4 @@
-package org.ihtsdo.otf.ts.client.test;
+package org.ihtsdo.otf.ts.test.rest;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;

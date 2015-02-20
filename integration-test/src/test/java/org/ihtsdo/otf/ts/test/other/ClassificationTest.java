@@ -1,4 +1,4 @@
-package org.ihtsdo.otf.ts.service.test;
+package org.ihtsdo.otf.ts.test.other;
 
 import org.apache.log4j.Logger;
 import org.ihtsdo.otf.ts.jpa.services.ActionServiceJpa;

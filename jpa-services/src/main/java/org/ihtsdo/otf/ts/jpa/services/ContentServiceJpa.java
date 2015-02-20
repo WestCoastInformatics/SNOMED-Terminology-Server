@@ -3423,7 +3423,7 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
         component.setLastModified(new Date());
       }
 
-      // set effective time to nnull unless this is the planned effective time
+      // set effective time to null unless this is the planned effective time
       if (component.getEffectiveTime() != null
           && !component.getEffectiveTime().equals(plannedEffectiveTime)) {
         component.setEffectiveTime(null);
