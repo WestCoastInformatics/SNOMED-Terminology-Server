@@ -48,9 +48,11 @@ public class SecurityClientRest implements SecurityServiceRest {
         client.resource(config.getProperty("base.url")
             + "/security/authenticate/" + username);
     resource.accept(MediaType.APPLICATION_JSON);
+    Logger.getLogger(this.getClass()).info("constructed resource");
     ClientResponse response = resource.post(ClientResponse.class, password);
+    Logger.getLogger(this.getClass()).info("response: " + response.toString());
     String resultString = response.getEntity(String.class);
-    Logger.getLogger(this.getClass()).info("status: " + response.getStatus());
+    Logger.getLogger(this.getClass()).info("status: " + response.getStatus() + " " + response.toString());
     if (response.getClientResponseStatus().getFamily() == Family.SUCCESSFUL) {
       Logger.getLogger(this.getClass()).info(resultString);
     } else {

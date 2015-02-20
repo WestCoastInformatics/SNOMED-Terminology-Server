@@ -51,16 +51,6 @@ public class DemoRemoverMojo extends AbstractMojo {
       ContentService service = new ContentServiceJpa();
 
       service.removeConcept(153882L);
-      // Remove any children of
-//      Concept concept =
-//          service.getSingleConcept("10001005", "SNOMEDCT", "latest");
-//      for (Relationship rel : concept.getInverseRelationships()) {
-//        if (TerminologyUtility.isHierarchicalIsaRelationship(rel)) {
-//          getLog().info(
-//              "  Removing " + rel.getSourceConcept().getTerminologyId());
-//          service.removeConcept(rel.getSourceConcept().getId());
-//        }
-//      }
       
       service.close();
       getLog().info("done ...");

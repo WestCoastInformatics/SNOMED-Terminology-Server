@@ -1,5 +1,14 @@
 package org.ihtsdo.otf.ts.rest.impl;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
 import javax.ws.rs.GET;
 import javax.ws.rs.HeaderParam;
 import javax.ws.rs.POST;
@@ -11,11 +20,23 @@ import javax.ws.rs.core.MediaType;
 import org.apache.log4j.Logger;
 import org.ihtsdo.otf.ts.Project;
 import org.ihtsdo.otf.ts.helpers.ConceptList;
+import org.ihtsdo.otf.ts.helpers.ConfigUtility;
 import org.ihtsdo.otf.ts.helpers.PfsParameterJpa;
 import org.ihtsdo.otf.ts.helpers.ProjectList;
+import org.ihtsdo.otf.ts.helpers.ReleaseInfo;
+import org.ihtsdo.otf.ts.helpers.ReleaseInfoJpa;
 import org.ihtsdo.otf.ts.helpers.SearchResultList;
 import org.ihtsdo.otf.ts.helpers.UserRole;
+import org.ihtsdo.otf.ts.jpa.algo.ClamlLoaderAlgorithm;
+import org.ihtsdo.otf.ts.jpa.algo.LuceneReindexAlgorithm;
+import org.ihtsdo.otf.ts.jpa.algo.Rf2DeltaLoaderAlgorithm;
+import org.ihtsdo.otf.ts.jpa.algo.Rf2FileSorter;
+import org.ihtsdo.otf.ts.jpa.algo.Rf2Readers;
+import org.ihtsdo.otf.ts.jpa.algo.Rf2SnapshotLoaderAlgorithm;
+import org.ihtsdo.otf.ts.jpa.algo.TransitiveClosureAlgorithm;
 import org.ihtsdo.otf.ts.jpa.services.ContentServiceJpa;
+import org.ihtsdo.otf.ts.jpa.services.HistoryServiceJpa;
+import org.ihtsdo.otf.ts.jpa.services.MetadataServiceJpa;
 import org.ihtsdo.otf.ts.jpa.services.SecurityServiceJpa;
 import org.ihtsdo.otf.ts.jpa.services.helper.TerminologyUtility;
 import org.ihtsdo.otf.ts.rest.ContentServiceRest;
@@ -25,6 +46,8 @@ import org.ihtsdo.otf.ts.rf2.Description;
 import org.ihtsdo.otf.ts.rf2.LanguageRefSetMember;
 import org.ihtsdo.otf.ts.rf2.Relationship;
 import org.ihtsdo.otf.ts.services.ContentService;
+import org.ihtsdo.otf.ts.services.HistoryService;
+import org.ihtsdo.otf.ts.services.MetadataService;
 import org.ihtsdo.otf.ts.services.SecurityService;
 
 import com.wordnik.swagger.annotations.Api;
@@ -819,6 +842,487 @@ public class ContentServiceRestImpl extends RootServiceRestImpl implements
     } catch (Exception e) {
       handleException(e, "trying to retrieve the projects");
       return null;
+    }
+  }
+
+  @Override
+  @GET
+  @Path("/reindex")
+  @ApiOperation(value = "Reindexes specified objects", notes = "Recomputes lucene indexes for the specified comma-separated objects")
+  @Produces({
+      MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML
+  })
+  public void luceneReindex(
+    @ApiParam(value = "Comma-separated list of objects to reindex, e.g. ConceptJpa (optional)", required = false) String indexedObjects,
+    @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken)
+
+  throws Exception {
+    Logger.getLogger(ContentServiceRestImpl.class).info(
+        "RESTful POST call (ContentChange): /reindex "
+            + (indexedObjects == null ? "with no objects specified"
+                : "with specified objects " + indexedObjects));
+
+    // Track system level information
+    long startTimeOrig = System.nanoTime();
+
+    try {
+      authenticate(securityService, authToken, "reindex",
+          UserRole.ADMINISTRATOR);
+
+      LuceneReindexAlgorithm algo = new LuceneReindexAlgorithm();
+      algo.setIndexedObjects(indexedObjects);
+      algo.compute();
+
+      // Final logging messages
+      Logger.getLogger(ContentServiceRestImpl.class).info(
+          "      elapsed time = " + getTotalElapsedTimeStr(startTimeOrig));
+      Logger.getLogger(ContentServiceRestImpl.class).info("done ...");
+
+    } catch (Exception e) {
+      handleException(e, "trying to remove a project");
+    }
+
+  }
+
+  @Override
+  @POST
+  @Path("/terminology/load/claml/{terminology}/{terminologyVersion}")
+  @ApiOperation(value = "Loads ClaML terminology from file", notes = "Loads terminology from ClaML file, assigning specified version")
+  public void loadTerminologyClaml(
+    @ApiParam(value = "Terminology, e.g. SNOMEDCT", required = true) @PathParam("terminology") String terminology,
+    @ApiParam(value = "Terminology version, e.g. 20140731", required = true) @PathParam("terminologyVersion") String terminologyVersion,
+    @ApiParam(value = "ClaML input file", required = true) String inputFile,
+    @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken)
+    throws Exception {
+
+    Logger.getLogger(ContentServiceRestImpl.class).info(
+        "RESTful POST call (ContentChange): /terminology/load/claml/"
+            + terminology + "/" + terminologyVersion + " from input file "
+            + inputFile);
+
+    // Track system level information
+    long startTimeOrig = System.nanoTime();
+
+    try {
+      authenticate(securityService, authToken, "start editing cycle",
+          UserRole.ADMINISTRATOR);
+
+      // Load snapshot
+      Logger.getLogger(ContentServiceJpa.class).info(
+          "Load ClaML data from " + inputFile);
+      ClamlLoaderAlgorithm algorithm = new ClamlLoaderAlgorithm();
+      algorithm.setTerminology(terminology);
+      algorithm.setTerminologyVersion(terminologyVersion);
+      algorithm.setInputFile(inputFile);
+      algorithm.compute();
+
+      // Let service begin its own transaction
+      Logger.getLogger(ContentServiceJpa.class).info(
+          "Start computing transtive closure");
+      TransitiveClosureAlgorithm algo = new TransitiveClosureAlgorithm();
+      algo.setTerminology(terminology);
+      algo.setTerminologyVersion(terminologyVersion);
+      algo.reset();
+      algo.compute();
+      algo.close();
+
+      // Final logging messages
+      Logger.getLogger(ContentServiceRestImpl.class).info(
+          "      elapsed time = " + getTotalElapsedTimeStr(startTimeOrig));
+      Logger.getLogger(ContentServiceRestImpl.class).info("done ...");
+
+    } catch (Exception e) {
+      handleException(e, "trying to load terminology from ClaML file");
+    }
+  }
+
+  @Override
+  @POST
+  @Path("/terminology/load/rf2/delta/{terminology}")
+  @ApiOperation(value = "Loads terminology RF2 delta from directory", notes = "Loads terminology RF2 delta from directory for specified terminology and version")
+  public void loadTerminologyRf2Delta(
+    @ApiParam(value = "Terminology, e.g. SNOMEDCT", required = true) @PathParam("terminology") String terminology,
+    @ApiParam(value = "RF2 input directory", required = true) String inputDir,
+    @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken)
+    throws Exception {
+
+    Logger.getLogger(ContentServiceRestImpl.class).info(
+        "RESTful POST call (ContentChange): /terminology/load/rf2/delta"
+            + terminology + " from input directory " + inputDir);
+
+    // Track system level information
+    long startTimeOrig = System.nanoTime();
+
+    try {
+      authenticate(securityService, authToken, "start editing cycle",
+          UserRole.ADMINISTRATOR);
+
+      Logger.getLogger(ContentServiceJpa.class).info(
+          "Starting RF2 delta loader");
+      Logger.getLogger(ContentServiceJpa.class).info(
+          "  terminology = " + terminology);
+      Logger.getLogger(ContentServiceJpa.class)
+          .info("  inputDir = " + inputDir);
+
+      // Check the input directory
+      File inputDirFile = new File(inputDir);
+      if (!inputDirFile.exists()) {
+        throw new Exception("Specified input directory does not exist");
+      }
+
+      // Previous computation of terminology version is based on file name
+      // but for delta/daily build files, this is not the current version
+      // look up the current version instead
+      MetadataService metadataService = new MetadataServiceJpa();
+      final String terminologyVersion =
+          metadataService.getLatestVersion(terminology);
+      metadataService.close();
+      if (terminologyVersion == null) {
+        throw new Exception("Unable to determine terminology version.");
+      }
+
+      //
+      // Verify that there is a release info for this version that is
+      // marked as "isPlanned"
+      //
+      HistoryService historyService = new HistoryServiceJpa();
+      ReleaseInfo releaseInfo =
+          historyService.getReleaseInfo(terminology, terminologyVersion);
+      if (releaseInfo == null) {
+        throw new Exception("A release info must exist for "
+            + terminologyVersion);
+      } else if (!releaseInfo.isPlanned()) {
+        throw new Exception("Release info for " + terminologyVersion
+            + " is not marked as planned'");
+      } else if (releaseInfo.isPublished()) {
+        throw new Exception("Release info for " + terminologyVersion
+            + " is marked as published");
+      }
+      historyService.close();
+
+      // Sort files
+      Logger.getLogger(ContentServiceJpa.class).info("  Sort RF2 Files");
+      Rf2FileSorter sorter = new Rf2FileSorter();
+      sorter.setSortByEffectiveTime(false);
+      sorter.setRequireAllFiles(false);
+      File outputDir = new File(inputDirFile, "/RF2-sorted-temp/");
+      sorter.sortFiles(inputDirFile, outputDir);
+
+      // Open readers
+      Rf2Readers readers = new Rf2Readers(outputDir);
+      readers.openReaders();
+
+      // Load delta
+      Rf2DeltaLoaderAlgorithm algorithm = new Rf2DeltaLoaderAlgorithm();
+      algorithm.setTerminology(terminology);
+      algorithm.setTerminologyVersion(terminologyVersion);
+      algorithm.setReleaseVersion(sorter.getFileVersion());
+      algorithm.setReaders(readers);
+      algorithm.compute();
+
+      // Compute transitive closure
+      Logger.getLogger(this.getClass()).info(
+          "  Compute transitive closure from  " + terminology + "/"
+              + terminologyVersion);
+      TransitiveClosureAlgorithm algo = new TransitiveClosureAlgorithm();
+      algo.setTerminology(terminology);
+      algo.setTerminologyVersion(terminologyVersion);
+      algo.reset();
+      algo.compute();
+
+      // No changes to release info
+
+      // Clean-up
+      readers.closeReaders();
+      Logger.getLogger(ContentServiceJpa.class).info("...done");
+
+      // Final logging messages
+      Logger.getLogger(ContentServiceRestImpl.class).info(
+          "      elapsed time = " + getTotalElapsedTimeStr(startTimeOrig));
+      Logger.getLogger(ContentServiceRestImpl.class).info("done ...");
+
+    } catch (Exception e) {
+      handleException(e, "trying to load terminology delta from RF2 directory");
+    }
+  }
+
+  @Override
+  @POST
+  @Path("/terminology/load/rf2/full/{terminology}/{terminologyVersion}")
+  @ApiOperation(value = "Loads terminology RF2 full from directory", notes = "Loads terminology RF2 full from directory for specified terminology and version")
+  public void loadTerminologyRf2Full(
+    @ApiParam(value = "Terminology, e.g. SNOMEDCT", required = true) @PathParam("terminology") String terminology,
+    @ApiParam(value = "Terminology version, e.g. 20140731", required = true) @PathParam("terminologyVersion") String terminologyVersion,
+    @ApiParam(value = "RF2 input directory", required = true) String inputDir,
+    @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken)
+    throws Exception {
+
+    Logger.getLogger(ContentServiceRestImpl.class).info(
+        "RESTful POST call (ContentChange): /terminology/load/rf2/full/"
+            + terminology + "/" + terminologyVersion + " from input file "
+            + inputDir);
+
+    // Track system level information
+    long startTimeOrig = System.nanoTime();
+
+    try {
+      authenticate(securityService, authToken, "start editing cycle",
+          UserRole.ADMINISTRATOR);
+
+      // Check the input directory
+      File inputDirFile = new File(inputDir);
+      if (!inputDirFile.exists()) {
+        throw new Exception("Specified input directory does not exist");
+      }
+
+      // Get the release versions
+      Logger.getLogger(ContentServiceJpa.class).info("  Get release versions");
+      Rf2FileSorter sorter = new Rf2FileSorter();
+      File conceptsFile = sorter.findFile(new File(inputDir), "sct2_Concept");
+      Set<String> releaseSet = new HashSet<>();
+      BufferedReader reader = new BufferedReader(new FileReader(conceptsFile));
+      String line;
+      while ((line = reader.readLine()) != null) {
+        final String fields[] = line.split("\t");
+        releaseSet.add(fields[1]);
+      }
+      reader.close();
+      List<String> releases = new ArrayList<>(releaseSet);
+      Collections.sort(releases);
+
+      // check that release info does not already exist
+      HistoryService historyService = new HistoryServiceJpa();
+      for (String release : releases) {
+        ReleaseInfo releaseInfo =
+            historyService.getReleaseInfo(terminology, release);
+        if (releaseInfo != null) {
+          throw new Exception("A release info already exists for " + release);
+        }
+      }
+
+      // Sort files
+      Logger.getLogger(ContentServiceJpa.class).info("  Sort RF2 Files");
+      sorter = new Rf2FileSorter();
+      sorter.setSortByEffectiveTime(true);
+      sorter.setRequireAllFiles(true);
+      File outputDir = new File(inputDirFile, "/RF2-sorted-temp/");
+      sorter.sortFiles(inputDirFile, outputDir);
+
+      // Open readers
+      Rf2Readers readers = new Rf2Readers(outputDir);
+      readers.openReaders();
+
+      // Load initial snapshot - first release version
+      Rf2SnapshotLoaderAlgorithm algorithm = new Rf2SnapshotLoaderAlgorithm();
+      algorithm.setTerminology(terminology);
+      algorithm.setTerminologyVersion(terminologyVersion);
+      algorithm.setReleaseVersion(releases.get(0));
+      algorithm.setReaders(readers);
+      algorithm.compute();
+
+      // Load deltas
+      for (String release : releases) {
+        if (release.equals(releases.get(0))) {
+          continue;
+        }
+
+        Rf2DeltaLoaderAlgorithm algorithm2 = new Rf2DeltaLoaderAlgorithm();
+        algorithm2.setTerminology(terminology);
+        algorithm2.setTerminologyVersion(terminologyVersion);
+        algorithm2.setReleaseVersion(release);
+        algorithm2.setReaders(readers);
+        algorithm2.compute();
+
+      }
+
+      // Compute transitive closure
+      Logger.getLogger(this.getClass()).info(
+          "  Compute transitive closure from  " + terminology + "/"
+              + terminologyVersion);
+      TransitiveClosureAlgorithm algo = new TransitiveClosureAlgorithm();
+      algo.setTerminology(terminology);
+      algo.setTerminologyVersion(terminologyVersion);
+      algo.reset();
+      algo.compute();
+
+      //
+      // Create ReleaseInfo for each release, unless already exists
+      //
+      for (String release : releases) {
+        ReleaseInfo info = historyService.getReleaseInfo(terminology, release);
+        if (info != null) {
+          info.setName(release);
+          info.setEffectiveTime(ConfigUtility.DATE_FORMAT.parse(release));
+          info.setDescription(terminology + " " + release + " release");
+          info.setPlanned(false);
+          info.setPublished(true);
+          info.setReleaseBeginDate(info.getEffectiveTime());
+          info.setReleaseFinishDate(info.getEffectiveTime());
+          info.setTerminology(terminology);
+          info.setTerminologyVersion(terminologyVersion);
+          historyService.addReleaseInfo(info);
+        }
+      }
+
+      // Clean-up
+      readers.closeReaders();
+      ConfigUtility
+          .deleteDirectory(new File(inputDirFile, "/RF2-sorted-temp/"));
+
+      // Final logging messages
+      Logger.getLogger(ContentServiceRestImpl.class).info(
+          "      elapsed time = " + getTotalElapsedTimeStr(startTimeOrig));
+      Logger.getLogger(ContentServiceRestImpl.class).info("done ...");
+
+    } catch (Exception e) {
+      handleException(e, "trying to load full terminology from RF2 directory");
+    }
+  }
+
+  @Override
+  @POST
+  @Path("/terminology/load/rf2/snapshot/{terminology}/{terminologyVersion}")
+  @ApiOperation(value = "Loads terminology RF2 snapshot from directory", notes = "Loads terminology RF2 snapshot from directory for specified terminology and version")
+  public void loadTerminologyRf2Snapshot(
+    @ApiParam(value = "Terminology, e.g. SNOMEDCT", required = true) @PathParam("terminology") String terminology,
+    @ApiParam(value = "Terminology version, e.g. 20140731", required = true) @PathParam("terminologyVersion") String terminologyVersion,
+    @ApiParam(value = "RF2 input directory", required = true) String inputDir,
+    @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken)
+    throws Exception {
+
+    Logger.getLogger(ContentServiceRestImpl.class).info(
+        "RESTful POST call (ContentChange): /terminology/load/rf2/snapshot"
+            + terminology + "/" + terminologyVersion + " from input directory "
+            + inputDir);
+
+    // Track system level information
+    long startTimeOrig = System.nanoTime();
+
+    try {
+      authenticate(securityService, authToken, "start editing cycle",
+          UserRole.ADMINISTRATOR);
+
+      // Check the input directory
+      File inputDirFile = new File(inputDir);
+      if (!inputDirFile.exists()) {
+        throw new Exception("Specified input directory does not exist");
+      }
+
+      // Sort files
+      Logger.getLogger(ContentServiceJpa.class).info("  Sort RF2 Files");
+      Rf2FileSorter sorter = new Rf2FileSorter();
+      sorter.setSortByEffectiveTime(false);
+      sorter.setRequireAllFiles(true);
+      File outputDir = new File(inputDirFile, "/RF2-sorted-temp/");
+      sorter.sortFiles(inputDirFile, outputDir);
+      String releaseVersion = sorter.getFileVersion();
+      Logger.getLogger(ContentServiceJpa.class).info(
+          "  releaseVersion = " + releaseVersion);
+
+      // Open readers
+      Rf2Readers readers = new Rf2Readers(outputDir);
+      readers.openReaders();
+
+      // Load snapshot
+      Rf2SnapshotLoaderAlgorithm algorithm = new Rf2SnapshotLoaderAlgorithm();
+      algorithm.setTerminology(terminology);
+      algorithm.setTerminologyVersion(terminologyVersion);
+      algorithm.setReleaseVersion(releaseVersion);
+      algorithm.setReaders(readers);
+      algorithm.compute();
+
+      //
+      // Create ReleaseInfo for this release if it does not already exist
+      //
+      HistoryService historyService = new HistoryServiceJpa();
+      historyService.setLastModifiedFlag(false);
+      ReleaseInfo info =
+          historyService.getReleaseInfo(terminology, releaseVersion);
+      if (info == null) {
+        info = new ReleaseInfoJpa();
+        info.setName(releaseVersion);
+        info.setEffectiveTime(ConfigUtility.DATE_FORMAT.parse(releaseVersion));
+        info.setDescription(terminology + " " + releaseVersion + " release");
+        info.setPlanned(false);
+        info.setPublished(true);
+        info.setReleaseBeginDate(info.getEffectiveTime());
+        info.setReleaseFinishDate(info.getEffectiveTime());
+        info.setTerminology(terminology);
+        info.setTerminologyVersion(terminologyVersion);
+        historyService.addReleaseInfo(info);
+      }
+      historyService.close();
+
+      // Compute transitive closure
+      Logger.getLogger(this.getClass()).info(
+          "  Compute transitive closure from  " + terminology + "/"
+              + terminologyVersion);
+      TransitiveClosureAlgorithm algo = new TransitiveClosureAlgorithm();
+      algo.setTerminology(terminology);
+      algo.setTerminologyVersion(terminologyVersion);
+      algo.reset();
+      algo.compute();
+
+      // Clean-up
+      readers.closeReaders();
+      ConfigUtility
+          .deleteDirectory(new File(inputDirFile, "/RF2-sorted-temp/"));
+
+      // Final logging messages
+      Logger.getLogger(ContentServiceRestImpl.class).info(
+          "      elapsed time = " + getTotalElapsedTimeStr(startTimeOrig));
+      Logger.getLogger(ContentServiceRestImpl.class).info("done ...");
+
+    } catch (Exception e) {
+      handleException(e,
+          "trying to load terminology snapshot from RF2 directory");
+    }
+  }
+
+  @Override
+  @GET
+  @Path("/terminology/closure/compute/{terminology}")
+  @ApiOperation(value = "Computes terminology transitive closure", notes = "Computes transitive closure for the latest version of the specified terminology")
+  public void computeTransitiveClosure(
+    @ApiParam(value = "Terminology, e.g. SNOMEDCT", required = true) @PathParam("terminology") String terminology,
+    @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken)
+
+  throws Exception {
+
+    Logger.getLogger(ContentServiceRestImpl.class).info(
+        "RESTful POST call (ContentChange): /terminology/closure/compute/"
+            + terminology);
+
+    // Track system level information
+    long startTimeOrig = System.nanoTime();
+
+    try {
+      authenticate(securityService, authToken, "compute transitive closure",
+          UserRole.ADMINISTRATOR);
+
+      // Compute transitive closure
+      MetadataService metadataService = new MetadataServiceJpa();
+      String terminologyVersion = metadataService.getLatestVersion(terminology);
+      metadataService.close();
+
+      // Compute transitive closure
+      Logger.getLogger(ContentServiceRestImpl.class).info(
+          "  Compute transitive closure from  " + terminology + "/"
+              + terminologyVersion);
+      TransitiveClosureAlgorithm algo = new TransitiveClosureAlgorithm();
+      algo.setTerminology(terminology);
+      algo.setTerminologyVersion(terminologyVersion);
+      algo.reset();
+      algo.compute();
+      algo.close();
+
+      // Final logging messages
+      Logger.getLogger(ContentServiceRestImpl.class).info(
+          "      elapsed time = " + getTotalElapsedTimeStr(startTimeOrig));
+      Logger.getLogger(ContentServiceRestImpl.class).info("done ...");
+
+    } catch (Exception e) {
+      handleException(e, "trying to compute transitive closure");
     }
   }
 

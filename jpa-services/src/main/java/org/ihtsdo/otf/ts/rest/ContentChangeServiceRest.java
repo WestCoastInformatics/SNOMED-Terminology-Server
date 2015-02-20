@@ -235,4 +235,46 @@ public interface ContentChangeServiceRest {
    */
   public void removeProject(Long id, String authToken) throws Exception;
   
+   /**
+   * Administrative tool to start editing cycle for a terminology/version
+   *
+   * @param terminology the terminology
+   * @param terminologyVersion the terminology version
+   * @param releaseVersion the release version
+   * @throws Exception 
+   */
+  public void startEditingCycle(String terminology, String terminologyVersion, String releaseVersion, String authToken) throws Exception;
+  
+  /**
+   * Remove release info objects for a terminology
+   *
+   * @param terminology the terminology
+   * @param releaseInfoNames the release info names as comma-separated list
+   */
+  public void removeReleaseInfos(String terminology, String releaseInfoNames);
+  
+  
+  /**
+   * Begin a release.
+   *
+   * @param terminology the terminology
+   * @param release the release
+   * @throws Exception the exception
+   */
+  public void releaseBegin(String releaseVersion, String terminology, String workflowStatusValues, boolean validate, boolean saveIdentifiers) throws Exception;
+  
+  /**
+   * Process a release.
+   *
+   * @throws Exception the exception
+   */
+  public void releaseProcess(String refSetId, String outputDirName, String effectiveTime, String moduleId) throws Exception;
+  
+  /**
+   * Finish a release.
+   *
+   * @throws Exception the exception
+   */
+  public void releaseFinish(String releaseVersion, String terminology, String workflowStatusValues, boolean validate, boolean saveIdentifiers) throws Exception;
+  
 }

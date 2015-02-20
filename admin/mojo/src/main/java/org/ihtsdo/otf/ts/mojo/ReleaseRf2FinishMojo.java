@@ -19,6 +19,12 @@ import org.ihtsdo.otf.ts.jpa.algo.ReleaseRf2FinishAlgorithm;
 public class ReleaseRf2FinishMojo extends AbstractMojo {
 
   /**
+   * The terminology
+   * @parameter terminology
+   */
+  private String terminology = null;
+  
+  /**
    * The release version
    * 
    * @parameter releaseVersion

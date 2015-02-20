@@ -30,7 +30,7 @@ public class DefaultSecurityServiceHandler implements SecurityServiceHandler {
       user.setUserName("admin");
       user.setName("Admin");
       user.setApplicationRole(UserRole.ADMINISTRATOR);
-      user.setEmail("guest@example.com");
+      user.setEmail("admin@example.com");
     } else {
       user.setUserName("guest");
       user.setName("Guest");

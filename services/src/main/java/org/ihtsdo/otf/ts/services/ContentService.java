@@ -1,3 +1,6 @@
+/*
+ * 
+ */
 package org.ihtsdo.otf.ts.services;
 
 import org.ihtsdo.otf.ts.Project;
@@ -34,8 +37,11 @@ import org.ihtsdo.otf.ts.services.handlers.ComputePreferredNameHandler;
 import org.ihtsdo.otf.ts.services.handlers.GraphResolutionHandler;
 import org.ihtsdo.otf.ts.services.handlers.IdentifierAssignmentHandler;
 
+// TODO: Auto-generated Javadoc
 /**
  * Generically represents a service for accessing content.
+ *
+ * @author ${author}
  */
 public interface ContentService extends RootService {
 
@@ -956,7 +962,6 @@ public interface ContentService extends RootService {
    * Returns the computed preferred name.
    *
    * @param concept the concept
-   * @throws Exception the exception
    * @return the computed preferred name
    * @throws Exception the exception
    */
@@ -1034,4 +1039,7 @@ public interface ContentService extends RootService {
   public UserRole getUserRoleForProject(String username, Long projectId)
     throws Exception;
 
+  
+  
+  
 }

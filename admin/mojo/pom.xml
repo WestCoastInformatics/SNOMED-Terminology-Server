@@ -35,6 +35,10 @@
       <groupId>org.ihtsdo.otf.term-server</groupId>
       <artifactId>term-server-jpa-services</artifactId>
     </dependency>
+    <dependency>
+      <groupId>org.ihtsdo.otf.term-server</groupId>
+      <artifactId>term-server-rest-client</artifactId>
+    </dependency>
 
     <!-- JPA dependencies -->
     <dependency>

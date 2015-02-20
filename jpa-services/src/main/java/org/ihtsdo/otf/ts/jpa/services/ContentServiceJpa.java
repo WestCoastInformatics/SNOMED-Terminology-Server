@@ -521,8 +521,12 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
     return list;
   }
 
-  /* (non-Javadoc)
-   * @see org.ihtsdo.otf.ts.services.ContentService#getChildConcepts(org.ihtsdo.otf.ts.rf2.Concept, org.ihtsdo.otf.ts.helpers.PfsParameter)
+  /*
+   * (non-Javadoc)
+   * 
+   * @see
+   * org.ihtsdo.otf.ts.services.ContentService#getChildConcepts(org.ihtsdo.otf
+   * .ts.rf2.Concept, org.ihtsdo.otf.ts.helpers.PfsParameter)
    */
   @SuppressWarnings("unchecked")
   @Override
@@ -3528,5 +3532,7 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
   public void setLastModifiedFlag(boolean lastModifiedFlag) {
     this.lastModifiedFlag = lastModifiedFlag;
   }
+
+
 
 }
