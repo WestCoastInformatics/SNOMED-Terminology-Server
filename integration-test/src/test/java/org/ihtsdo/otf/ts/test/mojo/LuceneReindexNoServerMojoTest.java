@@ -7,7 +7,7 @@ import org.junit.Test;
 /**
  * Sample integration test.
  */
-public class CopyOfLuceneReindexNoServerMojoTest {
+public class LuceneReindexNoServerMojoTest {
 
 
 
