@@ -1,5 +1,7 @@
 package org.ihtsdo.otf.ts.helpers;
 
+import org.ihtsdo.otf.ts.ReleaseInfo;
+
 
 /**
  * Represents a sortable list of {@link ReleaseInfo}

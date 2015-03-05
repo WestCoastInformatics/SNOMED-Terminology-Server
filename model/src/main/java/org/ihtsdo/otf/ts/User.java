@@ -1,4 +1,4 @@
-package org.ihtsdo.otf.ts.helpers;
+package org.ihtsdo.otf.ts;
 
 /**
  * Represents a user.

@@ -3,15 +3,15 @@ package org.ihtsdo.otf.ts.test.other;
 import java.util.Date;
 
 import org.apache.log4j.Logger;
+import org.ihtsdo.otf.ts.ReleaseInfo;
 import org.ihtsdo.otf.ts.helpers.ConceptList;
 import org.ihtsdo.otf.ts.helpers.ConfigUtility;
 import org.ihtsdo.otf.ts.helpers.DescriptionList;
 import org.ihtsdo.otf.ts.helpers.LanguageRefSetMemberList;
 import org.ihtsdo.otf.ts.helpers.PfsParameterJpa;
 import org.ihtsdo.otf.ts.helpers.RelationshipList;
-import org.ihtsdo.otf.ts.helpers.ReleaseInfo;
-import org.ihtsdo.otf.ts.helpers.ReleaseInfoJpa;
 import org.ihtsdo.otf.ts.helpers.ReleaseInfoList;
+import org.ihtsdo.otf.ts.jpa.ReleaseInfoJpa;
 import org.ihtsdo.otf.ts.jpa.client.HistoryClientRest;
 import org.ihtsdo.otf.ts.jpa.client.SecurityClientRest;
 import org.junit.After;

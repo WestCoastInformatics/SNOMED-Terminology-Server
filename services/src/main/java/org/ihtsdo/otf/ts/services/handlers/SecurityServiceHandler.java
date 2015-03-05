@@ -1,7 +1,7 @@
 package org.ihtsdo.otf.ts.services.handlers;
 
+import org.ihtsdo.otf.ts.User;
 import org.ihtsdo.otf.ts.helpers.Configurable;
-import org.ihtsdo.otf.ts.helpers.User;
 
 /**
  * Generically represents a handler that can authenticate a user.

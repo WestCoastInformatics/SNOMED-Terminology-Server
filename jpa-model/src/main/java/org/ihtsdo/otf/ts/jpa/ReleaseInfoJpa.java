@@ -1,4 +1,4 @@
-package org.ihtsdo.otf.ts.helpers;
+package org.ihtsdo.otf.ts.jpa;
 
 import java.util.Date;
 
@@ -14,6 +14,7 @@ import javax.xml.bind.annotation.XmlID;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.hibernate.envers.Audited;
+import org.ihtsdo.otf.ts.ReleaseInfo;
 
 /**
  * JPA enabled implementation of a {@link ReleaseInfo}.

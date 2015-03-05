@@ -22,6 +22,6 @@
     <class>org.ihtsdo.otf.ts.rf2.jpa.SimpleMapRefSetMemberJpa</class>
     <class>org.ihtsdo.otf.ts.rf2.jpa.SimpleRefSetMemberJpa</class>
     <class>org.ihtsdo.otf.ts.rf2.jpa.TransitiveRelationshipJpa</class>
-    <class>org.ihtsdo.otf.ts.helpers.UserJpa</class>
+    <class>org.ihtsdo.otf.ts.jpa.UserJpa</class>
   </persistence-unit>
 </persistence>

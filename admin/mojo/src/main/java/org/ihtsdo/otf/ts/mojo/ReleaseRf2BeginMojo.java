@@ -6,8 +6,8 @@ import java.util.Set;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
+import org.ihtsdo.otf.ts.ValidationResult;
 import org.ihtsdo.otf.ts.helpers.LocalException;
-import org.ihtsdo.otf.ts.helpers.ValidationResult;
 import org.ihtsdo.otf.ts.jpa.algo.ReleaseRf2BeginAlgorithm;
 
 /**

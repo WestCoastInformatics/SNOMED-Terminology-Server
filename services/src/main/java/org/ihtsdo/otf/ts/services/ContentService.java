@@ -1,6 +1,7 @@
 package org.ihtsdo.otf.ts.services;
 
 import org.ihtsdo.otf.ts.Project;
+import org.ihtsdo.otf.ts.UserRole;
 import org.ihtsdo.otf.ts.helpers.AssociationReferenceRefSetMemberList;
 import org.ihtsdo.otf.ts.helpers.AttributeValueRefSetMemberList;
 import org.ihtsdo.otf.ts.helpers.ComplexMapRefSetMemberList;
@@ -15,7 +16,6 @@ import org.ihtsdo.otf.ts.helpers.SearchResultList;
 import org.ihtsdo.otf.ts.helpers.SimpleMapRefSetMemberList;
 import org.ihtsdo.otf.ts.helpers.SimpleRefSetMemberList;
 import org.ihtsdo.otf.ts.helpers.StringList;
-import org.ihtsdo.otf.ts.helpers.UserRole;
 import org.ihtsdo.otf.ts.rf2.AssociationReferenceRefSetMember;
 import org.ihtsdo.otf.ts.rf2.AttributeValueRefSetMember;
 import org.ihtsdo.otf.ts.rf2.ComplexMapRefSetMember;

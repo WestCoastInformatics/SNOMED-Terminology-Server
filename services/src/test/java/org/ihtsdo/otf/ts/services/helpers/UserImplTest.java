@@ -1,8 +1,8 @@
 package org.ihtsdo.otf.ts.services.helpers;
 
 import org.apache.log4j.Logger;
+import org.ihtsdo.otf.ts.UserRole;
 import org.ihtsdo.otf.ts.helpers.GetterSetterTester;
-import org.ihtsdo.otf.ts.helpers.UserRole;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;

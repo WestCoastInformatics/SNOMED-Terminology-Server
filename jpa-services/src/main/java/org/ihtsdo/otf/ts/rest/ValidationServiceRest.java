@@ -1,6 +1,6 @@
 package org.ihtsdo.otf.ts.rest;
 
-import org.ihtsdo.otf.ts.helpers.ValidationResult;
+import org.ihtsdo.otf.ts.ValidationResult;
 import org.ihtsdo.otf.ts.rf2.jpa.ConceptJpa;
 
 /**

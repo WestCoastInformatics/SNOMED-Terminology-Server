@@ -6,11 +6,11 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response.Status.Family;
 
 import org.apache.log4j.Logger;
+import org.ihtsdo.otf.ts.User;
 import org.ihtsdo.otf.ts.helpers.ConfigUtility;
-import org.ihtsdo.otf.ts.helpers.User;
-import org.ihtsdo.otf.ts.helpers.UserJpa;
 import org.ihtsdo.otf.ts.helpers.UserList;
 import org.ihtsdo.otf.ts.helpers.UserListJpa;
+import org.ihtsdo.otf.ts.jpa.UserJpa;
 import org.ihtsdo.otf.ts.rest.SecurityServiceRest;
 
 import com.sun.jersey.api.client.Client;

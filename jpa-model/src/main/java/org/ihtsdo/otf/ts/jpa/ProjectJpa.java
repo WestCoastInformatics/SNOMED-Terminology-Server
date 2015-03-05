@@ -29,8 +29,7 @@ import org.hibernate.search.annotations.Indexed;
 import org.hibernate.search.annotations.IndexedEmbedded;
 import org.hibernate.search.annotations.Store;
 import org.ihtsdo.otf.ts.Project;
-import org.ihtsdo.otf.ts.helpers.User;
-import org.ihtsdo.otf.ts.helpers.UserJpa;
+import org.ihtsdo.otf.ts.User;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 

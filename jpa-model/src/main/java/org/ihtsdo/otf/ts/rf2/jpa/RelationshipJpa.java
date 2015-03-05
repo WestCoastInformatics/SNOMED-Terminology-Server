@@ -192,7 +192,7 @@ public class RelationshipJpa extends AbstractComponent implements Relationship {
    */
   @XmlElement
   private Long getSourceId() {
-    return (sourceConcept != null) ? sourceConcept.getId() : null;
+    return (sourceConcept != null) ? sourceConcept.getId() : 0;
   }
 
   /**
@@ -234,6 +234,27 @@ public class RelationshipJpa extends AbstractComponent implements Relationship {
   }
   
   /**
+   * Returns the source concept preferred name. Used for XML/JSON
+   * serialization.
+   * @return the source concept preferred name
+   */
+  @XmlElement
+  private String getSourcePreferredName() {
+    return sourceConcept != null ? sourceConcept
+        .getDefaultPreferredName() : "";
+  }
+
+  /**
+   * Sets the source concept preferred name.
+   *
+   * @param name the source concept preferred name
+   */
+  @SuppressWarnings("unused")
+  private void setSourcePreferredName(String name) {
+    // do nothing - here for JAXB
+  }
+  
+  /**
    * Returns the destination concept.
    * 
    * @return the destination concept
@@ -262,7 +283,7 @@ public class RelationshipJpa extends AbstractComponent implements Relationship {
   @XmlElement
   private Long getDestinationId() {
     return (destinationConcept != null) ? destinationConcept.getId()
-        : null;
+        : 0;
   }
 
   /**
@@ -312,7 +333,7 @@ public class RelationshipJpa extends AbstractComponent implements Relationship {
   @XmlElement
   private String getDestinationPreferredName() {
     return destinationConcept != null ? destinationConcept
-        .getDefaultPreferredName() : null;
+        .getDefaultPreferredName() : "";
   }
 
   /**

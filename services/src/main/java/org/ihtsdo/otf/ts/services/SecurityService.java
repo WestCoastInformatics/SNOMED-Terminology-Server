@@ -1,8 +1,8 @@
 package org.ihtsdo.otf.ts.services;
 
-import org.ihtsdo.otf.ts.helpers.User;
+import org.ihtsdo.otf.ts.User;
+import org.ihtsdo.otf.ts.UserRole;
 import org.ihtsdo.otf.ts.helpers.UserList;
-import org.ihtsdo.otf.ts.helpers.UserRole;
 
 /**
  * We want the web application to avoid needing to know anything about the

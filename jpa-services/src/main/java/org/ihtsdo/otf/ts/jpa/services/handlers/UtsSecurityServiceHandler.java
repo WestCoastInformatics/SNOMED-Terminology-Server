@@ -9,8 +9,8 @@ import java.net.URLEncoder;
 import java.util.Properties;
 import java.util.UUID;
 
+import org.ihtsdo.otf.ts.User;
 import org.ihtsdo.otf.ts.helpers.LocalException;
-import org.ihtsdo.otf.ts.helpers.User;
 import org.ihtsdo.otf.ts.services.handlers.SecurityServiceHandler;
 import org.ihtsdo.otf.ts.services.helpers.UserImpl;
 

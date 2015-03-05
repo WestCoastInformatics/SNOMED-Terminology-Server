@@ -8,7 +8,7 @@ import java.io.File;
 import org.apache.log4j.Logger;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoFailureException;
-import org.ihtsdo.otf.ts.helpers.ReleaseInfo;
+import org.ihtsdo.otf.ts.ReleaseInfo;
 import org.ihtsdo.otf.ts.jpa.algo.Rf2DeltaLoaderAlgorithm;
 import org.ihtsdo.otf.ts.jpa.algo.Rf2FileSorter;
 import org.ihtsdo.otf.ts.jpa.algo.Rf2Readers;

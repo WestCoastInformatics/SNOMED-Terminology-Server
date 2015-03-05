@@ -451,7 +451,6 @@ public class ActionServiceJpa extends ContentServiceJpa implements
     Logger.getLogger(getClass()).info(
         "Action Service - add new inferred relationships - " + sessionToken);
     tokenCheck(sessionToken);
-    // TODO Auto-generated method stub
 
     // Get the new inferred rels and add them
   }

@@ -1,10 +1,12 @@
-package org.ihtsdo.otf.ts.helpers;
+package org.ihtsdo.otf.ts.jpa;
 
 import java.util.HashSet;
 import java.util.Set;
 
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
+
+import org.ihtsdo.otf.ts.ValidationResult;
 
 /**
  * JPA enabled implementation of {@link ValidationResult}.
@@ -17,6 +19,23 @@ public class ValidationResultJpa implements ValidationResult {
 
   /** The warnings. */
   private Set<String> warnings = new HashSet<>();
+
+  /**
+   * Instantiates an empty {@link ValidationResultJpa}.
+   */
+  public ValidationResultJpa() {
+    // do nothing
+  }
+
+  /**
+   * Instantiates a {@link ValidationResultJpa} from the specified parameters.
+   *
+   * @param result the result
+   */
+  public ValidationResultJpa(ValidationResult result) {
+    this.errors = new HashSet<>(result.getErrors());
+    this.warnings = new HashSet<>(result.getWarnings());
+  }
 
   /*
    * (non-Javadoc)
@@ -171,6 +190,47 @@ public class ValidationResultJpa implements ValidationResult {
   @Override
   public String toString() {
     return "ERRORS: " + errors + ", WARNINGS: " + warnings;
+  }
+
+  /*
+   * (non-Javadoc)
+   * 
+   * @see java.lang.Object#hashCode()
+   */
+  @Override
+  public int hashCode() {
+    final int prime = 31;
+    int result = 1;
+    result = prime * result + ((errors == null) ? 0 : errors.hashCode());
+    result = prime * result + ((warnings == null) ? 0 : warnings.hashCode());
+    return result;
+  }
+
+  /*
+   * (non-Javadoc)
+   * 
+   * @see java.lang.Object#equals(java.lang.Object)
+   */
+  @Override
+  public boolean equals(Object obj) {
+    if (this == obj)
+      return true;
+    if (obj == null)
+      return false;
+    if (getClass() != obj.getClass())
+      return false;
+    ValidationResultJpa other = (ValidationResultJpa) obj;
+    if (errors == null) {
+      if (other.errors != null)
+        return false;
+    } else if (!errors.equals(other.errors))
+      return false;
+    if (warnings == null) {
+      if (other.warnings != null)
+        return false;
+    } else if (!warnings.equals(other.warnings))
+      return false;
+    return true;
   }
 
 }

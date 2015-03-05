@@ -1,7 +1,7 @@
 package org.ihtsdo.otf.ts.services.helpers;
 
-import org.ihtsdo.otf.ts.helpers.User;
-import org.ihtsdo.otf.ts.helpers.UserRole;
+import org.ihtsdo.otf.ts.User;
+import org.ihtsdo.otf.ts.UserRole;
 
 /**
  * Local implementation of {@link User}.

@@ -6,9 +6,9 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response.Status.Family;
 
 import org.apache.log4j.Logger;
+import org.ihtsdo.otf.ts.ValidationResult;
 import org.ihtsdo.otf.ts.helpers.ConfigUtility;
-import org.ihtsdo.otf.ts.helpers.ValidationResult;
-import org.ihtsdo.otf.ts.helpers.ValidationResultJpa;
+import org.ihtsdo.otf.ts.jpa.ValidationResultJpa;
 import org.ihtsdo.otf.ts.rest.ValidationServiceRest;
 import org.ihtsdo.otf.ts.rf2.jpa.ConceptJpa;
 
