@@ -35,12 +35,13 @@ public class CopyConstructorTester extends ProxyTester {
     });
     Logger.getLogger(getClass()).info(
         "    " + o1.toString() + " = " + o2.toString());
-    return o1.equals(o2) && o1.hashCode() == o2.hashCode();
+    return o1.equals(o2) && o1.hashCode() == o2.hashCode()
+        && o1.toString().equals(o2.toString());
   }
 
   /**
    * Creates an object from the object.
-   *
+   * TODO: actually test deep copy too
    * @param interfaceType the interface type
    * @return true, if successful
    * @throws Exception the exception
@@ -57,7 +58,8 @@ public class CopyConstructorTester extends ProxyTester {
     });
     Logger.getLogger(getClass()).info(
         "    " + o1.toString() + " = " + o2.toString());
-    return o1.equals(o2) && o1.hashCode() == o2.hashCode();
+    return o1.equals(o2) && o1.hashCode() == o2.hashCode()
+        && o1.toString().equals(o2.toString());
   }
 
 }

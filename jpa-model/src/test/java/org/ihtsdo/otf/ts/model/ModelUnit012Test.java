@@ -7,10 +7,10 @@ import org.ihtsdo.otf.ts.helpers.ConfigUtility;
 import org.ihtsdo.otf.ts.helpers.CopyConstructorTester;
 import org.ihtsdo.otf.ts.helpers.EqualsHashcodeTester;
 import org.ihtsdo.otf.ts.helpers.GetterSetterTester;
-import org.ihtsdo.otf.ts.rf2.Description;
-import org.ihtsdo.otf.ts.rf2.LanguageRefSetMember;
-import org.ihtsdo.otf.ts.rf2.jpa.DescriptionJpa;
-import org.ihtsdo.otf.ts.rf2.jpa.LanguageRefSetMemberJpa;
+import org.ihtsdo.otf.ts.rf2.AssociationReferenceConceptRefSetMember;
+import org.ihtsdo.otf.ts.rf2.Concept;
+import org.ihtsdo.otf.ts.rf2.jpa.AssociationReferenceConceptRefSetMemberJpa;
+import org.ihtsdo.otf.ts.rf2.jpa.ConceptJpa;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -18,18 +18,18 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 /**
- * Unit testing for {@link LanguageRefSetMemberJpa}.
+ * Unit testing for {@link AssociationReferenceConceptRefSetMemberJpa}.
  */
-public class ModelUnit009Test {
+public class ModelUnit012Test {
 
   /** The model object to test. */
-  private LanguageRefSetMemberJpa object;
+  private AssociationReferenceConceptRefSetMemberJpa object;
 
-  /** The test fixture d1. */
-  private Description d1;
+  /** The test fixture c1. */
+  private Concept c1;
 
-  /** The test fixture d2. */
-  private Description d2;
+  /** The test fixture c2. */
+  private Concept c2;
 
   /**
    * Setup class.
@@ -44,14 +44,14 @@ public class ModelUnit009Test {
    */
   @Before
   public void setup() {
-    object = new LanguageRefSetMemberJpa();
+    object = new AssociationReferenceConceptRefSetMemberJpa();
     // Set up some objects
-    d1 = new DescriptionJpa();
-    d1.setId(1L);
-    d1.setTypeId("1");
-    d2 = new DescriptionJpa();
-    d2.setId(2L);
-    d2.setTypeId("2");
+    c1 = new ConceptJpa();
+    c1.setId(1L);
+    c1.setDefinitionStatusId("1");
+    c2 = new ConceptJpa();
+    c2.setId(2L);
+    c2.setDefinitionStatusId("2");
 
   }
 
@@ -61,7 +61,7 @@ public class ModelUnit009Test {
    * @throws Exception the exception
    */
   @Test
-  public void testModelGetSet009() throws Exception {
+  public void testModelGetSet012() throws Exception {
     Logger.getLogger(getClass()).info("TEST testModelGetSet009");
     GetterSetterTester tester = new GetterSetterTester(object);
     tester.exclude("objectId");
@@ -74,8 +74,8 @@ public class ModelUnit009Test {
    * @throws Exception the exception
    */
   @Test
-  public void testModelEqualsHashcode009() throws Exception {
-    Logger.getLogger(getClass()).info("TEST testModelEqualsHashcode009");
+  public void testModelEqualsHashcode012() throws Exception {
+    Logger.getLogger(getClass()).info("TEST testModelEqualsHashcode012");
     EqualsHashcodeTester tester = new EqualsHashcodeTester(object);
     tester.include("active");
     tester.include("moduleId");
@@ -83,14 +83,14 @@ public class ModelUnit009Test {
     tester.include("terminologyId");
     tester.include("terminologyVersion");
     tester.include("refSetId");
-    tester.include("description");
+    tester.include("concept");
     // needed for generic refset class
     tester.include("component");
-    tester.include("acceptabilityId");
+    tester.include("targetComponentId");
 
     // Set up some objects
-    tester.proxy(Description.class, 1, d1);
-    tester.proxy(Description.class, 2, d2);
+    tester.proxy(Concept.class, 1, c1);
+    tester.proxy(Concept.class, 2, c2);
 
     assertTrue(tester.testIdentitiyFieldEquals());
     assertTrue(tester.testNonIdentitiyFieldEquals());
@@ -106,15 +106,16 @@ public class ModelUnit009Test {
    * @throws Exception the exception
    */
   @Test
-  public void testModelCopy009() throws Exception {
+  public void testModelCopy012() throws Exception {
     Logger.getLogger(getClass()).info("TEST testModelCopy009");
     CopyConstructorTester tester = new CopyConstructorTester(object);
 
     // Set up some objects
-    tester.proxy(Description.class, 1, d1);
-    tester.proxy(Description.class, 2, d2);
+    tester.proxy(Concept.class, 1, c1);
+    tester.proxy(Concept.class, 2, c2);
 
-    assertTrue(tester.testCopyConstructor(LanguageRefSetMember.class));
+    assertTrue(tester
+        .testCopyConstructor(AssociationReferenceConceptRefSetMember.class));
   }
 
   /**
@@ -123,24 +124,29 @@ public class ModelUnit009Test {
    * @throws Exception the exception
    */
   @Test
-  public void testXmlTransient009() throws Exception {
-    Logger.getLogger(getClass()).info("TEST testXmlTransient009");
-    Description d = new DescriptionJpa();
-    d.setId(1L);
-    d.setTerminologyId("1");
-    d.setTerm("1");
-    LanguageRefSetMember member = new LanguageRefSetMemberJpa();
+  public void testXmlTransient012() throws Exception {
+    Logger.getLogger(getClass()).info("TEST testXmlTransient012");
+    Concept c = new ConceptJpa();
+    c.setId(1L);
+    c.setTerminologyId("1");
+    // Definition status id is not persisted by the refset member
+    // so it can't be reconstructed, but is part of the equals computation
+    // c.setDefinitionStatusId("1");
+    c.setDefaultPreferredName("1");
+    AssociationReferenceConceptRefSetMember member =
+        new AssociationReferenceConceptRefSetMemberJpa();
     member.setId(1L);
     member.setTerminologyId("1");
-    member.setDescription(d);
-    d.addLanguageRefSetMember(member);
+    member.setConcept(c);
+    c.addAssociationReferenceRefSetMember(member);
     String xml = ConfigUtility.getStringForGraph(member);
-    assertTrue(xml.contains("<descriptionId>"));
-    assertTrue(xml.contains("<descriptionTerminologyId>"));
-    assertTrue(xml.contains("<descriptionTerm>"));
-    LanguageRefSetMember member2 =
-        (LanguageRefSetMember) ConfigUtility.getGraphForString(xml,
-            LanguageRefSetMemberJpa.class);
+    assertTrue(xml.contains("<conceptId>"));
+    assertTrue(xml.contains("<conceptTerminologyId>"));
+    assertTrue(xml.contains("<conceptPreferredName>"));
+    AssociationReferenceConceptRefSetMember member2 =
+        (AssociationReferenceConceptRefSetMember) ConfigUtility
+            .getGraphForString(xml,
+                AssociationReferenceConceptRefSetMemberJpa.class);
     assertTrue(member.equals(member2));
   }
 

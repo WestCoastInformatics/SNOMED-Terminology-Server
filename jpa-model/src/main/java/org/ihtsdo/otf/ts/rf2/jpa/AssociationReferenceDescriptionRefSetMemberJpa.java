@@ -23,7 +23,7 @@ public class AssociationReferenceDescriptionRefSetMemberJpa extends
     AbstractAssociationReferenceRefSetMemberJpa<Description> implements
     AssociationReferenceDescriptionRefSetMember {
 
-  /** The Description associated with this element */
+  /** The Description associated with this element. */
   @ManyToOne(targetEntity = DescriptionJpa.class, optional = true)
   private Description description;
 
@@ -47,6 +47,11 @@ public class AssociationReferenceDescriptionRefSetMemberJpa extends
     description = member.getDescription();
   }
 
+  /*
+   * (non-Javadoc)
+   * 
+   * @see org.ihtsdo.otf.ts.rf2.DescriptionRefSetMember#getDescription()
+   */
   @XmlTransient
   @Override
   public Description getDescription() {
@@ -117,8 +122,12 @@ public class AssociationReferenceDescriptionRefSetMemberJpa extends
     return true;
   }
 
-  /**
-   * {@inheritDoc}
+  /*
+   * (non-Javadoc)
+   * 
+   * @see
+   * org.ihtsdo.otf.ts.rf2.DescriptionRefSetMember#setDescription(org.ihtsdo
+   * .otf.ts.rf2.Description)
    */
   @Override
   public void setDescription(Description description) {
@@ -126,12 +135,17 @@ public class AssociationReferenceDescriptionRefSetMemberJpa extends
 
   }
 
+  /*
+   * (non-Javadoc)
+   * 
+   * @see org.ihtsdo.otf.ts.rf2.jpa.AbstractComponent#toString()
+   */
   @Override
   public String toString() {
     return super.toString() + ", " + getDescriptionId() + ", "
         + getDescriptionTerminologyId() + ", " + getTargetComponentId();
   }
-  
+
   /**
    * Returns the description id. Used for XML/JSON serialization.
    * 
@@ -178,5 +192,28 @@ public class AssociationReferenceDescriptionRefSetMemberJpa extends
     description.setTerminologyId(descriptionId);
     description.setTerminology(getTerminology());
     description.setTerminologyVersion(getTerminologyVersion());
-  }  
+  }
+
+  /**
+   * Returns the description term. Used for XML/JSON serialization.
+   * 
+   * @return the description term
+   */
+  @XmlElement
+  private String getDescriptionTerm() {
+    return description != null ? description.getTerm() : "";
+  }
+
+  /**
+   * Sets the description term.
+   *
+   * @param term the description term
+   */
+  @SuppressWarnings("unused")
+  private void setDescriptionTerm(String term) {
+    if (description == null) {
+      description = new DescriptionJpa();
+    }
+    description.setTerm(term);
+  }
 }

@@ -19,9 +19,9 @@ import org.junit.Test;
  */
 public class ModelUnit002Test {
 
-  /**  The model object to test. */
+  /** The model object to test. */
   private ReleaseInfoJpa object;
-  
+
   /**
    * Setup class.
    */
@@ -44,21 +44,21 @@ public class ModelUnit002Test {
    * @throws Exception the exception
    */
   @Test
-  public void testModelGetSet001() throws Exception {
-    Logger.getLogger(getClass()).info("TEST testModelGetSet001");
+  public void testModelGetSet002() throws Exception {
+    Logger.getLogger(getClass()).info("TEST testModelGetSet002");
     GetterSetterTester tester = new GetterSetterTester(object);
     tester.exclude("objectId");
     tester.test();
   }
-  
+
   /**
    * Test equals and hascode methods.
    *
    * @throws Exception the exception
    */
   @Test
-  public void testModelEqualsHashcode001() throws Exception {
-    Logger.getLogger(getClass()).info("TEST testModelEqualsHashcode001");
+  public void testModelEqualsHashcode002() throws Exception {
+    Logger.getLogger(getClass()).info("TEST testModelEqualsHashcode002");
     EqualsHashcodeTester tester = new EqualsHashcodeTester(object);
     tester.include("description");
     tester.include("name");
@@ -74,15 +74,15 @@ public class ModelUnit002Test {
     assertTrue(tester.testNonIdentitiyFieldHashcode());
     assertTrue(tester.testIdentityFieldDifferentHashcode());
   }
-  
+
   /**
    * Test copy constructor.
    *
    * @throws Exception the exception
    */
   @Test
-  public void testModelCopy001() throws Exception {
-    Logger.getLogger(getClass()).info("TEST testModelCopy001");
+  public void testModelCopy002() throws Exception {
+    Logger.getLogger(getClass()).info("TEST testModelCopy002");
     CopyConstructorTester tester = new CopyConstructorTester(object);
     assertTrue(tester.testCopyConstructor(ReleaseInfo.class));
   }

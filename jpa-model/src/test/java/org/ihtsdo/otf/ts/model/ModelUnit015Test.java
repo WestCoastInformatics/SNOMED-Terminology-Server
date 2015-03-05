@@ -7,10 +7,10 @@ import org.ihtsdo.otf.ts.helpers.ConfigUtility;
 import org.ihtsdo.otf.ts.helpers.CopyConstructorTester;
 import org.ihtsdo.otf.ts.helpers.EqualsHashcodeTester;
 import org.ihtsdo.otf.ts.helpers.GetterSetterTester;
+import org.ihtsdo.otf.ts.rf2.AttributeValueDescriptionRefSetMember;
 import org.ihtsdo.otf.ts.rf2.Description;
-import org.ihtsdo.otf.ts.rf2.LanguageRefSetMember;
+import org.ihtsdo.otf.ts.rf2.jpa.AttributeValueDescriptionRefSetMemberJpa;
 import org.ihtsdo.otf.ts.rf2.jpa.DescriptionJpa;
-import org.ihtsdo.otf.ts.rf2.jpa.LanguageRefSetMemberJpa;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -18,12 +18,12 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 /**
- * Unit testing for {@link LanguageRefSetMemberJpa}.
+ * Unit testing for {@link AttributeValueDescriptionRefSetMemberJpa}.
  */
-public class ModelUnit009Test {
+public class ModelUnit015Test {
 
   /** The model object to test. */
-  private LanguageRefSetMemberJpa object;
+  private AttributeValueDescriptionRefSetMemberJpa object;
 
   /** The test fixture d1. */
   private Description d1;
@@ -44,7 +44,7 @@ public class ModelUnit009Test {
    */
   @Before
   public void setup() {
-    object = new LanguageRefSetMemberJpa();
+    object = new AttributeValueDescriptionRefSetMemberJpa();
     // Set up some objects
     d1 = new DescriptionJpa();
     d1.setId(1L);
@@ -61,7 +61,7 @@ public class ModelUnit009Test {
    * @throws Exception the exception
    */
   @Test
-  public void testModelGetSet009() throws Exception {
+  public void testModelGetSet015() throws Exception {
     Logger.getLogger(getClass()).info("TEST testModelGetSet009");
     GetterSetterTester tester = new GetterSetterTester(object);
     tester.exclude("objectId");
@@ -74,8 +74,8 @@ public class ModelUnit009Test {
    * @throws Exception the exception
    */
   @Test
-  public void testModelEqualsHashcode009() throws Exception {
-    Logger.getLogger(getClass()).info("TEST testModelEqualsHashcode009");
+  public void testModelEqualsHashcode015() throws Exception {
+    Logger.getLogger(getClass()).info("TEST testModelEqualsHashcode015");
     EqualsHashcodeTester tester = new EqualsHashcodeTester(object);
     tester.include("active");
     tester.include("moduleId");
@@ -86,7 +86,7 @@ public class ModelUnit009Test {
     tester.include("description");
     // needed for generic refset class
     tester.include("component");
-    tester.include("acceptabilityId");
+    tester.include("valueId");
 
     // Set up some objects
     tester.proxy(Description.class, 1, d1);
@@ -106,7 +106,7 @@ public class ModelUnit009Test {
    * @throws Exception the exception
    */
   @Test
-  public void testModelCopy009() throws Exception {
+  public void testModelCopy015() throws Exception {
     Logger.getLogger(getClass()).info("TEST testModelCopy009");
     CopyConstructorTester tester = new CopyConstructorTester(object);
 
@@ -114,7 +114,8 @@ public class ModelUnit009Test {
     tester.proxy(Description.class, 1, d1);
     tester.proxy(Description.class, 2, d2);
 
-    assertTrue(tester.testCopyConstructor(LanguageRefSetMember.class));
+    assertTrue(tester
+        .testCopyConstructor(AttributeValueDescriptionRefSetMember.class));
   }
 
   /**
@@ -123,24 +124,26 @@ public class ModelUnit009Test {
    * @throws Exception the exception
    */
   @Test
-  public void testXmlTransient009() throws Exception {
+  public void testXmlTransient015() throws Exception {
     Logger.getLogger(getClass()).info("TEST testXmlTransient009");
     Description d = new DescriptionJpa();
     d.setId(1L);
     d.setTerminologyId("1");
     d.setTerm("1");
-    LanguageRefSetMember member = new LanguageRefSetMemberJpa();
+    AttributeValueDescriptionRefSetMember member =
+        new AttributeValueDescriptionRefSetMemberJpa();
     member.setId(1L);
     member.setTerminologyId("1");
     member.setDescription(d);
-    d.addLanguageRefSetMember(member);
+    d.addAttributeValueRefSetMember(member);
     String xml = ConfigUtility.getStringForGraph(member);
     assertTrue(xml.contains("<descriptionId>"));
     assertTrue(xml.contains("<descriptionTerminologyId>"));
     assertTrue(xml.contains("<descriptionTerm>"));
-    LanguageRefSetMember member2 =
-        (LanguageRefSetMember) ConfigUtility.getGraphForString(xml,
-            LanguageRefSetMemberJpa.class);
+    AttributeValueDescriptionRefSetMember member2 =
+        (AttributeValueDescriptionRefSetMember) ConfigUtility
+            .getGraphForString(xml,
+                AttributeValueDescriptionRefSetMemberJpa.class);
     assertTrue(member.equals(member2));
   }
 

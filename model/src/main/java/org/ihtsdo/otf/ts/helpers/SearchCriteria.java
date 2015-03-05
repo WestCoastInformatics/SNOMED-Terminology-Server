@@ -1,5 +1,6 @@
 package org.ihtsdo.otf.ts.helpers;
 
+// TODO: Auto-generated Javadoc
 /**
  * Represents semantic search criteria. NOTE, some combinations of these flags
  * may be erroneous (such as finding active AND inactive only content).
@@ -12,7 +13,7 @@ public interface SearchCriteria {
    * @return the id
    */
   public Long getId();
-  
+
   /**
    * Sets the id.
    *
@@ -77,7 +78,7 @@ public interface SearchCriteria {
   public void setFindDescendants(boolean descendants);
 
   /**
-   * Indicates whether to find matches themselves (vs only descendants)
+   * Indicates whether to find matches themselves (vs only descendants).
    *
    * @return the find self
    */
@@ -127,12 +128,26 @@ public interface SearchCriteria {
   public String getFindBySourceId();
 
   /**
+   * Sets the find by source id.
+   *
+   * @param findBySourceId the find by source id
+   */
+  public void setFindBySourceId(String findBySourceId);
+
+  /**
    * Returns the type id of relationships for which matches among source or
    * destination ids will be included.
    *
    * @return the find by relationship type id
    */
   public String getFindByRelationshipTypeId();
+
+  /**
+   * Sets the find by relationship type id.
+   *
+   * @param findByRelationshipTypeId the find by relationship type id
+   */
+  public void setFindByRelationshipTypeId(String findByRelationshipTypeId);
 
   /**
    * Returns the source id of relationships for which matches among source ids
@@ -143,12 +158,27 @@ public interface SearchCriteria {
   public String getFindByDestinationId();
 
   /**
+   * Sets the find by destination id.
+   *
+   * @param findByDestinationId the find by destination id
+   */
+  public void setFindByDestinationId(String findByDestinationId);
+
+  /**
    * Indicates whether the specified source or destination id of a relationship
    * criteria should be searched for just that id or also its descendats.
    *
    * @return the find by relationship descendants
    */
   public boolean getFindByRelationshipDescendants();
+
+  /**
+   * Sets the find by relationship descendants.
+   *
+   * @param findByRelationshipDescendants the find by relationship descendants
+   */
+  public void setFindByRelationshipDescendants(
+    boolean findByRelationshipDescendants);
 
   /**
    * Indicates that the search should return source concepts connected by the

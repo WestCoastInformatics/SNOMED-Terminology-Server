@@ -20,19 +20,19 @@ public class SearchCriteriaJpa implements SearchCriteria {
   private boolean findActiveOnly;
 
   /** The destination id. */
-  private String destinationId;
+  private String findByDestinationId;
 
   /** The module id. */
   private String findByModuleId;
 
   /** The relationship descendants. */
-  private boolean relationshipDescendants;
+  private boolean findByRelationshipDescendants;
 
   /** The relationship type id. */
-  private String relationshipTypeId;
+  private String findByRelationshipTypeId;
 
   /** The source id. */
-  private String sourceId;
+  private String findBySourceId;
 
   /** The descendants. */
   private boolean findDescendants;
@@ -63,11 +63,12 @@ public class SearchCriteriaJpa implements SearchCriteria {
    */
   public SearchCriteriaJpa(SearchCriteria searchCriteria) {
     findActiveOnly = searchCriteria.getFindActiveOnly();
-    destinationId = searchCriteria.getFindByDestinationId();
+    findByDestinationId = searchCriteria.getFindByDestinationId();
     findByModuleId = searchCriteria.getFindByModuleId();
-    relationshipDescendants = searchCriteria.getFindByRelationshipDescendants();
-    relationshipTypeId = searchCriteria.getFindByRelationshipTypeId();
-    sourceId = searchCriteria.getFindBySourceId();
+    findByRelationshipDescendants =
+        searchCriteria.getFindByRelationshipDescendants();
+    findByRelationshipTypeId = searchCriteria.getFindByRelationshipTypeId();
+    findBySourceId = searchCriteria.getFindBySourceId();
     findDefinedOnly = searchCriteria.getFindDefinedOnly();
     findDescendants = searchCriteria.getFindDescendants();
     findInactiveOnly = searchCriteria.getFindInactiveOnly();
@@ -254,7 +255,7 @@ public class SearchCriteriaJpa implements SearchCriteria {
    */
   @Override
   public String getFindBySourceId() {
-    return sourceId;
+    return findBySourceId;
   }
 
   /*
@@ -264,7 +265,7 @@ public class SearchCriteriaJpa implements SearchCriteria {
    */
   @Override
   public String getFindByRelationshipTypeId() {
-    return relationshipTypeId;
+    return findByRelationshipTypeId;
   }
 
   /*
@@ -274,7 +275,7 @@ public class SearchCriteriaJpa implements SearchCriteria {
    */
   @Override
   public String getFindByDestinationId() {
-    return destinationId;
+    return findByDestinationId;
   }
 
   /*
@@ -285,7 +286,7 @@ public class SearchCriteriaJpa implements SearchCriteria {
    */
   @Override
   public boolean getFindByRelationshipDescendants() {
-    return relationshipDescendants;
+    return findByRelationshipDescendants;
   }
 
   /*
@@ -298,9 +299,9 @@ public class SearchCriteriaJpa implements SearchCriteria {
   @Override
   public void setFindSourceOfRelationship(String typeId, String destinationId,
     boolean descendants) {
-    this.relationshipTypeId = typeId;
-    this.destinationId = destinationId;
-    this.relationshipDescendants = descendants;
+    this.findByRelationshipTypeId = typeId;
+    this.findByDestinationId = destinationId;
+    this.findByRelationshipDescendants = descendants;
   }
 
   /*
@@ -313,13 +314,64 @@ public class SearchCriteriaJpa implements SearchCriteria {
   @Override
   public void setFindDestinationOfRelationship(String typeId, String sourceId,
     boolean descendants) {
-    this.relationshipTypeId = typeId;
-    this.sourceId = sourceId;
-    this.relationshipDescendants = descendants;
+    this.findByRelationshipTypeId = typeId;
+    this.findBySourceId = sourceId;
+    this.findByRelationshipDescendants = descendants;
   }
 
+  /*
+   * (non-Javadoc)
+   * 
+   * @see
+   * org.ihtsdo.otf.ts.helpers.SearchCriteria#setFindBySourceId(java.lang.String
+   * )
+   */
+  @Override
+  public void setFindBySourceId(String findBySourceId) {
+    this.findBySourceId = findBySourceId;
+  }
 
-  /* (non-Javadoc)
+  /*
+   * (non-Javadoc)
+   * 
+   * @see
+   * org.ihtsdo.otf.ts.helpers.SearchCriteria#setFindByRelationshipTypeId(java
+   * .lang.String)
+   */
+  @Override
+  public void setFindByRelationshipTypeId(String findByRelationshipTypeId) {
+    this.findByRelationshipTypeId = findByRelationshipTypeId;
+  }
+
+  /*
+   * (non-Javadoc)
+   * 
+   * @see
+   * org.ihtsdo.otf.ts.helpers.SearchCriteria#setFindByDestinationId(java.lang
+   * .String)
+   */
+  @Override
+  public void setFindByDestinationId(String findByDestinationId) {
+    this.findByDestinationId = findByDestinationId;
+  }
+
+  /*
+   * (non-Javadoc)
+   * 
+   * @see
+   * org.ihtsdo.otf.ts.helpers.SearchCriteria#setFindByRelationshipDescendants
+   * (boolean)
+   */
+  @Override
+  public void setFindByRelationshipDescendants(
+    boolean findByRelationshipDescendants) {
+    this.findByRelationshipDescendants = findByRelationshipDescendants;
+
+  }
+
+  /*
+   * (non-Javadoc)
+   * 
    * @see java.lang.Object#hashCode()
    */
   @Override
@@ -330,22 +382,31 @@ public class SearchCriteriaJpa implements SearchCriteria {
     result = prime * result + (findDefinedOnly ? 1231 : 1237);
     result = prime * result + (findDescendants ? 1231 : 1237);
     result =
-        prime * result
-            + ((destinationId == null) ? 0 : destinationId.hashCode());
+        prime
+            * result
+            + ((findByDestinationId == null) ? 0 : findByDestinationId
+                .hashCode());
     result = prime * result + (findInactiveOnly ? 1231 : 1237);
-    result = prime * result + ((findByModuleId == null) ? 0 : findByModuleId.hashCode());
+    result =
+        prime * result
+            + ((findByModuleId == null) ? 0 : findByModuleId.hashCode());
     result = prime * result + (findPrimitiveOnly ? 1231 : 1237);
-    result = prime * result + (relationshipDescendants ? 1231 : 1237);
+    result = prime * result + (findByRelationshipDescendants ? 1231 : 1237);
     result =
         prime
             * result
-            + ((relationshipTypeId == null) ? 0 : relationshipTypeId.hashCode());
+            + ((findByRelationshipTypeId == null) ? 0
+                : findByRelationshipTypeId.hashCode());
     result = prime * result + (findSelf ? 1231 : 1237);
-    result = prime * result + ((sourceId == null) ? 0 : sourceId.hashCode());
+    result =
+        prime * result
+            + ((findBySourceId == null) ? 0 : findBySourceId.hashCode());
     return result;
   }
 
-  /* (non-Javadoc)
+  /*
+   * (non-Javadoc)
+   * 
    * @see java.lang.Object#equals(java.lang.Object)
    */
   @Override
@@ -363,10 +424,10 @@ public class SearchCriteriaJpa implements SearchCriteria {
       return false;
     if (findDescendants != other.findDescendants)
       return false;
-    if (destinationId == null) {
-      if (other.destinationId != null)
+    if (findByDestinationId == null) {
+      if (other.findByDestinationId != null)
         return false;
-    } else if (!destinationId.equals(other.destinationId))
+    } else if (!findByDestinationId.equals(other.findByDestinationId))
       return false;
     if (findInactiveOnly != other.findInactiveOnly)
       return false;
@@ -377,20 +438,21 @@ public class SearchCriteriaJpa implements SearchCriteria {
       return false;
     if (findPrimitiveOnly != other.findPrimitiveOnly)
       return false;
-    if (relationshipDescendants != other.relationshipDescendants)
+    if (findByRelationshipDescendants != other.findByRelationshipDescendants)
       return false;
-    if (relationshipTypeId == null) {
-      if (other.relationshipTypeId != null)
+    if (findByRelationshipTypeId == null) {
+      if (other.findByRelationshipTypeId != null)
         return false;
-    } else if (!relationshipTypeId.equals(other.relationshipTypeId))
+    } else if (!findByRelationshipTypeId.equals(other.findByRelationshipTypeId))
       return false;
     if (findSelf != other.findSelf)
       return false;
-    if (sourceId == null) {
-      if (other.sourceId != null)
+    if (findBySourceId == null) {
+      if (other.findBySourceId != null)
         return false;
-    } else if (!sourceId.equals(other.sourceId))
+    } else if (!findBySourceId.equals(other.findBySourceId))
       return false;
     return true;
   }
+
 }

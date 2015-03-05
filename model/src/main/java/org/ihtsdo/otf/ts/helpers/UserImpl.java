@@ -1,8 +1,9 @@
-package org.ihtsdo.otf.ts.services.helpers;
+package org.ihtsdo.otf.ts.helpers;
 
 import org.ihtsdo.otf.ts.User;
 import org.ihtsdo.otf.ts.UserRole;
 
+// TODO: Auto-generated Javadoc
 /**
  * Local implementation of {@link User}.
  */
@@ -20,57 +21,99 @@ public class UserImpl implements User {
   private UserRole applicationRole;
 
   /**
-   * The default constructor.
+   * Instantiates an empty {@link UserImpl}.
    */
   public UserImpl() {
     // do nothing
   }
 
+  /**
+   * Instantiates a {@link UserImpl} from the specified parameters.
+   *
+   * @param user the user
+   */
+  public UserImpl(User user) {
+    userName = user.getUserName();
+    name = user.getName();
+    email = user.getEmail();
+    applicationRole = user.getApplicationRole();
+  }
+  
+  /* (non-Javadoc)
+   * @see org.ihtsdo.otf.ts.User#getUserName()
+   */
   @Override
   public String getUserName() {
     return userName;
   }
 
+  /* (non-Javadoc)
+   * @see org.ihtsdo.otf.ts.User#setUserName(java.lang.String)
+   */
   @Override
   public void setUserName(String username) {
     this.userName = username;
   }
 
+  /* (non-Javadoc)
+   * @see org.ihtsdo.otf.ts.User#getName()
+   */
   @Override
   public String getName() {
     return name;
   }
 
+  /* (non-Javadoc)
+   * @see org.ihtsdo.otf.ts.User#setName(java.lang.String)
+   */
   @Override
   public void setName(String name) {
     this.name = name;
   }
 
+  /* (non-Javadoc)
+   * @see org.ihtsdo.otf.ts.User#getEmail()
+   */
   @Override
   public String getEmail() {
     return email;
   }
 
+  /* (non-Javadoc)
+   * @see org.ihtsdo.otf.ts.User#setEmail(java.lang.String)
+   */
   @Override
   public void setEmail(String email) {
     this.email = email;
   }
 
+  /* (non-Javadoc)
+   * @see org.ihtsdo.otf.ts.User#getApplicationRole()
+   */
   @Override
   public UserRole getApplicationRole() {
     return applicationRole;
   }
 
+  /* (non-Javadoc)
+   * @see org.ihtsdo.otf.ts.User#setApplicationRole(org.ihtsdo.otf.ts.UserRole)
+   */
   @Override
   public void setApplicationRole(UserRole role) {
     this.applicationRole = role;
   }
 
+  /* (non-Javadoc)
+   * @see org.ihtsdo.otf.ts.User#getId()
+   */
   @Override
   public Long getId() {
     return null;
   }
 
+  /* (non-Javadoc)
+   * @see org.ihtsdo.otf.ts.User#getObjectId()
+   */
   @Override
   public String getObjectId() {
     return "";

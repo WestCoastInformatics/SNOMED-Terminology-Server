@@ -7,7 +7,7 @@ import org.ihtsdo.otf.ts.User;
 import org.ihtsdo.otf.ts.helpers.CopyConstructorTester;
 import org.ihtsdo.otf.ts.helpers.EqualsHashcodeTester;
 import org.ihtsdo.otf.ts.helpers.GetterSetterTester;
-import org.ihtsdo.otf.ts.jpa.UserJpa;
+import org.ihtsdo.otf.ts.helpers.UserImpl;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -15,12 +15,12 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 /**
- * Unit testing for {@link UserJpa}.
+ * Unit testing for {@link UserImpl}.
  */
-public class ModelUnit003Test {
+public class ModelUnit022Test {
 
   /** The model object to test. */
-  private UserJpa object;
+  private UserImpl object;
 
   /**
    * Setup class.
@@ -35,7 +35,7 @@ public class ModelUnit003Test {
    */
   @Before
   public void setup() {
-    object = new UserJpa();
+    object = new UserImpl();
   }
 
   /**
@@ -44,10 +44,9 @@ public class ModelUnit003Test {
    * @throws Exception the exception
    */
   @Test
-  public void testModelGetSet003() throws Exception {
-    Logger.getLogger(getClass()).info("TEST testModelGetSet003");
+  public void testModelGetSet022() throws Exception {
+    Logger.getLogger(getClass()).info("TEST testModelGetSet022");
     GetterSetterTester tester = new GetterSetterTester(object);
-    tester.exclude("objectId");
     tester.test();
   }
 
@@ -57,8 +56,8 @@ public class ModelUnit003Test {
    * @throws Exception the exception
    */
   @Test
-  public void testModelEqualsHashcode003() throws Exception {
-    Logger.getLogger(getClass()).info("TEST testModelEqualsHashcode003");
+  public void testModelEqualsHashcode022() throws Exception {
+    Logger.getLogger(getClass()).info("TEST testModelEqualsHashcode022");
     EqualsHashcodeTester tester = new EqualsHashcodeTester(object);
     tester.include("applicationRole");
     tester.include("email");
@@ -79,8 +78,8 @@ public class ModelUnit003Test {
    * @throws Exception the exception
    */
   @Test
-  public void testModelCopy003() throws Exception {
-    Logger.getLogger(getClass()).info("TEST testModelCopy003");
+  public void testModelCopy022() throws Exception {
+    Logger.getLogger(getClass()).info("TEST testModelCopy022");
     CopyConstructorTester tester = new CopyConstructorTester(object);
     assertTrue(tester.testCopyConstructor(User.class));
   }

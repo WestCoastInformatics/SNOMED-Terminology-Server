@@ -6,6 +6,7 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -110,6 +111,7 @@ public class ProxyTester {
    */
   protected void setFields(Object o, boolean includeFlag, boolean logField,
     int initializer) throws Exception {
+    Set<String> includesSeen = new HashSet<>();
     Method[] methods = clazz.getMethods();
     for (int i = 0; i < methods.length; i++) {
 
@@ -122,6 +124,12 @@ public class ProxyTester {
       if (args.length != 1)
         continue;
 
+      // indicate we've seen it
+      if (includes != null && includes.contains(fieldName.toLowerCase())) {
+        includesSeen.add(fieldName.toLowerCase());
+      }
+
+      includesSeen.add(fieldName.toLowerCase());
       /* Check the field name against our include/exclude list. */
       if (includeFlag) {
         if (includes != null && !includes.contains(fieldName.toLowerCase()))
@@ -152,6 +160,19 @@ public class ProxyTester {
         Logger.getLogger(getClass()).info("  field = " + fieldName);
       }
       setField(o, getter, m, args[0], initializer);
+    }
+
+    // If includes contains entries and not all have been seen - error\
+    if (includes != null) {
+      Set<String> notSeen = new HashSet<>();
+      for (String field : includes) {
+        if (!includesSeen.contains(field.toLowerCase())) {
+          notSeen.add(field);
+        }
+      }
+      if (notSeen.size() > 0) {
+        throw new Exception("Some included fields were not found: " + notSeen);
+      }
     }
   }
 
@@ -188,7 +209,7 @@ public class ProxyTester {
     int initializer) throws Exception {
     Object proxy = makeProxy(argType, initializer);
     // Logger.getLogger(getClass()).info(
-    //     "  " + set.getName() + " = " + proxy.toString());
+    // "  " + set.getName() + " = " + proxy.toString());
     try {
       set.invoke(o, new Object[] {
         proxy
@@ -222,6 +243,8 @@ public class ProxyTester {
     /* If it's a primitive type, just create it. */
     if (type == String.class)
       return "" + initializer;
+    if (type == Date.class)
+      return new Date(initializer);
     if (type == Boolean.class || type == boolean.class)
       return new Boolean((initializer & 1) == 0);
     if (type == Integer.class || type == int.class)

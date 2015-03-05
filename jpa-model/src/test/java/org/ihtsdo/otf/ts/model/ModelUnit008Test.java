@@ -3,13 +3,20 @@ package org.ihtsdo.otf.ts.model;
 import static org.junit.Assert.assertTrue;
 
 import org.apache.log4j.Logger;
+import org.ihtsdo.otf.ts.helpers.ConfigUtility;
 import org.ihtsdo.otf.ts.helpers.CopyConstructorTester;
 import org.ihtsdo.otf.ts.helpers.EqualsHashcodeTester;
 import org.ihtsdo.otf.ts.helpers.GetterSetterTester;
+import org.ihtsdo.otf.ts.rf2.AssociationReferenceDescriptionRefSetMember;
+import org.ihtsdo.otf.ts.rf2.AttributeValueDescriptionRefSetMember;
 import org.ihtsdo.otf.ts.rf2.Concept;
 import org.ihtsdo.otf.ts.rf2.Description;
+import org.ihtsdo.otf.ts.rf2.LanguageRefSetMember;
+import org.ihtsdo.otf.ts.rf2.jpa.AssociationReferenceDescriptionRefSetMemberJpa;
+import org.ihtsdo.otf.ts.rf2.jpa.AttributeValueDescriptionRefSetMemberJpa;
 import org.ihtsdo.otf.ts.rf2.jpa.ConceptJpa;
 import org.ihtsdo.otf.ts.rf2.jpa.DescriptionJpa;
+import org.ihtsdo.otf.ts.rf2.jpa.LanguageRefSetMemberJpa;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -46,7 +53,7 @@ public class ModelUnit008Test {
    * @throws Exception the exception
    */
   @Test
-  public void testModelGetSet001() throws Exception {
+  public void testModelGetSet008() throws Exception {
     Logger.getLogger(getClass()).info("TEST testModelGetSet001");
     GetterSetterTester tester = new GetterSetterTester(object);
     tester.exclude("objectId");
@@ -59,7 +66,7 @@ public class ModelUnit008Test {
    * @throws Exception the exception
    */
   @Test
-  public void testModelEqualsHashcode001() throws Exception {
+  public void testModelEqualsHashcode008() throws Exception {
     Logger.getLogger(getClass()).info("TEST testModelEqualsHashcode001");
     EqualsHashcodeTester tester = new EqualsHashcodeTester(object);
     tester.include("active");
@@ -97,7 +104,7 @@ public class ModelUnit008Test {
    * @throws Exception the exception
    */
   @Test
-  public void testModelCopy001() throws Exception {
+  public void testModelCopy008() throws Exception {
     Logger.getLogger(getClass()).info("TEST testModelCopy001");
     CopyConstructorTester tester = new CopyConstructorTester(object);
 
@@ -112,6 +119,86 @@ public class ModelUnit008Test {
     tester.proxy(Concept.class, 2, c2);
 
     assertTrue(tester.testCopyConstructorCascadeDeep(Description.class));
+  }
+
+  /**
+   * Test deep copy.
+   *
+   * @throws Exception the exception
+   */
+  @Test
+  public void testDeepCopy008() throws Exception {
+    Logger.getLogger(getClass()).info("TEST testDeepCopy008");
+    Description d = new DescriptionJpa();
+    Concept c = new ConceptJpa();
+    c.setId(1L);
+    c.setTerminologyId("1");
+    c.setDefaultPreferredName("1");
+    d.setConcept(c);
+
+    LanguageRefSetMember lmember = new LanguageRefSetMemberJpa();
+    lmember.setId(1L);
+    lmember.setTerminologyId("1");
+    lmember.setDescription(d);
+    d.addLanguageRefSetMember(lmember);
+
+    AttributeValueDescriptionRefSetMember avmember =
+        new AttributeValueDescriptionRefSetMemberJpa();
+    avmember.setTerminologyId("1");
+    avmember.setDescription(d);
+    d.addAttributeValueRefSetMember(avmember);
+
+    AssociationReferenceDescriptionRefSetMember asmember =
+        new AssociationReferenceDescriptionRefSetMemberJpa();
+    asmember.setTerminologyId("1");
+    asmember.setDescription(d);
+    d.addAssociationReferenceRefSetMember(asmember);
+
+    // Cascade copy includes language refset members
+    Description d2 = new DescriptionJpa(d, true, false);
+    assertTrue(d2.getLanguageRefSetMembers().size() == 1);
+    assertTrue(d2.getLanguageRefSetMembers().iterator().next().equals(lmember));
+    assertTrue(d.equals(d2));
+    assertTrue(d2.getAttributeValueRefSetMembers().size() == 0);
+    assertTrue(d2.getAssociationReferenceRefSetMembers().size() == 0);
+
+    // Deep copy includes language, attribute value, and association reference
+    // members
+    Description d3 = new DescriptionJpa(d, true, true);
+    assertTrue(d3.getLanguageRefSetMembers().size() == 1);
+    assertTrue(d3.getLanguageRefSetMembers().iterator().next().equals(lmember));
+    assertTrue(d.equals(d3));
+    assertTrue(d3.getAttributeValueRefSetMembers().size() == 1);
+    assertTrue(d3.getAttributeValueRefSetMembers().iterator().next()
+        .equals(avmember));
+    assertTrue(d3.getAssociationReferenceRefSetMembers().size() == 1);
+    assertTrue(d3.getAssociationReferenceRefSetMembers().iterator().next()
+        .equals(asmember));
+
+  }
+
+  /**
+   * Test concept reference in XML serialization.
+   *
+   * @throws Exception the exception
+   */
+  @Test
+  public void testXmlTransient008() throws Exception {
+    Logger.getLogger(getClass()).info("TEST testXmlTransient008");
+    Description d = new DescriptionJpa();
+    Concept c = new ConceptJpa();
+    c.setId(1L);
+    c.setTerminologyId("1");
+    c.setDefaultPreferredName("1");
+    d.setConcept(c);
+    String xml = ConfigUtility.getStringForGraph(d);
+    assertTrue(xml.contains("<conceptId>"));
+    assertTrue(xml.contains("<conceptTerminologyId>"));
+    assertTrue(xml.contains("<conceptPreferredName>"));
+    Description d2 =
+        (Description) ConfigUtility
+            .getGraphForString(xml, DescriptionJpa.class);
+    assertTrue(d.equals(d2));
   }
 
   /**

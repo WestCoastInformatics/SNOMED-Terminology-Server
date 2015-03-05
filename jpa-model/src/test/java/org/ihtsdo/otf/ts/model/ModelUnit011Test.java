@@ -3,11 +3,13 @@ package org.ihtsdo.otf.ts.model;
 import static org.junit.Assert.assertTrue;
 
 import org.apache.log4j.Logger;
-import org.ihtsdo.otf.ts.User;
 import org.ihtsdo.otf.ts.helpers.CopyConstructorTester;
 import org.ihtsdo.otf.ts.helpers.EqualsHashcodeTester;
 import org.ihtsdo.otf.ts.helpers.GetterSetterTester;
-import org.ihtsdo.otf.ts.jpa.UserJpa;
+import org.ihtsdo.otf.ts.rf2.Concept;
+import org.ihtsdo.otf.ts.rf2.TransitiveRelationship;
+import org.ihtsdo.otf.ts.rf2.jpa.ConceptJpa;
+import org.ihtsdo.otf.ts.rf2.jpa.TransitiveRelationshipJpa;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -15,12 +17,18 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 /**
- * Unit testing for {@link UserJpa}.
+ * Unit testing for {@link TransitiveRelationshipJpa}.
  */
-public class ModelUnit003Test {
+public class ModelUnit011Test {
 
   /** The model object to test. */
-  private UserJpa object;
+  private TransitiveRelationshipJpa object;
+
+  /** The test fixture c1. */
+  private Concept c1;
+
+  /** The test fixture c2. */
+  private Concept c2;
 
   /**
    * Setup class.
@@ -35,7 +43,13 @@ public class ModelUnit003Test {
    */
   @Before
   public void setup() {
-    object = new UserJpa();
+    object = new TransitiveRelationshipJpa();
+    c1 = new ConceptJpa();
+    c1.setId(1L);
+    c1.setDefinitionStatusId("1");
+    c2 = new ConceptJpa();
+    c2.setId(2L);
+    c2.setDefinitionStatusId("2");
   }
 
   /**
@@ -44,8 +58,8 @@ public class ModelUnit003Test {
    * @throws Exception the exception
    */
   @Test
-  public void testModelGetSet003() throws Exception {
-    Logger.getLogger(getClass()).info("TEST testModelGetSet003");
+  public void testModelGetSet011() throws Exception {
+    Logger.getLogger(getClass()).info("TEST testModelGetSet011");
     GetterSetterTester tester = new GetterSetterTester(object);
     tester.exclude("objectId");
     tester.test();
@@ -57,13 +71,20 @@ public class ModelUnit003Test {
    * @throws Exception the exception
    */
   @Test
-  public void testModelEqualsHashcode003() throws Exception {
-    Logger.getLogger(getClass()).info("TEST testModelEqualsHashcode003");
+  public void testModelEqualsHashcode011() throws Exception {
+    Logger.getLogger(getClass()).info("TEST testModelEqualsHashcode011");
     EqualsHashcodeTester tester = new EqualsHashcodeTester(object);
-    tester.include("applicationRole");
-    tester.include("email");
-    tester.include("name");
-    tester.include("userName");
+    tester.include("active");
+    tester.include("moduleId");
+    tester.include("terminology");
+    tester.include("terminologyId");
+    tester.include("terminologyVersion");
+    tester.include("subTypeConcept");
+    tester.include("superTypeConcept");
+
+    // Set up objects
+    tester.proxy(Concept.class, 1, c1);
+    tester.proxy(Concept.class, 2, c2);
 
     assertTrue(tester.testIdentitiyFieldEquals());
     assertTrue(tester.testNonIdentitiyFieldEquals());
@@ -79,10 +100,15 @@ public class ModelUnit003Test {
    * @throws Exception the exception
    */
   @Test
-  public void testModelCopy003() throws Exception {
-    Logger.getLogger(getClass()).info("TEST testModelCopy003");
+  public void testModelCopy011() throws Exception {
+    Logger.getLogger(getClass()).info("TEST testModelCopy011");
     CopyConstructorTester tester = new CopyConstructorTester(object);
-    assertTrue(tester.testCopyConstructor(User.class));
+
+    // Set up objects
+    tester.proxy(Concept.class, 1, c1);
+    tester.proxy(Concept.class, 2, c2);
+
+    assertTrue(tester.testCopyConstructor(TransitiveRelationship.class));
   }
 
   /**

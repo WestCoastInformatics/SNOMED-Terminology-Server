@@ -44,8 +44,8 @@ public class ModelUnit006Test {
    * @throws Exception the exception
    */
   @Test
-  public void testModelGetSet001() throws Exception {
-    Logger.getLogger(getClass()).info("TEST testModelGetSet001");
+  public void testModelGetSet006() throws Exception {
+    Logger.getLogger(getClass()).info("TEST testModelGetSet006");
     GetterSetterTester tester = new GetterSetterTester(object);
     tester.exclude("objectId");
     tester.test();
@@ -57,20 +57,20 @@ public class ModelUnit006Test {
    * @throws Exception the exception
    */
   @Test
-  public void testModelEqualsHashcode001() throws Exception {
-    Logger.getLogger(getClass()).info("TEST testModelEqualsHashcode001");
+  public void testModelEqualsHashcode006() throws Exception {
+    Logger.getLogger(getClass()).info("TEST testModelEqualsHashcode006");
     EqualsHashcodeTester tester = new EqualsHashcodeTester(object);
     tester.include("findActiveOnly");
     tester.include("findDefinedOnly");
     tester.include("findDescendants");
-    tester.include("destinationId");
+    tester.include("findByDestinationId");
     tester.include("findInactiveOnly");
     tester.include("findByModuleId");
     tester.include("findPrimitiveOnly");
-    tester.include("relationshipDescendants");
-    tester.include("relationshipTypeId");
+    tester.include("findByRelationshipDescendants");
+    tester.include("findByRelationshipTypeId");
     tester.include("findSelf");
-    tester.include("sourceId");
+    tester.include("findBySourceId");
 
     assertTrue(tester.testIdentitiyFieldEquals());
     assertTrue(tester.testNonIdentitiyFieldEquals());
@@ -86,8 +86,8 @@ public class ModelUnit006Test {
    * @throws Exception the exception
    */
   @Test
-  public void testModelCopy001() throws Exception {
-    Logger.getLogger(getClass()).info("TEST testModelCopy001");
+  public void testModelCopy006() throws Exception {
+    Logger.getLogger(getClass()).info("TEST testModelCopy006");
     CopyConstructorTester tester = new CopyConstructorTester(object);
     assertTrue(tester.testCopyConstructor(SearchCriteria.class));
   }
