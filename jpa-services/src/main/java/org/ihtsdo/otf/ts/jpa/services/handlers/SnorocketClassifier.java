@@ -739,7 +739,7 @@ public class SnorocketClassifier implements Classifier {
         }
       }
 
-      if (exists == false) {
+      if (!exists) {
         return testNum;
       } else {
         testNum++;
@@ -996,6 +996,12 @@ public class SnorocketClassifier implements Classifier {
   @Override
   public void setProject(Project project) {
     this.project = project;
+  }
+
+  @Override
+  public void close() throws Exception {
+    // TODO Auto-generated method stub
+    
   }
 
 }

@@ -32,9 +32,10 @@ public class RootServiceRestImpl {
     } catch (Exception e1) {
       // do nothing
     }
+    e.printStackTrace();
     // throw the exception as-is, e.g. for 401 errors
     if (e instanceof WebApplicationException) {
-      throw (WebApplicationException)e;
+      throw (WebApplicationException) e;
     }
     throw new WebApplicationException(Response
         .status(500)
@@ -66,7 +67,7 @@ public class RootServiceRestImpl {
                 + ". Please contact the administrator.").build());
 
   }
-  
+
   /**
    * Authenticate.
    *
@@ -86,8 +87,26 @@ public class RootServiceRestImpl {
     }
     if (!role.hasPrivilegesOf(cmpRole))
       throw new WebApplicationException(Response.status(401)
-          .entity("User does not have permissions to " + perform + ".")
-          .build());
+          .entity("User does not have permissions to " + perform + ".").build());
+  }
+
+  /**
+   * Returns the total elapsed time str.
+   *
+   * @param time the time
+   * @return the total elapsed time str
+   */
+  @SuppressWarnings({
+    "boxing"
+  })
+  protected static String getTotalElapsedTimeStr(long time) {
+    Long resultnum = (System.nanoTime() - time) / 1000000000;
+    String result = resultnum.toString() + "s";
+    resultnum = resultnum / 60;
+    result = result + " / " + resultnum.toString() + "m";
+    resultnum = resultnum / 60;
+    result = result + " / " + resultnum.toString() + "h";
+    return result;
   }
 
 }

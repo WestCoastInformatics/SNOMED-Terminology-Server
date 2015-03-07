@@ -1,20 +1,14 @@
 package org.ihtsdo.otf.ts.mojo;
 
-import java.util.HashSet;
 import java.util.Properties;
-import java.util.Set;
-
-import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
-import javax.persistence.Persistence;
 
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoFailureException;
-import org.hibernate.CacheMode;
-import org.hibernate.search.jpa.FullTextEntityManager;
-import org.hibernate.search.jpa.Search;
 import org.ihtsdo.otf.ts.helpers.ConfigUtility;
-import org.ihtsdo.otf.ts.rf2.jpa.ConceptJpa;
+import org.ihtsdo.otf.ts.jpa.client.ContentClientRest;
+import org.ihtsdo.otf.ts.jpa.services.SecurityServiceJpa;
+import org.ihtsdo.otf.ts.rest.impl.ContentServiceRestImpl;
+import org.ihtsdo.otf.ts.services.SecurityService;
 
 /**
  * Goal which makes lucene indexes based on hibernate-search annotations.
@@ -27,15 +21,17 @@ import org.ihtsdo.otf.ts.rf2.jpa.ConceptJpa;
  */
 public class LuceneReindexMojo extends AbstractMojo {
 
-  /** The manager. */
-  private EntityManager manager;
-
   /**
    * The specified objects to index
    * @parameter
    */
-
   private String indexedObjects;
+
+  /**
+   * Whether to run this mojo against an active server
+   * @parameter
+   */
+  private boolean server = true;
 
   /**
    * Instantiates a {@link LuceneReindexMojo} from the specified parameters.
@@ -51,65 +47,44 @@ public class LuceneReindexMojo extends AbstractMojo {
    */
   @Override
   public void execute() throws MojoFailureException {
-
-    // set of objects to be re-indexed
-    Set<String> objectsToReindex = new HashSet<>();
-
-    // if no parameter specified, re-index all objects
-    if (indexedObjects == null) {
-      objectsToReindex.add("ConceptJpa");
-
-      // otherwise, construct set of indexed objects
-    } else {
-
-      // remove white-space and split by comma
-      String[] objects = indexedObjects.replaceAll(" ", "").split(",");
-
-      // add each value to the set
-      for (String object : objects)
-        objectsToReindex.add(object);
-
-    }
-    getLog().info("Starting reindexing for:");
-    for (String objectToReindex : objectsToReindex) {
-      getLog().info("  " + objectToReindex);
-    }
-
     try {
-      Properties config = ConfigUtility.getConfigProperties();
+      getLog().info("Lucene reindexing called via mojo.");
+      getLog().info("  Indexed objects : " + indexedObjects);
+      getLog().info("  Expect server up: " + server);
+      Properties properties = ConfigUtility.getConfigProperties();
 
-      EntityManagerFactory factory =
-          Persistence.createEntityManagerFactory("TermServiceDS", config);
+      boolean serverRunning = ConfigUtility.isServerActive();
+      
+      getLog().info("Server status detected:  " + (!serverRunning ? "DOWN" : "UP"));
 
-      manager = factory.createEntityManager();
-
-      // full text entity manager
-      FullTextEntityManager fullTextEntityManager =
-          Search.getFullTextEntityManager(manager);
-
-      // Concepts
-      if (objectsToReindex.contains("ConceptJpa")) {
-        getLog().info("  Creating indexes for ConceptJpa");
-        fullTextEntityManager.purgeAll(ConceptJpa.class);
-        fullTextEntityManager.flushToIndexes();
-        fullTextEntityManager.createIndexer(ConceptJpa.class)
-            .batchSizeToLoadObjects(100).cacheMode(CacheMode.NORMAL)
-            .threadsToLoadObjects(4).threadsForSubsequentFetching(8)
-            .startAndWait();
-
-        objectsToReindex.remove("ConceptJpa");
+      if (serverRunning && !server) {
+        throw new MojoFailureException("Mojo expects server to be down, but server is running");
       }
-
-      if (objectsToReindex.size() != 0) {
-        throw new MojoFailureException(
-            "The following objects were specified for re-indexing, but do not exist as indexed objects: "
-                + objectsToReindex.toString());
+      
+      if (!serverRunning&& server) {
+        throw new MojoFailureException("Mojo expects server to be running, but server is down");
       }
+      
+      // authenticate
+      SecurityService service = new SecurityServiceJpa();
+      String authToken =
+          service.authenticate(properties.getProperty("admin.user"),
+              properties.getProperty("admin.password"));
+      service.close();
 
-      // Cleanup
-      getLog().info("done ...");
-      manager.close();
-      factory.close();
+      if (!serverRunning) {
+        getLog().info("Running directly");
+        
+        ContentServiceRestImpl contentService = new ContentServiceRestImpl();
+        contentService.luceneReindex(indexedObjects, authToken);
+
+      } else {
+        getLog().info("Running against server");
+
+        // invoke the client
+        ContentClientRest client = new ContentClientRest(properties);
+        client.luceneReindex(indexedObjects, authToken);
+      }
 
     } catch (Exception e) {
       e.printStackTrace();

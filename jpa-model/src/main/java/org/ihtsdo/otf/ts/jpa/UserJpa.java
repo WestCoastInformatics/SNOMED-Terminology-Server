@@ -8,6 +8,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.xml.bind.annotation.XmlID;
+import javax.xml.bind.annotation.XmlIDREF;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.hibernate.envers.Audited;
@@ -110,6 +111,12 @@ public class UserJpa implements User {
   @Override
   public String getObjectId() {
     return (id == null ? "" : id.toString());
+  }
+
+  @XmlIDREF
+  @Override
+  public void setObjectId(String objectId) {
+    this.id = Long.parseLong(objectId);
   }
 
   /*

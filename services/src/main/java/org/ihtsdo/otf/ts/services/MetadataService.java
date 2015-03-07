@@ -5,13 +5,19 @@ import java.util.Map;
 
 import org.ihtsdo.otf.ts.helpers.Configurable;
 
+// TODO: Auto-generated Javadoc
 /**
  * Services to retrieve metadata objects.
+ *
+ * @author ${author}
  */
 public interface MetadataService extends RootService, Configurable {
 
+  
   /**
    * An enum for the keys of the get all metadata call.
+   *
+   * @author ${author}
    */
   public enum MetadataKeys {
     /** The Modules. */
@@ -37,13 +43,9 @@ public interface MetadataService extends RootService, Configurable {
     /** The Map_ relations. */
     Map_Relations,
     /** The Relationship_ characteristic_ types. */
-    Relationship_Characteristic_Types,
+    Characteristic_Types,
     /** The Relationship_ modifiers. */
     Relationship_Modifiers,
-    /** The Relationship_ types. */
-    Relationship_Types,
-    /** The Hierarchical_ relationship_ types. */
-    Hierarchical_Relationship_Types,
     /** The Simple_ map_ refsets. */
     Simple_Map_Refsets,
     /** The Simple_ refsets. */
@@ -55,9 +57,16 @@ public interface MetadataService extends RootService, Configurable {
     /** The Module_ dependency_ refsets. */
     Module_Dependency_Refsets,
     /** The Non_ grouping_ relationship_ types. */
-    Non_Grouping_Relationship_Types;
+    Non_Grouping_Relationship_Types,
+    /** The Relationship_ types. */
+    Relationship_Types,
+    /** The Hierarchical_ relationship_ types. */
+    Hierarchical_Relationship_Types,
+    /**  Stated relationship types. */
+    Stated_Characteristic_Types,
+    /**  Inferred relationship types. */
+    Inferred_Characteristic_Types;
   }
-
   /**
    * Returns the terminologies.
    * 
@@ -312,35 +321,35 @@ public interface MetadataService extends RootService, Configurable {
       String terminology, String version) throws Exception;
 
   /**
-   * Returns the inferred relationship types.  This will correspond
+   * Returns the inferred characteristic types.  This will correspond
    * to one of the characteristic type ids.
    *
    * @param terminology the terminology
    * @param version the version
-   * @return the inferred relationship types
+   * @return the inferred characteristic types
    * @throws Exception the exception
    */
-  public Map<String, String> getInferredRelationshipTypes(
+  public Map<String, String> getInferredCharacteristicTypes(
       String terminology, String version) throws Exception;
 
   /**
-   * Returns the inferred relationship types.  This will correspond
+   * Returns the inferred characteristic types.  This will correspond
    * to one of the characteristic type ids.
    *
    * @param terminology the terminology
    * @param version the version
-   * @return the stated relationship types
+   * @return the stated characteristic types
    * @throws Exception the exception
    */
-  public Map<String, String> getStatedRelationshipTypes(
+  public Map<String, String> getStatedCharacteristicTypes(
       String terminology, String version) throws Exception;
 
   /**
-   * Returns the relationship characteristic types.
+   * Returns the characteristic types.
    * 
    * @param terminology the terminology
    * @param version the version
-   * @return the relationship characteristic types
+   * @return the characteristic types
    * @throws Exception if anything goes wrong
    */
   public Map<String, String> getCharacteristicTypes(
@@ -367,5 +376,5 @@ public interface MetadataService extends RootService, Configurable {
    */
   public Map<String, String> getNonGroupingRelationshipTypes(
     String terminology, String version) throws Exception;
-
+  
 }

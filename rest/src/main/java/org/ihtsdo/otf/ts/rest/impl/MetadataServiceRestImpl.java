@@ -67,12 +67,13 @@ public class MetadataServiceRestImpl extends RootServiceRestImpl implements
   public KeyValuePairLists getMetadata(
     @ApiParam(value = "Terminology name, e.g. SNOMEDCT", required = true) @PathParam("terminology") String terminology,
     @ApiParam(value = "Terminology version, e.g. latest", required = true) @PathParam("version") String version,
-    @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken) {
+    @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken) throws Exception {
 
     Logger.getLogger(MetadataServiceRestImpl.class).info(
         "RESTful call (Metadata): /" + terminology + "/" + version);
 
     String user = "";
+    MetadataService metadataService = new MetadataServiceJpa();
     try {
       user = securityService.getUsernameForToken(authToken);
 
@@ -82,9 +83,26 @@ public class MetadataServiceRestImpl extends RootServiceRestImpl implements
         throw new WebApplicationException(Response.status(401)
             .entity("User does not have permissions to retrieve the metadata.")
             .build());
+      
+      // verify terminology and version pair exist
+      if (metadataService.getTerminologies().contains(terminology)) {
+        
+        // if this version does not exist for terminology, throw 204 (No Content)
+        if (!metadataService.getVersions(terminology).contains(version)) {
+          throw new WebApplicationException(Response.status(204)
+              .entity("No version " + version + " is loaded for terminology " + terminology)
+              .build());
+        } else {
+          // do nothing
+        }
+      } else {
+        // terminology does not exist, throw 204 (No Content)
+        throw new WebApplicationException(Response.status(204)
+            .entity("No terminology " + terminology + " is loaded")
+            .build());
+      }
 
       // call jpa service and get complex map return type
-      MetadataService metadataService = new MetadataServiceJpa();
       Map<String, Map<String, String>> mapOfMaps =
           metadataService.getAllMetadata(terminology, version);
 
@@ -107,6 +125,7 @@ public class MetadataServiceRestImpl extends RootServiceRestImpl implements
       metadataService.close();
       return keyValuePairLists;
     } catch (Exception e) {
+      metadataService.close();
       handleException(e, "trying to retrieve the metadata", user);
       return null;
     }
@@ -128,12 +147,14 @@ public class MetadataServiceRestImpl extends RootServiceRestImpl implements
   })
   public KeyValuePairLists getAllMetadata(
     @ApiParam(value = "Terminology name, e.g. SNOMEDCT", required = true) @PathParam("terminology") String terminology,
-    @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken) {
+    @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken) throws Exception {
 
     Logger.getLogger(MetadataServiceRestImpl.class).info(
         "RESTful call (Metadata): /all/" + terminology);
 
     String user = "";
+    MetadataService metadataService = new MetadataServiceJpa();
+    
     try {
       // authorize call
       user = securityService.getUsernameForToken(authToken);
@@ -143,7 +164,6 @@ public class MetadataServiceRestImpl extends RootServiceRestImpl implements
             .entity("User does not have permissions to retrieve all metadata.")
             .build());
 
-      MetadataService metadataService = new MetadataServiceJpa();
       String version = metadataService.getLatestVersion(terminology);
       KeyValuePairLists keyValuePairLists = new KeyValuePairLists();
       keyValuePairLists = getMetadata(terminology, version, authToken);
@@ -151,6 +171,7 @@ public class MetadataServiceRestImpl extends RootServiceRestImpl implements
       metadataService.close();
       return keyValuePairLists;
     } catch (Exception e) {
+      metadataService.close();
       handleException(e, "trying to retrieve all metadata", user);
       return null;
     }
@@ -170,12 +191,14 @@ public class MetadataServiceRestImpl extends RootServiceRestImpl implements
       MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML
   })
   public KeyValuePairList getAllTerminologiesLatestVersions(
-    @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken) {
+    @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken) throws Exception {
 
     Logger.getLogger(MetadataServiceRestImpl.class).info(
         "RESTful call (Metadata): /terminologies/latest/");
 
     String user = "";
+    MetadataService metadataService = new MetadataServiceJpa();
+    
     try {
       // authorize call
       user = securityService.getUsernameForToken(authToken);
@@ -188,7 +211,6 @@ public class MetadataServiceRestImpl extends RootServiceRestImpl implements
                     "User does not have permissions to retrieve the latest versions of all terminologies.")
                 .build());
 
-      MetadataService metadataService = new MetadataServiceJpa();
       Map<String, String> versionMap =
           metadataService.getTerminologyLatestVersions();
       KeyValuePairList keyValuePairList = new KeyValuePairList();
@@ -199,6 +221,7 @@ public class MetadataServiceRestImpl extends RootServiceRestImpl implements
       metadataService.close();
       return keyValuePairList;
     } catch (Exception e) {
+      metadataService.close();
       handleException(e,
           "trying to retrieve the latest versions of all terminologies", user);
       return null;
@@ -220,12 +243,14 @@ public class MetadataServiceRestImpl extends RootServiceRestImpl implements
       MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML
   })
   public KeyValuePairLists getAllTerminologiesVersions(
-    @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken) {
+    @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken) throws Exception {
 
     Logger.getLogger(MetadataServiceRestImpl.class).info(
         "RESTful call (Metadata): /terminologies");
 
     String user = "";
+    MetadataService metadataService = new MetadataServiceJpa();
+    
     try {
       // authorize call
       user = securityService.getUsernameForToken(authToken);
@@ -239,7 +264,6 @@ public class MetadataServiceRestImpl extends RootServiceRestImpl implements
                 .build());
 
       KeyValuePairLists keyValuePairLists = new KeyValuePairLists();
-      MetadataService metadataService = new MetadataServiceJpa();
       List<String> terminologies = metadataService.getTerminologies();
       for (String terminology : terminologies) {
         List<String> versions = metadataService.getVersions(terminology);
@@ -254,6 +278,7 @@ public class MetadataServiceRestImpl extends RootServiceRestImpl implements
       metadataService.close();
       return keyValuePairLists;
     } catch (Exception e) {
+      metadataService.close();
       handleException(e,
           "trying to retrieve the versions of all terminologies", user);
       return null;

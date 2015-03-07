@@ -804,7 +804,8 @@ public class ConceptJpa extends AbstractComponent implements Concept {
   @Override
   @Fields({
       @Field(index = Index.YES, analyze = Analyze.YES, store = Store.NO),
-      @Field(name = "all", index = Index.YES, analyze = Analyze.YES, store = Store.NO)
+      @Field(name = "all", index = Index.YES, analyze = Analyze.YES, store = Store.NO),
+      @Field(name = "defaultPreferredNameSort", index = Index.YES, analyze = Analyze.NO, store = Store.NO)
   })
   @Analyzer(definition = "noStopWord")
   public String getDefaultPreferredName() {

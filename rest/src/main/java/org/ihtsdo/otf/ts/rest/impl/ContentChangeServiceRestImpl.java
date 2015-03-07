@@ -13,6 +13,7 @@ import org.apache.log4j.Logger;
 import org.ihtsdo.otf.ts.Project;
 import org.ihtsdo.otf.ts.UserRole;
 import org.ihtsdo.otf.ts.jpa.ProjectJpa;
+import org.ihtsdo.otf.ts.jpa.algo.StartEditingCycleAlgorithm;
 import org.ihtsdo.otf.ts.jpa.algo.TransitiveClosureAlgorithm;
 import org.ihtsdo.otf.ts.jpa.services.ContentServiceJpa;
 import org.ihtsdo.otf.ts.jpa.services.SecurityServiceJpa;
@@ -798,8 +799,12 @@ public class ContentChangeServiceRestImpl extends RootServiceRestImpl implements
     }
   }
 
-  /* (non-Javadoc)
-   * @see org.ihtsdo.otf.ts.rest.ContentChangeServiceRest#addProject(org.ihtsdo.otf.ts.jpa.ProjectJpa, java.lang.String)
+  /*
+   * (non-Javadoc)
+   * 
+   * @see
+   * org.ihtsdo.otf.ts.rest.ContentChangeServiceRest#addProject(org.ihtsdo.otf
+   * .ts.jpa.ProjectJpa, java.lang.String)
    */
   @Override
   @PUT
@@ -846,8 +851,12 @@ public class ContentChangeServiceRestImpl extends RootServiceRestImpl implements
 
   }
 
-  /* (non-Javadoc)
-   * @see org.ihtsdo.otf.ts.rest.ContentChangeServiceRest#updateProject(org.ihtsdo.otf.ts.jpa.ProjectJpa, java.lang.String)
+  /*
+   * (non-Javadoc)
+   * 
+   * @see
+   * org.ihtsdo.otf.ts.rest.ContentChangeServiceRest#updateProject(org.ihtsdo
+   * .otf.ts.jpa.ProjectJpa, java.lang.String)
    */
   @Override
   @POST
@@ -919,4 +928,62 @@ public class ContentChangeServiceRestImpl extends RootServiceRestImpl implements
       handleException(e, "trying to remove a project");
     }
   }
+
+  @Override
+  @POST
+  @Path("/edit/begin/{terminology}/{terminologyVersion}/{releaseVersion}")
+  @ApiOperation(value = "Begin editing cycle", notes = "Begins the editing cycle for a sepcified terminology, version, and release version")
+  public void startEditingCycle(
+    @ApiParam(value = "Terminology, e.g. SNOMEDCT", required = true) @PathParam("terminology") String terminology,
+    @ApiParam(value = "Terminology version, e.g. 20140731", required = true) @PathParam("terminologyVersion") String terminologyVersion,
+    @ApiParam(value = "Release version, e.g. 20150131", required = true) @PathParam("releaseVersion") String releaseVersion,
+    @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken)
+    throws Exception {
+
+    Logger.getLogger(ContentServiceRestImpl.class).info(
+        "RESTful POST call (ContentChange): /edit/begin/" + terminology + "/"
+            + terminologyVersion + "/" + releaseVersion);
+    try {
+      authenticate(securityService, authToken, "start editing cycle",
+          UserRole.ADMINISTRATOR);
+    
+      StartEditingCycleAlgorithm algo = new StartEditingCycleAlgorithm(releaseVersion, terminology, terminologyVersion);
+      algo.compute();
+    } catch (Exception e) {
+      handleException(e, "trying to start editing cycle");
+    }
+
+  }
+
+  @Override
+  public void removeReleaseInfos(String terminology, String releaseInfoNames) {
+    // TODO Auto-generated method stub
+    
+  }
+
+  @Override
+  public void releaseBegin(String releaseVersion, String terminology,
+    String workflowStatusValues, boolean validate, boolean saveIdentifiers)
+    throws Exception {
+    // TODO Auto-generated method stub
+    
+  }
+
+  @Override
+  public void releaseProcess(String refSetId, String outputDirName,
+    String effectiveTime, String moduleId) throws Exception {
+    // TODO Auto-generated method stub
+    
+  }
+
+  @Override
+  public void releaseFinish(String releaseVersion, String terminology,
+    String workflowStatusValues, boolean validate, boolean saveIdentifiers)
+    throws Exception {
+    // TODO Auto-generated method stub
+    
+  }
+
+  
+
 }

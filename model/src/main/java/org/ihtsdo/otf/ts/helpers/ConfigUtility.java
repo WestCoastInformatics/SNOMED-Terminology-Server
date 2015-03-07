@@ -12,6 +12,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringReader;
 import java.io.StringWriter;
+import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.Comparator;
 import java.util.Properties;
@@ -80,6 +81,26 @@ public class ConfigUtility {
     }
   }
 
+
+  /**
+   * Indicates whether or not the server is active.
+   *
+   * @return <code>true</code> if so, <code>false</code> otherwise
+   * @throws Exception the exception
+   */
+  public static boolean isServerActive() throws Exception {
+    if (config == null)
+      config = ConfigUtility.getConfigProperties();
+
+    try {
+      new URL(config.getProperty("base.url") + "/index.html").openConnection()
+          .connect();
+      return true;
+    } catch (IOException e) {
+      return false;
+    }
+  }
+  
   /**
    * Returns the config properties.
    * @return the config properties
@@ -163,6 +184,8 @@ public class ConfigUtility {
 
     // Look up and build properties
     Properties handlerProperties = new Properties();
+    handlerProperties.setProperty("security.handler", handlerName);
+
     for (Object key : config.keySet()) {
       // Find properties like "metadata.service.handler.SNOMED.class"
       if (key.toString().startsWith(property + "." + handlerName + ".")) {

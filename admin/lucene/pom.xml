@@ -19,6 +19,9 @@
     <!-- Indicate objects to index, leave blank for all objects -->
     <!-- Override this property setting on the command line -->
     <indexed.objects></indexed.objects>
+    <server></server>
+    <!-- Indicates whether to run against a server (true/false) -->
+    <server></server>
   </properties>
 
   <profiles>
@@ -40,8 +43,9 @@
                   <goal>reindex</goal>
                 </goals>
                 <configuration>
-                  <!-- Specify -DindexedObjects=... -->
+                  <!-- Specify -DindexedObjects=... and -Dserver=[true/false] -->
                   <indexedObjects>${indexed.objects}</indexedObjects>
+                  <server>${server}</server>
                 </configuration>
               </execution>
             </executions>

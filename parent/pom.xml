@@ -78,6 +78,12 @@
       </dependency>
       <dependency>
         <groupId>org.ihtsdo.otf.term-server</groupId>
+        <artifactId>term-server-rest</artifactId>
+        <version>${releaseVersion}</version>
+        <classifier>classes</classifier>
+      </dependency>
+      <dependency>
+        <groupId>org.ihtsdo.otf.term-server</groupId>
         <artifactId>term-server-rest-client</artifactId>
         <version>${releaseVersion}</version>
       </dependency>

@@ -9,6 +9,7 @@ import org.apache.log4j.Logger;
 import org.ihtsdo.otf.ts.Project;
 import org.ihtsdo.otf.ts.helpers.ConfigUtility;
 import org.ihtsdo.otf.ts.jpa.ProjectJpa;
+import org.ihtsdo.otf.ts.jpa.algo.StartEditingCycleAlgorithm;
 import org.ihtsdo.otf.ts.rest.ContentChangeServiceRest;
 import org.ihtsdo.otf.ts.rf2.AssociationReferenceConceptRefSetMember;
 import org.ihtsdo.otf.ts.rf2.Concept;
@@ -698,5 +699,57 @@ public class ContentChangeClientRest implements ContentChangeServiceRest {
     }
 
   }
+
+  @Override
+  public void startEditingCycle(String terminology, String terminologyVersion,
+    String releaseVersion, String authToken) throws Exception {
+
+    Client client = Client.create();
+    WebResource resource =
+        client.resource(config.getProperty("base.url") + "/edit/begin/"
+            + terminology + "/" + terminologyVersion + "/" + releaseVersion);
+    ClientResponse response =
+        resource.accept(MediaType.APPLICATION_XML)
+            .header("Authorization", authToken).delete(ClientResponse.class);
+
+    if (response.getClientResponseStatus().getFamily() == Family.SUCCESSFUL) {
+
+      StartEditingCycleAlgorithm algorithm =
+          new StartEditingCycleAlgorithm(releaseVersion, terminology,
+              terminologyVersion);
+      algorithm.compute();
+    }
+
+  }
+
+  @Override
+  public void removeReleaseInfos(String terminology, String releaseInfoNames) {
+    // TODO Auto-generated method stub
+    
+  }
+
+  @Override
+  public void releaseBegin(String releaseVersion, String terminology,
+    String workflowStatusValues, boolean validate, boolean saveIdentifiers)
+    throws Exception {
+    // TODO Auto-generated method stub
+    
+  }
+
+  @Override
+  public void releaseProcess(String refSetId, String outputDirName,
+    String effectiveTime, String moduleId) throws Exception {
+    // TODO Auto-generated method stub
+    
+  }
+
+  @Override
+  public void releaseFinish(String releaseVersion, String terminology,
+    String workflowStatusValues, boolean validate, boolean saveIdentifiers)
+    throws Exception {
+    // TODO Auto-generated method stub
+    
+  }
+
 
 }

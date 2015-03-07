@@ -1,3 +1,6 @@
+/*
+ * 
+ */
 package org.ihtsdo.otf.ts.services;
 
 import org.ihtsdo.otf.ts.Project;
@@ -956,7 +959,6 @@ public interface ContentService extends RootService {
    * Returns the computed preferred name.
    *
    * @param concept the concept
-   * @throws Exception the exception
    * @return the computed preferred name
    * @throws Exception the exception
    */
@@ -1034,4 +1036,7 @@ public interface ContentService extends RootService {
   public UserRole getUserRoleForProject(String username, Long projectId)
     throws Exception;
 
+  
+  
+  
 }

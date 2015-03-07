@@ -14,8 +14,11 @@ import org.ihtsdo.otf.ts.rf2.Description;
 import org.ihtsdo.otf.ts.rf2.LanguageRefSetMember;
 import org.ihtsdo.otf.ts.rf2.Relationship;
 
+// TODO: Auto-generated Javadoc
 /**
  * Represents a content available via a REST service.
+ *
+ * @author ${author}
  */
 public interface ContentServiceRest {
 
@@ -260,4 +263,87 @@ public interface ContentServiceRest {
    * @throws Exception the exception
    */
   public ProjectList getProjects(String authToken) throws Exception;
+
+  /**
+   * Recomputes lucene indexes for the specified objects as a comma-separated
+   * string list.
+   *
+   * @param indexedObjects the indexed objects
+   * @param authToken the auth token
+   * @throws Exception the exception
+   */
+  public void luceneReindex(String indexedObjects, String authToken)
+    throws Exception;
+  
+  
+  /**
+   * Compute transitive closure for latest version of a terminology.
+   *
+   * @param terminology the terminology
+   * @param authToken the auth token
+   * @throws Exception the exception
+   */
+  public void computeTransitiveClosure(String terminology, String authToken) throws Exception;
+
+  /**
+   * Load terminology snapshot from RF2 directory.
+   *
+   * @param terminology the terminology
+   * @param terminologyVersion the terminology version
+   * @param inputDir the input dir
+   * @param authToken the auth token
+   * @throws Exception the exception
+   */
+  public void loadTerminologyRf2Snapshot(String terminology,
+    String terminologyVersion, String inputDir, String authToken)
+    throws Exception;
+
+  /**
+   * Load terminology full from RF2 directory.
+   *
+   * @param terminology the terminology
+   * @param terminologyVersion the terminology version
+   * @param inputDir the input dir
+   * @param authToken the auth token
+   * @throws Exception the exception
+   */
+  public void loadTerminologyRf2Full(String terminology,
+    String terminologyVersion, String inputDir, String authToken)
+    throws Exception;
+
+  /**
+   * Load terminology delta from RF2 directory.
+   *
+   * @param terminology the terminology
+   * @param inputDir the input dir
+   * @param authToken the auth token
+   * @throws Exception the exception
+   */
+  public void loadTerminologyRf2Delta(String terminology, String inputDir,
+    String authToken) throws Exception;
+
+  /**
+   * Load terminology from ClaML file.
+   *
+   * @param terminology the terminology
+   * @param terminologyVersion the terminology version
+   * @param inputFile the input file
+   * @param authToken the auth token
+   * @throws Exception the exception
+   */
+  public void loadTerminologyClaml(String terminology,
+    String terminologyVersion, String inputFile, String authToken)
+    throws Exception;
+
+  /**
+   * Removes the terminology.
+   *
+   * @param terminology the terminology
+   * @param terminologyVersion the terminology version
+   * @param authToken the auth token
+   * @throws Exception the exception
+   */
+  public void removeTerminology(String terminology, String terminologyVersion,
+    String authToken) throws Exception;
+
 }

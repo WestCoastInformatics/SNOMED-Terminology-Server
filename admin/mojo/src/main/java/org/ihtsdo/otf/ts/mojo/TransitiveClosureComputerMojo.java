@@ -1,10 +1,14 @@
 package org.ihtsdo.otf.ts.mojo;
 
+import java.util.Properties;
+
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoFailureException;
-import org.ihtsdo.otf.ts.jpa.algo.TransitiveClosureAlgorithm;
-import org.ihtsdo.otf.ts.jpa.services.MetadataServiceJpa;
-import org.ihtsdo.otf.ts.services.MetadataService;
+import org.ihtsdo.otf.ts.helpers.ConfigUtility;
+import org.ihtsdo.otf.ts.jpa.client.ContentClientRest;
+import org.ihtsdo.otf.ts.jpa.services.SecurityServiceJpa;
+import org.ihtsdo.otf.ts.rest.impl.ContentServiceRestImpl;
+import org.ihtsdo.otf.ts.services.SecurityService;
 
 /**
  * Goal which recomputes transitive closure for the latest version of a
@@ -26,6 +30,12 @@ public class TransitiveClosureComputerMojo extends AbstractMojo {
   private String terminology;
 
   /**
+   * Whether to run this mojo against an active server
+   * @parameter
+   */
+  private boolean server = true;
+
+  /**
    * Instantiates a {@link TransitiveClosureComputerMojo} from the specified
    * parameters.
    * 
@@ -45,37 +55,44 @@ public class TransitiveClosureComputerMojo extends AbstractMojo {
     getLog().info("  terminology = " + terminology);
 
     try {
+      
+      Properties properties = ConfigUtility.getConfigProperties();
 
-      // Track system level information
-      long startTimeOrig = System.nanoTime();
 
-      try {
+      boolean serverRunning = ConfigUtility.isServerActive();
 
-        // Compute transitive closure
-        MetadataService metadataService = new MetadataServiceJpa();
-        String terminologyVersion =
-            metadataService.getLatestVersion(terminology);
-        metadataService.close();
+      getLog().info(
+          "Server status detected:  "
+              + (!serverRunning ? "DOWN" : "UP"));
 
-        // Compute transitive closure
-        getLog().info(
-            "  Compute transitive closure from  " + terminology + "/"
-                + terminologyVersion);
-        TransitiveClosureAlgorithm algo = new TransitiveClosureAlgorithm();
-        algo.setTerminology(terminology);
-        algo.setTerminologyVersion(terminologyVersion);
-        algo.reset();
-        algo.compute();
-        algo.close();
+      if (serverRunning && !server) {
+        throw new MojoFailureException(
+            "Mojo expects server to be down, but server is running");
+      }
 
-        // Final logging messages
-        getLog().info(
-            "      elapsed time = " + getTotalElapsedTimeStr(startTimeOrig));
-        getLog().info("done ...");
+      if (!serverRunning && server) {
+        throw new MojoFailureException(
+            "Mojo expects server to be running, but server is down");
+      }
+      
+      // authenticate
+      SecurityService service = new SecurityServiceJpa();
+      String authToken =
+          service.authenticate(properties.getProperty("admin.user"),
+              properties.getProperty("admin.password"));
+      service.close();
 
-      } catch (Exception e) {
-        e.printStackTrace();
-        throw e;
+      if (!serverRunning) {
+        getLog().info("Running directly");
+        
+        ContentServiceRestImpl contentService = new ContentServiceRestImpl();
+        contentService.computeTransitiveClosure(terminology, authToken);
+      } else {
+        getLog().info("Running against server");
+
+        // invoke the client
+        ContentClientRest client = new ContentClientRest(properties);
+        client.computeTransitiveClosure(terminology, authToken);
       }
 
       // Clean-up
@@ -85,20 +102,4 @@ public class TransitiveClosureComputerMojo extends AbstractMojo {
     }
   }
 
-  /**
-   * Returns the total elapsed time str.
-   *
-   * @param time the time
-   * @return the total elapsed time str
-   */
-  @SuppressWarnings("boxing")
-  private static String getTotalElapsedTimeStr(long time) {
-    Long resultnum = (System.nanoTime() - time) / 1000000000;
-    String result = resultnum.toString() + "s";
-    resultnum = resultnum / 60;
-    result = result + " / " + resultnum.toString() + "m";
-    resultnum = resultnum / 60;
-    result = result + " / " + resultnum.toString() + "h";
-    return result;
-  }
 }

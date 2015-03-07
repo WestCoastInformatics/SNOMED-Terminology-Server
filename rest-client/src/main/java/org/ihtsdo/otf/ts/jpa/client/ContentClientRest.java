@@ -32,8 +32,11 @@ import com.sun.jersey.api.client.Client;
 import com.sun.jersey.api.client.ClientResponse;
 import com.sun.jersey.api.client.WebResource;
 
+// TODO: Auto-generated Javadoc
 /**
  * A client for connecting to a content REST service.
+ *
+ * @author ${author}
  */
 public class ContentClientRest implements ContentServiceRest {
 
@@ -681,6 +684,166 @@ public class ContentClientRest implements ContentServiceRest {
         (ProjectListJpa) ConfigUtility.getGraphForString(resultString,
             ProjectListJpa.class);
     return list;
+  }
+  
+  /* (non-Javadoc)
+   * @see org.ihtsdo.otf.ts.rest.ContentChangeServiceRest#luceneReindex(java.lang.String, java.lang.String)
+   */
+  @Override
+  public void luceneReindex(String indexedObjects, String authToken) throws Exception {
+    Client client = Client.create();
+    
+     WebResource resource =
+        client.resource(config.getProperty("base.url")
+            + "/content/reindex");
+    ClientResponse response =
+        resource.accept(MediaType.APPLICATION_XML)
+           .header("Authorization", authToken)
+            .header("Content-type", MediaType.TEXT_PLAIN)
+            .post(ClientResponse.class, indexedObjects);
+
+    if (response.getClientResponseStatus().getFamily() == Family.SUCCESSFUL) {
+      // do nothing
+    } else {
+      if (response.getStatus() != 204)
+        throw new Exception("Unexpected status " + response.getStatus());
+    }
+
+  }
+
+  /* (non-Javadoc)
+   * @see org.ihtsdo.otf.ts.rest.ContentServiceRest#loadTerminologyRf2Snapshot(java.lang.String, java.lang.String, java.lang.String, java.lang.String)
+   */
+  @Override
+  public void loadTerminologyRf2Snapshot(String terminology,
+    String terminologyVersion, String inputDir, String authToken)
+    throws Exception {
+    
+    Client client = Client.create();
+    WebResource resource =
+        client.resource(config.getProperty("base.url")
+            + "/terminology/load/rf2/snapshot"
+                + terminology + "/" + terminologyVersion);
+    ClientResponse response =
+        resource.accept(MediaType.APPLICATION_XML)
+            .header("Authorization", authToken)
+            .header("Content-type", MediaType.APPLICATION_XML)
+            .post(ClientResponse.class, inputDir);
+
+    if (response.getClientResponseStatus().getFamily() == Family.SUCCESSFUL) {
+      // do nothing
+    } else {
+      throw new Exception("Unexpected status " + response.getStatus());
+    }
+    
+  }
+
+  /* (non-Javadoc)
+   * @see org.ihtsdo.otf.ts.rest.ContentServiceRest#loadTerminologyRf2Full(java.lang.String, java.lang.String, java.lang.String, java.lang.String)
+   */
+  @Override
+  public void loadTerminologyRf2Full(String terminology,
+    String terminologyVersion, String inputDir, String authToken)
+    throws Exception {
+    
+    Client client = Client.create();
+    WebResource resource =
+        client.resource(config.getProperty("base.url")
+            + "/terminology/load/rf2/full"
+                + terminology + "/" + terminologyVersion);
+    ClientResponse response =
+        resource.accept(MediaType.APPLICATION_XML)
+            .header("Authorization", authToken)
+            .header("Content-type", MediaType.APPLICATION_XML)
+            .post(ClientResponse.class, inputDir);
+
+    if (response.getClientResponseStatus().getFamily() == Family.SUCCESSFUL) {
+      // do nothing
+    } else {
+      throw new Exception("Unexpected status " + response.getStatus());
+    }
+    
+  }
+
+  /* (non-Javadoc)
+   * @see org.ihtsdo.otf.ts.rest.ContentServiceRest#loadTerminologyRf2Delta(java.lang.String, java.lang.String, java.lang.String, java.lang.String)
+   */
+  @Override
+  public void loadTerminologyRf2Delta(String terminology, String inputDir, String authToken)
+    throws Exception {
+    
+    Client client = Client.create();
+    WebResource resource =
+        client.resource(config.getProperty("base.url")
+            + "/terminology/load/rf2/snapshot"
+                + terminology);
+    ClientResponse response =
+        resource.accept(MediaType.APPLICATION_XML)
+            .header("Authorization", authToken)
+            .header("Content-type", MediaType.APPLICATION_XML)
+            .post(ClientResponse.class, inputDir);
+
+    if (response.getClientResponseStatus().getFamily() == Family.SUCCESSFUL) {
+      // do nothing
+    } else {
+      throw new Exception("Unexpected status " + response.getStatus());
+    }
+    
+  }
+
+  /* (non-Javadoc)
+   * @see org.ihtsdo.otf.ts.rest.ContentServiceRest#loadTerminologyClaml(java.lang.String, java.lang.String, java.lang.String, java.lang.String)
+   */
+  @Override
+  public void loadTerminologyClaml(String terminology,
+    String terminologyVersion, String inputFile, String authToken)
+    throws Exception {
+    
+    Client client = Client.create();
+    WebResource resource =
+        client.resource(config.getProperty("base.url")
+            + "/terminology/load/claml/"
+                + terminology + "/" + terminologyVersion);
+    ClientResponse response =
+        resource.accept(MediaType.APPLICATION_XML)
+            .header("Authorization", authToken)
+            .header("Content-type", MediaType.APPLICATION_XML)
+            .post(ClientResponse.class, inputFile);
+
+    if (response.getClientResponseStatus().getFamily() == Family.SUCCESSFUL) {
+      // do nothing
+    } else {
+      throw new Exception("Unexpected status " + response.getStatus());
+    }
+  }
+
+
+  @Override
+  public void computeTransitiveClosure(String terminology, String authToken)
+    throws Exception {
+    Client client = Client.create();
+    WebResource resource =
+        client.resource(config.getProperty("base.url")
+            + "/content/terminology/closure/compute/" + terminology);
+    ClientResponse response =
+        resource.accept(MediaType.APPLICATION_XML)
+            .header("Authorization", authToken)
+            .header("Content-type", MediaType.APPLICATION_XML)
+            .get(ClientResponse.class);
+
+    if (response.getClientResponseStatus().getFamily() == Family.SUCCESSFUL) {
+      // do nothing
+    } else {
+      throw new Exception("Unexpected status " + response.getStatus());
+    }
+    
+  }
+
+  @Override
+  public void removeTerminology(String terminology, String terminologyVersion,
+    String authToken) throws Exception {
+    // TODO Implement
+    
   }
 
 }

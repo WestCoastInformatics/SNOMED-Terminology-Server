@@ -204,6 +204,7 @@
         <artifactId>maven-war-plugin</artifactId>
         <configuration>
           <warName>term-server-rest</warName>
+          <attachClasses>true</attachClasses>
           <filteringDeploymentDescriptors>true</filteringDeploymentDescriptors>
           <webResources>
             <resource>

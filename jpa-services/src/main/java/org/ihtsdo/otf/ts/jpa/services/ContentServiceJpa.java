@@ -1,6 +1,7 @@
 package org.ihtsdo.otf.ts.jpa.services;
 
 import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -22,6 +23,7 @@ import org.apache.lucene.search.Sort;
 import org.apache.lucene.search.SortField;
 import org.apache.lucene.util.Version;
 import org.hibernate.search.SearchFactory;
+import org.hibernate.search.annotations.Analyze;
 import org.hibernate.search.jpa.FullTextEntityManager;
 import org.hibernate.search.jpa.FullTextQuery;
 import org.hibernate.search.jpa.Search;
@@ -303,6 +305,8 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
         fullTextEntityManager
             .createFullTextQuery(luceneQuery, ConceptJpa.class);
     results.setTotalCount(fullTextQuery.getResultSize());
+    
+    
     // Apply paging and sorting parameters
     applyPfsToLuceneQuery(ConceptJpa.class, fullTextQuery, pfs);
 
@@ -467,11 +471,12 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
     ctQuery.setParameter("terminology", concept.getTerminology());
     ctQuery.setParameter("version", concept.getTerminologyVersion());
     ctQuery.setParameter("terminologyId", concept.getTerminologyId());
-    list.setTotalCount(((BigDecimal) ctQuery.getResultList().get(0)).intValue());
+    list.setTotalCount(ctQuery.getResultList().size());
 
     query.setParameter("terminology", concept.getTerminology());
     query.setParameter("version", concept.getTerminologyVersion());
     query.setParameter("terminologyId", concept.getTerminologyId());
+
     List<Concept> descendants = query.getResultList();
     list.setObjects(descendants);
     return list;
@@ -533,7 +538,7 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
     // construct query
     javax.persistence.Query query =
         manager.createQuery("select r from RelationshipJpa r, ConceptJpa c"
-            + " where destinationConcept = c"
+            + " where r.destinationConcept = c"
             + " and c.terminology = :terminology "
             + " and c.terminologyId = :terminologyId"
             + " and c.terminologyVersion = :version");
@@ -2688,7 +2693,7 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
     // Prepare results
     SearchResultList results = new SearchResultListJpa();
 
-    // Prepare the query
+    // Prepare the query string
     StringBuilder finalQuery = new StringBuilder();
     finalQuery.append(searchString);
     finalQuery.append(" AND terminology:" + terminology
@@ -2698,7 +2703,8 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
       finalQuery.append(pfs.getQueryRestriction());
     }
     Logger.getLogger(getClass()).info("query " + finalQuery);
-    // Prepare the query
+
+    // Prepare the manager and lucene query
     FullTextEntityManager fullTextEntityManager =
         Search.getFullTextEntityManager(manager);
     SearchFactory searchFactory = fullTextEntityManager.getSearchFactory();
@@ -3190,32 +3196,105 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
    * @param pfs the pfs
    * @throws Exception the exception
    */
-  @SuppressWarnings("static-method")
   protected void applyPfsToLuceneQuery(Class<?> clazz,
     FullTextQuery fullTextQuery, PfsParameter pfs) throws Exception {
+
+    System.out.println("Applying PFS " + pfs.toString());
+
     // set paging/filtering/sorting if indicated
     if (pfs != null) {
       // if start index and max results are set, set paging
       if (pfs.getStartIndex() != -1 && pfs.getMaxResults() != -1) {
+        System.out.println("  Applying first/max results");
         fullTextQuery.setFirstResult(pfs.getStartIndex());
         fullTextQuery.setMaxResults(pfs.getMaxResults());
       }
+
       // if sort field is specified, set sort key
       if (pfs.getSortField() != null && !pfs.getSortField().isEmpty()) {
 
-        // check that specified sort field exists on Concept and is
-        // a string
-        if (clazz.getDeclaredField(pfs.getSortField()).getType()
-            .equals(String.class)) {
-          fullTextQuery.setSort(new Sort(new SortField(pfs.getSortField(),
-              SortField.STRING)));
-        } else {
-          throw new Exception(
-              clazz.getName()
-                  + " query specified a field that does not exist or is not a string");
+        Map<String, Boolean> nameToAnalyzedMap =
+            this.getNameAnalyzedPairsFromAnnotation(clazz, pfs.getSortField());
+        System.out.println(nameToAnalyzedMap.toString());
+
+        String sortField = null;
+
+        if (nameToAnalyzedMap.size() == 0) {
+          throw new Exception(clazz.getName()
+              + " does not have declared, annotated method for field "
+              + pfs.getSortField());
         }
+
+        // first check the default name (rendered as ""), if not analyzed, use
+        // this as sort
+        if (nameToAnalyzedMap.get("") != null
+            && nameToAnalyzedMap.get("").equals(false)) {
+          sortField = pfs.getSortField();
+        }
+
+        // otherwise check explicit [name]Sort index
+        else if (nameToAnalyzedMap.get(pfs.getSortField() + "Sort") != null
+            && nameToAnalyzedMap.get(pfs.getSortField() + "Sort").equals(false)) {
+          sortField = pfs.getSortField() + "Sort";
+        }
+
+        // if none, throw exception
+        if (sortField == null) {
+          throw new Exception(
+              "Could not retrieve a non-analyzed Field annotation for get method for variable name "
+                  + pfs.getSortField());
+        }
+
+        System.out.println("Sort field selected: " + sortField);
+
+        Sort sort = new Sort(new SortField(sortField, SortField.STRING, !pfs.isAscending()));
+        fullTextQuery.setSort(sort);
       }
     }
+  }
+
+  /**
+   * Returns the name analyzed pairs from annotation.
+   *
+   * @param clazz the clazz
+   * @param sortField the sort field
+   * @return the name analyzed pairs from annotation
+   * @throws NoSuchMethodException the no such method exception
+   * @throws SecurityException the security exception
+   */
+  @SuppressWarnings("static-method")
+  private Map<String, Boolean> getNameAnalyzedPairsFromAnnotation(
+    Class<?> clazz, String sortField) throws NoSuchMethodException,
+    SecurityException {
+
+    // initialize the name->analyzed pair map
+    Map<String, Boolean> nameAnalyzedPairs = new HashMap<>();
+
+    Method m =
+        clazz.getMethod("get" + sortField.substring(0, 1).toUpperCase()
+            + sortField.substring(1), new Class<?>[] {});
+    
+    Set<org.hibernate.search.annotations.Field> annotationFields = new HashSet<>();
+
+    // check for Field annotation
+    if (m.isAnnotationPresent(org.hibernate.search.annotations.Field.class)) {
+      annotationFields.add(m.getAnnotation(org.hibernate.search.annotations.Field.class));
+    }
+
+    // check for Fields annotation
+    if (m.isAnnotationPresent(org.hibernate.search.annotations.Fields.class)) {
+      // add all specified fields
+      for (org.hibernate.search.annotations.Field f : m.getAnnotation(org.hibernate.search.annotations.Fields.class).value()) {
+        annotationFields.add(f);
+      }
+    }
+    
+    // cycle over discovered fields and put name and analyze == YES into map
+    for (org.hibernate.search.annotations.Field f : annotationFields) {
+      nameAnalyzedPairs.put(f.name(), f.analyze().equals(Analyze.YES) ? true : false); 
+    }
+    
+    return nameAnalyzedPairs;
   }
 
   /**
@@ -3234,28 +3313,52 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
         && (pfs.getSortField() != null && !pfs.getSortField().isEmpty())) {
       // check that specified sort field exists on Concept and is
       // a string
-      final Field sortField = clazz.getDeclaredField(pfs.getSortField());
-      if (!sortField.getType().equals(String.class)) {
+      final Field sortField = clazz.getField(pfs.getSortField());
 
-        throw new Exception(
-            "findDescendantConcepts error:  Referenced sort field is not of type String");
-      }
       // allow the field to access the Concept values
       sortField.setAccessible(true);
 
+      if (pfs.isAscending()) {
       // make comparator
       return new Comparator<T>() {
         @Override
         public int compare(T o1, T o2) {
           try {
-            return ((String) sortField.get(o1)).compareTo((String) sortField
-                .get(o2));
+              // handle dates explicitly
+              if (o2 instanceof Date) {
+                return ((Date) sortField.get(o1)).compareTo((Date) sortField.get(o2));
+              } else {
+                // otherwise, sort based on conversion to string
+              return (sortField.get(o1).toString()).compareTo(sortField
+                  .get(o2).toString());
+              }
           } catch (IllegalAccessException e) {
             // on exception, return equality
             return 0;
           }
         }
       };
+      } else {
+     // make comparator
+        return new Comparator<T>() {
+          @Override
+          public int compare(T o2, T o1) {
+            try {
+              // handle dates explicitly
+              if (o2 instanceof Date) {
+                return ((Date) sortField.get(o1)).compareTo((Date) sortField.get(o2));
+              } else {
+                // otherwise, sort based on conversion to string
+              return (sortField.get(o1).toString()).compareTo(sortField
+                  .get(o2).toString());
+              }
+            } catch (IllegalAccessException e) {
+              // on exception, return equality
+              return 0;
+            }
+          }
+        };
+      }
 
     } else {
       return null;

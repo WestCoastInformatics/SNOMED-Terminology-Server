@@ -7,6 +7,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
+import javax.persistence.NoResultException;
+
 import org.apache.log4j.Logger;
 import org.ihtsdo.otf.ts.User;
 import org.ihtsdo.otf.ts.UserRole;
@@ -58,9 +60,9 @@ public class SecurityServiceJpa extends RootServiceJpa implements
   @Override
   public String authenticate(String username, String password) throws Exception {
     // Check username and password are not null
-    if (username == null)
+    if (username == null || username.isEmpty())
       throw new LocalException("Invalid username: null");
-    if (password == null)
+    if (password == null || password.isEmpty())
       throw new LocalException("Invalid password: null");
 
     Properties config = ConfigUtility.getConfigProperties();
@@ -77,6 +79,9 @@ public class SecurityServiceJpa extends RootServiceJpa implements
     // Call the security service
     //
     User authUser = handler.authenticate(username, password);
+    
+    if (authUser == null)
+      return null;
 
     // check if authenticated user matches one of our users
     UserList userList = getUsers();
@@ -229,7 +234,11 @@ public class SecurityServiceJpa extends RootServiceJpa implements
         manager
             .createQuery("select u from UserJpa u where userName = :userName");
     query.setParameter("userName", username);
-    return (User) query.getSingleResult();
+    try {
+      return (User) query.getSingleResult();
+    } catch (NoResultException e) {
+      return null;
+    }
   }
 
   /*
