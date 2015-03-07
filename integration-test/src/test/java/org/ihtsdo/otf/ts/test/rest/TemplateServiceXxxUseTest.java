@@ -17,6 +17,7 @@ public class TemplateServiceXxxUseTest {
 
   // TODO: edit the service to use
   /** The service. */
+  @SuppressWarnings("unused")
   private SecurityClientRest service;
 
   /**

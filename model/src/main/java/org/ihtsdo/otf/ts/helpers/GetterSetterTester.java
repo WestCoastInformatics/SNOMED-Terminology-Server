@@ -150,7 +150,7 @@ public class GetterSetterTester extends ProxyTester {
   private void testGetterSetter(Method get, Method set, Class<?> argType)
     throws Exception {
     if (this.verbose)
-      System.out.println("Testing " + get.getDeclaringClass().getName() + "."
+      Logger.getLogger(getClass()).info("Testing " + get.getDeclaringClass().getName() + "."
           + get.getName());
     Object proxy = makeProxy(argType, 1);
     try {

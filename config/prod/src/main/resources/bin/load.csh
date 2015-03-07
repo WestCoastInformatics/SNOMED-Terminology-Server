@@ -14,11 +14,11 @@ echo "SERVER_CODE = $SERVER_CODE"
 echo "SERVER_DATA = $SERVER_DATA"
 echo "SERVER_CONFIG = $SERVER_CONFIG"
 
-echo "    Run updatedb with hibernate.hbm2ddl.auto = create ...`/bin/date`"
-cd $SERVER_HOME/admin/updatedb
-mvn install -PUpdatedb -Drun.config=$SERVER_CONFIG -Dhibernate.hbm2ddl.auto=create >&! mvn.log
+echo "    Run Createdb ...`/bin/date`"
+cd $SERVER_HOME/admin/db
+mvn install -PUpdatedb -Drun.config=$SERVER_CONFIG >&! mvn.log
 if ($status != 0) then
-    echo "ERROR running updatedb"
+    echo "ERROR running createdb"
     cat mvn.log
     exit 1
 endif

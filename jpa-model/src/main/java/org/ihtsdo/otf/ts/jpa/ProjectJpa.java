@@ -335,7 +335,7 @@ public class ProjectJpa implements Project {
    * @see org.ihtsdo.otf.ts.Project#getTerminology()
    */
   @Override
-  @Field(index = Index.YES, analyze = Analyze.YES, store = Store.NO)
+  @Field(index = Index.YES, analyze = Analyze.NO, store = Store.NO)
   public String getTerminology() {
     return terminology;
   }

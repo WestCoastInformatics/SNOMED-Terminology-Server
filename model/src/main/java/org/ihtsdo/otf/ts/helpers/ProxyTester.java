@@ -87,7 +87,7 @@ public class ProxyTester {
    * @return the object
    * @throws Exception the exception
    */
-  protected Object createObject(int initializer) throws Exception {
+  public Object createObject(int initializer) throws Exception {
     // Verify there is a no-argument constructor
     Object o = null;
     try {

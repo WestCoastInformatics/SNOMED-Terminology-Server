@@ -10,28 +10,48 @@
     <relativePath>../../parent</relativePath>
   </parent>
 
-  <artifactId>term-server-admin-updatedb</artifactId>
+  <artifactId>term-server-admin-db</artifactId>
   <name>Terminology server admin db creator and updater tool.</name>
   <description>Used to create the DB schema and update it when new code is deployed.</description>
   <packaging>pom</packaging>
 
-  <properties>
-    <!-- This can be overridden to use "create" instead via -D....=create -->
-    <!-- NOTE: this setting alone, as a maven property filters down to the HBM2DDL 
-      tool and causes it to work, no need for environment or config file properties -->
-    <hibernate.hbm2ddl.auto>update</hibernate.hbm2ddl.auto>
-  </properties>
-
-
   <profiles>
 
-    <!-- Specify -Drun.config=... -->
+    <!-- Create DB, specify -Drun.config=... -->
+    <profile>
+      <id>Createdb</id>
+      <build>
+        <plugins>
+
+          <!-- Create the database schema (or create it) -->
+          <plugin>
+            <groupId>org.ihtsdo.otf.term-server</groupId>
+            <artifactId>term-server-admin-mojo</artifactId>
+            <version>${releaseVersion}</version>
+            <executions>
+              <execution>
+                <id>createdb</id>
+                <phase>package</phase>
+                <goals>
+                  <goal>updatedb</goal>
+                </goals>
+                <configuration>
+                  <mode>create</mode>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+
+    <!-- Update DB, specify -Drun.config=... -->
     <profile>
       <id>Updatedb</id>
       <build>
         <plugins>
 
-          <!-- Update the database schema (or create it)-->
+          <!-- Update the database schema (or create it) -->
           <plugin>
             <groupId>org.ihtsdo.otf.term-server</groupId>
             <artifactId>term-server-admin-mojo</artifactId>
@@ -43,6 +63,9 @@
                 <goals>
                   <goal>updatedb</goal>
                 </goals>
+                <configuration>
+                  <mode>update</mode>
+                </configuration>
               </execution>
             </executions>
           </plugin>

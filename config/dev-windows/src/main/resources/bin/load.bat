@@ -24,9 +24,9 @@ goto trailer)
 set error=0
 pause
 
-echo     Run updatedb with hibernate.hbm2ddl.auto = create ...%date% %time%
-cd %SERVER_CODE%/admin/updatedb
-call mvn install -PUpdatedb -Drun.config=%SERVER_CONFIG% -Dhibernate.hbm2ddl.auto=create 1> mvn.log
+echo     Run Createdb ...%date% %time%
+cd %SERVER_CODE%/admin/db
+call mvn install -PCreatedb -Drun.config=%SERVER_CONFIG% 1> mvn.log
 IF %ERRORLEVEL% NEQ 0 (set error=1
 goto trailer)
 del /Q mvn.log

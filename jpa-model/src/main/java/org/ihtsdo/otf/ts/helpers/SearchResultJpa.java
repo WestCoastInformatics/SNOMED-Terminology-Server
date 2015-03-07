@@ -34,14 +34,14 @@ public class SearchResultJpa implements SearchResult {
   /**
    * Constructor.
    *
-   * @param id the id
-   * @param terminologyId the terminologyId
-   * @param value the value
+   * @param result the result
    */
-  public SearchResultJpa(Long id, String terminologyId, String value) {
-    this.id = id;
-    this.terminologyId = terminologyId;
-    this.value = value;
+  public SearchResultJpa(SearchResult result) {
+    id = result.getId();
+    terminology = result.getTerminology();
+    terminologyId = result.getTerminologyId();
+    terminologyVersion = result.getTerminologyVersion();
+    value = result.getValue();
   }
 
   /**

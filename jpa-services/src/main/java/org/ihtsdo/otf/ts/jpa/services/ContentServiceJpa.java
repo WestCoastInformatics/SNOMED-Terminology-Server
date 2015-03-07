@@ -60,9 +60,7 @@ import org.ihtsdo.otf.ts.helpers.SimpleRefSetMemberListJpa;
 import org.ihtsdo.otf.ts.helpers.StringList;
 import org.ihtsdo.otf.ts.jpa.ProjectJpa;
 import org.ihtsdo.otf.ts.jpa.services.helper.TerminologyUtility;
-import org.ihtsdo.otf.ts.rf2.AssociationReferenceConceptRefSetMember;
 import org.ihtsdo.otf.ts.rf2.AssociationReferenceRefSetMember;
-import org.ihtsdo.otf.ts.rf2.AttributeValueConceptRefSetMember;
 import org.ihtsdo.otf.ts.rf2.AttributeValueRefSetMember;
 import org.ihtsdo.otf.ts.rf2.ComplexMapRefSetMember;
 import org.ihtsdo.otf.ts.rf2.Component;
@@ -79,8 +77,6 @@ import org.ihtsdo.otf.ts.rf2.SimpleRefSetMember;
 import org.ihtsdo.otf.ts.rf2.TransitiveRelationship;
 import org.ihtsdo.otf.ts.rf2.jpa.AbstractAssociationReferenceRefSetMemberJpa;
 import org.ihtsdo.otf.ts.rf2.jpa.AbstractAttributeValueRefSetMemberJpa;
-import org.ihtsdo.otf.ts.rf2.jpa.AssociationReferenceConceptRefSetMemberJpa;
-import org.ihtsdo.otf.ts.rf2.jpa.AttributeValueConceptRefSetMemberJpa;
 import org.ihtsdo.otf.ts.rf2.jpa.ComplexMapRefSetMemberJpa;
 import org.ihtsdo.otf.ts.rf2.jpa.ConceptJpa;
 import org.ihtsdo.otf.ts.rf2.jpa.DescriptionJpa;
@@ -521,8 +517,12 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
     return list;
   }
 
-  /* (non-Javadoc)
-   * @see org.ihtsdo.otf.ts.services.ContentService#getChildConcepts(org.ihtsdo.otf.ts.rf2.Concept, org.ihtsdo.otf.ts.helpers.PfsParameter)
+  /*
+   * (non-Javadoc)
+   * 
+   * @see
+   * org.ihtsdo.otf.ts.services.ContentService#getChildConcepts(org.ihtsdo.otf
+   * .ts.rf2.Concept, org.ihtsdo.otf.ts.helpers.PfsParameter)
    */
   @SuppressWarnings("unchecked")
   @Override
@@ -1063,8 +1063,8 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
     Long id) throws Exception {
     Logger.getLogger(ContentServiceJpa.class).debug(
         "Content Service - get attribute value refset member " + id);
-    AttributeValueConceptRefSetMember c =
-        manager.find(AttributeValueConceptRefSetMemberJpa.class, id);
+    AttributeValueRefSetMember<?> c =
+        manager.find(AbstractAttributeValueRefSetMemberJpa.class, id);
     return c;
   }
 
@@ -1261,8 +1261,8 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
     Long id) throws Exception {
     Logger.getLogger(ContentServiceJpa.class).debug(
         "Content Service - get association reference refset member " + id);
-    AssociationReferenceConceptRefSetMember c =
-        manager.find(AssociationReferenceConceptRefSetMemberJpa.class, id);
+    AssociationReferenceRefSetMember<?> c =
+        manager.find(AbstractAssociationReferenceRefSetMemberJpa.class, id);
     return c;
   }
 
@@ -3209,7 +3209,6 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
             .equals(String.class)) {
           fullTextQuery.setSort(new Sort(new SortField(pfs.getSortField(),
               SortField.STRING)));
-
         } else {
           throw new Exception(
               clazz.getName()

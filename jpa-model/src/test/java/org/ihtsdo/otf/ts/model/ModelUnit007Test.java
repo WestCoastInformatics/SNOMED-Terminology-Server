@@ -106,7 +106,6 @@ public class ModelUnit007Test {
    *
    * @throws Exception the exception
    */
-  @SuppressWarnings("static-method")
   @Test
   public void testDeepCopy007() throws Exception {
     Logger.getLogger(getClass()).info("TEST testDeepCopy007");

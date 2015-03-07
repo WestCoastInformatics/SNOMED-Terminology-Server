@@ -21,7 +21,7 @@ import org.ihtsdo.otf.ts.rf2.LanguageRefSetMember;
 public class LanguageRefSetMemberJpa extends AbstractDescriptionRefSetMember
     implements LanguageRefSetMember {
 
-  /**  the acceptability id. */
+  /** the acceptability id. */
   @Column(nullable = false)
   private String acceptabilityId;
 
@@ -31,9 +31,10 @@ public class LanguageRefSetMemberJpa extends AbstractDescriptionRefSetMember
   public LanguageRefSetMemberJpa() {
     // do nothing
   }
-  
+
   /**
-   * Instantiates a {@link LanguageRefSetMemberJpa} from the specified parameters.
+   * Instantiates a {@link LanguageRefSetMemberJpa} from the specified
+   * parameters.
    *
    * @param member the member
    */
@@ -41,8 +42,7 @@ public class LanguageRefSetMemberJpa extends AbstractDescriptionRefSetMember
     super(member);
     this.acceptabilityId = member.getAcceptabilityId();
   }
-   
-  
+
   /**
    * returns the acceptability id.
    *
@@ -64,8 +64,9 @@ public class LanguageRefSetMemberJpa extends AbstractDescriptionRefSetMember
 
   }
 
-
-  /* (non-Javadoc)
+  /*
+   * (non-Javadoc)
+   * 
    * @see org.ihtsdo.otf.ts.rf2.jpa.AbstractComponent#toString()
    */
   @Override
@@ -75,7 +76,9 @@ public class LanguageRefSetMemberJpa extends AbstractDescriptionRefSetMember
             .getTerminologyId()) + "," + this.getAcceptabilityId();
   }
 
-  /* (non-Javadoc)
+  /*
+   * (non-Javadoc)
+   * 
    * @see org.ihtsdo.otf.ts.rf2.jpa.AbstractDescriptionRefSetMember#hashCode()
    */
   @Override
@@ -88,8 +91,12 @@ public class LanguageRefSetMemberJpa extends AbstractDescriptionRefSetMember
     return result;
   }
 
-  /* (non-Javadoc)
-   * @see org.ihtsdo.otf.ts.rf2.jpa.AbstractDescriptionRefSetMember#equals(java.lang.Object)
+  /*
+   * (non-Javadoc)
+   * 
+   * @see
+   * org.ihtsdo.otf.ts.rf2.jpa.AbstractDescriptionRefSetMember#equals(java.lang
+   * .Object)
    */
   @Override
   public boolean equals(Object obj) {

@@ -1,7 +1,10 @@
 package org.ihtsdo.otf.ts.mojo;
 
+import java.util.Properties;
+
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoFailureException;
+import org.ihtsdo.otf.ts.helpers.ConfigUtility;
 import org.ihtsdo.otf.ts.jpa.services.RootServiceJpa;
 
 /**
@@ -15,6 +18,13 @@ import org.ihtsdo.otf.ts.jpa.services.RootServiceJpa;
  */
 public class UpdateDbMojo extends AbstractMojo {
 
+  /**
+   * Mode: create or update
+   * @parameter
+   * @required
+   */ 
+  public String mode;
+  
   /**
    * Instantiates a {@link UpdateDbMojo} from the specified parameters.
    * 
@@ -31,7 +41,14 @@ public class UpdateDbMojo extends AbstractMojo {
   @Override
   public void execute() throws MojoFailureException {
     getLog().info("Start updating database schema...");
+    getLog().info("  mode = " + mode);
     try {
+      if (!mode.equals("update") && !mode.equals("create")) {
+        throw new Exception("Mode has illegal value: " + mode);
+      }
+      Properties config = ConfigUtility.getConfigProperties();
+      config.setProperty("hibernate.hbm2ddl.auto", mode);
+      
       // Trigger a JPA event
       new RootServiceJpa().close();
       getLog().info("done ...");
