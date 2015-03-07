@@ -5,6 +5,9 @@ import java.util.List;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
+import org.ihtsdo.otf.ts.User;
+import org.ihtsdo.otf.ts.jpa.UserJpa;
+
 /**
  * JAXB enabled implementation of {@link UserList}.
  */

@@ -17,7 +17,7 @@ import org.ihtsdo.otf.ts.rf2.ConceptRefSetMember;
 public abstract class AbstractConceptRefSetMember extends
     AbstractRefSetMemberJpa<Concept> implements ConceptRefSetMember {
 
-  /** The Concept associated with this element */
+  /** The Concept associated with this element. */
   @ManyToOne(targetEntity = ConceptJpa.class, optional = false)
   private Concept concept;
 
@@ -39,8 +39,10 @@ public abstract class AbstractConceptRefSetMember extends
     concept = member.getConcept();
   }
 
-  /**
-   * {@inheritDoc}
+  /*
+   * (non-Javadoc)
+   * 
+   * @see org.ihtsdo.otf.ts.rf2.ConceptRefSetMember#getConcept()
    */
   @XmlTransient
   @Override
@@ -48,14 +50,19 @@ public abstract class AbstractConceptRefSetMember extends
     return this.concept;
   }
 
-  /* (non-Javadoc)
-   * @see org.ihtsdo.otf.ts.rf2.ConceptRefSetMember#setConcept(org.ihtsdo.otf.ts.rf2.Concept)
+  /*
+   * (non-Javadoc)
+   * 
+   * @see
+   * org.ihtsdo.otf.ts.rf2.ConceptRefSetMember#setConcept(org.ihtsdo.otf.ts.
+   * rf2.Concept)
    */
   @Override
   public void setConcept(Concept concept) {
     this.concept = concept;
 
   }
+
   /*
    * (non-Javadoc)
    * 
@@ -78,7 +85,6 @@ public abstract class AbstractConceptRefSetMember extends
   public void setComponent(Concept concept) {
     this.concept = concept;
   }
-
 
   /**
    * Returns the concept id. Used for XML/JSON serialization.
@@ -127,8 +133,33 @@ public abstract class AbstractConceptRefSetMember extends
     concept.setTerminology(getTerminology());
     concept.setTerminologyVersion(getTerminologyVersion());
   }
-  
-  /* (non-Javadoc)
+
+  /**
+   * Returns the concept preferred name. Used for XML/JSON serialization.
+   * 
+   * @return the concept preferred name
+   */
+  @XmlElement
+  private String getConceptPreferredName() {
+    return concept != null ? concept.getDefaultPreferredName() : "";
+  }
+
+  /**
+   * Sets the concept preferred name.
+   *
+   * @param name the concept preferred name
+   */
+  @SuppressWarnings("unused")
+  private void setConceptPreferredName(String name) {
+    if (concept == null) {
+      concept = new ConceptJpa();
+    }
+    concept.setDefaultPreferredName(name);
+  }
+
+  /*
+   * (non-Javadoc)
+   * 
    * @see org.ihtsdo.otf.ts.rf2.jpa.AbstractRefSetMemberJpa#hashCode()
    */
   @Override
@@ -139,8 +170,11 @@ public abstract class AbstractConceptRefSetMember extends
     return result;
   }
 
-  /* (non-Javadoc)
-   * @see org.ihtsdo.otf.ts.rf2.jpa.AbstractRefSetMemberJpa#equals(java.lang.Object)
+  /*
+   * (non-Javadoc)
+   * 
+   * @see
+   * org.ihtsdo.otf.ts.rf2.jpa.AbstractRefSetMemberJpa#equals(java.lang.Object)
    */
   @Override
   public boolean equals(Object obj) {

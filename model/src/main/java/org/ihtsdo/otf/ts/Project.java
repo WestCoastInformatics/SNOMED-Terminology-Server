@@ -3,8 +3,6 @@ package org.ihtsdo.otf.ts;
 import java.util.Date;
 import java.util.Set;
 
-import org.ihtsdo.otf.ts.helpers.User;
-
 /**
  * Generically represents an editing project.
  */

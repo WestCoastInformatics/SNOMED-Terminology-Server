@@ -4,10 +4,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.log4j.Logger;
+import org.ihtsdo.otf.ts.ReleaseInfo;
 import org.ihtsdo.otf.ts.algo.Algorithm;
 import org.ihtsdo.otf.ts.helpers.ConfigUtility;
-import org.ihtsdo.otf.ts.helpers.ReleaseInfo;
-import org.ihtsdo.otf.ts.helpers.ReleaseInfoJpa;
+import org.ihtsdo.otf.ts.jpa.ReleaseInfoJpa;
 import org.ihtsdo.otf.ts.jpa.services.ContentServiceJpa;
 import org.ihtsdo.otf.ts.jpa.services.HistoryServiceJpa;
 import org.ihtsdo.otf.ts.services.HistoryService;

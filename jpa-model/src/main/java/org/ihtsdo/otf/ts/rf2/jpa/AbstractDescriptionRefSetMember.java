@@ -39,7 +39,9 @@ public abstract class AbstractDescriptionRefSetMember extends
     description = member.getDescription();
   }
 
-  /* (non-Javadoc)
+  /*
+   * (non-Javadoc)
+   * 
    * @see org.ihtsdo.otf.ts.rf2.DescriptionRefSetMember#getDescription()
    */
   @XmlTransient
@@ -48,15 +50,19 @@ public abstract class AbstractDescriptionRefSetMember extends
     return this.description;
   }
 
-  /* (non-Javadoc)
-   * @see org.ihtsdo.otf.ts.rf2.DescriptionRefSetMember#setDescription(org.ihtsdo.otf.ts.rf2.Description)
+  /*
+   * (non-Javadoc)
+   * 
+   * @see
+   * org.ihtsdo.otf.ts.rf2.DescriptionRefSetMember#setDescription(org.ihtsdo
+   * .otf.ts.rf2.Description)
    */
   @Override
   public void setDescription(Description description) {
     this.description = description;
 
   }
-  
+
   /*
    * (non-Javadoc)
    * 
@@ -126,9 +132,34 @@ public abstract class AbstractDescriptionRefSetMember extends
     description.setTerminologyId(descriptionId);
     description.setTerminology(getTerminology());
     description.setTerminologyVersion(getTerminologyVersion());
-  }  
-  
-  /* (non-Javadoc)
+  }
+
+  /**
+   * Returns the description term. Used for XML/JSON serialization.
+   * 
+   * @return the description term
+   */
+  @XmlElement
+  private String getDescriptionTerm() {
+    return description != null ? description.getTerminologyId() : "";
+  }
+
+  /**
+   * Sets the description term.
+   *
+   * @param term the description term
+   */
+  @SuppressWarnings("unused")
+  private void setDescriptionTerm(String term) {
+    if (description == null) {
+      description = new DescriptionJpa();
+    }
+    description.setTerm(term);
+  }
+
+  /*
+   * (non-Javadoc)
+   * 
    * @see org.ihtsdo.otf.ts.rf2.jpa.AbstractRefSetMemberJpa#hashCode()
    */
   @Override
@@ -140,8 +171,11 @@ public abstract class AbstractDescriptionRefSetMember extends
     return result;
   }
 
-  /* (non-Javadoc)
-   * @see org.ihtsdo.otf.ts.rf2.jpa.AbstractRefSetMemberJpa#equals(java.lang.Object)
+  /*
+   * (non-Javadoc)
+   * 
+   * @see
+   * org.ihtsdo.otf.ts.rf2.jpa.AbstractRefSetMemberJpa#equals(java.lang.Object)
    */
   @Override
   public boolean equals(Object obj) {
@@ -158,6 +192,7 @@ public abstract class AbstractDescriptionRefSetMember extends
         return false;
     } else if (!description.equals(other.description))
       return false;
+
     return true;
   }
 

@@ -5,11 +5,13 @@ import java.util.Properties;
 import java.util.Set;
 
 import org.apache.log4j.Logger;
+import org.ihtsdo.otf.ts.User;
+import org.ihtsdo.otf.ts.UserRole;
 import org.ihtsdo.otf.ts.helpers.ConfigUtility;
-import org.ihtsdo.otf.ts.helpers.User;
-import org.ihtsdo.otf.ts.helpers.UserRole;
+import org.ihtsdo.otf.ts.helpers.UserImpl;
 import org.ihtsdo.otf.ts.services.handlers.SecurityServiceHandler;
-import org.ihtsdo.otf.ts.services.helpers.UserImpl;
+
+
 
 /**
  * Implements a security handler that authorizes via IHTSDO authentication.

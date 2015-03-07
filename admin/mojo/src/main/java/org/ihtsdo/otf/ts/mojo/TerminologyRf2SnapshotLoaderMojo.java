@@ -1,24 +1,14 @@
 package org.ihtsdo.otf.ts.mojo;
 
-import java.io.File;
 import java.util.Properties;
 
-import org.apache.log4j.Logger;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoFailureException;
 import org.ihtsdo.otf.ts.helpers.ConfigUtility;
-import org.ihtsdo.otf.ts.helpers.ReleaseInfo;
-import org.ihtsdo.otf.ts.helpers.ReleaseInfoJpa;
-import org.ihtsdo.otf.ts.jpa.algo.Rf2FileSorter;
-import org.ihtsdo.otf.ts.jpa.algo.Rf2Readers;
-import org.ihtsdo.otf.ts.jpa.algo.Rf2SnapshotLoaderAlgorithm;
-import org.ihtsdo.otf.ts.jpa.algo.TransitiveClosureAlgorithm;
 import org.ihtsdo.otf.ts.jpa.client.ContentClientRest;
-import org.ihtsdo.otf.ts.jpa.services.HistoryServiceJpa;
 import org.ihtsdo.otf.ts.jpa.services.SecurityServiceJpa;
 import org.ihtsdo.otf.ts.jpa.services.helper.TomcatServerUtility;
 import org.ihtsdo.otf.ts.rest.impl.ContentServiceRestImpl;
-import org.ihtsdo.otf.ts.services.HistoryService;
 import org.ihtsdo.otf.ts.services.SecurityService;
 
 /**

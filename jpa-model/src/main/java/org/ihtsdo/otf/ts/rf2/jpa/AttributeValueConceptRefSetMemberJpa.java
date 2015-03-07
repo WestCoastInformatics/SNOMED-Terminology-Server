@@ -22,7 +22,7 @@ public class AttributeValueConceptRefSetMemberJpa extends
     AbstractAttributeValueRefSetMemberJpa<Concept> implements
     AttributeValueConceptRefSetMember {
 
-  /** The Concept associated with this element */
+  /** The Concept associated with this element. */
   @ManyToOne(targetEntity = ConceptJpa.class, optional = true)
   private Concept concept;
 
@@ -79,6 +79,12 @@ public class AttributeValueConceptRefSetMemberJpa extends
     setConcept(concept);
   }
 
+  /*
+   * (non-Javadoc)
+   * 
+   * @see
+   * org.ihtsdo.otf.ts.rf2.jpa.AbstractAttributeValueRefSetMemberJpa#hashCode()
+   */
   @Override
   public int hashCode() {
     final int prime = 31;
@@ -87,8 +93,12 @@ public class AttributeValueConceptRefSetMemberJpa extends
     return result;
   }
 
-  /* (non-Javadoc)
-   * @see org.ihtsdo.otf.ts.rf2.jpa.AbstractAttributeValueRefSetMemberJpa#equals(java.lang.Object)
+  /*
+   * (non-Javadoc)
+   * 
+   * @see
+   * org.ihtsdo.otf.ts.rf2.jpa.AbstractAttributeValueRefSetMemberJpa#equals(
+   * java.lang.Object)
    */
   @Override
   public boolean equals(Object obj) {
@@ -108,7 +118,9 @@ public class AttributeValueConceptRefSetMemberJpa extends
     return true;
   }
 
-  /* (non-Javadoc)
+  /*
+   * (non-Javadoc)
+   * 
    * @see org.ihtsdo.otf.ts.rf2.jpa.AbstractComponent#toString()
    */
   @Override
@@ -117,15 +129,18 @@ public class AttributeValueConceptRefSetMemberJpa extends
         + getConceptTerminologyId() + ", " + getValueId();
   }
 
-  /**
-   * {@inheritDoc}
+  /*
+   * (non-Javadoc)
+   * 
+   * @see
+   * org.ihtsdo.otf.ts.rf2.ConceptRefSetMember#setConcept(org.ihtsdo.otf.ts.
+   * rf2.Concept)
    */
   @Override
   public void setConcept(Concept concept) {
     this.concept = concept;
 
   }
-
 
   /**
    * Returns the concept id. Used for XML/JSON serialization.
@@ -173,5 +188,28 @@ public class AttributeValueConceptRefSetMemberJpa extends
     concept.setTerminologyId(conceptId);
     concept.setTerminology(getTerminology());
     concept.setTerminologyVersion(getTerminologyVersion());
+  }
+
+  /**
+   * Returns the concept preferred name. Used for XML/JSON serialization.
+   * 
+   * @return the concept preferred name
+   */
+  @XmlElement
+  private String getConceptPreferredName() {
+    return concept != null ? concept.getDefaultPreferredName() : "";
+  }
+
+  /**
+   * Sets the concept preferred name.
+   *
+   * @param defaultPreferredName the concept preferred name
+   */
+  @SuppressWarnings("unused")
+  private void setConceptPreferredName(String defaultPreferredName) {
+    if (concept == null) {
+      concept = new ConceptJpa();
+    }
+    concept.setDefaultPreferredName(defaultPreferredName);
   }
 }

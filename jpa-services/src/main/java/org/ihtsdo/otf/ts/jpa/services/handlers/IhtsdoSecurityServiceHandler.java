@@ -10,10 +10,10 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response.Status.Family;
 
 import org.apache.log4j.Logger;
+import org.ihtsdo.otf.ts.User;
 import org.ihtsdo.otf.ts.helpers.LocalException;
-import org.ihtsdo.otf.ts.helpers.User;
+import org.ihtsdo.otf.ts.helpers.UserImpl;
 import org.ihtsdo.otf.ts.services.handlers.SecurityServiceHandler;
-import org.ihtsdo.otf.ts.services.helpers.UserImpl;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sun.jersey.api.client.Client;

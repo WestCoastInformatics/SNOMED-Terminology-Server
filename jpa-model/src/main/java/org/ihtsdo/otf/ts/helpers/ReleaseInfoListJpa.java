@@ -5,6 +5,9 @@ import java.util.List;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
+import org.ihtsdo.otf.ts.ReleaseInfo;
+import org.ihtsdo.otf.ts.jpa.ReleaseInfoJpa;
+
 /**
  * JAXB-enabled implementation of {@link ReleaseInfoList}.
  */

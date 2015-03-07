@@ -1,7 +1,7 @@
 package org.ihtsdo.otf.ts.services.handlers;
 
+import org.ihtsdo.otf.ts.ValidationResult;
 import org.ihtsdo.otf.ts.helpers.Configurable;
-import org.ihtsdo.otf.ts.helpers.ValidationResult;
 import org.ihtsdo.otf.ts.rf2.Concept;
 
 /**

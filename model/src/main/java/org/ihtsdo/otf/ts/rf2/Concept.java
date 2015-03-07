@@ -2,7 +2,6 @@ package org.ihtsdo.otf.ts.rf2;
 
 import java.util.Set;
 
-// TODO: Auto-generated Javadoc
 /**
  * Represents a concept in a terminology.
  */

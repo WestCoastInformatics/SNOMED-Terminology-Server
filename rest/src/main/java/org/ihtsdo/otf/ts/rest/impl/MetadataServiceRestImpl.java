@@ -13,10 +13,10 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import org.apache.log4j.Logger;
+import org.ihtsdo.otf.ts.UserRole;
 import org.ihtsdo.otf.ts.helpers.KeyValuePair;
 import org.ihtsdo.otf.ts.helpers.KeyValuePairList;
 import org.ihtsdo.otf.ts.helpers.KeyValuePairLists;
-import org.ihtsdo.otf.ts.helpers.UserRole;
 import org.ihtsdo.otf.ts.jpa.services.MetadataServiceJpa;
 import org.ihtsdo.otf.ts.jpa.services.SecurityServiceJpa;
 import org.ihtsdo.otf.ts.rest.MetadataServiceRest;

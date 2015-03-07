@@ -3,8 +3,8 @@ package org.ihtsdo.otf.ts.jpa.services.validation;
 import java.util.Properties;
 
 import org.apache.log4j.Logger;
-import org.ihtsdo.otf.ts.helpers.ValidationResult;
-import org.ihtsdo.otf.ts.helpers.ValidationResultJpa;
+import org.ihtsdo.otf.ts.ValidationResult;
+import org.ihtsdo.otf.ts.jpa.ValidationResultJpa;
 import org.ihtsdo.otf.ts.rf2.Concept;
 import org.ihtsdo.otf.ts.rf2.Description;
 import org.ihtsdo.otf.ts.rf2.LanguageRefSetMember;

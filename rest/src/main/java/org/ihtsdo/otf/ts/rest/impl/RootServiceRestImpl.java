@@ -3,7 +3,7 @@ package org.ihtsdo.otf.ts.rest.impl;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
 
-import org.ihtsdo.otf.ts.helpers.UserRole;
+import org.ihtsdo.otf.ts.UserRole;
 import org.ihtsdo.otf.ts.services.SecurityService;
 import org.ihtsdo.otf.ts.services.handlers.ExceptionHandler;
 

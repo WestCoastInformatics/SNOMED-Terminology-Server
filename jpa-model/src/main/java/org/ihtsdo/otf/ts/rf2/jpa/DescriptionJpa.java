@@ -283,7 +283,7 @@ public class DescriptionJpa extends AbstractComponent implements Description {
    */
   @XmlElement
   private Long getConceptId() {
-    return concept != null ? concept.getId() : null;
+    return concept != null ? concept.getId() : 0;
   }
 
   /**
@@ -297,6 +297,25 @@ public class DescriptionJpa extends AbstractComponent implements Description {
       concept = new ConceptJpa();
     }
     concept.setId(conceptId);
+  }
+
+  /**
+   * Returns the concept preferred name. Used for XML/JSON serialization.
+   * @return the concept preferred name
+   */
+  @XmlElement
+  private String getConceptPreferredName() {
+    return concept != null ? concept.getDefaultPreferredName() : "";
+  }
+
+  /**
+   * Sets the concept preferred name.
+   *
+   * @param name the concept preferred name
+   */
+  @SuppressWarnings("unused")
+  private void setConceptPreferredName(String name) {
+    // do nothing - here for JAXB
   }
 
   /**

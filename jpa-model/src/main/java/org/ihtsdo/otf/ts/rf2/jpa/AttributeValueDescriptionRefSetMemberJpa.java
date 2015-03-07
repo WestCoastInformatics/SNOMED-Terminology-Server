@@ -70,7 +70,6 @@ public class AttributeValueDescriptionRefSetMemberJpa extends
 
   }
 
-
   /**
    * Returns the description id. Used for XML/JSON serialization.
    * 
@@ -117,7 +116,30 @@ public class AttributeValueDescriptionRefSetMemberJpa extends
     description.setTerminologyId(descriptionId);
     description.setTerminology(getTerminology());
     description.setTerminologyVersion(getTerminologyVersion());
-  }  
+  }
+
+  /**
+   * Returns the description term. Used for XML/JSON serialization.
+   * 
+   * @return the description term
+   */
+  @XmlElement
+  private String getDescriptionTerm() {
+    return description != null ? description.getTerm() : "";
+  }
+
+  /**
+   * Sets the description term.
+   *
+   * @param term the description term
+   */
+  @SuppressWarnings("unused")
+  private void setDescriptionTerm(String term) {
+    if (description == null) {
+      description = new DescriptionJpa();
+    }
+    description.setTerm(term);
+  }
 
   /*
    * (non-Javadoc)
@@ -137,7 +159,6 @@ public class AttributeValueDescriptionRefSetMemberJpa extends
    * org.ihtsdo.otf.ts.rf2.RefSetMember#setComponent(org.ihtsdo.otf.ts.rf2.Component
    * )
    */
-  @XmlTransient
   @Override
   public void setComponent(Description component) {
     setDescription(component);
@@ -183,7 +204,9 @@ public class AttributeValueDescriptionRefSetMemberJpa extends
     return true;
   }
 
-  /* (non-Javadoc)
+  /*
+   * (non-Javadoc)
+   * 
    * @see org.ihtsdo.otf.ts.rf2.jpa.AbstractComponent#toString()
    */
   @Override

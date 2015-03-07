@@ -945,7 +945,6 @@ public class SnorocketClassifier implements Classifier {
    */
   @Override
   public List<org.ihtsdo.otf.ts.rf2.Relationship> getNewInferredRelationships() {
-    // TODO Auto-generated method stub
     return null;
   }
 
@@ -956,7 +955,6 @@ public class SnorocketClassifier implements Classifier {
    */
   @Override
   public List<org.ihtsdo.otf.ts.rf2.Relationship> getOldInferredRelationships() {
-    // todo
     return null;
   }
 

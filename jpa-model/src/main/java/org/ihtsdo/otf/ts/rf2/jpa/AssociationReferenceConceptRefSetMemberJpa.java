@@ -22,7 +22,7 @@ public class AssociationReferenceConceptRefSetMemberJpa extends
     AbstractAssociationReferenceRefSetMemberJpa<Concept> implements
     AssociationReferenceConceptRefSetMember {
 
-  /** The Concept associated with this element */
+  /** The Concept associated with this element. */
   @ManyToOne(targetEntity = ConceptJpa.class, optional = true)
   private Concept concept;
 
@@ -119,8 +119,12 @@ public class AssociationReferenceConceptRefSetMemberJpa extends
     return true;
   }
 
-  /**
-   * {@inheritDoc}
+  /*
+   * (non-Javadoc)
+   * 
+   * @see
+   * org.ihtsdo.otf.ts.rf2.ConceptRefSetMember#setConcept(org.ihtsdo.otf.ts.
+   * rf2.Concept)
    */
   @Override
   public void setConcept(Concept concept) {
@@ -176,11 +180,38 @@ public class AssociationReferenceConceptRefSetMemberJpa extends
     concept.setTerminologyVersion(getTerminologyVersion());
   }
 
-
+  /*
+   * (non-Javadoc)
+   * 
+   * @see org.ihtsdo.otf.ts.rf2.jpa.AbstractComponent#toString()
+   */
   @Override
   public String toString() {
     return super.toString() + ", " + getConceptId() + ", "
         + getConceptTerminologyId() + ", " + getTargetComponentId();
+  }
+
+  /**
+   * Returns the concept preferred name. Used for XML/JSON serialization.
+   * 
+   * @return the concept preferred name
+   */
+  @XmlElement
+  private String getConceptPreferredName() {
+    return concept != null ? concept.getDefaultPreferredName() : "";
+  }
+
+  /**
+   * Sets the concept preferred name.
+   *
+   * @param defaultPreferredName the concept preferred name
+   */
+  @SuppressWarnings("unused")
+  private void setConceptPreferredName(String defaultPreferredName) {
+    if (concept == null) {
+      concept = new ConceptJpa();
+    }
+    concept.setDefaultPreferredName(defaultPreferredName);
   }
 
 }

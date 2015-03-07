@@ -4,9 +4,9 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import org.apache.log4j.Logger;
-import org.ihtsdo.otf.ts.helpers.User;
-import org.ihtsdo.otf.ts.helpers.UserJpa;
-import org.ihtsdo.otf.ts.helpers.UserRole;
+import org.ihtsdo.otf.ts.User;
+import org.ihtsdo.otf.ts.UserRole;
+import org.ihtsdo.otf.ts.jpa.UserJpa;
 import org.ihtsdo.otf.ts.jpa.services.SecurityServiceJpa;
 import org.ihtsdo.otf.ts.rest.SecurityServiceRest;
 import org.ihtsdo.otf.ts.services.SecurityService;

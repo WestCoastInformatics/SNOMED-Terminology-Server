@@ -28,6 +28,9 @@ import org.hibernate.search.jpa.FullTextEntityManager;
 import org.hibernate.search.jpa.FullTextQuery;
 import org.hibernate.search.jpa.Search;
 import org.ihtsdo.otf.ts.Project;
+import org.ihtsdo.otf.ts.ReleaseInfo;
+import org.ihtsdo.otf.ts.User;
+import org.ihtsdo.otf.ts.UserRole;
 import org.ihtsdo.otf.ts.helpers.AssociationReferenceRefSetMemberList;
 import org.ihtsdo.otf.ts.helpers.AssociationReferenceRefSetMemberListJpa;
 import org.ihtsdo.otf.ts.helpers.AttributeValueRefSetMemberList;
@@ -47,7 +50,6 @@ import org.ihtsdo.otf.ts.helpers.ProjectList;
 import org.ihtsdo.otf.ts.helpers.ProjectListJpa;
 import org.ihtsdo.otf.ts.helpers.RefsetDescriptorRefSetMemberList;
 import org.ihtsdo.otf.ts.helpers.RefsetDescriptorRefSetMemberListJpa;
-import org.ihtsdo.otf.ts.helpers.ReleaseInfo;
 import org.ihtsdo.otf.ts.helpers.SearchCriteriaList;
 import org.ihtsdo.otf.ts.helpers.SearchResult;
 import org.ihtsdo.otf.ts.helpers.SearchResultJpa;
@@ -58,8 +60,6 @@ import org.ihtsdo.otf.ts.helpers.SimpleMapRefSetMemberListJpa;
 import org.ihtsdo.otf.ts.helpers.SimpleRefSetMemberList;
 import org.ihtsdo.otf.ts.helpers.SimpleRefSetMemberListJpa;
 import org.ihtsdo.otf.ts.helpers.StringList;
-import org.ihtsdo.otf.ts.helpers.User;
-import org.ihtsdo.otf.ts.helpers.UserRole;
 import org.ihtsdo.otf.ts.jpa.ProjectJpa;
 import org.ihtsdo.otf.ts.jpa.services.helper.TerminologyUtility;
 import org.ihtsdo.otf.ts.rf2.AssociationReferenceConceptRefSetMember;
@@ -2764,7 +2764,7 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
   public SearchResultList findConceptsForSearchCriteria(String terminology,
     String version, String query, SearchCriteriaList criteria, PfsParameter pfs)
     throws Exception {
-    throw new UnsupportedOperationException("TODO:");
+    throw new UnsupportedOperationException();
 
   }
 
@@ -3266,8 +3266,6 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
     // initialize the name->analyzed pair map
     Map<String, Boolean> nameAnalyzedPairs = new HashMap<>();
 
-    String annoText = null;
-
     Method m =
         clazz.getMethod("get" + sortField.substring(0, 1).toUpperCase()
             + sortField.substring(1), new Class<?>[] {});
@@ -3276,17 +3274,11 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
 
     // check for Field annotation
     if (m.isAnnotationPresent(org.hibernate.search.annotations.Field.class)) {
-      System.out.println("  "
-          + m.getAnnotation(org.hibernate.search.annotations.Field.class));
-
       annotationFields.add(m.getAnnotation(org.hibernate.search.annotations.Field.class));
     }
 
     // check for Fields annotation
     if (m.isAnnotationPresent(org.hibernate.search.annotations.Fields.class)) {
-      System.out.println("  "
-          + m.getAnnotation(org.hibernate.search.annotations.Fields.class));
-
       // add all specified fields
       for (org.hibernate.search.annotations.Field f : m.getAnnotation(org.hibernate.search.annotations.Fields.class).value()) {
         annotationFields.add(f);

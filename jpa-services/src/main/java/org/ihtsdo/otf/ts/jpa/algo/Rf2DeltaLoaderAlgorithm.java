@@ -253,13 +253,6 @@ public class Rf2DeltaLoaderAlgorithm extends ContentServiceJpa implements
       // Skip other delta data structures
       // TODO: implement this
 
-      // Remove concepts in the DB that were created by prior
-      // deltas that no longer exist in the delta
-      // Logger.getLogger(this.getClass()).info("    Retire non-existent concepts..");
-      // TODO - bring this back once algo is worked out
-      // retireRemovedConcepts(); - this is a special case only for processing
-      // "daily builds"
-
       // Compute the number of modified objects of each type
       Logger.getLogger(this.getClass()).info(
           "  Computing number of modified objects...");

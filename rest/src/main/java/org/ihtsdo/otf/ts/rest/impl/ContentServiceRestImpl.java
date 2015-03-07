@@ -19,14 +19,14 @@ import javax.ws.rs.core.MediaType;
 
 import org.apache.log4j.Logger;
 import org.ihtsdo.otf.ts.Project;
+import org.ihtsdo.otf.ts.ReleaseInfo;
+import org.ihtsdo.otf.ts.UserRole;
 import org.ihtsdo.otf.ts.helpers.ConceptList;
 import org.ihtsdo.otf.ts.helpers.ConfigUtility;
 import org.ihtsdo.otf.ts.helpers.PfsParameterJpa;
 import org.ihtsdo.otf.ts.helpers.ProjectList;
-import org.ihtsdo.otf.ts.helpers.ReleaseInfo;
-import org.ihtsdo.otf.ts.helpers.ReleaseInfoJpa;
 import org.ihtsdo.otf.ts.helpers.SearchResultList;
-import org.ihtsdo.otf.ts.helpers.UserRole;
+import org.ihtsdo.otf.ts.jpa.ReleaseInfoJpa;
 import org.ihtsdo.otf.ts.jpa.algo.ClamlLoaderAlgorithm;
 import org.ihtsdo.otf.ts.jpa.algo.LuceneReindexAlgorithm;
 import org.ihtsdo.otf.ts.jpa.algo.Rf2DeltaLoaderAlgorithm;

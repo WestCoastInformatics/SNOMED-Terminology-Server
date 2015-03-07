@@ -18,7 +18,7 @@ package org.ihtsdo.otf.ts.mojo;
 
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoFailureException;
-import org.ihtsdo.otf.ts.helpers.ReleaseInfo;
+import org.ihtsdo.otf.ts.ReleaseInfo;
 import org.ihtsdo.otf.ts.jpa.services.HistoryServiceJpa;
 import org.ihtsdo.otf.ts.services.HistoryService;
 

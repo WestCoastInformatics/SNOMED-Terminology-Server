@@ -42,17 +42,19 @@ public class TransitiveRelationshipJpa extends AbstractComponent implements
   public TransitiveRelationshipJpa() {
     // do nothing
   }
-  
+
   /**
-   * Instantiates a {@link TransitiveRelationshipJpa} from the specified parameters.
+   * Instantiates a {@link TransitiveRelationshipJpa} from the specified
+   * parameters.
    *
    * @param transitiveRelationship the transitive relationship
    */
   public TransitiveRelationshipJpa(TransitiveRelationship transitiveRelationship) {
+    super(transitiveRelationship);
     subTypeConcept = transitiveRelationship.getSubTypeConcept();
     superTypeConcept = transitiveRelationship.getSuperTypeConcept();
   }
-  
+
   /*
    * (non-Javadoc)
    * 

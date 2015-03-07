@@ -8,11 +8,11 @@ import java.util.Comparator;
 
 import org.apache.log4j.Logger;
 import org.ihtsdo.otf.ts.Project;
-import org.ihtsdo.otf.ts.helpers.User;
-import org.ihtsdo.otf.ts.helpers.UserJpa;
+import org.ihtsdo.otf.ts.User;
+import org.ihtsdo.otf.ts.UserRole;
 import org.ihtsdo.otf.ts.helpers.UserList;
-import org.ihtsdo.otf.ts.helpers.UserRole;
 import org.ihtsdo.otf.ts.jpa.ProjectJpa;
+import org.ihtsdo.otf.ts.jpa.UserJpa;
 import org.ihtsdo.otf.ts.jpa.services.ContentServiceJpa;
 import org.ihtsdo.otf.ts.jpa.services.SecurityServiceJpa;
 import org.ihtsdo.otf.ts.rest.SecurityServiceRest;

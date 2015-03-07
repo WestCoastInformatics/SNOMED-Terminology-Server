@@ -1,8 +1,8 @@
 package org.ihtsdo.otf.ts.rest;
 
-import org.ihtsdo.otf.ts.helpers.User;
-import org.ihtsdo.otf.ts.helpers.UserJpa;
+import org.ihtsdo.otf.ts.User;
 import org.ihtsdo.otf.ts.helpers.UserList;
+import org.ihtsdo.otf.ts.jpa.UserJpa;
 
 /**
  * Represents a security available via a REST service.

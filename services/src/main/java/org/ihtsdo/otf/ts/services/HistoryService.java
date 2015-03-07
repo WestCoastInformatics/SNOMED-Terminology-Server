@@ -2,12 +2,12 @@ package org.ihtsdo.otf.ts.services;
 
 import java.util.Date;
 
+import org.ihtsdo.otf.ts.ReleaseInfo;
 import org.ihtsdo.otf.ts.helpers.ConceptList;
 import org.ihtsdo.otf.ts.helpers.DescriptionList;
 import org.ihtsdo.otf.ts.helpers.LanguageRefSetMemberList;
 import org.ihtsdo.otf.ts.helpers.PfsParameter;
 import org.ihtsdo.otf.ts.helpers.RelationshipList;
-import org.ihtsdo.otf.ts.helpers.ReleaseInfo;
 import org.ihtsdo.otf.ts.helpers.ReleaseInfoList;
 import org.ihtsdo.otf.ts.rf2.Concept;
 import org.ihtsdo.otf.ts.rf2.Description;
