@@ -335,4 +335,7 @@ public interface ContentServiceRest {
     String terminologyVersion, String inputFile, String authToken)
     throws Exception;
 
+  public void removeTerminology(String terminology, String terminologyVersion,
+    String authToken) throws Exception;
+
 }

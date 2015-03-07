@@ -23,6 +23,8 @@
     <version>latest</version>
     <!-- the release info names to remove -->
     <release.info.names></release.info.names>
+    <!-- whether the server is expected to be up (Default: false) -->
+  	<server></server>
   </properties>
 
   <profiles>
@@ -46,6 +48,7 @@
                 <configuration>
                   <terminology>${terminology}</terminology>
                   <terminologyVersion>${version}</terminologyVersion>
+                  <server>${server}</server>
                 </configuration>
               </execution>
             </executions>

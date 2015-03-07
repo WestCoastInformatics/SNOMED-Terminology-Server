@@ -118,10 +118,10 @@ public class TerminologyUtility {
     String version) throws Exception {
     if (statedType == null) {
       MetadataService metadataService = new MetadataServiceJpa();
-      Map<String, String> map = metadataService.getInferredRelationshipTypes(terminology, version);
+      Map<String, String> map = metadataService.getInferredCharacteristicTypes(terminology, version);
       // assume map has at least one entry
       inferredType = map.keySet().iterator().next();
-      map = metadataService.getStatedRelationshipTypes(terminology, version);
+      map = metadataService.getStatedCharacteristicTypes(terminology, version);
       // assume map has at least one entry
       statedType = map.keySet().iterator().next();
     }

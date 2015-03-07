@@ -692,21 +692,23 @@ public class ContentClientRest implements ContentServiceRest {
   @Override
   public void luceneReindex(String indexedObjects, String authToken) throws Exception {
     Client client = Client.create();
-    WebResource resource =
+    
+     WebResource resource =
         client.resource(config.getProperty("base.url")
-            + "/reindex");
+            + "/content/reindex");
     ClientResponse response =
         resource.accept(MediaType.APPLICATION_XML)
-            .header("Authorization", authToken)
-            .get(ClientResponse.class);
+           .header("Authorization", authToken)
+            .header("Content-type", MediaType.TEXT_PLAIN)
+            .post(ClientResponse.class, indexedObjects);
 
     if (response.getClientResponseStatus().getFamily() == Family.SUCCESSFUL) {
       // do nothing
     } else {
-      throw new Exception("Unexpected status " + response.getStatus());
+      if (response.getStatus() != 204)
+        throw new Exception("Unexpected status " + response.getStatus());
     }
 
-    
   }
 
   /* (non-Javadoc)
@@ -822,7 +824,7 @@ public class ContentClientRest implements ContentServiceRest {
     Client client = Client.create();
     WebResource resource =
         client.resource(config.getProperty("base.url")
-            + "/terminology/closure/compute/" + terminology);
+            + "/content/terminology/closure/compute/" + terminology);
     ClientResponse response =
         resource.accept(MediaType.APPLICATION_XML)
             .header("Authorization", authToken)
@@ -834,6 +836,13 @@ public class ContentClientRest implements ContentServiceRest {
     } else {
       throw new Exception("Unexpected status " + response.getStatus());
     }
+    
+  }
+
+  @Override
+  public void removeTerminology(String terminology, String terminologyVersion,
+    String authToken) throws Exception {
+    // TODO Implement
     
   }
 

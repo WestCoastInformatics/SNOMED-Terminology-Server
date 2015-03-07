@@ -18,7 +18,7 @@ import org.ihtsdo.otf.ts.services.RootService;
 public class RootServiceJpa implements RootService {
 
   /** The factory. */
-  protected static EntityManagerFactory factory;
+  protected static EntityManagerFactory factory = null;
   static {
     Logger.getLogger(RootServiceJpa.class).info(
         "Setting root service entity manager factory.");
@@ -61,6 +61,10 @@ public class RootServiceJpa implements RootService {
     // created on each instantiation
     manager = factory.createEntityManager();
     tx = manager.getTransaction();
+  }
+  
+  public static boolean isActive() {
+    return factory.isOpen();
   }
 
   /*

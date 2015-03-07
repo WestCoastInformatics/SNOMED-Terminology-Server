@@ -32,6 +32,7 @@ public class RootServiceRestImpl {
     } catch (Exception e1) {
       // do nothing
     }
+    e.printStackTrace();
     // throw the exception as-is, e.g. for 401 errors
     if (e instanceof WebApplicationException) {
       throw (WebApplicationException) e;

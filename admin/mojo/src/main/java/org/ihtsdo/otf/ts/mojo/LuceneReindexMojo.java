@@ -7,6 +7,8 @@ import org.apache.maven.plugin.MojoFailureException;
 import org.ihtsdo.otf.ts.helpers.ConfigUtility;
 import org.ihtsdo.otf.ts.jpa.client.ContentClientRest;
 import org.ihtsdo.otf.ts.jpa.services.SecurityServiceJpa;
+import org.ihtsdo.otf.ts.jpa.services.helper.TomcatServerUtility;
+import org.ihtsdo.otf.ts.rest.impl.ContentServiceRestImpl;
 import org.ihtsdo.otf.ts.services.SecurityService;
 
 /**
@@ -27,6 +29,12 @@ public class LuceneReindexMojo extends AbstractMojo {
   private String indexedObjects;
 
   /**
+   * Whether to run this mojo against an active server
+   * @parameter
+   */
+  private boolean server = true;
+
+  /**
    * Instantiates a {@link LuceneReindexMojo} from the specified parameters.
    */
   public LuceneReindexMojo() {
@@ -42,17 +50,43 @@ public class LuceneReindexMojo extends AbstractMojo {
   public void execute() throws MojoFailureException {
     try {
       getLog().info("Lucene reindexing called via mojo.");
+      getLog().info("  Indexed objects : " + indexedObjects);
+      getLog().info("  Expect server up: " + server);
       Properties properties = ConfigUtility.getConfigProperties();
 
+      boolean serverRunning = TomcatServerUtility.isActive();
+      
+      getLog().info("Server status detected:  " + (serverRunning == false ? "DOWN" : "UP"));
+
+      if (serverRunning == true && server == false) {
+        throw new MojoFailureException("Mojo expects server to be down, but server is running");
+      }
+      
+      if (serverRunning == false && server == true) {
+        throw new MojoFailureException("Mojo expects server to be running, but server is down");
+      }
+      
+      // authenticate
       SecurityService service = new SecurityServiceJpa();
       String authToken =
           service.authenticate(properties.getProperty("admin.user"),
               properties.getProperty("admin.password"));
       service.close();
-      
-      ContentClientRest client = new ContentClientRest(properties);
-      client.luceneReindex(indexedObjects, authToken);
-      
+
+      if (serverRunning == false) {
+        getLog().info("Running directly");
+        
+        ContentServiceRestImpl contentService = new ContentServiceRestImpl();
+        contentService.luceneReindex(indexedObjects, authToken);
+
+      } else {
+        getLog().info("Running against server");
+
+        // invoke the client
+        ContentClientRest client = new ContentClientRest(properties);
+        client.luceneReindex(indexedObjects, authToken);
+      }
+
     } catch (Exception e) {
       e.printStackTrace();
       throw new MojoFailureException("Unexpected exception:", e);

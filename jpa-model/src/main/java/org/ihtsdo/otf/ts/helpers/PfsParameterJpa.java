@@ -2,31 +2,41 @@ package org.ihtsdo.otf.ts.helpers;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
+// TODO: Auto-generated Javadoc
 /**
- * The Jpa implementation of the paging/filtering/sorting object
+ * The Jpa implementation of the paging/filtering/sorting object.
+ *
+ * @author ${author}
  */
 @XmlRootElement
 public class PfsParameterJpa implements PfsParameter {
 
-  /** The maximum number of results */
+  /**  The maximum number of results. */
   private int maxResults = -1;
 
-  /** The start index for queries */
+  /**  The start index for queries. */
   private int startIndex = -1;
 
-  /** The filter string */
+  /**  The filter string. */
   private String queryRestriction = null;
 
-  /** The comparator for sorting */
+  /**  The comparator for sorting. */
   private String sortField = null;
+  
+  /**  The ascending flag. */
+  private boolean ascending = true;
 
-  /** The default constructor */
+
+  /**
+   *  The default constructor.
+   */
   public PfsParameterJpa() {
     // do nothing
   }
 
   /**
-   * Returns the maximum number of results
+   * Returns the maximum number of results.
+   *
    * @return the maximum number of results
    */
   @Override
@@ -35,7 +45,8 @@ public class PfsParameterJpa implements PfsParameter {
   }
 
   /**
-   * Sets the maximum number of results
+   * Sets the maximum number of results.
+   *
    * @param maxResults the maximum number of results
    */
   @Override
@@ -44,7 +55,8 @@ public class PfsParameterJpa implements PfsParameter {
   }
 
   /**
-   * Returns the starting index of a query result subset
+   * Returns the starting index of a query result subset.
+   *
    * @return the start index
    */
   @Override
@@ -53,7 +65,8 @@ public class PfsParameterJpa implements PfsParameter {
   }
 
   /**
-   * Sets the starting index of a query result subset
+   * Sets the starting index of a query result subset.
+   *
    * @param startIndex the start index
    */
   @Override
@@ -62,7 +75,8 @@ public class PfsParameterJpa implements PfsParameter {
   }
 
   /**
-   * Returns the filter string
+   * Returns the filter string.
+   *
    * @return the filter string
    */
   @Override
@@ -71,12 +85,76 @@ public class PfsParameterJpa implements PfsParameter {
   }
 
   /**
-   * Sets the filter string
+   * Sets the filter string.
+   *
    * @param queryRestriction the filter string
    */
   @Override
   public void setQueryRestriction(String queryRestriction) {
     this.queryRestriction = queryRestriction;
+  }
+
+
+  /**
+   * Indicates whether or not sort is in ascending order
+   *
+   * @return <code>true</code> if so, <code>false</code> otherwise
+   */
+  @Override
+  public boolean isAscending() {
+    return ascending;
+  }
+
+  /**
+   * Sets the ascending.
+   *
+   * @param ascending the ascending
+   */
+  @Override
+  public void setAscending(boolean ascending) {
+    this.ascending = ascending;
+  }
+  
+  @Override
+  public int hashCode() {
+    final int prime = 31;
+    int result = 1;
+    result = prime * result + (ascending ? 1231 : 1237);
+    result = prime * result + maxResults;
+    result =
+        prime * result
+            + ((queryRestriction == null) ? 0 : queryRestriction.hashCode());
+    result = prime * result + ((sortField == null) ? 0 : sortField.hashCode());
+    result = prime * result + startIndex;
+    return result;
+  }
+
+  @Override
+  public boolean equals(Object obj) {
+    if (this == obj)
+      return true;
+    if (obj == null)
+      return false;
+    if (getClass() != obj.getClass())
+      return false;
+    PfsParameterJpa other = (PfsParameterJpa) obj;
+    if (ascending != other.ascending)
+      return false;
+    if (maxResults != other.maxResults)
+      return false;
+    if (queryRestriction == null) {
+      if (other.queryRestriction != null)
+        return false;
+    } else if (!queryRestriction.equals(other.queryRestriction))
+      return false;
+    if (sortField == null) {
+      if (other.sortField != null)
+        return false;
+    } else if (!sortField.equals(other.sortField))
+      return false;
+    if (startIndex != other.startIndex)
+      return false;
+    return true;
   }
 
   /**
@@ -90,9 +168,9 @@ public class PfsParameterJpa implements PfsParameter {
   }
 
   /**
-   * Sets the sort field
-   * 
-   * @param sortField
+   * Sets the sort field.
+   *
+   * @param sortField the sort field
    */
   @Override
   public void setSortField(String sortField) {
@@ -114,7 +192,7 @@ public class PfsParameterJpa implements PfsParameter {
   public String toString() {
     return "PfsParameterJpa [maxResults=" + maxResults + ", startIndex="
         + startIndex + ", queryRestriction=" + queryRestriction
-        + ", sortField=" + sortField + "]";
+        + ", sortField=" + sortField + ", ascending=" + ascending + "]";
   }
 
 }

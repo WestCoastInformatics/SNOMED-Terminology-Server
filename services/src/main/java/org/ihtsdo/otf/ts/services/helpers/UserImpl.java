@@ -76,6 +76,11 @@ public class UserImpl implements User {
     return "";
   }
 
+  @Override
+  public void setObjectId(String objectId) {
+    // do nothing
+  }
+
   /*
    * (non-Javadoc)
    * 
@@ -127,4 +132,5 @@ public class UserImpl implements User {
       return false;
     return true;
   }
+
 }

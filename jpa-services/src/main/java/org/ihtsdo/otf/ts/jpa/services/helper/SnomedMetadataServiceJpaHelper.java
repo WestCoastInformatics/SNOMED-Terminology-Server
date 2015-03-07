@@ -119,9 +119,9 @@ public class SnomedMetadataServiceJpaHelper extends ContentServiceJpa implements
     Map<String, String> map = new HashMap<>();
 
     // want all descendants, do not use pfs
-    // descendants of 900000000000460005 | component type |
+    // descendants of 900000000000459000 | attribute type |
     Set<Concept> descendants =
-        getDescendantConcepts("900000000000460005", terminology, version,
+        getDescendantConcepts("900000000000459000", terminology, version,
             isaRelationshipType);
 
     for (Concept descendant : descendants) {
@@ -481,8 +481,11 @@ public class SnomedMetadataServiceJpaHelper extends ContentServiceJpa implements
 
     // want all descendants, do not use pfs
     Set<Concept> descendants =
-        getDescendantConcepts("106237007", terminology, version,
+        getDescendantConcepts("410662002", terminology, version,
             isaRelationshipType);
+
+    descendants
+        .add(getSingleConcept(isaRelationshipType, terminology, version));
 
     for (Concept descendant : descendants) {
       if (descendant.isActive()) {
@@ -524,7 +527,7 @@ public class SnomedMetadataServiceJpaHelper extends ContentServiceJpa implements
    * (java.lang.String, java.lang.String)
    */
   @Override
-  public Map<String, String> getInferredRelationshipTypes(String terminology,
+  public Map<String, String> getInferredCharacteristicTypes(String terminology,
     String version) throws Exception {
     Map<String, String> map = new HashMap<>();
 
@@ -548,7 +551,7 @@ public class SnomedMetadataServiceJpaHelper extends ContentServiceJpa implements
    * .lang.String, java.lang.String)
    */
   @Override
-  public Map<String, String> getStatedRelationshipTypes(String terminology,
+  public Map<String, String> getStatedCharacteristicTypes(String terminology,
     String version) throws Exception {
     Map<String, String> map = new HashMap<>();
 

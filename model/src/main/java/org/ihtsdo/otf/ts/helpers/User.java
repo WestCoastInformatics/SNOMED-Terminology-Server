@@ -75,4 +75,11 @@ public interface User {
    */
   public void setApplicationRole(UserRole role);
 
+  /**
+   * Sets the object id.
+   *
+   * @param objectId the object id
+   */
+  public void setObjectId(String objectId);
+
 }

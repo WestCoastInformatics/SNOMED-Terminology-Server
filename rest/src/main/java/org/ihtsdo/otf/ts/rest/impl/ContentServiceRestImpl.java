@@ -290,7 +290,7 @@ public class ContentServiceRestImpl extends RootServiceRestImpl implements
 
     Logger.getLogger(ContentServiceRestImpl.class).info(
         "RESTful call (Content): /concept/" + terminology + "/" + version
-            + "/query/" + query);
+            + "/query/" + query + " with PFS parameter " + (pfs == null ? "empty" : pfs.toString()));
     try {
       authenticate(securityService, authToken, "find concepts by query",
           UserRole.VIEWER);
@@ -846,7 +846,7 @@ public class ContentServiceRestImpl extends RootServiceRestImpl implements
   }
 
   @Override
-  @GET
+  @POST
   @Path("/reindex")
   @ApiOperation(value = "Reindexes specified objects", notes = "Recomputes lucene indexes for the specified comma-separated objects")
   @Produces({
@@ -857,6 +857,7 @@ public class ContentServiceRestImpl extends RootServiceRestImpl implements
     @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken)
 
   throws Exception {
+    Logger.getLogger(ContentServiceRestImpl.class).info("test");
     Logger.getLogger(ContentServiceRestImpl.class).info(
         "RESTful POST call (ContentChange): /reindex "
             + (indexedObjects == null ? "with no objects specified"
@@ -866,11 +867,14 @@ public class ContentServiceRestImpl extends RootServiceRestImpl implements
     long startTimeOrig = System.nanoTime();
 
     try {
+      
       authenticate(securityService, authToken, "reindex",
           UserRole.ADMINISTRATOR);
 
       LuceneReindexAlgorithm algo = new LuceneReindexAlgorithm();
+      
       algo.setIndexedObjects(indexedObjects);
+      
       algo.compute();
 
       // Final logging messages
@@ -879,7 +883,9 @@ public class ContentServiceRestImpl extends RootServiceRestImpl implements
       Logger.getLogger(ContentServiceRestImpl.class).info("done ...");
 
     } catch (Exception e) {
-      handleException(e, "trying to remove a project");
+      Logger.getLogger(ContentServiceRestImpl.class).info("ERROR:");
+      e.printStackTrace();
+      //handleException(e, "trying to reindex");
     }
 
   }
@@ -1323,6 +1329,41 @@ public class ContentServiceRestImpl extends RootServiceRestImpl implements
 
     } catch (Exception e) {
       handleException(e, "trying to compute transitive closure");
+    }
+  }
+  
+  @Override
+  @POST
+  @Path("/terminology/remove/{terminology}/{terminologyVersion}")
+  @ApiOperation(value = "Removes a terminology", notes = "Removes all elements for a specified terminology and version")
+  public void removeTerminology(
+    @ApiParam(value = "Terminology, e.g. SNOMEDCT", required = true) @PathParam("terminology") String terminology,
+    @ApiParam(value = "Terminology version, e.g. 20140731", required = true) @PathParam("terminologyVersion") String terminologyVersion,
+    @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken)
+    throws Exception {
+
+    Logger.getLogger(ContentServiceRestImpl.class).info(
+        "RESTful POST call (ContentChange): /terminology/remove/"
+            + terminology + "/" + terminologyVersion);
+
+    // Track system level information
+    long startTimeOrig = System.nanoTime();
+
+    try {
+      authenticate(securityService, authToken, "start editing cycle",
+          UserRole.ADMINISTRATOR);
+
+      ContentService contentService = new ContentServiceJpa();
+      contentService.clearConcepts(terminology, terminologyVersion);
+      contentService.close();
+
+      // Final logging messages
+      Logger.getLogger(ContentServiceRestImpl.class).info(
+          "      elapsed time = " + getTotalElapsedTimeStr(startTimeOrig));
+      Logger.getLogger(ContentServiceRestImpl.class).info("done ...");
+
+    } catch (Exception e) {
+      handleException(e, "trying to load terminology from ClaML file");
     }
   }
 

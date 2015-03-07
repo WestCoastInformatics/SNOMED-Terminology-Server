@@ -35,6 +35,8 @@
     <input.dir></input.dir>
     <!-- The input file for ClaML loads -->
     <input.file></input.file>
+    <!-- Whether to run against server (default false) -->
+    <server></server>
   </properties>
 
   <profiles>
@@ -59,6 +61,7 @@
                   <terminology>${terminology}</terminology>
                   <terminologyVersion>${version}</terminologyVersion>
                   <inputDir>${input.dir}</inputDir>
+                  <server>${server}</server>
                 </configuration>
               </execution>
             </executions>
@@ -87,6 +90,7 @@
                   <terminology>${terminology}</terminology>
                   <terminologyVersion>${version}</terminologyVersion>
                   <inputDir>${input.dir}</inputDir>
+                  <server>${server}</server>
                 </configuration>
               </execution>
             </executions>
@@ -114,6 +118,7 @@
                 <configuration>
                   <terminology>${terminology}</terminology>
                   <inputDir>${input.dir}</inputDir>
+                  <server>${server}</server>
                 </configuration>
               </execution>
             </executions>
@@ -142,6 +147,7 @@
                   <terminology>${terminology}</terminology>
                   <terminologyVersion>${version}</terminologyVersion>
                   <inputFile>${input.file}</inputFile>
+                  <server>${server}</server>
                 </configuration>
               </execution>
             </executions>
@@ -168,6 +174,7 @@
                 </goals>
                 <configuration>
                   <terminology>${terminology}</terminology>
+                  <server>${server}</server>
                 </configuration>
               </execution>
             </executions>
@@ -202,6 +209,7 @@
                   <scopeDescendantsFlag>${scope.descendants.flag}</scopeDescendantsFlag>
                   <scopeExcludesConcepts>${scope.excludes.concepts}</scopeExcludesConcepts>
                   <scopeExcludesDescendantsFlag>${scope.excludes.descendants.flag}</scopeExcludesDescendantsFlag>
+               	  <server>${server}</server>
                 </configuration>
               </execution>
             </executions>

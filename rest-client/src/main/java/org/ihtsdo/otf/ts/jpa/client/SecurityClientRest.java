@@ -7,6 +7,7 @@ import javax.ws.rs.core.Response.Status.Family;
 
 import org.apache.log4j.Logger;
 import org.ihtsdo.otf.ts.helpers.ConfigUtility;
+import org.ihtsdo.otf.ts.helpers.LocalException;
 import org.ihtsdo.otf.ts.helpers.User;
 import org.ihtsdo.otf.ts.helpers.UserJpa;
 import org.ihtsdo.otf.ts.helpers.UserList;
@@ -48,15 +49,12 @@ public class SecurityClientRest implements SecurityServiceRest {
         client.resource(config.getProperty("base.url")
             + "/security/authenticate/" + username);
     resource.accept(MediaType.APPLICATION_JSON);
-    Logger.getLogger(this.getClass()).info("constructed resource");
     ClientResponse response = resource.post(ClientResponse.class, password);
-    Logger.getLogger(this.getClass()).info("response: " + response.toString());
     String resultString = response.getEntity(String.class);
-    Logger.getLogger(this.getClass()).info("status: " + response.getStatus() + " " + response.toString());
     if (response.getClientResponseStatus().getFamily() == Family.SUCCESSFUL) {
       Logger.getLogger(this.getClass()).info(resultString);
     } else {
-      throw new Exception(resultString);
+      throw new LocalException(resultString);
     }
     // return auth token
     return resultString.replaceAll("\"", "");
@@ -101,6 +99,9 @@ public class SecurityClientRest implements SecurityServiceRest {
     ClientResponse response =
         resource.accept(MediaType.APPLICATION_XML)
             .header("Authorization", authToken).get(ClientResponse.class);
+    
+    if (response.getStatus() == 204)
+      return null;
 
     String resultString = response.getEntity(String.class);
     if (response.getClientResponseStatus().getFamily() == Family.SUCCESSFUL) {
@@ -131,6 +132,9 @@ public class SecurityClientRest implements SecurityServiceRest {
         resource.accept(MediaType.APPLICATION_XML)
             .header("Authorization", authToken).get(ClientResponse.class);
 
+    if (response.getStatus() == 204)
+      return null;
+    
     String resultString = response.getEntity(String.class);
     if (response.getClientResponseStatus().getFamily() == Family.SUCCESSFUL) {
       Logger.getLogger(this.getClass()).debug(resultString);

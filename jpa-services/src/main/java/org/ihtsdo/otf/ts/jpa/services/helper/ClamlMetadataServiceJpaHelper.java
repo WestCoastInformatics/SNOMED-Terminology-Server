@@ -271,7 +271,11 @@ public class ClamlMetadataServiceJpaHelper extends ContentServiceJpa implements
     if (rootId == null)
       throw new Exception("Case significance concept cannot be found.");
 
-    return getDescendantMap(rootId, terminology, version);
+    // get map of descendant concepts, add isa relationship concept
+    Map<String, String> descMap = getDescendantMap(rootId, terminology, version);
+   
+    return descMap;
+  
   }
 
   /*
@@ -299,8 +303,10 @@ public class ClamlMetadataServiceJpaHelper extends ContentServiceJpa implements
     }
     if (rootId == null)
       throw new Exception("Relationship type concept cannot be found.");
-
-    return getDescendantMap(rootId, terminology, version);
+    
+    Map<String, String> descMap = getDescendantMap(rootId, terminology, version);
+    
+    return descMap;
   }
 
   /*
@@ -335,7 +341,7 @@ public class ClamlMetadataServiceJpaHelper extends ContentServiceJpa implements
    * (java.lang.String, java.lang.String)
    */
   @Override
-  public Map<String, String> getInferredRelationshipTypes(String terminology,
+  public Map<String, String> getInferredCharacteristicTypes(String terminology,
     String version) throws NumberFormatException, Exception {
     Map<String, String> map = new HashMap<>();
 
@@ -362,9 +368,9 @@ public class ClamlMetadataServiceJpaHelper extends ContentServiceJpa implements
    * .lang.String, java.lang.String)
    */
   @Override
-  public Map<String, String> getStatedRelationshipTypes(String terminology,
+  public Map<String, String> getStatedCharacteristicTypes(String terminology,
     String version) throws NumberFormatException, Exception {
-    return getInferredRelationshipTypes(terminology, version);
+    return getInferredCharacteristicTypes(terminology, version);
   }
 
   /*

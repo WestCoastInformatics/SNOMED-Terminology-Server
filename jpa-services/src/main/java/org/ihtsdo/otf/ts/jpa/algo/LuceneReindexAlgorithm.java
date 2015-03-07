@@ -87,7 +87,7 @@ public class LuceneReindexAlgorithm extends RootServiceJpa implements
     Set<String> objectsToReindex = new HashSet<>();
 
     // if no parameter specified, re-index all objects
-    if (indexedObjects == null) {
+    if (indexedObjects == null || indexedObjects.isEmpty()) {
       objectsToReindex.add("ConceptJpa");
       objectsToReindex.add("ProjectJpa");
 

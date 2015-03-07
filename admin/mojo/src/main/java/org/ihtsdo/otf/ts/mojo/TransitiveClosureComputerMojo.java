@@ -1,7 +1,15 @@
 package org.ihtsdo.otf.ts.mojo;
 
+import java.util.Properties;
+
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoFailureException;
+import org.ihtsdo.otf.ts.helpers.ConfigUtility;
+import org.ihtsdo.otf.ts.jpa.client.ContentClientRest;
+import org.ihtsdo.otf.ts.jpa.services.SecurityServiceJpa;
+import org.ihtsdo.otf.ts.jpa.services.helper.TomcatServerUtility;
+import org.ihtsdo.otf.ts.rest.impl.ContentServiceRestImpl;
+import org.ihtsdo.otf.ts.services.SecurityService;
 
 /**
  * Goal which recomputes transitive closure for the latest version of a
@@ -23,6 +31,12 @@ public class TransitiveClosureComputerMojo extends AbstractMojo {
   private String terminology;
 
   /**
+   * Whether to run this mojo against an active server
+   * @parameter
+   */
+  private boolean server = true;
+
+  /**
    * Instantiates a {@link TransitiveClosureComputerMojo} from the specified
    * parameters.
    * 
@@ -42,7 +56,45 @@ public class TransitiveClosureComputerMojo extends AbstractMojo {
     getLog().info("  terminology = " + terminology);
 
     try {
+      
+      Properties properties = ConfigUtility.getConfigProperties();
 
+
+      boolean serverRunning = TomcatServerUtility.isActive();
+
+      getLog().info(
+          "Server status detected:  "
+              + (serverRunning == false ? "DOWN" : "UP"));
+
+      if (serverRunning == true && server == false) {
+        throw new MojoFailureException(
+            "Mojo expects server to be down, but server is running");
+      }
+
+      if (serverRunning == false && server == true) {
+        throw new MojoFailureException(
+            "Mojo expects server to be running, but server is down");
+      }
+      
+      // authenticate
+      SecurityService service = new SecurityServiceJpa();
+      String authToken =
+          service.authenticate(properties.getProperty("admin.user"),
+              properties.getProperty("admin.password"));
+      service.close();
+
+      if (serverRunning == false) {
+        getLog().info("Running directly");
+        
+        ContentServiceRestImpl contentService = new ContentServiceRestImpl();
+        contentService.computeTransitiveClosure(terminology, authToken);
+      } else {
+        getLog().info("Running against server");
+
+        // invoke the client
+        ContentClientRest client = new ContentClientRest(properties);
+        client.computeTransitiveClosure(terminology, authToken);
+      }
 
       // Clean-up
     } catch (Exception e) {
@@ -51,5 +103,4 @@ public class TransitiveClosureComputerMojo extends AbstractMojo {
     }
   }
 
-  
 }

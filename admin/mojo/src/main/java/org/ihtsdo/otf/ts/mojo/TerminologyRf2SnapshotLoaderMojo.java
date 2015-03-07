@@ -1,6 +1,7 @@
 package org.ihtsdo.otf.ts.mojo;
 
 import java.io.File;
+import java.util.Properties;
 
 import org.apache.log4j.Logger;
 import org.apache.maven.plugin.AbstractMojo;
@@ -12,8 +13,13 @@ import org.ihtsdo.otf.ts.jpa.algo.Rf2FileSorter;
 import org.ihtsdo.otf.ts.jpa.algo.Rf2Readers;
 import org.ihtsdo.otf.ts.jpa.algo.Rf2SnapshotLoaderAlgorithm;
 import org.ihtsdo.otf.ts.jpa.algo.TransitiveClosureAlgorithm;
+import org.ihtsdo.otf.ts.jpa.client.ContentClientRest;
 import org.ihtsdo.otf.ts.jpa.services.HistoryServiceJpa;
+import org.ihtsdo.otf.ts.jpa.services.SecurityServiceJpa;
+import org.ihtsdo.otf.ts.jpa.services.helper.TomcatServerUtility;
+import org.ihtsdo.otf.ts.rest.impl.ContentServiceRestImpl;
 import org.ihtsdo.otf.ts.services.HistoryService;
+import org.ihtsdo.otf.ts.services.SecurityService;
 
 /**
  * Goal which loads an RF2 Snapshot of SNOMED CT data into a database.
@@ -46,6 +52,13 @@ public class TerminologyRf2SnapshotLoaderMojo extends AbstractMojo {
    * @required
    */
   private String inputDir;
+  
+  /**
+   * Whether to run this mojo against an active server
+   * @parameter
+   */
+  private boolean server = true;
+
 
   /**
    * Instantiates a {@link TerminologyRf2SnapshotLoaderMojo} from the specified
@@ -63,77 +76,48 @@ public class TerminologyRf2SnapshotLoaderMojo extends AbstractMojo {
    */
   @Override
   public void execute() throws MojoFailureException {
-    getLog().info("Starting load of RF2 snapshot");
-    getLog().info("  terminology = " + terminology);
-    getLog().info("  inputDir = " + inputDir);
+   
     try {
+      getLog().info("RF2 Snapshot Terminology Loader called via mojo.");
+      getLog().info("  Terminology        : " + terminology);
+      getLog().info("  Terminology Version: " + terminologyVersion);
+      getLog().info("  Input directory    : " + inputDir);
+      getLog().info("  Expect server up   : " + server);
+      
+      Properties properties = ConfigUtility.getConfigProperties();
 
-      // Check the input directory
-      File inputDirFile = new File(inputDir);
-      if (!inputDirFile.exists()) {
-        throw new MojoFailureException(
-            "Specified input directory does not exist");
+      boolean serverRunning = TomcatServerUtility.isActive();
+      
+      getLog().info("Server status detected:  " + (serverRunning == false ? "DOWN" : "UP"));
+
+      if (serverRunning == true && server == false) {
+        throw new MojoFailureException("Mojo expects server to be down, but server is running");
       }
-
-      // Sort files
-      getLog().info("  Sort RF2 Files");
-      Rf2FileSorter sorter = new Rf2FileSorter();
-      sorter.setSortByEffectiveTime(false);
-      sorter.setRequireAllFiles(true);
-      File outputDir = new File(inputDirFile, "/RF2-sorted-temp/");
-      sorter.sortFiles(inputDirFile, outputDir);
-      String releaseVersion = sorter.getFileVersion();
-      getLog().info("  releaseVersion = " + releaseVersion);
-
-      // Open readers
-      Rf2Readers readers = new Rf2Readers(outputDir);
-      readers.openReaders();
-
-
-      // Load snapshot
-      Rf2SnapshotLoaderAlgorithm algorithm = new Rf2SnapshotLoaderAlgorithm();
-      algorithm.setTerminology(terminology);
-      algorithm.setTerminologyVersion(terminologyVersion);
-      algorithm.setReleaseVersion(releaseVersion);
-      algorithm.setReaders(readers);
-      algorithm.compute();
-
-      //
-      // Create ReleaseInfo for this release if it does not already exist
-      //
-      HistoryService historyService = new HistoryServiceJpa();
-      historyService.setLastModifiedFlag(false);
-      ReleaseInfo info =
-          historyService.getReleaseInfo(terminology, releaseVersion);
-      if (info == null) {
-        info = new ReleaseInfoJpa();
-        info.setName(releaseVersion);
-        info.setEffectiveTime(ConfigUtility.DATE_FORMAT.parse(releaseVersion));
-        info.setDescription(terminology + " " + releaseVersion + " release");
-        info.setPlanned(false);
-        info.setPublished(true);
-        info.setReleaseBeginDate(info.getEffectiveTime());
-        info.setReleaseFinishDate(info.getEffectiveTime());
-        info.setTerminology(terminology);
-        info.setTerminologyVersion(terminologyVersion);
-        historyService.addReleaseInfo(info);
+      
+      if (serverRunning == false && server == true) {
+        throw new MojoFailureException("Mojo expects server to be running, but server is down");
       }
-      historyService.close();
+      
+      // authenticate
+      SecurityService service = new SecurityServiceJpa();
+      String authToken =
+          service.authenticate(properties.getProperty("admin.user"),
+              properties.getProperty("admin.password"));
+      service.close();
 
-      // Compute transitive closure
-      Logger.getLogger(this.getClass()).info(
-          "  Compute transitive closure from  " + terminology
-              + "/" + terminologyVersion);
-      TransitiveClosureAlgorithm algo = new TransitiveClosureAlgorithm();
-      algo.setTerminology(terminology);
-      algo.setTerminologyVersion(terminologyVersion);
-      algo.reset();
-      algo.compute();
+      if (serverRunning == false) {
+        getLog().info("Running directly");
+        
+        ContentServiceRestImpl contentService = new ContentServiceRestImpl();
+        contentService.loadTerminologyRf2Snapshot(terminology, terminologyVersion, inputDir, authToken);
 
-      // Clean-up
-      readers.closeReaders();
-      ConfigUtility
-          .deleteDirectory(new File(inputDirFile, "/RF2-sorted-temp/"));
+      } else {
+        getLog().info("Running against server");
+
+        // invoke the client
+        ContentClientRest client = new ContentClientRest(properties);
+        client.loadTerminologyRf2Snapshot(terminology, terminologyVersion, inputDir, authToken);
+      }
 
     } catch (Exception e) {
       e.printStackTrace();

@@ -1,17 +1,15 @@
 package org.ihtsdo.otf.ts.mojo;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.Properties;
 
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoFailureException;
-import org.ihtsdo.otf.ts.jpa.algo.Rf2FileSorter;
+import org.ihtsdo.otf.ts.helpers.ConfigUtility;
+import org.ihtsdo.otf.ts.jpa.client.ContentClientRest;
+import org.ihtsdo.otf.ts.jpa.services.SecurityServiceJpa;
+import org.ihtsdo.otf.ts.jpa.services.helper.TomcatServerUtility;
+import org.ihtsdo.otf.ts.rest.impl.ContentServiceRestImpl;
+import org.ihtsdo.otf.ts.services.SecurityService;
 
 /**
  * Goal which loads an RF2 Full of SNOMED CT data into a database.
@@ -46,6 +44,12 @@ public class TerminologyRf2FullLoaderMojo extends AbstractMojo {
   private String inputDir;
 
   /**
+   * Whether to run this mojo against an active server
+   * @parameter
+   */
+  private boolean server = true;
+
+  /**
    * Instantiates a {@link TerminologyRf2FullLoaderMojo} from the specified
    * parameters.
    * 
@@ -61,29 +65,59 @@ public class TerminologyRf2FullLoaderMojo extends AbstractMojo {
    */
   @Override
   public void execute() throws MojoFailureException {
-    
-  }
 
-  /**
-   * Returns the release versions covered by this full build.
-   *
-   * @return the release versions
-   * @throws Exception the exception
-   */
-  public List<String> getReleaseVersions() throws Exception {
-    Rf2FileSorter sorter = new Rf2FileSorter();
-    File conceptsFile = sorter.findFile(new File(inputDir), "sct2_Concept");
-    Set<String> releaseSet = new HashSet<>();
-    BufferedReader reader = new BufferedReader(new FileReader(conceptsFile));
-    String line;
-    while ((line = reader.readLine()) != null) {
-      final String fields[] = line.split("\t");
-      releaseSet.add(fields[1]);
+    try {
+      getLog().info("RF2 Full Terminology Loader called via mojo.");
+      getLog().info("  Terminology        : " + terminology);
+      getLog().info("  Terminology Version: " + terminologyVersion);
+      getLog().info("  Input directory    : " + inputDir);
+      getLog().info("  Expect server up   : " + server);
+
+      Properties properties = ConfigUtility.getConfigProperties();
+
+      boolean serverRunning = TomcatServerUtility.isActive();
+
+      getLog().info(
+          "Server status detected:  "
+              + (serverRunning == false ? "DOWN" : "UP"));
+
+      if (serverRunning == true && server == false) {
+        throw new MojoFailureException(
+            "Mojo expects server to be down, but server is running");
+      }
+
+      if (serverRunning == false && server == true) {
+        throw new MojoFailureException(
+            "Mojo expects server to be running, but server is down");
+      }
+
+      // authenticate
+      SecurityService service = new SecurityServiceJpa();
+      String authToken =
+          service.authenticate(properties.getProperty("admin.user"),
+              properties.getProperty("admin.password"));
+      service.close();
+
+      if (serverRunning == false) {
+        getLog().info("Running directly");
+
+        ContentServiceRestImpl contentService = new ContentServiceRestImpl();
+        contentService.loadTerminologyRf2Full(terminology, terminologyVersion,
+            inputDir, authToken);
+
+      } else {
+        getLog().info("Running against server");
+
+        // invoke the client
+        ContentClientRest client = new ContentClientRest(properties);
+        client.loadTerminologyRf2Full(terminology, terminologyVersion,
+            inputDir, authToken);
+      }
+
+    } catch (Exception e) {
+      e.printStackTrace();
+      throw new MojoFailureException("Unexpected exception:", e);
     }
-    List<String> results = new ArrayList<>(releaseSet);
-    Collections.sort(results);
-    reader.close();
-    return results;
   }
 
 }

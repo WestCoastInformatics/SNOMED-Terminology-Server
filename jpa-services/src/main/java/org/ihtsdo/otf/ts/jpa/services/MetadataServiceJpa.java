@@ -66,16 +66,16 @@ public class MetadataServiceJpa extends RootServiceJpa implements
       idNameMapList.put(MetadataKeys.Modules.toString(), modulesIdNameMap);
     }
 
-    Map<String, String> adNameMap =
-        getAttributeDescriptions(terminology, version);
-    if (adNameMap != null) {
-      idNameMapList.put(MetadataKeys.Attribute_Types.toString(), adNameMap);
+    Map<String, String> atNameMap =
+        getAttributeTypes(terminology, version);
+    if (atNameMap != null) {
+      idNameMapList.put(MetadataKeys.Attribute_Types.toString(), atNameMap);
     }
 
-    Map<String, String> atNameMap = getAttributeTypes(terminology, version);
-    if (atNameMap != null) {
+    Map<String, String> adNameMap = getAttributeDescriptions(terminology, version);
+    if (adNameMap != null) {
       idNameMapList.put(MetadataKeys.Attribute_Descriptions.toString(),
-          atNameMap);
+          adNameMap);
     }
 
     Map<String, String> dfNameMap = getDescriptionFormats(terminology, version);
@@ -123,9 +123,25 @@ public class MetadataServiceJpa extends RootServiceJpa implements
         getCharacteristicTypes(terminology, version);
     if (rctIdNameMap != null) {
       idNameMapList.put(
-          MetadataKeys.Relationship_Characteristic_Types.toString(),
+          MetadataKeys.Characteristic_Types.toString(),
           rctIdNameMap);
     }
+    Map<String, String> sctIdNameMap =
+        getStatedCharacteristicTypes(terminology, version);
+    if (rctIdNameMap != null) {
+      idNameMapList.put(
+          MetadataKeys.Stated_Characteristic_Types.toString(),
+          sctIdNameMap);
+    }
+    
+    Map<String, String> ictIdNameMap =
+        getInferredCharacteristicTypes(terminology, version);
+    if (rctIdNameMap != null) {
+      idNameMapList.put(
+          MetadataKeys.Inferred_Characteristic_Types.toString(),
+          ictIdNameMap);
+    }
+    
     Map<String, String> rmIdNameMap =
         getRelationshipModifiers(terminology, version);
     if (rmIdNameMap != null) {
@@ -529,10 +545,10 @@ public class MetadataServiceJpa extends RootServiceJpa implements
    * @see org.ihtsdo.otf.ts.services.MetadataService#getInferredRelationshipTypes(java.lang.String, java.lang.String)
    */
   @Override
-  public Map<String, String> getInferredRelationshipTypes(
+  public Map<String, String> getInferredCharacteristicTypes(
     String terminology, String version) throws Exception {
     if (helperMap.containsKey(terminology)) {
-      return helperMap.get(terminology).getInferredRelationshipTypes(
+      return helperMap.get(terminology).getInferredCharacteristicTypes(
           terminology, version);
     } else {
       // return an empty map
@@ -544,10 +560,10 @@ public class MetadataServiceJpa extends RootServiceJpa implements
    * @see org.ihtsdo.otf.ts.services.MetadataService#getStatedRelationshipTypes(java.lang.String, java.lang.String)
    */
   @Override
-  public Map<String, String> getStatedRelationshipTypes(
+  public Map<String, String> getStatedCharacteristicTypes(
     String terminology, String version) throws Exception {
     if (helperMap.containsKey(terminology)) {
-      return helperMap.get(terminology).getStatedRelationshipTypes(
+      return helperMap.get(terminology).getStatedCharacteristicTypes(
           terminology, version);
     } else {
       // return an empty map

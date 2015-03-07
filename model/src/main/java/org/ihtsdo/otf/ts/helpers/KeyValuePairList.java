@@ -70,6 +70,14 @@ public class KeyValuePairList {
   public String getName() {
     return name;
   }
+  
+  public boolean contains(KeyValuePair pair) {
+    return this.getKeyValuePairList().contains(pair);
+  }
+  
+  public boolean contains(KeyValuePairList pairList) {
+    return this.getKeyValuePairList().contains(pairList.getKeyValuePairList());
+  }
 
   /* (non-Javadoc)
    * @see java.lang.Object#hashCode()

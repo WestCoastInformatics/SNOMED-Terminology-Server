@@ -1000,4 +1000,10 @@ public class SnorocketClassifier implements Classifier {
     this.project = project;
   }
 
+  @Override
+  public void close() throws Exception {
+    // TODO Auto-generated method stub
+    
+  }
+
 }

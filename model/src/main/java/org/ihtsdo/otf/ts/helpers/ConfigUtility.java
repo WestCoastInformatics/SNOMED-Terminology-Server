@@ -163,6 +163,8 @@ public class ConfigUtility {
 
     // Look up and build properties
     Properties handlerProperties = new Properties();
+    handlerProperties.setProperty("security.handler", handlerName);
+
     for (Object key : config.keySet()) {
       // Find properties like "metadata.service.handler.SNOMED.class"
       if (key.toString().startsWith(property + "." + handlerName + ".")) {
