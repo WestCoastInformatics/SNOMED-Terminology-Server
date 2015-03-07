@@ -45,7 +45,7 @@ public class ModelUnit003Test {
    */
   @Test
   public void testModelGetSet003() throws Exception {
-    Logger.getLogger(getClass()).info("TEST testModelGetSet003");
+    Logger.getLogger(getClass()).debug("TEST testModelGetSet003");
     GetterSetterTester tester = new GetterSetterTester(object);
     tester.exclude("objectId");
     tester.test();
@@ -58,7 +58,7 @@ public class ModelUnit003Test {
    */
   @Test
   public void testModelEqualsHashcode003() throws Exception {
-    Logger.getLogger(getClass()).info("TEST testModelEqualsHashcode003");
+    Logger.getLogger(getClass()).debug("TEST testModelEqualsHashcode003");
     EqualsHashcodeTester tester = new EqualsHashcodeTester(object);
     tester.include("applicationRole");
     tester.include("email");
@@ -80,7 +80,7 @@ public class ModelUnit003Test {
    */
   @Test
   public void testModelCopy003() throws Exception {
-    Logger.getLogger(getClass()).info("TEST testModelCopy003");
+    Logger.getLogger(getClass()).debug("TEST testModelCopy003");
     CopyConstructorTester tester = new CopyConstructorTester(object);
     assertTrue(tester.testCopyConstructor(User.class));
   }

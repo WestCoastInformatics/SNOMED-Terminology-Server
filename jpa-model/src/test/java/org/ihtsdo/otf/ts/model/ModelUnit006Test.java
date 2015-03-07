@@ -45,7 +45,7 @@ public class ModelUnit006Test {
    */
   @Test
   public void testModelGetSet006() throws Exception {
-    Logger.getLogger(getClass()).info("TEST testModelGetSet006");
+    Logger.getLogger(getClass()).debug("TEST testModelGetSet006");
     GetterSetterTester tester = new GetterSetterTester(object);
     tester.exclude("objectId");
     tester.test();
@@ -58,7 +58,7 @@ public class ModelUnit006Test {
    */
   @Test
   public void testModelEqualsHashcode006() throws Exception {
-    Logger.getLogger(getClass()).info("TEST testModelEqualsHashcode006");
+    Logger.getLogger(getClass()).debug("TEST testModelEqualsHashcode006");
     EqualsHashcodeTester tester = new EqualsHashcodeTester(object);
     tester.include("findActiveOnly");
     tester.include("findDefinedOnly");
@@ -87,7 +87,7 @@ public class ModelUnit006Test {
    */
   @Test
   public void testModelCopy006() throws Exception {
-    Logger.getLogger(getClass()).info("TEST testModelCopy006");
+    Logger.getLogger(getClass()).debug("TEST testModelCopy006");
     CopyConstructorTester tester = new CopyConstructorTester(object);
     assertTrue(tester.testCopyConstructor(SearchCriteria.class));
   }

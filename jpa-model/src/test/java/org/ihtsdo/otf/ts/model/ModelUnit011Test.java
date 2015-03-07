@@ -59,7 +59,7 @@ public class ModelUnit011Test {
    */
   @Test
   public void testModelGetSet011() throws Exception {
-    Logger.getLogger(getClass()).info("TEST testModelGetSet011");
+    Logger.getLogger(getClass()).debug("TEST testModelGetSet011");
     GetterSetterTester tester = new GetterSetterTester(object);
     tester.exclude("objectId");
     tester.test();
@@ -72,7 +72,7 @@ public class ModelUnit011Test {
    */
   @Test
   public void testModelEqualsHashcode011() throws Exception {
-    Logger.getLogger(getClass()).info("TEST testModelEqualsHashcode011");
+    Logger.getLogger(getClass()).debug("TEST testModelEqualsHashcode011");
     EqualsHashcodeTester tester = new EqualsHashcodeTester(object);
     tester.include("active");
     tester.include("moduleId");
@@ -101,7 +101,7 @@ public class ModelUnit011Test {
    */
   @Test
   public void testModelCopy011() throws Exception {
-    Logger.getLogger(getClass()).info("TEST testModelCopy011");
+    Logger.getLogger(getClass()).debug("TEST testModelCopy011");
     CopyConstructorTester tester = new CopyConstructorTester(object);
 
     // Set up objects

@@ -134,7 +134,7 @@ public class GetterSetterTester extends ProxyTester {
         }
       }
 
-      Logger.getLogger(getClass()).info("  field = " + fieldName);
+      Logger.getLogger(getClass()).debug("  field = " + fieldName);
       testGetterSetter(getter, m, args[0]);
     }
   }
@@ -150,7 +150,7 @@ public class GetterSetterTester extends ProxyTester {
   private void testGetterSetter(Method get, Method set, Class<?> argType)
     throws Exception {
     if (this.verbose)
-      Logger.getLogger(getClass()).info("Testing " + get.getDeclaringClass().getName() + "."
+      Logger.getLogger(getClass()).debug("Testing " + get.getDeclaringClass().getName() + "."
           + get.getName());
     Object proxy = makeProxy(argType, 1);
     try {

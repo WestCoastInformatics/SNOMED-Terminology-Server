@@ -59,7 +59,7 @@ public class ModelUnit007Test {
    */
   @Test
   public void testModelGetSet007() throws Exception {
-    Logger.getLogger(getClass()).info("TEST testModelGetSet007");
+    Logger.getLogger(getClass()).debug("TEST testModelGetSet007");
     GetterSetterTester tester = new GetterSetterTester(object);
     tester.exclude("objectId");
     tester.test();
@@ -72,7 +72,7 @@ public class ModelUnit007Test {
    */
   @Test
   public void testModelEqualsHashcode007() throws Exception {
-    Logger.getLogger(getClass()).info("TEST testModelEqualsHashcode007");
+    Logger.getLogger(getClass()).debug("TEST testModelEqualsHashcode007");
     EqualsHashcodeTester tester = new EqualsHashcodeTester(object);
     tester.include("active");
     tester.include("moduleId");
@@ -96,7 +96,7 @@ public class ModelUnit007Test {
    */
   @Test
   public void testModelCopy007() throws Exception {
-    Logger.getLogger(getClass()).info("TEST testModelCopy007");
+    Logger.getLogger(getClass()).debug("TEST testModelCopy007");
     CopyConstructorTester tester = new CopyConstructorTester(object);
     assertTrue(tester.testCopyConstructorCascadeDeep(Concept.class));
   }
@@ -108,7 +108,7 @@ public class ModelUnit007Test {
    */
   @Test
   public void testDeepCopy007() throws Exception {
-    Logger.getLogger(getClass()).info("TEST testDeepCopy007");
+    Logger.getLogger(getClass()).debug("TEST testDeepCopy007");
     Concept c = new ConceptJpa();
     c.setId(1L);
     c.setTerminologyId("1");

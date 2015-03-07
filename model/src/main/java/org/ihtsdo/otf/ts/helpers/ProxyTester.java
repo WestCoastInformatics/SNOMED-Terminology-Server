@@ -157,7 +157,7 @@ public class ProxyTester {
         }
       }
       if (logField) {
-        Logger.getLogger(getClass()).info("  field = " + fieldName);
+        Logger.getLogger(getClass()).debug("  field = " + fieldName);
       }
       setField(o, getter, m, args[0], initializer);
     }
@@ -208,7 +208,7 @@ public class ProxyTester {
   protected void setField(Object o, Method get, Method set, Class<?> argType,
     int initializer) throws Exception {
     Object proxy = makeProxy(argType, initializer);
-    // Logger.getLogger(getClass()).info(
+    // Logger.getLogger(getClass()).debug(
     // "  " + set.getName() + " = " + proxy.toString());
     try {
       set.invoke(o, new Object[] {

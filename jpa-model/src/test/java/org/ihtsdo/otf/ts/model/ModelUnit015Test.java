@@ -62,7 +62,7 @@ public class ModelUnit015Test {
    */
   @Test
   public void testModelGetSet015() throws Exception {
-    Logger.getLogger(getClass()).info("TEST testModelGetSet009");
+    Logger.getLogger(getClass()).debug("TEST testModelGetSet009");
     GetterSetterTester tester = new GetterSetterTester(object);
     tester.exclude("objectId");
     tester.test();
@@ -75,7 +75,7 @@ public class ModelUnit015Test {
    */
   @Test
   public void testModelEqualsHashcode015() throws Exception {
-    Logger.getLogger(getClass()).info("TEST testModelEqualsHashcode015");
+    Logger.getLogger(getClass()).debug("TEST testModelEqualsHashcode015");
     EqualsHashcodeTester tester = new EqualsHashcodeTester(object);
     tester.include("active");
     tester.include("moduleId");
@@ -107,7 +107,7 @@ public class ModelUnit015Test {
    */
   @Test
   public void testModelCopy015() throws Exception {
-    Logger.getLogger(getClass()).info("TEST testModelCopy009");
+    Logger.getLogger(getClass()).debug("TEST testModelCopy009");
     CopyConstructorTester tester = new CopyConstructorTester(object);
 
     // Set up some objects
@@ -125,7 +125,7 @@ public class ModelUnit015Test {
    */
   @Test
   public void testXmlTransient015() throws Exception {
-    Logger.getLogger(getClass()).info("TEST testXmlTransient009");
+    Logger.getLogger(getClass()).debug("TEST testXmlTransient009");
     Description d = new DescriptionJpa();
     d.setId(1L);
     d.setTerminologyId("1");

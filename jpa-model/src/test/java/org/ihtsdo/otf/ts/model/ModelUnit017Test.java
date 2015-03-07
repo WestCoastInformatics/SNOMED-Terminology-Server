@@ -62,7 +62,7 @@ public class ModelUnit017Test {
    */
   @Test
   public void testModelGetSet017() throws Exception {
-    Logger.getLogger(getClass()).info("TEST testModelGetSet009");
+    Logger.getLogger(getClass()).debug("TEST testModelGetSet009");
     GetterSetterTester tester = new GetterSetterTester(object);
     tester.exclude("objectId");
     tester.test();
@@ -75,7 +75,7 @@ public class ModelUnit017Test {
    */
   @Test
   public void testModelEqualsHashcode017() throws Exception {
-    Logger.getLogger(getClass()).info("TEST testModelEqualsHashcode017");
+    Logger.getLogger(getClass()).debug("TEST testModelEqualsHashcode017");
     EqualsHashcodeTester tester = new EqualsHashcodeTester(object);
     tester.include("active");
     tester.include("moduleId");
@@ -108,7 +108,7 @@ public class ModelUnit017Test {
    */
   @Test
   public void testModelCopy017() throws Exception {
-    Logger.getLogger(getClass()).info("TEST testModelCopy009");
+    Logger.getLogger(getClass()).debug("TEST testModelCopy009");
     CopyConstructorTester tester = new CopyConstructorTester(object);
 
     // Set up some objects
@@ -125,7 +125,7 @@ public class ModelUnit017Test {
    */
   @Test
   public void testXmlTransient017() throws Exception {
-    Logger.getLogger(getClass()).info("TEST testXmlTransient017");
+    Logger.getLogger(getClass()).debug("TEST testXmlTransient017");
     Concept c = new ConceptJpa();
     c.setId(1L);
     c.setTerminologyId("1");

@@ -54,7 +54,7 @@ public class ModelUnit008Test {
    */
   @Test
   public void testModelGetSet008() throws Exception {
-    Logger.getLogger(getClass()).info("TEST testModelGetSet001");
+    Logger.getLogger(getClass()).debug("TEST testModelGetSet001");
     GetterSetterTester tester = new GetterSetterTester(object);
     tester.exclude("objectId");
     tester.test();
@@ -67,7 +67,7 @@ public class ModelUnit008Test {
    */
   @Test
   public void testModelEqualsHashcode008() throws Exception {
-    Logger.getLogger(getClass()).info("TEST testModelEqualsHashcode001");
+    Logger.getLogger(getClass()).debug("TEST testModelEqualsHashcode001");
     EqualsHashcodeTester tester = new EqualsHashcodeTester(object);
     tester.include("active");
     tester.include("moduleId");
@@ -105,7 +105,7 @@ public class ModelUnit008Test {
    */
   @Test
   public void testModelCopy008() throws Exception {
-    Logger.getLogger(getClass()).info("TEST testModelCopy001");
+    Logger.getLogger(getClass()).debug("TEST testModelCopy001");
     CopyConstructorTester tester = new CopyConstructorTester(object);
 
     // Set up some objects
@@ -128,7 +128,7 @@ public class ModelUnit008Test {
    */
   @Test
   public void testDeepCopy008() throws Exception {
-    Logger.getLogger(getClass()).info("TEST testDeepCopy008");
+    Logger.getLogger(getClass()).debug("TEST testDeepCopy008");
     Description d = new DescriptionJpa();
     Concept c = new ConceptJpa();
     c.setId(1L);
@@ -184,7 +184,7 @@ public class ModelUnit008Test {
    */
   @Test
   public void testXmlTransient008() throws Exception {
-    Logger.getLogger(getClass()).info("TEST testXmlTransient008");
+    Logger.getLogger(getClass()).debug("TEST testXmlTransient008");
     Description d = new DescriptionJpa();
     Concept c = new ConceptJpa();
     c.setId(1L);
