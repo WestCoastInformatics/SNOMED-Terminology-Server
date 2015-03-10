@@ -285,7 +285,7 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
 
     // Prepare the query
     StringBuilder finalQuery = new StringBuilder();
-    finalQuery.append("terminology:" + terminology + " AND version:"
+    finalQuery.append("terminology:" + terminology + " AND terminologyVersion:"
         + version);
     if (pfs != null && pfs.getQueryRestriction() != null) {
       finalQuery.append(" AND ");
@@ -2697,7 +2697,7 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
     StringBuilder finalQuery = new StringBuilder();
     finalQuery.append(searchString);
     finalQuery.append(" AND terminology:" + terminology
-        + " AND version:" + version);
+        + " AND terminologyVersion:" + version);
     if (pfs != null && pfs.getQueryRestriction() != null) {
       finalQuery.append(" AND ");
       finalQuery.append(pfs.getQueryRestriction());
