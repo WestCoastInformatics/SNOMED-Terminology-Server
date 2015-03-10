@@ -46,7 +46,7 @@ public class TerminologyRf2FullLoaderMojo extends AbstractMojo {
    * Whether to run this mojo against an active server
    * @parameter
    */
-  private boolean server = true;
+  private boolean server = false;
 
   /**
    * Instantiates a {@link TerminologyRf2FullLoaderMojo} from the specified

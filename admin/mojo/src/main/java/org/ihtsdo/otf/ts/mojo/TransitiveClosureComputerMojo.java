@@ -33,7 +33,7 @@ public class TransitiveClosureComputerMojo extends AbstractMojo {
    * Whether to run this mojo against an active server
    * @parameter
    */
-  private boolean server = true;
+  private boolean server = false;
 
   /**
    * Instantiates a {@link TransitiveClosureComputerMojo} from the specified
@@ -55,15 +55,13 @@ public class TransitiveClosureComputerMojo extends AbstractMojo {
     getLog().info("  terminology = " + terminology);
 
     try {
-      
-      Properties properties = ConfigUtility.getConfigProperties();
 
+      Properties properties = ConfigUtility.getConfigProperties();
 
       boolean serverRunning = ConfigUtility.isServerActive();
 
       getLog().info(
-          "Server status detected:  "
-              + (!serverRunning ? "DOWN" : "UP"));
+          "Server status detected:  " + (!serverRunning ? "DOWN" : "UP"));
 
       if (serverRunning && !server) {
         throw new MojoFailureException(
@@ -74,7 +72,7 @@ public class TransitiveClosureComputerMojo extends AbstractMojo {
         throw new MojoFailureException(
             "Mojo expects server to be running, but server is down");
       }
-      
+
       // authenticate
       SecurityService service = new SecurityServiceJpa();
       String authToken =
@@ -84,7 +82,7 @@ public class TransitiveClosureComputerMojo extends AbstractMojo {
 
       if (!serverRunning) {
         getLog().info("Running directly");
-        
+
         ContentServiceRestImpl contentService = new ContentServiceRestImpl();
         contentService.computeTransitiveClosure(terminology, authToken);
       } else {

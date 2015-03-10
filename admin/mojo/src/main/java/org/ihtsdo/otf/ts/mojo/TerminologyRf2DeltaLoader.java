@@ -44,7 +44,7 @@ public class TerminologyRf2DeltaLoader extends AbstractMojo {
    * Whether to run this mojo against an active server
    * @parameter
    */
-  private boolean server = true;
+  private boolean server = false;
 
   /*
    * (non-Javadoc)

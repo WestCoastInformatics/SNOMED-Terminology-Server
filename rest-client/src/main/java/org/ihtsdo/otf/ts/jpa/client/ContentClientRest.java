@@ -32,11 +32,8 @@ import com.sun.jersey.api.client.Client;
 import com.sun.jersey.api.client.ClientResponse;
 import com.sun.jersey.api.client.WebResource;
 
-// TODO: Auto-generated Javadoc
 /**
  * A client for connecting to a content REST service.
- *
- * @author ${author}
  */
 public class ContentClientRest implements ContentServiceRest {
 

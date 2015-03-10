@@ -16,7 +16,7 @@ echo "SERVER_CONFIG = $SERVER_CONFIG"
 
 echo "    Run Createdb ...`/bin/date`"
 cd $SERVER_HOME/admin/db
-mvn install -PUpdatedb -Drun.config=$SERVER_CONFIG >&! mvn.log
+mvn install -PCreatedb -Drun.config=$SERVER_CONFIG >&! mvn.log
 if ($status != 0) then
     echo "ERROR running createdb"
     cat mvn.log
@@ -25,7 +25,7 @@ endif
 
 echo "    Clear indexes ...`/bin/date`"
 cd $SERVER_HOME/admin/lucene
-mvn install -Drun.config=$SERVER_CONFIG >&! mvn.log
+mvn install -PReindex -Drun.config=$SERVER_CONFIG >&! mvn.log
 if ($status != 0) then
     echo "ERROR running lucene"
     cat mvn.log

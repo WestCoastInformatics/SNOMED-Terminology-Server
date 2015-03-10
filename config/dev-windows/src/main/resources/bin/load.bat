@@ -33,7 +33,7 @@ del /Q mvn.log
 
 echo     Clear indexes ...%date% %time%
 cd %SERVER_CODE%/admin/lucene
-call mvn install -Drun.config=%SERVER_CONFIG% 1> mvn.log
+call mvn install -PReindex -Drun.config=%SERVER_CONFIG% 1> mvn.log
 IF %ERRORLEVEL% NEQ 0 (set error=1
 goto trailer)
 del /Q mvn.log

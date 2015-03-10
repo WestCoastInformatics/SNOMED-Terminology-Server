@@ -36,7 +36,7 @@
     <!-- The input file for ClaML loads -->
     <input.file></input.file>
     <!-- Whether to run against server (default false) -->
-    <server></server>
+    <server>false</server>
   </properties>
 
   <profiles>

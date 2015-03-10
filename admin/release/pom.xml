@@ -29,6 +29,10 @@
     <workflow.status.values></workflow.status.values>
     <!-- Indicates whether ids should be saved -->
     <save.identifiers>false</save.identifiers>
+    <!-- Indicates whether ids should be saved -->
+    <save.identifiers>false</save.identifiers>
+    <!-- Indicates whether to run against a server (true/false) -->
+    <server>false</server>
   </properties>
 
   <!-- Build Profiles -->
@@ -54,6 +58,7 @@
                   <releaseVersion>${release.version}</releaseVersion>
                   <terminology>${terminology}</terminology>
                   <terminologyVersion>${terminology.version}</terminologyVersion>
+                  <server>${server}</server>
                 </configuration>
               </execution>
             </executions>

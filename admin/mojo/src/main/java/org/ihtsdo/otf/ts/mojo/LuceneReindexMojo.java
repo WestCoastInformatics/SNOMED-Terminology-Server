@@ -31,7 +31,7 @@ public class LuceneReindexMojo extends AbstractMojo {
    * Whether to run this mojo against an active server
    * @parameter
    */
-  private boolean server = true;
+  private boolean server = false;
 
   /**
    * Instantiates a {@link LuceneReindexMojo} from the specified parameters.
