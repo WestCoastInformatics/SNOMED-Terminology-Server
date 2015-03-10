@@ -282,7 +282,7 @@ public class SecurityServiceRestDegenerateUseTest extends
     project.setScopeExcludesConcepts(null);
     project.setScopeExcludesDescendantsFlag(true);
     project.setTerminology("terminology");
-    project.setTerminologyVersion("terminologyVersion");
+    project.setTerminologyVersion("version");
     project.setLastModifiedBy("some_user");
 
     user = service.getUser(properties.getProperty("bad.user"), authToken);

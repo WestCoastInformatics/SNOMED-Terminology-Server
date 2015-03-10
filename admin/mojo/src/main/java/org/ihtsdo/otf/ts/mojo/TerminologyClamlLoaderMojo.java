@@ -30,11 +30,11 @@ public class TerminologyClamlLoaderMojo extends AbstractMojo {
   String terminology;
 
   /**
-   * Name of terminologyVersion to be loaded.
+   * Name of version to be loaded.
    * @parameter
    * @required
    */
-  String terminologyVersion;
+  String version;
 
   /**
    * Input file.
@@ -51,7 +51,7 @@ public class TerminologyClamlLoaderMojo extends AbstractMojo {
   public void execute() throws MojoExecutionException {
     getLog().info("Starting load of ClaML");
     getLog().info("  terminology = " + terminology);
-    getLog().info("  terminologyVersion = " + terminologyVersion);
+    getLog().info("  version = " + version);
     getLog().info("  inputFile = " + inputFile);
 
     try {
@@ -65,7 +65,7 @@ public class TerminologyClamlLoaderMojo extends AbstractMojo {
       // Load snapshot
       ClamlLoaderAlgorithm algorithm = new ClamlLoaderAlgorithm();
       algorithm.setTerminology(terminology);
-      algorithm.setTerminologyVersion(terminologyVersion);
+      algorithm.setTerminologyVersion(version);
       algorithm.setInputFile(inputFile);
       algorithm.compute();
 
@@ -73,7 +73,7 @@ public class TerminologyClamlLoaderMojo extends AbstractMojo {
       getLog().info("Start computing transtive closure");
       TransitiveClosureAlgorithm algo = new TransitiveClosureAlgorithm();
       algo.setTerminology(terminology);
-      algo.setTerminologyVersion(terminologyVersion);
+      algo.setTerminologyVersion(version);
       algo.reset();
       algo.compute();
       algo.close();

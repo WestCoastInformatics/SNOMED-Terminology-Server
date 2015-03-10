@@ -31,7 +31,7 @@ public class StartEditingCycleAlgorithm extends ContentServiceJpa implements
   private String terminology = null;
 
   /** The terminology version. */
-  private String terminologyVersion = null;
+  private String version = null;
 
   /** Listeners. */
   private List<ProgressListener> listeners = new ArrayList<>();
@@ -44,15 +44,15 @@ public class StartEditingCycleAlgorithm extends ContentServiceJpa implements
    *
    * @param releaseVersion the release version
    * @param terminology the terminology
-   * @param terminologyVersion the terminology version
+   * @param version the terminology version
    * @throws Exception if anything goes wrong
    */
   public StartEditingCycleAlgorithm(String releaseVersion, String terminology,
-      String terminologyVersion) throws Exception {
+      String version) throws Exception {
     super();
     this.releaseVersion = releaseVersion;
     this.terminology = terminology;
-    this.terminologyVersion = terminologyVersion;
+    this.version = version;
   }
 
   /*
@@ -92,7 +92,7 @@ public class StartEditingCycleAlgorithm extends ContentServiceJpa implements
     info.setPlanned(true);
     info.setPublished(false);
     info.setTerminology(terminology);
-    info.setTerminologyVersion(terminologyVersion);
+    info.setTerminologyVersion(version);
     service.addReleaseInfo(info);
     service.close();
 

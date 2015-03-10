@@ -21,8 +21,8 @@
     <release.version></release.version>
     <!-- Default terminology, specify with -Dterminology= -->
     <terminology></terminology>
-    <!-- Default terminology version, specify with -DterminologyVersion= -->
-    <terminology.version></terminology.version>
+    <!-- Default terminology version, specify with -Dversion= -->
+    <version></version>
     <!-- Default validate flag value -->
     <validate>false</validate>
     <!-- Default workflow status values -->
@@ -57,7 +57,7 @@
                 <configuration>
                   <releaseVersion>${release.version}</releaseVersion>
                   <terminology>${terminology}</terminology>
-                  <terminologyVersion>${terminology.version}</terminologyVersion>
+                  <version>${version}</version>
                   <server>${server}</server>
                 </configuration>
               </execution>

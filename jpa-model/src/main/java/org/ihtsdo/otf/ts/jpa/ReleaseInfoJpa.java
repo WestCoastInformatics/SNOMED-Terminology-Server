@@ -24,7 +24,7 @@ import org.ihtsdo.otf.ts.ReleaseInfo;
     @UniqueConstraint(columnNames = {
         "name", "terminology"
     }), @UniqueConstraint(columnNames = {
-        "terminology", "terminologyVersion"
+        "terminology", "version"
     })
 })
 @Audited
@@ -66,7 +66,7 @@ public class ReleaseInfoJpa implements ReleaseInfo {
   private String terminology;
 
   /** The terminology version. */
-  private String terminologyVersion;
+  private String version;
 
   /**
    * Instantiates an empty {@link ReleaseInfoJpa}.
@@ -90,7 +90,7 @@ public class ReleaseInfoJpa implements ReleaseInfo {
     planned = releaseInfo.isPlanned();
     published = releaseInfo.isPublished();
     terminology = releaseInfo.getTerminology();
-    terminologyVersion = releaseInfo.getTerminologyVersion();
+    version = releaseInfo.getTerminologyVersion();
   }
 
   /**
@@ -294,7 +294,7 @@ public class ReleaseInfoJpa implements ReleaseInfo {
    */
   @Override
   public String getTerminologyVersion() {
-    return terminologyVersion;
+    return version;
   }
 
   /*
@@ -306,7 +306,7 @@ public class ReleaseInfoJpa implements ReleaseInfo {
    */
   @Override
   public void setTerminologyVersion(String version) {
-    this.terminologyVersion = version;
+    this.version = version;
   }
 
   /*
@@ -328,7 +328,7 @@ public class ReleaseInfoJpa implements ReleaseInfo {
     result =
         prime
             * result
-            + ((terminologyVersion == null) ? 0 : terminologyVersion.hashCode());
+            + ((version == null) ? 0 : version.hashCode());
     return result;
   }
 
@@ -365,10 +365,10 @@ public class ReleaseInfoJpa implements ReleaseInfo {
         return false;
     } else if (!terminology.equals(other.terminology))
       return false;
-    if (terminologyVersion == null) {
-      if (other.terminologyVersion != null)
+    if (version == null) {
+      if (other.version != null)
         return false;
-    } else if (!terminologyVersion.equals(other.terminologyVersion))
+    } else if (!version.equals(other.version))
       return false;
     return true;
   }
@@ -381,6 +381,6 @@ public class ReleaseInfoJpa implements ReleaseInfo {
   @Override
   public String toString() {
     return name + ", " + description + ", " + effectiveTime + ", " + planned
-        + ", " + published + ", " + terminology + ", " + terminologyVersion;
+        + ", " + published + ", " + terminology + ", " + version;
   }
 }

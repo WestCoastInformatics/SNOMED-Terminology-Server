@@ -46,7 +46,7 @@ public class Rf2DeltaLoaderAlgorithm extends ContentServiceJpa implements
   private String terminology;
 
   /** The terminology version. */
-  private String terminologyVersion;
+  private String version;
 
   /** The release version. */
   private String releaseVersion;
@@ -111,10 +111,10 @@ public class Rf2DeltaLoaderAlgorithm extends ContentServiceJpa implements
   /**
    * Sets the terminology version.
    *
-   * @param terminologyVersion the terminology version
+   * @param version the terminology version
    */
-  public void setTerminologyVersion(String terminologyVersion) {
-    this.terminologyVersion = terminologyVersion;
+  public void setTerminologyVersion(String version) {
+    this.version = version;
   }
 
   /**
@@ -171,9 +171,9 @@ public class Rf2DeltaLoaderAlgorithm extends ContentServiceJpa implements
       // but for delta/daily build files, this is not the current version
       // look up the current version instead
       MetadataService metadataService = new MetadataServiceJpa();
-      terminologyVersion = metadataService.getLatestVersion(terminology);
+      version = metadataService.getLatestVersion(terminology);
       metadataService.close();
-      if (terminologyVersion == null) {
+      if (version == null) {
         throw new Exception("Unable to determine terminology version.");
       }
 
@@ -181,7 +181,7 @@ public class Rf2DeltaLoaderAlgorithm extends ContentServiceJpa implements
       // rels/descs)
       Logger.getLogger(this.getClass()).info("  Cache concepts");
       ConceptList conceptList =
-          historyService.getAllConcepts(terminology, terminologyVersion);
+          historyService.getAllConcepts(terminology, version);
       for (Concept c : conceptList.getObjects()) {
         existingConceptCache.put(c.getTerminologyId(), c);
       }
@@ -195,7 +195,7 @@ public class Rf2DeltaLoaderAlgorithm extends ContentServiceJpa implements
       Logger.getLogger(this.getClass()).info("  Cache description ids");
       existingDescriptionIds =
           new HashSet<>(historyService.getAllDescriptionTerminologyIds(
-              terminology, terminologyVersion).getObjects());
+              terminology, version).getObjects());
       Logger.getLogger(this.getClass()).info(
           "    count = " + existingDescriptionIds.size());
       Logger.getLogger(this.getClass()).info(
@@ -203,13 +203,13 @@ public class Rf2DeltaLoaderAlgorithm extends ContentServiceJpa implements
       existingLanguageRefSetMemberIds =
           new HashSet<>(historyService
               .getAllLanguageRefSetMemberTerminologyIds(terminology,
-                  terminologyVersion).getObjects());
+                  version).getObjects());
       Logger.getLogger(this.getClass()).info(
           "    count = " + existingLanguageRefSetMemberIds.size());
       Logger.getLogger(this.getClass()).info("  Cache relationship ids");
       existingRelationshipIds =
           new HashSet<>(historyService.getAllRelationshipTerminologyIds(
-              terminology, terminologyVersion).getObjects());
+              terminology, version).getObjects());
       Logger.getLogger(this.getClass()).info(
           "    count = " + existingRelationshipIds.size());
 
@@ -501,7 +501,7 @@ public class Rf2DeltaLoaderAlgorithm extends ContentServiceJpa implements
         newConcept.setModuleId(fields[3]);
         newConcept.setDefinitionStatusId(fields[4]);
         newConcept.setTerminology(terminology);
-        newConcept.setTerminologyVersion(terminologyVersion);
+        newConcept.setTerminologyVersion(version);
         newConcept.setDefaultPreferredName("TBD");
         newConcept.setLastModifiedBy("loader");
 
@@ -578,7 +578,7 @@ public class Rf2DeltaLoaderAlgorithm extends ContentServiceJpa implements
           // retrieve concept
           concept =
               historyService.getSingleConcept(fields[4], terminology,
-                  terminologyVersion);
+                  version);
         }
 
         // if the concept is not null
@@ -594,7 +594,7 @@ public class Rf2DeltaLoaderAlgorithm extends ContentServiceJpa implements
           } else if (existingDescriptionIds.contains(fields[0])) {
             description =
                 historyService.getDescription(fields[0], terminology,
-                    terminologyVersion);
+                    version);
           }
 
           // Throw exception if it cant be found
@@ -627,7 +627,7 @@ public class Rf2DeltaLoaderAlgorithm extends ContentServiceJpa implements
           newDescription.setTerm(fields[7]);
           newDescription.setCaseSignificanceId(fields[8]);
           newDescription.setTerminology(terminology);
-          newDescription.setTerminologyVersion(terminologyVersion);
+          newDescription.setTerminologyVersion(version);
           newDescription.setLastModifiedBy("loader");
 
           // If description is new, add it
@@ -705,7 +705,7 @@ public class Rf2DeltaLoaderAlgorithm extends ContentServiceJpa implements
         } else {
           description =
               historyService.getDescription(fields[5], terminology,
-                  terminologyVersion);
+                  version);
         }
 
         // get the concept
@@ -730,7 +730,7 @@ public class Rf2DeltaLoaderAlgorithm extends ContentServiceJpa implements
           // retrieve languageRefSetMember
           languageRefSetMember =
               historyService.getLanguageRefSetMember(fields[0], terminology,
-                  terminologyVersion);
+                  version);
         }
 
         if (languageRefSetMember == null
@@ -761,7 +761,7 @@ public class Rf2DeltaLoaderAlgorithm extends ContentServiceJpa implements
         newLanguageRefSetMember.setRefSetId(fields[4]);
         newLanguageRefSetMember.setAcceptabilityId(fields[6]);
         newLanguageRefSetMember.setTerminology(terminology);
-        newLanguageRefSetMember.setTerminologyVersion(terminologyVersion);
+        newLanguageRefSetMember.setTerminologyVersion(version);
         newLanguageRefSetMember.setLastModifiedBy("loader");
 
         // If language refset entry is new, add it
@@ -838,7 +838,7 @@ public class Rf2DeltaLoaderAlgorithm extends ContentServiceJpa implements
         } else {
           sourceConcept =
               historyService.getSingleConcept(fields[4], terminology,
-                  terminologyVersion);
+                  version);
         }
         if (sourceConcept == null) {
           throw new Exception("Relationship " + fields[0] + " source concept "
@@ -853,7 +853,7 @@ public class Rf2DeltaLoaderAlgorithm extends ContentServiceJpa implements
         } else {
           destinationConcept =
               historyService.getSingleConcept(fields[5], terminology,
-                  terminologyVersion);
+                  version);
         }
         if (destinationConcept == null) {
           throw new Exception("Relationship " + fields[0]
@@ -871,7 +871,7 @@ public class Rf2DeltaLoaderAlgorithm extends ContentServiceJpa implements
         } else if (existingRelationshipIds.contains(fields[0])) {
           relationship =
               historyService.getRelationship(fields[0], terminology,
-                  terminologyVersion);
+                  version);
 
         }
 
@@ -900,7 +900,7 @@ public class Rf2DeltaLoaderAlgorithm extends ContentServiceJpa implements
         newRelationship.setTypeId(fields[7]); // typeId
         newRelationship.setCharacteristicTypeId(fields[8]); // characteristicTypeId
         newRelationship.setTerminology(terminology);
-        newRelationship.setTerminologyVersion(terminologyVersion);
+        newRelationship.setTerminologyVersion(version);
         newRelationship.setModifierId(fields[9]);
         newRelationship.setSourceConcept(sourceConcept);
         newRelationship.setDestinationConcept(destinationConcept);
@@ -942,7 +942,7 @@ public class Rf2DeltaLoaderAlgorithm extends ContentServiceJpa implements
    * Retires concepts that were removed from prior deltas. Find concepts in the
    * DB that are not in the current delta and which have effective times greater
    * than the latest release date. The latest release date is the
-   * "terminologyVersion" in this case.
+   * "version" in this case.
    * @throws Exception
    */
   public void retireRemovedConcepts() throws Exception {

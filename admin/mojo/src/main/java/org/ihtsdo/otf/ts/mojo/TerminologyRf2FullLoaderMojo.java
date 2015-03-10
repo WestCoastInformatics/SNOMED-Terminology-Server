@@ -33,7 +33,7 @@ public class TerminologyRf2FullLoaderMojo extends AbstractMojo {
    * @parameter
    * @required
    */
-  private String terminologyVersion;
+  private String version;
 
   /**
    * Input directory.
@@ -68,7 +68,7 @@ public class TerminologyRf2FullLoaderMojo extends AbstractMojo {
     try {
       getLog().info("RF2 Full Terminology Loader called via mojo.");
       getLog().info("  Terminology        : " + terminology);
-      getLog().info("  Terminology Version: " + terminologyVersion);
+      getLog().info("  Terminology Version: " + version);
       getLog().info("  Input directory    : " + inputDir);
       getLog().info("  Expect server up   : " + server);
 
@@ -101,7 +101,7 @@ public class TerminologyRf2FullLoaderMojo extends AbstractMojo {
         getLog().info("Running directly");
 
         ContentServiceRestImpl contentService = new ContentServiceRestImpl();
-        contentService.loadTerminologyRf2Full(terminology, terminologyVersion,
+        contentService.loadTerminologyRf2Full(terminology, version,
             inputDir, authToken);
 
       } else {
@@ -109,7 +109,7 @@ public class TerminologyRf2FullLoaderMojo extends AbstractMojo {
 
         // invoke the client
         ContentClientRest client = new ContentClientRest(properties);
-        client.loadTerminologyRf2Full(terminology, terminologyVersion,
+        client.loadTerminologyRf2Full(terminology, version,
             inputDir, authToken);
       }
 

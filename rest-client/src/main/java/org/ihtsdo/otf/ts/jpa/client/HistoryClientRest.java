@@ -34,6 +34,7 @@ import com.sun.jersey.api.client.Client;
 import com.sun.jersey.api.client.ClientResponse;
 import com.sun.jersey.api.client.WebResource;
 
+// TODO: Auto-generated Javadoc
 /**
  * A client for connecting to a history REST service.
  */
@@ -811,11 +812,11 @@ public class HistoryClientRest implements HistoryServiceRest {
    * (non-Javadoc)
    * 
    * @see
-   * org.ihtsdo.otf.ts.rest.HistoryServiceRest#removeReleaseInfo(java.lang.String
-   * , java.lang.String)
+   * org.ihtsdo.otf.ts.rest.HistoryServiceRest#removeReleaseInfo(java.lang.Long,
+   * java.lang.String)
    */
   @Override
-  public void removeReleaseInfo(String id, String authToken) throws Exception {
+  public void removeReleaseInfo(Long id, String authToken) throws Exception {
     Client client = Client.create();
     WebResource resource =
         client.resource(config.getProperty("base.url")
@@ -831,6 +832,28 @@ public class HistoryClientRest implements HistoryServiceRest {
       throw new Exception("Unexpected status " + response.getStatus());
     }
 
+  }
+
+  /* (non-Javadoc)
+   * @see org.ihtsdo.otf.ts.rest.HistoryServiceRest#startEditingCycle(java.lang.String, java.lang.String, java.lang.String, java.lang.String)
+   */
+  @Override
+  public void startEditingCycle(String releaseVersion, String terminology,
+    String version, String authToken) throws Exception {
+    Client client = Client.create();
+    WebResource resource =
+        client.resource(config.getProperty("base.url")
+            + "/history/release/startEditingCycle/" + releaseVersion + "/"
+            + terminology + "/" + version);
+    ClientResponse response =
+        resource.accept(MediaType.APPLICATION_XML)
+            .header("Authorization", authToken).get(ClientResponse.class);
+
+    if (response.getClientResponseStatus().getFamily() == Family.SUCCESSFUL) {
+      // do nothing
+    } else {
+      throw new Exception("Unexpected status " + response.getStatus());
+    }
   }
 
 }

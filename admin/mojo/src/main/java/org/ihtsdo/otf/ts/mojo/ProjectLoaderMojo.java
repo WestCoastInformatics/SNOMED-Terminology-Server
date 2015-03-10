@@ -18,14 +18,16 @@ package org.ihtsdo.otf.ts.mojo;
 
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.Properties;
 
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoFailureException;
 import org.ihtsdo.otf.ts.Project;
+import org.ihtsdo.otf.ts.helpers.ConfigUtility;
 import org.ihtsdo.otf.ts.jpa.ProjectJpa;
-import org.ihtsdo.otf.ts.jpa.services.ContentServiceJpa;
+import org.ihtsdo.otf.ts.jpa.client.ContentClientRest;
 import org.ihtsdo.otf.ts.jpa.services.SecurityServiceJpa;
-import org.ihtsdo.otf.ts.services.ContentService;
+import org.ihtsdo.otf.ts.rest.impl.ContentServiceRestImpl;
 import org.ihtsdo.otf.ts.services.SecurityService;
 
 /**
@@ -68,7 +70,7 @@ public class ProjectLoaderMojo extends AbstractMojo {
    * @parameter
    * @required
    */
-  private String terminologyVersion = null;
+  private String version = null;
 
   /**
    * The admin user.
@@ -84,7 +86,8 @@ public class ProjectLoaderMojo extends AbstractMojo {
    * @parameter
    * @required
    */
-  private String scopeConcepts= "";
+  private String scopeConcepts = "";
+
   /**
    * The scope descendants flag
    * 
@@ -98,13 +101,19 @@ public class ProjectLoaderMojo extends AbstractMojo {
    * @parameter
    */
   private String scopeExcludesConcepts = "";
-  
+
   /**
    * The scope excludes descendants flag
    * 
    * @parameter
    */
   private boolean scopeExcludesDescendantsFlag = true;
+
+  /**
+   * Whether to run this mojo against an active server
+   * @parameter
+   */
+  private boolean server = false;
 
   /**
    * Instantiates a {@link ProjectLoaderMojo} from the specified parameters.
@@ -124,39 +133,63 @@ public class ProjectLoaderMojo extends AbstractMojo {
     getLog().info("  name = " + name);
     getLog().info("  description= " + description);
     getLog().info("  terminology = " + terminology);
-    getLog().info("  terminologyVersion = " + terminologyVersion);
+    getLog().info("  version = " + version);
     getLog().info("  scope concepts = " + scopeConcepts);
     getLog().info("  scope desc flag = " + scopeDescendantsFlag);
     getLog().info("  scope excludes concepts = " + scopeExcludesConcepts);
-    getLog().info("  scope excludes desc flag = " + scopeExcludesDescendantsFlag);
+    getLog().info(
+        "  scope excludes desc flag = " + scopeExcludesDescendantsFlag);
     try {
-      ContentService contentService = new ContentServiceJpa();
-      SecurityService securityService = new SecurityServiceJpa();
-      
-      Project project = new ProjectJpa();
+
+      Properties properties = ConfigUtility.getConfigProperties();
+      boolean serverRunning = ConfigUtility.isServerActive();
+      getLog().info(
+          "Server status detected:  " + (!serverRunning ? "DOWN" : "UP"));
+      if (serverRunning && !server) {
+        throw new MojoFailureException(
+            "Mojo expects server to be down, but server is running");
+      }
+      if (!serverRunning && server) {
+        throw new MojoFailureException(
+            "Mojo expects server to be running, but server is down");
+      }
+
+      // authenticate
+      SecurityService service = new SecurityServiceJpa();
+      String authToken =
+          service.authenticate(properties.getProperty("admin.user"),
+              properties.getProperty("admin.password"));
+
+      ProjectJpa project = new ProjectJpa();
       project.setName(name);
       project.setDescription(description);
-      project.addAdministrator(securityService.getUser(adminUser));
+      project.addAdministrator(service.getUser(adminUser));
       project.setPublic(true);
-      project.setScopeConcepts(new HashSet<String>(Arrays.asList(scopeConcepts.split(","))));
+      project.setScopeConcepts(new HashSet<String>(Arrays.asList(scopeConcepts
+          .split(","))));
       project.setScopeDescendantsFlag(scopeDescendantsFlag);
-      project.setScopeExcludesConcepts(new HashSet<String>(Arrays.asList(scopeExcludesConcepts.split(","))));
+      project.setScopeExcludesConcepts(new HashSet<String>(Arrays
+          .asList(scopeExcludesConcepts.split(","))));
       project.setScopeExcludesDescendantsFlag(scopeExcludesDescendantsFlag);
       project.setTerminology(terminology);
-      project.setTerminologyVersion(terminologyVersion);
+      project.setTerminologyVersion(version);
       project.setLastModifiedBy("admin");
 
       // check for this project
-      for (Project p : contentService.getProjects().getObjects()) {
-        if (p.getName().equals(project.getName()) &&
-            p.getDescription().equals(project.getDescription())) {
-          throw new Exception("A project with this name and description already exists.");
-        }
+      if (!serverRunning) {
+        getLog().info("Running directly");
+
+        ContentServiceRestImpl contentService = new ContentServiceRestImpl();
+        contentService.addProject(project, authToken);
+
+      } else {
+        getLog().info("Running against server");
+
+        // invoke the client
+        ContentClientRest client = new ContentClientRest(properties);
+        client.addProject(project, authToken);
       }
-      // Add the project
-      contentService.addProject(project);
-      securityService.close();
-      contentService.close();
+      service.close();
       getLog().info("done ...");
     } catch (Exception e) {
       e.printStackTrace();

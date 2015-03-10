@@ -8,19 +8,28 @@ import org.ihtsdo.otf.ts.helpers.ConceptList;
 import org.ihtsdo.otf.ts.helpers.PfsParameterJpa;
 import org.ihtsdo.otf.ts.helpers.ProjectList;
 import org.ihtsdo.otf.ts.helpers.SearchResultList;
+import org.ihtsdo.otf.ts.jpa.ProjectJpa;
 import org.ihtsdo.otf.ts.rf2.AssociationReferenceConceptRefSetMember;
 import org.ihtsdo.otf.ts.rf2.Concept;
 import org.ihtsdo.otf.ts.rf2.Description;
 import org.ihtsdo.otf.ts.rf2.LanguageRefSetMember;
 import org.ihtsdo.otf.ts.rf2.Relationship;
 
-// TODO: Auto-generated Javadoc
 /**
  * Represents a content available via a REST service.
- *
- * @author ${author}
  */
 public interface ContentServiceRest {
+
+  /**
+   * Adds the project.
+   *
+   * @param project the project
+   * @param authToken the auth token
+   * @return the project
+   * @throws Exception the exception
+   */
+  public Project addProject(ProjectJpa project, String authToken)
+    throws Exception;
 
   /**
    * Returns the concept for search string.
@@ -289,26 +298,26 @@ public interface ContentServiceRest {
    * Load terminology snapshot from RF2 directory.
    *
    * @param terminology the terminology
-   * @param terminologyVersion the terminology version
+   * @param version the terminology version
    * @param inputDir the input dir
    * @param authToken the auth token
    * @throws Exception the exception
    */
   public void loadTerminologyRf2Snapshot(String terminology,
-    String terminologyVersion, String inputDir, String authToken)
+    String version, String inputDir, String authToken)
     throws Exception;
 
   /**
    * Load terminology full from RF2 directory.
    *
    * @param terminology the terminology
-   * @param terminologyVersion the terminology version
+   * @param version the terminology version
    * @param inputDir the input dir
    * @param authToken the auth token
    * @throws Exception the exception
    */
   public void loadTerminologyRf2Full(String terminology,
-    String terminologyVersion, String inputDir, String authToken)
+    String version, String inputDir, String authToken)
     throws Exception;
 
   /**
@@ -326,24 +335,24 @@ public interface ContentServiceRest {
    * Load terminology from ClaML file.
    *
    * @param terminology the terminology
-   * @param terminologyVersion the terminology version
+   * @param version the terminology version
    * @param inputFile the input file
    * @param authToken the auth token
    * @throws Exception the exception
    */
   public void loadTerminologyClaml(String terminology,
-    String terminologyVersion, String inputFile, String authToken)
+    String version, String inputFile, String authToken)
     throws Exception;
 
   /**
    * Removes the terminology.
    *
    * @param terminology the terminology
-   * @param terminologyVersion the terminology version
+   * @param version the terminology version
    * @param authToken the auth token
    * @throws Exception the exception
    */
-  public void removeTerminology(String terminology, String terminologyVersion,
+  public void removeTerminology(String terminology, String version,
     String authToken) throws Exception;
 
 }

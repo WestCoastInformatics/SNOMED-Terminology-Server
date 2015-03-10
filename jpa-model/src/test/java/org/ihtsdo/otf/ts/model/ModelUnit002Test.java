@@ -7,6 +7,7 @@ import org.ihtsdo.otf.ts.ReleaseInfo;
 import org.ihtsdo.otf.ts.helpers.CopyConstructorTester;
 import org.ihtsdo.otf.ts.helpers.EqualsHashcodeTester;
 import org.ihtsdo.otf.ts.helpers.GetterSetterTester;
+import org.ihtsdo.otf.ts.helpers.XmlSerializationTester;
 import org.ihtsdo.otf.ts.jpa.ReleaseInfoJpa;
 import org.junit.After;
 import org.junit.AfterClass;
@@ -85,6 +86,18 @@ public class ModelUnit002Test {
     Logger.getLogger(getClass()).debug("TEST testModelCopy002");
     CopyConstructorTester tester = new CopyConstructorTester(object);
     assertTrue(tester.testCopyConstructor(ReleaseInfo.class));
+  }
+
+  /**
+   * Test XML serialization.
+   *
+   * @throws Exception the exception
+   */
+  @Test
+  public void testModelXmlSerialization002() throws Exception {
+    Logger.getLogger(getClass()).debug("TEST testModelXmlTransient002");
+    XmlSerializationTester tester = new XmlSerializationTester(object);
+    assertTrue(tester.testXmlSerialization());
   }
 
   /**

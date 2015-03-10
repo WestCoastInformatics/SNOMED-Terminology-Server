@@ -7,6 +7,7 @@ import org.ihtsdo.otf.ts.helpers.ConfigUtility;
 import org.ihtsdo.otf.ts.helpers.CopyConstructorTester;
 import org.ihtsdo.otf.ts.helpers.EqualsHashcodeTester;
 import org.ihtsdo.otf.ts.helpers.GetterSetterTester;
+import org.ihtsdo.otf.ts.helpers.XmlSerializationTester;
 import org.ihtsdo.otf.ts.rf2.ComplexMapRefSetMember;
 import org.ihtsdo.otf.ts.rf2.Concept;
 import org.ihtsdo.otf.ts.rf2.jpa.ComplexMapRefSetMemberJpa;
@@ -123,19 +124,38 @@ public class ModelUnit016Test {
   }
 
   /**
+   * Test XML serialization.
+   *
+   * @throws Exception the exception
+   */
+  @Test
+  public void testModelXmlSerialization016() throws Exception {
+    Logger.getLogger(getClass()).debug("TEST testModelXmlTransient016");
+    XmlSerializationTester tester = new XmlSerializationTester(object);
+
+    // Set up some objects
+    Concept c = new ConceptJpa();
+    c.setId(1L);
+    c.setTerminology("1");
+    c.setTerminologyId("1");
+    c.setTerminologyVersion("1");
+    c.setDefaultPreferredName("1");
+    tester.proxy(Concept.class, 1, c);
+
+    assertTrue(tester.testXmlSerialization());
+  }
+
+  /**
    * Test concept reference in XML serialization.
    *
    * @throws Exception the exception
    */
   @Test
-  public void testXmlTransient016() throws Exception {
-    Logger.getLogger(getClass()).debug("TEST testXmlTransient016");
+  public void testModelXmlTransient016() throws Exception {
+    Logger.getLogger(getClass()).debug("TEST testModelXmlTransient016");
     Concept c = new ConceptJpa();
     c.setId(1L);
     c.setTerminologyId("1");
-    // Definition status id is not persisted by the refset member
-    // so it can't be reconstructed, but is part of the equals computation
-    // c.setDefinitionStatusId("1");
     c.setDefaultPreferredName("1");
     ComplexMapRefSetMember member = new ComplexMapRefSetMemberJpa();
     member.setId(1L);
@@ -146,10 +166,6 @@ public class ModelUnit016Test {
     assertTrue(xml.contains("<conceptId>"));
     assertTrue(xml.contains("<conceptTerminologyId>"));
     assertTrue(xml.contains("<conceptPreferredName>"));
-    ComplexMapRefSetMember member2 =
-        (ComplexMapRefSetMember) ConfigUtility.getGraphForString(xml,
-            ComplexMapRefSetMemberJpa.class);
-    assertTrue(member.equals(member2));
   }
 
   /**

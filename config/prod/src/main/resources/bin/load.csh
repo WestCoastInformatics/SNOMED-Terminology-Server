@@ -68,7 +68,7 @@ echo "    Start SNOMEDCT editing ...`/bin/date`"
 cd $SERVER_HOME/admin/release
 mvn install -PStartEditingCycle -Drun.config=$SERVER_CONFIG \
   -Drelease.version=20150131 -Dterminology=SNOMEDCT \
-  -Dterminology.version=20140731 >&! mvn.log
+  -Dterminology.version=latest >&! mvn.log
 if ($status != 0) then
     echo "ERROR starting editing for SNOMEDCT"
     cat mvn.log

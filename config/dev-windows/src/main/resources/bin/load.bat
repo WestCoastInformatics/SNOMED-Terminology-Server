@@ -61,7 +61,7 @@ del /Q mvn.log
 
 echo     Start SNOMED editing ...%date% %time%
 cd %SERVER_CODE%/admin/release
-call mvn install -PStartEditingCycle -Drelease.version=20150131 -Dterminology=SNOMEDCT -Dterminology.version=20140731 -Drun.config=%SERVER_CONFIG% 1> mvn.log
+call mvn install -PStartEditingCycle -Drelease.version=20150131 -Dterminology=SNOMEDCT -Dterminology.version=latest -Drun.config=%SERVER_CONFIG% 1> mvn.log
 IF %ERRORLEVEL% NEQ 0 (set error=1
 goto trailer)
 del /Q mvn.log

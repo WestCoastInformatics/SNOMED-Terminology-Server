@@ -10,6 +10,7 @@ import org.ihtsdo.otf.ts.Project;
 import org.ihtsdo.otf.ts.helpers.CopyConstructorTester;
 import org.ihtsdo.otf.ts.helpers.EqualsHashcodeTester;
 import org.ihtsdo.otf.ts.helpers.GetterSetterTester;
+import org.ihtsdo.otf.ts.helpers.XmlSerializationTester;
 import org.ihtsdo.otf.ts.jpa.ProjectJpa;
 import org.junit.After;
 import org.junit.AfterClass;
@@ -109,6 +110,20 @@ public class ModelUnit001Test {
     tester.proxy(Set.class, 2, s2);
 
     assertTrue(tester.testCopyConstructor(Project.class));
+  }
+
+  /**
+   * Test XML serialization.
+   *
+   * @throws Exception the exception
+   */
+  @Test
+  public void testModelXmlSerialization001() throws Exception {
+    Logger.getLogger(getClass()).debug("TEST testModelXmlTransient001");
+    XmlSerializationTester tester = new XmlSerializationTester(object);
+    // Set up objects
+    tester.proxy(Set.class, 1, s1);
+    assertTrue(tester.testXmlSerialization());
   }
 
   /**

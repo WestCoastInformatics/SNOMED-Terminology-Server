@@ -37,14 +37,14 @@ public interface SearchResult {
   public void setTerminology(String terminology);
 
   /**
-   * @return the terminologyVersion
+   * @return the version
    */
   public String getTerminologyVersion();
 
   /**
-   * @param terminologyVersion the terminologyVersion to set
+   * @param version the version to set
    */
-  public void setTerminologyVersion(String terminologyVersion);
+  public void setTerminologyVersion(String version);
 
   /**
    * @return the value

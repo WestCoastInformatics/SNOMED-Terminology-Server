@@ -6,6 +6,7 @@ import org.apache.log4j.Logger;
 import org.ihtsdo.otf.ts.helpers.CopyConstructorTester;
 import org.ihtsdo.otf.ts.helpers.EqualsHashcodeTester;
 import org.ihtsdo.otf.ts.helpers.GetterSetterTester;
+import org.ihtsdo.otf.ts.helpers.XmlSerializationTester;
 import org.ihtsdo.otf.ts.rf2.AssociationReferenceConceptRefSetMember;
 import org.ihtsdo.otf.ts.rf2.AttributeValueConceptRefSetMember;
 import org.ihtsdo.otf.ts.rf2.ComplexMapRefSetMember;
@@ -102,13 +103,25 @@ public class ModelUnit007Test {
   }
 
   /**
+   * Test XML serialization.
+   *
+   * @throws Exception the exception
+   */
+  @Test
+  public void testModelXmlSerialization007() throws Exception {
+    Logger.getLogger(getClass()).debug("TEST testModelXmlTransient007");
+    XmlSerializationTester tester = new XmlSerializationTester(object);
+    assertTrue(tester.testXmlSerialization());
+  }
+
+  /**
    * Test deep copy.
    *
    * @throws Exception the exception
    */
   @Test
-  public void testDeepCopy007() throws Exception {
-    Logger.getLogger(getClass()).debug("TEST testDeepCopy007");
+  public void testModelDeepCopy007() throws Exception {
+    Logger.getLogger(getClass()).debug("TEST testModelDeepCopy007");
     Concept c = new ConceptJpa();
     c.setId(1L);
     c.setTerminologyId("1");

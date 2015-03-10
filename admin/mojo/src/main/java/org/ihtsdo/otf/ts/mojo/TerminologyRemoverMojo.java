@@ -44,7 +44,7 @@ public class TerminologyRemoverMojo extends AbstractMojo {
    * @parameter
    * @required
    */
-  private String terminologyVersion;
+  private String version;
 
   /**
    * Instantiates a {@link TerminologyRemoverMojo} from the specified
@@ -64,10 +64,10 @@ public class TerminologyRemoverMojo extends AbstractMojo {
   public void execute() throws MojoFailureException {
     getLog().info("Starting removing terminology");
     getLog().info("  terminology = " + terminology);
-    getLog().info("  terminologyVersion = " + terminologyVersion);
+    getLog().info("  version = " + version);
     try {
       ContentService contentService = new ContentServiceJpa();
-      contentService.clearConcepts(terminology, terminologyVersion);
+      contentService.clearConcepts(terminology, version);
       contentService.close();
       getLog().info("done ...");
     } catch (Exception e) {

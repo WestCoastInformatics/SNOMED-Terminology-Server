@@ -6,6 +6,7 @@ import org.apache.log4j.Logger;
 import org.ihtsdo.otf.ts.helpers.CopyConstructorTester;
 import org.ihtsdo.otf.ts.helpers.EqualsHashcodeTester;
 import org.ihtsdo.otf.ts.helpers.GetterSetterTester;
+import org.ihtsdo.otf.ts.helpers.XmlSerializationTester;
 import org.ihtsdo.otf.ts.rf2.Concept;
 import org.ihtsdo.otf.ts.rf2.TransitiveRelationship;
 import org.ihtsdo.otf.ts.rf2.jpa.ConceptJpa;
@@ -109,6 +110,27 @@ public class ModelUnit011Test {
     tester.proxy(Concept.class, 2, c2);
 
     assertTrue(tester.testCopyConstructor(TransitiveRelationship.class));
+  }
+
+  /**
+   * Test XML serialization.
+   *
+   * @throws Exception the exception
+   */
+  @Test
+  public void testModelXmlSerialization011() throws Exception {
+    Logger.getLogger(getClass()).debug("TEST testModelXmlTransient011");
+    XmlSerializationTester tester = new XmlSerializationTester(object);
+
+    // Set up objects
+    Concept c = new ConceptJpa();
+    c.setId(1L);
+    c.setTerminology("1");
+    c.setTerminologyId("1");
+    c.setTerminologyVersion("1");
+    c.setDefaultPreferredName("1");
+    tester.proxy(Concept.class, 1, c);
+    assertTrue(tester.testXmlSerialization());
   }
 
   /**

@@ -240,12 +240,12 @@ public interface ContentChangeServiceRest {
    * Administrative tool to start editing cycle for a terminology/version.
    *
    * @param terminology the terminology
-   * @param terminologyVersion the terminology version
+   * @param version the terminology version
    * @param releaseVersion the release version
    * @param authToken the auth token
    * @throws Exception the exception
    */
-  public void startEditingCycle(String terminology, String terminologyVersion,
+  public void startEditingCycle(String terminology, String version,
     String releaseVersion, String authToken) throws Exception;
 
   /**
