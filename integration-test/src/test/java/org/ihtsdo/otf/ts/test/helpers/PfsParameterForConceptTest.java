@@ -19,7 +19,9 @@ import org.ihtsdo.otf.ts.services.ContentService;
  */
 public class PfsParameterForConceptTest {
 
-  @SuppressWarnings("unchecked")
+  @SuppressWarnings({
+      "unchecked", "rawtypes"
+  })
   public static boolean testSort(SearchResultList results, PfsParameter pfs)
     throws Exception {
 

@@ -520,10 +520,7 @@ public class ContentServiceRestNormalUseTest extends ContentServiceRestTest {
    */
   @Test
   public void testNormalUseRestContent006() throws Exception {
-    
-    Set<AssociationReferenceConceptRefSetMember> refsetMembers;
-    Concept concept;
-    Description description;
+
     AssociationReferenceConceptRefSetMember refsetMember, refsetMember2;
     
     
