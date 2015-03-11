@@ -1,4 +1,4 @@
-package org.ihtsdo.otf.ts.rest.impl;
+package org.ihtsdo.otf.ts.rest.todo;
 
 import javax.ws.rs.DELETE;
 import javax.ws.rs.HeaderParam;
@@ -19,6 +19,8 @@ import org.ihtsdo.otf.ts.jpa.services.ContentServiceJpa;
 import org.ihtsdo.otf.ts.jpa.services.SecurityServiceJpa;
 import org.ihtsdo.otf.ts.jpa.services.helper.TerminologyUtility;
 import org.ihtsdo.otf.ts.rest.ContentChangeServiceRest;
+import org.ihtsdo.otf.ts.rest.impl.ContentServiceRestImpl;
+import org.ihtsdo.otf.ts.rest.impl.RootServiceRestImpl;
 import org.ihtsdo.otf.ts.rf2.AssociationReferenceConceptRefSetMember;
 import org.ihtsdo.otf.ts.rf2.Concept;
 import org.ihtsdo.otf.ts.rf2.Description;
