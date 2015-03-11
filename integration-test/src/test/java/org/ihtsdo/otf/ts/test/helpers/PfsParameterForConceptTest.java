@@ -2,9 +2,11 @@ package org.ihtsdo.otf.ts.test.helpers;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 import org.apache.log4j.Logger;
+import org.ihtsdo.otf.ts.helpers.PfsParameter;
 import org.ihtsdo.otf.ts.helpers.SearchResult;
 import org.ihtsdo.otf.ts.helpers.SearchResultList;
 import org.ihtsdo.otf.ts.jpa.services.ContentServiceJpa;
@@ -14,7 +16,8 @@ import org.ihtsdo.otf.ts.services.ContentService;
 
 public class PfsParameterForConceptTest {
 
-  public static boolean testSort(SearchResultList results, String fieldName)
+  @SuppressWarnings("unchecked")
+  public static boolean testSort(SearchResultList results, PfsParameter pfs)
     throws Exception {
 
     System.out.println("testSort called with search results: ");
@@ -30,14 +33,14 @@ public class PfsParameterForConceptTest {
 
     do {
       try {
-        field = clazz.getDeclaredField(fieldName);
+        field = clazz.getDeclaredField(pfs.getSortField());
       } catch (NoSuchFieldException e) {
         clazz = clazz.getSuperclass();
       }
     } while (clazz != null && field == null);
 
     if (field == null)
-      throw new Exception("Could not retrieve field " + fieldName
+      throw new Exception("Could not retrieve field " + pfs.getSortField()
           + " for ConceptJpa");
 
     field.setAccessible(true);
@@ -57,38 +60,57 @@ public class PfsParameterForConceptTest {
       concepts.add(c);
     }
 
+    Comparator comparator = null;
+
+  
+    switch (field.getType().getSimpleName()) {
+      case "int":
+        comparator = new Comparator<Integer>() {
+          @Override
+          public int compare(Integer u1, Integer u2) {
+            return u1.compareTo(u2);
+          };
+        };
+      case "Long":
+        comparator = new Comparator<Long>() {
+          @Override
+          public int compare(Long u1, Long u2) {
+            return u1.compareTo(u2);
+          };
+        };
+        break;
+      case "String":
+        comparator = new Comparator<String>() {
+          @Override
+          public int compare(String u1, String u2) {
+            return u1.compareTo(u2);
+          };
+        };
+
+        break;
+      default:
+        Logger.getLogger(PfsParameterForConceptTest.class).info(
+            "  Concept does not support testing sorting on field type "
+                + field.getType().getSimpleName());
+        return false;
+    }
+
     for (Concept c : concepts) {
 
       thisValue = field.get(c);
+      
+      // if not the first value
       if (prevValue != null) {
+        
+        // test ascending case
+        if (pfs.isAscending() && (comparator.compare(thisValue, prevValue) < 0)) {
+          return false;
+        }
 
-        System.out.println("Comparing " + thisValue + " to " + prevValue);
-
-        switch (field.getType().getSimpleName()) {
-          case "int":
-            if (((Integer) thisValue).compareTo((Integer) prevValue) < 0) {
-              System.out.println("  int comparison -> false");
-              return false;
-            }
-            break;
-          case "Long":
-            if (((Long) thisValue).compareTo((Long) prevValue) < 0) {
-              System.out.println("  Long comparison -> false");
-              return false;
-            }
-            break;
-          case "String":
-            if (((String) thisValue).compareTo((String) prevValue) < 0) {
-              System.out.println("  String comparison -> false");
-              return false;
-            }
-
-            break;
-          default:
-            Logger.getLogger(PfsParameterForConceptTest.class).info(
-                "  PfsParameterForConceptTest does not support testing sorting on field type "
-                    + field.getType().getSimpleName());
-            return false;
+        // test descending case
+        else if (!pfs.isAscending()
+            && comparator.compare(prevValue, thisValue) < 0) {
+          return false;
         }
       }
 
@@ -99,8 +121,11 @@ public class PfsParameterForConceptTest {
   }
 
   public static boolean testPaging(SearchResultList results,
-    SearchResultList fullResults, int page, int pageSize) {
+    SearchResultList fullResults, PfsParameter pfs) {
     // check results size, must be less than or equal to page size
+
+    int page = (int) (Math.floor(pfs.getStartIndex() / pfs.getMaxResults()) + 1);
+    int pageSize = pfs.getMaxResults();
     
     System.out.println("List:");
     for (SearchResult sr : results.getObjects()) {

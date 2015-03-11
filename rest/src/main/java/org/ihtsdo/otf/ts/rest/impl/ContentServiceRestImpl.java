@@ -333,7 +333,7 @@ public class ContentServiceRestImpl extends RootServiceRestImpl implements
       Concept concept =
           contentService.getSingleConcept(terminologyId, terminology, version);
       ConceptList list = contentService.getChildConcepts(concept, pfs);
-      for (Concept c : list.getObjects()) {
+       for (Concept c : list.getObjects()) {
         contentService.getGraphResolutionHandler().resolve(
             c,
             TerminologyUtility.getHierarchcialIsaRels(c.getTerminology(),

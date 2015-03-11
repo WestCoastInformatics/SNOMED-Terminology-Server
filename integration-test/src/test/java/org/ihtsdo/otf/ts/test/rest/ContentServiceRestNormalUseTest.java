@@ -3,12 +3,17 @@ package org.ihtsdo.otf.ts.test.rest;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
+import java.util.Set;
+
 import org.ihtsdo.otf.ts.helpers.ConceptList;
 import org.ihtsdo.otf.ts.helpers.ConceptListJpa;
 import org.ihtsdo.otf.ts.helpers.PfsParameterJpa;
 import org.ihtsdo.otf.ts.helpers.SearchResultList;
+import org.ihtsdo.otf.ts.rf2.AssociationReferenceConceptRefSetMember;
 import org.ihtsdo.otf.ts.rf2.Concept;
 import org.ihtsdo.otf.ts.rf2.Description;
+import org.ihtsdo.otf.ts.rf2.LanguageRefSetMember;
+import org.ihtsdo.otf.ts.rf2.Relationship;
 import org.ihtsdo.otf.ts.test.helpers.PfsParameterForConceptTest;
 import org.junit.After;
 import org.junit.Before;
@@ -113,8 +118,8 @@ public class ContentServiceRestNormalUseTest extends ContentServiceRestTest {
 
     try {
       conceptList =
-          contentService.getConcepts(icd9TestId, icd9Terminology,
-              icd9Version, authToken);
+          contentService.getConcepts(icd9TestId, icd9Terminology, icd9Version,
+              authToken);
     } catch (Exception e) {
       fail("Get concepts threw unexpected exception");
     }
@@ -123,8 +128,7 @@ public class ContentServiceRestNormalUseTest extends ContentServiceRestTest {
     assertTrue(concept.getTerminologyId().equals(icd9TestId));
     assertTrue(concept.getTerminology().equals(icd9Terminology));
     assertTrue(concept.getTerminologyVersion().equals(icd9Version));
-    assertTrue(concept.getDefaultPreferredName().startsWith(
-        "MYCOSES"));
+    assertTrue(concept.getDefaultPreferredName().startsWith("MYCOSES"));
 
     // check relationships both through count and objects
     System.out.println(concept.getRelationshipCount());
@@ -153,7 +157,7 @@ public class ContentServiceRestNormalUseTest extends ContentServiceRestTest {
     } catch (Exception e) {
       fail("Get concepts threw unexpected exception");
     }
-    
+
     /** Procedure 3: Find concepts */
 
     // For test, execute findConceptsForQuery("ossification", ...) for
@@ -177,7 +181,16 @@ public class ContentServiceRestNormalUseTest extends ContentServiceRestTest {
         contentService.findConceptsForQuery(snomedTerminology, snomedVersion,
             query, pfs, authToken);
     assertTrue(searchResults.getCount() == 10);
-    assertTrue(PfsParameterForConceptTest.testSort(searchResults, pfs.getSortField()));
+    assertTrue(PfsParameterForConceptTest.testSort(searchResults, pfs));
+
+    // test descending order
+    pfs.setAscending(false);
+
+    searchResults =
+        contentService.findConceptsForQuery(snomedTerminology, snomedVersion,
+            query, pfs, authToken);
+    assertTrue(searchResults.getCount() == 10);
+    assertTrue(PfsParameterForConceptTest.testSort(searchResults, pfs));
 
     // store the sorted results
     SearchResultList storedResults = searchResults;
@@ -191,9 +204,10 @@ public class ContentServiceRestNormalUseTest extends ContentServiceRestTest {
     searchResults =
         contentService.findConceptsForQuery(snomedTerminology, snomedVersion,
             query, pfs, authToken);
-    assertTrue(PfsParameterForConceptTest.testSort(searchResults, "defaultPreferredName"));
-    assertTrue(PfsParameterForConceptTest.testPaging(searchResults, storedResults, 1, 5));
-    
+    assertTrue(PfsParameterForConceptTest.testSort(searchResults, pfs));
+    assertTrue(PfsParameterForConceptTest.testPaging(searchResults,
+        storedResults, pfs));
+
     // Paged, sorted results, second page – Pfs parameter with startIndex 6, max
     // results 5 and sortField defaultPreferredName
     // TEST: 5 results, matching second set of 5 results from previous test
@@ -204,20 +218,23 @@ public class ContentServiceRestNormalUseTest extends ContentServiceRestTest {
         contentService.findConceptsForQuery(snomedTerminology, snomedVersion,
             query, pfs, authToken);
 
-    assertTrue(PfsParameterForConceptTest.testPaging(searchResults, storedResults, 2, 5));
-    assertTrue(PfsParameterForConceptTest.testSort(searchResults, "defaultPreferredName"));
-    
+    assertTrue(PfsParameterForConceptTest.testPaging(searchResults,
+        storedResults, pfs));
+    assertTrue(PfsParameterForConceptTest.testSort(searchResults, pfs));
+
     // test lucene query restriction
     pfs = new PfsParameterJpa();
     pfs.setQueryRestriction("terminologyId:93563005");
     searchResults =
         contentService.findConceptsForQuery(snomedTerminology, snomedVersion,
             query, pfs, authToken);
-    
+
     System.out.println("QR results: " + searchResults.toString());
-    
+
     assertTrue(searchResults.getCount() == 1);
-    
+    assertTrue(searchResults.getObjects().get(0).getTerminologyId()
+        .equals("93563005"));
+
     // TODO Test ordering (ascending/descending)
   }
 
@@ -231,26 +248,297 @@ public class ContentServiceRestNormalUseTest extends ContentServiceRestTest {
     PfsParameterJpa pfs = new PfsParameterJpa();
     ConceptList conceptList;
 
-    // Get children for SNOMEDCT concept
+    // Get children for SNOMEDCT concept // TEST: Expect 80 children
     conceptList =
         contentService.getChildConcepts(snomedTestId, snomedTerminology,
             snomedVersion, pfs, authToken);
-    System.out.println("N = " + conceptList.getCount());
-    assertTrue(conceptList.getCount() == 38);
+    assertTrue(conceptList.getCount() == 80);
 
-    // Get descendants for SNOMEDCT concept
+    // Get descendants for SNOMEDCT concept // TEST: Expect 94 descendants
     conceptList =
         contentService.getDescendantConcepts(snomedTestId, snomedTerminology,
             snomedVersion, pfs, authToken);
-    assertTrue(conceptList.getCount() == 9911);
+    assertTrue(conceptList.getCount() == 94);
 
-    // Get ancestors for SNOMEDCT concept
-    // TEST: Expect 0 ancestors
+    // Get ancestors for SNOMEDCT concept // TEST: Expect 11 ancestors
     conceptList =
         contentService.getAncestorConcepts(snomedTestId, snomedTerminology,
             snomedVersion, pfs, authToken);
-    assertTrue(conceptList.getCount() == 0);
+    assertTrue(conceptList.getCount() == 11);
 
+    // Get children for ICD9CM concept
+    // TEST: Expect 8 children
+    conceptList =
+        contentService.getChildConcepts(icd9TestId, icd9Terminology,
+            icd9Version, pfs, authToken);
+    assertTrue(conceptList.getCount() == 8);
+
+    // Get descendants for ICD9CM concept
+    // TEST: Expect 81 descendants
+    conceptList =
+        contentService.getDescendantConcepts(icd9TestId, icd9Terminology,
+            icd9Version, pfs, authToken);
+    assertTrue(conceptList.getCount() == 81);
+
+    // Get ancestors for ICD9CM concept
+    // TEST: Expect 2 ancestors
+    conceptList =
+        contentService.getAncestorConcepts(icd9TestId, icd9Terminology,
+            icd9Version, pfs, authToken);
+    assertTrue(conceptList.getCount() == 2);
+
+  }
+
+  /**
+   * Test Get methods for descriptions
+   * @throws Exception
+   */
+  @Test
+  public void testNormalUseRestContent003() throws Exception {
+
+    Set<Description> descriptions;
+    Concept concept;
+    Description description, description2;
+
+    /**
+     * Test retrieval of SNOMEDCT descriptions
+     */
+
+    // Get SNOMEDCT concept
+    concept =
+        contentService.getSingleConcept(snomedTestId, snomedTerminology,
+            snomedVersion, authToken);
+
+    // Get descriptions for concept
+    descriptions = concept.getDescriptions();
+
+    // Get description by terminologyId (from first description retrieved for
+    // concept)
+    description =
+        contentService.getDescription(descriptions.iterator().next()
+            .getTerminologyId(), concept.getTerminology(),
+            concept.getTerminologyVersion(), authToken);
+
+    // TEST: ﻿Description has terminologyId
+    assertTrue(description.getTerminologyId().equals("891000119115"));
+
+    // TEST:﻿ Description has concept equal to retrieved concept
+    assertTrue(description.getConcept().getId().equals(concept.getId()));
+
+    // Get description by id (from previous description)
+    description2 =
+        contentService.getDescription(description.getId(), authToken);
+
+    // TEST: Descriptions are equal
+    assertTrue(description.equals(description2));
+
+    /**
+     * Test retrieval of ICD9CM descriptions
+     */
+
+    // Get ICD9CM concept
+    concept =
+        contentService.getSingleConcept(icd9TestId, icd9Terminology,
+            icd9Version, authToken);
+
+    descriptions = concept.getDescriptions();
+
+    // Get description by terminologyId (from first description retrieved for
+    // concept)
+    description =
+        contentService.getDescription(descriptions.iterator().next()
+            .getTerminologyId(), concept.getTerminology(),
+            concept.getTerminologyVersion(), authToken);
+
+    // TEST: ﻿Description has terminologyId
+    assertTrue(description.getTerminologyId().equals("D0000017"));
+
+    // TEST:﻿ Description has concept equal to retrieved concept
+    assertTrue(description.getConcept().getId().equals(concept.getId()));
+
+    // Get description by id (from previous description)
+    description2 =
+        contentService.getDescription(description.getId(), authToken);
+
+    // TEST: Descriptions are equal
+    assertTrue(description.equals(description2));
+
+  }
+
+  /**
+   * Test Get methods for relationships
+   * @throws Exception
+   */
+  @Test
+  public void testNormalUseRestContent004() throws Exception {
+
+    Set<Relationship> relationships;
+    Concept concept;
+    Relationship relationship, relationship2;
+
+    /**
+     * Test retrieval of SNOMEDCT relationships
+     */
+
+    // Get SNOMEDCT concept
+    concept =
+        contentService.getSingleConcept(snomedTestId, snomedTerminology,
+            snomedVersion, authToken);
+
+    // Get relationships for concept
+    relationships = concept.getRelationships();
+
+    // Get relationship by terminologyId (from first relationship retrieved for
+    // concept)
+    relationship =
+        contentService.getRelationship(relationships.iterator().next()
+            .getTerminologyId(), concept.getTerminology(),
+            concept.getTerminologyVersion(), authToken);
+
+    // TEST: ﻿Relationship has terminologyId
+    assertTrue(relationship.getTerminologyId().equals("4731220023"));
+
+    // TEST:﻿ Relationship has concept equal to retrieved concept
+    assertTrue(relationship.getSourceConcept().getId().equals(concept.getId()));
+
+    // Get relationship by id (from previous relationship)
+    relationship2 =
+        contentService.getRelationship(relationship.getId(), authToken);
+
+    // TEST: Relationships are equal
+    assertTrue(relationship.equals(relationship2));
+
+    /**
+     * Test retrieval of ICD9CM relationships
+     */
+
+    // Get ICD9CM concept
+    concept =
+        contentService.getSingleConcept(icd9TestId, icd9Terminology,
+            icd9Version, authToken);
+
+    relationships = concept.getRelationships();
+
+    // Get relationship by terminologyId (from first relationship retrieved for
+    // concept)
+    relationship =
+        contentService.getRelationship(relationships.iterator().next()
+            .getTerminologyId(), concept.getTerminology(),
+            concept.getTerminologyVersion(), authToken);
+
+    // TEST: ﻿Relationship has terminologyId
+    assertTrue(relationship.getTerminologyId().equals("4816"));
+
+    // TEST:﻿ Relationship has concept equal to retrieved concept
+    assertTrue(relationship.getSourceConcept().getId().equals(concept.getId()));
+
+    // Get relationship by id (from previous relationship)
+    relationship2 =
+        contentService.getRelationship(relationship.getId(), authToken);
+
+    // TEST: Relationships are equal
+    assertTrue(relationship.equals(relationship2));
+
+  }
+
+  /**
+   * Test Get methods for languages
+   * @throws Exception
+   */
+  @Test
+  public void testNormalUseRestContent005() throws Exception {
+
+    Set<LanguageRefSetMember> languages;
+    Concept concept;
+    Description description;
+    LanguageRefSetMember language, language2;
+
+    /**
+     * Test retrieval of SNOMEDCT languages
+     */
+
+    // Get SNOMEDCT concept
+    concept =
+        contentService.getSingleConcept(snomedTestId, snomedTerminology,
+            snomedVersion, authToken);
+
+    // Get languages for concept
+    description = concept.getDescriptions().iterator().next();
+    languages = description.getLanguageRefSetMembers();
+
+    // Get language by terminologyId (from first language retrieved for
+    // concept)
+    language =
+        contentService.getLanguageRefSetMember(languages.iterator().next()
+            .getTerminologyId(), concept.getTerminology(),
+            concept.getTerminologyVersion(), authToken);
+
+    System.out.println(language.toString());
+
+    // TEST: ﻿LanguageRefSetMember has terminologyId
+    assertTrue(language.getTerminologyId().equals(
+        "5d556777-934a-582e-b828-02e3b7cfeb67"));
+
+    // TEST:﻿ LanguageRefSetMember has concept equal to retrieved concept
+    assertTrue(language.getDescription().getId().equals(description.getId()));
+
+    // Get language by id (from previous language)
+    language2 =
+        contentService.getLanguageRefSetMember(language.getId(), authToken);
+
+    // TEST: LanguageRefSetMembers are equal
+    assertTrue(language.equals(language2));
+
+    /**
+     * ICD9CM does not have language ref set members, no test
+     */
+
+  }
+
+  /**
+   * Test Get rest functions for Association Reference Concept Ref Set Members
+   * @throws Exception
+   */
+  @Test
+  public void testNormalUseRestContent006() throws Exception {
+    
+    Set<AssociationReferenceConceptRefSetMember> refsetMembers;
+    Concept concept;
+    Description description;
+    AssociationReferenceConceptRefSetMember refsetMember, refsetMember2;
+    
+    
+    /**
+     * Test retrieval of SNOMEDCT refsetMembers
+     * NOTE:  Ref Set Member id hardcoded, as concept's set is @XmlTransient
+     */
+
+    String refSetMemberTerminologyId = "d9835599-19ac-56bd-89ad-18b37713dfbd";
+    
+    // Get refsetMember by terminologyId (from first refsetMember retrieved for
+    // concept)
+    refsetMember =
+        contentService.getAssociationReferenceConceptRefSetMember(refSetMemberTerminologyId,
+            snomedTerminology, snomedVersion,
+            authToken);
+    
+    System.out.println(refsetMember.toString());
+   
+    // TEST: ﻿AssociationRefSetMember has terminologyId
+    assertTrue(refsetMember.getTerminologyId().equals("d9835599-19ac-56bd-89ad-18b37713dfbd"));
+    // TEST:﻿ AssociationRefSetMember has concept equal to retrieved concept
+    assertTrue(refsetMember.getConcept().getTerminologyId().equals("103389009"));
+    
+    // Get refsetMember by id (from previous refsetMember)
+    refsetMember2 = contentService.getAssociationReferenceConceptRefSetMember(refsetMember.getId(), authToken);
+
+    // TEST: AssociationRefSetMembers are equal
+    assertTrue(refsetMember.equals(refsetMember2));
+    
+    /**
+     * ICD9CM does not have association reference concept ref set members
+     * No test
+     */
   }
 
   /**

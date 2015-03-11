@@ -466,7 +466,7 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
 
     javax.persistence.Query ctQuery =
         manager
-            .createQuery("select tr from TransitiveRelationshipJpa tr, ConceptJpa super"
+            .createQuery("select count(*) from TransitiveRelationshipJpa tr, ConceptJpa super"
                 + " where super.terminologyVersion = :version "
                 + " and super.terminology = :terminology "
                 + " and super.terminologyId = :terminologyId"
@@ -475,7 +475,8 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
     ctQuery.setParameter("terminology", concept.getTerminology());
     ctQuery.setParameter("version", concept.getTerminologyVersion());
     ctQuery.setParameter("terminologyId", concept.getTerminologyId());
-    list.setTotalCount(ctQuery.getResultList().size());
+    System.out.println("ctQuery: " + ctQuery.getSingleResult());
+    list.setTotalCount(((Long) ctQuery.getSingleResult()).intValue());
 
     query.setParameter("terminology", concept.getTerminology());
     query.setParameter("version", concept.getTerminologyVersion());
@@ -507,16 +508,16 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
 
     javax.persistence.Query ctQuery =
         manager
-            .createQuery("select tr from TransitiveRelationshipJpa tr, ConceptJpa sub"
+            .createQuery("select count(*) from TransitiveRelationshipJpa tr, ConceptJpa sub"
                 + " where sub.terminologyVersion = :version "
                 + " and sub.terminology = :terminology "
                 + " and sub.terminologyId = :terminologyId"
-                + " and tr.subTypeConcept = super");
+                + " and tr.subTypeConcept = sub");
 
     ctQuery.setParameter("terminology", concept.getTerminology());
     ctQuery.setParameter("version", concept.getTerminologyVersion());
     ctQuery.setParameter("terminologyId", concept.getTerminologyId());
-    list.setTotalCount(((BigDecimal) ctQuery.getResultList().get(0)).intValue());
+    list.setTotalCount(((Long) ctQuery.getSingleResult()).intValue());
 
     query.setParameter("terminology", concept.getTerminology());
     query.setParameter("version", concept.getTerminologyVersion());
@@ -3204,8 +3205,6 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
   protected void applyPfsToLuceneQuery(Class<?> clazz,
     FullTextQuery fullTextQuery, PfsParameter pfs) throws Exception {
 
-    System.out.println("Applying PFS " + pfs.toString());
-
     // set paging/filtering/sorting if indicated
     if (pfs != null) {
       // if start index and max results are set, set paging
@@ -3220,8 +3219,6 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
 
         Map<String, Boolean> nameToAnalyzedMap =
             this.getNameAnalyzedPairsFromAnnotation(clazz, pfs.getSortField());
-
-        System.out.println(nameToAnalyzedMap.toString());
 
         String sortField = null;
 
@@ -3250,8 +3247,6 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
               "Could not retrieve a non-analyzed Field annotation for get method for variable name "
                   + pfs.getSortField());
         }
-
-        System.out.println("Sort field selected: " + sortField);
 
         Sort sort = new Sort(new SortField(sortField, SortField.STRING, !pfs.isAscending()));
         fullTextQuery.setSort(sort);

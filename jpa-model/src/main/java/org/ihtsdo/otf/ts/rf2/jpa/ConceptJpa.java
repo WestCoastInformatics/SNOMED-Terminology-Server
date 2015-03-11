@@ -114,7 +114,8 @@ public class ConceptJpa extends AbstractComponent implements Concept {
       null;
 
   /** The associationReference RefSet members. */
-  @OneToMany(mappedBy = "concept", targetEntity = AssociationReferenceConceptRefSetMemberJpa.class)
+  @OneToMany(mappedBy = "concept", cascade = CascadeType.ALL, orphanRemoval = true,
+       targetEntity = AssociationReferenceConceptRefSetMemberJpa.class)
   private Set<AssociationReferenceConceptRefSetMember> associationReferenceRefSetMembers =
       null;
 
