@@ -23,8 +23,6 @@ import org.ihtsdo.otf.ts.ReleaseInfo;
 @Table(name = "release_infos", uniqueConstraints = {
     @UniqueConstraint(columnNames = {
         "name", "terminology"
-    }), @UniqueConstraint(columnNames = {
-        "terminology", "version"
     })
 })
 @Audited
