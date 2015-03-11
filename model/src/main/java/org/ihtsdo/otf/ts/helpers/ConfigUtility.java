@@ -12,7 +12,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringReader;
 import java.io.StringWriter;
-import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.Comparator;
 import java.util.Properties;
@@ -25,6 +24,8 @@ import javax.mail.Session;
 import javax.mail.Transport;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response.Status.Family;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
@@ -47,6 +48,10 @@ import org.apache.log4j.Logger;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.xml.sax.SAXException;
+
+import com.sun.jersey.api.client.Client;
+import com.sun.jersey.api.client.ClientResponse;
+import com.sun.jersey.api.client.WebResource;
 
 /**
  * Loads and serves configuration.
@@ -93,10 +98,18 @@ public class ConfigUtility {
       config = ConfigUtility.getConfigProperties();
 
     try {
-      new URL(config.getProperty("base.url") + "/index.html").openConnection()
-          .connect();
-      return true;
-    } catch (IOException e) {
+      // Attempt to logout to verify service is up (this works like a "ping").
+      Client client = Client.create();
+      WebResource resource =
+          client.resource(config.getProperty("base.url") + "/security/logout/dummy");
+      resource.accept(MediaType.APPLICATION_JSON);
+      ClientResponse response = resource.get(ClientResponse.class);
+      if (response.getClientResponseStatus().getFamily() == Family.SUCCESSFUL) {
+        return true;
+      } else {
+        return false;
+      }
+    } catch (Exception e) {
       return false;
     }
   }

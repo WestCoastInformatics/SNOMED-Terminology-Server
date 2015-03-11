@@ -91,7 +91,6 @@ import org.ihtsdo.otf.ts.rf2.jpa.SimpleMapRefSetMemberJpa;
 import org.ihtsdo.otf.ts.rf2.jpa.SimpleRefSetMemberJpa;
 import org.ihtsdo.otf.ts.rf2.jpa.TransitiveRelationshipJpa;
 import org.ihtsdo.otf.ts.services.ContentService;
-import org.ihtsdo.otf.ts.services.MetadataService;
 import org.ihtsdo.otf.ts.services.handlers.ComputePreferredNameHandler;
 import org.ihtsdo.otf.ts.services.handlers.GraphResolutionHandler;
 import org.ihtsdo.otf.ts.services.handlers.IdentifierAssignmentHandler;
@@ -197,7 +196,7 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
   }
 
   /** The planned effective time map. */
-  public static Map<String, Date> plannedEffectiveTimeMap = null;
+  public static Map<String, Date> plannedEffectiveTimeMap = new HashMap<>();
 
   /**
    * Instantiates an empty {@link ContentServiceJpa}.
@@ -223,17 +222,6 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
     if (pnHandlerMap == null) {
       throw new Exception(
           "Identifier compute preferred name handler did not properly initialize, serious error.");
-    }
-    if (plannedEffectiveTimeMap == null) {
-      MetadataService service = new MetadataServiceJpa();
-      Map<String, String> terminologyVersionMap =
-          service.getTerminologyLatestVersions();
-      for (String key : terminologyVersionMap.keySet()) {
-        final String terminology = key;
-        final String version = terminologyVersionMap.get(key);
-        plannedEffectiveTimeMap.put(terminology + version,
-            getPlannedEffectiveTime(terminology, version));
-      }
     }
   }
 
@@ -3530,7 +3518,7 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
       // set effective time to null unless this is the planned effective time
       if (component.getEffectiveTime() != null
           && !component.getEffectiveTime().equals(
-              plannedEffectiveTimeMap.get(component.getTerminology() +
+              getPlannedEffectiveTime(component.getTerminology(),
                   component.getTerminologyVersion()))) {
         component.setEffectiveTime(null);
       }
@@ -3610,6 +3598,9 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
    * @return the planned effective time
    */
   private Date getPlannedEffectiveTime(String terminology, String version) {
+    if (plannedEffectiveTimeMap.containsKey(terminology + version)) {
+      return plannedEffectiveTimeMap.get(terminology + version);
+    }
     javax.persistence.Query query =
         manager
             .createQuery("select a from ReleaseInfoJpa a where planned is TRUE "
@@ -3618,6 +3609,8 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
       query.setParameter("terminology", terminology);
       query.setParameter("version", version);
       ReleaseInfo releaseInfo = (ReleaseInfo) query.getSingleResult();
+      plannedEffectiveTimeMap.put(terminology + version,
+          releaseInfo.getEffectiveTime());
       return releaseInfo.getEffectiveTime();
     } catch (NoResultException e) {
       return null;
