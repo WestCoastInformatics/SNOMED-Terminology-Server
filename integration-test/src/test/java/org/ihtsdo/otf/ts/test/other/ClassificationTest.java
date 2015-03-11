@@ -44,7 +44,7 @@ public class ClassificationTest {
     Logger.getLogger(this.getClass()).info("TEST Classify");
 
 
-    String token = actionService.configureActionService(null);
+//    String token = actionService.configureActionService(null);
   }
 
   /**

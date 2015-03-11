@@ -79,6 +79,9 @@
                       </value>
                     </property>
 
+  <!-- Validate projects -->
+  <!-- Validate release info -->
+  
                   </queries>
                 </configuration>
               </execution>
