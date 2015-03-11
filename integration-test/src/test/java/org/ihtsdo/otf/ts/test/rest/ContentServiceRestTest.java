@@ -16,6 +16,7 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Ignore;
 
+// TODO: Auto-generated Javadoc
 /**
  * Implementation of the "Content Service REST Normal Use" Test Cases.
  */
@@ -32,7 +33,10 @@ public class ContentServiceRestTest {
   protected static Properties properties;
   
   /**  The test password. */
-  protected static String testUser, testPassword;
+  protected static String testUser;
+  
+  /**  The test password. */
+  protected static String testPassword;
 
   /**
    * Create test fixtures for class.
@@ -115,7 +119,7 @@ public class ContentServiceRestTest {
    */
   @After
   public void teardown() throws Exception {
-
+    // do nothing
   }
 
   /**

@@ -62,9 +62,7 @@ import org.ihtsdo.otf.ts.helpers.SimpleRefSetMemberListJpa;
 import org.ihtsdo.otf.ts.helpers.StringList;
 import org.ihtsdo.otf.ts.jpa.ProjectJpa;
 import org.ihtsdo.otf.ts.jpa.services.helper.TerminologyUtility;
-import org.ihtsdo.otf.ts.rf2.AssociationReferenceConceptRefSetMember;
 import org.ihtsdo.otf.ts.rf2.AssociationReferenceRefSetMember;
-import org.ihtsdo.otf.ts.rf2.AttributeValueConceptRefSetMember;
 import org.ihtsdo.otf.ts.rf2.AttributeValueRefSetMember;
 import org.ihtsdo.otf.ts.rf2.ComplexMapRefSetMember;
 import org.ihtsdo.otf.ts.rf2.Component;
@@ -81,8 +79,6 @@ import org.ihtsdo.otf.ts.rf2.SimpleRefSetMember;
 import org.ihtsdo.otf.ts.rf2.TransitiveRelationship;
 import org.ihtsdo.otf.ts.rf2.jpa.AbstractAssociationReferenceRefSetMemberJpa;
 import org.ihtsdo.otf.ts.rf2.jpa.AbstractAttributeValueRefSetMemberJpa;
-import org.ihtsdo.otf.ts.rf2.jpa.AssociationReferenceConceptRefSetMemberJpa;
-import org.ihtsdo.otf.ts.rf2.jpa.AttributeValueConceptRefSetMemberJpa;
 import org.ihtsdo.otf.ts.rf2.jpa.ComplexMapRefSetMemberJpa;
 import org.ihtsdo.otf.ts.rf2.jpa.ConceptJpa;
 import org.ihtsdo.otf.ts.rf2.jpa.DescriptionJpa;
@@ -356,7 +352,7 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
             + "/" + version);
     javax.persistence.Query query =
         manager
-            .createQuery("select c from ConceptJpa c where terminologyId = :terminologyId and terminologyVersion = :version and terminology = :terminology");
+            .createQuery("select c from ConceptJpa c where terminologyId = :terminologyId and version = :version and terminology = :terminology");
     /*
      * Try to retrieve the single expected result If zero or more than one
      * result are returned, log error and set result to null
@@ -420,7 +416,7 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
         "Content Service - get concepts " + terminology + "/" + version);
     javax.persistence.Query query =
         manager
-            .createQuery("select c from ConceptJpa c where terminologyVersion = :version and terminology = :terminology");
+            .createQuery("select c from ConceptJpa c where version = :version and terminology = :terminology");
     /*
      * Try to retrieve the single expected result If zero or more than one
      * result are returned, log error and set result to null
@@ -457,7 +453,7 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
     ConceptList list = new ConceptListJpa();
     String queryStr =
         "select a from TransitiveRelationshipJpa tr, ConceptJpa super, ConceptJpa a "
-            + " where super.terminologyVersion = :version "
+            + " where super.version = :version "
             + " and super.terminology = :terminology "
             + " and super.terminologyId = :terminologyId"
             + " and tr.superTypeConcept = super"
@@ -467,7 +463,7 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
     javax.persistence.Query ctQuery =
         manager
             .createQuery("select count(*) from TransitiveRelationshipJpa tr, ConceptJpa super"
-                + " where super.terminologyVersion = :version "
+                + " where super.version = :version "
                 + " and super.terminology = :terminology "
                 + " and super.terminologyId = :terminologyId"
                 + " and tr.superTypeConcept = super");
@@ -500,7 +496,7 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
     ConceptList list = new ConceptListJpa();
     String queryStr =
         "select a from TransitiveRelationshipJpa tr, ConceptJpa a, ConceptJpa sub "
-            + " where sub.terminologyVersion = :version "
+            + " where sub.version = :version "
             + " and sub.terminology = :terminology "
             + " and sub.terminologyId = :terminologyId"
             + " and tr.superTypeConcept = a" + " and tr.subTypeConcept = sub";
@@ -509,7 +505,7 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
     javax.persistence.Query ctQuery =
         manager
             .createQuery("select count(*) from TransitiveRelationshipJpa tr, ConceptJpa sub"
-                + " where sub.terminologyVersion = :version "
+                + " where sub.version = :version "
                 + " and sub.terminology = :terminology "
                 + " and sub.terminologyId = :terminologyId"
                 + " and tr.subTypeConcept = sub");
@@ -546,7 +542,7 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
             + " where r.destinationConcept = c"
             + " and c.terminology = :terminology "
             + " and c.terminologyId = :terminologyId"
-            + " and c.terminologyVersion = :version");
+            + " and c.version = :version");
     query.setParameter("terminologyId", concept.getTerminologyId());
     query.setParameter("terminology", concept.getTerminology());
     query.setParameter("version", concept.getTerminologyVersion());
@@ -737,7 +733,7 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
             + terminology + "/" + version);
     javax.persistence.Query query =
         manager
-            .createQuery("select c from DescriptionJpa c where terminologyId = :terminologyId and terminologyVersion = :version and terminology = :terminology");
+            .createQuery("select c from DescriptionJpa c where terminologyId = :terminologyId and version = :version and terminology = :terminology");
     /*
      * Try to retrieve the single expected result If zero or more than one
      * result are returned, log error and set result to null
@@ -881,7 +877,7 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
             + terminology + "/" + version);
     javax.persistence.Query query =
         manager
-            .createQuery("select c from RelationshipJpa c where terminologyId = :terminologyId and terminologyVersion = :version and terminology = :terminology");
+            .createQuery("select c from RelationshipJpa c where terminologyId = :terminologyId and version = :version and terminology = :terminology");
     /*
      * Try to retrieve the single expected result If zero or more than one
      * result are returned, log error and set result to null
@@ -1073,8 +1069,8 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
     Long id) throws Exception {
     Logger.getLogger(ContentServiceJpa.class).debug(
         "Content Service - get attribute value refset member " + id);
-    AttributeValueConceptRefSetMember c =
-        manager.find(AttributeValueConceptRefSetMemberJpa.class, id);
+    AttributeValueRefSetMember<?> c =
+        manager.find(AbstractAttributeValueRefSetMemberJpa.class, id);
     return c;
   }
 
@@ -1093,7 +1089,7 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
             + "/" + terminology + "/" + version);
     javax.persistence.Query query =
         manager
-            .createQuery("select c from AttributeValueRefSetMemberJpa c where terminologyId = :terminologyId and terminologyVersion = :version and terminology = :terminology");
+            .createQuery("select c from AttributeValueRefSetMemberJpa c where terminologyId = :terminologyId and version = :version and terminology = :terminology");
     /*
      * Try to retrieve the single expected result If zero or more than one
      * result are returned, log error and set result to null
@@ -1131,13 +1127,13 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
     javax.persistence.Query query =
         applyPfsToQuery("select a from AttributeValueRefSetMemberJpa a "
             + "where refSetId = :refsetId "
-            + "and terminologyVersion = :version "
+            + "and version = :version "
             + "and terminology = :terminology", pfs);
     javax.persistence.Query ctQuery =
         manager
             .createQuery("select count(a) ct from AttributeValueRefSetMemberJpa a "
                 + "where refSetId = :refsetId "
-                + "and terminologyVersion = :version "
+                + "and version = :version "
                 + "and terminology = :terminology");
     try {
       AttributeValueRefSetMemberList list =
@@ -1271,8 +1267,8 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
     Long id) throws Exception {
     Logger.getLogger(ContentServiceJpa.class).debug(
         "Content Service - get association reference refset member " + id);
-    AssociationReferenceConceptRefSetMember c =
-        manager.find(AssociationReferenceConceptRefSetMemberJpa.class, id);
+    AssociationReferenceRefSetMember<?> c =
+        manager.find(AbstractAssociationReferenceRefSetMemberJpa.class, id);
     return c;
   }
 
@@ -1295,13 +1291,13 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
     javax.persistence.Query query =
         applyPfsToQuery("select a from AssociationReferenceRefSetMemberJpa a "
             + "where refSetId = :refsetId "
-            + "and terminologyVersion = :version "
+            + "and version = :version "
             + "and terminology = :terminology", pfs);
     javax.persistence.Query ctQuery =
         manager
             .createQuery("select count(a) from AssociationReferenceRefSetMemberJpa a "
                 + "where refSetId = :refsetId "
-                + "and terminologyVersion = :version "
+                + "and version = :version "
                 + "and terminology = :terminology");
     try {
       AssociationReferenceRefSetMemberList list =
@@ -1339,7 +1335,7 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
             + terminologyId + "/" + terminology + "/" + version);
     javax.persistence.Query query =
         manager
-            .createQuery("select c from AssociationReferenceRefSetMemberJpa c where terminologyId = :terminologyId and terminologyVersion = :version and terminology = :terminology");
+            .createQuery("select c from AssociationReferenceRefSetMemberJpa c where terminologyId = :terminologyId and version = :version and terminology = :terminology");
     /*
      * Try to retrieve the single expected result If zero or more than one
      * result are returned, log error and set result to null
@@ -1482,7 +1478,7 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
             + "/" + terminology + "/" + version);
     javax.persistence.Query query =
         manager
-            .createQuery("select c from ComplexMapRefSetMemberJpa c where terminologyId = :terminologyId and terminologyVersion = :version and terminology = :terminology");
+            .createQuery("select c from ComplexMapRefSetMemberJpa c where terminologyId = :terminologyId and version = :version and terminology = :terminology");
     /*
      * Try to retrieve the single expected result If zero or more than one
      * result are returned, log error and set result to null
@@ -1518,12 +1514,12 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
     javax.persistence.Query query =
         applyPfsToQuery("select a from ComplexMapRefSetMemberJpa a "
             + "where refSetId = :refsetId "
-            + "and terminologyVersion = :version "
+            + "and version = :version "
             + "and terminology = :terminology", pfs);
     javax.persistence.Query ctQuery =
         manager.createQuery("select count(a) from ComplexMapRefSetMemberJpa a "
             + "where refSetId = :refsetId "
-            + "and terminologyVersion = :version "
+            + "and version = :version "
             + "and terminology = :terminology");
     try {
       ComplexMapRefSetMemberList list = new ComplexMapRefSetMemberListJpa();
@@ -1664,7 +1660,7 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
             + terminology + "/" + version);
     javax.persistence.Query query =
         manager
-            .createQuery("select c from LanguageRefSetMemberJpa c where terminologyId = :terminologyId and terminologyVersion = :version and terminology = :terminology");
+            .createQuery("select c from LanguageRefSetMemberJpa c where terminologyId = :terminologyId and version = :version and terminology = :terminology");
     /*
      * Try to retrieve the single expected result If zero or more than one
      * result are returned, log error and set result to null
@@ -1698,12 +1694,12 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
     javax.persistence.Query query =
         applyPfsToQuery("select a from LanguageRefSetMemberJpa a "
             + "where refSetId = :refsetId "
-            + "and terminologyVersion = :version "
+            + "and version = :version "
             + "and terminology = :terminology", pfs);
     javax.persistence.Query ctQuery =
         manager.createQuery("select count(a) from LanguageRefSetMemberJpa a "
             + "where refSetId = :refsetId "
-            + "and terminologyVersion = :version "
+            + "and version = :version "
             + "and terminology = :terminology");
     try {
       LanguageRefSetMemberList list = new LanguageRefSetMemberListJpa();
@@ -1842,7 +1838,7 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
             + terminology + "/" + version);
     javax.persistence.Query query =
         manager
-            .createQuery("select c from SimpleMapRefSetMemberJpa c where terminologyId = :terminologyId and terminologyVersion = :version and terminology = :terminology");
+            .createQuery("select c from SimpleMapRefSetMemberJpa c where terminologyId = :terminologyId and version = :version and terminology = :terminology");
     /*
      * Try to retrieve the single expected result If zero or more than one
      * result are returned, log error and set result to null
@@ -1876,12 +1872,12 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
     javax.persistence.Query query =
         applyPfsToQuery("select a from SimpleMapRefSetMemberJpa a "
             + "where refSetId = :refsetId "
-            + "and terminologyVersion = :version "
+            + "and version = :version "
             + "and terminology = :terminology", pfs);
     javax.persistence.Query ctQuery =
         manager.createQuery("select count(a) from SimpleMapRefSetMemberJpa a "
             + "where refSetId = :refsetId "
-            + "and terminologyVersion = :version "
+            + "and version = :version "
             + "and terminology = :terminology");
     try {
       SimpleMapRefSetMemberList list = new SimpleMapRefSetMemberListJpa();
@@ -2019,7 +2015,7 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
             + terminology + "/" + version);
     javax.persistence.Query query =
         manager
-            .createQuery("select c from SimpleRefSetMemberJpa c where terminologyId = :terminologyId and terminologyVersion = :version and terminology = :terminology");
+            .createQuery("select c from SimpleRefSetMemberJpa c where terminologyId = :terminologyId and version = :version and terminology = :terminology");
     /*
      * Try to retrieve the single expected result If zero or more than one
      * result are returned, log error and set result to null
@@ -2053,12 +2049,12 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
     javax.persistence.Query query =
         applyPfsToQuery("select a from SimpleRefSetMemberJpa a "
             + "where refSetId = :refsetId "
-            + "and terminologyVersion = :version "
+            + "and version = :version "
             + "and terminology = :terminology", pfs);
     javax.persistence.Query ctQuery =
         manager.createQuery("select count(a) from SimpleRefSetMemberJpa a "
             + "where refSetId = :refsetId "
-            + "and terminologyVersion = :version "
+            + "and version = :version "
             + "and terminology = :terminology");
     try {
       SimpleRefSetMemberList list = new SimpleRefSetMemberListJpa();
@@ -2198,7 +2194,7 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
             + terminologyId + "/" + terminology + "/" + version);
     javax.persistence.Query query =
         manager
-            .createQuery("select c from RefsetDescriptorRefSetMemberJpa c where terminologyId = :terminologyId and terminologyVersion = :version and terminology = :terminology");
+            .createQuery("select c from RefsetDescriptorRefSetMemberJpa c where terminologyId = :terminologyId and version = :version and terminology = :terminology");
     /*
      * Try to retrieve the single expected result If zero or more than one
      * result are returned, log error and set result to null
@@ -2230,7 +2226,7 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
             + terminologyId + "/" + terminology + "/" + version);
     javax.persistence.Query query =
         manager
-            .createQuery("select c from RefsetDescriptorRefSetMemberJpa c where referencedComponentId = :terminologyId and terminologyVersion = :version and terminology = :terminology order by attributeOrder and active = 1");
+            .createQuery("select c from RefsetDescriptorRefSetMemberJpa c where referencedComponentId = :terminologyId and version = :version and terminology = :terminology order by attributeOrder and active = 1");
 
     try {
       query.setParameter("terminologyId", terminologyId);
@@ -2369,7 +2365,7 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
             + "/" + terminology + "/" + version);
     javax.persistence.Query query =
         manager
-            .createQuery("select c from DescriptionTypeRefSetMemberJpa c where referencedComponentId = :terminologyId and terminologyVersion = :version and terminology = :terminology and active = 1");
+            .createQuery("select c from DescriptionTypeRefSetMemberJpa c where referencedComponentId = :terminologyId and version = :version and terminology = :terminology and active = 1");
     /*
      * Try to retrieve the single expected result If zero or more than one
      * result are returned, log error and set result to null
@@ -2401,7 +2397,7 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
             + terminologyId + "/" + terminology + "/" + version);
     javax.persistence.Query query =
         manager
-            .createQuery("select c from DescriptionTypeRefSetMemberJpa c where terminologyId = :terminologyId and terminologyVersion = :version and terminology = :terminology");
+            .createQuery("select c from DescriptionTypeRefSetMemberJpa c where terminologyId = :terminologyId and version = :version and terminology = :terminology");
     /*
      * Try to retrieve the single expected result If zero or more than one
      * result are returned, log error and set result to null
@@ -2539,7 +2535,7 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
             + terminologyId + "/" + terminology + "/" + version);
     javax.persistence.Query query =
         manager
-            .createQuery("select c from ModuleDependencyRefSetMemberJpa c where terminologyId = :terminologyId and terminologyVersion = :version and terminology = :terminology");
+            .createQuery("select c from ModuleDependencyRefSetMemberJpa c where terminologyId = :terminologyId and version = :version and terminology = :terminology");
     /*
      * Try to retrieve the single expected result If zero or more than one
      * result are returned, log error and set result to null
@@ -2571,7 +2567,7 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
             + terminologyId + "/" + terminology + "/" + version);
     javax.persistence.Query query =
         manager
-            .createQuery("select c from ModuleDependencyRefSetMemberJpa c where moduleId = :terminologyId and terminologyVersion = :version and terminology = :terminology and active = 1 order by sourceEffectiveTime");
+            .createQuery("select c from ModuleDependencyRefSetMemberJpa c where moduleId = :terminologyId and version = :version and terminology = :terminology and active = 1 order by sourceEffectiveTime");
     try {
       query.setParameter("terminologyId", terminologyId);
       query.setParameter("terminology", terminology);
@@ -2786,7 +2782,7 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
     javax.persistence.Query query =
         manager
             .createQuery(
-                "select c.terminologyId from RelationshipJpa c where terminology=:terminology and terminologyVersion=:version")
+                "select c.terminologyId from RelationshipJpa c where terminology=:terminology and version=:version")
             .setParameter("terminology", terminology)
             .setParameter("version", version);
 
@@ -2815,7 +2811,7 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
     javax.persistence.Query query =
         manager
             .createQuery(
-                "select c.terminologyId from DescriptionJpa c where terminology=:terminology and terminologyVersion=:version")
+                "select c.terminologyId from DescriptionJpa c where terminology=:terminology and version=:version")
             .setParameter("terminology", terminology)
             .setParameter("version", version);
 
@@ -2843,7 +2839,7 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
     javax.persistence.Query query =
         manager
             .createQuery(
-                "select c.terminologyId from LanguageRefSetMemberJpa c where terminology=:terminology and terminologyVersion=:version")
+                "select c.terminologyId from LanguageRefSetMemberJpa c where terminology=:terminology and version=:version")
             .setParameter("terminology", terminology)
             .setParameter("version", version);
 
@@ -2876,9 +2872,9 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
       javax.persistence.Query query =
           manager.createQuery("DELETE From TransitiveRelationshipJpa "
               + " c where terminology = :terminology "
-              + " and terminologyVersion = :terminologyVersion");
+              + " and version = :version");
       query.setParameter("terminology", terminology);
-      query.setParameter("terminologyVersion", version);
+      query.setParameter("version", version);
       int deleteRecords = query.executeUpdate();
       Logger.getLogger(getClass()).info(
           "    TransitiveRelationshipJpa records deleted: " + deleteRecords);
@@ -2929,9 +2925,9 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
         javax.persistence.Query query =
             manager.createQuery("DELETE FROM " + type
                 + " WHERE terminology = :terminology "
-                + " AND terminologyVersion = :terminologyVersion");
+                + " AND version = :version");
         query.setParameter("terminology", terminology);
-        query.setParameter("terminologyVersion", version);
+        query.setParameter("version", version);
         int deleteRecords = query.executeUpdate();
         Logger.getLogger(getClass()).info(
             "    " + type + " records deleted: " + deleteRecords);
@@ -3201,7 +3197,6 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
    * @param pfs the pfs
    * @throws Exception the exception
    */
-  @SuppressWarnings("static-method")
   protected void applyPfsToLuceneQuery(Class<?> clazz,
     FullTextQuery fullTextQuery, PfsParameter pfs) throws Exception {
 
@@ -3219,7 +3214,6 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
 
         Map<String, Boolean> nameToAnalyzedMap =
             this.getNameAnalyzedPairsFromAnnotation(clazz, pfs.getSortField());
-
         String sortField = null;
 
         if (nameToAnalyzedMap.size() == 0) {
@@ -3254,6 +3248,16 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
     }
   }
 
+  /**
+   * Returns the name analyzed pairs from annotation.
+   *
+   * @param clazz the clazz
+   * @param sortField the sort field
+   * @return the name analyzed pairs from annotation
+   * @throws NoSuchMethodException the no such method exception
+   * @throws SecurityException the security exception
+   */
+  @SuppressWarnings("static-method")
   private Map<String, Boolean> getNameAnalyzedPairsFromAnnotation(
     Class<?> clazz, String sortField) throws NoSuchMethodException,
     SecurityException {

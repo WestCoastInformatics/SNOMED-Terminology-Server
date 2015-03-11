@@ -14,6 +14,9 @@ import org.ihtsdo.otf.ts.rf2.Concept;
 import org.ihtsdo.otf.ts.rf2.jpa.ConceptJpa;
 import org.ihtsdo.otf.ts.services.ContentService;
 
+/**
+ * Helper testing class for PfsParameter concept tests.
+ */
 public class PfsParameterForConceptTest {
 
   @SuppressWarnings("unchecked")
@@ -120,6 +123,15 @@ public class PfsParameterForConceptTest {
     return true;
   }
 
+  /**
+   * Test paging.
+   *
+   * @param results the results
+   * @param fullResults the full results
+   * @param page the page
+   * @param pageSize the page size
+   * @return true, if successful
+   */
   public static boolean testPaging(SearchResultList results,
     SearchResultList fullResults, PfsParameter pfs) {
     // check results size, must be less than or equal to page size
@@ -155,6 +167,13 @@ public class PfsParameterForConceptTest {
     return true;
   }
 
+  /**
+   * Test query.
+   *
+   * @param results the results
+   * @param query the query
+   * @return true, if successful
+   */
   public static boolean testQuery(SearchResultList results, String query) {
 
     // another interesting case, would need to extract indexed fields and
@@ -163,6 +182,13 @@ public class PfsParameterForConceptTest {
     return true;
   }
 
+  /**
+   * Test query restriction.
+   *
+   * @param results the results
+   * @param queryRestriction the query restriction
+   * @return true, if successful
+   */
   public static boolean testQueryRestriction(SearchResultList results,
     String queryRestriction) {
     return true;

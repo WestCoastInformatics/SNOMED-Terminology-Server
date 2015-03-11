@@ -20,6 +20,7 @@ import org.junit.Test;
  */
 public class MetadataServiceRestNormalUseTest extends MetadataServiceRestTest {
 
+  /**  The auth token. */
   private static String authToken;
 
   /**
@@ -27,6 +28,7 @@ public class MetadataServiceRestNormalUseTest extends MetadataServiceRestTest {
    *
    * @throws Exception the exception
    */
+  @Override
   @Before
   public void setup() throws Exception {
 
@@ -36,9 +38,11 @@ public class MetadataServiceRestNormalUseTest extends MetadataServiceRestTest {
   }
 
   /**
-   * Test retrieval of all terminology/version pairs
-   * @throws Exception
+   * Test retrieval of all terminology/version pairs.
+   *
+   * @throws Exception the exception
    */
+  @SuppressWarnings("static-method")
   @Test
   public void testNormalUseRestMetadata001() throws Exception {
     KeyValuePairLists keyValuePairLists =
@@ -76,8 +80,11 @@ public class MetadataServiceRestNormalUseTest extends MetadataServiceRestTest {
 
   /**
    * Tests retrieval of all terminology and latest version pairs NOTE: Test is
-   * identical to testNormalUseRestMetadata001 but uses different API call
+   * identical to testNormalUseRestMetadata001 but uses different API call.
+   *
+   * @throws Exception the exception
    */
+  @SuppressWarnings("static-method")
   @Test
   public void testNormalUseRestMetadata002() throws Exception {
 
@@ -112,8 +119,9 @@ public class MetadataServiceRestNormalUseTest extends MetadataServiceRestTest {
   }
 
   /**
-   * Test retrieving all metadata for a terminology
-   * @throws Exception
+   * Test retrieving all metadata for a terminology.
+   *
+   * @throws Exception the exception
    */
   @Test
   public void testNormalUseRestMetadata003() throws Exception {
@@ -131,8 +139,9 @@ public class MetadataServiceRestNormalUseTest extends MetadataServiceRestTest {
   }
 
   /**
-   * Test retrieving all metadata for latest version of a terminology
-   * @throws Exception
+   * Test retrieving all metadata for latest version of a terminology.
+   *
+   * @throws Exception the exception
    */
   @Test
   public void testNormalUseRestMetadata004() throws Exception {
@@ -154,6 +163,7 @@ public class MetadataServiceRestNormalUseTest extends MetadataServiceRestTest {
    *
    * @throws Exception the exception
    */
+  @Override
   @After
   public void teardown() throws Exception {
 
@@ -162,11 +172,13 @@ public class MetadataServiceRestNormalUseTest extends MetadataServiceRestTest {
   }
 
   /**
-   * Helper function used by cases 003 and 004
-   * @param keyValuePairList
-   * @return
-   * @throws Exception
+   * Helper function used by cases 003 and 004.
+   *
+   * @param keyValuePairLists the key value pair lists
+   * @return true, if successful
+   * @throws Exception the exception
    */
+  @SuppressWarnings("null")
   private boolean testSnomedMetadata(KeyValuePairLists keyValuePairLists)
     throws Exception {
 
@@ -530,6 +542,13 @@ public class MetadataServiceRestNormalUseTest extends MetadataServiceRestTest {
     return categorySuccessCt == MetadataKeys.values().length;
   }
 
+  /**
+   * Test icd9 metadata.
+   *
+   * @param keyValuePairLists the key value pair lists
+   * @return true, if successful
+   * @throws Exception the exception
+   */
   private boolean testIcd9Metadata(KeyValuePairLists keyValuePairLists)
     throws Exception {
 

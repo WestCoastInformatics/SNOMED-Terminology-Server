@@ -46,7 +46,7 @@ import org.ihtsdo.otf.ts.rf2.SimpleRefSetMember;
 // @UniqueConstraint here is being used to create an index, not to enforce
 // uniqueness
 @Table(name = "concepts", uniqueConstraints = @UniqueConstraint(columnNames = {
-    "terminologyId", "terminology", "terminologyVersion", "id"
+    "terminologyId", "terminology", "version", "id"
 }))
 @Audited
 @Indexed

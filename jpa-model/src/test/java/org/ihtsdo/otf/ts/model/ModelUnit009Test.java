@@ -7,6 +7,7 @@ import org.ihtsdo.otf.ts.helpers.ConfigUtility;
 import org.ihtsdo.otf.ts.helpers.CopyConstructorTester;
 import org.ihtsdo.otf.ts.helpers.EqualsHashcodeTester;
 import org.ihtsdo.otf.ts.helpers.GetterSetterTester;
+import org.ihtsdo.otf.ts.helpers.XmlSerializationTester;
 import org.ihtsdo.otf.ts.rf2.Description;
 import org.ihtsdo.otf.ts.rf2.LanguageRefSetMember;
 import org.ihtsdo.otf.ts.rf2.jpa.DescriptionJpa;
@@ -62,7 +63,7 @@ public class ModelUnit009Test {
    */
   @Test
   public void testModelGetSet009() throws Exception {
-    Logger.getLogger(getClass()).info("TEST testModelGetSet009");
+    Logger.getLogger(getClass()).debug("TEST testModelGetSet009");
     GetterSetterTester tester = new GetterSetterTester(object);
     tester.exclude("objectId");
     tester.test();
@@ -75,7 +76,7 @@ public class ModelUnit009Test {
    */
   @Test
   public void testModelEqualsHashcode009() throws Exception {
-    Logger.getLogger(getClass()).info("TEST testModelEqualsHashcode009");
+    Logger.getLogger(getClass()).debug("TEST testModelEqualsHashcode009");
     EqualsHashcodeTester tester = new EqualsHashcodeTester(object);
     tester.include("active");
     tester.include("moduleId");
@@ -107,7 +108,7 @@ public class ModelUnit009Test {
    */
   @Test
   public void testModelCopy009() throws Exception {
-    Logger.getLogger(getClass()).info("TEST testModelCopy009");
+    Logger.getLogger(getClass()).debug("TEST testModelCopy009");
     CopyConstructorTester tester = new CopyConstructorTester(object);
 
     // Set up some objects
@@ -118,13 +119,35 @@ public class ModelUnit009Test {
   }
 
   /**
+   * Test XML serialization.
+   *
+   * @throws Exception the exception
+   */
+  @Test
+  public void testModelXmlSerialization009() throws Exception {
+    Logger.getLogger(getClass()).debug("TEST testModelXmlTransient009");
+    XmlSerializationTester tester = new XmlSerializationTester(object);
+
+    // Set up some objects
+    Description d = new DescriptionJpa();
+    d.setId(1L);
+    d.setTerminology("1");
+    d.setTerminologyId("1");
+    d.setTerminologyVersion("1");
+    d.setTerm("1");
+    tester.proxy(Description.class, 1, d);
+
+    assertTrue(tester.testXmlSerialization());
+  }
+
+  /**
    * Test concept reference in XML serialization.
    *
    * @throws Exception the exception
    */
   @Test
-  public void testXmlTransient009() throws Exception {
-    Logger.getLogger(getClass()).info("TEST testXmlTransient009");
+  public void testModelXmlTransient009() throws Exception {
+    Logger.getLogger(getClass()).debug("TEST testModelXmlTransient009");
     Description d = new DescriptionJpa();
     d.setId(1L);
     d.setTerminologyId("1");
@@ -138,10 +161,6 @@ public class ModelUnit009Test {
     assertTrue(xml.contains("<descriptionId>"));
     assertTrue(xml.contains("<descriptionTerminologyId>"));
     assertTrue(xml.contains("<descriptionTerm>"));
-    LanguageRefSetMember member2 =
-        (LanguageRefSetMember) ConfigUtility.getGraphForString(xml,
-            LanguageRefSetMemberJpa.class);
-    assertTrue(member.equals(member2));
   }
 
   /**

@@ -10,7 +10,6 @@ import org.apache.maven.plugin.MojoFailureException;
 import org.ihtsdo.otf.ts.helpers.ConfigUtility;
 import org.ihtsdo.otf.ts.jpa.client.ContentClientRest;
 import org.ihtsdo.otf.ts.jpa.services.SecurityServiceJpa;
-import org.ihtsdo.otf.ts.jpa.services.helper.TomcatServerUtility;
 import org.ihtsdo.otf.ts.rest.impl.ContentServiceRestImpl;
 import org.ihtsdo.otf.ts.services.SecurityService;
 
@@ -45,7 +44,7 @@ public class TerminologyRf2DeltaLoader extends AbstractMojo {
    * Whether to run this mojo against an active server
    * @parameter
    */
-  private boolean server = true;
+  private boolean server = false;
 
   /*
    * (non-Javadoc)
@@ -62,18 +61,18 @@ public class TerminologyRf2DeltaLoader extends AbstractMojo {
 
       Properties properties = ConfigUtility.getConfigProperties();
 
-      boolean serverRunning = TomcatServerUtility.isActive();
+      boolean serverRunning = ConfigUtility.isServerActive();
 
       getLog().info(
           "Server status detected:  "
-              + (serverRunning == false ? "DOWN" : "UP"));
+              + (!serverRunning ? "DOWN" : "UP"));
 
-      if (serverRunning == true && server == false) {
+      if (serverRunning && !server) {
         throw new MojoFailureException(
             "Mojo expects server to be down, but server is running");
       }
 
-      if (serverRunning == false && server == true) {
+      if (!serverRunning && server) {
         throw new MojoFailureException(
             "Mojo expects server to be running, but server is down");
       }
@@ -85,7 +84,7 @@ public class TerminologyRf2DeltaLoader extends AbstractMojo {
               properties.getProperty("admin.password"));
       service.close();
 
-      if (serverRunning == false) {
+      if (!serverRunning) {
         getLog().info("Running directly");
 
         ContentServiceRestImpl contentService = new ContentServiceRestImpl();

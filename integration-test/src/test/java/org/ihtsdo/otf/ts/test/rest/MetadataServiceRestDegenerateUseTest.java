@@ -12,6 +12,7 @@ import org.junit.Test;
 public class MetadataServiceRestDegenerateUseTest extends
     MetadataServiceRestTest {
 
+  /**  The auth token. */
   private static String authToken;
 
   /**
@@ -19,6 +20,7 @@ public class MetadataServiceRestDegenerateUseTest extends
    *
    * @throws Exception the exception
    */
+  @Override
   @Before
   public void setup() throws Exception {
 
@@ -30,6 +32,7 @@ public class MetadataServiceRestDegenerateUseTest extends
    * Test retrieval of all versions for all terminologies
    * @throws Exception
    */
+  @SuppressWarnings("static-method")
   @Test
   public void testDegenerateUseRestMetadata001() throws Exception {
     try {
@@ -45,8 +48,11 @@ public class MetadataServiceRestDegenerateUseTest extends
    * Tests retrieval of all terminology and latest version pairs
    * 
    * NOTE: Test is identical to testDegenerateUseRestMetadata001 but uses
-   * different API call
+   * different API call.
+   *
+   * @throws Exception the exception
    */
+  @SuppressWarnings("static-method")
   @Test
   public void testDegenerateUseRestMetadata002() throws Exception {
 
@@ -63,6 +69,7 @@ public class MetadataServiceRestDegenerateUseTest extends
    * Test retrieving all metadata for a terminology
    * @throws Exception
    */
+  @SuppressWarnings("static-method")
   @Test
   public void testDegenerateUseRestMetadata003() throws Exception {
     
@@ -97,6 +104,7 @@ public class MetadataServiceRestDegenerateUseTest extends
    * Test retrieving all metadata for latest version of a terminology
    * @throws Exception
    */
+  @SuppressWarnings("static-method")
   @Test
   public void testDegenerateUseRestMetadata004() throws Exception {
 
@@ -122,6 +130,7 @@ public class MetadataServiceRestDegenerateUseTest extends
    *
    * @throws Exception the exception
    */
+  @Override
   @After
   public void teardown() throws Exception {
 

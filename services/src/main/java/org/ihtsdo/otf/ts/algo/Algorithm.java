@@ -29,5 +29,10 @@ public interface Algorithm extends ProgressReporter {
    */
   public void cancel() throws Exception;
   
+  /**
+   * Close.
+   *
+   * @throws Exception the exception
+   */
   public void close() throws Exception;
 }

@@ -739,7 +739,7 @@ public class SnorocketClassifier implements Classifier {
         }
       }
 
-      if (exists == false) {
+      if (!exists) {
         return testNum;
       } else {
         testNum++;

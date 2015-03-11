@@ -26,7 +26,7 @@ public class EqualsHashcodeTester extends ProxyTester {
    * @throws Exception the exception
    */
   public boolean testIdentitiyFieldEquals() throws Exception {
-    Logger.getLogger(getClass()).info(
+    Logger.getLogger(getClass()).debug(
         "Test identity field equals - " + clazz.getName());
     Object o1 = createObject(1);
     Object o2 = createObject(1);
@@ -41,7 +41,7 @@ public class EqualsHashcodeTester extends ProxyTester {
    * @throws Exception the exception
    */
   public boolean testNonIdentitiyFieldEquals() throws Exception {
-    Logger.getLogger(getClass()).info(
+    Logger.getLogger(getClass()).debug(
         "Test non identity field equals - " + clazz.getName());
     Object o1 = createObject(1);
     Object o2 = createObject(1);
@@ -57,7 +57,7 @@ public class EqualsHashcodeTester extends ProxyTester {
    * @throws Exception the exception
    */
   public boolean testIdentityFieldNotEquals() throws Exception {
-    Logger.getLogger(getClass()).info(
+    Logger.getLogger(getClass()).debug(
         "Test identity field not equals - " + clazz.getName());
 
     // Create an object
@@ -101,15 +101,15 @@ public class EqualsHashcodeTester extends ProxyTester {
       // Create second object each time, so we can compare resetting each field
       // value
       Object o2 = createObject(1);
-      Logger.getLogger(getClass()).info("  field = " + fieldName);
+      Logger.getLogger(getClass()).debug("  field = " + fieldName);
 
       // Change the field (use an initializer of 2).
       setField(o2, getter, m, args[0], 2);
 
       if (o1.equals(o2)) {
         // if equals, fail here
-        Logger.getLogger(getClass()).info("  o1 = " + o1.hashCode());
-        Logger.getLogger(getClass()).info("  o2 = " + o2.hashCode());
+        Logger.getLogger(getClass()).debug("  o1 = " + o1.hashCode());
+        Logger.getLogger(getClass()).debug("  o2 = " + o2.hashCode());
         throw new Exception("Equality did not change when field " + fieldName
             + " was changed");
       }
@@ -126,7 +126,7 @@ public class EqualsHashcodeTester extends ProxyTester {
    * @throws Exception the exception
    */
   public boolean testIdentitiyFieldHashcode() throws Exception {
-    Logger.getLogger(getClass()).info(
+    Logger.getLogger(getClass()).debug(
         "Test identity field hashcode - " + clazz.getName());
     Object o1 = createObject(1);
     Object o2 = createObject(1);
@@ -141,7 +141,7 @@ public class EqualsHashcodeTester extends ProxyTester {
    * @throws Exception the exception
    */
   public boolean testNonIdentitiyFieldHashcode() throws Exception {
-    Logger.getLogger(getClass()).info(
+    Logger.getLogger(getClass()).debug(
         "Test non identity field hashcode - " + clazz.getName());
     Object o1 = createObject(1);
     Object o2 = createObject(1);
@@ -157,7 +157,7 @@ public class EqualsHashcodeTester extends ProxyTester {
    * @throws Exception the exception
    */
   public boolean testIdentityFieldDifferentHashcode() throws Exception {
-    Logger.getLogger(getClass()).info(
+    Logger.getLogger(getClass()).debug(
         "Test identity field different hashcode - " + clazz.getName());
 
     // Create an object
@@ -201,7 +201,7 @@ public class EqualsHashcodeTester extends ProxyTester {
       // Create second object each time, so we can compare resetting each field
       // value
       Object o2 = createObject(1);
-      Logger.getLogger(getClass()).info("  field = " + fieldName);
+      Logger.getLogger(getClass()).debug("  field = " + fieldName);
 
       // Change the field (use an initializer of 2).
       setField(o2, getter, m, args[0], 2);

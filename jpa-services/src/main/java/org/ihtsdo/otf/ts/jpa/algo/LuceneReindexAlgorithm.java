@@ -34,6 +34,7 @@ public class LuceneReindexAlgorithm extends RootServiceJpa implements
   /** The terminology. */
   private String indexedObjects;
   
+  /**  The full text entity manager. */
   private FullTextEntityManager fullTextEntityManager;
 
   /**
@@ -44,6 +45,11 @@ public class LuceneReindexAlgorithm extends RootServiceJpa implements
     super();
   }
 
+  /**
+   * Sets the indexed objects.
+   *
+   * @param indexedObjects the indexed objects
+   */
   public void setIndexedObjects(String indexedObjects) {
     this.indexedObjects = indexedObjects;
   }

@@ -24,16 +24,16 @@ goto trailer)
 set error=0
 pause
 
-echo     Run updatedb with hibernate.hbm2ddl.auto = create ...%date% %time%
-cd %SERVER_CODE%/admin/updatedb
-call mvn install -PUpdatedb -Drun.config=%SERVER_CONFIG% -Dhibernate.hbm2ddl.auto=create 1> mvn.log
+echo     Run Createdb ...%date% %time%
+cd %SERVER_CODE%/admin/db
+call mvn install -PCreatedb -Drun.config=%SERVER_CONFIG% 1> mvn.log
 IF %ERRORLEVEL% NEQ 0 (set error=1
 goto trailer)
 del /Q mvn.log
 
 echo     Clear indexes ...%date% %time%
 cd %SERVER_CODE%/admin/lucene
-call mvn install -Drun.config=%SERVER_CONFIG% 1> mvn.log
+call mvn install -PReindex -Drun.config=%SERVER_CONFIG% 1> mvn.log
 IF %ERRORLEVEL% NEQ 0 (set error=1
 goto trailer)
 del /Q mvn.log
@@ -61,14 +61,14 @@ del /Q mvn.log
 
 echo     Start SNOMED editing ...%date% %time%
 cd %SERVER_CODE%/admin/release
-call mvn install -PStartEditingCycle -Drelease.version=20150131 -Dterminology=SNOMEDCT -Dterminology.version=20140731 -Drun.config=%SERVER_CONFIG% 1> mvn.log
+call mvn install -PStartEditingCycle -Drelease.version=20150131 -Dterminology=SNOMEDCT -Dversion=latest -Drun.config=%SERVER_CONFIG% 1> mvn.log
 IF %ERRORLEVEL% NEQ 0 (set error=1
 goto trailer)
 del /Q mvn.log
 
 echo     Start ICD9CM editing ...%date% %time%
 cd %SERVER_CODE%/admin/release
-call mvn install -PStartEditingCycle -Drelease.version=20150101 -Dterminology=ICD9CM -Dterminology.version=2013 -Drun.config=%SERVER_CONFIG% 1> mvn.log
+call mvn install -PStartEditingCycle -Drelease.version=20150101 -Dterminology=ICD9CM -Dversion=2013 -Drun.config=%SERVER_CONFIG% 1> mvn.log
 IF %ERRORLEVEL% NEQ 0 (set error=1
 goto trailer)
 del /Q mvn.log

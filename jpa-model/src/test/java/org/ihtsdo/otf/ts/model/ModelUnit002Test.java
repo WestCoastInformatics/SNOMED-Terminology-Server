@@ -7,6 +7,7 @@ import org.ihtsdo.otf.ts.ReleaseInfo;
 import org.ihtsdo.otf.ts.helpers.CopyConstructorTester;
 import org.ihtsdo.otf.ts.helpers.EqualsHashcodeTester;
 import org.ihtsdo.otf.ts.helpers.GetterSetterTester;
+import org.ihtsdo.otf.ts.helpers.XmlSerializationTester;
 import org.ihtsdo.otf.ts.jpa.ReleaseInfoJpa;
 import org.junit.After;
 import org.junit.AfterClass;
@@ -45,7 +46,7 @@ public class ModelUnit002Test {
    */
   @Test
   public void testModelGetSet002() throws Exception {
-    Logger.getLogger(getClass()).info("TEST testModelGetSet002");
+    Logger.getLogger(getClass()).debug("TEST testModelGetSet002");
     GetterSetterTester tester = new GetterSetterTester(object);
     tester.exclude("objectId");
     tester.test();
@@ -58,7 +59,7 @@ public class ModelUnit002Test {
    */
   @Test
   public void testModelEqualsHashcode002() throws Exception {
-    Logger.getLogger(getClass()).info("TEST testModelEqualsHashcode002");
+    Logger.getLogger(getClass()).debug("TEST testModelEqualsHashcode002");
     EqualsHashcodeTester tester = new EqualsHashcodeTester(object);
     tester.include("description");
     tester.include("name");
@@ -82,9 +83,21 @@ public class ModelUnit002Test {
    */
   @Test
   public void testModelCopy002() throws Exception {
-    Logger.getLogger(getClass()).info("TEST testModelCopy002");
+    Logger.getLogger(getClass()).debug("TEST testModelCopy002");
     CopyConstructorTester tester = new CopyConstructorTester(object);
     assertTrue(tester.testCopyConstructor(ReleaseInfo.class));
+  }
+
+  /**
+   * Test XML serialization.
+   *
+   * @throws Exception the exception
+   */
+  @Test
+  public void testModelXmlSerialization002() throws Exception {
+    Logger.getLogger(getClass()).debug("TEST testModelXmlTransient002");
+    XmlSerializationTester tester = new XmlSerializationTester(object);
+    assertTrue(tester.testXmlSerialization());
   }
 
   /**

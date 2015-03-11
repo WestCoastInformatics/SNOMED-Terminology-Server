@@ -7,6 +7,7 @@ import org.ihtsdo.otf.ts.helpers.ConfigUtility;
 import org.ihtsdo.otf.ts.helpers.CopyConstructorTester;
 import org.ihtsdo.otf.ts.helpers.EqualsHashcodeTester;
 import org.ihtsdo.otf.ts.helpers.GetterSetterTester;
+import org.ihtsdo.otf.ts.helpers.XmlSerializationTester;
 import org.ihtsdo.otf.ts.rf2.AssociationReferenceDescriptionRefSetMember;
 import org.ihtsdo.otf.ts.rf2.AttributeValueDescriptionRefSetMember;
 import org.ihtsdo.otf.ts.rf2.Concept;
@@ -54,7 +55,7 @@ public class ModelUnit008Test {
    */
   @Test
   public void testModelGetSet008() throws Exception {
-    Logger.getLogger(getClass()).info("TEST testModelGetSet001");
+    Logger.getLogger(getClass()).debug("TEST testModelGetSet001");
     GetterSetterTester tester = new GetterSetterTester(object);
     tester.exclude("objectId");
     tester.test();
@@ -67,7 +68,7 @@ public class ModelUnit008Test {
    */
   @Test
   public void testModelEqualsHashcode008() throws Exception {
-    Logger.getLogger(getClass()).info("TEST testModelEqualsHashcode001");
+    Logger.getLogger(getClass()).debug("TEST testModelEqualsHashcode001");
     EqualsHashcodeTester tester = new EqualsHashcodeTester(object);
     tester.include("active");
     tester.include("moduleId");
@@ -105,7 +106,7 @@ public class ModelUnit008Test {
    */
   @Test
   public void testModelCopy008() throws Exception {
-    Logger.getLogger(getClass()).info("TEST testModelCopy001");
+    Logger.getLogger(getClass()).debug("TEST testModelCopy001");
     CopyConstructorTester tester = new CopyConstructorTester(object);
 
     // Set up some objects
@@ -127,8 +128,8 @@ public class ModelUnit008Test {
    * @throws Exception the exception
    */
   @Test
-  public void testDeepCopy008() throws Exception {
-    Logger.getLogger(getClass()).info("TEST testDeepCopy008");
+  public void testModelDeepCopy008() throws Exception {
+    Logger.getLogger(getClass()).debug("TEST testModelDeepCopy008");
     Description d = new DescriptionJpa();
     Concept c = new ConceptJpa();
     c.setId(1L);
@@ -183,8 +184,8 @@ public class ModelUnit008Test {
    * @throws Exception the exception
    */
   @Test
-  public void testXmlTransient008() throws Exception {
-    Logger.getLogger(getClass()).info("TEST testXmlTransient008");
+  public void testModelXmlTransient008() throws Exception {
+    Logger.getLogger(getClass()).debug("TEST testModelXmlTransient008");
     Description d = new DescriptionJpa();
     Concept c = new ConceptJpa();
     c.setId(1L);
@@ -195,10 +196,29 @@ public class ModelUnit008Test {
     assertTrue(xml.contains("<conceptId>"));
     assertTrue(xml.contains("<conceptTerminologyId>"));
     assertTrue(xml.contains("<conceptPreferredName>"));
-    Description d2 =
-        (Description) ConfigUtility
-            .getGraphForString(xml, DescriptionJpa.class);
-    assertTrue(d.equals(d2));
+
+  }
+
+  /**
+   * Test XML serialization.
+   *
+   * @throws Exception the exception
+   */
+  @Test
+  public void testModelXmlSerialization008() throws Exception {
+    Logger.getLogger(getClass()).debug("TEST testModelXmlTransient008");
+    XmlSerializationTester tester = new XmlSerializationTester(object);
+    // Set up some objects
+
+    Concept c = new ConceptJpa();
+    c.setId(1L);
+    c.setTerminology("1");
+    c.setTerminologyId("1");
+    c.setTerminologyVersion("1");
+    c.setDefaultPreferredName("1");
+    tester.proxy(Concept.class, 1, c);
+
+    assertTrue(tester.testXmlSerialization());
   }
 
   /**

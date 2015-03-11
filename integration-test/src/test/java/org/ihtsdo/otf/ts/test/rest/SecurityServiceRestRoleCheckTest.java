@@ -16,13 +16,18 @@ import org.junit.Test;
  */
 public class SecurityServiceRestRoleCheckTest extends SecurityServiceRestTest {
 
-  private static String viewerUserAuthToken, adminUserAuthToken;
+  /**  The admin user auth token. */
+  private static String viewerUserAuthToken;
+  
+  /**  The admin user auth token. */
+  private static String adminUserAuthToken;
   
   /**
    * Create test fixtures per test.
    *
    * @throws Exception the exception
    */
+  @SuppressWarnings("static-method")
   @Before
   public void setup() throws Exception {
     
@@ -41,6 +46,7 @@ public class SecurityServiceRestRoleCheckTest extends SecurityServiceRestTest {
    * 
    * @throws Exception the exception
    */
+  @SuppressWarnings("static-method")
   @Test
   public void testRoleCheckRestSecurity002() throws Exception {
     

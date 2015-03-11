@@ -57,7 +57,7 @@ public class ClamlLoaderAlgorithm extends ContentServiceJpa implements
   String terminology;
 
   /** The terminology version. */
-  String terminologyVersion;
+  String version;
 
   /** hash set for storing default preferred names. */
   Map<Long, String> defaultPreferredNames = new HashMap<>();
@@ -109,10 +109,10 @@ public class ClamlLoaderAlgorithm extends ContentServiceJpa implements
   /**
    * Sets the terminology version.
    *
-   * @param terminologyVersion the terminology version
+   * @param version the terminology version
    */
-  public void setTerminologyVersion(String terminologyVersion) {
-    this.terminologyVersion = terminologyVersion;
+  public void setTerminologyVersion(String version) {
+    this.version = version;
   }
 
   /**
@@ -167,7 +167,7 @@ public class ClamlLoaderAlgorithm extends ContentServiceJpa implements
       // create Metadata
       Logger.getLogger(getClass()).info("  Create metadata classes");
       helper =
-          new ClamlMetadataHelper(terminology, terminologyVersion,
+          new ClamlMetadataHelper(terminology, version,
               effectiveTime, contentService);
       conceptMap = helper.createMetadata();
 
@@ -656,7 +656,7 @@ public class ClamlLoaderAlgorithm extends ContentServiceJpa implements
             concept.setDefinitionStatusId(conceptMap.get(
                 "defaultDefinitionStatus").getTerminologyId());
             concept.setTerminology(terminology);
-            concept.setTerminologyVersion(terminologyVersion);
+            concept.setTerminologyVersion(version);
             concept.setDefaultPreferredName(labelChars.toString());
             Logger.getLogger(getClass()).debug(
                 "  Add concept " + concept.getTerminologyId() + " "
@@ -676,7 +676,7 @@ public class ClamlLoaderAlgorithm extends ContentServiceJpa implements
           desc.setLastModifiedBy("loader");
           desc.setModuleId(conceptMap.get("defaultModule").getTerminologyId());
           desc.setTerminology(terminology);
-          desc.setTerminologyVersion(terminologyVersion);
+          desc.setTerminologyVersion(version);
           desc.setTerm(labelChars.toString());
           desc.setConcept(concept);
           desc.setCaseSignificanceId(conceptMap.get("defaultCaseSignificance")
@@ -800,7 +800,7 @@ public class ClamlLoaderAlgorithm extends ContentServiceJpa implements
             member.setTerminology(terminology);
             member.setTerminologyId(new Integer(refSetMemberCounter++)
                 .toString());
-            member.setTerminologyVersion(terminologyVersion);
+            member.setTerminologyVersion(version);
             member.setRefSetId(conceptMap.get(classUsage).getTerminologyId());
             concept.addSimpleRefSetMember(member);
           }
@@ -918,7 +918,7 @@ public class ClamlLoaderAlgorithm extends ContentServiceJpa implements
               relationship.setModuleId(conceptMap.get("defaultModule")
                   .getTerminologyId());
               relationship.setTerminology(terminology);
-              relationship.setTerminologyVersion(terminologyVersion);
+              relationship.setTerminologyVersion(version);
               relationship.setCharacteristicTypeId(conceptMap.get(
                   "defaultCharacteristicType").getTerminologyId());
               relationship.setModifierId(conceptMap.get("defaultModifier")
@@ -973,7 +973,7 @@ public class ClamlLoaderAlgorithm extends ContentServiceJpa implements
         concept.setDefinitionStatusId(conceptMap.get("defaultDefinitionStatus")
             .getTerminologyId());
         concept.setTerminology(terminology);
-        concept.setTerminologyVersion(terminologyVersion);
+        concept.setTerminologyVersion(version);
         concept.setDefaultPreferredName(labelChars.toString());
         Logger.getLogger(getClass()).info(
             "  Add modifier concept " + concept.getTerminologyId() + " "
@@ -992,7 +992,7 @@ public class ClamlLoaderAlgorithm extends ContentServiceJpa implements
       desc.setLastModifiedBy("loader");
       desc.setModuleId(conceptMap.get("defaultModule").getTerminologyId());
       desc.setTerminology(terminology);
-      desc.setTerminologyVersion(terminologyVersion);
+      desc.setTerminologyVersion(version);
       desc.setTerm(chars.toString());
       desc.setConcept(concept);
       desc.setCaseSignificanceId(conceptMap.get("defaultCaseSignificance")
@@ -1427,7 +1427,7 @@ public class ClamlLoaderAlgorithm extends ContentServiceJpa implements
       Concept childConcept = new ConceptJpa();
       childConcept =
           helper.createNewActiveConcept(childCode, terminology,
-              terminologyVersion, parentConcept.getDefaultPreferredName() + " "
+              version, parentConcept.getDefaultPreferredName() + " "
                   + modConcept.getDefaultPreferredName(), effectiveTime);
       if (conceptMap.containsKey(childConcept.getTerminologyId()))
         throw new IllegalStateException("ALERT2!  "
@@ -1437,7 +1437,7 @@ public class ClamlLoaderAlgorithm extends ContentServiceJpa implements
       contentService.addConcept(childConcept);
       // add relationship
       helper.createIsaRelationship(parentConcept, childConcept, ("" + relId),
-          terminology, terminologyVersion, effectiveTime);
+          terminology, version, effectiveTime);
       childToParentCodeMap.put(childConcept.getTerminologyId(),
           parentConcept.getTerminologyId());
       parentCodeHasChildrenMap.put(parentConcept.getTerminologyId(), true);

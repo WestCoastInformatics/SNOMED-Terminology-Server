@@ -139,7 +139,6 @@ public interface ContentChangeServiceRest {
   public void removeLanguageRefSetMember(Long id, String authToken)
     throws Exception;
 
-
   /**
    * Adds the association reference refset member.
    *
@@ -149,7 +148,8 @@ public interface ContentChangeServiceRest {
    * @throws Exception the exception
    */
   public AssociationReferenceConceptRefSetMember addAssociationConceptReferenceRefSetMember(
-    AssociationReferenceConceptRefSetMemberJpa member, String authToken) throws Exception;
+    AssociationReferenceConceptRefSetMemberJpa member, String authToken)
+    throws Exception;
 
   /**
    * Update association reference refset member.
@@ -158,8 +158,9 @@ public interface ContentChangeServiceRest {
    * @param authToken the auth token
    * @throws Exception the exception
    */
-  public void updateAssociationReferenceConceptRefSetMember(AssociationReferenceConceptRefSetMemberJpa member,
-    String authToken) throws Exception;
+  public void updateAssociationReferenceConceptRefSetMember(
+    AssociationReferenceConceptRefSetMemberJpa member, String authToken)
+    throws Exception;
 
   /**
    * Removes the association reference refset member.
@@ -170,7 +171,7 @@ public interface ContentChangeServiceRest {
    */
   public void removeAssociationReferenceRefSetMember(Long id, String authToken)
     throws Exception;
-  
+
   /**
    * Compute transitive closure.
    *
@@ -205,17 +206,17 @@ public interface ContentChangeServiceRest {
   public void clearConcepts(String terminology, String version, String authToken)
     throws Exception;
 
-
   /**
    * Adds the project.
    *
    * @param project the project
    * @param authToken the auth token
    * @return the project
-   * @throws Exception 
+   * @throws Exception the exception
    */
-  public Project addProject(ProjectJpa project, String authToken) throws Exception;
-  
+  public Project addProject(ProjectJpa project, String authToken)
+    throws Exception;
+
   /**
    * Update project.
    *
@@ -223,9 +224,9 @@ public interface ContentChangeServiceRest {
    * @param authToken the auth token
    * @throws Exception the exception
    */
-  public void updateProject(ProjectJpa project, String authToken) throws 
-  Exception;
-  
+  public void updateProject(ProjectJpa project, String authToken)
+    throws Exception;
+
   /**
    * Removes the project.
    *
@@ -234,47 +235,65 @@ public interface ContentChangeServiceRest {
    * @throws Exception the exception
    */
   public void removeProject(Long id, String authToken) throws Exception;
-  
-   /**
-   * Administrative tool to start editing cycle for a terminology/version
+
+  /**
+   * Administrative tool to start editing cycle for a terminology/version.
    *
    * @param terminology the terminology
-   * @param terminologyVersion the terminology version
+   * @param version the terminology version
    * @param releaseVersion the release version
-   * @throws Exception 
+   * @param authToken the auth token
+   * @throws Exception the exception
    */
-  public void startEditingCycle(String terminology, String terminologyVersion, String releaseVersion, String authToken) throws Exception;
-  
+  public void startEditingCycle(String terminology, String version,
+    String releaseVersion, String authToken) throws Exception;
+
   /**
-   * Remove release info objects for a terminology
+   * Remove release info objects for a terminology.
    *
    * @param terminology the terminology
    * @param releaseInfoNames the release info names as comma-separated list
    */
   public void removeReleaseInfos(String terminology, String releaseInfoNames);
-  
-  
+
   /**
    * Begin a release.
    *
+   * @param releaseVersion the release version
    * @param terminology the terminology
-   * @param release the release
+   * @param workflowStatusValues the workflow status values
+   * @param validate the validate
+   * @param saveIdentifiers the save identifiers
    * @throws Exception the exception
    */
-  public void releaseBegin(String releaseVersion, String terminology, String workflowStatusValues, boolean validate, boolean saveIdentifiers) throws Exception;
-  
+  public void releaseBegin(String releaseVersion, String terminology,
+    String workflowStatusValues, boolean validate, boolean saveIdentifiers)
+    throws Exception;
+
   /**
    * Process a release.
    *
+   * @param refSetId the ref set id
+   * @param outputDirName the output dir name
+   * @param effectiveTime the effective time
+   * @param moduleId the module id
    * @throws Exception the exception
    */
-  public void releaseProcess(String refSetId, String outputDirName, String effectiveTime, String moduleId) throws Exception;
-  
+  public void releaseProcess(String refSetId, String outputDirName,
+    String effectiveTime, String moduleId) throws Exception;
+
   /**
    * Finish a release.
    *
+   * @param releaseVersion the release version
+   * @param terminology the terminology
+   * @param workflowStatusValues the workflow status values
+   * @param validate the validate
+   * @param saveIdentifiers the save identifiers
    * @throws Exception the exception
    */
-  public void releaseFinish(String releaseVersion, String terminology, String workflowStatusValues, boolean validate, boolean saveIdentifiers) throws Exception;
-  
+  public void releaseFinish(String releaseVersion, String terminology,
+    String workflowStatusValues, boolean validate, boolean saveIdentifiers)
+    throws Exception;
+
 }

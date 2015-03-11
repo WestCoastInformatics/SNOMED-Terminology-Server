@@ -23,13 +23,22 @@ public class SecurityServiceRestTest {
   protected static Properties properties;
 
   /** The viewer user password. */
-  protected static String viewerUserName, viewerUserPassword;
+  protected static String viewerUserName;
+  
+  /**  The viewer user password. */
+  protected static String viewerUserPassword;
 
   /** The admin user password. */
-  protected static String adminUserName, adminUserPassword;
+  protected static String adminUserName;
+  
+  /**  The admin user password. */
+  protected static String adminUserPassword;
 
   /** The bad user password. */
-  protected static String badUserName, badUserPassword;
+  protected static String badUserName;
+  
+  /**  The bad user password. */
+  protected static String badUserPassword;
 
   /**
    * Create test fixtures for class.

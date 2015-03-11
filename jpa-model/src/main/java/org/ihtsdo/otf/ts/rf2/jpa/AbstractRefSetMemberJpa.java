@@ -19,16 +19,17 @@ public abstract class AbstractRefSetMemberJpa<T extends Component> extends
   /** The ref set id */
   @Column(nullable = false)
   String refSetId;
-  
+
   /**
    * Instantiates an empty {@link AbstractRefSetMemberJpa}.
    */
   protected AbstractRefSetMemberJpa() {
     // do nothing
   }
-  
+
   /**
-   * Instantiates a {@link AbstractRefSetMemberJpa} from the specified parameters.
+   * Instantiates a {@link AbstractRefSetMemberJpa} from the specified
+   * parameters.
    *
    * @param member the member
    */
@@ -36,8 +37,10 @@ public abstract class AbstractRefSetMemberJpa<T extends Component> extends
     super(member);
     refSetId = member.getRefSetId();
   }
-  
-  /* (non-Javadoc)
+
+  /*
+   * (non-Javadoc)
+   * 
    * @see org.ihtsdo.otf.ts.rf2.RefSetMember#getRefSetId()
    */
   @Override

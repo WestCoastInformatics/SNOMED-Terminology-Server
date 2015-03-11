@@ -16,11 +16,17 @@
  */
 package org.ihtsdo.otf.ts.mojo;
 
+import java.util.Properties;
+
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoFailureException;
 import org.ihtsdo.otf.ts.ReleaseInfo;
-import org.ihtsdo.otf.ts.jpa.services.HistoryServiceJpa;
-import org.ihtsdo.otf.ts.services.HistoryService;
+import org.ihtsdo.otf.ts.helpers.ConfigUtility;
+import org.ihtsdo.otf.ts.jpa.client.HistoryClientRest;
+import org.ihtsdo.otf.ts.jpa.services.SecurityServiceJpa;
+import org.ihtsdo.otf.ts.rest.HistoryServiceRest;
+import org.ihtsdo.otf.ts.rest.impl.HistoryServiceRestImpl;
+import org.ihtsdo.otf.ts.services.SecurityService;
 
 /**
  * Goal which removes one or more {@link ReleaseInfo}s from the database.
@@ -48,6 +54,12 @@ public class ReleaseInfoRemoverMojo extends AbstractMojo {
   private String releaseInfoNames;
 
   /**
+   * Whether to run this mojo against an active server
+   * @parameter
+   */
+  private boolean server = false;
+
+  /**
    * Instantiates a {@link ReleaseInfoRemoverMojo} from the specified
    * parameters.
    */
@@ -64,17 +76,43 @@ public class ReleaseInfoRemoverMojo extends AbstractMojo {
   public void execute() throws MojoFailureException {
     getLog().info("Starting removing ReleaseInfos");
     try {
-      HistoryService service = new HistoryServiceJpa();
+      Properties properties = ConfigUtility.getConfigProperties();
+      boolean serverRunning = ConfigUtility.isServerActive();
+      getLog().info("Server status detected:  " + (!serverRunning ? "DOWN" : "UP"));
+      if (serverRunning && !server) {
+        throw new MojoFailureException("Mojo expects server to be down, but server is running");
+      }
+      if (!serverRunning&& server) {
+        throw new MojoFailureException("Mojo expects server to be running, but server is down");
+      }
+      
+      // authenticate
+      SecurityService service = new SecurityServiceJpa();
+      String authToken =
+          service.authenticate(properties.getProperty("admin.user"),
+              properties.getProperty("admin.password"));
+      service.close();      
+
+      
+      HistoryServiceRest historyService = null;
+      if (!serverRunning) {
+        getLog().info("Running directly");
+        historyService = new HistoryServiceRestImpl();
+      } else {
+        getLog().info("Running against server");
+        historyService = new HistoryClientRest(properties);
+      }
+      
       if (releaseInfoNames == null || releaseInfoNames.isEmpty()) {
-        for (ReleaseInfo releaseInfo : service.getReleaseHistory(terminology).getObjects()) {
+        for (ReleaseInfo releaseInfo : historyService.getReleaseHistory(terminology, authToken).getObjects()) {
           getLog().info("  Removing " + releaseInfo.getName());
-          service.removeReleaseInfo(releaseInfo.getId());
+          historyService.removeReleaseInfo(releaseInfo.getId(), authToken);
         }
       } else {
         for (String releaseInfoValue : releaseInfoNames.split(",")) {
           getLog().info("  Removing " + releaseInfoValue);
-          service.removeReleaseInfo(service.getReleaseInfo(terminology,releaseInfoValue)
-              .getId());
+          historyService.removeReleaseInfo(historyService.getReleaseInfo(terminology,releaseInfoValue, authToken)
+              .getId(), authToken);
         }
       }
       service.close();

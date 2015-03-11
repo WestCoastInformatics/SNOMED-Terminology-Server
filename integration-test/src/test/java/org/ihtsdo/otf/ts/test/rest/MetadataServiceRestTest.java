@@ -32,7 +32,10 @@ public class MetadataServiceRestTest {
   protected static Properties properties;
   
   /**  The test password. */
-  protected static String testUser, testPassword;
+  protected static String testUser;
+  
+  /**  The test password. */
+  protected static String testPassword;
 
   /**
    * Create test fixtures for class.
@@ -115,7 +118,7 @@ public class MetadataServiceRestTest {
    */
   @After
   public void teardown() throws Exception {
-
+    // do nothing
   }
 
   /**

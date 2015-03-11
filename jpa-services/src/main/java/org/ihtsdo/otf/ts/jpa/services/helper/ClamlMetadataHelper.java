@@ -27,7 +27,7 @@ public class ClamlMetadataHelper {
   private String terminology;
 
   /** The terminology version. */
-  private String terminologyVersion;
+  private String version;
 
   /** The Content service */
   private ContentService contentService;
@@ -39,14 +39,14 @@ public class ClamlMetadataHelper {
    * Instantiates a {@link ClamlMetadataHelper} from the specified parameters.
    * 
    * @param terminology the terminology
-   * @param terminologyVersion the terminology version
+   * @param version the terminology version
    * @param effectiveTime the effective time
    * @param contentService the content service
    */
-  public ClamlMetadataHelper(String terminology, String terminologyVersion,
+  public ClamlMetadataHelper(String terminology, String version,
       String effectiveTime, ContentService contentService) {
     this.terminology = terminology;
-    this.terminologyVersion = terminologyVersion;
+    this.version = version;
     this.effectiveTime = effectiveTime;
     this.contentService = contentService;
   }
@@ -105,7 +105,7 @@ public class ClamlMetadataHelper {
     //
     Concept defaultDefinitionStatusConcept =
         createNewActiveConcept("" + metadataCounter++, terminology,
-            terminologyVersion, "Default definition status", effectiveTime);
+            version, "Default definition status", effectiveTime);
     defaultDefinitionStatusConcept
         .setDefinitionStatusId(defaultDefinitionStatusConcept
             .getTerminologyId());
@@ -113,36 +113,36 @@ public class ClamlMetadataHelper {
 
     Concept defaultModuleConcept =
         createNewActiveConcept("" + metadataCounter++, terminology,
-            terminologyVersion, "Default module", effectiveTime);
+            version, "Default module", effectiveTime);
     defaultModuleConcept.setModuleId(defaultModuleConcept.getTerminologyId());
     conceptMap.put("defaultModule", defaultModuleConcept);
 
     Concept defaultCaseSignificanceConcept =
         createNewActiveConcept("" + metadataCounter++, terminology,
-            terminologyVersion, "Default case significance", effectiveTime);
+            version, "Default case significance", effectiveTime);
     conceptMap.put("defaultCaseSignificance", defaultCaseSignificanceConcept);
 
     Concept preferredConcept =
         createNewActiveConcept("" + metadataCounter++, terminology,
-            terminologyVersion, "Preferred", effectiveTime);
+            version, "Preferred", effectiveTime);
     conceptMap.put("preferred", preferredConcept);
 
     Concept defaultModifierConcept =
         createNewActiveConcept("" + metadataCounter++, terminology,
-            terminologyVersion, "Default modifier", effectiveTime);
+            version, "Default modifier", effectiveTime);
     conceptMap.put("defaultModifier", defaultModifierConcept);
     contentService.addConcept(defaultModifierConcept);
 
     Concept defaultCharacteristicTypeConcept =
         createNewActiveConcept("" + metadataCounter++, terminology,
-            terminologyVersion, "Default characteristic type", effectiveTime);
+            version, "Default characteristic type", effectiveTime);
     conceptMap.put("defaultCharacteristicType",
         defaultCharacteristicTypeConcept);
     contentService.addConcept(defaultCharacteristicTypeConcept);
 
     Concept isaConcept =
         createNewActiveConcept("" + metadataCounter++, terminology,
-            terminologyVersion, "Isa", effectiveTime);
+            version, "Isa", effectiveTime);
     conceptMap.put("isa", isaConcept);
     contentService.addConcept(isaConcept);
 
@@ -192,7 +192,7 @@ public class ClamlMetadataHelper {
     //
     Concept metadataConcept =
         createNewActiveConcept("" + metadataCounter++, terminology,
-            terminologyVersion, "Metadata", effectiveTime);
+            version, "Metadata", effectiveTime);
     conceptMap.put("modifier", metadataConcept);
     contentService.addConcept(metadataConcept);
 
@@ -201,127 +201,127 @@ public class ClamlMetadataHelper {
     //
     Concept descriptionTypeConcept =
         createNewActiveConcept("" + metadataCounter++, terminology,
-            terminologyVersion, "Description type", effectiveTime);
+            version, "Description type", effectiveTime);
     conceptMap.put("descriptionType", descriptionTypeConcept);
     contentService.addConcept(descriptionTypeConcept);
 
     Concept codingHintConcept =
         createNewActiveConcept("" + metadataCounter++, terminology,
-            terminologyVersion, "Coding hint", effectiveTime);
+            version, "Coding hint", effectiveTime);
     conceptMap.put("coding-hint", codingHintConcept);
     contentService.addConcept(codingHintConcept);
 
     Concept considerConcept =
         createNewActiveConcept("" + metadataCounter++, terminology,
-            terminologyVersion, "Consider", effectiveTime);
+            version, "Consider", effectiveTime);
     conceptMap.put("consider", considerConcept);
     contentService.addConcept(considerConcept);
 
     Concept definitionConcept =
         createNewActiveConcept("" + metadataCounter++, terminology,
-            terminologyVersion, "Definition", effectiveTime);
+            version, "Definition", effectiveTime);
     conceptMap.put("definition", definitionConcept);
     contentService.addConcept(definitionConcept);
 
     Concept exclusionConcept =
         createNewActiveConcept("" + metadataCounter++, terminology,
-            terminologyVersion, "Exclusion", effectiveTime);
+            version, "Exclusion", effectiveTime);
     conceptMap.put("exclusion", exclusionConcept);
     contentService.addConcept(exclusionConcept);
 
     Concept inclusionConcept =
         createNewActiveConcept("" + metadataCounter++, terminology,
-            terminologyVersion, "Inclusion", effectiveTime);
+            version, "Inclusion", effectiveTime);
     conceptMap.put("inclusion", inclusionConcept);
     contentService.addConcept(inclusionConcept);
 
     Concept footnoteConcept =
         createNewActiveConcept("" + metadataCounter++, terminology,
-            terminologyVersion, "Footnote", effectiveTime);
+            version, "Footnote", effectiveTime);
     conceptMap.put("footnote", footnoteConcept);
     contentService.addConcept(footnoteConcept);
 
     Concept introductionConcept =
         createNewActiveConcept("" + metadataCounter++, terminology,
-            terminologyVersion, "Introduction", effectiveTime);
+            version, "Introduction", effectiveTime);
     conceptMap.put("introduction", introductionConcept);
     contentService.addConcept(introductionConcept);
 
     Concept modifierlinkConcept =
         createNewActiveConcept("" + metadataCounter++, terminology,
-            terminologyVersion, "Modifier link", effectiveTime);
+            version, "Modifier link", effectiveTime);
     conceptMap.put("modifierlink", modifierlinkConcept);
     contentService.addConcept(modifierlinkConcept);
 
     Concept noteConcept =
         createNewActiveConcept("" + metadataCounter++, terminology,
-            terminologyVersion, "Note", effectiveTime);
+            version, "Note", effectiveTime);
     conceptMap.put("note", noteConcept);
     contentService.addConcept(noteConcept);
 
     Concept preferredAbbreviatedConcept =
         createNewActiveConcept("" + metadataCounter++, terminology,
-            terminologyVersion, "Preferred abbreviated", effectiveTime);
+            version, "Preferred abbreviated", effectiveTime);
     conceptMap.put("preferredAbbreviated", preferredAbbreviatedConcept);
     contentService.addConcept(preferredAbbreviatedConcept);
 
     Concept preferredLongConcept =
         createNewActiveConcept("" + metadataCounter++, terminology,
-            terminologyVersion, "Preferred long", effectiveTime);
+            version, "Preferred long", effectiveTime);
     conceptMap.put("preferredLong", preferredLongConcept);
     contentService.addConcept(preferredLongConcept);
 
     Concept textConcept =
         createNewActiveConcept("" + metadataCounter++, terminology,
-            terminologyVersion, "Text", effectiveTime);
+            version, "Text", effectiveTime);
     conceptMap.put("text", textConcept);
     contentService.addConcept(textConcept);
 
     createIsaRelationship(metadataConcept, descriptionTypeConcept, new Integer(
-        metadataCounter++).toString(), terminology, terminologyVersion,
+        metadataCounter++).toString(), terminology, version,
         effectiveTime);
 
     createIsaRelationship(descriptionTypeConcept, footnoteConcept, new Integer(
-        metadataCounter++).toString(), terminology, terminologyVersion,
+        metadataCounter++).toString(), terminology, version,
         effectiveTime);
 
     createIsaRelationship(descriptionTypeConcept, textConcept, new Integer(
-        metadataCounter++).toString(), terminology, terminologyVersion,
+        metadataCounter++).toString(), terminology, version,
         effectiveTime);
 
     createIsaRelationship(descriptionTypeConcept, codingHintConcept, ""
-        + metadataCounter++, terminology, terminologyVersion, effectiveTime);
+        + metadataCounter++, terminology, version, effectiveTime);
 
     createIsaRelationship(descriptionTypeConcept, definitionConcept, ""
-        + metadataCounter++, terminology, terminologyVersion, effectiveTime);
+        + metadataCounter++, terminology, version, effectiveTime);
 
     createIsaRelationship(descriptionTypeConcept, introductionConcept, ""
-        + metadataCounter++, terminology, terminologyVersion, effectiveTime);
+        + metadataCounter++, terminology, version, effectiveTime);
 
     createIsaRelationship(descriptionTypeConcept, modifierlinkConcept, ""
-        + metadataCounter++, terminology, terminologyVersion, effectiveTime);
+        + metadataCounter++, terminology, version, effectiveTime);
 
     createIsaRelationship(descriptionTypeConcept, noteConcept, new Integer(
-        metadataCounter++).toString(), terminology, terminologyVersion,
+        metadataCounter++).toString(), terminology, version,
         effectiveTime);
 
     createIsaRelationship(descriptionTypeConcept, exclusionConcept, ""
-        + metadataCounter++, terminology, terminologyVersion, effectiveTime);
+        + metadataCounter++, terminology, version, effectiveTime);
 
     createIsaRelationship(descriptionTypeConcept, inclusionConcept, ""
-        + metadataCounter++, terminology, terminologyVersion, effectiveTime);
+        + metadataCounter++, terminology, version, effectiveTime);
 
     createIsaRelationship(descriptionTypeConcept, preferredLongConcept, ""
-        + metadataCounter++, terminology, terminologyVersion, effectiveTime);
+        + metadataCounter++, terminology, version, effectiveTime);
 
     createIsaRelationship(descriptionTypeConcept, preferredAbbreviatedConcept,
-        "" + metadataCounter++, terminology, terminologyVersion, effectiveTime);
+        "" + metadataCounter++, terminology, version, effectiveTime);
 
     createIsaRelationship(descriptionTypeConcept, preferredConcept, ""
-        + metadataCounter++, terminology, terminologyVersion, effectiveTime);
+        + metadataCounter++, terminology, version, effectiveTime);
 
     createIsaRelationship(descriptionTypeConcept, considerConcept, new Integer(
-        metadataCounter++).toString(), terminology, terminologyVersion,
+        metadataCounter++).toString(), terminology, version,
         effectiveTime);
 
     //
@@ -329,94 +329,94 @@ public class ClamlMetadataHelper {
     //
     Concept relationshipTypeConcept =
         createNewActiveConcept("" + metadataCounter++, terminology,
-            terminologyVersion, "Relationship type", effectiveTime);
+            version, "Relationship type", effectiveTime);
     conceptMap.put("relationshipType", relationshipTypeConcept);
     contentService.addConcept(relationshipTypeConcept);
 
     Concept asteriskToDaggerConcept =
         createNewActiveConcept("" + metadataCounter++, terminology,
-            terminologyVersion, "Asterisk to dagger", effectiveTime);
+            version, "Asterisk to dagger", effectiveTime);
     conceptMap.put("asterisk-to-dagger", asteriskToDaggerConcept);
     contentService.addConcept(asteriskToDaggerConcept);
 
     Concept daggerToAsteriskConcept =
         createNewActiveConcept("" + metadataCounter++, terminology,
-            terminologyVersion, "Dagger to asterisk", effectiveTime);
+            version, "Dagger to asterisk", effectiveTime);
     conceptMap.put("dagger-to-asterisk", daggerToAsteriskConcept);
     contentService.addConcept(daggerToAsteriskConcept);
 
     Concept referenceConcept =
         createNewActiveConcept("" + metadataCounter++, terminology,
-            terminologyVersion, "Reference", effectiveTime);
+            version, "Reference", effectiveTime);
     conceptMap.put("reference", referenceConcept);
     contentService.addConcept(referenceConcept);
 
     createIsaRelationship(metadataConcept, relationshipTypeConcept, ""
-        + metadataCounter++, terminology, terminologyVersion, effectiveTime);
+        + metadataCounter++, terminology, version, effectiveTime);
 
     createIsaRelationship(relationshipTypeConcept, isaConcept, new Integer(
-        metadataCounter++).toString(), terminology, terminologyVersion,
+        metadataCounter++).toString(), terminology, version,
         effectiveTime);
 
     createIsaRelationship(relationshipTypeConcept, daggerToAsteriskConcept,
         new Integer(metadataCounter++).toString(), terminology,
-        terminologyVersion, effectiveTime);
+        version, effectiveTime);
 
     createIsaRelationship(relationshipTypeConcept, referenceConcept,
         new Integer(metadataCounter++).toString(), terminology,
-        terminologyVersion, effectiveTime);
+        version, effectiveTime);
 
     createIsaRelationship(relationshipTypeConcept, asteriskToDaggerConcept,
         new Integer(metadataCounter++).toString(), terminology,
-        terminologyVersion, effectiveTime);
+        version, effectiveTime);
 
     //
     // Case significance
     //
     Concept caseSignificanceConcept =
         createNewActiveConcept("" + metadataCounter++, terminology,
-            terminologyVersion, "Case significance", effectiveTime);
+            version, "Case significance", effectiveTime);
     conceptMap.put("caseSignificance", caseSignificanceConcept);
     contentService.addConcept(caseSignificanceConcept);
 
     createIsaRelationship(metadataConcept, caseSignificanceConcept, ""
-        + metadataCounter++, terminology, terminologyVersion, effectiveTime);
+        + metadataCounter++, terminology, version, effectiveTime);
 
     createIsaRelationship(caseSignificanceConcept,
         defaultCaseSignificanceConcept, "" + metadataCounter++, terminology,
-        terminologyVersion, effectiveTime);
+        version, effectiveTime);
 
     //
     // Characteristic type
     //
     Concept characteristicTypeConcept =
         createNewActiveConcept("" + metadataCounter++, terminology,
-            terminologyVersion, "Characteristic type", effectiveTime);
+            version, "Characteristic type", effectiveTime);
     conceptMap.put("characteristicType", characteristicTypeConcept);
     contentService.addConcept(characteristicTypeConcept);
 
     createIsaRelationship(metadataConcept, characteristicTypeConcept, ""
-        + metadataCounter++, terminology, terminologyVersion, effectiveTime);
+        + metadataCounter++, terminology, version, effectiveTime);
 
     createIsaRelationship(characteristicTypeConcept,
         defaultCharacteristicTypeConcept, "" + metadataCounter++, terminology,
-        terminologyVersion, effectiveTime);
+        version, effectiveTime);
 
     //
     // Modifier
     //
     Concept modifierConcept =
         createNewActiveConcept("" + metadataCounter++, terminology,
-            terminologyVersion, "Modifier", effectiveTime);
+            version, "Modifier", effectiveTime);
     conceptMap.put("modifier", modifierConcept);
     contentService.addConcept(modifierConcept);
 
     createIsaRelationship(metadataConcept, modifierConcept, new Integer(
-        metadataCounter++).toString(), terminology, terminologyVersion,
+        metadataCounter++).toString(), terminology, version,
         effectiveTime);
 
     createIsaRelationship(modifierConcept, defaultModifierConcept, new Integer(
-        metadataCounter++).toString(), terminology, terminologyVersion,
+        metadataCounter++).toString(), terminology, version,
         effectiveTime);
 
     //
@@ -424,32 +424,32 @@ public class ClamlMetadataHelper {
     //
     Concept definitionStatusConcept =
         createNewActiveConcept("" + metadataCounter++, terminology,
-            terminologyVersion, "Definition status", effectiveTime);
+            version, "Definition status", effectiveTime);
     conceptMap.put("definitionStatus", definitionStatusConcept);
     contentService.addConcept(definitionStatusConcept);
 
     createIsaRelationship(metadataConcept, definitionStatusConcept, ""
-        + metadataCounter++, terminology, terminologyVersion, effectiveTime);
+        + metadataCounter++, terminology, version, effectiveTime);
 
     createIsaRelationship(definitionStatusConcept,
         defaultDefinitionStatusConcept, "" + metadataCounter++, terminology,
-        terminologyVersion, effectiveTime);
+        version, effectiveTime);
 
     //
     // Module
     //
     Concept moduleConcept =
         createNewActiveConcept("" + metadataCounter++, terminology,
-            terminologyVersion, "Module", effectiveTime);
+            version, "Module", effectiveTime);
     conceptMap.put("module", moduleConcept);
     contentService.addConcept(moduleConcept);
 
     createIsaRelationship(metadataConcept, moduleConcept, new Integer(
-        metadataCounter++).toString(), terminology, terminologyVersion,
+        metadataCounter++).toString(), terminology, version,
         effectiveTime);
 
     createIsaRelationship(moduleConcept, defaultModuleConcept, new Integer(
-        metadataCounter++).toString(), terminology, terminologyVersion,
+        metadataCounter++).toString(), terminology, version,
         effectiveTime);
 
     //
@@ -457,43 +457,43 @@ public class ClamlMetadataHelper {
     //
     Concept refsetsConcept =
         createNewActiveConcept("" + metadataCounter++, terminology,
-            terminologyVersion, "Refsets", effectiveTime);
+            version, "Refsets", effectiveTime);
     conceptMap.put("refsets", refsetsConcept);
     contentService.addConcept(refsetsConcept);
 
     Concept simpleRefsetsConcept =
         createNewActiveConcept("" + metadataCounter++, terminology,
-            terminologyVersion, "Simple refsets", effectiveTime);
+            version, "Simple refsets", effectiveTime);
     conceptMap.put("simpleRefsets", simpleRefsetsConcept);
     contentService.addConcept(simpleRefsetsConcept);
 
     Concept asteriskRefsetConcept =
         createNewActiveConcept("" + metadataCounter++, terminology,
-            terminologyVersion, "Asterisk refset", effectiveTime);
+            version, "Asterisk refset", effectiveTime);
     conceptMap.put("aster", asteriskRefsetConcept);
     contentService.addConcept(asteriskRefsetConcept);
 
     Concept daggerRefsetConcept =
         createNewActiveConcept("" + metadataCounter++, terminology,
-            terminologyVersion, "Dagger refset", effectiveTime);
+            version, "Dagger refset", effectiveTime);
     conceptMap.put("dagger", daggerRefsetConcept);
     contentService.addConcept(daggerRefsetConcept);
 
     createIsaRelationship(metadataConcept, refsetsConcept, new Integer(
-        metadataCounter++).toString(), terminology, terminologyVersion,
+        metadataCounter++).toString(), terminology, version,
         effectiveTime);
 
     createIsaRelationship(refsetsConcept, simpleRefsetsConcept, new Integer(
-        metadataCounter++).toString(), terminology, terminologyVersion,
+        metadataCounter++).toString(), terminology, version,
         effectiveTime);
 
     createIsaRelationship(simpleRefsetsConcept, asteriskRefsetConcept,
         new Integer(metadataCounter++).toString(), terminology,
-        terminologyVersion, effectiveTime);
+        version, effectiveTime);
 
     createIsaRelationship(simpleRefsetsConcept, daggerRefsetConcept,
         new Integer(metadataCounter++).toString(), terminology,
-        terminologyVersion, effectiveTime);
+        version, effectiveTime);
 
     return conceptMap;
   }
@@ -504,20 +504,20 @@ public class ClamlMetadataHelper {
    * 
    * @param terminologyId the terminology id
    * @param terminology the terminology
-   * @param terminologyVersion the terminology version
+   * @param version the terminology version
    * @param defaultPreferredName the default preferred name
    * @param effectiveTime the effective time
    * @return the concept
    * @throws Exception the exception
    */
   public Concept createNewActiveConcept(String terminologyId,
-    String terminology, String terminologyVersion, String defaultPreferredName,
+    String terminology, String version, String defaultPreferredName,
     String effectiveTime) throws Exception {
 
     Concept concept = new ConceptJpa();
     concept.setTerminologyId(terminologyId);
     concept.setTerminology(terminology);
-    concept.setTerminologyVersion(terminologyVersion);
+    concept.setTerminologyVersion(version);
     concept.setEffectiveTime(ConfigUtility.DATE_FORMAT.parse(effectiveTime));
     concept.setDefaultPreferredName(defaultPreferredName);
     concept.setActive(true);
@@ -543,7 +543,7 @@ public class ClamlMetadataHelper {
     if (conceptMap.containsKey("defaultModule"))
       desc.setModuleId(conceptMap.get("defaultModule").getTerminologyId());
     desc.setTerminology(terminology);
-    desc.setTerminologyVersion(terminologyVersion);
+    desc.setTerminologyVersion(version);
     desc.setTerm(defaultPreferredName);
     desc.setConcept(concept);
     // default case significance
@@ -567,13 +567,13 @@ public class ClamlMetadataHelper {
    * @param childConcept the child concept
    * @param terminologyId the terminology id
    * @param terminology the terminology
-   * @param terminologyVersion the terminology version
+   * @param version the terminology version
    * @param effectiveTime the effective time
    * @throws Exception the exception
    */
   public void createIsaRelationship(Concept parentConcept,
     Concept childConcept, String terminologyId, String terminology,
-    String terminologyVersion, String effectiveTime) throws Exception {
+    String version, String effectiveTime) throws Exception {
     if (parentConcept == null) {
       throw new Exception("Parent concept may not be null");
     }
@@ -586,7 +586,7 @@ public class ClamlMetadataHelper {
     relationship
         .setModuleId(conceptMap.get("defaultModule").getTerminologyId());
     relationship.setTerminology(terminology);
-    relationship.setTerminologyVersion(terminologyVersion);
+    relationship.setTerminologyVersion(version);
     // default characteristic type
     relationship.setCharacteristicTypeId(conceptMap.get(
         "defaultCharacteristicType").getTerminologyId());

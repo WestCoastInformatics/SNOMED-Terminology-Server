@@ -69,7 +69,7 @@
   <!-- Sub-modules -->
   <modules>
     <module>mojo</module>
-    <module>updatedb</module>
+    <module>db</module>
     <module>lucene</module>
     <module>loader</module>
     <module>remover</module>

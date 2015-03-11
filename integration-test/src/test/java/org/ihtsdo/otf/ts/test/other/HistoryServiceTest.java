@@ -86,7 +86,7 @@ public class HistoryServiceTest {
     Assert.assertNotEquals(info, info2);
 
     // remove release info
-    client.removeReleaseInfo(info2.getId().toString(), authToken);
+    client.removeReleaseInfo(info2.getId(), authToken);
     info2 = client.getReleaseInfo("SNOMEDCT", "test2014", authToken);
     Assert.assertNull(info2);
 

@@ -1,3 +1,6 @@
+/*
+ * 
+ */
 package org.ihtsdo.otf.ts.test.rest;
 
 import static org.junit.Assert.assertTrue;
@@ -24,17 +27,33 @@ import org.junit.Test;
  */
 public class ContentServiceRestNormalUseTest extends ContentServiceRestTest {
 
+  /**  The auth token. */
   private static String authToken;
 
-  String snomedTestId, snomedTerminology, snomedVersion;
+  /**  The snomed test id. */
+  private String snomedTestId;
+  
+  /**  The snomed terminology. */
+  private String snomedTerminology;
+  
+  /**  The snomed version. */
+  private String snomedVersion;
 
-  String icd9TestId, icd9Terminology, icd9Version;
+  /**  The icd9 test id. */
+  private String icd9TestId;
+  
+  /**  The icd9 terminology. */
+  private String icd9Terminology;
+  
+  /**  The icd9 version. */
+  private String icd9Version;
 
   /**
    * Create test fixtures per test.
    *
    * @throws Exception the exception
    */
+  @Override
   @Before
   public void setup() throws Exception {
 
@@ -546,6 +565,7 @@ public class ContentServiceRestNormalUseTest extends ContentServiceRestTest {
    *
    * @throws Exception the exception
    */
+  @Override
   @After
   public void teardown() throws Exception {
 

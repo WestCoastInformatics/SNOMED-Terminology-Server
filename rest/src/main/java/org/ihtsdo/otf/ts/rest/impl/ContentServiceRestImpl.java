@@ -12,6 +12,7 @@ import java.util.Set;
 import javax.ws.rs.GET;
 import javax.ws.rs.HeaderParam;
 import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
@@ -26,6 +27,7 @@ import org.ihtsdo.otf.ts.helpers.ConfigUtility;
 import org.ihtsdo.otf.ts.helpers.PfsParameterJpa;
 import org.ihtsdo.otf.ts.helpers.ProjectList;
 import org.ihtsdo.otf.ts.helpers.SearchResultList;
+import org.ihtsdo.otf.ts.jpa.ProjectJpa;
 import org.ihtsdo.otf.ts.jpa.ReleaseInfoJpa;
 import org.ihtsdo.otf.ts.jpa.algo.ClamlLoaderAlgorithm;
 import org.ihtsdo.otf.ts.jpa.algo.LuceneReindexAlgorithm;
@@ -75,6 +77,54 @@ public class ContentServiceRestImpl extends RootServiceRestImpl implements
    */
   public ContentServiceRestImpl() throws Exception {
     securityService = new SecurityServiceJpa();
+  }
+
+  @Override
+  @PUT
+  @Path("/project/add")
+  @ApiOperation(value = "Add new project", notes = "Creates a new project.", response = Project.class)
+  @Produces({
+      MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML
+  })
+  public Project addProject(
+    @ApiParam(value = "Project, e.g. newProject", required = true) ProjectJpa project,
+    @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken)
+    throws Exception {
+    Logger.getLogger(ContentChangeServiceRestImpl.class).info(
+        "RESTful call PUT (ContentChange): /project/add " + project);
+    Logger.getLogger(ContentChangeServiceRestImpl.class).debug(
+        project.toString());
+
+    try {
+      authenticate(securityService, authToken, "add project", UserRole.AUTHOR);
+      
+      // Create service and configure transaction scope
+      ContentService contentService = new ContentServiceJpa();
+
+      // check to see if project already exists
+      for (Project p : contentService.getProjects().getObjects()) {
+        if (p.getName().equals(project.getName())
+            && p.getDescription().equals(project.getDescription())) {
+          throw new Exception(
+              "A project with this name and description already exists.");
+        }
+      }
+      
+      contentService.setTransactionPerOperation(false);
+      contentService.beginTransaction();
+
+      // Add project
+      Project newProject = contentService.addProject(project);
+
+      // Commit, close, and return
+      contentService.commit();
+      contentService.close();
+      return newProject;
+    } catch (Exception e) {
+      handleException(e, "trying to add a project");
+      return null;
+    }
+
   }
 
   /*
@@ -290,7 +340,8 @@ public class ContentServiceRestImpl extends RootServiceRestImpl implements
 
     Logger.getLogger(ContentServiceRestImpl.class).info(
         "RESTful call (Content): /concept/" + terminology + "/" + version
-            + "/query/" + query + " with PFS parameter " + (pfs == null ? "empty" : pfs.toString()));
+            + "/query/" + query + " with PFS parameter "
+            + (pfs == null ? "empty" : pfs.toString()));
     try {
       authenticate(securityService, authToken, "find concepts by query",
           UserRole.VIEWER);
@@ -867,14 +918,14 @@ public class ContentServiceRestImpl extends RootServiceRestImpl implements
     long startTimeOrig = System.nanoTime();
 
     try {
-      
+
       authenticate(securityService, authToken, "reindex",
           UserRole.ADMINISTRATOR);
 
       LuceneReindexAlgorithm algo = new LuceneReindexAlgorithm();
-      
+
       algo.setIndexedObjects(indexedObjects);
-      
+
       algo.compute();
 
       // Final logging messages
@@ -885,25 +936,25 @@ public class ContentServiceRestImpl extends RootServiceRestImpl implements
     } catch (Exception e) {
       Logger.getLogger(ContentServiceRestImpl.class).info("ERROR:");
       e.printStackTrace();
-      //handleException(e, "trying to reindex");
+      // handleException(e, "trying to reindex");
     }
 
   }
 
   @Override
   @POST
-  @Path("/terminology/load/claml/{terminology}/{terminologyVersion}")
+  @Path("/terminology/load/claml/{terminology}/{version}")
   @ApiOperation(value = "Loads ClaML terminology from file", notes = "Loads terminology from ClaML file, assigning specified version")
   public void loadTerminologyClaml(
     @ApiParam(value = "Terminology, e.g. SNOMEDCT", required = true) @PathParam("terminology") String terminology,
-    @ApiParam(value = "Terminology version, e.g. 20140731", required = true) @PathParam("terminologyVersion") String terminologyVersion,
+    @ApiParam(value = "Terminology version, e.g. 20140731", required = true) @PathParam("version") String version,
     @ApiParam(value = "ClaML input file", required = true) String inputFile,
     @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken)
     throws Exception {
 
     Logger.getLogger(ContentServiceRestImpl.class).info(
         "RESTful POST call (ContentChange): /terminology/load/claml/"
-            + terminology + "/" + terminologyVersion + " from input file "
+            + terminology + "/" + version + " from input file "
             + inputFile);
 
     // Track system level information
@@ -918,7 +969,7 @@ public class ContentServiceRestImpl extends RootServiceRestImpl implements
           "Load ClaML data from " + inputFile);
       ClamlLoaderAlgorithm algorithm = new ClamlLoaderAlgorithm();
       algorithm.setTerminology(terminology);
-      algorithm.setTerminologyVersion(terminologyVersion);
+      algorithm.setTerminologyVersion(version);
       algorithm.setInputFile(inputFile);
       algorithm.compute();
 
@@ -927,7 +978,7 @@ public class ContentServiceRestImpl extends RootServiceRestImpl implements
           "Start computing transtive closure");
       TransitiveClosureAlgorithm algo = new TransitiveClosureAlgorithm();
       algo.setTerminology(terminology);
-      algo.setTerminologyVersion(terminologyVersion);
+      algo.setTerminologyVersion(version);
       algo.reset();
       algo.compute();
       algo.close();
@@ -980,10 +1031,10 @@ public class ContentServiceRestImpl extends RootServiceRestImpl implements
       // but for delta/daily build files, this is not the current version
       // look up the current version instead
       MetadataService metadataService = new MetadataServiceJpa();
-      final String terminologyVersion =
+      final String version =
           metadataService.getLatestVersion(terminology);
       metadataService.close();
-      if (terminologyVersion == null) {
+      if (version == null) {
         throw new Exception("Unable to determine terminology version.");
       }
 
@@ -993,15 +1044,15 @@ public class ContentServiceRestImpl extends RootServiceRestImpl implements
       //
       HistoryService historyService = new HistoryServiceJpa();
       ReleaseInfo releaseInfo =
-          historyService.getReleaseInfo(terminology, terminologyVersion);
+          historyService.getReleaseInfo(terminology, version);
       if (releaseInfo == null) {
         throw new Exception("A release info must exist for "
-            + terminologyVersion);
+            + version);
       } else if (!releaseInfo.isPlanned()) {
-        throw new Exception("Release info for " + terminologyVersion
+        throw new Exception("Release info for " + version
             + " is not marked as planned'");
       } else if (releaseInfo.isPublished()) {
-        throw new Exception("Release info for " + terminologyVersion
+        throw new Exception("Release info for " + version
             + " is marked as published");
       }
       historyService.close();
@@ -1021,7 +1072,7 @@ public class ContentServiceRestImpl extends RootServiceRestImpl implements
       // Load delta
       Rf2DeltaLoaderAlgorithm algorithm = new Rf2DeltaLoaderAlgorithm();
       algorithm.setTerminology(terminology);
-      algorithm.setTerminologyVersion(terminologyVersion);
+      algorithm.setTerminologyVersion(version);
       algorithm.setReleaseVersion(sorter.getFileVersion());
       algorithm.setReaders(readers);
       algorithm.compute();
@@ -1029,10 +1080,10 @@ public class ContentServiceRestImpl extends RootServiceRestImpl implements
       // Compute transitive closure
       Logger.getLogger(this.getClass()).info(
           "  Compute transitive closure from  " + terminology + "/"
-              + terminologyVersion);
+              + version);
       TransitiveClosureAlgorithm algo = new TransitiveClosureAlgorithm();
       algo.setTerminology(terminology);
-      algo.setTerminologyVersion(terminologyVersion);
+      algo.setTerminologyVersion(version);
       algo.reset();
       algo.compute();
 
@@ -1054,18 +1105,18 @@ public class ContentServiceRestImpl extends RootServiceRestImpl implements
 
   @Override
   @POST
-  @Path("/terminology/load/rf2/full/{terminology}/{terminologyVersion}")
+  @Path("/terminology/load/rf2/full/{terminology}/{version}")
   @ApiOperation(value = "Loads terminology RF2 full from directory", notes = "Loads terminology RF2 full from directory for specified terminology and version")
   public void loadTerminologyRf2Full(
     @ApiParam(value = "Terminology, e.g. SNOMEDCT", required = true) @PathParam("terminology") String terminology,
-    @ApiParam(value = "Terminology version, e.g. 20140731", required = true) @PathParam("terminologyVersion") String terminologyVersion,
+    @ApiParam(value = "Terminology version, e.g. 20140731", required = true) @PathParam("version") String version,
     @ApiParam(value = "RF2 input directory", required = true) String inputDir,
     @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken)
     throws Exception {
 
     Logger.getLogger(ContentServiceRestImpl.class).info(
         "RESTful POST call (ContentChange): /terminology/load/rf2/full/"
-            + terminology + "/" + terminologyVersion + " from input file "
+            + terminology + "/" + version + " from input file "
             + inputDir);
 
     // Track system level information
@@ -1121,7 +1172,7 @@ public class ContentServiceRestImpl extends RootServiceRestImpl implements
       // Load initial snapshot - first release version
       Rf2SnapshotLoaderAlgorithm algorithm = new Rf2SnapshotLoaderAlgorithm();
       algorithm.setTerminology(terminology);
-      algorithm.setTerminologyVersion(terminologyVersion);
+      algorithm.setTerminologyVersion(version);
       algorithm.setReleaseVersion(releases.get(0));
       algorithm.setReaders(readers);
       algorithm.compute();
@@ -1134,7 +1185,7 @@ public class ContentServiceRestImpl extends RootServiceRestImpl implements
 
         Rf2DeltaLoaderAlgorithm algorithm2 = new Rf2DeltaLoaderAlgorithm();
         algorithm2.setTerminology(terminology);
-        algorithm2.setTerminologyVersion(terminologyVersion);
+        algorithm2.setTerminologyVersion(version);
         algorithm2.setReleaseVersion(release);
         algorithm2.setReaders(readers);
         algorithm2.compute();
@@ -1144,10 +1195,10 @@ public class ContentServiceRestImpl extends RootServiceRestImpl implements
       // Compute transitive closure
       Logger.getLogger(this.getClass()).info(
           "  Compute transitive closure from  " + terminology + "/"
-              + terminologyVersion);
+              + version);
       TransitiveClosureAlgorithm algo = new TransitiveClosureAlgorithm();
       algo.setTerminology(terminology);
-      algo.setTerminologyVersion(terminologyVersion);
+      algo.setTerminologyVersion(version);
       algo.reset();
       algo.compute();
 
@@ -1165,7 +1216,7 @@ public class ContentServiceRestImpl extends RootServiceRestImpl implements
           info.setReleaseBeginDate(info.getEffectiveTime());
           info.setReleaseFinishDate(info.getEffectiveTime());
           info.setTerminology(terminology);
-          info.setTerminologyVersion(terminologyVersion);
+          info.setTerminologyVersion(version);
           historyService.addReleaseInfo(info);
         }
       }
@@ -1187,18 +1238,18 @@ public class ContentServiceRestImpl extends RootServiceRestImpl implements
 
   @Override
   @POST
-  @Path("/terminology/load/rf2/snapshot/{terminology}/{terminologyVersion}")
+  @Path("/terminology/load/rf2/snapshot/{terminology}/{version}")
   @ApiOperation(value = "Loads terminology RF2 snapshot from directory", notes = "Loads terminology RF2 snapshot from directory for specified terminology and version")
   public void loadTerminologyRf2Snapshot(
     @ApiParam(value = "Terminology, e.g. SNOMEDCT", required = true) @PathParam("terminology") String terminology,
-    @ApiParam(value = "Terminology version, e.g. 20140731", required = true) @PathParam("terminologyVersion") String terminologyVersion,
+    @ApiParam(value = "Terminology version, e.g. 20140731", required = true) @PathParam("version") String version,
     @ApiParam(value = "RF2 input directory", required = true) String inputDir,
     @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken)
     throws Exception {
 
     Logger.getLogger(ContentServiceRestImpl.class).info(
         "RESTful POST call (ContentChange): /terminology/load/rf2/snapshot"
-            + terminology + "/" + terminologyVersion + " from input directory "
+            + terminology + "/" + version + " from input directory "
             + inputDir);
 
     // Track system level information
@@ -1232,7 +1283,7 @@ public class ContentServiceRestImpl extends RootServiceRestImpl implements
       // Load snapshot
       Rf2SnapshotLoaderAlgorithm algorithm = new Rf2SnapshotLoaderAlgorithm();
       algorithm.setTerminology(terminology);
-      algorithm.setTerminologyVersion(terminologyVersion);
+      algorithm.setTerminologyVersion(version);
       algorithm.setReleaseVersion(releaseVersion);
       algorithm.setReaders(readers);
       algorithm.compute();
@@ -1254,7 +1305,7 @@ public class ContentServiceRestImpl extends RootServiceRestImpl implements
         info.setReleaseBeginDate(info.getEffectiveTime());
         info.setReleaseFinishDate(info.getEffectiveTime());
         info.setTerminology(terminology);
-        info.setTerminologyVersion(terminologyVersion);
+        info.setTerminologyVersion(version);
         historyService.addReleaseInfo(info);
       }
       historyService.close();
@@ -1262,10 +1313,10 @@ public class ContentServiceRestImpl extends RootServiceRestImpl implements
       // Compute transitive closure
       Logger.getLogger(this.getClass()).info(
           "  Compute transitive closure from  " + terminology + "/"
-              + terminologyVersion);
+              + version);
       TransitiveClosureAlgorithm algo = new TransitiveClosureAlgorithm();
       algo.setTerminology(terminology);
-      algo.setTerminologyVersion(terminologyVersion);
+      algo.setTerminologyVersion(version);
       algo.reset();
       algo.compute();
 
@@ -1308,16 +1359,16 @@ public class ContentServiceRestImpl extends RootServiceRestImpl implements
 
       // Compute transitive closure
       MetadataService metadataService = new MetadataServiceJpa();
-      String terminologyVersion = metadataService.getLatestVersion(terminology);
+      String version = metadataService.getLatestVersion(terminology);
       metadataService.close();
 
       // Compute transitive closure
       Logger.getLogger(ContentServiceRestImpl.class).info(
           "  Compute transitive closure from  " + terminology + "/"
-              + terminologyVersion);
+              + version);
       TransitiveClosureAlgorithm algo = new TransitiveClosureAlgorithm();
       algo.setTerminology(terminology);
-      algo.setTerminologyVersion(terminologyVersion);
+      algo.setTerminologyVersion(version);
       algo.reset();
       algo.compute();
       algo.close();
@@ -1331,20 +1382,20 @@ public class ContentServiceRestImpl extends RootServiceRestImpl implements
       handleException(e, "trying to compute transitive closure");
     }
   }
-  
+
   @Override
   @POST
-  @Path("/terminology/remove/{terminology}/{terminologyVersion}")
+  @Path("/terminology/remove/{terminology}/{version}")
   @ApiOperation(value = "Removes a terminology", notes = "Removes all elements for a specified terminology and version")
   public void removeTerminology(
     @ApiParam(value = "Terminology, e.g. SNOMEDCT", required = true) @PathParam("terminology") String terminology,
-    @ApiParam(value = "Terminology version, e.g. 20140731", required = true) @PathParam("terminologyVersion") String terminologyVersion,
+    @ApiParam(value = "Terminology version, e.g. 20140731", required = true) @PathParam("version") String version,
     @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken)
     throws Exception {
 
     Logger.getLogger(ContentServiceRestImpl.class).info(
-        "RESTful POST call (ContentChange): /terminology/remove/"
-            + terminology + "/" + terminologyVersion);
+        "RESTful POST call (ContentChange): /terminology/remove/" + terminology
+            + "/" + version);
 
     // Track system level information
     long startTimeOrig = System.nanoTime();
@@ -1354,7 +1405,7 @@ public class ContentServiceRestImpl extends RootServiceRestImpl implements
           UserRole.ADMINISTRATOR);
 
       ContentService contentService = new ContentServiceJpa();
-      contentService.clearConcepts(terminology, terminologyVersion);
+      contentService.clearConcepts(terminology, version);
       contentService.close();
 
       // Final logging messages

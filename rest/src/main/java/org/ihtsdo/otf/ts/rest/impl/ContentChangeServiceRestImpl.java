@@ -931,23 +931,23 @@ public class ContentChangeServiceRestImpl extends RootServiceRestImpl implements
 
   @Override
   @POST
-  @Path("/edit/begin/{terminology}/{terminologyVersion}/{releaseVersion}")
+  @Path("/edit/begin/{terminology}/{version}/{releaseVersion}")
   @ApiOperation(value = "Begin editing cycle", notes = "Begins the editing cycle for a sepcified terminology, version, and release version")
   public void startEditingCycle(
     @ApiParam(value = "Terminology, e.g. SNOMEDCT", required = true) @PathParam("terminology") String terminology,
-    @ApiParam(value = "Terminology version, e.g. 20140731", required = true) @PathParam("terminologyVersion") String terminologyVersion,
+    @ApiParam(value = "Terminology version, e.g. 20140731", required = true) @PathParam("version") String version,
     @ApiParam(value = "Release version, e.g. 20150131", required = true) @PathParam("releaseVersion") String releaseVersion,
     @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken)
     throws Exception {
 
     Logger.getLogger(ContentServiceRestImpl.class).info(
         "RESTful POST call (ContentChange): /edit/begin/" + terminology + "/"
-            + terminologyVersion + "/" + releaseVersion);
+            + version + "/" + releaseVersion);
     try {
       authenticate(securityService, authToken, "start editing cycle",
           UserRole.ADMINISTRATOR);
     
-      StartEditingCycleAlgorithm algo = new StartEditingCycleAlgorithm(releaseVersion, terminology, terminologyVersion);
+      StartEditingCycleAlgorithm algo = new StartEditingCycleAlgorithm(releaseVersion, terminology, version);
       algo.compute();
     } catch (Exception e) {
       handleException(e, "trying to start editing cycle");

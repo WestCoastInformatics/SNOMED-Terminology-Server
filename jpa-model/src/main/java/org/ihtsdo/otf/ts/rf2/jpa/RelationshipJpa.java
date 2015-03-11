@@ -21,7 +21,7 @@ import org.ihtsdo.otf.ts.rf2.Relationship;
 // @UniqueConstraint here is being used to create an index, not to enforce
 // uniqueness
 @Table(name = "relationships", uniqueConstraints = @UniqueConstraint(columnNames = {
-    "terminologyId", "terminology", "terminologyVersion", "id"
+    "terminologyId", "terminology", "version", "id"
 }))
 @Audited
 @XmlRootElement(name = "relationship")
@@ -196,7 +196,7 @@ public class RelationshipJpa extends AbstractComponent implements Relationship {
   }
 
   /**
-   * Sets the source concept  id.
+   * Sets the source concept id.
    *
    * @param sourceId the source concept id
    */
@@ -232,16 +232,14 @@ public class RelationshipJpa extends AbstractComponent implements Relationship {
     sourceConcept.setTerminology(getTerminology());
     sourceConcept.setTerminologyVersion(getTerminologyVersion());
   }
-  
+
   /**
-   * Returns the source concept preferred name. Used for XML/JSON
-   * serialization.
+   * Returns the source concept preferred name. Used for XML/JSON serialization.
    * @return the source concept preferred name
    */
   @XmlElement
   private String getSourcePreferredName() {
-    return sourceConcept != null ? sourceConcept
-        .getDefaultPreferredName() : "";
+    return sourceConcept != null ? sourceConcept.getDefaultPreferredName() : "";
   }
 
   /**
@@ -253,7 +251,7 @@ public class RelationshipJpa extends AbstractComponent implements Relationship {
   private void setSourcePreferredName(String name) {
     // do nothing - here for JAXB
   }
-  
+
   /**
    * Returns the destination concept.
    * 
@@ -282,8 +280,7 @@ public class RelationshipJpa extends AbstractComponent implements Relationship {
    */
   @XmlElement
   private Long getDestinationId() {
-    return (destinationConcept != null) ? destinationConcept.getId()
-        : 0;
+    return (destinationConcept != null) ? destinationConcept.getId() : 0;
   }
 
   /**
@@ -373,15 +370,13 @@ public class RelationshipJpa extends AbstractComponent implements Relationship {
    */
   @Override
   public String toString() {
-    return super.toString() + ","
-        + getSourceId() + ","
-        + getSourceTerminologyId() + ","
-        + getDestinationId() + ","
-        + getDestinationTerminologyId() + ","
-        + this.getRelationshipGroup() + "," + this.getTypeId() + ","
-        + this.getCharacteristicTypeId() + "," + this.getModifierId(); // end of
-                                                                       // relationship
-                                                                       // fields
+    return super.toString() + "," + getSourceId() + ","
+        + getSourceTerminologyId() + "," + getDestinationId() + ","
+        + getDestinationTerminologyId() + "," + this.getRelationshipGroup()
+        + "," + this.getTypeId() + "," + this.getCharacteristicTypeId() + ","
+        + this.getModifierId(); // end of
+                                // relationship
+                                // fields
 
   }
 

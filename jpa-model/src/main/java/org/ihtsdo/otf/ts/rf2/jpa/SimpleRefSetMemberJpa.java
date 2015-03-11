@@ -23,7 +23,7 @@ public class SimpleRefSetMemberJpa extends AbstractConceptRefSetMember
   public SimpleRefSetMemberJpa() {
     // do nothing
   }
-  
+
   /**
    * Instantiates a {@link SimpleRefSetMemberJpa} from the specified parameters.
    *
@@ -32,8 +32,7 @@ public class SimpleRefSetMemberJpa extends AbstractConceptRefSetMember
   public SimpleRefSetMemberJpa(SimpleRefSetMember member) {
     super(member);
   }
-  
-  
+
   /**
    * {@inheritDoc}
    */

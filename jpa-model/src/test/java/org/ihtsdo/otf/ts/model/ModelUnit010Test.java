@@ -7,6 +7,7 @@ import org.ihtsdo.otf.ts.helpers.ConfigUtility;
 import org.ihtsdo.otf.ts.helpers.CopyConstructorTester;
 import org.ihtsdo.otf.ts.helpers.EqualsHashcodeTester;
 import org.ihtsdo.otf.ts.helpers.GetterSetterTester;
+import org.ihtsdo.otf.ts.helpers.XmlSerializationTester;
 import org.ihtsdo.otf.ts.rf2.Concept;
 import org.ihtsdo.otf.ts.rf2.Relationship;
 import org.ihtsdo.otf.ts.rf2.jpa.ConceptJpa;
@@ -60,7 +61,7 @@ public class ModelUnit010Test {
    */
   @Test
   public void testModelGetSet010() throws Exception {
-    Logger.getLogger(getClass()).info("TEST testModelGetSet010");
+    Logger.getLogger(getClass()).debug("TEST testModelGetSet010");
     GetterSetterTester tester = new GetterSetterTester(object);
     tester.exclude("objectId");
     tester.test();
@@ -73,7 +74,7 @@ public class ModelUnit010Test {
    */
   @Test
   public void testModelEqualsHashcode010() throws Exception {
-    Logger.getLogger(getClass()).info("TEST testModelEqualsHashcode010");
+    Logger.getLogger(getClass()).debug("TEST testModelEqualsHashcode010");
     EqualsHashcodeTester tester = new EqualsHashcodeTester(object);
     tester.include("active");
     tester.include("moduleId");
@@ -107,7 +108,7 @@ public class ModelUnit010Test {
    */
   @Test
   public void testModelCopy010() throws Exception {
-    Logger.getLogger(getClass()).info("TEST testModelCopy010");
+    Logger.getLogger(getClass()).debug("TEST testModelCopy010");
     CopyConstructorTester tester = new CopyConstructorTester(object);
 
     // Set up objects
@@ -118,13 +119,35 @@ public class ModelUnit010Test {
   }
 
   /**
+   * Test XML serialization.
+   *
+   * @throws Exception the exception
+   */
+  @Test
+  public void testModelXmlSerialization010() throws Exception {
+    Logger.getLogger(getClass()).debug("TEST testModelXmlTransient010");
+    XmlSerializationTester tester = new XmlSerializationTester(object);
+
+    // Set up objects
+    Concept c = new ConceptJpa();
+    c.setId(1L);
+    c.setTerminology("1");
+    c.setTerminologyId("1");
+    c.setTerminologyVersion("1");
+    c.setDefaultPreferredName("1");
+    tester.proxy(Concept.class, 1, c);
+
+    assertTrue(tester.testXmlSerialization());
+  }
+
+  /**
    * Test concept reference in XML serialization.
    *
    * @throws Exception the exception
    */
   @Test
-  public void testXmlTransient010() throws Exception {
-    Logger.getLogger(getClass()).info("TEST testXmlTransient010");
+  public void testModelXmlTransient010() throws Exception {
+    Logger.getLogger(getClass()).debug("TEST testModelXmlTransient010");
     Relationship r = new RelationshipJpa();
     r.setId(1L);
     r.setTerminologyId("1");
@@ -144,10 +167,6 @@ public class ModelUnit010Test {
     assertTrue(xml.contains("<destinationId>"));
     assertTrue(xml.contains("<destinationTerminologyId>"));
     assertTrue(xml.contains("<destinationPreferredName>"));
-    Relationship r2 =
-        (Relationship) ConfigUtility.getGraphForString(xml,
-            RelationshipJpa.class);
-    assertTrue(r.equals(r2));
   }
 
   /**

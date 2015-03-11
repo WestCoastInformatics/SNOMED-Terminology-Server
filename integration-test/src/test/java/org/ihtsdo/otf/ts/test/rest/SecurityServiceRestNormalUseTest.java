@@ -26,7 +26,7 @@ public class SecurityServiceRestNormalUseTest extends SecurityServiceRestTest {
    */
   @Before
   public void setup() throws Exception {
-
+    // do nothing
   }
 
   /**
@@ -34,6 +34,7 @@ public class SecurityServiceRestNormalUseTest extends SecurityServiceRestTest {
    * 
    * @throws Exception the exception
    */
+  @SuppressWarnings("static-method")
   @Test
   public void testNormalUseRestSecurity001() throws Exception {
     String authToken = service.authenticate(viewerUserName, viewerUserPassword);
@@ -47,6 +48,7 @@ public class SecurityServiceRestNormalUseTest extends SecurityServiceRestTest {
    *
    * @throws Exception the exception
    */
+  @SuppressWarnings("static-method")
   @Test
   public void testNormalUseRestSecurity002() throws Exception {
 
@@ -67,7 +69,6 @@ public class SecurityServiceRestNormalUseTest extends SecurityServiceRestTest {
     user.setApplicationRole(UserRole.VIEWER);
     user.setEmail("none");
     user.setName(badUserName);
-    ;
     user.setUserName(badUserName);
 
     // add the user and verify that hibernate id has been set
@@ -160,6 +161,7 @@ public class SecurityServiceRestNormalUseTest extends SecurityServiceRestTest {
    *
    * @throws Exception the exception
    */
+  @SuppressWarnings("static-method")
   @Test
   public void testNormalUseRestSecurity003() throws Exception {
     service.authenticate("guest", "guest");
@@ -173,6 +175,7 @@ public class SecurityServiceRestNormalUseTest extends SecurityServiceRestTest {
    *
    * @throws Exception the exception
    */
+  @SuppressWarnings("static-method")
   @After
   public void teardown() throws Exception {
     // remove the bad user if tests have failed

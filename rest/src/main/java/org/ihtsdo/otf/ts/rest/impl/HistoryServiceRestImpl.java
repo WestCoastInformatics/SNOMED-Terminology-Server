@@ -1,5 +1,6 @@
 package org.ihtsdo.otf.ts.rest.impl;
 
+import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.HeaderParam;
@@ -21,6 +22,7 @@ import org.ihtsdo.otf.ts.helpers.PfsParameterJpa;
 import org.ihtsdo.otf.ts.helpers.RelationshipList;
 import org.ihtsdo.otf.ts.helpers.ReleaseInfoList;
 import org.ihtsdo.otf.ts.jpa.ReleaseInfoJpa;
+import org.ihtsdo.otf.ts.jpa.algo.StartEditingCycleAlgorithm;
 import org.ihtsdo.otf.ts.jpa.services.HistoryServiceJpa;
 import org.ihtsdo.otf.ts.jpa.services.SecurityServiceJpa;
 import org.ihtsdo.otf.ts.jpa.services.helper.TerminologyUtility;
@@ -795,8 +797,8 @@ public class HistoryServiceRestImpl extends RootServiceRestImpl implements
         "RESTful call (History): /release/" + name);
 
     try {
-      authenticate(securityService, authToken, "get release info for "
-          + name, UserRole.VIEWER);
+      authenticate(securityService, authToken, "get release info for " + name,
+          UserRole.VIEWER);
 
       HistoryService historyService = new HistoryServiceJpa();
       ReleaseInfo result = historyService.getReleaseInfo(terminology, name);
@@ -893,7 +895,7 @@ public class HistoryServiceRestImpl extends RootServiceRestImpl implements
       MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML
   })
   public void removeReleaseInfo(
-    @ApiParam(value = "Release info object id, e.g. 2", required = true) @PathParam("id") String id,
+    @ApiParam(value = "Release info object id, e.g. 2", required = true) @PathParam("id") Long id,
     @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken)
     throws Exception {
     Logger.getLogger(ContentServiceRestImpl.class).info(
@@ -904,11 +906,45 @@ public class HistoryServiceRestImpl extends RootServiceRestImpl implements
           UserRole.ADMINISTRATOR);
 
       HistoryService historyService = new HistoryServiceJpa();
-      historyService.removeReleaseInfo(Long.valueOf(id));
+      historyService.removeReleaseInfo(id);
       historyService.close();
     } catch (Exception e) {
       handleException(e, "trying to remove release info");
     }
   }
 
+  /*
+   * (non-Javadoc)
+   * 
+   * @see
+   * org.ihtsdo.otf.ts.rest.HistoryServiceRest#startEditingCycle(java.lang.String
+   * , java.lang.String, java.lang.String, java.lang.String)
+   */
+  @Override
+  @GET
+  @Path("/startEditingCycle/{releaseVersion}/{terminology}/{version}")
+  @ApiOperation(value = "Start the editing cycle", notes = "Marks the start of the editing cycle for the specified release for the specified terminology/version")
+  @Consumes({
+      MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML
+  })
+  public void startEditingCycle(
+    @ApiParam(value = "Release version, e.g. 20150131", required = true) @PathParam("release") String releaseVersion,
+    @ApiParam(value = "Terminology, e.g. SNOMEDCT", required = true) @PathParam("terminology") String terminology,
+    @ApiParam(value = "Terminology version, e.g. latest", required = true) @PathParam("version") String version,
+    @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken) {
+    Logger.getLogger(ContentServiceRestImpl.class).info(
+        "RESTful call (History): /release/startEditingCycle/" + releaseVersion
+            + "/" + terminology + "/" + version);
+    try {
+      authenticate(securityService, authToken, "start editing cycle",
+          UserRole.ADMINISTRATOR);
+      // Perform operations
+      StartEditingCycleAlgorithm algorithm =
+          new StartEditingCycleAlgorithm(releaseVersion, terminology,
+              version);
+      algorithm.compute();
+    } catch (Exception e) {
+      handleException(e, "start editing cycle");
+    }
+  }
 }

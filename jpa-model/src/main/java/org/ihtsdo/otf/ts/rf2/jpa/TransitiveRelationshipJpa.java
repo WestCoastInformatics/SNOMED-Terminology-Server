@@ -4,7 +4,9 @@ import javax.persistence.Entity;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
+import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 
 import org.hibernate.envers.Audited;
 import org.ihtsdo.otf.ts.rf2.Concept;
@@ -61,6 +63,7 @@ public class TransitiveRelationshipJpa extends AbstractComponent implements
    * @see org.ihtsdo.otf.mapping.rf2.TransitiveRelationship#getSubTypeConcept()
    */
   @Override
+  @XmlTransient
   public Concept getSubTypeConcept() {
     return subTypeConcept;
   }
@@ -83,6 +86,7 @@ public class TransitiveRelationshipJpa extends AbstractComponent implements
    * @see
    * org.ihtsdo.otf.mapping.rf2.TransitiveRelationship#getSuperTypeConcept()
    */
+  @XmlTransient
   @Override
   public Concept getSuperTypeConcept() {
     return superTypeConcept;
@@ -99,7 +103,153 @@ public class TransitiveRelationshipJpa extends AbstractComponent implements
   public void setSuperTypeConcept(Concept superTypeConcept) {
     this.superTypeConcept = superTypeConcept;
   }
+  
 
+  /**
+   * For serialization.
+   *
+   * @return the super type concept id
+   */
+  @XmlElement
+  private Long getSuperTypeId() {
+    return (superTypeConcept != null) ? superTypeConcept.getId() : 0;
+  }
+
+  /**
+   * Sets the super type concept id.
+   *
+   * @param superTypeId the super type id
+   */
+  @SuppressWarnings("unused")
+  private void setSuperTypeId(Long superTypeId) {
+    if (superTypeConcept == null) {
+      superTypeConcept = new ConceptJpa();
+    }
+    superTypeConcept.setId(superTypeId);
+  }
+
+  /**
+   * For serialization.
+   *
+   * @return the super type concept terminology id
+   */
+  @XmlElement
+  private String getSuperTypeTerminologyId() {
+    return (superTypeConcept != null) ? superTypeConcept.getTerminologyId()
+        : "";
+  }
+
+  /**
+   * Sets the super type concept id.
+   *
+   * @param superTypeConceptId the super type concept id
+   */
+  @SuppressWarnings("unused")
+  private void setSuperTypeTerminologyId(String superTypeConceptId) {
+    if (superTypeConcept == null) {
+      superTypeConcept = new ConceptJpa();
+    }
+    superTypeConcept.setTerminologyId(superTypeConceptId);
+    superTypeConcept.setTerminology(getTerminology());
+    superTypeConcept.setTerminologyVersion(getTerminologyVersion());
+  }
+
+  /**
+   * Returns the super type concept preferred name. Used for XML/JSON
+   * serialization.
+   * @return the super type concept preferred name
+   */
+  @XmlElement
+  private String getSuperTypePreferredName() {
+    return superTypeConcept != null ? superTypeConcept
+        .getDefaultPreferredName() : "";
+  }
+
+  /**
+   * Sets the super type concept preferred name.
+   *
+   * @param name the super type concept preferred name
+   */
+  @SuppressWarnings("unused")
+  private void setSuperTypePreferredName(String name) {
+    // do nothing - here for JAXB
+  }  
+  
+
+  /**
+   * For serialization.
+   *
+   * @return the sub type concept id
+   */
+  @XmlElement
+  private Long getSubTypeId() {
+    return (subTypeConcept != null) ? subTypeConcept.getId() : 0;
+  }
+
+  /**
+   * Sets the sub type concept id.
+   *
+   * @param subTypeId the sub type id
+   */
+  @SuppressWarnings("unused")
+  private void setSubTypeId(Long subTypeId) {
+    if (subTypeConcept == null) {
+      subTypeConcept = new ConceptJpa();
+    }
+    subTypeConcept.setId(subTypeId);
+  }
+
+  /**
+   * For serialization.
+   *
+   * @return the sub type concept terminology id
+   */
+  @XmlElement
+  private String getSubTypeTerminologyId() {
+    return (subTypeConcept != null) ? subTypeConcept.getTerminologyId()
+        : "";
+  }
+
+  /**
+   * Sets the sub type concept id.
+   *
+   * @param subTypeConceptId the sub type concept id
+   */
+  @SuppressWarnings("unused")
+  private void setSubTypeTerminologyId(String subTypeConceptId) {
+    if (subTypeConcept == null) {
+      subTypeConcept = new ConceptJpa();
+    }
+    subTypeConcept.setTerminologyId(subTypeConceptId);
+    subTypeConcept.setTerminology(getTerminology());
+    subTypeConcept.setTerminologyVersion(getTerminologyVersion());
+  }
+
+  /**
+   * Returns the sub type concept preferred name. Used for XML/JSON
+   * serialization.
+   * @return the sub type concept preferred name
+   */
+  @XmlElement
+  private String getSubTypePreferredName() {
+    return subTypeConcept != null ? subTypeConcept
+        .getDefaultPreferredName() : "";
+  }
+
+  /**
+   * Sets the sub type concept preferred name.
+   *
+   * @param name the sub type concept preferred name
+   */
+  @SuppressWarnings("unused")
+  private void setSubTypePreferredName(String name) {
+    // do nothing - here for JAXB
+  }  
+  
+  
+  /* (non-Javadoc)
+   * @see org.ihtsdo.otf.ts.rf2.jpa.AbstractComponent#hashCode()
+   */
   @Override
   public int hashCode() {
     final int prime = 31;
@@ -113,6 +263,9 @@ public class TransitiveRelationshipJpa extends AbstractComponent implements
     return result;
   }
 
+  /* (non-Javadoc)
+   * @see org.ihtsdo.otf.ts.rf2.jpa.AbstractComponent#equals(java.lang.Object)
+   */
   @Override
   public boolean equals(Object obj) {
     if (this == obj)

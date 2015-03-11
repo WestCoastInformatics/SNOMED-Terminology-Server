@@ -701,13 +701,13 @@ public class ContentChangeClientRest implements ContentChangeServiceRest {
   }
 
   @Override
-  public void startEditingCycle(String terminology, String terminologyVersion,
+  public void startEditingCycle(String terminology, String version,
     String releaseVersion, String authToken) throws Exception {
 
     Client client = Client.create();
     WebResource resource =
         client.resource(config.getProperty("base.url") + "/edit/begin/"
-            + terminology + "/" + terminologyVersion + "/" + releaseVersion);
+            + terminology + "/" + version + "/" + releaseVersion);
     ClientResponse response =
         resource.accept(MediaType.APPLICATION_XML)
             .header("Authorization", authToken).delete(ClientResponse.class);
@@ -716,7 +716,7 @@ public class ContentChangeClientRest implements ContentChangeServiceRest {
 
       StartEditingCycleAlgorithm algorithm =
           new StartEditingCycleAlgorithm(releaseVersion, terminology,
-              terminologyVersion);
+              version);
       algorithm.compute();
     }
 

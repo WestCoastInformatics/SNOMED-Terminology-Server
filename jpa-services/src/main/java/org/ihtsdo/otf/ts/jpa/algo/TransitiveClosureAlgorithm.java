@@ -38,7 +38,7 @@ public class TransitiveClosureAlgorithm extends ContentServiceJpa implements
   private String terminology;
 
   /** The terminology version. */
-  private String terminologyVersion;
+  private String version;
 
   /** The descendants map. */
   private Map<Long, Set<Long>> descendantsMap = new HashMap<>();
@@ -66,10 +66,10 @@ public class TransitiveClosureAlgorithm extends ContentServiceJpa implements
   /**
    * Sets the terminology version.
    *
-   * @param terminologyVersion the terminology version
+   * @param version the terminology version
    */
-  public void setTerminologyVersion(String terminologyVersion) {
-    this.terminologyVersion = terminologyVersion;
+  public void setTerminologyVersion(String version) {
+    this.version = version;
   }
 
   /*
@@ -79,7 +79,7 @@ public class TransitiveClosureAlgorithm extends ContentServiceJpa implements
    */
   @Override
   public void compute() throws Exception {
-    computeTransitiveClosure(terminology, terminologyVersion);
+    computeTransitiveClosure(terminology, version);
   }
 
   /*
@@ -89,18 +89,18 @@ public class TransitiveClosureAlgorithm extends ContentServiceJpa implements
    */
   @Override
   public void reset() throws Exception {
-    clearTransitiveClosure(terminology, terminologyVersion);
+    clearTransitiveClosure(terminology, version);
   }
 
   /**
    * Compute transitive closure.
    *
    * @param terminology the terminology
-   * @param terminologyVersion the terminology version
+   * @param version the terminology version
    * @throws Exception the exception
    */
   private void computeTransitiveClosure(String terminology,
-    String terminologyVersion) throws Exception {
+    String version) throws Exception {
     //
     // Check assumptions/prerequisites
     //
@@ -123,12 +123,12 @@ public class TransitiveClosureAlgorithm extends ContentServiceJpa implements
         "  Initialize relationships ... " + new Date());
 
     String inferredCharType =
-        TerminologyUtility.getInferredType(terminology, terminologyVersion);
+        TerminologyUtility.getInferredType(terminology, version);
     Logger.getLogger(this.getClass()).info("    inferredType = " + inferredCharType);
     
     String isaRel =
         TerminologyUtility
-            .getHierarchcialIsaRels(terminology, terminologyVersion).iterator()
+            .getHierarchcialIsaRels(terminology, version).iterator()
             .next();
     Logger.getLogger(this.getClass()).info("    isaRel = " + isaRel);
 
@@ -140,10 +140,10 @@ public class TransitiveClosureAlgorithm extends ContentServiceJpa implements
             .createQuery(
                 "select r from RelationshipJpa r where active=1 "
                     + "and terminology=:terminology "
-                    + "and terminologyVersion=:terminologyVersion "
+                    + "and version=:version "
                     + "and typeId=:typeId and characteristicTypeId=:characteristicTypeId")
             .setParameter("terminology", terminology)
-            .setParameter("terminologyVersion", terminologyVersion)
+            .setParameter("version", version)
             .setParameter("typeId", isaRel)
             .setParameter("characteristicTypeId", inferredCharType);
 
@@ -172,7 +172,7 @@ public class TransitiveClosureAlgorithm extends ContentServiceJpa implements
     Logger.getLogger(this.getClass()).info(
         "  Initialize concepts ... " + new Date());
     Map<Long, Concept> conceptMap = new HashMap<>();
-    for (Concept concept : getAllConcepts(terminology, terminologyVersion)
+    for (Concept concept : getAllConcepts(terminology, version)
         .getObjects()) {
       conceptMap.put(concept.getId(), concept);
     }
@@ -222,7 +222,7 @@ public class TransitiveClosureAlgorithm extends ContentServiceJpa implements
         tr.setModuleId("");
         tr.setTerminologyId("");
         tr.setTerminology(terminology);
-        tr.setTerminologyVersion(terminologyVersion);
+        tr.setTerminologyVersion(version);
         addTransitiveRelationship(tr);
       }
       if (ct % commitCt == 0) {

@@ -105,7 +105,12 @@ public class DefaultSecurityServiceHandler implements SecurityServiceHandler {
     this.properties = properties;
   }
 
-  public Set<String> getViewerUsersFromConfigFile() {
+  /**
+   * Returns the viewer users from config file.
+   *
+   * @return the viewer users from config file
+   */
+  private Set<String> getViewerUsersFromConfigFile() {
     HashSet<String> userSet = new HashSet<>();
     String userList = properties.getProperty("users.viewer");
 
@@ -122,7 +127,12 @@ public class DefaultSecurityServiceHandler implements SecurityServiceHandler {
     return userSet;
   }
 
-  public Set<String> getAdminUsersFromConfigFile() {
+  /**
+   * Returns the admin users from config file.
+   *
+   * @return the admin users from config file
+   */
+  private Set<String> getAdminUsersFromConfigFile() {
 
     HashSet<String> userSet = new HashSet<>();
     String userList = properties.getProperty("users.admin");

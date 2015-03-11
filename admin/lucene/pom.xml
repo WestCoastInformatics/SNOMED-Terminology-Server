@@ -21,7 +21,7 @@
     <indexed.objects></indexed.objects>
     <server></server>
     <!-- Indicates whether to run against a server (true/false) -->
-    <server></server>
+    <server>false</server>
   </properties>
 
   <profiles>

@@ -635,7 +635,7 @@ public class MetadataServiceJpa extends RootServiceJpa implements
   public List<String> getVersions(String terminology) throws Exception {
     javax.persistence.Query query =
         manager
-            .createQuery("SELECT distinct c.terminologyVersion from ConceptJpa c where terminology = :terminology");
+            .createQuery("SELECT distinct c.version from ConceptJpa c where terminology = :terminology");
 
     query.setParameter("terminology", terminology);
     @SuppressWarnings("unchecked")
@@ -656,7 +656,7 @@ public class MetadataServiceJpa extends RootServiceJpa implements
 
     javax.persistence.Query query =
         manager
-            .createQuery("SELECT max(c.terminologyVersion) from ConceptJpa c where terminology = :terminology");
+            .createQuery("SELECT max(c.version) from ConceptJpa c where terminology = :terminology");
 
     query.setParameter("terminology", terminology);
     Object o = query.getSingleResult();
@@ -680,7 +680,7 @@ public class MetadataServiceJpa extends RootServiceJpa implements
     javax.persistence.TypedQuery<Object[]> query =
         manager
             .createQuery(
-                "SELECT c.terminology, max(c.terminologyVersion) from ConceptJpa c group by c.terminology",
+                "SELECT c.terminology, max(c.version) from ConceptJpa c group by c.terminology",
                 Object[].class);
 
     List<Object[]> resultList = query.getResultList();

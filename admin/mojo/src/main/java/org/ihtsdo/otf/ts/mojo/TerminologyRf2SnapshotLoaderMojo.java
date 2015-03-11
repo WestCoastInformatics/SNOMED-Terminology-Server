@@ -7,7 +7,6 @@ import org.apache.maven.plugin.MojoFailureException;
 import org.ihtsdo.otf.ts.helpers.ConfigUtility;
 import org.ihtsdo.otf.ts.jpa.client.ContentClientRest;
 import org.ihtsdo.otf.ts.jpa.services.SecurityServiceJpa;
-import org.ihtsdo.otf.ts.jpa.services.helper.TomcatServerUtility;
 import org.ihtsdo.otf.ts.rest.impl.ContentServiceRestImpl;
 import org.ihtsdo.otf.ts.services.SecurityService;
 
@@ -34,7 +33,7 @@ public class TerminologyRf2SnapshotLoaderMojo extends AbstractMojo {
    * @parameter
    * @required
    */
-  private String terminologyVersion;
+  private String version;
 
   /**
    * Input directory.
@@ -47,7 +46,7 @@ public class TerminologyRf2SnapshotLoaderMojo extends AbstractMojo {
    * Whether to run this mojo against an active server
    * @parameter
    */
-  private boolean server = true;
+  private boolean server = false;
 
 
   /**
@@ -70,21 +69,21 @@ public class TerminologyRf2SnapshotLoaderMojo extends AbstractMojo {
     try {
       getLog().info("RF2 Snapshot Terminology Loader called via mojo.");
       getLog().info("  Terminology        : " + terminology);
-      getLog().info("  Terminology Version: " + terminologyVersion);
+      getLog().info("  Terminology Version: " + version);
       getLog().info("  Input directory    : " + inputDir);
       getLog().info("  Expect server up   : " + server);
       
       Properties properties = ConfigUtility.getConfigProperties();
 
-      boolean serverRunning = TomcatServerUtility.isActive();
+      boolean serverRunning = ConfigUtility.isServerActive();
       
-      getLog().info("Server status detected:  " + (serverRunning == false ? "DOWN" : "UP"));
+      getLog().info("Server status detected:  " + (!serverRunning ? "DOWN" : "UP"));
 
-      if (serverRunning == true && server == false) {
+      if (serverRunning && !server) {
         throw new MojoFailureException("Mojo expects server to be down, but server is running");
       }
       
-      if (serverRunning == false && server == true) {
+      if (!serverRunning && server) {
         throw new MojoFailureException("Mojo expects server to be running, but server is down");
       }
       
@@ -95,18 +94,18 @@ public class TerminologyRf2SnapshotLoaderMojo extends AbstractMojo {
               properties.getProperty("admin.password"));
       service.close();
 
-      if (serverRunning == false) {
+      if (!serverRunning) {
         getLog().info("Running directly");
         
         ContentServiceRestImpl contentService = new ContentServiceRestImpl();
-        contentService.loadTerminologyRf2Snapshot(terminology, terminologyVersion, inputDir, authToken);
+        contentService.loadTerminologyRf2Snapshot(terminology, version, inputDir, authToken);
 
       } else {
         getLog().info("Running against server");
 
         // invoke the client
         ContentClientRest client = new ContentClientRest(properties);
-        client.loadTerminologyRf2Snapshot(terminology, terminologyVersion, inputDir, authToken);
+        client.loadTerminologyRf2Snapshot(terminology, version, inputDir, authToken);
       }
 
     } catch (Exception e) {

@@ -33,6 +33,7 @@ public class SecurityServiceRestDegenerateUseTest extends
    *
    * @throws Exception the exception
    */
+  @SuppressWarnings("static-method")
   @Before
   public void setup() throws Exception {
 
@@ -51,6 +52,7 @@ public class SecurityServiceRestDegenerateUseTest extends
    * 
    * @throws Exception the exception
    */
+  @SuppressWarnings("static-method")
   @Test
   public void testDegenerateUseRestSecurity001() throws Exception {
 
@@ -89,6 +91,7 @@ public class SecurityServiceRestDegenerateUseTest extends
    *
    * @throws Exception the exception
    */
+  @SuppressWarnings("static-method")
   @Test
   public void testDegenerateUseRestSecurity002() throws Exception {
 
@@ -259,7 +262,7 @@ public class SecurityServiceRestDegenerateUseTest extends
       @Override
       public int compare(User u1, User u2) {
         return u1.getId().compareTo(u2.getId());
-      };
+      }
     }).getId() + 1;
     try {
       service.removeUser(badId, authToken);
@@ -279,7 +282,7 @@ public class SecurityServiceRestDegenerateUseTest extends
     project.setScopeExcludesConcepts(null);
     project.setScopeExcludesDescendantsFlag(true);
     project.setTerminology("terminology");
-    project.setTerminologyVersion("terminologyVersion");
+    project.setTerminologyVersion("version");
     project.setLastModifiedBy("some_user");
 
     user = service.getUser(properties.getProperty("bad.user"), authToken);
@@ -314,6 +317,7 @@ public class SecurityServiceRestDegenerateUseTest extends
    * @throws Exception the exception
    */
   @After
+  @SuppressWarnings("static-method")
   public void teardown() throws Exception {
 
     // before each test, ensure the bad user is removed

@@ -32,11 +32,8 @@ import com.sun.jersey.api.client.Client;
 import com.sun.jersey.api.client.ClientResponse;
 import com.sun.jersey.api.client.WebResource;
 
-// TODO: Auto-generated Javadoc
 /**
  * A client for connecting to a content REST service.
- *
- * @author ${author}
  */
 public class ContentClientRest implements ContentServiceRest {
 
@@ -50,6 +47,41 @@ public class ContentClientRest implements ContentServiceRest {
    */
   public ContentClientRest(Properties config) {
     this.config = config;
+  }
+
+  /* (non-Javadoc)
+   * @see org.ihtsdo.otf.ts.rest.ContentServiceRest#addProject(org.ihtsdo.otf.ts.jpa.ProjectJpa, java.lang.String)
+   */
+  @Override
+  public Project addProject(ProjectJpa project, String authToken)
+    throws Exception {
+    Client client = Client.create();
+    WebResource resource =
+        client
+            .resource(config.getProperty("base.url") + "/content/project/add");
+
+    String projectString =
+        (project != null ? ConfigUtility.getStringForGraph(project) : null);
+    Logger.getLogger(getClass()).debug(projectString);
+    ClientResponse response =
+        resource.accept(MediaType.APPLICATION_XML)
+            .header("Authorization", authToken)
+            .header("Content-type", MediaType.APPLICATION_XML)
+            .put(ClientResponse.class, projectString);
+
+    String resultString = response.getEntity(String.class);
+    if (response.getClientResponseStatus().getFamily() == Family.SUCCESSFUL) {
+      Logger.getLogger(getClass()).debug(resultString);
+    } else {
+      throw new Exception(resultString);
+    }
+
+    // converting to object
+    ProjectJpa result =
+        (ProjectJpa) ConfigUtility.getGraphForString(resultString,
+            ProjectJpa.class);
+
+    return result;
   }
 
   /*
@@ -685,20 +717,24 @@ public class ContentClientRest implements ContentServiceRest {
             ProjectListJpa.class);
     return list;
   }
-  
-  /* (non-Javadoc)
-   * @see org.ihtsdo.otf.ts.rest.ContentChangeServiceRest#luceneReindex(java.lang.String, java.lang.String)
+
+  /*
+   * (non-Javadoc)
+   * 
+   * @see
+   * org.ihtsdo.otf.ts.rest.ContentChangeServiceRest#luceneReindex(java.lang
+   * .String, java.lang.String)
    */
   @Override
-  public void luceneReindex(String indexedObjects, String authToken) throws Exception {
+  public void luceneReindex(String indexedObjects, String authToken)
+    throws Exception {
     Client client = Client.create();
-    
-     WebResource resource =
-        client.resource(config.getProperty("base.url")
-            + "/content/reindex");
+
+    WebResource resource =
+        client.resource(config.getProperty("base.url") + "/content/reindex");
     ClientResponse response =
         resource.accept(MediaType.APPLICATION_XML)
-           .header("Authorization", authToken)
+            .header("Authorization", authToken)
             .header("Content-type", MediaType.TEXT_PLAIN)
             .post(ClientResponse.class, indexedObjects);
 
@@ -711,19 +747,23 @@ public class ContentClientRest implements ContentServiceRest {
 
   }
 
-  /* (non-Javadoc)
-   * @see org.ihtsdo.otf.ts.rest.ContentServiceRest#loadTerminologyRf2Snapshot(java.lang.String, java.lang.String, java.lang.String, java.lang.String)
+  /*
+   * (non-Javadoc)
+   * 
+   * @see
+   * org.ihtsdo.otf.ts.rest.ContentServiceRest#loadTerminologyRf2Snapshot(java
+   * .lang.String, java.lang.String, java.lang.String, java.lang.String)
    */
   @Override
   public void loadTerminologyRf2Snapshot(String terminology,
-    String terminologyVersion, String inputDir, String authToken)
+    String version, String inputDir, String authToken)
     throws Exception {
-    
+
     Client client = Client.create();
     WebResource resource =
         client.resource(config.getProperty("base.url")
-            + "/terminology/load/rf2/snapshot"
-                + terminology + "/" + terminologyVersion);
+            + "/terminology/load/rf2/snapshot" + terminology + "/"
+            + version);
     ClientResponse response =
         resource.accept(MediaType.APPLICATION_XML)
             .header("Authorization", authToken)
@@ -735,22 +775,26 @@ public class ContentClientRest implements ContentServiceRest {
     } else {
       throw new Exception("Unexpected status " + response.getStatus());
     }
-    
+
   }
 
-  /* (non-Javadoc)
-   * @see org.ihtsdo.otf.ts.rest.ContentServiceRest#loadTerminologyRf2Full(java.lang.String, java.lang.String, java.lang.String, java.lang.String)
+  /*
+   * (non-Javadoc)
+   * 
+   * @see
+   * org.ihtsdo.otf.ts.rest.ContentServiceRest#loadTerminologyRf2Full(java.lang
+   * .String, java.lang.String, java.lang.String, java.lang.String)
    */
   @Override
   public void loadTerminologyRf2Full(String terminology,
-    String terminologyVersion, String inputDir, String authToken)
+    String version, String inputDir, String authToken)
     throws Exception {
-    
+
     Client client = Client.create();
     WebResource resource =
         client.resource(config.getProperty("base.url")
-            + "/terminology/load/rf2/full"
-                + terminology + "/" + terminologyVersion);
+            + "/terminology/load/rf2/full" + terminology + "/"
+            + version);
     ClientResponse response =
         resource.accept(MediaType.APPLICATION_XML)
             .header("Authorization", authToken)
@@ -762,21 +806,24 @@ public class ContentClientRest implements ContentServiceRest {
     } else {
       throw new Exception("Unexpected status " + response.getStatus());
     }
-    
+
   }
 
-  /* (non-Javadoc)
-   * @see org.ihtsdo.otf.ts.rest.ContentServiceRest#loadTerminologyRf2Delta(java.lang.String, java.lang.String, java.lang.String, java.lang.String)
+  /*
+   * (non-Javadoc)
+   * 
+   * @see
+   * org.ihtsdo.otf.ts.rest.ContentServiceRest#loadTerminologyRf2Delta(java.
+   * lang.String, java.lang.String, java.lang.String, java.lang.String)
    */
   @Override
-  public void loadTerminologyRf2Delta(String terminology, String inputDir, String authToken)
-    throws Exception {
-    
+  public void loadTerminologyRf2Delta(String terminology, String inputDir,
+    String authToken) throws Exception {
+
     Client client = Client.create();
     WebResource resource =
         client.resource(config.getProperty("base.url")
-            + "/terminology/load/rf2/snapshot"
-                + terminology);
+            + "/terminology/load/rf2/snapshot" + terminology);
     ClientResponse response =
         resource.accept(MediaType.APPLICATION_XML)
             .header("Authorization", authToken)
@@ -788,22 +835,26 @@ public class ContentClientRest implements ContentServiceRest {
     } else {
       throw new Exception("Unexpected status " + response.getStatus());
     }
-    
+
   }
 
-  /* (non-Javadoc)
-   * @see org.ihtsdo.otf.ts.rest.ContentServiceRest#loadTerminologyClaml(java.lang.String, java.lang.String, java.lang.String, java.lang.String)
+  /*
+   * (non-Javadoc)
+   * 
+   * @see
+   * org.ihtsdo.otf.ts.rest.ContentServiceRest#loadTerminologyClaml(java.lang
+   * .String, java.lang.String, java.lang.String, java.lang.String)
    */
   @Override
   public void loadTerminologyClaml(String terminology,
-    String terminologyVersion, String inputFile, String authToken)
+    String version, String inputFile, String authToken)
     throws Exception {
-    
+
     Client client = Client.create();
     WebResource resource =
         client.resource(config.getProperty("base.url")
-            + "/terminology/load/claml/"
-                + terminology + "/" + terminologyVersion);
+            + "/terminology/load/claml/" + terminology + "/"
+            + version);
     ClientResponse response =
         resource.accept(MediaType.APPLICATION_XML)
             .header("Authorization", authToken)
@@ -816,7 +867,6 @@ public class ContentClientRest implements ContentServiceRest {
       throw new Exception("Unexpected status " + response.getStatus());
     }
   }
-
 
   @Override
   public void computeTransitiveClosure(String terminology, String authToken)
@@ -836,14 +886,14 @@ public class ContentClientRest implements ContentServiceRest {
     } else {
       throw new Exception("Unexpected status " + response.getStatus());
     }
-    
+
   }
 
   @Override
-  public void removeTerminology(String terminology, String terminologyVersion,
+  public void removeTerminology(String terminology, String version,
     String authToken) throws Exception {
     // TODO Implement
-    
+
   }
 
 }

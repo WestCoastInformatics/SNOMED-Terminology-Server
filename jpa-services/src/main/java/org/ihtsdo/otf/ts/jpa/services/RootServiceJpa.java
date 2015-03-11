@@ -62,10 +62,6 @@ public class RootServiceJpa implements RootService {
     manager = factory.createEntityManager();
     tx = manager.getTransaction();
   }
-  
-  public static boolean isActive() {
-    return factory.isOpen();
-  }
 
   /*
    * (non-Javadoc)

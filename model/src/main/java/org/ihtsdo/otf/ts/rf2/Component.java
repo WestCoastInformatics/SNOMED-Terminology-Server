@@ -152,9 +152,9 @@ public interface Component {
   /**
    * Sets the terminology version.
    * 
-   * @param terminologyVersion the terminology version
+   * @param version the terminology version
    */
-  public void setTerminologyVersion(String terminologyVersion);
+  public void setTerminologyVersion(String version);
 
   /**
    * Returns the terminology id.

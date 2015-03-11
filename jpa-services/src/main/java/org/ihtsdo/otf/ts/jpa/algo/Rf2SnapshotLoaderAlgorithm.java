@@ -63,7 +63,7 @@ public class Rf2SnapshotLoaderAlgorithm extends ContentServiceJpa implements
   private String terminology;
 
   /** The terminology version. */
-  private String terminologyVersion;
+  private String version;
 
   /** The release version. */
   private String releaseVersion;
@@ -107,10 +107,10 @@ public class Rf2SnapshotLoaderAlgorithm extends ContentServiceJpa implements
   /**
    * Sets the terminology version.
    *
-   * @param terminologyVersion the terminology version
+   * @param version the terminology version
    */
-  public void setTerminologyVersion(String terminologyVersion) {
-    this.terminologyVersion = terminologyVersion;
+  public void setTerminologyVersion(String version) {
+    this.version = version;
   }
 
   /**
@@ -448,7 +448,7 @@ public class Rf2SnapshotLoaderAlgorithm extends ContentServiceJpa implements
         concept.setModuleId(fields[3]);
         concept.setDefinitionStatusId(fields[4]);
         concept.setTerminology(terminology);
-        concept.setTerminologyVersion(terminologyVersion);
+        concept.setTerminologyVersion(version);
         concept.setDefaultPreferredName("null");
         concept.setLastModifiedBy("loader");
         concept.setWorkflowStatus("PUBLISHED");
@@ -515,7 +515,7 @@ public class Rf2SnapshotLoaderAlgorithm extends ContentServiceJpa implements
         relationship.setTypeId(fields[7]); // typeId
         relationship.setCharacteristicTypeId(fields[8]); // characteristicTypeId
         relationship.setTerminology(terminology);
-        relationship.setTerminologyVersion(terminologyVersion);
+        relationship.setTerminologyVersion(version);
         relationship.setModifierId(fields[9]);
         relationship.setLastModifiedBy("loader");
 
@@ -736,7 +736,7 @@ public class Rf2SnapshotLoaderAlgorithm extends ContentServiceJpa implements
         description.setTerm(fields[7]);
         description.setCaseSignificanceId(fields[8]);
         description.setTerminology(terminology);
-        description.setTerminologyVersion(terminologyVersion);
+        description.setTerminologyVersion(version);
         description.setLastModifiedBy("loader");
 
         // set concept from cache
@@ -804,7 +804,7 @@ public class Rf2SnapshotLoaderAlgorithm extends ContentServiceJpa implements
 
         // Terminology attributes
         member.setTerminology(terminology);
-        member.setTerminologyVersion(terminologyVersion);
+        member.setTerminologyVersion(version);
         member.setLastModifiedBy("loader");
 
         // Set a dummy description with terminology id only
@@ -892,7 +892,7 @@ public class Rf2SnapshotLoaderAlgorithm extends ContentServiceJpa implements
 
         // Terminology attributes
         member.setTerminology(terminology);
-        member.setTerminologyVersion(terminologyVersion);
+        member.setTerminologyVersion(version);
         member.setLastModifiedBy("loader");
 
         contentService.addAttributeValueRefSetMember(member);
@@ -976,7 +976,7 @@ public class Rf2SnapshotLoaderAlgorithm extends ContentServiceJpa implements
 
         // Terminology attributes
         member.setTerminology(terminology);
-        member.setTerminologyVersion(terminologyVersion);
+        member.setTerminologyVersion(version);
         member.setLastModifiedBy("loader");
 
         contentService.addAssociationReferenceRefSetMember(member);
@@ -1047,7 +1047,7 @@ public class Rf2SnapshotLoaderAlgorithm extends ContentServiceJpa implements
 
         // Terminology attributes
         member.setTerminology(terminology);
-        member.setTerminologyVersion(terminologyVersion);
+        member.setTerminologyVersion(version);
         member.setLastModifiedBy("loader");
 
         // Retrieve Concept -- firstToken is referencedComonentId
@@ -1120,7 +1120,7 @@ public class Rf2SnapshotLoaderAlgorithm extends ContentServiceJpa implements
 
         // Terminology attributes
         member.setTerminology(terminology);
-        member.setTerminologyVersion(terminologyVersion);
+        member.setTerminologyVersion(version);
         member.setLastModifiedBy("loader");
 
         // Retrieve concept -- firstToken is referencedComponentId
@@ -1203,7 +1203,7 @@ public class Rf2SnapshotLoaderAlgorithm extends ContentServiceJpa implements
 
         // Terminology attributes
         member.setTerminology(terminology);
-        member.setTerminologyVersion(terminologyVersion);
+        member.setTerminologyVersion(version);
         member.setLastModifiedBy("loader");
 
         // set Concept
@@ -1288,7 +1288,7 @@ public class Rf2SnapshotLoaderAlgorithm extends ContentServiceJpa implements
 
         // Terminology attributes
         member.setTerminology(terminology);
-        member.setTerminologyVersion(terminologyVersion);
+        member.setTerminologyVersion(version);
         member.setLastModifiedBy("loader");
 
         // set Concept
@@ -1373,7 +1373,7 @@ public class Rf2SnapshotLoaderAlgorithm extends ContentServiceJpa implements
 
         // Terminology attributes
         member.setTerminology(terminology);
-        member.setTerminologyVersion(terminologyVersion);
+        member.setTerminologyVersion(version);
         member.setLastModifiedBy("loader");
 
         // set Concept
@@ -1458,7 +1458,7 @@ public class Rf2SnapshotLoaderAlgorithm extends ContentServiceJpa implements
 
         // Terminology attributes
         member.setTerminology(terminology);
-        member.setTerminologyVersion(terminologyVersion);
+        member.setTerminologyVersion(version);
         member.setLastModifiedBy("loader");
 
         // set Concept
@@ -1541,7 +1541,7 @@ public class Rf2SnapshotLoaderAlgorithm extends ContentServiceJpa implements
 
         // Terminology attributes
         member.setTerminology(terminology);
-        member.setTerminologyVersion(terminologyVersion);
+        member.setTerminologyVersion(version);
         member.setLastModifiedBy("loader");
 
         // set Concept

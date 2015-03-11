@@ -20,7 +20,7 @@ public class SecurityServiceRestEdgeCasesTest extends SecurityServiceRestTest {
    */
   @Before
   public void setup() throws Exception {
-
+    // do nothing
   }
 
   /**
@@ -28,6 +28,7 @@ public class SecurityServiceRestEdgeCasesTest extends SecurityServiceRestTest {
    * 
    * @throws Exception the exception
    */
+  @SuppressWarnings("static-method")
   @Test
   public void testEdgeCasesRestSecurity001() throws Exception {
 
@@ -51,6 +52,7 @@ public class SecurityServiceRestEdgeCasesTest extends SecurityServiceRestTest {
    *
    * @throws Exception the exception
    */
+  @SuppressWarnings("static-method")
   @Test
   public void testEdgeCasesRestSecurity003() throws Exception {
 

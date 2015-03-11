@@ -79,7 +79,7 @@ public class ProjectJpa implements Project {
 
   /** The terminology version. */
   @Column(nullable = false)
-  private String terminologyVersion;
+  private String version;
 
   /** The leads. */
   @ManyToMany(targetEntity = UserJpa.class, fetch = FetchType.LAZY)
@@ -149,7 +149,7 @@ public class ProjectJpa implements Project {
     isPublic = project.isPublic();
     moduleId = project.getModuleId();
     terminology = project.getTerminology();
-    terminologyVersion = project.getTerminologyVersion();
+    version = project.getTerminologyVersion();
     leads = new HashSet<>(project.getLeads());
     authors = new HashSet<>(project.getAuthors());
     administrators = new HashSet<>(project.getAdministrators());
@@ -233,7 +233,7 @@ public class ProjectJpa implements Project {
    * @see org.ihtsdo.otf.ts.Project#getLeads()
    */
   @Override
-  @XmlElement(type = UserJpa.class, name = ".lead")
+  @XmlElement(type = UserJpa.class, name = "lead")
   public Set<User> getLeads() {
     return leads;
   }
@@ -335,7 +335,7 @@ public class ProjectJpa implements Project {
    * @see org.ihtsdo.otf.ts.Project#getTerminology()
    */
   @Override
-  @Field(index = Index.YES, analyze = Analyze.YES, store = Store.NO)
+  @Field(index = Index.YES, analyze = Analyze.NO, store = Store.NO)
   public String getTerminology() {
     return terminology;
   }
@@ -354,15 +354,15 @@ public class ProjectJpa implements Project {
   @Override
   @Field(index = Index.YES, analyze = Analyze.NO, store = Store.NO)
   public String getTerminologyVersion() {
-    return terminologyVersion;
+    return version;
   }
 
   /* (non-Javadoc)
    * @see org.ihtsdo.otf.ts.Project#setTerminologyVersion(java.lang.String)
    */
   @Override
-  public void setTerminologyVersion(String terminologyVersion) {
-    this.terminologyVersion = terminologyVersion;
+  public void setTerminologyVersion(String version) {
+    this.version = version;
   }
 
   /* (non-Javadoc)
@@ -587,7 +587,7 @@ public class ProjectJpa implements Project {
     result =
         prime
             * result
-            + ((terminologyVersion == null) ? 0 : terminologyVersion.hashCode());
+            + ((version == null) ? 0 : version.hashCode());
     return result;
   }
 
@@ -632,10 +632,10 @@ public class ProjectJpa implements Project {
         return false;
     } else if (!terminology.equals(other.terminology))
       return false;
-    if (terminologyVersion == null) {
-      if (other.terminologyVersion != null)
+    if (version == null) {
+      if (other.version != null)
         return false;
-    } else if (!terminologyVersion.equals(other.terminologyVersion))
+    } else if (!version.equals(other.version))
       return false;
     return true;
   }

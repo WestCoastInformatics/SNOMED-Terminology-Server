@@ -8,6 +8,7 @@ import org.ihtsdo.otf.ts.helpers.EqualsHashcodeTester;
 import org.ihtsdo.otf.ts.helpers.GetterSetterTester;
 import org.ihtsdo.otf.ts.helpers.SearchCriteria;
 import org.ihtsdo.otf.ts.helpers.SearchCriteriaJpa;
+import org.ihtsdo.otf.ts.helpers.XmlSerializationTester;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -45,7 +46,7 @@ public class ModelUnit006Test {
    */
   @Test
   public void testModelGetSet006() throws Exception {
-    Logger.getLogger(getClass()).info("TEST testModelGetSet006");
+    Logger.getLogger(getClass()).debug("TEST testModelGetSet006");
     GetterSetterTester tester = new GetterSetterTester(object);
     tester.exclude("objectId");
     tester.test();
@@ -58,7 +59,7 @@ public class ModelUnit006Test {
    */
   @Test
   public void testModelEqualsHashcode006() throws Exception {
-    Logger.getLogger(getClass()).info("TEST testModelEqualsHashcode006");
+    Logger.getLogger(getClass()).debug("TEST testModelEqualsHashcode006");
     EqualsHashcodeTester tester = new EqualsHashcodeTester(object);
     tester.include("findActiveOnly");
     tester.include("findDefinedOnly");
@@ -87,9 +88,21 @@ public class ModelUnit006Test {
    */
   @Test
   public void testModelCopy006() throws Exception {
-    Logger.getLogger(getClass()).info("TEST testModelCopy006");
+    Logger.getLogger(getClass()).debug("TEST testModelCopy006");
     CopyConstructorTester tester = new CopyConstructorTester(object);
     assertTrue(tester.testCopyConstructor(SearchCriteria.class));
+  }
+
+  /**
+   * Test XML serialization.
+   *
+   * @throws Exception the exception
+   */
+  @Test
+  public void testModelXmlSerialization006() throws Exception {
+    Logger.getLogger(getClass()).debug("TEST testModelXmlTransient006");
+    XmlSerializationTester tester = new XmlSerializationTester(object);
+    assertTrue(tester.testXmlSerialization());
   }
 
   /**

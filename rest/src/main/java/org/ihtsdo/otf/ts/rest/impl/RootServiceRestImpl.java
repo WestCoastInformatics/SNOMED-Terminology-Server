@@ -97,7 +97,7 @@ public class RootServiceRestImpl {
    * @return the total elapsed time str
    */
   @SuppressWarnings({
-      "boxing", "unused"
+    "boxing"
   })
   protected static String getTotalElapsedTimeStr(long time) {
     Long resultnum = (System.nanoTime() - time) / 1000000000;

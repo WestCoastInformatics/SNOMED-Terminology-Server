@@ -22,6 +22,7 @@ public class ReleaseRf2FinishMojo extends AbstractMojo {
    * The terminology
    * @parameter terminology
    */
+  @SuppressWarnings("unused")
   private String terminology = null;
   
   /**

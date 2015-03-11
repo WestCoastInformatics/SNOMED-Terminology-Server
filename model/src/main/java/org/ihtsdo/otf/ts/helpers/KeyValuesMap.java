@@ -3,7 +3,6 @@ package org.ihtsdo.otf.ts.helpers;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
-import java.util.Set;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
@@ -14,7 +13,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 public class KeyValuesMap {
 
   /** The map. */
-  private Map<String,Set<String>> map;
+  private Map<String, HashSet<String>> map;
 
   /**
    * Instantiates an empty {@link KeyValuesMap}.
@@ -37,7 +36,7 @@ public class KeyValuesMap {
    *
    * @return the map
    */
-  public Map<String, Set<String>> getMap() {
+  public Map<String, HashSet<String>> getMap() {
     return map;
   }
 
@@ -46,7 +45,7 @@ public class KeyValuesMap {
    *
    * @param map the map
    */
-  public void setMap(Map<String, Set<String>> map) {
+  public void setMap(Map<String, HashSet<String>> map) {
     this.map = map;
   }
 
@@ -58,10 +57,44 @@ public class KeyValuesMap {
    */
   public void put(String key, String value) {
     if (!map.containsKey(key)) {
-      Set<String> values = new HashSet<>();
+      HashSet<String> values = new HashSet<>();
       map.put(key, values);
     }
     map.get(key).add(value);
   }
 
+  /*
+   * (non-Javadoc)
+   * 
+   * @see java.lang.Object#hashCode()
+   */
+  @Override
+  public int hashCode() {
+    final int prime = 31;
+    int result = 1;
+    result = prime * result + ((map == null) ? 0 : map.hashCode());
+    return result;
+  }
+
+  /*
+   * (non-Javadoc)
+   * 
+   * @see java.lang.Object#equals(java.lang.Object)
+   */
+  @Override
+  public boolean equals(Object obj) {
+    if (this == obj)
+      return true;
+    if (obj == null)
+      return false;
+    if (getClass() != obj.getClass())
+      return false;
+    KeyValuesMap other = (KeyValuesMap) obj;
+    if (map == null) {
+      if (other.map != null)
+        return false;
+    } else if (!map.equals(other.map))
+      return false;
+    return true;
+  }
 }

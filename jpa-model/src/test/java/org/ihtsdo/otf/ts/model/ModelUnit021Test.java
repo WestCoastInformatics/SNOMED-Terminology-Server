@@ -7,6 +7,7 @@ import org.ihtsdo.otf.ts.helpers.ConfigUtility;
 import org.ihtsdo.otf.ts.helpers.CopyConstructorTester;
 import org.ihtsdo.otf.ts.helpers.EqualsHashcodeTester;
 import org.ihtsdo.otf.ts.helpers.GetterSetterTester;
+import org.ihtsdo.otf.ts.helpers.XmlSerializationTester;
 import org.ihtsdo.otf.ts.rf2.Concept;
 import org.ihtsdo.otf.ts.rf2.SimpleRefSetMember;
 import org.ihtsdo.otf.ts.rf2.jpa.ConceptJpa;
@@ -62,7 +63,7 @@ public class ModelUnit021Test {
    */
   @Test
   public void testModelGetSet021() throws Exception {
-    Logger.getLogger(getClass()).info("TEST testModelGetSet009");
+    Logger.getLogger(getClass()).debug("TEST testModelGetSet009");
     GetterSetterTester tester = new GetterSetterTester(object);
     tester.exclude("objectId");
     tester.test();
@@ -75,7 +76,7 @@ public class ModelUnit021Test {
    */
   @Test
   public void testModelEqualsHashcode021() throws Exception {
-    Logger.getLogger(getClass()).info("TEST testModelEqualsHashcode021");
+    Logger.getLogger(getClass()).debug("TEST testModelEqualsHashcode021");
     EqualsHashcodeTester tester = new EqualsHashcodeTester(object);
     tester.include("active");
     tester.include("moduleId");
@@ -106,7 +107,7 @@ public class ModelUnit021Test {
    */
   @Test
   public void testModelCopy021() throws Exception {
-    Logger.getLogger(getClass()).info("TEST testModelCopy009");
+    Logger.getLogger(getClass()).debug("TEST testModelCopy009");
     CopyConstructorTester tester = new CopyConstructorTester(object);
 
     // Set up some objects
@@ -117,19 +118,38 @@ public class ModelUnit021Test {
   }
 
   /**
+   * Test XML serialization.
+   *
+   * @throws Exception the exception
+   */
+  @Test
+  public void testModelXmlSerialization021() throws Exception {
+    Logger.getLogger(getClass()).debug("TEST testModelXmlTransient021");
+    XmlSerializationTester tester = new XmlSerializationTester(object);
+
+    // Set up some objects
+    Concept c = new ConceptJpa();
+    c.setId(1L);
+    c.setTerminology("1");
+    c.setTerminologyId("1");
+    c.setTerminologyVersion("1");
+    c.setDefaultPreferredName("1");
+    tester.proxy(Concept.class, 1, c);
+
+    assertTrue(tester.testXmlSerialization());
+  }
+
+  /**
    * Test concept reference in XML serialization.
    *
    * @throws Exception the exception
    */
   @Test
-  public void testXmlTransient021() throws Exception {
-    Logger.getLogger(getClass()).info("TEST testXmlTransient021");
+  public void testModelXmlTransient021() throws Exception {
+    Logger.getLogger(getClass()).debug("TEST testModelXmlTransient021");
     Concept c = new ConceptJpa();
     c.setId(1L);
     c.setTerminologyId("1");
-    // Definition status id is not persisted by the refset member
-    // so it can't be reconstructed, but is part of the equals computation
-    // c.setDefinitionStatusId("1");
     c.setDefaultPreferredName("1");
     SimpleRefSetMember member = new SimpleRefSetMemberJpa();
     member.setId(1L);
@@ -140,10 +160,6 @@ public class ModelUnit021Test {
     assertTrue(xml.contains("<conceptId>"));
     assertTrue(xml.contains("<conceptTerminologyId>"));
     assertTrue(xml.contains("<conceptPreferredName>"));
-    SimpleRefSetMember member2 =
-        (SimpleRefSetMember) ConfigUtility.getGraphForString(xml,
-            SimpleRefSetMemberJpa.class);
-    assertTrue(member.equals(member2));
   }
 
   /**
