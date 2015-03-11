@@ -21,6 +21,7 @@ import org.ihtsdo.otf.ts.helpers.UserList;
 import org.ihtsdo.otf.ts.jpa.UserJpa;
 import org.ihtsdo.otf.ts.jpa.services.SecurityServiceJpa;
 import org.ihtsdo.otf.ts.rest.SecurityServiceRest;
+import org.ihtsdo.otf.ts.rest.todo.ContentChangeServiceRestImpl;
 import org.ihtsdo.otf.ts.services.SecurityService;
 
 import com.wordnik.swagger.annotations.Api;

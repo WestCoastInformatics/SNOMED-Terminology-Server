@@ -1,4 +1,4 @@
-package org.ihtsdo.otf.ts.rest.impl;
+package org.ihtsdo.otf.ts.rest.todo;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.HeaderParam;
@@ -18,6 +18,8 @@ import org.ihtsdo.otf.ts.jpa.ProjectJpa;
 import org.ihtsdo.otf.ts.jpa.services.ActionServiceJpa;
 import org.ihtsdo.otf.ts.jpa.services.SecurityServiceJpa;
 import org.ihtsdo.otf.ts.rest.ActionServiceRest;
+import org.ihtsdo.otf.ts.rest.impl.ContentServiceRestImpl;
+import org.ihtsdo.otf.ts.rest.impl.RootServiceRestImpl;
 import org.ihtsdo.otf.ts.services.ActionService;
 import org.ihtsdo.otf.ts.services.SecurityService;
 

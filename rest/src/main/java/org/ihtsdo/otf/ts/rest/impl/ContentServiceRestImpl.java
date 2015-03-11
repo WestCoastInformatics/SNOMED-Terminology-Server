@@ -42,6 +42,7 @@ import org.ihtsdo.otf.ts.jpa.services.MetadataServiceJpa;
 import org.ihtsdo.otf.ts.jpa.services.SecurityServiceJpa;
 import org.ihtsdo.otf.ts.jpa.services.helper.TerminologyUtility;
 import org.ihtsdo.otf.ts.rest.ContentServiceRest;
+import org.ihtsdo.otf.ts.rest.todo.ContentChangeServiceRestImpl;
 import org.ihtsdo.otf.ts.rf2.AssociationReferenceConceptRefSetMember;
 import org.ihtsdo.otf.ts.rf2.Concept;
 import org.ihtsdo.otf.ts.rf2.Description;

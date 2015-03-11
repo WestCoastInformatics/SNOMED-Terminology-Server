@@ -1,4 +1,4 @@
-package org.ihtsdo.otf.ts.rest.impl;
+package org.ihtsdo.otf.ts.rest.todo;
 
 import javax.ws.rs.HeaderParam;
 import javax.ws.rs.POST;
@@ -14,6 +14,7 @@ import org.ihtsdo.otf.ts.jpa.services.SecurityServiceJpa;
 import org.ihtsdo.otf.ts.jpa.services.ValidationServiceJpa;
 import org.ihtsdo.otf.ts.jpa.services.helper.TerminologyUtility;
 import org.ihtsdo.otf.ts.rest.ValidationServiceRest;
+import org.ihtsdo.otf.ts.rest.impl.RootServiceRestImpl;
 import org.ihtsdo.otf.ts.rf2.jpa.ConceptJpa;
 import org.ihtsdo.otf.ts.services.SecurityService;
 import org.ihtsdo.otf.ts.services.ValidationService;
