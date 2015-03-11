@@ -24,7 +24,17 @@ public class KeyValuePairList {
   public KeyValuePairList() {
     // do nothing
   }
-
+  
+  /**
+   * Instantiates a {@link KeyValuePairList} from the specified parameters.
+   *
+   * @param list the list
+   */
+  public KeyValuePairList(KeyValuePairList list) {
+    name = list.getName();
+    keyValuePairList = list.getKeyValuePairList();
+  }
+  
   /**
    * Returns the key value pair list.
    * 

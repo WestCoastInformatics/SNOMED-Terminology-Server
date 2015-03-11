@@ -6,9 +6,11 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
@@ -218,6 +220,10 @@ public class ProxyTester {
       e.printStackTrace();
       throw new RuntimeException("Setter " + set.getDeclaringClass().getName()
           + "." + set.getName() + " threw " + e.getTargetException().toString());
+    } catch (IllegalArgumentException e) {
+      System.out.println("o="+o.getClass().getName());
+      System.out.println("proxy="+proxy.getClass().getName());
+      throw e;
     }
   }
 
@@ -262,6 +268,10 @@ public class ProxyTester {
     if (type == Set.class) {
       Set set = new HashSet();
       return set;
+    }
+    if (type == List.class) {
+      List list = new ArrayList();
+      return list;
     }
     if (type == BigInteger.class)
       return new BigInteger("" + initializer);

@@ -11,27 +11,39 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlRootElement
 public class PfsParameterJpa implements PfsParameter {
 
-  /**  The maximum number of results. */
+  /** The maximum number of results. */
   private int maxResults = -1;
 
-  /**  The start index for queries. */
+  /** The start index for queries. */
   private int startIndex = -1;
 
-  /**  The filter string. */
+  /** The filter string. */
   private String queryRestriction = null;
 
-  /**  The comparator for sorting. */
+  /** The comparator for sorting. */
   private String sortField = null;
-  
-  /**  The ascending flag. */
+
+  /** The ascending flag. */
   private boolean ascending = true;
 
-
   /**
-   *  The default constructor.
+   * The default constructor.
    */
   public PfsParameterJpa() {
     // do nothing
+  }
+
+  /**
+   * Instantiates a {@link PfsParameterJpa} from the specified parameters.
+   *
+   * @param pfs the pfs
+   */
+  public PfsParameterJpa(PfsParameter pfs) {
+    maxResults = pfs.getMaxResults();
+    startIndex = pfs.getStartIndex();
+    queryRestriction = pfs.getQueryRestriction();
+    sortField = pfs.getSortField();
+    ascending = pfs.isAscending();
   }
 
   /**
@@ -94,7 +106,6 @@ public class PfsParameterJpa implements PfsParameter {
     this.queryRestriction = queryRestriction;
   }
 
-
   /**
    * Indicates whether or not sort is in ascending order
    *
@@ -114,7 +125,7 @@ public class PfsParameterJpa implements PfsParameter {
   public void setAscending(boolean ascending) {
     this.ascending = ascending;
   }
-  
+
   @Override
   public int hashCode() {
     final int prime = 31;

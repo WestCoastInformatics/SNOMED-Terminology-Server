@@ -10,15 +10,15 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 /**
- * Unit testing for {@link ConfigUtility}.
+ * Unit testing for {@link LocalException}.
  */
-public class HelperUnit002Test {
+public class HelperUnit006Test {
 
   /** The helper object to test. */
-  private CancelException object;
+  private LocalException object;
 
   /** The helper object to test. */
-  private CancelException object2;
+  private LocalException object2;
 
   /**
    * Setup class.
@@ -33,9 +33,9 @@ public class HelperUnit002Test {
    */
   @Before
   public void setup() {
-    object = new CancelException("test");
+    object = new LocalException("test");
     Exception e = new Exception("inner");
-    object2 = new CancelException("test2", e);
+    object2 = new LocalException("test2", e);
   }
 
   /**
@@ -44,8 +44,8 @@ public class HelperUnit002Test {
    * @throws Exception the exception
    */
   @Test
-  public void testHelperNormalUse002() throws Exception {
-    Logger.getLogger(getClass()).info("TEST testHelperNormalUse002");
+  public void testHelperNormalUse006() throws Exception {
+    Logger.getLogger(getClass()).info("TEST testHelperNormalUse006");
     assertTrue(object.getMessage().equals("test"));
     assertTrue(object2.getMessage().equals("test2"));
     assertTrue(object2.getCause() != null);
@@ -58,9 +58,8 @@ public class HelperUnit002Test {
    * @throws Exception the exception
    */
   @Test
-  public void testHelperDegenerateUse002() throws Exception {
-    Logger.getLogger(getClass()).info("TEST testHelperDegenerateUse002");
-
+  public void testHelperDegenerateUse006() throws Exception {
+    // n/a
   }
 
   /**
@@ -69,9 +68,8 @@ public class HelperUnit002Test {
    * @throws Exception the exception
    */
   @Test
-  public void testHelperEdgeCases002() throws Exception {
-    Logger.getLogger(getClass()).info("TEST testHelperEdgeCases002");
-
+  public void testHelperEdgeCases006() throws Exception {
+    // n/a
   }
 
   /**
