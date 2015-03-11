@@ -68,7 +68,7 @@ echo "    Start SNOMEDCT editing ...`/bin/date`"
 cd $SERVER_HOME/admin/release
 mvn install -PStartEditingCycle -Drun.config=$SERVER_CONFIG \
   -Drelease.version=20150131 -Dterminology=SNOMEDCT \
-  -Dterminology.version=latest >&! mvn.log
+  -Dversion=latest >&! mvn.log
 if ($status != 0) then
     echo "ERROR starting editing for SNOMEDCT"
     cat mvn.log
@@ -79,7 +79,7 @@ echo "    Start ICD9CM editing ...`/bin/date`"
 cd $SERVER_HOME/admin/release
 mvn install -PStartEditingCycle -Drun.config=$SERVER_CONFIG \
   -Drelease.version=20150101 -Dterminology=ICD9CM \
-  -Dterminology.version=2013 >&! mvn.log
+  -Dversion=2013 >&! mvn.log
 if ($status != 0) then
     echo "ERROR starting editing for ICD9CM"
     cat mvn.log
