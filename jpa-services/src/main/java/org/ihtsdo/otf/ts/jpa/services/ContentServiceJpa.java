@@ -104,13 +104,16 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
   /** The listeners enabled. */
   private boolean listenersEnabled = true;
 
+  /** The config properties */
+  private static Properties config = null;
+
   /** The listener. */
   private static List<WorkflowListener> listeners = null;
   static {
     listeners = new ArrayList<>();
-    Properties config;
     try {
-      config = ConfigUtility.getConfigProperties();
+      if (config == null)
+        config = ConfigUtility.getConfigProperties();
       String key = "workflow.listener.handler";
       for (String handlerName : config.getProperty(key).split(",")) {
         if (handlerName.isEmpty())
@@ -130,9 +133,10 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
   /** The graph resolver. */
   public static GraphResolutionHandler graphResolver = null;
   static {
-    Properties config;
+
     try {
-      config = ConfigUtility.getConfigProperties();
+      if (config == null)
+        config = ConfigUtility.getConfigProperties();
       String key = "graph.resolution.handler";
       String handlerName = config.getProperty(key);
       if (handlerName == null || handlerName.isEmpty()) {
@@ -154,9 +158,10 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
   public static Map<String, IdentifierAssignmentHandler> idHandlerMap =
       new HashMap<>();
   static {
-    Properties config;
+
     try {
-      config = ConfigUtility.getConfigProperties();
+      if (config == null)
+        config = ConfigUtility.getConfigProperties();
       String key = "identifier.assignment.handler";
       for (String handlerName : config.getProperty(key).split(",")) {
         if (handlerName.isEmpty())
@@ -177,7 +182,7 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
   private static Map<String, ComputePreferredNameHandler> pnHandlerMap = null;
   static {
     pnHandlerMap = new HashMap<>();
-    Properties config;
+
     try {
       config = ConfigUtility.getConfigProperties();
       String key = "compute.preferred.name.handler";
@@ -219,13 +224,15 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
           "Identifier assignment handler did not properly initialize, serious error.");
     }
 
-    if (pnHandlerMap == null) {
-      throw new Exception(
-          "Identifier compute preferred name handler did not properly initialize, serious error.");
-    }
-    if (plannedEffectiveTime == null) {
-      //plannedEffectiveTime = getPlannedEffectiveTime();
-    }
+    /*
+     * if (pnHandlerMap == null) { throw new Exception(
+     * "Identifier compute preferred name handler did not properly initialize, serious error."
+     * ); }
+     */
+    // if (plannedEffectiveTime == null) {
+    // plannedEffectiveTime = getPlannedEffectiveTime();
+    // }
+  }
 
   /** The last modified flag. */
   private boolean lastModifiedFlag = false;
@@ -304,7 +311,7 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
         fullTextEntityManager
             .createFullTextQuery(luceneQuery, ConceptJpa.class);
     results.setTotalCount(fullTextQuery.getResultSize());
-    
+
     // Apply paging and sorting parameters
     applyPfsToLuceneQuery(ConceptJpa.class, fullTextQuery, pfs);
 
@@ -2674,7 +2681,7 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
     Logger.getLogger(ContentServiceJpa.class).info(
         "Content Service - find concepts " + terminology + "/" + version + "/"
             + searchString);
-    
+
     if (pfs != null) {
       Logger.getLogger(ContentServiceJpa.class).info(
           "  pfs = " + pfs.toString());
@@ -3259,7 +3266,7 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
     Method m =
         clazz.getMethod("get" + sortField.substring(0, 1).toUpperCase()
             + sortField.substring(1), new Class<?>[] {});
-    
+
     Set<org.hibernate.search.annotations.Field> annotationFields =
         new HashSet<>();
 
@@ -3277,13 +3284,13 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
         annotationFields.add(f);
       }
     }
-    
+
     // cycle over discovered fields and put name and analyze == YES into map
     for (org.hibernate.search.annotations.Field f : annotationFields) {
       nameAnalyzedPairs.put(f.name(), f.analyze().equals(Analyze.YES) ? true
           : false);
     }
-    
+
     return nameAnalyzedPairs;
   }
 
@@ -3330,7 +3337,7 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
           }
         };
       } else {
-     // make comparator
+        // make comparator
         return new Comparator<T>() {
           @Override
           public int compare(T o2, T o1) {
