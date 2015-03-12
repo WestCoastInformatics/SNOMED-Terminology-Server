@@ -84,9 +84,11 @@ public class ModelUnit008Test {
     // Set up some objects
     Concept c1 = new ConceptJpa();
     c1.setDefinitionStatusId("1");
+    c1.setTerminologyId("1");
     c1.setId(1L);
     Concept c2 = new ConceptJpa();
     c2.setId(2L);
+    c2.setTerminologyId("2");
     c2.setDefinitionStatusId("2");
     tester.proxy(Concept.class, 1, c1);
     tester.proxy(Concept.class, 2, c2);
@@ -112,9 +114,11 @@ public class ModelUnit008Test {
     // Set up some objects
     Concept c1 = new ConceptJpa();
     c1.setDefinitionStatusId("1");
+    c1.setTerminologyId("1");
     c1.setId(1L);
     Concept c2 = new ConceptJpa();
     c2.setId(2L);
+    c2.setTerminologyId("2");
     c2.setDefinitionStatusId("2");
     tester.proxy(Concept.class, 1, c1);
     tester.proxy(Concept.class, 2, c2);

@@ -103,7 +103,6 @@ public class TransitiveRelationshipJpa extends AbstractComponent implements
   public void setSuperTypeConcept(Concept superTypeConcept) {
     this.superTypeConcept = superTypeConcept;
   }
-  
 
   /**
    * For serialization.
@@ -173,8 +172,7 @@ public class TransitiveRelationshipJpa extends AbstractComponent implements
   @SuppressWarnings("unused")
   private void setSuperTypePreferredName(String name) {
     // do nothing - here for JAXB
-  }  
-  
+  }
 
   /**
    * For serialization.
@@ -206,8 +204,7 @@ public class TransitiveRelationshipJpa extends AbstractComponent implements
    */
   @XmlElement
   private String getSubTypeTerminologyId() {
-    return (subTypeConcept != null) ? subTypeConcept.getTerminologyId()
-        : "";
+    return (subTypeConcept != null) ? subTypeConcept.getTerminologyId() : "";
   }
 
   /**
@@ -232,8 +229,8 @@ public class TransitiveRelationshipJpa extends AbstractComponent implements
    */
   @XmlElement
   private String getSubTypePreferredName() {
-    return subTypeConcept != null ? subTypeConcept
-        .getDefaultPreferredName() : "";
+    return subTypeConcept != null ? subTypeConcept.getDefaultPreferredName()
+        : "";
   }
 
   /**
@@ -244,10 +241,11 @@ public class TransitiveRelationshipJpa extends AbstractComponent implements
   @SuppressWarnings("unused")
   private void setSubTypePreferredName(String name) {
     // do nothing - here for JAXB
-  }  
-  
-  
-  /* (non-Javadoc)
+  }
+
+  /*
+   * (non-Javadoc)
+   * 
    * @see org.ihtsdo.otf.ts.rf2.jpa.AbstractComponent#hashCode()
    */
   @Override
@@ -255,15 +253,21 @@ public class TransitiveRelationshipJpa extends AbstractComponent implements
     final int prime = 31;
     int result = super.hashCode();
     result =
-        prime * result
-            + ((subTypeConcept == null) ? 0 : subTypeConcept.hashCode());
+        prime
+            * result
+            + ((subTypeConcept == null || subTypeConcept.getTerminologyId() == null) ? 0 : subTypeConcept.getTerminologyId()
+                .hashCode());
     result =
-        prime * result
-            + ((superTypeConcept == null) ? 0 : superTypeConcept.hashCode());
+        prime
+            * result
+            + ((superTypeConcept == null || subTypeConcept.getTerminologyId() == null) ? 0 : superTypeConcept
+                .getTerminologyId().hashCode());
     return result;
   }
 
-  /* (non-Javadoc)
+  /*
+   * (non-Javadoc)
+   * 
    * @see org.ihtsdo.otf.ts.rf2.jpa.AbstractComponent#equals(java.lang.Object)
    */
   @Override
@@ -275,16 +279,27 @@ public class TransitiveRelationshipJpa extends AbstractComponent implements
     if (getClass() != obj.getClass())
       return false;
     TransitiveRelationshipJpa other = (TransitiveRelationshipJpa) obj;
-    if (subTypeConcept == null) {
-      if (other.subTypeConcept != null)
-        return false;
-    } else if (!subTypeConcept.equals(other.subTypeConcept))
-      return false;
     if (superTypeConcept == null) {
       if (other.superTypeConcept != null)
         return false;
-    } else if (!superTypeConcept.equals(other.superTypeConcept))
+    } else if (superTypeConcept.getTerminologyId() == null) {
+      if (other.superTypeConcept != null
+          && other.superTypeConcept.getTerminologyId() != null)
+        return false;
+    } else if (!superTypeConcept.getTerminologyId().equals(
+        other.superTypeConcept.getTerminologyId()))
       return false;
+    if (subTypeConcept == null) {
+      if (other.subTypeConcept != null)
+        return false;
+    } else if (subTypeConcept.getTerminologyId() == null) {
+      if (other.subTypeConcept != null
+          && other.subTypeConcept.getTerminologyId() != null)
+        return false;
+    } else if (!subTypeConcept.getTerminologyId().equals(
+        other.subTypeConcept.getTerminologyId()))
+      return false;
+
     return true;
   }
 

@@ -49,9 +49,11 @@ public class ModelUnit021Test {
     // Set up some objects
     c1 = new ConceptJpa();
     c1.setId(1L);
+    c1.setTerminologyId("1");
     c1.setDefinitionStatusId("1");
     c2 = new ConceptJpa();
     c2.setId(2L);
+    c2.setTerminology("2");
     c2.setDefinitionStatusId("2");
 
   }

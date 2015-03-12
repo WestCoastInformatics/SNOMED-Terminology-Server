@@ -52,7 +52,7 @@ endif
 
 echo "    Add SNOMEDCT project ...`/bin/date`"
 cd $SERVER_HOME/admin/loader
-mvn install -PAddProject -Drun.config=%SERVER_CONFIG% \
+mvn install -PAddProject -Drun.config=$SERVER_CONFIG \
   -Dname="Sample Project" -Ddescription="Sample project." \
   -Dterminology=SNOMEDCT -Dversion=latest \
   -Dscope.concepts=138875005 -Dscope.descendants.flag=true \

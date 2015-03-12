@@ -49,9 +49,11 @@ public class ModelUnit015Test {
     // Set up some objects
     d1 = new DescriptionJpa();
     d1.setId(1L);
+    d1.setTerminologyId("1");
     d1.setTypeId("1");
     d2 = new DescriptionJpa();
     d2.setId(2L);
+    d2.setTerminologyId("2");
     d2.setTypeId("2");
 
   }
