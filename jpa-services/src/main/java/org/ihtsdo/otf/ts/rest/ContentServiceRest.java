@@ -71,8 +71,9 @@ public interface ContentServiceRest {
    * @return the concept for user
    * @throws Exception the exception
    */
-  public Concept getConceptForUser(String terminologyId, String terminology,
-    String version, String authToken) throws Exception;
+  // Commented out as part of change service
+  //public Concept getConceptForUser(String terminologyId, String terminology,
+  //  String version, String authToken) throws Exception;
 
   /**
    * Returns the single concept for the specified parameters. If there are more

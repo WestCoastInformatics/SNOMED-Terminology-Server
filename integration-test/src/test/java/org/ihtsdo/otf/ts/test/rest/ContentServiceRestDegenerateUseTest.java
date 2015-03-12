@@ -3,36 +3,44 @@
  */
 package org.ihtsdo.otf.ts.test.rest;
 
-import org.ihtsdo.otf.ts.test.helpers.ContentServiceRestDegenerateUseForMethodTestHelper;
+import static org.junit.Assert.assertTrue;
+
+import org.ihtsdo.otf.ts.helpers.PfsParameterJpa;
+import org.ihtsdo.otf.ts.rf2.AssociationReferenceConceptRefSetMember;
+import org.ihtsdo.otf.ts.rf2.Concept;
+import org.ihtsdo.otf.ts.rf2.Description;
+import org.ihtsdo.otf.ts.rf2.LanguageRefSetMember;
+import org.ihtsdo.otf.ts.rf2.Relationship;
+import org.ihtsdo.otf.ts.test.helpers.DegenerateUseMethodTestHelper;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
+// TODO: Auto-generated Javadoc
 /**
  * Implementation of the "Content Service REST Degenerate Use" Test Cases.
+ *
+ * @author ${author}
  */
 public class ContentServiceRestDegenerateUseTest extends ContentServiceRestTest {
 
   /** The auth token. */
   private static String authToken;
 
-  /** The snomed test id. */
-  private String snomedTestId;
+  /** The test test id. */
+  private String testId;
 
-  /** The snomed terminology. */
-  private String snomedTerminology;
+  /** The test terminology. */
+  private String testTerminology;
 
-  /** The snomed version. */
-  private String snomedVersion;
+  /** The test version. */
+  private String testVersion;
 
-  /** The icd9 test id. */
-  private String icd9TestId;
+  /** The concept used in testing. */
+  private Concept concept;
 
-  /** The icd9 terminology. */
-  private String icd9Terminology;
-
-  /** The icd9 version. */
-  private String icd9Version;
+  /** The valid parameters used for reflection testing. */
+  private Object[] validParameters;
 
   /**
    * Create test fixtures per test.
@@ -47,198 +55,275 @@ public class ContentServiceRestDegenerateUseTest extends ContentServiceRestTest 
     authToken = securityService.authenticate(testUser, testPassword);
 
     // set terminology and version
-    snomedTerminology = "SNOMEDCT";
-    snomedVersion = "latest";
-    snomedTestId = "-1";
+    testTerminology = "SNOMEDCT";
+    testVersion = "latest";
+    testId = "121000119106";
+
+    // get test concept
+    concept =
+        contentService.getSingleConcept(testId, testTerminology, testVersion,
+            authToken);
 
   }
 
   /**
-   * Test Get and Find methods for concepts
-   * @throws Exception
+   * Test Get and Find methods for concepts.
+   *
+   * @throws Exception the exception
    */
   @Test
   public void testDegenerateUseRestContent001() throws Exception {
 
-    // Invalid values used for testing:
-    // null
-    // String "-1" (except authToken)
-    // Valid values used for testing:
-    // Terminology: SNOMEDCT
-    // Terminology version: latest
-    // Terminology id: 121000119106
-    
-    
-    /** Get concepts */
-    Object[] validParameters = {snomedTestId, snomedTerminology, snomedVersion, authToken};
-    Object[] invalidParameters = {"-1", "-1", "-1", "-1"};
-    ContentServiceRestDegenerateUseForMethodTestHelper.testDegenerateArgumentsForServiceMethod(
-        contentService, 
-        "getConcepts",
-        validParameters, 
-        invalidParameters);
-    
-   /* *//**
-     * Procedure 1: Get concepts
-     * *//*
+    /** Concept methods */
 
-    *//** invalid terminologyId *//*
-    // TEST: null 
-    try {
-      contentService.getConcepts(null, snomedTerminology, snomedVersion, authToken);
-      fail("getConcepts with null terminology id did not throw expected exception");
-    } catch (Exception e) {
-      // do nothing
-    }
-    // ﻿TEST:﻿ invalid 
-    try {
-      contentService.getConcepts(invalidStr, snomedTerminology, snomedVersion, authToken);
-      
-      fail("getConcepts with invalid terminology id did not throw expected exception");
-    } catch (Exception e) {
-      // do nothing
-    }
+    // get concepts
+    validParameters = new Object[] {
+        testId, testTerminology, testVersion, authToken
+    };
 
-    *//** invalid terminology *//*
-    // TEST: null 
-    try {
-      contentService.getConcepts(snomedTestId, null, snomedVersion, authToken);
-      
-      fail("getConcepts with null terminology did not throw expected exception");
-    } catch (Exception e) {
-      // do nothing
-    }
-    // TEST: invalid 
-    try {
-      contentService.getConcepts(snomedTestId, invalidStr, snomedVersion, authToken);
-      
-      fail("getConcepts with invalid terminology did not throw expected exception");
-    } catch (Exception e) {
-      // do nothing
-    }
+    DegenerateUseMethodTestHelper.testDegenerateArguments(
+        contentService,
+        contentService.getClass().getMethod("getConcepts",
+            getParameterTypes(validParameters)), validParameters,
+        new boolean[] {
+            false, false, false, true
+        });
 
-    *//** invalid terminology version *//*
-    // TEST: null 
+    // get single concept
+    validParameters = new Object[] {
+        testId, testTerminology, testVersion, authToken
+    };
+    DegenerateUseMethodTestHelper.testDegenerateArguments(
+        contentService,
+        contentService.getClass().getMethod("getSingleConcept",
+            getParameterTypes(validParameters)), validParameters,
+        new boolean[] {
+            false, false, false, true
+        });
+
+    // get concept by id
+    validParameters = new Object[] {
+        concept.getId(), authToken
+    };
+    DegenerateUseMethodTestHelper.testDegenerateArguments(
+        contentService,
+        contentService.getClass().getMethod("getConcept",
+            getParameterTypes(validParameters)), validParameters);
+
+    // find concepts
+    validParameters =
+        new Object[] {
+            testTerminology, testVersion, "ossification",
+            new PfsParameterJpa(), authToken
+        };
+
+    // Find method helper should not test terminology, version, or search string
+    DegenerateUseMethodTestHelper.testDegenerateArguments(
+        contentService,
+        contentService.getClass().getMethod("findConceptsForQuery",
+            getParameterTypes(validParameters)), validParameters,
+        new boolean[] {
+            false, false, false, true, true
+        });
+
+    // test for invalid values manually
     try {
-      contentService.getConcepts(snomedTestId, snomedTerminology, null, authToken);
-      
-      fail("getConcepts with null version did not throw expected exception");
+      // unparseable terminology
+      contentService.findConceptsForQuery("&%$#*", testVersion, "ossification",
+          null, authToken);
     } catch (Exception e) {
-      // do nothing
-    }
-    // TEST: invalid 
-    try {
-      contentService.getConcepts(snomedTestId, snomedTerminology, invalidStr, authToken);
-      
-      fail("getConcepts with invalid version did not throw expected exception");
-    } catch (Exception e) {
-      // do nothing
+      assertTrue(e.getClass().equals(IllegalArgumentException.class));
     }
 
-    *//** invalid auth token *//*
-    // TEST: null 
     try {
-      contentService.getConcepts(snomedTestId, snomedTerminology, snomedVersion, null);
-      
-      fail("getConcepts with null authToken did not throw expected exception");
+      // unparseable version
+      contentService.findConceptsForQuery(testTerminology, "&%$#*",
+          "ossification", null, authToken);
     } catch (Exception e) {
-      // do nothing
-    }
-    
-    // TEST: invalid 
-    try {
-      contentService.getConcepts(snomedTestId, snomedTerminology, snomedVersion, invalidStr);
-      
-      fail("getConcepts with invalid authToken did not throw expected exception");
-    } catch (Exception e) {
-      // do nothing
+      assertTrue(e.getClass().equals(IllegalArgumentException.class));
     }
 
-    *//**
-     * Procedure 2: Get Single Concepts
-     *//*
-
-    // Get single concept for:
-    // invalid terminologyId
-    // TEST: null 
     try {
-
-      fail("did not throw expected exception");
+      // unparseable searchString
+      contentService.findConceptsForQuery(testTerminology, testVersion,
+          "&%$#*", null, authToken);
     } catch (Exception e) {
-      // do nothing
+      assertTrue(e.getClass().equals(IllegalArgumentException.class));
     }
-    // TEST: invalid 
-    try {
 
-      fail("did not throw expected exception");
-    } catch (Exception e) {
-      // do nothing
-    }
-    // invalid terminology
-    // TEST: null 
-    try {
-
-      fail("did not throw expected exception");
-    } catch (Exception e) {
-      // do nothing
-    }
-    // TEST: invalid 
-    try {
-
-      fail("did not throw expected exception");
-    } catch (Exception e) {
-      // do nothing
-    }
-    // invalid terminology
-    // TEST: null 
-    try {
-
-      fail("did not throw expected exception");
-    } catch (Exception e) {
-      // do nothing
-    }
-    // TEST: invalid 
-    try {
-
-      fail("did not throw expected exception");
-    } catch (Exception e) {
-      // do nothing
-    }
-    // invalid auth token
-    // TEST: null 
-    try {
-
-      fail("did not throw expected exception");
-    } catch (Exception e) {
-      // do nothing
-    }
-    // Get concepts by id for:
-    // invalid hibernate id
-    // ﻿TEST﻿: ﻿null 
-    try {
-
-      fail("did not throw expected exception");
-    } catch (Exception e) {
-      // do nothing
-    }
-    // ﻿TEST: invalid 
-    try {
-
-      fail("did not throw expected exception");
-    } catch (Exception e) {
-      // do nothing
-    }
-    // invalid auth token
-    // TEST: null 
-    try {
-
-      fail("did not throw expected exception");
-    } catch (Exception e) {
-      // do nothing
-    }*/
   }
 
+  /**
+   * Test children, descendant, and ancestor services.
+   *
+   * @throws Exception the exception
+   */
+  @Test
+  public void testDegenerateUseRestContent002() throws Exception {
+    // get child concepts
+    validParameters = new Object[] {
+        testId, testTerminology, testVersion, new PfsParameterJpa(), authToken
+    };
+    DegenerateUseMethodTestHelper.testDegenerateArguments(
+        contentService,
+        contentService.getClass().getMethod("getChildConcepts",
+            getParameterTypes(validParameters)), validParameters);
 
+    // get descendant concepts
+    validParameters = new Object[] {
+        testId, testTerminology, testVersion, new PfsParameterJpa(), authToken
+    };
+    DegenerateUseMethodTestHelper.testDegenerateArguments(
+        contentService,
+        contentService.getClass().getMethod("getDescendantConcepts",
+            getParameterTypes(validParameters)), validParameters);
+
+    // get ancestor concepts
+    validParameters = new Object[] {
+        testId, testTerminology, testVersion, new PfsParameterJpa(), authToken
+    };
+    DegenerateUseMethodTestHelper.testDegenerateArguments(
+        contentService,
+        contentService.getClass().getMethod("getAncestorConcepts",
+            getParameterTypes(validParameters)), validParameters);
+
+  }
+
+  /**
+   * Test description services
+   *
+   * @throws Exception the exception
+   */
+  @Test
+  public void testDegenerateUseRestContent003() throws Exception {
+
+    Description description = concept.getDescriptions().iterator().next();
+
+    // get description
+    validParameters = new Object[] {
+        description.getTerminologyId(), testTerminology, testVersion, authToken
+    };
+
+    DegenerateUseMethodTestHelper.testDegenerateArguments(
+        contentService,
+        contentService.getClass().getMethod("getDescription",
+            getParameterTypes(validParameters)), validParameters);
+
+    // get description
+    validParameters = new Object[] {
+        description.getId(), authToken
+    };
+
+    DegenerateUseMethodTestHelper.testDegenerateArguments(
+        contentService,
+        contentService.getClass().getMethod("getDescription",
+            getParameterTypes(validParameters)), validParameters);
+  }
+  
+  /**
+   * Test relationship services
+   *
+   * @throws Exception the exception
+   */
+  @Test
+  public void testDegenerateUseRestContent004() throws Exception {
+
+    Relationship relationship = concept.getRelationships().iterator().next();
+
+    // get relationship
+    validParameters = new Object[] {
+        relationship.getTerminologyId(), testTerminology, testVersion, authToken
+    };
+
+    DegenerateUseMethodTestHelper.testDegenerateArguments(
+        contentService,
+        contentService.getClass().getMethod("getRelationship",
+            getParameterTypes(validParameters)), validParameters);
+
+    // get relationship
+    validParameters = new Object[] {
+        relationship.getId(), authToken
+    };
+
+    DegenerateUseMethodTestHelper.testDegenerateArguments(
+        contentService,
+        contentService.getClass().getMethod("getRelationship",
+            getParameterTypes(validParameters)), validParameters);
+  }
+  
+  /**
+   * Test description services
+   *
+   * @throws Exception the exception
+   */
+  @Test
+  public void testDegenerateUseRestContent005() throws Exception {
+
+    Description description = concept.getDescriptions().iterator().next();
+    LanguageRefSetMember language = description.getLanguageRefSetMembers().iterator().next();
+
+    // get language
+    validParameters = new Object[] {
+        language.getTerminologyId(), testTerminology, testVersion, authToken
+    };
+
+    DegenerateUseMethodTestHelper.testDegenerateArguments(
+        contentService,
+        contentService.getClass().getMethod("getLanguageRefSetMember",
+            getParameterTypes(validParameters)), validParameters);
+
+    // get language
+    validParameters = new Object[] {
+        language.getId(), authToken
+    };
+
+    DegenerateUseMethodTestHelper.testDegenerateArguments(
+        contentService,
+        contentService.getClass().getMethod("getLanguageRefSetMember",
+            getParameterTypes(validParameters)), validParameters);
+  }
+  
+  
+  /**
+   * Test retrieval of SNOMEDCT refsetMembers
+   * NOTE:  Ref Set Member id hardcoded, as concept's set is @XmlTransient
+   */
+  /**
+   * Test relationship services
+   *
+   * @throws Exception the exception
+   */
+  @Test
+  public void testDegenerateUseRestContent006() throws Exception {
+
+    String refSetMemberTerminologyId = "d9835599-19ac-56bd-89ad-18b37713dfbd";
+
+    AssociationReferenceConceptRefSetMember refsetMember = 
+        contentService.getAssociationReferenceConceptRefSetMember(
+            refSetMemberTerminologyId, 
+            testTerminology, testVersion, authToken);
+
+    // get relationship
+    validParameters = new Object[] {
+        refsetMember.getTerminologyId(), testTerminology, testVersion, authToken
+    };
+
+    DegenerateUseMethodTestHelper.testDegenerateArguments(
+        contentService,
+        contentService.getClass().getMethod("getAssociationReferenceConceptRefSetMember",
+            getParameterTypes(validParameters)), validParameters);
+
+    // get relationship
+    validParameters = new Object[] {
+        refsetMember.getId(), authToken
+    };
+
+    DegenerateUseMethodTestHelper.testDegenerateArguments(
+        contentService,
+        contentService.getClass().getMethod("getAssociationReferenceConceptRefSetMember",
+            getParameterTypes(validParameters)), validParameters);
+  }
+  
   /**
    * Teardown.
    *
@@ -250,6 +335,20 @@ public class ContentServiceRestDegenerateUseTest extends ContentServiceRestTest 
 
     // logout
     securityService.logout(authToken);
+  }
+
+  /**
+   * Returns the parameter types.
+   *
+   * @param parameters the parameters
+   * @return the parameter types
+   */
+  public Class<?>[] getParameterTypes(Object[] parameters) {
+    Class<?>[] types = new Class<?>[parameters.length];
+    for (int i = 0; i < parameters.length; i++) {
+      types[i] = parameters[i].getClass();
+    }
+    return types;
   }
 
 }

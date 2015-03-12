@@ -115,14 +115,14 @@ public class ContentClientRest implements ContentServiceRest {
             ConceptListJpa.class);
     return list;
   }
-
-  /*
+/*
+   Commented out as not part of change service
    * (non-Javadoc)
    * 
    * @see
    * org.ihtsdo.otf.ts.rest.ContentServiceRest#getConceptForUser(java.lang.String
    * , java.lang.String, java.lang.String, java.lang.String)
-   */
+   
   @Override
   public Concept getConceptForUser(String terminologyId, String terminology,
     String version, String authToken) throws Exception {
@@ -147,7 +147,7 @@ public class ContentClientRest implements ContentServiceRest {
             ConceptJpa.class);
     return concept;
   }
-
+*/
   /*
    * (non-Javadoc)
    * 

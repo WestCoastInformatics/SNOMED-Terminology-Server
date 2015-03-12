@@ -224,7 +224,7 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
           "Identifier compute preferred name handler did not properly initialize, serious error.");
     }
     if (plannedEffectiveTime == null) {
-      plannedEffectiveTime = getPlannedEffectiveTime();
+      //plannedEffectiveTime = getPlannedEffectiveTime();
     }
   }
 
@@ -1335,7 +1335,7 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
             + terminologyId + "/" + terminology + "/" + version);
     javax.persistence.Query query =
         manager
-            .createQuery("select c from AssociationReferenceRefSetMemberJpa c where terminologyId = :terminologyId and version = :version and terminology = :terminology");
+            .createQuery("select c from AbstractAssociationReferenceRefSetMemberJpa c where terminologyId = :terminologyId and version = :version and terminology = :terminology");
     /*
      * Try to retrieve the single expected result If zero or more than one
      * result are returned, log error and set result to null
@@ -2686,6 +2686,7 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
     Logger.getLogger(ContentServiceJpa.class).info(
         "Content Service - find concepts " + terminology + "/" + version + "/"
             + searchString);
+    
     if (pfs != null) {
       Logger.getLogger(ContentServiceJpa.class).info(
           "  pfs = " + pfs.toString());

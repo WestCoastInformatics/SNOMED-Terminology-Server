@@ -177,14 +177,14 @@ public class ContentServiceRestImpl extends RootServiceRestImpl implements
     }
 
   }
-
-  /*
+/*
+  Commented out for later move to change service
    * (non-Javadoc)
    * 
    * @see
    * org.ihtsdo.otf.mapping.rest.ContentServiceRest#getConcept(java.lang.String,
    * java.lang.String, java.lang.String, java.lang.String)
-   */
+   
   @Override
   @GET
   @Path("/concept/{terminology}/{version}/{terminologyId}/foruser")
@@ -230,7 +230,7 @@ public class ContentServiceRestImpl extends RootServiceRestImpl implements
     }
 
   }
-
+*/
   /*
    * (non-Javadoc)
    * 
