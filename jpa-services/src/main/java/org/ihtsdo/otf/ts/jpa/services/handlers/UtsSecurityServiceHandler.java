@@ -64,7 +64,7 @@ public class UtsSecurityServiceHandler implements SecurityServiceHandler {
     boolean authenticated = false;
     while ((line = rd.readLine()) != null) {
       if (line.toLowerCase().contains("true")) {
-        authenticated = false;
+        authenticated = true;
       }
     }
     wr.close();

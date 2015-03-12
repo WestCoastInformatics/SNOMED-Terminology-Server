@@ -175,7 +175,10 @@ public class AttributeValueDescriptionRefSetMemberJpa extends
     final int prime = 31;
     int result = super.hashCode();
     result =
-        prime * result + ((description == null) ? 0 : description.hashCode());
+        prime
+            * result
+            + ((description == null || description.getTerminologyId() == null) ? 0 : description.getTerminologyId()
+                .hashCode());
     return result;
   }
 
@@ -199,7 +202,12 @@ public class AttributeValueDescriptionRefSetMemberJpa extends
     if (description == null) {
       if (other.description != null)
         return false;
-    } else if (!description.equals(other.description))
+    } else if (description.getTerminologyId() == null) {
+      if (other.description == null
+          || other.description.getTerminologyId() != null)
+        return false;
+    } else if (!description.getTerminologyId().equals(
+        other.description.getTerminologyId()))
       return false;
     return true;
   }

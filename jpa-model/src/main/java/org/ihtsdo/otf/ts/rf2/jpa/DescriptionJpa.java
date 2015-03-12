@@ -573,7 +573,9 @@ public class DescriptionJpa extends AbstractComponent implements Description {
         prime
             * result
             + ((caseSignificanceId == null) ? 0 : caseSignificanceId.hashCode());
-    result = prime * result + ((concept == null) ? 0 : concept.hashCode());
+    result =
+        prime * result
+            + ((concept == null || concept.getTerminologyId() == null) ? 0 : concept.getTerminologyId().hashCode());
     result =
         prime * result + ((languageCode == null) ? 0 : languageCode.hashCode());
     result = prime * result + ((term == null) ? 0 : term.hashCode());
@@ -598,7 +600,11 @@ public class DescriptionJpa extends AbstractComponent implements Description {
     if (concept == null) {
       if (other.concept != null)
         return false;
-    } else if (!concept.equals(other.concept))
+    } else if (concept.getTerminologyId() == null) {
+      if (other.concept != null && other.concept.getTerminologyId() != null)
+        return false;
+    } else if (!concept.getTerminologyId().equals(
+        other.concept.getTerminologyId()))
       return false;
     if (languageCode == null) {
       if (other.languageCode != null)

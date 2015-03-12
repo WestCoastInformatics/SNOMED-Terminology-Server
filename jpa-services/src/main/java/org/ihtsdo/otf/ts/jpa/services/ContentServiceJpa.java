@@ -195,8 +195,8 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
     }
   }
 
-  /** The planned effective time. */
-  public static Date plannedEffectiveTime = null;
+  /** The planned effective time map. */
+  public static Map<String, Date> plannedEffectiveTimeMap = new HashMap<>();
 
   /**
    * Instantiates an empty {@link ContentServiceJpa}.
@@ -226,7 +226,6 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
     if (plannedEffectiveTime == null) {
       //plannedEffectiveTime = getPlannedEffectiveTime();
     }
-  }
 
   /** The last modified flag. */
   private boolean lastModifiedFlag = false;
@@ -305,7 +304,6 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
         fullTextEntityManager
             .createFullTextQuery(luceneQuery, ConceptJpa.class);
     results.setTotalCount(fullTextQuery.getResultSize());
-    
     
     // Apply paging and sorting parameters
     applyPfsToLuceneQuery(ConceptJpa.class, fullTextQuery, pfs);
@@ -1126,8 +1124,7 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
             + refsetId + "/" + terminology + "/" + version);
     javax.persistence.Query query =
         applyPfsToQuery("select a from AttributeValueRefSetMemberJpa a "
-            + "where refSetId = :refsetId "
-            + "and version = :version "
+            + "where refSetId = :refsetId " + "and version = :version "
             + "and terminology = :terminology", pfs);
     javax.persistence.Query ctQuery =
         manager
@@ -1290,8 +1287,7 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
             + refsetId + "/" + terminology + "/" + version);
     javax.persistence.Query query =
         applyPfsToQuery("select a from AssociationReferenceRefSetMemberJpa a "
-            + "where refSetId = :refsetId "
-            + "and version = :version "
+            + "where refSetId = :refsetId " + "and version = :version "
             + "and terminology = :terminology", pfs);
     javax.persistence.Query ctQuery =
         manager
@@ -1513,13 +1509,11 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
             + refsetId + "/" + terminology + "/" + version);
     javax.persistence.Query query =
         applyPfsToQuery("select a from ComplexMapRefSetMemberJpa a "
-            + "where refSetId = :refsetId "
-            + "and version = :version "
+            + "where refSetId = :refsetId " + "and version = :version "
             + "and terminology = :terminology", pfs);
     javax.persistence.Query ctQuery =
         manager.createQuery("select count(a) from ComplexMapRefSetMemberJpa a "
-            + "where refSetId = :refsetId "
-            + "and version = :version "
+            + "where refSetId = :refsetId " + "and version = :version "
             + "and terminology = :terminology");
     try {
       ComplexMapRefSetMemberList list = new ComplexMapRefSetMemberListJpa();
@@ -1693,13 +1687,11 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
             + refsetId + "/" + terminology + "/" + version);
     javax.persistence.Query query =
         applyPfsToQuery("select a from LanguageRefSetMemberJpa a "
-            + "where refSetId = :refsetId "
-            + "and version = :version "
+            + "where refSetId = :refsetId " + "and version = :version "
             + "and terminology = :terminology", pfs);
     javax.persistence.Query ctQuery =
         manager.createQuery("select count(a) from LanguageRefSetMemberJpa a "
-            + "where refSetId = :refsetId "
-            + "and version = :version "
+            + "where refSetId = :refsetId " + "and version = :version "
             + "and terminology = :terminology");
     try {
       LanguageRefSetMemberList list = new LanguageRefSetMemberListJpa();
@@ -1871,13 +1863,11 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
             + refsetId + "/" + terminology + "/" + version);
     javax.persistence.Query query =
         applyPfsToQuery("select a from SimpleMapRefSetMemberJpa a "
-            + "where refSetId = :refsetId "
-            + "and version = :version "
+            + "where refSetId = :refsetId " + "and version = :version "
             + "and terminology = :terminology", pfs);
     javax.persistence.Query ctQuery =
         manager.createQuery("select count(a) from SimpleMapRefSetMemberJpa a "
-            + "where refSetId = :refsetId "
-            + "and version = :version "
+            + "where refSetId = :refsetId " + "and version = :version "
             + "and terminology = :terminology");
     try {
       SimpleMapRefSetMemberList list = new SimpleMapRefSetMemberListJpa();
@@ -2048,13 +2038,11 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
             + refsetId + "/" + terminology + "/" + version);
     javax.persistence.Query query =
         applyPfsToQuery("select a from SimpleRefSetMemberJpa a "
-            + "where refSetId = :refsetId "
-            + "and version = :version "
+            + "where refSetId = :refsetId " + "and version = :version "
             + "and terminology = :terminology", pfs);
     javax.persistence.Query ctQuery =
         manager.createQuery("select count(a) from SimpleRefSetMemberJpa a "
-            + "where refSetId = :refsetId "
-            + "and version = :version "
+            + "where refSetId = :refsetId " + "and version = :version "
             + "and terminology = :terminology");
     try {
       SimpleRefSetMemberList list = new SimpleRefSetMemberListJpa();
@@ -3243,7 +3231,9 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
                   + pfs.getSortField());
         }
 
-        Sort sort = new Sort(new SortField(sortField, SortField.STRING, !pfs.isAscending()));
+        Sort sort =
+            new Sort(new SortField(sortField, SortField.STRING,
+                !pfs.isAscending()));
         fullTextQuery.setSort(sort);
       }
     }
@@ -3270,24 +3260,28 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
         clazz.getMethod("get" + sortField.substring(0, 1).toUpperCase()
             + sortField.substring(1), new Class<?>[] {});
     
-    Set<org.hibernate.search.annotations.Field> annotationFields = new HashSet<>();
+    Set<org.hibernate.search.annotations.Field> annotationFields =
+        new HashSet<>();
 
     // check for Field annotation
     if (m.isAnnotationPresent(org.hibernate.search.annotations.Field.class)) {
-      annotationFields.add(m.getAnnotation(org.hibernate.search.annotations.Field.class));
+      annotationFields.add(m
+          .getAnnotation(org.hibernate.search.annotations.Field.class));
     }
 
     // check for Fields annotation
     if (m.isAnnotationPresent(org.hibernate.search.annotations.Fields.class)) {
       // add all specified fields
-      for (org.hibernate.search.annotations.Field f : m.getAnnotation(org.hibernate.search.annotations.Fields.class).value()) {
+      for (org.hibernate.search.annotations.Field f : m.getAnnotation(
+          org.hibernate.search.annotations.Fields.class).value()) {
         annotationFields.add(f);
       }
     }
     
     // cycle over discovered fields and put name and analyze == YES into map
     for (org.hibernate.search.annotations.Field f : annotationFields) {
-      nameAnalyzedPairs.put(f.name(), f.analyze().equals(Analyze.YES) ? true : false); 
+      nameAnalyzedPairs.put(f.name(), f.analyze().equals(Analyze.YES) ? true
+          : false);
     }
     
     return nameAnalyzedPairs;
@@ -3322,11 +3316,12 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
             try {
               // handle dates explicitly
               if (o2 instanceof Date) {
-                return ((Date) sortField.get(o1)).compareTo((Date) sortField.get(o2));
+                return ((Date) sortField.get(o1)).compareTo((Date) sortField
+                    .get(o2));
               } else {
                 // otherwise, sort based on conversion to string
-              return (sortField.get(o1).toString()).compareTo(sortField
-                  .get(o2).toString());
+                return (sortField.get(o1).toString()).compareTo(sortField.get(
+                    o2).toString());
               }
             } catch (IllegalAccessException e) {
               // on exception, return equality
@@ -3342,11 +3337,12 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
             try {
               // handle dates explicitly
               if (o2 instanceof Date) {
-                return ((Date) sortField.get(o1)).compareTo((Date) sortField.get(o2));
+                return ((Date) sortField.get(o1)).compareTo((Date) sortField
+                    .get(o2));
               } else {
                 // otherwise, sort based on conversion to string
-              return (sortField.get(o1).toString()).compareTo(sortField
-                  .get(o2).toString());
+                return (sortField.get(o1).toString()).compareTo(sortField.get(
+                    o2).toString());
               }
             } catch (IllegalAccessException e) {
               // on exception, return equality
@@ -3519,7 +3515,9 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
 
       // set effective time to null unless this is the planned effective time
       if (component.getEffectiveTime() != null
-          && !component.getEffectiveTime().equals(plannedEffectiveTime)) {
+          && !component.getEffectiveTime().equals(
+              getPlannedEffectiveTime(component.getTerminology(),
+                  component.getTerminologyVersion()))) {
         component.setEffectiveTime(null);
       }
 
@@ -3593,14 +3591,24 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
    * need to know this here to be able to get the effective time which is used
    * for managing publication effective times.
    *
+   * @param terminology the terminology
+   * @param version the version
    * @return the planned effective time
    */
-  private Date getPlannedEffectiveTime() {
+  private Date getPlannedEffectiveTime(String terminology, String version) {
+    if (plannedEffectiveTimeMap.containsKey(terminology + version)) {
+      return plannedEffectiveTimeMap.get(terminology + version);
+    }
     javax.persistence.Query query =
         manager
-            .createQuery("select a from ReleaseInfoJpa a where planned is TRUE");
+            .createQuery("select a from ReleaseInfoJpa a where planned is TRUE "
+                + "and terminology = :terminology and terminologyVersion = :version");
     try {
+      query.setParameter("terminology", terminology);
+      query.setParameter("version", version);
       ReleaseInfo releaseInfo = (ReleaseInfo) query.getSingleResult();
+      plannedEffectiveTimeMap.put(terminology + version,
+          releaseInfo.getEffectiveTime());
       return releaseInfo.getEffectiveTime();
     } catch (NoResultException e) {
       return null;

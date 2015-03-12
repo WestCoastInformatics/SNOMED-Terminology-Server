@@ -397,15 +397,19 @@ public class RelationshipJpa extends AbstractComponent implements Relationship {
     result =
         prime
             * result
-            + ((destinationConcept == null) ? 0 : destinationConcept.hashCode());
+            + ((destinationConcept == null || destinationConcept
+                .getTerminologyId() == null) ? 0 : destinationConcept
+                .getTerminologyId().hashCode());
     result =
         prime * result + ((modifierId == null) ? 0 : modifierId.hashCode());
     result =
         prime * result
             + ((relationshipGroup == null) ? 0 : relationshipGroup.hashCode());
     result =
-        prime * result
-            + ((sourceConcept == null) ? 0 : sourceConcept.hashCode());
+        prime
+            * result
+            + ((sourceConcept == null || sourceConcept.getTerminologyId() == null)
+                ? 0 : sourceConcept.getTerminologyId().hashCode());
     result = prime * result + ((typeId == null) ? 0 : typeId.hashCode());
     return result;
   }
@@ -432,7 +436,12 @@ public class RelationshipJpa extends AbstractComponent implements Relationship {
     if (destinationConcept == null) {
       if (other.destinationConcept != null)
         return false;
-    } else if (!destinationConcept.equals(other.destinationConcept))
+    } else if (destinationConcept.getTerminologyId() == null) {
+      if (other.destinationConcept != null
+          && other.destinationConcept.getTerminologyId() != null)
+        return false;
+    } else if (!destinationConcept.getTerminologyId().equals(
+        other.destinationConcept.getTerminologyId()))
       return false;
     if (modifierId == null) {
       if (other.modifierId != null)
@@ -447,7 +456,12 @@ public class RelationshipJpa extends AbstractComponent implements Relationship {
     if (sourceConcept == null) {
       if (other.sourceConcept != null)
         return false;
-    } else if (!sourceConcept.equals(other.sourceConcept))
+    } else if (sourceConcept.getTerminologyId() == null) {
+      if (other.sourceConcept != null
+          && other.sourceConcept.getTerminologyId() != null)
+        return false;
+    } else if (!sourceConcept.getTerminologyId().equals(
+        other.sourceConcept.getTerminologyId()))
       return false;
     if (typeId == null) {
       if (other.typeId != null)
