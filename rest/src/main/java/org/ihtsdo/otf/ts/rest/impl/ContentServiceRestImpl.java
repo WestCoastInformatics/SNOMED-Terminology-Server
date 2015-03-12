@@ -1039,25 +1039,6 @@ public class ContentServiceRestImpl extends RootServiceRestImpl implements
         throw new Exception("Unable to determine terminology version.");
       }
 
-      //
-      // Verify that there is a release info for this version that is
-      // marked as "isPlanned"
-      //
-      HistoryService historyService = new HistoryServiceJpa();
-      ReleaseInfo releaseInfo =
-          historyService.getReleaseInfo(terminology, version);
-      if (releaseInfo == null) {
-        throw new Exception("A release info must exist for "
-            + version);
-      } else if (!releaseInfo.isPlanned()) {
-        throw new Exception("Release info for " + version
-            + " is not marked as planned'");
-      } else if (releaseInfo.isPublished()) {
-        throw new Exception("Release info for " + version
-            + " is marked as published");
-      }
-      historyService.close();
-
       // Sort files
       Logger.getLogger(ContentServiceJpa.class).info("  Sort RF2 Files");
       Rf2FileSorter sorter = new Rf2FileSorter();
@@ -1065,6 +1046,7 @@ public class ContentServiceRestImpl extends RootServiceRestImpl implements
       sorter.setRequireAllFiles(false);
       File outputDir = new File(inputDirFile, "/RF2-sorted-temp/");
       sorter.sortFiles(inputDirFile, outputDir);
+      String releaseVersion = sorter.getFileVersion();
 
       // Open readers
       Rf2Readers readers = new Rf2Readers(outputDir);
@@ -1088,7 +1070,27 @@ public class ContentServiceRestImpl extends RootServiceRestImpl implements
       algo.reset();
       algo.compute();
 
-      // No changes to release info
+      //
+      // Create ReleaseInfo for this release if it does not already exist
+      //
+      HistoryService historyService = new HistoryServiceJpa();
+      historyService.setLastModifiedFlag(false);
+      ReleaseInfo info =
+          historyService.getReleaseInfo(terminology, releaseVersion);
+      if (info == null) {
+        info = new ReleaseInfoJpa();
+        info.setName(releaseVersion);
+        info.setEffectiveTime(ConfigUtility.DATE_FORMAT.parse(releaseVersion));
+        info.setDescription(terminology + " " + releaseVersion + " release");
+        info.setPlanned(false);
+        info.setPublished(true);
+        info.setReleaseBeginDate(info.getEffectiveTime());
+        info.setReleaseFinishDate(info.getEffectiveTime());
+        info.setTerminology(terminology);
+        info.setTerminologyVersion(version);
+        historyService.addReleaseInfo(info);
+      }
+      historyService.close();
 
       // Clean-up
       readers.closeReaders();
@@ -1204,23 +1206,9 @@ public class ContentServiceRestImpl extends RootServiceRestImpl implements
       algo.compute();
 
       //
-      // Create ReleaseInfo for each release, unless already exists
+      // Individual release infos will already be created by
+      // snapshot and delta processes, so it is not needed here
       //
-      for (String release : releases) {
-        ReleaseInfo info = historyService.getReleaseInfo(terminology, release);
-        if (info != null) {
-          info.setName(release);
-          info.setEffectiveTime(ConfigUtility.DATE_FORMAT.parse(release));
-          info.setDescription(terminology + " " + release + " release");
-          info.setPlanned(false);
-          info.setPublished(true);
-          info.setReleaseBeginDate(info.getEffectiveTime());
-          info.setReleaseFinishDate(info.getEffectiveTime());
-          info.setTerminology(terminology);
-          info.setTerminologyVersion(version);
-          historyService.addReleaseInfo(info);
-        }
-      }
 
       // Clean-up
       readers.closeReaders();
