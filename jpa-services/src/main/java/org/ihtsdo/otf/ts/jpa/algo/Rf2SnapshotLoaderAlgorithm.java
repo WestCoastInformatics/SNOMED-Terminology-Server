@@ -84,9 +84,6 @@ public class Rf2SnapshotLoaderAlgorithm extends ContentServiceJpa implements
   /** counter for objects created, reset in each load section. */
   int objectCt; //
 
-  /**  The content service. */
-  private ContentService contentService;
-  
   /**
    * Instantiates an empty {@link Rf2SnapshotLoaderAlgorithm}.
    * @throws Exception if anything goes wrong
@@ -161,11 +158,10 @@ public class Rf2SnapshotLoaderAlgorithm extends ContentServiceJpa implements
       // Track system level information
       long startTimeOrig = System.nanoTime();
 
-      contentService = new ContentServiceJpa();
       // Turn of ID computation when loading a terminology
-      contentService.setAssignIdentifiersFlag(false);
-      contentService.setTransactionPerOperation(false);
-      contentService.beginTransaction();
+      setAssignIdentifiersFlag(false);
+      setTransactionPerOperation(false);
+      beginTransaction();
       
       //
       // Load concepts
@@ -209,8 +205,8 @@ public class Rf2SnapshotLoaderAlgorithm extends ContentServiceJpa implements
               + " (Ended at " + ft.format(new Date()) + ")");
 
       // clear and commit
-      contentService.commit();
-      contentService.clear();
+      commit();
+      clear();
       
       //
       // Load Simple RefSets (Content)
@@ -460,7 +456,7 @@ public class Rf2SnapshotLoaderAlgorithm extends ContentServiceJpa implements
         // copy concept to shed any hibernate stuff
         conceptCache.put(fields[0], concept);
 
-        contentService.addConcept(concept);
+        addConcept(concept);
         if (++objectCt % commitCt == 0) {
           Logger.getLogger(getClass()).info("    count = " + objectCt);
         }
