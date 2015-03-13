@@ -160,5 +160,7 @@ public interface IdentifierAssignmentHandler extends Configurable {
    *
    * @return true, if successful
    */
-  public boolean allowConceptIdChangeOnUpdate();  
+  public boolean allowConceptIdChangeOnUpdate();
+  
+  
 }

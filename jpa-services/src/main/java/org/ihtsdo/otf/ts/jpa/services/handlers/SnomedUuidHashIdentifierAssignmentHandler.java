@@ -51,10 +51,6 @@ public class SnomedUuidHashIdentifierAssignmentHandler implements
   public String getTerminologyId(Concept concept) throws Exception {
     // If the concept already has an sctid return it
     Logger.getLogger(this.getClass()).debug("assigning concept id");
-    if (isSctid(concept.getTerminologyId())) {
-      Logger.getLogger(this.getClass()).debug("  SCTID found");
-      return concept.getTerminologyId();
-    }
     StringBuilder sb = new StringBuilder();
     List<Concept> concepts =
         TerminologyUtility.getActiveParentConcepts(concept);
@@ -79,12 +75,7 @@ public class SnomedUuidHashIdentifierAssignmentHandler implements
    */
   @Override
   public String getTerminologyId(Description description) throws Exception {
-    // If the description already has an sctid return it
-    // NOTE: this will allow changing the identity fields
-    // of a description if the SCTID is already assigned
-    if (isSctid(description.getTerminologyId())) {
-      return description.getTerminologyId();
-    }
+
     // otherwise return the uuid - for identity comparisons
     String value =
         description.getConcept().getTerminologyId() + description.getTypeId()
@@ -99,12 +90,7 @@ public class SnomedUuidHashIdentifierAssignmentHandler implements
    */
   @Override
   public String getTerminologyId(Relationship relationship) throws Exception {
-    // If the relationship already has an sctid return it
-    // NOTE: this will allow changing the identity fields
-    // of a relationship if the SCTID is already assigned
-    if (isSctid(relationship.getTerminologyId())) {
-      return relationship.getTerminologyId();
-    }
+
     // always return the uuid - for identity comparisons
     String value =
         relationship.getSourceConcept().getTerminologyId()
@@ -270,7 +256,6 @@ public class SnomedUuidHashIdentifierAssignmentHandler implements
    * @param str the str
    * @return <code>true</code> if so, <code>false</code> otherwise
    * @throws Exception the exception
-   */
   protected boolean isSctid(String str) throws Exception {
     if (str == null || str.isEmpty()) {
       return false;
@@ -287,6 +272,7 @@ public class SnomedUuidHashIdentifierAssignmentHandler implements
     }
     return false;
   }
+   */
 
   /**
    * The Class Verhoeff.

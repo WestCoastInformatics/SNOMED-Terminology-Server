@@ -37,6 +37,7 @@ import org.ihtsdo.otf.ts.services.handlers.ComputePreferredNameHandler;
 import org.ihtsdo.otf.ts.services.handlers.GraphResolutionHandler;
 import org.ihtsdo.otf.ts.services.handlers.IdentifierAssignmentHandler;
 
+// TODO: Auto-generated Javadoc
 /**
  * Generically represents a service for accessing content.
  */
@@ -978,6 +979,13 @@ public interface ContentService extends RootService {
    * @param lastModifiedFlag the last modified flag
    */
   public void setLastModifiedFlag(boolean lastModifiedFlag);
+
+  /**
+   * Sets the assign identifiers flag.
+   *
+   * @param assignIdentifiersFlag the assign identifiers flag
+   */
+  public void setAssignIdentifiersFlag(boolean assignIdentifiersFlag);
 
   /**
    * Returns the concepts in scope.

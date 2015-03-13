@@ -96,6 +96,7 @@ import org.ihtsdo.otf.ts.services.handlers.GraphResolutionHandler;
 import org.ihtsdo.otf.ts.services.handlers.IdentifierAssignmentHandler;
 import org.ihtsdo.otf.ts.services.handlers.WorkflowListener;
 
+// TODO: Auto-generated Javadoc
 /**
  * JPA enabled implementation of {@link ContentService}.
  */
@@ -104,7 +105,7 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
   /** The listeners enabled. */
   private boolean listenersEnabled = true;
 
-  /** The config properties */
+  /** The config properties. */
   private static Properties config = null;
 
   /** The listener. */
@@ -224,18 +225,13 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
           "Identifier assignment handler did not properly initialize, serious error.");
     }
 
-    /*
-     * if (pnHandlerMap == null) { throw new Exception(
-     * "Identifier compute preferred name handler did not properly initialize, serious error."
-     * ); }
-     */
-    // if (plannedEffectiveTime == null) {
-    // plannedEffectiveTime = getPlannedEffectiveTime();
-    // }
   }
 
   /** The last modified flag. */
   private boolean lastModifiedFlag = false;
+
+  /** The assign identifiers flag. */
+  private boolean assignIdentifiersFlag = false;
 
   /*
    * (non-Javadoc)
@@ -488,6 +484,13 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
     return list;
   }
 
+  /*
+   * (non-Javadoc)
+   * 
+   * @see
+   * org.ihtsdo.otf.ts.services.ContentService#getAncestorConcepts(org.ihtsdo
+   * .otf.ts.rf2.Concept, org.ihtsdo.otf.ts.helpers.PfsParameter)
+   */
   @SuppressWarnings("unchecked")
   @Override
   public ConceptList getAncestorConcepts(Concept concept, PfsParameter pfs)
@@ -602,27 +605,34 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
    * org.ihtsdo.otf.mapping.services.ContentService#addConcept(org.ihtsdo.otf
    * .mapping.rf2.Concept)
    */
+  @SuppressWarnings("null")
   @Override
   public Concept addConcept(Concept concept) throws Exception {
     Logger.getLogger(ContentServiceJpa.class).debug(
         "Content Service - add concept " + concept.getTerminologyId());
     // Assign id
-    IdentifierAssignmentHandler idHandler =
-        idHandlerMap.get(concept.getTerminology());
-    String id = idHandler.getTerminologyId(concept);
-    concept.setTerminologyId(id);
+    IdentifierAssignmentHandler idHandler = null;
+    if (assignIdentifiersFlag) {
+      idHandler = idHandlerMap.get(concept.getTerminology());
+      String id = idHandler.getTerminologyId(concept);
+      concept.setTerminologyId(id);
+    }
     // Process Cascade.ALL data structures
     Date date = new Date();
     for (Description description : concept.getDescriptions()) {
-      id = idHandler.getTerminologyId(description);
-      description.setTerminologyId(id);
+      if (assignIdentifiersFlag) {
+        String id = idHandler.getTerminologyId(description);
+        description.setTerminologyId(id);
+      }
       if (lastModifiedFlag) {
         description.setLastModified(date);
         description.setLastModifiedBy(concept.getLastModifiedBy());
       }
       for (LanguageRefSetMember member : description.getLanguageRefSetMembers()) {
-        id = idHandler.getTerminologyId(member);
-        member.setTerminologyId(id);
+        if (assignIdentifiersFlag) {
+          String id = idHandler.getTerminologyId(member);
+          member.setTerminologyId(id);
+        }
         if (lastModifiedFlag) {
           member.setLastModifiedBy(concept.getLastModifiedBy());
           member.setLastModified(date);
@@ -630,8 +640,10 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
       }
     }
     for (Relationship relationship : concept.getRelationships()) {
-      id = idHandler.getTerminologyId(relationship);
-      relationship.setTerminologyId(idHandler.getTerminologyId(relationship));
+      if (assignIdentifiersFlag) {
+        String id = idHandler.getTerminologyId(relationship);
+        relationship.setTerminologyId(id);
+      }
       if (lastModifiedFlag) {
         relationship.setLastModifiedBy(concept.getLastModifiedBy());
         relationship.setLastModified(date);
@@ -666,17 +678,19 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
     // Id assignment should not change
     final IdentifierAssignmentHandler idHandler =
         idHandlerMap.get(concept.getTerminology());
-    if (!idHandler.allowConceptIdChangeOnUpdate()) {
-      Concept concept2 = getConcept(concept.getId());
-      if (!idHandler.getTerminologyId(concept).equals(
-          idHandler.getTerminologyId(concept2))) {
-        throw new Exception("Update cannot be used to change object identity.");
+    if (assignIdentifiersFlag) {
+      if (!idHandler.allowConceptIdChangeOnUpdate()) {
+        Concept concept2 = getConcept(concept.getId());
+        if (!idHandler.getTerminologyId(concept).equals(
+            idHandler.getTerminologyId(concept2))) {
+          throw new Exception(
+              "Update cannot be used to change object identity.");
+        }
+      } else {
+        // set concept id on update
+        concept.setTerminologyId(idHandler.getTerminologyId(concept));
       }
-    } else {
-      // set concept id on update
-      concept.setTerminologyId(idHandler.getTerminologyId(concept));
     }
-
     // update component
     this.updateComponent(concept);
 
@@ -766,19 +780,24 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
    * org.ihtsdo.otf.mapping.services.ContentService#addDescription(org.ihtsdo
    * .otf.mapping.rf2.Description)
    */
+  @SuppressWarnings("null")
   @Override
   public Description addDescription(Description description) throws Exception {
     Logger.getLogger(ContentServiceJpa.class).debug(
         "Content Service - add description " + description.getTerminologyId());
     // Assign id
-    IdentifierAssignmentHandler idHandler =
-        idHandlerMap.get(description.getTerminology());
-    description.setTerminologyId(idHandler.getTerminologyId(description));
+    IdentifierAssignmentHandler idHandler = null;
+    if (assignIdentifiersFlag) {
+      idHandler = idHandlerMap.get(description.getTerminology());
+      description.setTerminologyId(idHandler.getTerminologyId(description));
+    }
 
     // Process Cascade.ALL data structures
     Date date = new Date();
     for (LanguageRefSetMember member : description.getLanguageRefSetMembers()) {
-      member.setTerminologyId(idHandler.getTerminologyId(member));
+      if (assignIdentifiersFlag) {
+        member.setTerminologyId(idHandler.getTerminologyId(member));
+      }
       if (lastModifiedFlag) {
         member.setLastModifiedBy(description.getLastModifiedBy());
         member.setLastModified(date);
@@ -812,7 +831,7 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
     // Id assignment should not change
     final IdentifierAssignmentHandler idHandler =
         idHandlerMap.get(description.getTerminology());
-    if (!idHandler.allowIdChangeOnUpdate()) {
+    if (!idHandler.allowIdChangeOnUpdate() && assignIdentifiersFlag) {
       Description description2 = getDescription(description.getId());
       if (!idHandler.getTerminologyId(description).equals(
           idHandler.getTerminologyId(description2))) {
@@ -918,9 +937,10 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
             "Content Service - add relationship "
                 + relationship.getTerminologyId());
     // Assign id
-    relationship.setTerminologyId(idHandlerMap.get(
-        relationship.getTerminology()).getTerminologyId(relationship));
-
+    if (assignIdentifiersFlag) {
+      relationship.setTerminologyId(idHandlerMap.get(
+          relationship.getTerminology()).getTerminologyId(relationship));
+    }
     // Add component
     Relationship newRelationship = addComponent(relationship);
 
@@ -948,7 +968,7 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
     // Id assignment should not change
     final IdentifierAssignmentHandler idHandler =
         idHandlerMap.get(relationship.getTerminology());
-    if (!idHandler.allowIdChangeOnUpdate()) {
+    if (!idHandler.allowIdChangeOnUpdate() && assignIdentifiersFlag) {
       Relationship relationship2 = getRelationship(relationship.getId());
       if (!idHandler.getTerminologyId(relationship).equals(
           idHandler.getTerminologyId(relationship2))) {
@@ -1004,8 +1024,10 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
             + relationship.getSuperTypeConcept() + "/"
             + relationship.getSubTypeConcept());
     // Assign id
-    relationship.setTerminologyId(idHandlerMap.get(
-        relationship.getTerminology()).getTerminologyId(relationship));
+    if (assignIdentifiersFlag) {
+      relationship.setTerminologyId(idHandlerMap.get(
+          relationship.getTerminology()).getTerminologyId(relationship));
+    }
 
     // Add component
     return addComponent(relationship);
@@ -1030,7 +1052,7 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
     // Id assignment should not change
     final IdentifierAssignmentHandler idHandler =
         idHandlerMap.get(relationship.getTerminology());
-    if (!idHandler.allowIdChangeOnUpdate()) {
+    if (!idHandler.allowIdChangeOnUpdate() && assignIdentifiersFlag) {
       Relationship relationship2 = getRelationship(relationship.getId());
       if (!idHandler.getTerminologyId(relationship).equals(
           idHandler.getTerminologyId(relationship2))) {
@@ -1183,8 +1205,10 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
         "Content Service - add attribute value refset member"
             + member.getTerminologyId());
     // Assign id
-    member.setTerminologyId(idHandlerMap.get(member.getTerminology())
-        .getTerminologyId(member));
+    if (assignIdentifiersFlag) {
+      member.setTerminologyId(idHandlerMap.get(member.getTerminology())
+          .getTerminologyId(member));
+    }
 
     // Add component
     AttributeValueRefSetMember<? extends Component> newMember =
@@ -1215,7 +1239,7 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
     // Id assignment should not change
     final IdentifierAssignmentHandler idHandler =
         idHandlerMap.get(member.getTerminology());
-    if (!idHandler.allowIdChangeOnUpdate()) {
+    if (!idHandler.allowIdChangeOnUpdate() && assignIdentifiersFlag) {
       AttributeValueRefSetMember<? extends Component> member2 =
           getAttributeValueRefSetMember(member.getId());
       if (!idHandler.getTerminologyId(member).equals(
@@ -1371,9 +1395,10 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
         "Content Service - add association reference refset member"
             + member.getTerminologyId());
     // Assign id
+    if (assignIdentifiersFlag) {
     member.setTerminologyId(idHandlerMap.get(member.getTerminology())
         .getTerminologyId(member));
-
+    }
     // Add component
     AssociationReferenceRefSetMember<? extends Component> newMember =
         addComponent(member);
@@ -1404,7 +1429,7 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
     // Id assignment should not change
     final IdentifierAssignmentHandler idHandler =
         idHandlerMap.get(member.getTerminology());
-    if (!idHandler.allowIdChangeOnUpdate()) {
+    if (!idHandler.allowIdChangeOnUpdate() && assignIdentifiersFlag) {
       AssociationReferenceRefSetMember<? extends Component> member2 =
           getAssociationReferenceRefSetMember(member.getId());
       if (!idHandler.getTerminologyId(member).equals(
@@ -1555,9 +1580,10 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
         "Content Service - add complex map refset member"
             + member.getTerminologyId());
     // Assign id
+    if (assignIdentifiersFlag) {
     member.setTerminologyId(idHandlerMap.get(member.getTerminology())
         .getTerminologyId(member));
-
+    }
     // Add component
     ComplexMapRefSetMember newMember = addComponent(member);
 
@@ -1587,7 +1613,7 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
     // Id assignment should not change
     final IdentifierAssignmentHandler idHandler =
         idHandlerMap.get(member.getTerminology());
-    if (!idHandler.allowIdChangeOnUpdate()) {
+    if (!idHandler.allowIdChangeOnUpdate() && assignIdentifiersFlag) {
       ComplexMapRefSetMember member2 =
           getComplexMapRefSetMember(member.getId());
       if (!idHandler.getTerminologyId(member).equals(
@@ -1734,9 +1760,10 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
         "Content Service - add language refset member"
             + member.getTerminologyId());
     // Assign id
+    if (assignIdentifiersFlag) {
     member.setTerminologyId(idHandlerMap.get(member.getTerminology())
         .getTerminologyId(member));
-
+    }
     // Add component
     LanguageRefSetMember newMember = addComponent(member);
 
@@ -1765,7 +1792,7 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
     // Id assignment should not change
     final IdentifierAssignmentHandler idHandler =
         idHandlerMap.get(member.getTerminology());
-    if (!idHandler.allowIdChangeOnUpdate()) {
+    if (!idHandler.allowIdChangeOnUpdate() && assignIdentifiersFlag) {
       LanguageRefSetMember member2 = getLanguageRefSetMember(member.getId());
       if (!idHandler.getTerminologyId(member).equals(
           idHandler.getTerminologyId(member2))) {
@@ -1909,9 +1936,10 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
         "Content Service - add simple map refset member"
             + member.getTerminologyId());
     // Assign id
+    if (assignIdentifiersFlag) {
     member.setTerminologyId(idHandlerMap.get(member.getTerminology())
         .getTerminologyId(member));
-
+    }
     // Add component
     SimpleMapRefSetMember newMember = addComponent(member);
 
@@ -1940,7 +1968,7 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
     // Id assignment should not change
     final IdentifierAssignmentHandler idHandler =
         idHandlerMap.get(member.getTerminology());
-    if (!idHandler.allowIdChangeOnUpdate()) {
+    if (!idHandler.allowIdChangeOnUpdate() && assignIdentifiersFlag) {
       SimpleMapRefSetMember member2 = getSimpleMapRefSetMember(member.getId());
       if (!idHandler.getTerminologyId(member).equals(
           idHandler.getTerminologyId(member2))) {
@@ -2084,9 +2112,10 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
         "Content Service - add simple refset member"
             + member.getTerminologyId());
     // Assign id
+    if (assignIdentifiersFlag) {
     member.setTerminologyId(idHandlerMap.get(member.getTerminology())
         .getTerminologyId(member));
-
+    }
     // Add component
     SimpleRefSetMember newMember = addComponent(member);
 
@@ -2116,7 +2145,7 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
     // Id assignment should not change
     final IdentifierAssignmentHandler idHandler =
         idHandlerMap.get(member.getTerminology());
-    if (!idHandler.allowIdChangeOnUpdate()) {
+    if (!idHandler.allowIdChangeOnUpdate() && assignIdentifiersFlag) {
       SimpleRefSetMember member2 = getSimpleRefSetMember(member.getId());
       if (!idHandler.getTerminologyId(member).equals(
           idHandler.getTerminologyId(member2))) {
@@ -2253,9 +2282,10 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
         "Content Service - add refset descriptor refset member"
             + member.getTerminologyId());
     // Assign id
+    if (assignIdentifiersFlag) {
     member.setTerminologyId(idHandlerMap.get(member.getTerminology())
         .getTerminologyId(member));
-
+    }
     // Add component
     RefsetDescriptorRefSetMember newMember = addComponent(member);
 
@@ -2285,7 +2315,7 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
     // Id assignment should not change
     final IdentifierAssignmentHandler idHandler =
         idHandlerMap.get(member.getTerminology());
-    if (!idHandler.allowIdChangeOnUpdate()) {
+    if (!idHandler.allowIdChangeOnUpdate() && assignIdentifiersFlag) {
       RefsetDescriptorRefSetMember member2 =
           getRefsetDescriptorRefSetMember(member.getId());
       if (!idHandler.getTerminologyId(member).equals(
@@ -2423,9 +2453,10 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
         "Content Service - add description type refset member"
             + member.getTerminologyId());
     // Assign id
+    if (assignIdentifiersFlag) {
     member.setTerminologyId(idHandlerMap.get(member.getTerminology())
         .getTerminologyId(member));
-
+    }
     // Add component
     DescriptionTypeRefSetMember newMember = addComponent(member);
 
@@ -2455,7 +2486,7 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
     // Id assignment should not change
     final IdentifierAssignmentHandler idHandler =
         idHandlerMap.get(member.getTerminology());
-    if (!idHandler.allowIdChangeOnUpdate()) {
+    if (!idHandler.allowIdChangeOnUpdate() && assignIdentifiersFlag) {
       DescriptionTypeRefSetMember member2 =
           getDescriptionTypeRefSetMember(member.getId());
       if (!idHandler.getTerminologyId(member).equals(
@@ -2593,9 +2624,10 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
         "Content Service - add module dependency refset member"
             + member.getTerminologyId());
     // Assign id
+    if (assignIdentifiersFlag) {
     member.setTerminologyId(idHandlerMap.get(member.getTerminology())
         .getTerminologyId(member));
-
+    }
     // Add component
     ModuleDependencyRefSetMember newMember = addComponent(member);
 
@@ -2624,7 +2656,7 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
     // Id assignment should not change
     final IdentifierAssignmentHandler idHandler =
         idHandlerMap.get(member.getTerminology());
-    if (!idHandler.allowIdChangeOnUpdate()) {
+    if (!idHandler.allowIdChangeOnUpdate() && assignIdentifiersFlag) {
       ModuleDependencyRefSetMember member2 =
           getModuleDependencyRefSetMember(member.getId());
       if (!idHandler.getTerminologyId(member).equals(
@@ -3640,6 +3672,17 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
   @Override
   public void setLastModifiedFlag(boolean lastModifiedFlag) {
     this.lastModifiedFlag = lastModifiedFlag;
+  }
+
+  /*
+   * (non-Javadoc)
+   * 
+   * @see
+   * org.ihtsdo.otf.ts.services.ContentService#setAssignIdentifiersFlag(boolean)
+   */
+  @Override
+  public void setAssignIdentifiersFlag(boolean assignIdentifiersFlag) {
+    this.assignIdentifiersFlag = assignIdentifiersFlag;
   }
 
 }

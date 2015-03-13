@@ -93,6 +93,8 @@ public class Rf2SnapshotLoaderAlgorithm extends ContentServiceJpa implements
    */
   public Rf2SnapshotLoaderAlgorithm() throws Exception {
     super();
+    // Turn of ID computation when loading a terminology
+    setAssignIdentifiersFlag(false);
   }
 
   /**
@@ -160,6 +162,8 @@ public class Rf2SnapshotLoaderAlgorithm extends ContentServiceJpa implements
       long startTimeOrig = System.nanoTime();
 
       contentService = new ContentServiceJpa();
+      // Turn of ID computation when loading a terminology
+      contentService.setAssignIdentifiersFlag(false);
       contentService.setTransactionPerOperation(false);
       contentService.beginTransaction();
       

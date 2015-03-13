@@ -924,7 +924,7 @@ public class ContentServiceRestImpl extends RootServiceRestImpl implements
           UserRole.ADMINISTRATOR);
 
       // Load snapshot
-      Logger.getLogger(ContentServiceJpa.class).info(
+      Logger.getLogger(getClass()).info(
           "Load ClaML data from " + inputFile);
       ClamlLoaderAlgorithm algorithm = new ClamlLoaderAlgorithm();
       algorithm.setTerminology(terminology);
@@ -933,7 +933,7 @@ public class ContentServiceRestImpl extends RootServiceRestImpl implements
       algorithm.compute();
 
       // Let service begin its own transaction
-      Logger.getLogger(ContentServiceJpa.class).info(
+      Logger.getLogger(getClass()).info(
           "Start computing transtive closure");
       TransitiveClosureAlgorithm algo = new TransitiveClosureAlgorithm();
       algo.setTerminology(terminology);
@@ -983,11 +983,11 @@ public class ContentServiceRestImpl extends RootServiceRestImpl implements
       authenticate(securityService, authToken, "start editing cycle",
           UserRole.ADMINISTRATOR);
 
-      Logger.getLogger(ContentServiceJpa.class).info(
+      Logger.getLogger(getClass()).info(
           "Starting RF2 delta loader");
-      Logger.getLogger(ContentServiceJpa.class).info(
+      Logger.getLogger(getClass()).info(
           "  terminology = " + terminology);
-      Logger.getLogger(ContentServiceJpa.class)
+      Logger.getLogger(getClass())
           .info("  inputDir = " + inputDir);
 
       // Check the input directory
@@ -1007,7 +1007,7 @@ public class ContentServiceRestImpl extends RootServiceRestImpl implements
       }
 
       // Sort files
-      Logger.getLogger(ContentServiceJpa.class).info("  Sort RF2 Files");
+      Logger.getLogger(getClass()).info("  Sort RF2 Files");
       Rf2FileSorter sorter = new Rf2FileSorter();
       sorter.setSortByEffectiveTime(false);
       sorter.setRequireAllFiles(false);
@@ -1060,7 +1060,7 @@ public class ContentServiceRestImpl extends RootServiceRestImpl implements
 
       // Clean-up
       readers.closeReaders();
-      Logger.getLogger(ContentServiceJpa.class).info("...done");
+      Logger.getLogger(getClass()).info("...done");
 
       // Final logging messages
       Logger.getLogger(ContentServiceRestImpl.class).info(
@@ -1111,7 +1111,7 @@ public class ContentServiceRestImpl extends RootServiceRestImpl implements
       }
 
       // Get the release versions
-      Logger.getLogger(ContentServiceJpa.class).info("  Get release versions");
+      Logger.getLogger(getClass()).info("  Get release versions");
       Rf2FileSorter sorter = new Rf2FileSorter();
       File conceptsFile = sorter.findFile(new File(inputDir), "sct2_Concept");
       Set<String> releaseSet = new HashSet<>();
@@ -1136,7 +1136,7 @@ public class ContentServiceRestImpl extends RootServiceRestImpl implements
       }
 
       // Sort files
-      Logger.getLogger(ContentServiceJpa.class).info("  Sort RF2 Files");
+      Logger.getLogger(getClass()).info("  Sort RF2 Files");
       sorter = new Rf2FileSorter();
       sorter.setSortByEffectiveTime(true);
       sorter.setRequireAllFiles(true);
@@ -1240,14 +1240,14 @@ public class ContentServiceRestImpl extends RootServiceRestImpl implements
       }
 
       // Sort files
-      Logger.getLogger(ContentServiceJpa.class).info("  Sort RF2 Files");
+      Logger.getLogger(getClass()).info("  Sort RF2 Files");
       Rf2FileSorter sorter = new Rf2FileSorter();
       sorter.setSortByEffectiveTime(false);
       sorter.setRequireAllFiles(true);
       File outputDir = new File(inputDirFile, "/RF2-sorted-temp/");
       sorter.sortFiles(inputDirFile, outputDir);
       String releaseVersion = sorter.getFileVersion();
-      Logger.getLogger(ContentServiceJpa.class).info(
+      Logger.getLogger(getClass()).info(
           "  releaseVersion = " + releaseVersion);
 
       // Open readers

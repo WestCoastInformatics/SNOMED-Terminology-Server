@@ -88,7 +88,7 @@ public class Rf2DeltaLoaderAlgorithm extends ContentServiceJpa implements
   /** The existing language ref set member ids. */
   private Set<String> existingLanguageRefSetMemberIds = new HashSet<>();
 
-  /**  The history service. */
+  /** The history service. */
   private HistoryService historyService;
 
   /**
@@ -97,6 +97,8 @@ public class Rf2DeltaLoaderAlgorithm extends ContentServiceJpa implements
    */
   public Rf2DeltaLoaderAlgorithm() throws Exception {
     super();
+    // Turn of ID computation when loading a terminology
+    setAssignIdentifiersFlag(false);
   }
 
   /**
@@ -202,8 +204,8 @@ public class Rf2DeltaLoaderAlgorithm extends ContentServiceJpa implements
           "  Cache language refset member ids");
       existingLanguageRefSetMemberIds =
           new HashSet<>(historyService
-              .getAllLanguageRefSetMemberTerminologyIds(terminology,
-                  version).getObjects());
+              .getAllLanguageRefSetMemberTerminologyIds(terminology, version)
+              .getObjects());
       Logger.getLogger(this.getClass()).info(
           "    count = " + existingLanguageRefSetMemberIds.size());
       Logger.getLogger(this.getClass()).info("  Cache relationship ids");
@@ -577,8 +579,7 @@ public class Rf2DeltaLoaderAlgorithm extends ContentServiceJpa implements
         } else {
           // retrieve concept
           concept =
-              historyService.getSingleConcept(fields[4], terminology,
-                  version);
+              historyService.getSingleConcept(fields[4], terminology, version);
         }
 
         // if the concept is not null
@@ -593,8 +594,7 @@ public class Rf2DeltaLoaderAlgorithm extends ContentServiceJpa implements
             description = descriptionCache.get(fields[0]);
           } else if (existingDescriptionIds.contains(fields[0])) {
             description =
-                historyService.getDescription(fields[0], terminology,
-                    version);
+                historyService.getDescription(fields[0], terminology, version);
           }
 
           // Throw exception if it cant be found
@@ -704,8 +704,7 @@ public class Rf2DeltaLoaderAlgorithm extends ContentServiceJpa implements
           description = descriptionCache.get(fields[5]);
         } else {
           description =
-              historyService.getDescription(fields[5], terminology,
-                  version);
+              historyService.getDescription(fields[5], terminology, version);
         }
 
         // get the concept
@@ -837,8 +836,7 @@ public class Rf2DeltaLoaderAlgorithm extends ContentServiceJpa implements
           sourceConcept = existingConceptCache.get(fields[4]);
         } else {
           sourceConcept =
-              historyService.getSingleConcept(fields[4], terminology,
-                  version);
+              historyService.getSingleConcept(fields[4], terminology, version);
         }
         if (sourceConcept == null) {
           throw new Exception("Relationship " + fields[0] + " source concept "
@@ -852,8 +850,7 @@ public class Rf2DeltaLoaderAlgorithm extends ContentServiceJpa implements
           destinationConcept = existingConceptCache.get(fields[5]);
         } else {
           destinationConcept =
-              historyService.getSingleConcept(fields[5], terminology,
-                  version);
+              historyService.getSingleConcept(fields[5], terminology, version);
         }
         if (destinationConcept == null) {
           throw new Exception("Relationship " + fields[0]
@@ -870,8 +867,7 @@ public class Rf2DeltaLoaderAlgorithm extends ContentServiceJpa implements
           relationship = relationshipCache.get(fields[0]);
         } else if (existingRelationshipIds.contains(fields[0])) {
           relationship =
-              historyService.getRelationship(fields[0], terminology,
-                  version);
+              historyService.getRelationship(fields[0], terminology, version);
 
         }
 
@@ -941,8 +937,8 @@ public class Rf2DeltaLoaderAlgorithm extends ContentServiceJpa implements
   /**
    * Retires concepts that were removed from prior deltas. Find concepts in the
    * DB that are not in the current delta and which have effective times greater
-   * than the latest release date. The latest release date is the
-   * "version" in this case.
+   * than the latest release date. The latest release date is the "version" in
+   * this case.
    * @throws Exception
    */
   public void retireRemovedConcepts() throws Exception {
