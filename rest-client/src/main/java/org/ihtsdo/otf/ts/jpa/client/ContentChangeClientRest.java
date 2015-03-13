@@ -44,6 +44,34 @@ public class ContentChangeClientRest implements ContentChangeServiceRest {
     this.config = config;
   }
 
+  /* (non-Javadoc)
+   * @see org.ihtsdo.otf.ts.rest.ContentChangeServiceRest#getConceptForUser(java.lang.String, java.lang.String, java.lang.String, java.lang.String)
+   */
+  @Override
+  public Concept getConceptForUser(String terminologyId, String terminology,
+    String version, String authToken) throws Exception {
+    Client client = Client.create();
+    WebResource resource =
+        client.resource(config.getProperty("base.url") + "/history/concept/"
+            + terminology + "/" + version + "/" + terminologyId);
+    ClientResponse response =
+        resource.accept(MediaType.APPLICATION_XML)
+            .header("Authorization", authToken).get(ClientResponse.class);
+
+    String resultString = response.getEntity(String.class);
+    if (response.getClientResponseStatus().getFamily() == Family.SUCCESSFUL) {
+      Logger.getLogger(this.getClass()).debug(resultString);
+    } else {
+      throw new Exception(resultString);
+    }
+
+    // converting to object
+    ConceptJpa c =
+        (ConceptJpa) ConfigUtility.getGraphForString(resultString,
+            ConceptJpa.class);
+    return c;
+  }
+  
   /*
    * (non-Javadoc)
    * 
@@ -715,8 +743,7 @@ public class ContentChangeClientRest implements ContentChangeServiceRest {
     if (response.getClientResponseStatus().getFamily() == Family.SUCCESSFUL) {
 
       StartEditingCycleAlgorithm algorithm =
-          new StartEditingCycleAlgorithm(releaseVersion, terminology,
-              version);
+          new StartEditingCycleAlgorithm(releaseVersion, terminology, version);
       algorithm.compute();
     }
 
@@ -725,7 +752,7 @@ public class ContentChangeClientRest implements ContentChangeServiceRest {
   @Override
   public void removeReleaseInfos(String terminology, String releaseInfoNames) {
     // TODO Auto-generated method stub
-    
+
   }
 
   @Override
@@ -733,14 +760,14 @@ public class ContentChangeClientRest implements ContentChangeServiceRest {
     String workflowStatusValues, boolean validate, boolean saveIdentifiers)
     throws Exception {
     // TODO Auto-generated method stub
-    
+
   }
 
   @Override
   public void releaseProcess(String refSetId, String outputDirName,
     String effectiveTime, String moduleId) throws Exception {
     // TODO Auto-generated method stub
-    
+
   }
 
   @Override
@@ -748,8 +775,7 @@ public class ContentChangeClientRest implements ContentChangeServiceRest {
     String workflowStatusValues, boolean validate, boolean saveIdentifiers)
     throws Exception {
     // TODO Auto-generated method stub
-    
-  }
 
+  }
 
 }

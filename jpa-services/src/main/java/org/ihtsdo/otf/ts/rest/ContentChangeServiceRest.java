@@ -19,6 +19,19 @@ import org.ihtsdo.otf.ts.rf2.jpa.RelationshipJpa;
 public interface ContentChangeServiceRest {
 
   /**
+   * Returns the concept for user.
+   *
+   * @param terminologyId the terminology id
+   * @param terminology the terminology
+   * @param version the version
+   * @param authToken the auth token
+   * @return the concept for user
+   * @throws Exception the exception
+   */
+  public Concept getConceptForUser(String terminologyId, String terminology,
+    String version, String authToken) throws Exception;
+
+  /**
    * Adds the concept.
    *
    * @param concept the concept

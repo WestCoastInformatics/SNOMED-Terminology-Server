@@ -46,6 +46,9 @@
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-surefire-plugin</artifactId>
         <configuration>
+          <includes>
+            <include>**/Metadata*Test.java</include>
+          </includes>
           <additionalClasspathElements>
             <additionalClasspathElement>src/main/resources</additionalClasspathElement>
           </additionalClasspathElements>

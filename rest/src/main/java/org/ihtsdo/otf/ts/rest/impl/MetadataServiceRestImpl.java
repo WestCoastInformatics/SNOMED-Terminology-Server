@@ -3,6 +3,7 @@ package org.ihtsdo.otf.ts.rest.impl;
 import java.util.List;
 import java.util.Map;
 
+import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.HeaderParam;
 import javax.ws.rs.Path;
@@ -33,7 +34,7 @@ import com.wordnik.swagger.annotations.ApiParam;
 @Path("/metadata")
 @Api(value = "/metadata", description = "Operations providing terminology metadata.")
 @Produces({
-    MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML
+  MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML
 })
 public class MetadataServiceRestImpl extends RootServiceRestImpl implements
     MetadataServiceRest {
@@ -61,9 +62,6 @@ public class MetadataServiceRestImpl extends RootServiceRestImpl implements
   @GET
   @Path("/terminology/id/{terminology}/{version}")
   @ApiOperation(value = "Get metadata for terminology and version.", notes = "Gets the key-value pairs representing all metadata for a particular terminology and version.", response = KeyValuePairLists.class)
-  @Produces({
-      MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML
-  })
   public KeyValuePairLists getMetadata(
     @ApiParam(value = "Terminology name, e.g. SNOMEDCT", required = true) @PathParam("terminology") String terminology,
     @ApiParam(value = "Terminology version, e.g. latest", required = true) @PathParam("version") String version,
@@ -142,9 +140,6 @@ public class MetadataServiceRestImpl extends RootServiceRestImpl implements
   @GET
   @Path("/terminology/id/{terminology}/latest")
   @ApiOperation(value = "Get all metadata for the the latest version of a terminology.", notes = "Returns all metadata for the latest version of a specified terminology.", response = KeyValuePairLists.class)
-  @Produces({
-      MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML
-  })
   public KeyValuePairLists getAllMetadata(
     @ApiParam(value = "Terminology name, e.g. SNOMEDCT", required = true) @PathParam("terminology") String terminology,
     @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken) throws Exception {
@@ -187,9 +182,6 @@ public class MetadataServiceRestImpl extends RootServiceRestImpl implements
   @GET
   @Path("/terminology/terminologies/latest")
   @ApiOperation(value = "Get all terminologies and their latest versions.", notes = "Gets the list of terminologies and their latest versions.", response = KeyValuePairList.class)
-  @Produces({
-      MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML
-  })
   public KeyValuePairList getAllTerminologiesLatestVersions(
     @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken) throws Exception {
 
@@ -239,9 +231,6 @@ public class MetadataServiceRestImpl extends RootServiceRestImpl implements
   @GET
   @Path("/terminology/terminologies")
   @ApiOperation(value = "Get all terminologies and all their versions", notes = "Gets the list of all terminologies and all of their versions", response = KeyValuePairList.class)
-  @Produces({
-      MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML
-  })
   public KeyValuePairLists getAllTerminologiesVersions(
     @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken) throws Exception {
 

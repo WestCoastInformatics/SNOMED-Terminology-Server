@@ -9,6 +9,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.HeaderParam;
 import javax.ws.rs.POST;
@@ -61,10 +62,13 @@ import com.wordnik.swagger.annotations.ApiParam;
  * REST implementation for {@link ContentServiceRest}..
  */
 @Path("/content")
-@Api(value = "/content", description = "Operations to retrieve RF2 content for a terminology.")
+@Consumes({
+    MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML
+})
 @Produces({
     MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML
 })
+@Api(value = "/content", description = "Operations to retrieve RF2 content for a terminology.")
 public class ContentServiceRestImpl extends RootServiceRestImpl implements
     ContentServiceRest {
 
@@ -80,13 +84,17 @@ public class ContentServiceRestImpl extends RootServiceRestImpl implements
     securityService = new SecurityServiceJpa();
   }
 
+  /*
+   * (non-Javadoc)
+   * 
+   * @see
+   * org.ihtsdo.otf.ts.rest.ContentServiceRest#addProject(org.ihtsdo.otf.ts.
+   * jpa.ProjectJpa, java.lang.String)
+   */
   @Override
   @PUT
   @Path("/project/add")
   @ApiOperation(value = "Add new project", notes = "Creates a new project.", response = Project.class)
-  @Produces({
-      MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML
-  })
   public Project addProject(
     @ApiParam(value = "Project, e.g. newProject", required = true) ProjectJpa project,
     @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken)
@@ -98,7 +106,7 @@ public class ContentServiceRestImpl extends RootServiceRestImpl implements
 
     try {
       authenticate(securityService, authToken, "add project", UserRole.AUTHOR);
-      
+
       // Create service and configure transaction scope
       ContentService contentService = new ContentServiceJpa();
 
@@ -110,7 +118,7 @@ public class ContentServiceRestImpl extends RootServiceRestImpl implements
               "A project with this name and description already exists.");
         }
       }
-      
+
       contentService.setTransactionPerOperation(false);
       contentService.beginTransaction();
 
@@ -139,9 +147,6 @@ public class ContentServiceRestImpl extends RootServiceRestImpl implements
   @GET
   @Path("/concepts/{terminology}/{version}/{terminologyId}")
   @ApiOperation(value = "Get concept(s) by id, terminology, and version", notes = "Gets all concepts matching the specified parameters.", response = Concept.class)
-  @Produces({
-      MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML
-  })
   public ConceptList getConcepts(
     @ApiParam(value = "Concept terminology id, e.g. 102751005", required = true) @PathParam("terminologyId") String terminologyId,
     @ApiParam(value = "Concept terminology name, e.g. SNOMEDCT", required = true) @PathParam("terminology") String terminology,
@@ -177,60 +182,7 @@ public class ContentServiceRestImpl extends RootServiceRestImpl implements
     }
 
   }
-/*
-  Commented out for later move to change service
-   * (non-Javadoc)
-   * 
-   * @see
-   * org.ihtsdo.otf.mapping.rest.ContentServiceRest#getConcept(java.lang.String,
-   * java.lang.String, java.lang.String, java.lang.String)
-   
-  @Override
-  @GET
-  @Path("/concept/{terminology}/{version}/{terminologyId}/foruser")
-  @ApiOperation(value = "Get concept by id, terminology, and version for the current user", notes = "Gets the concepts matching the specified parameters where the current user is the last modified by.", response = Concept.class)
-  @Produces({
-      MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML
-  })
-  public Concept getConceptForUser(
-    @ApiParam(value = "Concept terminology id, e.g. 102751005", required = true) @PathParam("terminologyId") String terminologyId,
-    @ApiParam(value = "Concept terminology name, e.g. SNOMEDCT", required = true) @PathParam("terminology") String terminology,
-    @ApiParam(value = "Concept terminology version, e.g. latest", required = true) @PathParam("version") String version,
-    @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken) {
 
-    Logger.getLogger(ContentServiceRestImpl.class).info(
-        "RESTful call (Content): /concept/" + terminology + "/" + version + "/"
-            + terminologyId);
-
-    try {
-      authenticate(securityService, authToken, "retrieve the concept",
-          UserRole.VIEWER);
-
-      String username = securityService.getUsernameForToken(authToken);
-      ContentService contentService = new ContentServiceJpa();
-      ConceptList cl =
-          contentService.getConcepts(terminologyId, terminology, version);
-
-      for (Concept concept : cl.getObjects()) {
-        if (concept != null && concept.getLastModified().equals(username)) {
-          contentService.getGraphResolutionHandler().resolve(
-              concept,
-              TerminologyUtility.getHierarchcialIsaRels(
-                  concept.getTerminology(), concept.getTerminologyVersion()));
-
-          contentService.close();
-          return concept;
-        }
-      }
-      contentService.close();
-      return null;
-    } catch (Exception e) {
-      handleException(e, "trying to retrieve a concept");
-      return null;
-    }
-
-  }
-*/
   /*
    * (non-Javadoc)
    * 
@@ -242,9 +194,6 @@ public class ContentServiceRestImpl extends RootServiceRestImpl implements
   @GET
   @Path("/concept/{terminology}/{version}/{terminologyId}")
   @ApiOperation(value = "Get concept by id, terminology, and version", notes = "Gets the concept for the specified parameters. It assumes there is only one which may not be the case during dual independent review.", response = Concept.class)
-  @Produces({
-      MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML
-  })
   public Concept getSingleConcept(
     @ApiParam(value = "Concept terminology id, e.g. 102751005", required = true) @PathParam("terminologyId") String terminologyId,
     @ApiParam(value = "Concept terminology name, e.g. SNOMEDCT", required = true) @PathParam("terminology") String terminology,
@@ -288,9 +237,6 @@ public class ContentServiceRestImpl extends RootServiceRestImpl implements
   @GET
   @Path("/concept/id/{id}")
   @ApiOperation(value = "Get concept by id", notes = "Gets the concept for the specified id.", response = Concept.class)
-  @Produces({
-      MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML
-  })
   public Concept getConcept(
     @ApiParam(value = "Concept internal id, e.g. 2", required = true) @PathParam("id") Long id,
     @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken) {
@@ -328,9 +274,6 @@ public class ContentServiceRestImpl extends RootServiceRestImpl implements
   @Override
   @POST
   @Path("/concepts/{terminology}/{version}/query/{query}")
-  @Produces({
-      MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML
-  })
   @ApiOperation(value = "Find concepts matching a search query.", notes = "Gets a list of search results that match the lucene query.", response = String.class)
   public SearchResultList findConceptsForQuery(
     @ApiParam(value = "Terminology, e.g. SNOMEDCT", required = true) @PathParam("terminology") String terminology,
@@ -359,13 +302,18 @@ public class ContentServiceRestImpl extends RootServiceRestImpl implements
     }
   }
 
+  /*
+   * (non-Javadoc)
+   * 
+   * @see
+   * org.ihtsdo.otf.ts.rest.ContentServiceRest#getChildConcepts(java.lang.String
+   * , java.lang.String, java.lang.String,
+   * org.ihtsdo.otf.ts.helpers.PfsParameterJpa, java.lang.String)
+   */
   @Override
   @POST
   @Path("/concepts/{terminology}/{version}/{terminologyId}/children")
   @ApiOperation(value = "Get children", notes = "Gets the child concepts for the specified id.", response = ConceptList.class)
-  @Produces({
-      MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML
-  })
   public ConceptList getChildConcepts(
     @ApiParam(value = "Concept terminology id, e.g. 102751005", required = true) @PathParam("terminologyId") String terminologyId,
     @ApiParam(value = "Concept terminology name, e.g. SNOMEDCT", required = true) @PathParam("terminology") String terminology,
@@ -385,7 +333,7 @@ public class ContentServiceRestImpl extends RootServiceRestImpl implements
       Concept concept =
           contentService.getSingleConcept(terminologyId, terminology, version);
       ConceptList list = contentService.getChildConcepts(concept, pfs);
-       for (Concept c : list.getObjects()) {
+      for (Concept c : list.getObjects()) {
         contentService.getGraphResolutionHandler().resolve(
             c,
             TerminologyUtility.getHierarchcialIsaRels(c.getTerminology(),
@@ -399,13 +347,18 @@ public class ContentServiceRestImpl extends RootServiceRestImpl implements
     }
   }
 
+  /*
+   * (non-Javadoc)
+   * 
+   * @see
+   * org.ihtsdo.otf.ts.rest.ContentServiceRest#getDescendantConcepts(java.lang
+   * .String, java.lang.String, java.lang.String,
+   * org.ihtsdo.otf.ts.helpers.PfsParameterJpa, java.lang.String)
+   */
   @Override
   @POST
   @Path("/concepts/{terminology}/{version}/{terminologyId}/descendants")
   @ApiOperation(value = "Get descendants", notes = "Gets the descendant concepts for the specified id.", response = ConceptList.class)
-  @Produces({
-      MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML
-  })
   public ConceptList getDescendantConcepts(
     @ApiParam(value = "Concept terminology id, e.g. 102751005", required = true) @PathParam("terminologyId") String terminologyId,
     @ApiParam(value = "Concept terminology name, e.g. SNOMEDCT", required = true) @PathParam("terminology") String terminology,
@@ -439,13 +392,18 @@ public class ContentServiceRestImpl extends RootServiceRestImpl implements
     }
   }
 
+  /*
+   * (non-Javadoc)
+   * 
+   * @see
+   * org.ihtsdo.otf.ts.rest.ContentServiceRest#getAncestorConcepts(java.lang
+   * .String, java.lang.String, java.lang.String,
+   * org.ihtsdo.otf.ts.helpers.PfsParameterJpa, java.lang.String)
+   */
   @Override
   @POST
   @Path("/concepts/{terminology}/{version}/{terminologyId}/ancestors")
   @ApiOperation(value = "Get ancestors", notes = "Gets the ancestor concepts for the specified id.", response = ConceptList.class)
-  @Produces({
-      MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML
-  })
   public ConceptList getAncestorConcepts(
     @ApiParam(value = "Concept terminology id, e.g. 102751005", required = true) @PathParam("terminologyId") String terminologyId,
     @ApiParam(value = "Concept terminology name, e.g. SNOMEDCT", required = true) @PathParam("terminology") String terminology,
@@ -490,9 +448,6 @@ public class ContentServiceRestImpl extends RootServiceRestImpl implements
   @GET
   @Path("/description/id/{id}")
   @ApiOperation(value = "Get description by id", notes = "Gets the description for the specified id.", response = Description.class)
-  @Produces({
-      MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML
-  })
   public Description getDescription(
     @ApiParam(value = "Description internal id, e.g. 2", required = true) @PathParam("id") Long id,
     @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken) {
@@ -528,9 +483,6 @@ public class ContentServiceRestImpl extends RootServiceRestImpl implements
   @GET
   @Path("/description/{terminology}/{version}/{terminologyId}")
   @ApiOperation(value = "Get description by id, terminology, and version", notes = "Gets the description for the specified parameters. It assumes there is only one which may not be the case during dual independent review.", response = Description.class)
-  @Produces({
-      MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML
-  })
   public Description getDescription(
     @ApiParam(value = "Description terminology id, e.g. 100114019", required = true) @PathParam("terminologyId") String terminologyId,
     @ApiParam(value = "Description terminology name, e.g. SNOMEDCT", required = true) @PathParam("terminology") String terminology,
@@ -573,9 +525,6 @@ public class ContentServiceRestImpl extends RootServiceRestImpl implements
   @GET
   @Path("/relationship/id/{id}")
   @ApiOperation(value = "Get relationship by id", notes = "Gets the relationship for the specified id.", response = Relationship.class)
-  @Produces({
-      MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML
-  })
   public Relationship getRelationship(
     @ApiParam(value = "Relationship internal id, e.g. 2", required = true) @PathParam("id") Long id,
     @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken) {
@@ -610,9 +559,6 @@ public class ContentServiceRestImpl extends RootServiceRestImpl implements
   @GET
   @Path("/relationship/{terminology}/{version}/{terminologyId}")
   @ApiOperation(value = "Get relationship by id, terminology, and version", notes = "Gets the relationship for the specified parameters. It assumes there is only one which may not be the case during dual independent review.", response = Relationship.class)
-  @Produces({
-      MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML
-  })
   public Relationship getRelationship(
     @ApiParam(value = "Relationship terminology id, e.g. 100114019", required = true) @PathParam("terminologyId") String terminologyId,
     @ApiParam(value = "Relationship terminology name, e.g. SNOMEDCT", required = true) @PathParam("terminology") String terminology,
@@ -655,9 +601,6 @@ public class ContentServiceRestImpl extends RootServiceRestImpl implements
   @GET
   @Path("/language/id/{id}")
   @ApiOperation(value = "Get language refset member by id", notes = "Gets the language refset member for the specified id.", response = LanguageRefSetMember.class)
-  @Produces({
-      MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML
-  })
   public LanguageRefSetMember getLanguageRefSetMember(
     @ApiParam(value = "Language refset member internal id, e.g. 2", required = true) @PathParam("id") Long id,
     @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken) {
@@ -693,9 +636,6 @@ public class ContentServiceRestImpl extends RootServiceRestImpl implements
   @GET
   @Path("/language/{terminology}/{version}/{terminologyId}")
   @ApiOperation(value = "Get language refset member by id, terminology, and version", notes = "Gets the language refset member for the specified parameters. It assumes there is only one which may not be the case during dual independent review.", response = LanguageRefSetMember.class)
-  @Produces({
-      MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML
-  })
   public LanguageRefSetMember getLanguageRefSetMember(
     @ApiParam(value = "Language refset member terminology id, e.g. 100114019", required = true) @PathParam("terminologyId") String terminologyId,
     @ApiParam(value = "Language refset member terminology name, e.g. SNOMEDCT", required = true) @PathParam("terminology") String terminology,
@@ -738,9 +678,6 @@ public class ContentServiceRestImpl extends RootServiceRestImpl implements
   @GET
   @Path("/associationReference/id/{id}")
   @ApiOperation(value = "Get association reference refset member by id", notes = "Gets the association reference  refset member for the specified id.", response = AssociationReferenceConceptRefSetMember.class)
-  @Produces({
-      MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML
-  })
   public AssociationReferenceConceptRefSetMember getAssociationReferenceConceptRefSetMember(
     @ApiParam(value = "association reference refset member internal id, e.g. 2", required = true) @PathParam("id") Long id,
     @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken) {
@@ -779,9 +716,6 @@ public class ContentServiceRestImpl extends RootServiceRestImpl implements
   @GET
   @Path("/associationReference/{terminology}/{version}/{terminologyId}")
   @ApiOperation(value = "Get association reference refset member by id, terminology, and version", notes = "Gets the association reference refset member for the specified parameters. It assumes there is only one which may not be the case during dual independent review.", response = AssociationReferenceConceptRefSetMember.class)
-  @Produces({
-      MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML
-  })
   public AssociationReferenceConceptRefSetMember getAssociationReferenceConceptRefSetMember(
     @ApiParam(value = "AssociationReferenceConcept refset member terminology id, e.g. 100114019", required = true) @PathParam("terminologyId") String terminologyId,
     @ApiParam(value = "AssociationReferenceConcept refset member terminology name, e.g. SNOMEDCT", required = true) @PathParam("terminology") String terminology,
@@ -815,14 +749,19 @@ public class ContentServiceRestImpl extends RootServiceRestImpl implements
     }
   }
 
+  /*
+   * (non-Javadoc)
+   * 
+   * @see
+   * org.ihtsdo.otf.ts.rest.ContentServiceRest#getConceptsInScope(java.lang.
+   * Long, java.lang.String)
+   */
   @Override
   @GET
   @Path("/project/id/{id}/scope")
   @ApiOperation(value = "Get project scope for the project id", notes = "Gets all concpets in scope for this project.", response = ConceptList.class)
-  @Produces({
-      MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML
-  })
   public ConceptList getConceptsInScope(
+
     @ApiParam(value = "Project internal id, e.g. 2", required = true) @PathParam("id") Long id,
     @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken) {
 
@@ -844,13 +783,16 @@ public class ContentServiceRestImpl extends RootServiceRestImpl implements
     }
   }
 
+  /*
+   * (non-Javadoc)
+   * 
+   * @see org.ihtsdo.otf.ts.rest.ContentServiceRest#getProject(java.lang.Long,
+   * java.lang.String)
+   */
   @Override
   @GET
   @Path("/project/id/{id}")
   @ApiOperation(value = "Get project for id", notes = "Gets the project for the specified id.", response = ConceptList.class)
-  @Produces({
-      MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML
-  })
   public Project getProject(
     @ApiParam(value = "Project internal id, e.g. 2", required = true) @PathParam("id") Long id,
     @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken) {
@@ -871,13 +813,16 @@ public class ContentServiceRestImpl extends RootServiceRestImpl implements
     }
   }
 
+  /*
+   * (non-Javadoc)
+   * 
+   * @see
+   * org.ihtsdo.otf.ts.rest.ContentServiceRest#getProjects(java.lang.String)
+   */
   @Override
   @GET
   @Path("/project/projects}")
   @ApiOperation(value = "Get all projects", notes = "Gets all projects.", response = ConceptList.class)
-  @Produces({
-      MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML
-  })
   public ProjectList getProjects(
     @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken) {
     Logger.getLogger(ContentServiceRestImpl.class).info(
@@ -897,13 +842,17 @@ public class ContentServiceRestImpl extends RootServiceRestImpl implements
     }
   }
 
+  /*
+   * (non-Javadoc)
+   * 
+   * @see
+   * org.ihtsdo.otf.ts.rest.ContentServiceRest#luceneReindex(java.lang.String,
+   * java.lang.String)
+   */
   @Override
   @POST
   @Path("/reindex")
   @ApiOperation(value = "Reindexes specified objects", notes = "Recomputes lucene indexes for the specified comma-separated objects")
-  @Produces({
-      MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML
-  })
   public void luceneReindex(
     @ApiParam(value = "Comma-separated list of objects to reindex, e.g. ConceptJpa (optional)", required = false) String indexedObjects,
     @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken)
@@ -942,9 +891,19 @@ public class ContentServiceRestImpl extends RootServiceRestImpl implements
 
   }
 
+  /*
+   * (non-Javadoc)
+   * 
+   * @see
+   * org.ihtsdo.otf.ts.rest.ContentServiceRest#loadTerminologyClaml(java.lang
+   * .String, java.lang.String, java.lang.String, java.lang.String)
+   */
   @Override
   @POST
   @Path("/terminology/load/claml/{terminology}/{version}")
+  @Consumes({
+    MediaType.TEXT_PLAIN
+  })
   @ApiOperation(value = "Loads ClaML terminology from file", notes = "Loads terminology from ClaML file, assigning specified version")
   public void loadTerminologyClaml(
     @ApiParam(value = "Terminology, e.g. SNOMEDCT", required = true) @PathParam("terminology") String terminology,
@@ -955,8 +914,7 @@ public class ContentServiceRestImpl extends RootServiceRestImpl implements
 
     Logger.getLogger(ContentServiceRestImpl.class).info(
         "RESTful POST call (ContentChange): /terminology/load/claml/"
-            + terminology + "/" + version + " from input file "
-            + inputFile);
+            + terminology + "/" + version + " from input file " + inputFile);
 
     // Track system level information
     long startTimeOrig = System.nanoTime();
@@ -994,9 +952,19 @@ public class ContentServiceRestImpl extends RootServiceRestImpl implements
     }
   }
 
+  /*
+   * (non-Javadoc)
+   * 
+   * @see
+   * org.ihtsdo.otf.ts.rest.ContentServiceRest#loadTerminologyRf2Delta(java.
+   * lang.String, java.lang.String, java.lang.String)
+   */
   @Override
   @POST
   @Path("/terminology/load/rf2/delta/{terminology}")
+  @Consumes({
+    MediaType.TEXT_PLAIN
+  })
   @ApiOperation(value = "Loads terminology RF2 delta from directory", notes = "Loads terminology RF2 delta from directory for specified terminology and version")
   public void loadTerminologyRf2Delta(
     @ApiParam(value = "Terminology, e.g. SNOMEDCT", required = true) @PathParam("terminology") String terminology,
@@ -1032,8 +1000,7 @@ public class ContentServiceRestImpl extends RootServiceRestImpl implements
       // but for delta/daily build files, this is not the current version
       // look up the current version instead
       MetadataService metadataService = new MetadataServiceJpa();
-      final String version =
-          metadataService.getLatestVersion(terminology);
+      final String version = metadataService.getLatestVersion(terminology);
       metadataService.close();
       if (version == null) {
         throw new Exception("Unable to determine terminology version.");
@@ -1062,8 +1029,7 @@ public class ContentServiceRestImpl extends RootServiceRestImpl implements
 
       // Compute transitive closure
       Logger.getLogger(this.getClass()).info(
-          "  Compute transitive closure from  " + terminology + "/"
-              + version);
+          "  Compute transitive closure from  " + terminology + "/" + version);
       TransitiveClosureAlgorithm algo = new TransitiveClosureAlgorithm();
       algo.setTerminology(terminology);
       algo.setTerminologyVersion(version);
@@ -1106,9 +1072,19 @@ public class ContentServiceRestImpl extends RootServiceRestImpl implements
     }
   }
 
+  /*
+   * (non-Javadoc)
+   * 
+   * @see
+   * org.ihtsdo.otf.ts.rest.ContentServiceRest#loadTerminologyRf2Full(java.lang
+   * .String, java.lang.String, java.lang.String, java.lang.String)
+   */
   @Override
   @POST
   @Path("/terminology/load/rf2/full/{terminology}/{version}")
+  @Consumes({
+    MediaType.TEXT_PLAIN
+  })
   @ApiOperation(value = "Loads terminology RF2 full from directory", notes = "Loads terminology RF2 full from directory for specified terminology and version")
   public void loadTerminologyRf2Full(
     @ApiParam(value = "Terminology, e.g. SNOMEDCT", required = true) @PathParam("terminology") String terminology,
@@ -1119,8 +1095,7 @@ public class ContentServiceRestImpl extends RootServiceRestImpl implements
 
     Logger.getLogger(ContentServiceRestImpl.class).info(
         "RESTful POST call (ContentChange): /terminology/load/rf2/full/"
-            + terminology + "/" + version + " from input file "
-            + inputDir);
+            + terminology + "/" + version + " from input file " + inputDir);
 
     // Track system level information
     long startTimeOrig = System.nanoTime();
@@ -1197,8 +1172,7 @@ public class ContentServiceRestImpl extends RootServiceRestImpl implements
 
       // Compute transitive closure
       Logger.getLogger(this.getClass()).info(
-          "  Compute transitive closure from  " + terminology + "/"
-              + version);
+          "  Compute transitive closure from  " + terminology + "/" + version);
       TransitiveClosureAlgorithm algo = new TransitiveClosureAlgorithm();
       algo.setTerminology(terminology);
       algo.setTerminologyVersion(version);
@@ -1225,9 +1199,19 @@ public class ContentServiceRestImpl extends RootServiceRestImpl implements
     }
   }
 
+  /*
+   * (non-Javadoc)
+   * 
+   * @see
+   * org.ihtsdo.otf.ts.rest.ContentServiceRest#loadTerminologyRf2Snapshot(java
+   * .lang.String, java.lang.String, java.lang.String, java.lang.String)
+   */
   @Override
   @POST
   @Path("/terminology/load/rf2/snapshot/{terminology}/{version}")
+  @Consumes({
+    MediaType.TEXT_PLAIN
+  })
   @ApiOperation(value = "Loads terminology RF2 snapshot from directory", notes = "Loads terminology RF2 snapshot from directory for specified terminology and version")
   public void loadTerminologyRf2Snapshot(
     @ApiParam(value = "Terminology, e.g. SNOMEDCT", required = true) @PathParam("terminology") String terminology,
@@ -1236,10 +1220,11 @@ public class ContentServiceRestImpl extends RootServiceRestImpl implements
     @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken)
     throws Exception {
 
-    Logger.getLogger(ContentServiceRestImpl.class).info(
-        "RESTful POST call (ContentChange): /terminology/load/rf2/snapshot"
-            + terminology + "/" + version + " from input directory "
-            + inputDir);
+    Logger.getLogger(ContentServiceRestImpl.class)
+        .info(
+            "RESTful POST call (ContentChange): /terminology/load/rf2/snapshot"
+                + terminology + "/" + version + " from input directory "
+                + inputDir);
 
     // Track system level information
     long startTimeOrig = System.nanoTime();
@@ -1301,8 +1286,7 @@ public class ContentServiceRestImpl extends RootServiceRestImpl implements
 
       // Compute transitive closure
       Logger.getLogger(this.getClass()).info(
-          "  Compute transitive closure from  " + terminology + "/"
-              + version);
+          "  Compute transitive closure from  " + terminology + "/" + version);
       TransitiveClosureAlgorithm algo = new TransitiveClosureAlgorithm();
       algo.setTerminology(terminology);
       algo.setTerminologyVersion(version);
@@ -1325,6 +1309,13 @@ public class ContentServiceRestImpl extends RootServiceRestImpl implements
     }
   }
 
+  /*
+   * (non-Javadoc)
+   * 
+   * @see
+   * org.ihtsdo.otf.ts.rest.ContentServiceRest#computeTransitiveClosure(java
+   * .lang.String, java.lang.String)
+   */
   @Override
   @GET
   @Path("/terminology/closure/compute/{terminology}")
@@ -1353,8 +1344,7 @@ public class ContentServiceRestImpl extends RootServiceRestImpl implements
 
       // Compute transitive closure
       Logger.getLogger(ContentServiceRestImpl.class).info(
-          "  Compute transitive closure from  " + terminology + "/"
-              + version);
+          "  Compute transitive closure from  " + terminology + "/" + version);
       TransitiveClosureAlgorithm algo = new TransitiveClosureAlgorithm();
       algo.setTerminology(terminology);
       algo.setTerminologyVersion(version);
@@ -1372,6 +1362,13 @@ public class ContentServiceRestImpl extends RootServiceRestImpl implements
     }
   }
 
+  /*
+   * (non-Javadoc)
+   * 
+   * @see
+   * org.ihtsdo.otf.ts.rest.ContentServiceRest#removeTerminology(java.lang.String
+   * , java.lang.String, java.lang.String)
+   */
   @Override
   @POST
   @Path("/terminology/remove/{terminology}/{version}")

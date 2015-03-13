@@ -1,6 +1,8 @@
 package org.ihtsdo.otf.ts.rest.todo;
 
+import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
+import javax.ws.rs.GET;
 import javax.ws.rs.HeaderParam;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
@@ -12,6 +14,7 @@ import javax.ws.rs.core.MediaType;
 import org.apache.log4j.Logger;
 import org.ihtsdo.otf.ts.Project;
 import org.ihtsdo.otf.ts.UserRole;
+import org.ihtsdo.otf.ts.helpers.ConceptList;
 import org.ihtsdo.otf.ts.jpa.ProjectJpa;
 import org.ihtsdo.otf.ts.jpa.algo.StartEditingCycleAlgorithm;
 import org.ihtsdo.otf.ts.jpa.algo.TransitiveClosureAlgorithm;
@@ -44,8 +47,11 @@ import com.wordnik.swagger.annotations.ApiParam;
  */
 @Path("/edit")
 @Api(value = "/edit", description = "Operations to edit content for a terminology.")
+@Consumes({
+  MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML
+})
 @Produces({
-    MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML
+  MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML
 })
 public class ContentChangeServiceRestImpl extends RootServiceRestImpl implements
     ContentChangeServiceRest {
@@ -63,6 +69,56 @@ public class ContentChangeServiceRestImpl extends RootServiceRestImpl implements
   }
 
   /*
+   * Commented out for later move to change service (non-Javadoc)
+   * 
+   * @see
+   * org.ihtsdo.otf.mapping.rest.ContentServiceRest#getConcept(java.lang.String,
+   * java.lang.String, java.lang.String, java.lang.String)
+   */
+  @Override
+  @GET
+  @Path("/concept/{terminology}/{version}/{terminologyId}/foruser")
+  @ApiOperation(value = "Get concept by id, terminology, and version for the current user", notes = "Gets the concepts matching the specified parameters where the current user is the last modified by.", response = Concept.class)
+  public Concept getConceptForUser(
+    @ApiParam(value = "Concept terminology id, e.g. 102751005", required = true) @PathParam("terminologyId") String terminologyId,
+    @ApiParam(value = "Concept terminology name, e.g. SNOMEDCT", required = true) @PathParam("terminology") String terminology,
+    @ApiParam(value = "Concept terminology version, e.g. latest", required = true) @PathParam("version") String version,
+    @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken) {
+
+    Logger.getLogger(ContentServiceRestImpl.class).info(
+        "RESTful call (Content): /concept/" + terminology + "/" + version + "/"
+            + terminologyId);
+
+    try {
+      authenticate(securityService, authToken, "retrieve the concept",
+          UserRole.VIEWER);
+
+      String username = securityService.getUsernameForToken(authToken);
+      ContentService contentService = new ContentServiceJpa();
+      ConceptList cl =
+          contentService.getConcepts(terminologyId, terminology, version);
+
+      for (Concept concept : cl.getObjects()) {
+        if (concept != null && concept.getLastModified().equals(username)) {
+          contentService.getGraphResolutionHandler().resolve(
+              concept,
+              TerminologyUtility.getHierarchcialIsaRels(
+                  concept.getTerminology(), concept.getTerminologyVersion()));
+
+          contentService.close();
+          return concept;
+        }
+      }
+      contentService.close();
+      return null;
+    } catch (Exception e) {
+      handleException(e, "trying to retrieve a concept");
+      return null;
+    }
+
+  }
+
+  /*
    * (non-Javadoc)
    * 
    * @see
@@ -73,9 +129,6 @@ public class ContentChangeServiceRestImpl extends RootServiceRestImpl implements
   @PUT
   @Path("/concept/add")
   @ApiOperation(value = "Add new concept", notes = "Creates a new concept.", response = Concept.class)
-  @Produces({
-      MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML
-  })
   public Concept addConcept(
     @ApiParam(value = "Concept, e.g. newConcept", required = true) ConceptJpa concept,
     @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken)
@@ -133,9 +186,6 @@ public class ContentChangeServiceRestImpl extends RootServiceRestImpl implements
   @POST
   @Path("/concept/update")
   @ApiOperation(value = "Update Concept", notes = "Updates the specified concept.")
-  @Produces({
-      MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML
-  })
   public void updateConcept(
     @ApiParam(value = "Concept, e.g. update", required = true) ConceptJpa concept,
     @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken)
@@ -190,9 +240,6 @@ public class ContentChangeServiceRestImpl extends RootServiceRestImpl implements
   @DELETE
   @Path("/concept/remove/{id}")
   @ApiOperation(value = "Remove concept by id", notes = "Removes the concept for the specified id.")
-  @Produces({
-      MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML
-  })
   public void removeConcept(
     @ApiParam(value = "Concept internal id, e.g. 2", required = true) @PathParam("id") Long id,
     @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken)
@@ -222,9 +269,6 @@ public class ContentChangeServiceRestImpl extends RootServiceRestImpl implements
   @PUT
   @Path("/description/add")
   @ApiOperation(value = "Add new description", notes = "Creates a new description.", response = Description.class)
-  @Produces({
-      MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML
-  })
   public Description addDescription(
     @ApiParam(value = "Description, e.g. newDescription", required = true) DescriptionJpa description,
     @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken)
@@ -293,9 +337,6 @@ public class ContentChangeServiceRestImpl extends RootServiceRestImpl implements
   @POST
   @Path("/description/update")
   @ApiOperation(value = "Update description", notes = "Updates the specified description.")
-  @Produces({
-      MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML
-  })
   public void updateDescription(
     @ApiParam(value = "Description, e.g. newDescription", required = true) DescriptionJpa description,
     @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken)
@@ -362,9 +403,6 @@ public class ContentChangeServiceRestImpl extends RootServiceRestImpl implements
   @DELETE
   @Path("/description/remove/{id}")
   @ApiOperation(value = "Remove description by id", notes = "Removes the description for the specified id.")
-  @Produces({
-      MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML
-  })
   public void removeDescription(
     @ApiParam(value = "Descrption internal id, e.g. 2", required = true) @PathParam("id") Long id,
     @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken)
@@ -415,9 +453,6 @@ public class ContentChangeServiceRestImpl extends RootServiceRestImpl implements
   @PUT
   @Path("/relationship/add")
   @ApiOperation(value = "Add new relationship", notes = "Creates a new relationship.", response = Relationship.class)
-  @Produces({
-      MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML
-  })
   public Relationship addRelationship(
     @ApiParam(value = "Relationship, e.g. newRelationship", required = true) RelationshipJpa relationship,
     @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken)
@@ -440,9 +475,6 @@ public class ContentChangeServiceRestImpl extends RootServiceRestImpl implements
   @POST
   @Path("/relationship/update")
   @ApiOperation(value = "Update relationship", notes = "Updates the specified relationship.")
-  @Produces({
-      MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML
-  })
   public void updateRelationship(
     @ApiParam(value = "Relationship, e.g. update", required = true) RelationshipJpa relationship,
     @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken)
@@ -466,9 +498,6 @@ public class ContentChangeServiceRestImpl extends RootServiceRestImpl implements
   @DELETE
   @Path("/relationship/remove/{id}")
   @ApiOperation(value = "Remove relationship by id", notes = "Removes the relationship for the specified id.")
-  @Produces({
-      MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML
-  })
   public void removeRelationship(
     @ApiParam(value = "Relationship internal id, e.g. 2", required = true) @PathParam("id") Long id,
     @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken)
@@ -490,9 +519,6 @@ public class ContentChangeServiceRestImpl extends RootServiceRestImpl implements
   @PUT
   @Path("/language/add")
   @ApiOperation(value = "Add new language refset member", notes = "Creates a new language refset member.", response = LanguageRefSetMember.class)
-  @Produces({
-      MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML
-  })
   public LanguageRefSetMember addLanguageRefSetMember(
     @ApiParam(value = "language refset member, e.g. language refset member", required = true) LanguageRefSetMemberJpa member,
     @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken)
@@ -515,9 +541,6 @@ public class ContentChangeServiceRestImpl extends RootServiceRestImpl implements
   @POST
   @Path("/language/update")
   @ApiOperation(value = "Update language refset member", notes = "Updates the specified language refset member.")
-  @Produces({
-      MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML
-  })
   public void updateLanguageRefSetMember(
     @ApiParam(value = "language refset member, e.g. language refset member", required = true) LanguageRefSetMemberJpa member,
     @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken)
@@ -540,9 +563,6 @@ public class ContentChangeServiceRestImpl extends RootServiceRestImpl implements
   @DELETE
   @Path("/language/remove/id/{id}")
   @ApiOperation(value = "Remove language refset member by id", notes = "Removes the language refset member for the specified id.")
-  @Produces({
-      MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML
-  })
   public void removeLanguageRefSetMember(
     @ApiParam(value = "language refset member internal id, e.g. 2", required = true) @PathParam("id") Long id,
     @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken)
@@ -565,9 +585,6 @@ public class ContentChangeServiceRestImpl extends RootServiceRestImpl implements
   @PUT
   @Path("/associationReference/add")
   @ApiOperation(value = "Add new association reference refset member", notes = "Creates a new association reference refset member.", response = AssociationReferenceConceptRefSetMember.class)
-  @Produces({
-      MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML
-  })
   public AssociationReferenceConceptRefSetMember addAssociationConceptReferenceRefSetMember(
     @ApiParam(value = "Association reference refset member, e.g. a new association reference refset member", required = true) AssociationReferenceConceptRefSetMemberJpa member,
     @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken)
@@ -626,9 +643,6 @@ public class ContentChangeServiceRestImpl extends RootServiceRestImpl implements
   @POST
   @Path("/ssociationReference/update")
   @ApiOperation(value = "Update association reference refset member", notes = "Updates the specified AssociationReferenceConceptRefSetMember.")
-  @Produces({
-      MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML
-  })
   public void updateAssociationReferenceConceptRefSetMember(
     @ApiParam(value = "Association reference refset member, e.g. new association reference refset member", required = true) AssociationReferenceConceptRefSetMemberJpa member,
     @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken)
@@ -678,9 +692,6 @@ public class ContentChangeServiceRestImpl extends RootServiceRestImpl implements
   @DELETE
   @Path("/associationReference/remove/{id}")
   @ApiOperation(value = "Remove association reference refset member by id", notes = "Removes the association reference refset member for the specified id.")
-  @Produces({
-      MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML
-  })
   public void removeAssociationReferenceRefSetMember(
     @ApiParam(value = "Association reference refset member internal id, e.g. 2", required = true) @PathParam("id") Long id,
     @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken)
@@ -716,9 +727,6 @@ public class ContentChangeServiceRestImpl extends RootServiceRestImpl implements
   @POST
   @Path("/transitive/compute/{terminology}/{version}/{rootId}")
   @ApiOperation(value = "Compute transitive closure by id, terminology, and version", notes = "Computes transitive closure for the specified parameters.")
-  @Produces({
-      MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML
-  })
   public void computeTransitiveClosure(
     @ApiParam(value = "Root concept terminology id, e.g. 138875005", required = true) @PathParam("rootId") String rootId,
     @ApiParam(value = "Concept terminology, e.g. SNOMEDCT", required = true) @PathParam("terminology") String terminology,
@@ -750,9 +758,6 @@ public class ContentChangeServiceRestImpl extends RootServiceRestImpl implements
   @POST
   @Path("/transitive/clear/{terminology}/{version}")
   @ApiOperation(value = "Remove transitive closure by terminology, and version", notes = "Removes all transitive closure relationships matching the specified parameters.")
-  @Produces({
-      MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML
-  })
   public void clearTransitiveClosure(
     @ApiParam(value = "Concept terminology, e.g. SNOMEDCT", required = true) @PathParam("terminology") String terminology,
     @ApiParam(value = "Concept terminology version, e.g. latest", required = true) @PathParam("version") String version,
@@ -781,9 +786,6 @@ public class ContentChangeServiceRestImpl extends RootServiceRestImpl implements
   @POST
   @Path("/concept/clear/{terminology}/{version}")
   @ApiOperation(value = "Clear concepts", notes = "Removes all concepts matching the specified parameters.")
-  @Produces({
-      MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML
-  })
   public void clearConcepts(
     @ApiParam(value = "Concept terminology e.g. SNOMEDCT", required = true) @PathParam("terminology") String terminology,
     @ApiParam(value = "Concept terminology version, e.g. latest", required = true) @PathParam("version") String version,
@@ -812,9 +814,6 @@ public class ContentChangeServiceRestImpl extends RootServiceRestImpl implements
   @PUT
   @Path("/project/add")
   @ApiOperation(value = "Add new project", notes = "Creates a new project.", response = Project.class)
-  @Produces({
-      MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML
-  })
   public Project addProject(
     @ApiParam(value = "Project, e.g. newProject", required = true) ProjectJpa project,
     @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken)
@@ -864,9 +863,6 @@ public class ContentChangeServiceRestImpl extends RootServiceRestImpl implements
   @POST
   @Path("/project/update")
   @ApiOperation(value = "Update project", notes = "Updates the specified project.")
-  @Produces({
-      MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML
-  })
   public void updateProject(
     @ApiParam(value = "Project, e.g. newProject", required = true) ProjectJpa project,
     @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken)
@@ -910,9 +906,6 @@ public class ContentChangeServiceRestImpl extends RootServiceRestImpl implements
   @DELETE
   @Path("/project/remove/{id}")
   @ApiOperation(value = "Remove project by id", notes = "Removes the project for the specified id.")
-  @Produces({
-      MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML
-  })
   public void removeProject(
     @ApiParam(value = "Project internal id, e.g. 2", required = true) @PathParam("id") Long id,
     @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken)
@@ -948,8 +941,9 @@ public class ContentChangeServiceRestImpl extends RootServiceRestImpl implements
     try {
       authenticate(securityService, authToken, "start editing cycle",
           UserRole.ADMINISTRATOR);
-    
-      StartEditingCycleAlgorithm algo = new StartEditingCycleAlgorithm(releaseVersion, terminology, version);
+
+      StartEditingCycleAlgorithm algo =
+          new StartEditingCycleAlgorithm(releaseVersion, terminology, version);
       algo.compute();
     } catch (Exception e) {
       handleException(e, "trying to start editing cycle");
@@ -960,7 +954,7 @@ public class ContentChangeServiceRestImpl extends RootServiceRestImpl implements
   @Override
   public void removeReleaseInfos(String terminology, String releaseInfoNames) {
     // TODO Auto-generated method stub
-    
+
   }
 
   @Override
@@ -968,14 +962,14 @@ public class ContentChangeServiceRestImpl extends RootServiceRestImpl implements
     String workflowStatusValues, boolean validate, boolean saveIdentifiers)
     throws Exception {
     // TODO Auto-generated method stub
-    
+
   }
 
   @Override
   public void releaseProcess(String refSetId, String outputDirName,
     String effectiveTime, String moduleId) throws Exception {
     // TODO Auto-generated method stub
-    
+
   }
 
   @Override
@@ -983,9 +977,7 @@ public class ContentChangeServiceRestImpl extends RootServiceRestImpl implements
     String workflowStatusValues, boolean validate, boolean saveIdentifiers)
     throws Exception {
     // TODO Auto-generated method stub
-    
-  }
 
-  
+  }
 
 }
