@@ -245,7 +245,6 @@ public class FileSorter {
 
     // open file
     File fileIn = new File(inputFile);
-    Logger.getLogger(FileSorter.class).info("split file fileIn=" + fileIn);
     BufferedReader reader = new BufferedReader(new FileReader(fileIn));
 
     // cycle until end of file
