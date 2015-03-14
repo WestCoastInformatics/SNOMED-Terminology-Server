@@ -1,6 +1,5 @@
 package org.ihtsdo.otf.ts.helpers;
 
-// TODO: Auto-generated Javadoc
 /**
  * Represents semantic search criteria. NOTE, some combinations of these flags
  * may be erroneous (such as finding active AND inactive only content).

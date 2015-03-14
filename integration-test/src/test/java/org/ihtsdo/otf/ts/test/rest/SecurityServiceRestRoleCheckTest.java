@@ -46,11 +46,10 @@ public class SecurityServiceRestRoleCheckTest extends SecurityServiceRestTest {
    * 
    * @throws Exception the exception
    */
-  @SuppressWarnings("static-method")
   @Test
   public void testRoleCheckRestSecurity002() throws Exception {
     
-    Logger.getLogger(SecurityServiceRestRoleCheckTest.class).info("Testing role requirements for user management services...");
+    Logger.getLogger(getClass()).info("Testing role requirements for user management services...");
     
     // create test user
     UserJpa testUser = new UserJpa();
@@ -97,7 +96,7 @@ public class SecurityServiceRestRoleCheckTest extends SecurityServiceRestTest {
     // remove the user as admin
     service.removeUser(testUser.getId(), adminUserAuthToken);
     
-    Logger.getLogger(SecurityServiceRestRoleCheckTest.class).info("  Done!");
+    Logger.getLogger(getClass()).info("  Done!");
   }
 
   //

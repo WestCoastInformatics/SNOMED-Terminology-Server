@@ -19,6 +19,14 @@ import org.ihtsdo.otf.ts.services.ContentService;
  */
 public class PfsParameterForConceptTest {
 
+  /**
+   * Test sort.
+   *
+   * @param results the results
+   * @param pfs the pfs
+   * @return true, if successful
+   * @throws Exception the exception
+   */
   @SuppressWarnings({
       "unchecked", "rawtypes"
   })
@@ -74,14 +82,14 @@ public class PfsParameterForConceptTest {
           @Override
           public int compare(Integer u1, Integer u2) {
             return u1.compareTo(u2);
-          };
+          }
         };
       case "Long":
         comparator = new Comparator<Long>() {
           @Override
           public int compare(Long u1, Long u2) {
             return u1.compareTo(u2);
-          };
+          }
         };
         break;
       case "String":
@@ -89,7 +97,7 @@ public class PfsParameterForConceptTest {
           @Override
           public int compare(String u1, String u2) {
             return u1.compareTo(u2);
-          };
+          }
         };
 
         break;
@@ -130,8 +138,7 @@ public class PfsParameterForConceptTest {
    *
    * @param results the results
    * @param fullResults the full results
-   * @param page the page
-   * @param pageSize the page size
+   * @param pfs the pfs
    * @return true, if successful
    */
   public static boolean testPaging(SearchResultList results,

@@ -82,7 +82,7 @@ public class HistoryServiceRestImpl extends RootServiceRestImpl implements
     @ApiParam(value = "PFS Parameter, e.g. '{ \"startIndex\":\"1\", \"maxResults\":\"5\" }'", required = false) PfsParameterJpa pfs,
     @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken) {
 
-    Logger.getLogger(ContentServiceRestImpl.class).info(
+    Logger.getLogger(getClass()).info(
         "RESTful call (History): /concept/" + terminology + "/" + date);
 
     try {
@@ -136,7 +136,7 @@ public class HistoryServiceRestImpl extends RootServiceRestImpl implements
     @ApiParam(value = "PFS Parameter, e.g. '{ \"startIndex\":\"1\", \"maxResults\":\"5\" }'", required = false) PfsParameterJpa pfs,
     @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken) {
 
-    Logger.getLogger(ContentServiceRestImpl.class).info(
+    Logger.getLogger(getClass()).info(
         "RESTful call (History): /concept/revisions/" + id + "/" + startDate
             + "/" + endDate + "/all");
 
@@ -168,7 +168,7 @@ public class HistoryServiceRestImpl extends RootServiceRestImpl implements
     @ApiParam(value = "Release date in the format YYYYMMDD , e.g. latest", required = true) @PathParam("release") String release,
     @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken) {
 
-    Logger.getLogger(ContentServiceRestImpl.class).info(
+    Logger.getLogger(getClass()).info(
         "RESTful call (History): /concept/revisions/" + id + "/" + release);
 
     try {
@@ -207,7 +207,7 @@ public class HistoryServiceRestImpl extends RootServiceRestImpl implements
     @ApiParam(value = "PFS Parameter, e.g. '{ \"startIndex\":\"1\", \"maxResults\":\"5\" }'", required = false) PfsParameterJpa pfs,
     @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken) {
 
-    Logger.getLogger(ContentServiceRestImpl.class).info(
+    Logger.getLogger(getClass()).info(
         "RESTful call (History): /description/" + terminology + "/" + date);
 
     try {
@@ -256,7 +256,7 @@ public class HistoryServiceRestImpl extends RootServiceRestImpl implements
     @ApiParam(value = "PFS Parameter, e.g. '{ \"startIndex\":\"1\", \"maxResults\":\"5\" }'", required = false) PfsParameterJpa pfs,
     @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken) {
 
-    Logger.getLogger(ContentServiceRestImpl.class).info(
+    Logger.getLogger(getClass()).info(
         "RESTful call (History): /description/revisions/" + id + "/"
             + startDate + "/" + endDate + "/all");
 
@@ -288,7 +288,7 @@ public class HistoryServiceRestImpl extends RootServiceRestImpl implements
     @ApiParam(value = "Release date in the format YYYYMMDD , e.g. latest", required = true) @PathParam("release") String release,
     @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken) {
 
-    Logger.getLogger(ContentServiceRestImpl.class).info(
+    Logger.getLogger(getClass()).info(
         "RESTful call (History): /description/revisions/" + id + "/" + release);
 
     try {
@@ -327,7 +327,7 @@ public class HistoryServiceRestImpl extends RootServiceRestImpl implements
     @ApiParam(value = "PFS Parameter, e.g. '{ \"startIndex\":\"1\", \"maxResults\":\"5\" }'", required = false) PfsParameterJpa pfs,
     @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken) {
 
-    Logger.getLogger(ContentServiceRestImpl.class).info(
+    Logger.getLogger(getClass()).info(
         "RESTful call (History): /relationship/" + terminology + "/" + date);
 
     try {
@@ -376,7 +376,7 @@ public class HistoryServiceRestImpl extends RootServiceRestImpl implements
     @ApiParam(value = "PFS Parameter, e.g. '{ \"startIndex\":\"1\", \"maxResults\":\"5\" }'", required = false) PfsParameterJpa pfs,
     @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken) {
 
-    Logger.getLogger(ContentServiceRestImpl.class).info(
+    Logger.getLogger(getClass()).info(
         "RESTful call (History): /relationship/revisions/" + id + "/"
             + startDate + "/" + endDate + "/all");
 
@@ -408,7 +408,7 @@ public class HistoryServiceRestImpl extends RootServiceRestImpl implements
     @ApiParam(value = "Release date in the format YYYYMMDD , e.g. latest", required = true) @PathParam("release") String release,
     @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken) {
 
-    Logger.getLogger(ContentServiceRestImpl.class)
+    Logger.getLogger(getClass())
         .info(
             "RESTful call (History): /relationship/revisions/" + id + "/"
                 + release);
@@ -449,7 +449,7 @@ public class HistoryServiceRestImpl extends RootServiceRestImpl implements
     @ApiParam(value = "PFS Parameter, e.g. '{ \"startIndex\":\"1\", \"maxResults\":\"5\" }'", required = false) PfsParameterJpa pfs,
     @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken) {
 
-    Logger.getLogger(ContentServiceRestImpl.class).info(
+    Logger.getLogger(getClass()).info(
         "RESTful call (History): /language/" + terminology + "/" + date);
 
     try {
@@ -499,7 +499,7 @@ public class HistoryServiceRestImpl extends RootServiceRestImpl implements
     @ApiParam(value = "PFS Parameter, e.g. '{ \"startIndex\":\"1\", \"maxResults\":\"5\" }'", required = false) PfsParameterJpa pfs,
     @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken) {
 
-    Logger.getLogger(ContentServiceRestImpl.class).info(
+    Logger.getLogger(getClass()).info(
         "RESTful call (History): /language/revisions/" + id + "/" + startDate
             + "/" + endDate + "/all");
 
@@ -539,7 +539,7 @@ public class HistoryServiceRestImpl extends RootServiceRestImpl implements
     @ApiParam(value = "Release date in the format YYYYMMDD , e.g. latest", required = true) @PathParam("release") String release,
     @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken) {
 
-    Logger.getLogger(ContentServiceRestImpl.class).info(
+    Logger.getLogger(getClass()).info(
         "RESTful call (History): /language/revisions/" + id + "/" + release);
 
     try {
@@ -579,7 +579,7 @@ public class HistoryServiceRestImpl extends RootServiceRestImpl implements
     @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken)
     throws Exception {
 
-    Logger.getLogger(ContentServiceRestImpl.class).info(
+    Logger.getLogger(getClass()).info(
         "RESTful call (History): /concept/" + terminology + "/" + date
             + "/deep");
 
@@ -616,7 +616,7 @@ public class HistoryServiceRestImpl extends RootServiceRestImpl implements
     @ApiParam(value = "Release info terminology , e.g. SNOMEDCT", required = true) @PathParam("terminology") String terminology,
     @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken)
     throws Exception {
-    Logger.getLogger(ContentServiceRestImpl.class).info(
+    Logger.getLogger(getClass()).info(
         "RESTful call (History): /release/history/");
 
     try {
@@ -649,7 +649,7 @@ public class HistoryServiceRestImpl extends RootServiceRestImpl implements
     @ApiParam(value = "Release info terminology , e.g. SNOMEDCT", required = true) @PathParam("terminology") String terminology,
     @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken)
     throws Exception {
-    Logger.getLogger(ContentServiceRestImpl.class).info(
+    Logger.getLogger(getClass()).info(
         "RESTful call (History): /release/current/");
 
     try {
@@ -682,7 +682,7 @@ public class HistoryServiceRestImpl extends RootServiceRestImpl implements
     @ApiParam(value = "Release info terminology , e.g. SNOMEDCT", required = true) @PathParam("terminology") String terminology,
     @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken)
     throws Exception {
-    Logger.getLogger(ContentServiceRestImpl.class).info(
+    Logger.getLogger(getClass()).info(
         "RESTful call (History): /release/previous/");
 
     try {
@@ -708,7 +708,7 @@ public class HistoryServiceRestImpl extends RootServiceRestImpl implements
     @ApiParam(value = "Release info terminology , e.g. SNOMEDCT", required = true) @PathParam("terminology") String terminology,
     @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken)
     throws Exception {
-    Logger.getLogger(ContentServiceRestImpl.class).info(
+    Logger.getLogger(getClass()).info(
         "RESTful call (History): /release/planned/");
 
     try {
@@ -742,7 +742,7 @@ public class HistoryServiceRestImpl extends RootServiceRestImpl implements
     @ApiParam(value = "Release version info, e.g. 'latest'", required = true) @PathParam("name") String name,
     @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken)
     throws Exception {
-    Logger.getLogger(ContentServiceRestImpl.class).info(
+    Logger.getLogger(getClass()).info(
         "RESTful call (History): /release/" + name);
 
     try {
@@ -775,7 +775,7 @@ public class HistoryServiceRestImpl extends RootServiceRestImpl implements
     @ApiParam(value = "Release info object, e.g. see output of /release/current", required = true) ReleaseInfoJpa releaseInfo,
     @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken)
     throws Exception {
-    Logger.getLogger(ContentServiceRestImpl.class).info(
+    Logger.getLogger(getClass()).info(
         "RESTful call (History): /release/add " + releaseInfo.getName());
 
     try {
@@ -808,7 +808,7 @@ public class HistoryServiceRestImpl extends RootServiceRestImpl implements
     @ApiParam(value = "Release info object, e.g. see output of /release/current", required = true) ReleaseInfoJpa releaseInfo,
     @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken)
     throws Exception {
-    Logger.getLogger(ContentServiceRestImpl.class).info(
+    Logger.getLogger(getClass()).info(
         "RESTful call (History): /release/update " + releaseInfo.getName());
 
     try {
@@ -838,7 +838,7 @@ public class HistoryServiceRestImpl extends RootServiceRestImpl implements
     @ApiParam(value = "Release info object id, e.g. 2", required = true) @PathParam("id") Long id,
     @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken)
     throws Exception {
-    Logger.getLogger(ContentServiceRestImpl.class).info(
+    Logger.getLogger(getClass()).info(
         "RESTful call (History): /release/remove/" + id);
 
     try {
@@ -869,7 +869,7 @@ public class HistoryServiceRestImpl extends RootServiceRestImpl implements
     @ApiParam(value = "Terminology, e.g. SNOMEDCT", required = true) @PathParam("terminology") String terminology,
     @ApiParam(value = "Terminology version, e.g. latest", required = true) @PathParam("version") String version,
     @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken) {
-    Logger.getLogger(ContentServiceRestImpl.class).info(
+    Logger.getLogger(getClass()).info(
         "RESTful call (History): /release/startEditingCycle/" + releaseVersion
             + "/" + terminology + "/" + version);
     try {

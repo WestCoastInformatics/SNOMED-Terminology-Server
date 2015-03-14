@@ -143,7 +143,7 @@ public interface ReleaseInfo {
   /**
    * Sets the terminology version.
    *
-   * @param version the terminology version
+   * @param terminologyVersion the terminology version
    */
-  public void setTerminologyVersion(String version);
+  public void setTerminologyVersion(String terminologyVersion);
 }

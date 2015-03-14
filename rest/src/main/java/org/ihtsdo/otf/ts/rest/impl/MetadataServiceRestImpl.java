@@ -3,7 +3,6 @@ package org.ihtsdo.otf.ts.rest.impl;
 import java.util.List;
 import java.util.Map;
 
-import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.HeaderParam;
 import javax.ws.rs.Path;
@@ -67,7 +66,7 @@ public class MetadataServiceRestImpl extends RootServiceRestImpl implements
     @ApiParam(value = "Terminology version, e.g. latest", required = true) @PathParam("version") String version,
     @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken) throws Exception {
 
-    Logger.getLogger(MetadataServiceRestImpl.class).info(
+    Logger.getLogger(getClass()).info(
         "RESTful call (Metadata): /" + terminology + "/" + version);
 
     String user = "";
@@ -144,7 +143,7 @@ public class MetadataServiceRestImpl extends RootServiceRestImpl implements
     @ApiParam(value = "Terminology name, e.g. SNOMEDCT", required = true) @PathParam("terminology") String terminology,
     @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken) throws Exception {
 
-    Logger.getLogger(MetadataServiceRestImpl.class).info(
+    Logger.getLogger(getClass()).info(
         "RESTful call (Metadata): /all/" + terminology);
 
     String user = "";
@@ -185,7 +184,7 @@ public class MetadataServiceRestImpl extends RootServiceRestImpl implements
   public KeyValuePairList getAllTerminologiesLatestVersions(
     @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken) throws Exception {
 
-    Logger.getLogger(MetadataServiceRestImpl.class).info(
+    Logger.getLogger(getClass()).info(
         "RESTful call (Metadata): /terminologies/latest/");
 
     String user = "";
@@ -234,7 +233,7 @@ public class MetadataServiceRestImpl extends RootServiceRestImpl implements
   public KeyValuePairLists getAllTerminologiesVersions(
     @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken) throws Exception {
 
-    Logger.getLogger(MetadataServiceRestImpl.class).info(
+    Logger.getLogger(getClass()).info(
         "RESTful call (Metadata): /terminologies");
 
     String user = "";

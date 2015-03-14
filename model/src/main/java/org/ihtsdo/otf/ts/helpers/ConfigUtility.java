@@ -59,7 +59,8 @@ import com.sun.jersey.api.client.WebResource;
 public class ConfigUtility {
 
   /** The date format. */
-  public final static FastDateFormat DATE_FORMAT = FastDateFormat.getInstance("yyyyMMdd");
+  public final static FastDateFormat DATE_FORMAT = FastDateFormat
+      .getInstance("yyyyMMdd");
 
   /** The config. */
   public static Properties config = null;
@@ -86,7 +87,6 @@ public class ConfigUtility {
     }
   }
 
-
   /**
    * Indicates whether or not the server is active.
    *
@@ -101,7 +101,8 @@ public class ConfigUtility {
       // Attempt to logout to verify service is up (this works like a "ping").
       Client client = Client.create();
       WebResource resource =
-          client.resource(config.getProperty("base.url") + "/security/logout/dummy");
+          client.resource(config.getProperty("base.url")
+              + "/security/logout/dummy");
       resource.accept(MediaType.APPLICATION_JSON);
       ClientResponse response = resource.get(ClientResponse.class);
       if (response.getClientResponseStatus().getFamily() == Family.SUCCESSFUL) {
@@ -113,7 +114,7 @@ public class ConfigUtility {
       return false;
     }
   }
-  
+
   /**
    * Returns the config properties.
    * @return the config properties
@@ -536,5 +537,5 @@ public class ConfigUtility {
       }
     }
   }
-  
+
 }

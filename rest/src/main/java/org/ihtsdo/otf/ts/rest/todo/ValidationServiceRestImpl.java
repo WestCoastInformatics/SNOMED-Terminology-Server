@@ -66,7 +66,7 @@ public class ValidationServiceRestImpl extends RootServiceRestImpl implements
     @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken)
     throws Exception {
 
-    Logger.getLogger(ValidationServiceRestImpl.class).info(
+    Logger.getLogger(getClass()).info(
         "RESTful call (Validation): /concept " + concept.getTerminologyId());
 
     String user = "";

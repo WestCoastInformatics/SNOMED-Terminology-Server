@@ -38,7 +38,6 @@ public class ClassificationTest {
    * Test get single concept for SNOMEDCT.
    * @throws Exception
    */
-  @SuppressWarnings("unused")
   @Test
   public void testClassify() throws Exception {
     Logger.getLogger(this.getClass()).info("TEST Classify");

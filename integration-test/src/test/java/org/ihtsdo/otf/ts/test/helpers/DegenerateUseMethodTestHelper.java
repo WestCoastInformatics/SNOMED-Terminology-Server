@@ -5,20 +5,24 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.ihtsdo.otf.ts.helpers.AbstractResultList;
 import org.ihtsdo.otf.ts.helpers.LocalException;
 import org.ihtsdo.otf.ts.helpers.PfsParameter;
 import org.ihtsdo.otf.ts.helpers.PfsParameterJpa;
 
+/**
+ * Helper for testing degenerate use methods.
+ */
 public class DegenerateUseMethodTestHelper {
 
   /**
    * Test a object's method for invalid and null values Assumes invalid values
-   * are -1 (as String, Long, int) Also tests PfsParameter
-   * @param obj
-   * @param method
-   * @param validParameters
+   * are -1 (as String, Long, int) Also tests PfsParameter.
+   *
+   * @param obj the obj
+   * @param method the method
+   * @param validParameters the valid parameters
    * @throws Exception thrown if any unexpected behavior occurs
+   * @throws LocalException the local exception
    */
   public static void testDegenerateArguments(Object obj, Method method,
     Object[] validParameters) throws Exception, LocalException {
@@ -27,6 +31,16 @@ public class DegenerateUseMethodTestHelper {
     testDegenerateArguments(obj, method, validParameters, null);
   }
 
+  /**
+   * Test degenerate arguments.
+   *
+   * @param obj the obj
+   * @param method the method
+   * @param validParameters the valid parameters
+   * @param isFieldValueTested the is field value tested
+   * @throws Exception the exception
+   */
+  @SuppressWarnings("null")
   public static void testDegenerateArguments(Object obj, Method method,
     Object[] validParameters, boolean[] isFieldValueTested) throws Exception {
 
@@ -136,6 +150,14 @@ public class DegenerateUseMethodTestHelper {
     }
   }
 
+  /**
+   * Invoke.
+   *
+   * @param obj the obj
+   * @param method the method
+   * @param parameters the parameters
+   * @throws Exception the exception
+   */
   private static void invoke(Object obj, Method method, Object[] parameters)
     throws Exception {
     String debugStr = "";

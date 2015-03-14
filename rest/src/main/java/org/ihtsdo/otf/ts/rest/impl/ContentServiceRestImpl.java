@@ -43,7 +43,6 @@ import org.ihtsdo.otf.ts.jpa.services.MetadataServiceJpa;
 import org.ihtsdo.otf.ts.jpa.services.SecurityServiceJpa;
 import org.ihtsdo.otf.ts.jpa.services.helper.TerminologyUtility;
 import org.ihtsdo.otf.ts.rest.ContentServiceRest;
-import org.ihtsdo.otf.ts.rest.todo.ContentChangeServiceRestImpl;
 import org.ihtsdo.otf.ts.rf2.AssociationReferenceConceptRefSetMember;
 import org.ihtsdo.otf.ts.rf2.Concept;
 import org.ihtsdo.otf.ts.rf2.Description;
@@ -99,9 +98,9 @@ public class ContentServiceRestImpl extends RootServiceRestImpl implements
     @ApiParam(value = "Project, e.g. newProject", required = true) ProjectJpa project,
     @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken)
     throws Exception {
-    Logger.getLogger(ContentChangeServiceRestImpl.class).info(
+    Logger.getLogger(getClass()).info(
         "RESTful call PUT (ContentChange): /project/add " + project);
-    Logger.getLogger(ContentChangeServiceRestImpl.class).debug(
+    Logger.getLogger(getClass()).debug(
         project.toString());
 
     try {
@@ -153,7 +152,7 @@ public class ContentServiceRestImpl extends RootServiceRestImpl implements
     @ApiParam(value = "Concept terminology version, e.g. latest", required = true) @PathParam("version") String version,
     @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken) {
 
-    Logger.getLogger(ContentServiceRestImpl.class).info(
+    Logger.getLogger(getClass()).info(
         "RESTful call (Content): /concept/" + terminology + "/" + version + "/"
             + terminologyId);
 
@@ -200,7 +199,7 @@ public class ContentServiceRestImpl extends RootServiceRestImpl implements
     @ApiParam(value = "Concept terminology version, e.g. latest", required = true) @PathParam("version") String version,
     @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken) {
 
-    Logger.getLogger(ContentServiceRestImpl.class).info(
+    Logger.getLogger(getClass()).info(
         "RESTful call (Content): /concept/" + terminology + "/" + version + "/"
             + terminologyId);
 
@@ -240,7 +239,7 @@ public class ContentServiceRestImpl extends RootServiceRestImpl implements
   public Concept getConcept(
     @ApiParam(value = "Concept internal id, e.g. 2", required = true) @PathParam("id") Long id,
     @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken) {
-    Logger.getLogger(ContentServiceRestImpl.class).info(
+    Logger.getLogger(getClass()).info(
         "RESTful call (Content): /concept/id/" + id);
 
     try {
@@ -282,7 +281,7 @@ public class ContentServiceRestImpl extends RootServiceRestImpl implements
     @ApiParam(value = "PFS Parameter, e.g. '{ \"startIndex\":\"1\", \"maxResults\":\"5\" }'", required = false) PfsParameterJpa pfs,
     @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken) {
 
-    Logger.getLogger(ContentServiceRestImpl.class).info(
+    Logger.getLogger(getClass()).info(
         "RESTful call (Content): /concept/" + terminology + "/" + version
             + "/query/" + query + " with PFS parameter "
             + (pfs == null ? "empty" : pfs.toString()));
@@ -321,7 +320,7 @@ public class ContentServiceRestImpl extends RootServiceRestImpl implements
     @ApiParam(value = "PFS Parameter, e.g. '{ \"startIndex\":\"1\", \"maxResults\":\"5\" }'", required = false) PfsParameterJpa pfs,
     @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken) {
 
-    Logger.getLogger(ContentServiceRestImpl.class).info(
+    Logger.getLogger(getClass()).info(
         "RESTful call (Content): /concept/" + terminology + "/" + version + "/"
             + terminologyId + "/children");
 
@@ -366,7 +365,7 @@ public class ContentServiceRestImpl extends RootServiceRestImpl implements
     @ApiParam(value = "PFS Parameter, e.g. '{ \"startIndex\":\"1\", \"maxResults\":\"5\" }'", required = false) PfsParameterJpa pfs,
     @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken) {
 
-    Logger.getLogger(ContentServiceRestImpl.class).info(
+    Logger.getLogger(getClass()).info(
         "RESTful call (Content): /concept/" + terminology + "/" + version + "/"
             + terminologyId + "/descendants");
 
@@ -411,7 +410,7 @@ public class ContentServiceRestImpl extends RootServiceRestImpl implements
     @ApiParam(value = "PFS Parameter, e.g. '{ \"startIndex\":\"1\", \"maxResults\":\"5\" }'", required = false) PfsParameterJpa pfs,
     @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken) {
 
-    Logger.getLogger(ContentServiceRestImpl.class).info(
+    Logger.getLogger(getClass()).info(
         "RESTful call (Content): /concept/" + terminology + "/" + version + "/"
             + terminologyId + "/ancestors");
 
@@ -451,7 +450,7 @@ public class ContentServiceRestImpl extends RootServiceRestImpl implements
   public Description getDescription(
     @ApiParam(value = "Description internal id, e.g. 2", required = true) @PathParam("id") Long id,
     @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken) {
-    Logger.getLogger(ContentServiceRestImpl.class).info(
+    Logger.getLogger(getClass()).info(
         "RESTful call (Content): /description/id/" + id);
 
     try {
@@ -489,7 +488,7 @@ public class ContentServiceRestImpl extends RootServiceRestImpl implements
     @ApiParam(value = "Description terminology version, e.g. latest", required = true) @PathParam("version") String version,
     @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken) {
 
-    Logger.getLogger(ContentServiceRestImpl.class).info(
+    Logger.getLogger(getClass()).info(
         "RESTful call (Content): /description/" + terminology + "/" + version
             + "/" + terminologyId);
 
@@ -528,7 +527,7 @@ public class ContentServiceRestImpl extends RootServiceRestImpl implements
   public Relationship getRelationship(
     @ApiParam(value = "Relationship internal id, e.g. 2", required = true) @PathParam("id") Long id,
     @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken) {
-    Logger.getLogger(ContentServiceRestImpl.class).info(
+    Logger.getLogger(getClass()).info(
         "RESTful call (Content): /relationship/id/" + id);
 
     try {
@@ -565,7 +564,7 @@ public class ContentServiceRestImpl extends RootServiceRestImpl implements
     @ApiParam(value = "Relationship terminology version, e.g. latest", required = true) @PathParam("version") String version,
     @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken) {
 
-    Logger.getLogger(ContentServiceRestImpl.class).info(
+    Logger.getLogger(getClass()).info(
         "RESTful call (Content): /relationship/" + terminology + "/" + version
             + "/" + terminologyId);
 
@@ -604,7 +603,7 @@ public class ContentServiceRestImpl extends RootServiceRestImpl implements
   public LanguageRefSetMember getLanguageRefSetMember(
     @ApiParam(value = "Language refset member internal id, e.g. 2", required = true) @PathParam("id") Long id,
     @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken) {
-    Logger.getLogger(ContentServiceRestImpl.class).info(
+    Logger.getLogger(getClass()).info(
         "RESTful call (Content): /language/id/" + id);
 
     try {
@@ -642,7 +641,7 @@ public class ContentServiceRestImpl extends RootServiceRestImpl implements
     @ApiParam(value = "Language refset member terminology version, e.g. latest", required = true) @PathParam("version") String version,
     @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken) {
 
-    Logger.getLogger(ContentServiceRestImpl.class).info(
+    Logger.getLogger(getClass()).info(
         "RESTful call (Content): /language/" + terminology + "/" + version
             + "/" + terminologyId);
 
@@ -681,7 +680,7 @@ public class ContentServiceRestImpl extends RootServiceRestImpl implements
   public AssociationReferenceConceptRefSetMember getAssociationReferenceConceptRefSetMember(
     @ApiParam(value = "association reference refset member internal id, e.g. 2", required = true) @PathParam("id") Long id,
     @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken) {
-    Logger.getLogger(ContentServiceRestImpl.class).info(
+    Logger.getLogger(getClass()).info(
         "RESTful call (Content): /associationReference/id/" + id);
 
     try {
@@ -722,7 +721,7 @@ public class ContentServiceRestImpl extends RootServiceRestImpl implements
     @ApiParam(value = "AssociationReferenceConcept refset member terminology version, e.g. latest", required = true) @PathParam("version") String version,
     @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken) {
 
-    Logger.getLogger(ContentServiceRestImpl.class).info(
+    Logger.getLogger(getClass()).info(
         "RESTful call (Content): /associationReference/" + terminology + "/"
             + version + "/" + terminologyId);
 
@@ -765,7 +764,7 @@ public class ContentServiceRestImpl extends RootServiceRestImpl implements
     @ApiParam(value = "Project internal id, e.g. 2", required = true) @PathParam("id") Long id,
     @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken) {
 
-    Logger.getLogger(ContentServiceRestImpl.class).info(
+    Logger.getLogger(getClass()).info(
         "RESTful call (Content): /project/" + id + "/scope");
 
     try {
@@ -796,7 +795,7 @@ public class ContentServiceRestImpl extends RootServiceRestImpl implements
   public Project getProject(
     @ApiParam(value = "Project internal id, e.g. 2", required = true) @PathParam("id") Long id,
     @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken) {
-    Logger.getLogger(ContentServiceRestImpl.class).info(
+    Logger.getLogger(getClass()).info(
         "RESTful call (Content): /project/id/" + id);
 
     try {
@@ -825,7 +824,7 @@ public class ContentServiceRestImpl extends RootServiceRestImpl implements
   @ApiOperation(value = "Get all projects", notes = "Gets all projects.", response = ConceptList.class)
   public ProjectList getProjects(
     @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken) {
-    Logger.getLogger(ContentServiceRestImpl.class).info(
+    Logger.getLogger(getClass()).info(
         "RESTful call (Content): /project/projects");
 
     try {
@@ -858,8 +857,8 @@ public class ContentServiceRestImpl extends RootServiceRestImpl implements
     @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken)
 
   throws Exception {
-    Logger.getLogger(ContentServiceRestImpl.class).info("test");
-    Logger.getLogger(ContentServiceRestImpl.class).info(
+    Logger.getLogger(getClass()).info("test");
+    Logger.getLogger(getClass()).info(
         "RESTful POST call (ContentChange): /reindex "
             + (indexedObjects == null ? "with no objects specified"
                 : "with specified objects " + indexedObjects));
@@ -879,12 +878,12 @@ public class ContentServiceRestImpl extends RootServiceRestImpl implements
       algo.compute();
 
       // Final logging messages
-      Logger.getLogger(ContentServiceRestImpl.class).info(
+      Logger.getLogger(getClass()).info(
           "      elapsed time = " + getTotalElapsedTimeStr(startTimeOrig));
-      Logger.getLogger(ContentServiceRestImpl.class).info("done ...");
+      Logger.getLogger(getClass()).info("done ...");
 
     } catch (Exception e) {
-      Logger.getLogger(ContentServiceRestImpl.class).info("ERROR:");
+      Logger.getLogger(getClass()).info("ERROR:");
       e.printStackTrace();
       // handleException(e, "trying to reindex");
     }
@@ -912,7 +911,7 @@ public class ContentServiceRestImpl extends RootServiceRestImpl implements
     @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken)
     throws Exception {
 
-    Logger.getLogger(ContentServiceRestImpl.class).info(
+    Logger.getLogger(getClass()).info(
         "RESTful POST call (ContentChange): /terminology/load/claml/"
             + terminology + "/" + version + " from input file " + inputFile);
 
@@ -943,9 +942,9 @@ public class ContentServiceRestImpl extends RootServiceRestImpl implements
       algo.close();
 
       // Final logging messages
-      Logger.getLogger(ContentServiceRestImpl.class).info(
+      Logger.getLogger(getClass()).info(
           "      elapsed time = " + getTotalElapsedTimeStr(startTimeOrig));
-      Logger.getLogger(ContentServiceRestImpl.class).info("done ...");
+      Logger.getLogger(getClass()).info("done ...");
 
     } catch (Exception e) {
       handleException(e, "trying to load terminology from ClaML file");
@@ -972,7 +971,7 @@ public class ContentServiceRestImpl extends RootServiceRestImpl implements
     @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken)
     throws Exception {
 
-    Logger.getLogger(ContentServiceRestImpl.class).info(
+    Logger.getLogger(getClass()).info(
         "RESTful POST call (ContentChange): /terminology/load/rf2/delta"
             + terminology + " from input directory " + inputDir);
 
@@ -1063,9 +1062,9 @@ public class ContentServiceRestImpl extends RootServiceRestImpl implements
       Logger.getLogger(getClass()).info("...done");
 
       // Final logging messages
-      Logger.getLogger(ContentServiceRestImpl.class).info(
+      Logger.getLogger(getClass()).info(
           "      elapsed time = " + getTotalElapsedTimeStr(startTimeOrig));
-      Logger.getLogger(ContentServiceRestImpl.class).info("done ...");
+      Logger.getLogger(getClass()).info("done ...");
 
     } catch (Exception e) {
       handleException(e, "trying to load terminology delta from RF2 directory");
@@ -1093,7 +1092,7 @@ public class ContentServiceRestImpl extends RootServiceRestImpl implements
     @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken)
     throws Exception {
 
-    Logger.getLogger(ContentServiceRestImpl.class).info(
+    Logger.getLogger(getClass()).info(
         "RESTful POST call (ContentChange): /terminology/load/rf2/full/"
             + terminology + "/" + version + " from input file " + inputDir);
 
@@ -1113,7 +1112,7 @@ public class ContentServiceRestImpl extends RootServiceRestImpl implements
       // Get the release versions
       Logger.getLogger(getClass()).info("  Get release versions");
       Rf2FileSorter sorter = new Rf2FileSorter();
-      File conceptsFile = sorter.findFile(new File(inputDir), "sct2_Concept");
+      File conceptsFile = sorter.findFile(new File(inputDir,"Terminology"), "sct2_Concept");
       Set<String> releaseSet = new HashSet<>();
       BufferedReader reader = new BufferedReader(new FileReader(conceptsFile));
       String line;
@@ -1127,7 +1126,10 @@ public class ContentServiceRestImpl extends RootServiceRestImpl implements
 
       // check that release info does not already exist
       HistoryService historyService = new HistoryServiceJpa();
+      Logger.getLogger(getClass()).info("  Releases to process");
       for (String release : releases) {
+        Logger.getLogger(getClass()).info("    release = " + release);
+        
         ReleaseInfo releaseInfo =
             historyService.getReleaseInfo(terminology, release);
         if (releaseInfo != null) {
@@ -1190,9 +1192,9 @@ public class ContentServiceRestImpl extends RootServiceRestImpl implements
           .deleteDirectory(new File(inputDirFile, "/RF2-sorted-temp/"));
 
       // Final logging messages
-      Logger.getLogger(ContentServiceRestImpl.class).info(
+      Logger.getLogger(getClass()).info(
           "      elapsed time = " + getTotalElapsedTimeStr(startTimeOrig));
-      Logger.getLogger(ContentServiceRestImpl.class).info("done ...");
+      Logger.getLogger(getClass()).info("done ...");
 
     } catch (Exception e) {
       handleException(e, "trying to load full terminology from RF2 directory");
@@ -1220,7 +1222,7 @@ public class ContentServiceRestImpl extends RootServiceRestImpl implements
     @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken)
     throws Exception {
 
-    Logger.getLogger(ContentServiceRestImpl.class)
+    Logger.getLogger(getClass())
         .info(
             "RESTful POST call (ContentChange): /terminology/load/rf2/snapshot"
                 + terminology + "/" + version + " from input directory "
@@ -1299,9 +1301,9 @@ public class ContentServiceRestImpl extends RootServiceRestImpl implements
           .deleteDirectory(new File(inputDirFile, "/RF2-sorted-temp/"));
 
       // Final logging messages
-      Logger.getLogger(ContentServiceRestImpl.class).info(
+      Logger.getLogger(getClass()).info(
           "      elapsed time = " + getTotalElapsedTimeStr(startTimeOrig));
-      Logger.getLogger(ContentServiceRestImpl.class).info("done ...");
+      Logger.getLogger(getClass()).info("done ...");
 
     } catch (Exception e) {
       handleException(e,
@@ -1326,7 +1328,7 @@ public class ContentServiceRestImpl extends RootServiceRestImpl implements
 
   throws Exception {
 
-    Logger.getLogger(ContentServiceRestImpl.class).info(
+    Logger.getLogger(getClass()).info(
         "RESTful POST call (ContentChange): /terminology/closure/compute/"
             + terminology);
 
@@ -1343,7 +1345,7 @@ public class ContentServiceRestImpl extends RootServiceRestImpl implements
       metadataService.close();
 
       // Compute transitive closure
-      Logger.getLogger(ContentServiceRestImpl.class).info(
+      Logger.getLogger(getClass()).info(
           "  Compute transitive closure from  " + terminology + "/" + version);
       TransitiveClosureAlgorithm algo = new TransitiveClosureAlgorithm();
       algo.setTerminology(terminology);
@@ -1353,9 +1355,9 @@ public class ContentServiceRestImpl extends RootServiceRestImpl implements
       algo.close();
 
       // Final logging messages
-      Logger.getLogger(ContentServiceRestImpl.class).info(
+      Logger.getLogger(getClass()).info(
           "      elapsed time = " + getTotalElapsedTimeStr(startTimeOrig));
-      Logger.getLogger(ContentServiceRestImpl.class).info("done ...");
+      Logger.getLogger(getClass()).info("done ...");
 
     } catch (Exception e) {
       handleException(e, "trying to compute transitive closure");
@@ -1379,7 +1381,7 @@ public class ContentServiceRestImpl extends RootServiceRestImpl implements
     @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken)
     throws Exception {
 
-    Logger.getLogger(ContentServiceRestImpl.class).info(
+    Logger.getLogger(getClass()).info(
         "RESTful POST call (ContentChange): /terminology/remove/" + terminology
             + "/" + version);
 
@@ -1395,9 +1397,9 @@ public class ContentServiceRestImpl extends RootServiceRestImpl implements
       contentService.close();
 
       // Final logging messages
-      Logger.getLogger(ContentServiceRestImpl.class).info(
+      Logger.getLogger(getClass()).info(
           "      elapsed time = " + getTotalElapsedTimeStr(startTimeOrig));
-      Logger.getLogger(ContentServiceRestImpl.class).info("done ...");
+      Logger.getLogger(getClass()).info("done ...");
 
     } catch (Exception e) {
       handleException(e, "trying to load terminology from ClaML file");

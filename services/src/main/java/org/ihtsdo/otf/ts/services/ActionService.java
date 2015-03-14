@@ -4,7 +4,6 @@ import org.ihtsdo.otf.ts.Project;
 import org.ihtsdo.otf.ts.helpers.KeyValuesMap;
 import org.ihtsdo.otf.ts.helpers.RelationshipList;
 
-// TODO: Auto-generated Javadoc
 /**
  * Generically represents a service for performing maintenance actions.
  */

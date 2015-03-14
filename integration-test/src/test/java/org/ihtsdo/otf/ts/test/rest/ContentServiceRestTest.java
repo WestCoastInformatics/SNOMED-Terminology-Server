@@ -16,7 +16,6 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Ignore;
 
-// TODO: Auto-generated Javadoc
 /**
  * Implementation of the "Content Service REST Normal Use" Test Cases.
  */

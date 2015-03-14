@@ -19,7 +19,7 @@ public class SearchResultJpa implements SearchResult {
   private String terminology;
 
   /** The terminology version. */
-  private String version;
+  private String terminologyVersion;
 
   /** The value. */
   private String value;
@@ -40,7 +40,7 @@ public class SearchResultJpa implements SearchResult {
     id = result.getId();
     terminology = result.getTerminology();
     terminologyId = result.getTerminologyId();
-    version = result.getTerminologyVersion();
+    terminologyVersion = result.getTerminologyVersion();
     value = result.getValue();
   }
 
@@ -117,7 +117,7 @@ public class SearchResultJpa implements SearchResult {
    */
   @Override
   public String getTerminologyVersion() {
-    return this.version;
+    return this.terminologyVersion;
   }
 
   /*
@@ -128,8 +128,8 @@ public class SearchResultJpa implements SearchResult {
    * lang.String)
    */
   @Override
-  public void setTerminologyVersion(String version) {
-    this.version = version;
+  public void setTerminologyVersion(String terminologyVersion) {
+    this.terminologyVersion = terminologyVersion;
   }
 
   /**
@@ -171,7 +171,7 @@ public class SearchResultJpa implements SearchResult {
     result =
         prime
             * result
-            + ((version == null) ? 0 : version.hashCode());
+            + ((terminologyVersion == null) ? 0 : terminologyVersion.hashCode());
     result = prime * result + ((value == null) ? 0 : value.hashCode());
     return result;
   }
@@ -200,10 +200,10 @@ public class SearchResultJpa implements SearchResult {
         return false;
     } else if (!terminologyId.equals(other.terminologyId))
       return false;
-    if (version == null) {
-      if (other.version != null)
+    if (terminologyVersion == null) {
+      if (other.terminologyVersion != null)
         return false;
-    } else if (!version.equals(other.version))
+    } else if (!terminologyVersion.equals(other.terminologyVersion))
       return false;
     if (value == null) {
       if (other.value != null)
@@ -222,7 +222,7 @@ public class SearchResultJpa implements SearchResult {
   public String toString() {
     return "SearchResultJpa [id=" + id + ", terminologyId=" + terminologyId
         + ", terminology=" + terminology + ", version="
-        + version + ", value=" + value + "]";
+        + terminologyVersion + ", value=" + value + "]";
   }
 
 }

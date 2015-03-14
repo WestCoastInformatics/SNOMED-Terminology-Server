@@ -70,7 +70,7 @@ public class ActionServiceRestImpl extends RootServiceRestImpl implements
     @ApiParam(value = "Project, e.g. the result of a content service get project call", required = true) ProjectJpa project,
     @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken) {
 
-    Logger.getLogger(ContentServiceRestImpl.class).info(
+    Logger.getLogger(getClass()).info(
         "RESTful call (Action): /configure");
 
     try {
@@ -102,7 +102,7 @@ public class ActionServiceRestImpl extends RootServiceRestImpl implements
     @ApiParam(value = "Session token, e.g. value from /action/configure", required = true) @HeaderParam("sessionToken") String sessionToken,
     @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken) {
 
-    Logger.getLogger(ContentServiceRestImpl.class).info(
+    Logger.getLogger(getClass()).info(
         "RESTful call (Action): /clear/" + sessionToken);
 
     try {
@@ -138,7 +138,7 @@ public class ActionServiceRestImpl extends RootServiceRestImpl implements
     @ApiParam(value = "Session token, e.g. value from /action/configure", required = true) @HeaderParam("sessionToken") String sessionToken,
     @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken) {
 
-    Logger.getLogger(ContentServiceRestImpl.class).info(
+    Logger.getLogger(getClass()).info(
         "RESTful call (Action): /progress/" + sessionToken);
 
     try {
@@ -173,7 +173,7 @@ public class ActionServiceRestImpl extends RootServiceRestImpl implements
     @ApiParam(value = "Session token, e.g. value from /action/configure", required = true) @HeaderParam("sessionToken") String sessionToken,
     @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken) {
 
-    Logger.getLogger(ContentServiceRestImpl.class).info(
+    Logger.getLogger(getClass()).info(
         "RESTful call (Action): /cancel/" + sessionToken);
 
     try {
@@ -207,7 +207,7 @@ public class ActionServiceRestImpl extends RootServiceRestImpl implements
     @ApiParam(value = "Session token, e.g. value from /action/configure", required = true) @HeaderParam("sessionToken") String sessionToken,
     @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken) {
 
-    Logger.getLogger(ContentServiceRestImpl.class).info(
+    Logger.getLogger(getClass()).info(
         "RESTful call (Action): /classify/" + sessionToken + "/prepare");
 
     try {
@@ -243,7 +243,7 @@ public class ActionServiceRestImpl extends RootServiceRestImpl implements
     @ApiParam(value = "Session token, e.g. value from /action/configure", required = true) @HeaderParam("sessionToken") String sessionToken,
     @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken) {
 
-    Logger.getLogger(ContentServiceRestImpl.class).info(
+    Logger.getLogger(getClass()).info(
         "RESTful call (Action): /classify/" + sessionToken);
 
     try {
@@ -276,7 +276,7 @@ public class ActionServiceRestImpl extends RootServiceRestImpl implements
     @ApiParam(value = "Session token, e.g. value from /action/configure", required = true) @HeaderParam("sessionToken") String sessionToken,
     @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken) {
 
-    Logger.getLogger(ContentServiceRestImpl.class).info(
+    Logger.getLogger(getClass()).info(
         "RESTful call (Action): /classify/" + sessionToken + "/incremental");
 
     try {
@@ -310,7 +310,7 @@ public class ActionServiceRestImpl extends RootServiceRestImpl implements
     @ApiParam(value = "Session token, e.g. value from /action/configure", required = true) @HeaderParam("sessionToken") String sessionToken,
     @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken) {
 
-    Logger.getLogger(ContentServiceRestImpl.class).info(
+    Logger.getLogger(getClass()).info(
         "RESTful call (Action): /classify/" + sessionToken + "/equivalents");
 
     try {
@@ -351,7 +351,7 @@ public class ActionServiceRestImpl extends RootServiceRestImpl implements
     @ApiParam(value = "Session token, e.g. value from /action/configure", required = true) @HeaderParam("sessionToken") String sessionToken,
     @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken) {
 
-    Logger.getLogger(ContentServiceRestImpl.class).info(
+    Logger.getLogger(getClass()).info(
         "RESTful call (Action): /classify/" + sessionToken + "/old");
 
     try {
@@ -392,7 +392,7 @@ public class ActionServiceRestImpl extends RootServiceRestImpl implements
     @ApiParam(value = "Session token, e.g. value from /action/configure", required = true) @HeaderParam("sessionToken") String sessionToken,
     @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken) {
 
-    Logger.getLogger(ContentServiceRestImpl.class).info(
+    Logger.getLogger(getClass()).info(
         "RESTful call (Action): /classify/" + sessionToken + "/new");
 
     try {
@@ -426,7 +426,7 @@ public class ActionServiceRestImpl extends RootServiceRestImpl implements
     @ApiParam(value = "Session token, e.g. value from /action/configure", required = true) @HeaderParam("sessionToken") String sessionToken,
     @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken) {
 
-    Logger.getLogger(ContentServiceRestImpl.class).info(
+    Logger.getLogger(getClass()).info(
         "RESTful call (Action): /classify/" + sessionToken + "/old/retire");
 
     try {
@@ -466,7 +466,7 @@ public class ActionServiceRestImpl extends RootServiceRestImpl implements
     @ApiParam(value = "Session token, e.g. value from /action/configure", required = true) @HeaderParam("sessionToken") String sessionToken,
     @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken) {
 
-    Logger.getLogger(ContentServiceRestImpl.class).info(
+    Logger.getLogger(getClass()).info(
         "RESTful call (Action): /classify/" + sessionToken + "/new");
 
     try {

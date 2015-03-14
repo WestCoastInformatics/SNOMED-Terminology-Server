@@ -85,7 +85,7 @@ public class ContentChangeServiceRestImpl extends RootServiceRestImpl implements
     @ApiParam(value = "Concept terminology version, e.g. latest", required = true) @PathParam("version") String version,
     @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken) {
 
-    Logger.getLogger(ContentServiceRestImpl.class).info(
+    Logger.getLogger(getClass()).info(
         "RESTful call (Content): /concept/" + terminology + "/" + version + "/"
             + terminologyId);
 
@@ -133,9 +133,9 @@ public class ContentChangeServiceRestImpl extends RootServiceRestImpl implements
     @ApiParam(value = "Concept, e.g. newConcept", required = true) ConceptJpa concept,
     @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken)
     throws Exception {
-    Logger.getLogger(ContentChangeServiceRestImpl.class).info(
+    Logger.getLogger(getClass()).info(
         "RESTful call PUT (ContentChange): /concept/add " + concept);
-    Logger.getLogger(ContentChangeServiceRestImpl.class).debug(
+    Logger.getLogger(getClass()).debug(
         ConceptReportHelper.getConceptReport(concept));
 
     try {
@@ -190,9 +190,9 @@ public class ContentChangeServiceRestImpl extends RootServiceRestImpl implements
     @ApiParam(value = "Concept, e.g. update", required = true) ConceptJpa concept,
     @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken)
     throws Exception {
-    Logger.getLogger(ContentChangeServiceRestImpl.class).info(
+    Logger.getLogger(getClass()).info(
         "RESTful call POST (ContentChange): /concept/update " + concept);
-    Logger.getLogger(ContentChangeServiceRestImpl.class).debug(
+    Logger.getLogger(getClass()).debug(
         ConceptReportHelper.getConceptReport(concept));
 
     try {
@@ -244,7 +244,7 @@ public class ContentChangeServiceRestImpl extends RootServiceRestImpl implements
     @ApiParam(value = "Concept internal id, e.g. 2", required = true) @PathParam("id") Long id,
     @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken)
     throws Exception {
-    Logger.getLogger(ContentServiceRestImpl.class).info(
+    Logger.getLogger(getClass()).info(
         "RESTful DELETE call (ContentChange): /concept/remove/id/" + id);
     try {
       authenticate(securityService, authToken, "remove concept",
@@ -273,12 +273,12 @@ public class ContentChangeServiceRestImpl extends RootServiceRestImpl implements
     @ApiParam(value = "Description, e.g. newDescription", required = true) DescriptionJpa description,
     @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken)
     throws Exception {
-    Logger.getLogger(ContentChangeServiceRestImpl.class).info(
+    Logger.getLogger(getClass()).info(
         "RESTful call PUT (ContentChange): /description/add " + description);
     if (description != null) {
-      Logger.getLogger(ContentChangeServiceRestImpl.class).debug(
+      Logger.getLogger(getClass()).debug(
           ConceptReportHelper.getConceptReport(description.getConcept()));
-      Logger.getLogger(ContentChangeServiceRestImpl.class).debug(
+      Logger.getLogger(getClass()).debug(
           ConceptReportHelper.getDescriptionReport(description));
     }
 
@@ -341,14 +341,14 @@ public class ContentChangeServiceRestImpl extends RootServiceRestImpl implements
     @ApiParam(value = "Description, e.g. newDescription", required = true) DescriptionJpa description,
     @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken)
     throws Exception {
-    Logger.getLogger(ContentChangeServiceRestImpl.class)
+    Logger.getLogger(getClass())
         .info(
             "RESTful call POST (ContentChange): /description/update "
                 + description);
     if (description != null) {
-      Logger.getLogger(ContentChangeServiceRestImpl.class).debug(
+      Logger.getLogger(getClass()).debug(
           ConceptReportHelper.getConceptReport(description.getConcept()));
-      Logger.getLogger(ContentChangeServiceRestImpl.class).debug(
+      Logger.getLogger(getClass()).debug(
           ConceptReportHelper.getDescriptionReport(description));
     }
 
@@ -407,7 +407,7 @@ public class ContentChangeServiceRestImpl extends RootServiceRestImpl implements
     @ApiParam(value = "Descrption internal id, e.g. 2", required = true) @PathParam("id") Long id,
     @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken)
     throws Exception {
-    Logger.getLogger(ContentChangeServiceRestImpl.class).info(
+    Logger.getLogger(getClass()).info(
         "RESTful call POST (ContentChange): /description/remove/" + id);
 
     try {
@@ -457,7 +457,7 @@ public class ContentChangeServiceRestImpl extends RootServiceRestImpl implements
     @ApiParam(value = "Relationship, e.g. newRelationship", required = true) RelationshipJpa relationship,
     @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken)
     throws Exception {
-    Logger.getLogger(ContentChangeServiceRestImpl.class).info(
+    Logger.getLogger(getClass()).info(
         "RESTful call PUT (ContentChange): /relationship/add " + relationship);
     authenticate(securityService, authToken, "add relationship",
         UserRole.AUTHOR);
@@ -479,7 +479,7 @@ public class ContentChangeServiceRestImpl extends RootServiceRestImpl implements
     @ApiParam(value = "Relationship, e.g. update", required = true) RelationshipJpa relationship,
     @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken)
     throws Exception {
-    Logger.getLogger(ContentChangeServiceRestImpl.class).info(
+    Logger.getLogger(getClass()).info(
         "RESTful call POST (ContentChange): /relationship/update "
             + relationship);
     authenticate(securityService, authToken, "update relationship",
@@ -502,7 +502,7 @@ public class ContentChangeServiceRestImpl extends RootServiceRestImpl implements
     @ApiParam(value = "Relationship internal id, e.g. 2", required = true) @PathParam("id") Long id,
     @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken)
     throws Exception {
-    Logger.getLogger(ContentServiceRestImpl.class).info(
+    Logger.getLogger(getClass()).info(
         "RESTful DELETE call (ContentChange): /relationship/remove/id/" + id);
     authenticate(securityService, authToken, "remove relationship",
         UserRole.AUTHOR);
@@ -523,7 +523,7 @@ public class ContentChangeServiceRestImpl extends RootServiceRestImpl implements
     @ApiParam(value = "language refset member, e.g. language refset member", required = true) LanguageRefSetMemberJpa member,
     @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken)
     throws Exception {
-    Logger.getLogger(ContentChangeServiceRestImpl.class).info(
+    Logger.getLogger(getClass()).info(
         "RESTful call PUT (ContentChange): /language/add " + member);
     authenticate(securityService, authToken, "add language refset member",
         UserRole.AUTHOR);
@@ -545,7 +545,7 @@ public class ContentChangeServiceRestImpl extends RootServiceRestImpl implements
     @ApiParam(value = "language refset member, e.g. language refset member", required = true) LanguageRefSetMemberJpa member,
     @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken)
     throws Exception {
-    Logger.getLogger(ContentChangeServiceRestImpl.class).info(
+    Logger.getLogger(getClass()).info(
         "RESTful call POST (ContentChange): /language/update " + member);
     authenticate(securityService, authToken, "update language refset member",
         UserRole.AUTHOR);
@@ -567,7 +567,7 @@ public class ContentChangeServiceRestImpl extends RootServiceRestImpl implements
     @ApiParam(value = "language refset member internal id, e.g. 2", required = true) @PathParam("id") Long id,
     @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken)
     throws Exception {
-    Logger.getLogger(ContentServiceRestImpl.class).info(
+    Logger.getLogger(getClass()).info(
         "RESTful DELETE call (ContentChange): /language/remove/id/" + id);
     authenticate(securityService, authToken, "remove language refset member",
         UserRole.AUTHOR);
@@ -590,7 +590,7 @@ public class ContentChangeServiceRestImpl extends RootServiceRestImpl implements
     @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken)
     throws Exception {
 
-    Logger.getLogger(ContentChangeServiceRestImpl.class)
+    Logger.getLogger(getClass())
         .info(
             "RESTful call PUT (ContentChange): /associationReference/add "
                 + member);
@@ -647,7 +647,7 @@ public class ContentChangeServiceRestImpl extends RootServiceRestImpl implements
     @ApiParam(value = "Association reference refset member, e.g. new association reference refset member", required = true) AssociationReferenceConceptRefSetMemberJpa member,
     @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken)
     throws Exception {
-    Logger.getLogger(ContentChangeServiceRestImpl.class).info(
+    Logger.getLogger(getClass()).info(
         "RESTful call POST (ContentChange): /associationReference/update "
             + member);
     try {
@@ -696,7 +696,7 @@ public class ContentChangeServiceRestImpl extends RootServiceRestImpl implements
     @ApiParam(value = "Association reference refset member internal id, e.g. 2", required = true) @PathParam("id") Long id,
     @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken)
     throws Exception {
-    Logger.getLogger(ContentChangeServiceRestImpl.class)
+    Logger.getLogger(getClass())
         .info(
             "RESTful call POST (ContentChange): /associationReference/remove/"
                 + id);
@@ -818,9 +818,9 @@ public class ContentChangeServiceRestImpl extends RootServiceRestImpl implements
     @ApiParam(value = "Project, e.g. newProject", required = true) ProjectJpa project,
     @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken)
     throws Exception {
-    Logger.getLogger(ContentChangeServiceRestImpl.class).info(
+    Logger.getLogger(getClass()).info(
         "RESTful call PUT (ContentChange): /project/add " + project);
-    Logger.getLogger(ContentChangeServiceRestImpl.class)
+    Logger.getLogger(getClass())
         .debug("    " + project);
     try {
       authenticate(securityService, authToken, "add project", UserRole.AUTHOR);
@@ -867,10 +867,10 @@ public class ContentChangeServiceRestImpl extends RootServiceRestImpl implements
     @ApiParam(value = "Project, e.g. newProject", required = true) ProjectJpa project,
     @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken)
     throws Exception {
-    Logger.getLogger(ContentChangeServiceRestImpl.class).info(
+    Logger.getLogger(getClass()).info(
         "RESTful call POST (ContentChange): /project/update " + project);
     if (project != null) {
-      Logger.getLogger(ContentChangeServiceRestImpl.class).debug(
+      Logger.getLogger(getClass()).debug(
           "    " + project);
     }
 
@@ -910,7 +910,7 @@ public class ContentChangeServiceRestImpl extends RootServiceRestImpl implements
     @ApiParam(value = "Project internal id, e.g. 2", required = true) @PathParam("id") Long id,
     @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken)
     throws Exception {
-    Logger.getLogger(ContentServiceRestImpl.class).info(
+    Logger.getLogger(getClass()).info(
         "RESTful DELETE call (ContentChange): /project/remove/id/" + id);
     try {
       authenticate(securityService, authToken, "remove project",
@@ -935,7 +935,7 @@ public class ContentChangeServiceRestImpl extends RootServiceRestImpl implements
     @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken)
     throws Exception {
 
-    Logger.getLogger(ContentServiceRestImpl.class).info(
+    Logger.getLogger(getClass()).info(
         "RESTful POST call (ContentChange): /edit/begin/" + terminology + "/"
             + version + "/" + releaseVersion);
     try {

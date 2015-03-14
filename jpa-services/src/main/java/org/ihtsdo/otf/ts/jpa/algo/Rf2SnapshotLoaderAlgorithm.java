@@ -41,7 +41,6 @@ import org.ihtsdo.otf.ts.rf2.jpa.RefsetDescriptorRefSetMemberJpa;
 import org.ihtsdo.otf.ts.rf2.jpa.RelationshipJpa;
 import org.ihtsdo.otf.ts.rf2.jpa.SimpleMapRefSetMemberJpa;
 import org.ihtsdo.otf.ts.rf2.jpa.SimpleRefSetMemberJpa;
-import org.ihtsdo.otf.ts.services.ContentService;
 import org.ihtsdo.otf.ts.services.handlers.ComputePreferredNameHandler;
 import org.ihtsdo.otf.ts.services.helpers.ProgressEvent;
 import org.ihtsdo.otf.ts.services.helpers.ProgressListener;
@@ -56,14 +55,14 @@ public class Rf2SnapshotLoaderAlgorithm extends ContentServiceJpa implements
   /** Listeners. */
   private List<ProgressListener> listeners = new ArrayList<>();
 
-  /** The Constant commitCt. */
-  private final static int commitCt = 2000;
+  /** The logging object ct threshold */
+  private final static int logCt = 2000;
 
   /** The terminology. */
   private String terminology;
 
   /** The terminology version. */
-  private String version;
+  private String terminologyVersion;
 
   /** The release version. */
   private String releaseVersion;
@@ -92,6 +91,8 @@ public class Rf2SnapshotLoaderAlgorithm extends ContentServiceJpa implements
     super();
     // Turn of ID computation when loading a terminology
     setAssignIdentifiersFlag(false);
+    // Let loader set last modified flags.
+    setLastModifiedFlag(false);
   }
 
   /**
@@ -106,10 +107,10 @@ public class Rf2SnapshotLoaderAlgorithm extends ContentServiceJpa implements
   /**
    * Sets the terminology version.
    *
-   * @param version the terminology version
+   * @param terminologyVersion the terminology version
    */
-  public void setTerminologyVersion(String version) {
-    this.version = version;
+  public void setTerminologyVersion(String terminologyVersion) {
+    this.terminologyVersion = terminologyVersion;
   }
 
   /**
@@ -144,6 +145,9 @@ public class Rf2SnapshotLoaderAlgorithm extends ContentServiceJpa implements
   public void compute() throws Exception {
     try {
       Logger.getLogger(this.getClass()).info("Start loading snapshot");
+      Logger.getLogger(this.getClass()).info("  terminology = " + terminology);
+      Logger.getLogger(this.getClass()).info("  version = " + terminologyVersion);
+      Logger.getLogger(this.getClass()).info("  releaseVersion = " + releaseVersion);
 
       // Log memory usage
       Runtime runtime = Runtime.getRuntime();
@@ -204,10 +208,6 @@ public class Rf2SnapshotLoaderAlgorithm extends ContentServiceJpa implements
           "    elapsed time = " + getElapsedTime(startTime) + "s"
               + " (Ended at " + ft.format(new Date()) + ")");
 
-      // clear and commit
-      commit();
-      clear();
-      
       //
       // Load Simple RefSets (Content)
       //
@@ -305,6 +305,10 @@ public class Rf2SnapshotLoaderAlgorithm extends ContentServiceJpa implements
               + " (Ended at " + ft.format(new Date()) + ")");
 
       // Clear concept cache
+      // clear and commit
+      commit();
+      clear();
+      
       conceptCache.clear();
 
       // Final logging messages
@@ -448,7 +452,7 @@ public class Rf2SnapshotLoaderAlgorithm extends ContentServiceJpa implements
         concept.setModuleId(fields[3]);
         concept.setDefinitionStatusId(fields[4]);
         concept.setTerminology(terminology);
-        concept.setTerminologyVersion(version);
+        concept.setTerminologyVersion(terminologyVersion);
         concept.setDefaultPreferredName("null");
         concept.setLastModifiedBy("loader");
         concept.setWorkflowStatus("PUBLISHED");
@@ -457,7 +461,7 @@ public class Rf2SnapshotLoaderAlgorithm extends ContentServiceJpa implements
         conceptCache.put(fields[0], concept);
 
         addConcept(concept);
-        if (++objectCt % commitCt == 0) {
+        if (++objectCt % logCt == 0) {
           Logger.getLogger(getClass()).info("    count = " + objectCt);
         }
 
@@ -515,7 +519,7 @@ public class Rf2SnapshotLoaderAlgorithm extends ContentServiceJpa implements
         relationship.setTypeId(fields[7]); // typeId
         relationship.setCharacteristicTypeId(fields[8]); // characteristicTypeId
         relationship.setTerminology(terminology);
-        relationship.setTerminologyVersion(version);
+        relationship.setTerminologyVersion(terminologyVersion);
         relationship.setModifierId(fields[9]);
         relationship.setLastModifiedBy("loader");
 
@@ -541,7 +545,7 @@ public class Rf2SnapshotLoaderAlgorithm extends ContentServiceJpa implements
 
         }
 
-        if (++objectCt % commitCt == 0) {
+        if (++objectCt % logCt == 0) {
           Logger.getLogger(getClass()).info("    count = " + objectCt);
         }
 
@@ -571,13 +575,11 @@ public class Rf2SnapshotLoaderAlgorithm extends ContentServiceJpa implements
     int skipCt = 0; // counter for number of language ref set members skipped
 
     // Begin transaction
-    final ContentService contentService = new ContentServiceJpa();
     ComputePreferredNameHandler pnHandler =
-        contentService.getComputePreferredNameHandler(terminology);
-    contentService.close();
+        getComputePreferredNameHandler(terminology);
 
     // Load and persist first description
-    description = getNextDescription(contentService);
+    description = getNextDescription();
 
     // Load first language ref set member
     language = getNextLanguage();
@@ -640,12 +642,12 @@ public class Rf2SnapshotLoaderAlgorithm extends ContentServiceJpa implements
       }
 
       // Pet the next description
-      description = getNextDescription(contentService);
+      description = getNextDescription();
 
       // increment description count
       descCt++;
 
-      if (descCt % commitCt == 0) {
+      if (descCt % logCt == 0) {
         Logger.getLogger(getClass()).info("    count = " + descCt);
       }
 
@@ -683,7 +685,7 @@ public class Rf2SnapshotLoaderAlgorithm extends ContentServiceJpa implements
       } else {
         concept.setDefaultPreferredName("No default preferred name found");
       }
-      if (++objectCt % commitCt == 0) {
+      if (++objectCt % logCt == 0) {
         Logger.getLogger(getClass()).info("    count = " + objectCt);
       }
     }
@@ -700,12 +702,11 @@ public class Rf2SnapshotLoaderAlgorithm extends ContentServiceJpa implements
   /**
    * Returns the next description.
    *
-   * @param contentService the content service
    * @return the next description
    * @throws Exception the exception
    */
   @SuppressWarnings("resource")
-  private Description getNextDescription(ContentService contentService)
+  private Description getNextDescription()
     throws Exception {
 
     String line, fields[];
@@ -736,7 +737,7 @@ public class Rf2SnapshotLoaderAlgorithm extends ContentServiceJpa implements
         description.setTerm(fields[7]);
         description.setCaseSignificanceId(fields[8]);
         description.setTerminology(terminology);
-        description.setTerminologyVersion(version);
+        description.setTerminologyVersion(terminologyVersion);
         description.setLastModifiedBy("loader");
 
         // set concept from cache
@@ -759,7 +760,7 @@ public class Rf2SnapshotLoaderAlgorithm extends ContentServiceJpa implements
 
       // otherwise get next line
       else {
-        return getNextDescription(contentService);
+        return getNextDescription();
       }
     }
     return null;
@@ -804,7 +805,7 @@ public class Rf2SnapshotLoaderAlgorithm extends ContentServiceJpa implements
 
         // Terminology attributes
         member.setTerminology(terminology);
-        member.setTerminologyVersion(version);
+        member.setTerminologyVersion(terminologyVersion);
         member.setLastModifiedBy("loader");
 
         // Set a dummy description with terminology id only
@@ -839,12 +840,6 @@ public class Rf2SnapshotLoaderAlgorithm extends ContentServiceJpa implements
 
     String line = "";
     objectCt = 0;
-
-    // Begin transaction
-    ContentService contentService = new ContentServiceJpa();
-    contentService.setLastModifiedFlag(false);
-    contentService.setTransactionPerOperation(false);
-    contentService.beginTransaction();
 
     // Iterate through attribute value entries
     PushBackReader reader = readers.getReader(Rf2Readers.Keys.ATTRIBUTE_VALUE);
@@ -892,22 +887,18 @@ public class Rf2SnapshotLoaderAlgorithm extends ContentServiceJpa implements
 
         // Terminology attributes
         member.setTerminology(terminology);
-        member.setTerminologyVersion(version);
+        member.setTerminologyVersion(terminologyVersion);
         member.setLastModifiedBy("loader");
 
-        contentService.addAttributeValueRefSetMember(member);
+        addAttributeValueRefSetMember(member);
 
         // regularly commit at intervals
-        if (++objectCt % commitCt == 0) {
+        if (++objectCt % logCt == 0) {
           Logger.getLogger(this.getClass()).info("  count = " + objectCt);
         }
 
       }
     }
-
-    // commit any remaining objects
-    contentService.commit();
-    contentService.close();
 
     // print memory information
     Runtime runtime = Runtime.getRuntime();
@@ -930,12 +921,6 @@ public class Rf2SnapshotLoaderAlgorithm extends ContentServiceJpa implements
     String line = "";
     objectCt = 0;
 
-    // begin transaction
-    ContentService contentService = new ContentServiceJpa();
-    contentService.setLastModifiedFlag(false);
-    contentService.setTransactionPerOperation(false);
-    contentService.beginTransaction();
-
     PushBackReader reader =
         readers.getReader(Rf2Readers.Keys.ASSOCIATION_REFERENCE);
     while ((line = reader.readLine()) != null) {
@@ -944,6 +929,12 @@ public class Rf2SnapshotLoaderAlgorithm extends ContentServiceJpa implements
       String fields[] = line.split("\t");
 
       if (!fields[0].equals("id")) { // header
+
+        // Stop if the effective time is past the release version
+        if (fields[1].compareTo(releaseVersion) > 0) {
+          reader.push(line);
+          break;
+        }
 
         AssociationReferenceRefSetMember<?> member = null;
 
@@ -976,22 +967,18 @@ public class Rf2SnapshotLoaderAlgorithm extends ContentServiceJpa implements
 
         // Terminology attributes
         member.setTerminology(terminology);
-        member.setTerminologyVersion(version);
+        member.setTerminologyVersion(terminologyVersion);
         member.setLastModifiedBy("loader");
 
-        contentService.addAssociationReferenceRefSetMember(member);
+        addAssociationReferenceRefSetMember(member);
 
         // regularly commit at intervals
-        if (++objectCt % commitCt == 0) {
+        if (++objectCt % logCt == 0) {
           Logger.getLogger(this.getClass()).info("  count = " + objectCt);
         }
 
       }
     }
-
-    // Commit any remaining objects
-    contentService.commit();
-    contentService.close();
 
     // print memory information
     Runtime runtime = Runtime.getRuntime();
@@ -1012,12 +999,6 @@ public class Rf2SnapshotLoaderAlgorithm extends ContentServiceJpa implements
 
     String line = "";
     objectCt = 0;
-
-    // begin transaction
-    final ContentService contentService = new ContentServiceJpa();
-    contentService.setLastModifiedFlag(false);
-    contentService.setTransactionPerOperation(false);
-    contentService.beginTransaction();
 
     PushBackReader reader = readers.getReader(Rf2Readers.Keys.SIMPLE);
     while ((line = reader.readLine()) != null) {
@@ -1047,7 +1028,7 @@ public class Rf2SnapshotLoaderAlgorithm extends ContentServiceJpa implements
 
         // Terminology attributes
         member.setTerminology(terminology);
-        member.setTerminologyVersion(version);
+        member.setTerminologyVersion(terminologyVersion);
         member.setLastModifiedBy("loader");
 
         // Retrieve Concept -- firstToken is referencedComonentId
@@ -1055,10 +1036,10 @@ public class Rf2SnapshotLoaderAlgorithm extends ContentServiceJpa implements
 
         if (concept != null) {
           member.setConcept(concept);
-          contentService.addSimpleRefSetMember(member);
+          addSimpleRefSetMember(member);
 
           // regularly commit at intervals
-          if (++objectCt % commitCt == 0) {
+          if (++objectCt % logCt == 0) {
             Logger.getLogger(this.getClass()).info("    count = " + objectCt);
           }
         } else {
@@ -1068,10 +1049,6 @@ public class Rf2SnapshotLoaderAlgorithm extends ContentServiceJpa implements
         }
       }
     }
-
-    // commit any remaining objects
-    contentService.commit();
-    contentService.close();
 
     // print memory information
     Runtime runtime = Runtime.getRuntime();
@@ -1092,12 +1069,6 @@ public class Rf2SnapshotLoaderAlgorithm extends ContentServiceJpa implements
     String line = "";
     objectCt = 0;
 
-    // begin transaction
-    final ContentService contentService = new ContentServiceJpa();
-    contentService.setLastModifiedFlag(false);
-    contentService.setTransactionPerOperation(false);
-    contentService.beginTransaction();
-
     PushBackReader reader = readers.getReader(Rf2Readers.Keys.SIMPLE_MAP);
     while ((line = reader.readLine()) != null) {
 
@@ -1105,6 +1076,12 @@ public class Rf2SnapshotLoaderAlgorithm extends ContentServiceJpa implements
       final String fields[] = line.split("\t");
 
       if (!fields[0].equals("id")) { // header
+        // Stop if the effective time is past the release version
+        if (fields[1].compareTo(releaseVersion) > 0) {
+          reader.push(line);
+          break;
+        }
+
         final SimpleMapRefSetMember member = new SimpleMapRefSetMemberJpa();
 
         // Universal RefSet attributes
@@ -1120,7 +1097,7 @@ public class Rf2SnapshotLoaderAlgorithm extends ContentServiceJpa implements
 
         // Terminology attributes
         member.setTerminology(terminology);
-        member.setTerminologyVersion(version);
+        member.setTerminologyVersion(terminologyVersion);
         member.setLastModifiedBy("loader");
 
         // Retrieve concept -- firstToken is referencedComponentId
@@ -1128,10 +1105,10 @@ public class Rf2SnapshotLoaderAlgorithm extends ContentServiceJpa implements
 
         if (concept != null) {
           member.setConcept(concept);
-          contentService.addSimpleMapRefSetMember(member);
+          addSimpleMapRefSetMember(member);
 
           // regularly commit at intervals
-          if (++objectCt % commitCt == 0) {
+          if (++objectCt % logCt == 0) {
             Logger.getLogger(this.getClass()).info("    count = " + objectCt);
 
           }
@@ -1142,10 +1119,6 @@ public class Rf2SnapshotLoaderAlgorithm extends ContentServiceJpa implements
         }
       }
     }
-
-    // commit any remaining objects
-    contentService.commit();
-    contentService.close();
 
     // print memory information
     Runtime runtime = Runtime.getRuntime();
@@ -1165,12 +1138,6 @@ public class Rf2SnapshotLoaderAlgorithm extends ContentServiceJpa implements
 
     String line = "";
     objectCt = 0;
-
-    // begin transaction
-    final ContentService contentService = new ContentServiceJpa();
-    contentService.setLastModifiedFlag(false);
-    contentService.setTransactionPerOperation(false);
-    contentService.beginTransaction();
 
     PushBackReader reader = readers.getReader(Rf2Readers.Keys.COMPLEX_MAP);
     while ((line = reader.readLine()) != null) {
@@ -1203,7 +1170,7 @@ public class Rf2SnapshotLoaderAlgorithm extends ContentServiceJpa implements
 
         // Terminology attributes
         member.setTerminology(terminology);
-        member.setTerminologyVersion(version);
+        member.setTerminologyVersion(terminologyVersion);
         member.setLastModifiedBy("loader");
 
         // set Concept
@@ -1211,10 +1178,10 @@ public class Rf2SnapshotLoaderAlgorithm extends ContentServiceJpa implements
 
         if (concept != null) {
           member.setConcept(concept);
-          contentService.addComplexMapRefSetMember(member);
+          addComplexMapRefSetMember(member);
 
           // regularly commit at intervals
-          if (++objectCt % commitCt == 0) {
+          if (++objectCt % logCt == 0) {
             Logger.getLogger(this.getClass()).info("    count = " + objectCt);
           }
         } else {
@@ -1225,10 +1192,6 @@ public class Rf2SnapshotLoaderAlgorithm extends ContentServiceJpa implements
 
       }
     }
-
-    // commit any remaining objects
-    contentService.commit();
-    contentService.close();
 
     // print memory information
     Runtime runtime = Runtime.getRuntime();
@@ -1248,12 +1211,6 @@ public class Rf2SnapshotLoaderAlgorithm extends ContentServiceJpa implements
 
     String line = "";
     objectCt = 0;
-
-    // begin transaction
-    final ContentService contentService = new ContentServiceJpa();
-    contentService.setLastModifiedFlag(false);
-    contentService.setTransactionPerOperation(false);
-    contentService.beginTransaction();
 
     PushBackReader reader = readers.getReader(Rf2Readers.Keys.EXTENDED_MAP);
     while ((line = reader.readLine()) != null) {
@@ -1288,7 +1245,7 @@ public class Rf2SnapshotLoaderAlgorithm extends ContentServiceJpa implements
 
         // Terminology attributes
         member.setTerminology(terminology);
-        member.setTerminologyVersion(version);
+        member.setTerminologyVersion(terminologyVersion);
         member.setLastModifiedBy("loader");
 
         // set Concept
@@ -1296,10 +1253,10 @@ public class Rf2SnapshotLoaderAlgorithm extends ContentServiceJpa implements
 
         if (concept != null) {
           member.setConcept(concept);
-          contentService.addComplexMapRefSetMember(member);
+          addComplexMapRefSetMember(member);
 
           // regularly commit at intervals
-          if (++objectCt % commitCt == 0) {
+          if (++objectCt % logCt == 0) {
             Logger.getLogger(this.getClass()).info("    count = " + objectCt);
 
           }
@@ -1311,10 +1268,6 @@ public class Rf2SnapshotLoaderAlgorithm extends ContentServiceJpa implements
 
       }
     }
-
-    // commit any remaining objects
-    contentService.commit();
-    contentService.close();
 
     // print memory information
     Runtime runtime = Runtime.getRuntime();
@@ -1334,12 +1287,6 @@ public class Rf2SnapshotLoaderAlgorithm extends ContentServiceJpa implements
 
     String line = "";
     objectCt = 0;
-
-    // begin transaction
-    final ContentService contentService = new ContentServiceJpa();
-    contentService.setLastModifiedFlag(false);
-    contentService.setTransactionPerOperation(false);
-    contentService.beginTransaction();
 
     PushBackReader reader =
         readers.getReader(Rf2Readers.Keys.REFSET_DESCRIPTOR);
@@ -1373,7 +1320,7 @@ public class Rf2SnapshotLoaderAlgorithm extends ContentServiceJpa implements
 
         // Terminology attributes
         member.setTerminology(terminology);
-        member.setTerminologyVersion(version);
+        member.setTerminologyVersion(terminologyVersion);
         member.setLastModifiedBy("loader");
 
         // set Concept
@@ -1381,10 +1328,10 @@ public class Rf2SnapshotLoaderAlgorithm extends ContentServiceJpa implements
 
         if (concept != null) {
           member.setConcept(concept);
-          contentService.addRefsetDescriptorRefSetMember(member);
+          addRefsetDescriptorRefSetMember(member);
 
           // regularly commit at intervals
-          if (++objectCt % commitCt == 0) {
+          if (++objectCt % logCt == 0) {
             Logger.getLogger(this.getClass()).info("    count = " + objectCt);
           }
         } else {
@@ -1395,10 +1342,6 @@ public class Rf2SnapshotLoaderAlgorithm extends ContentServiceJpa implements
 
       }
     }
-
-    // commit any remaining objects
-    contentService.commit();
-    contentService.close();
 
     // print memory information
     Runtime runtime = Runtime.getRuntime();
@@ -1418,12 +1361,6 @@ public class Rf2SnapshotLoaderAlgorithm extends ContentServiceJpa implements
 
     String line = "";
     objectCt = 0;
-
-    // begin transaction
-    final ContentService contentService = new ContentServiceJpa();
-    contentService.setLastModifiedFlag(false);
-    contentService.setTransactionPerOperation(false);
-    contentService.beginTransaction();
 
     PushBackReader reader =
         readers.getReader(Rf2Readers.Keys.REFSET_DESCRIPTOR);
@@ -1458,7 +1395,7 @@ public class Rf2SnapshotLoaderAlgorithm extends ContentServiceJpa implements
 
         // Terminology attributes
         member.setTerminology(terminology);
-        member.setTerminologyVersion(version);
+        member.setTerminologyVersion(terminologyVersion);
         member.setLastModifiedBy("loader");
 
         // set Concept
@@ -1466,10 +1403,10 @@ public class Rf2SnapshotLoaderAlgorithm extends ContentServiceJpa implements
 
         if (concept != null) {
           member.setConcept(concept);
-          contentService.addModuleDependencyRefSetMember(member);
+          addModuleDependencyRefSetMember(member);
 
           // regularly commit at intervals
-          if (++objectCt % commitCt == 0) {
+          if (++objectCt % logCt == 0) {
             Logger.getLogger(this.getClass()).info("    count = " + objectCt);
           }
         } else {
@@ -1480,10 +1417,6 @@ public class Rf2SnapshotLoaderAlgorithm extends ContentServiceJpa implements
 
       }
     }
-
-    // commit any remaining objects
-    contentService.commit();
-    contentService.close();
 
     // print memory information
     Runtime runtime = Runtime.getRuntime();
@@ -1504,11 +1437,6 @@ public class Rf2SnapshotLoaderAlgorithm extends ContentServiceJpa implements
     String line = "";
     objectCt = 0;
 
-    // begin transaction
-    final ContentService contentService = new ContentServiceJpa();
-    contentService.setLastModifiedFlag(false);
-    contentService.setTransactionPerOperation(false);
-    contentService.beginTransaction();
 
     PushBackReader reader =
         readers.getReader(Rf2Readers.Keys.REFSET_DESCRIPTOR);
@@ -1541,7 +1469,7 @@ public class Rf2SnapshotLoaderAlgorithm extends ContentServiceJpa implements
 
         // Terminology attributes
         member.setTerminology(terminology);
-        member.setTerminologyVersion(version);
+        member.setTerminologyVersion(terminologyVersion);
         member.setLastModifiedBy("loader");
 
         // set Concept
@@ -1549,10 +1477,10 @@ public class Rf2SnapshotLoaderAlgorithm extends ContentServiceJpa implements
 
         if (concept != null) {
           member.setConcept(concept);
-          contentService.addDescriptionTypeRefSetMember(member);
+          addDescriptionTypeRefSetMember(member);
 
           // regularly commit at intervals
-          if (++objectCt % commitCt == 0) {
+          if (++objectCt % logCt == 0) {
             Logger.getLogger(this.getClass()).info("    count = " + objectCt);
           }
         } else {
@@ -1563,10 +1491,6 @@ public class Rf2SnapshotLoaderAlgorithm extends ContentServiceJpa implements
 
       }
     }
-
-    // commit any remaining objects
-    contentService.commit();
-    contentService.close();
 
     // print memory information
     Runtime runtime = Runtime.getRuntime();

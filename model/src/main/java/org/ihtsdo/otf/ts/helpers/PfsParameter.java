@@ -2,12 +2,9 @@ package org.ihtsdo.otf.ts.helpers;
 
 import org.ihtsdo.otf.ts.rf2.Concept;
 
-// TODO: Auto-generated Javadoc
 /**
  * Represents a parameter container for paging, filtering and sorting. NOTE:
  * filtering is not currently imported or supported.
- *
- * @author ${author}
  */
 public interface PfsParameter {
 

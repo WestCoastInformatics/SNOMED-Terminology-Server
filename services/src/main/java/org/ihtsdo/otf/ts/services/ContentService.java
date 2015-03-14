@@ -37,7 +37,6 @@ import org.ihtsdo.otf.ts.services.handlers.ComputePreferredNameHandler;
 import org.ihtsdo.otf.ts.services.handlers.GraphResolutionHandler;
 import org.ihtsdo.otf.ts.services.handlers.IdentifierAssignmentHandler;
 
-// TODO: Auto-generated Javadoc
 /**
  * Generically represents a service for accessing content.
  */

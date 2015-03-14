@@ -69,7 +69,7 @@ public abstract class AbstractComponent implements Component {
 
   /** The terminology version. */
   @Column(nullable = false)
-  private String version;
+  private String terminologyVersion;
 
   /**
    * Instantiates an empty {@link AbstractComponent}.
@@ -93,7 +93,7 @@ public abstract class AbstractComponent implements Component {
     moduleId = component.getModuleId();
     terminology = component.getTerminology();
     terminologyId = component.getTerminologyId();
-    version = component.getTerminologyVersion();
+    terminologyVersion = component.getTerminologyVersion();
   }
 
   /**
@@ -292,7 +292,7 @@ public abstract class AbstractComponent implements Component {
     result =
         prime
             * result
-            + ((version == null) ? 0 : version.hashCode());
+            + ((terminologyVersion == null) ? 0 : terminologyVersion.hashCode());
     return result;
   }
 
@@ -322,10 +322,10 @@ public abstract class AbstractComponent implements Component {
         return false;
     } else if (!terminologyId.equals(other.terminologyId))
       return false;
-    if (version == null) {
-      if (other.version != null)
+    if (terminologyVersion == null) {
+      if (other.terminologyVersion != null)
         return false;
-    } else if (!version.equals(other.version))
+    } else if (!terminologyVersion.equals(other.terminologyVersion))
       return false;
     return true;
   }
@@ -338,7 +338,7 @@ public abstract class AbstractComponent implements Component {
   @Override
   @Field(index = Index.YES, analyze = Analyze.NO, store = Store.NO)
   public String getTerminologyVersion() {
-    return version;
+    return terminologyVersion;
   }
 
   /*
@@ -348,8 +348,8 @@ public abstract class AbstractComponent implements Component {
    * org.ihtsdo.otf.ts.rf2.Component#setTerminologyVersion(java.lang.String)
    */
   @Override
-  public void setTerminologyVersion(String version) {
-    this.version = version;
+  public void setTerminologyVersion(String terminologyVersion) {
+    this.terminologyVersion = terminologyVersion;
   }
 
   /*
@@ -404,7 +404,7 @@ public abstract class AbstractComponent implements Component {
   public String toString() {
 
     return id + "," + terminology + "," + terminologyId + ","
-        + version + "," + effectiveTime + "," + active + ","
+        + terminologyVersion + "," + effectiveTime + "," + active + ","
         + moduleId + ", " + lastModifiedBy + ", " + lastModified + " ";
   }
 

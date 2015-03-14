@@ -34,7 +34,7 @@ endif
 
 echo "    Load SNOMEDCT ...`/bin/date`"
 cd $SERVER_HOME/admin/loader
-mvn install -PRF2-snapshot -Drun.config=$SERVER_CONFIG -Dterminology=SNOMEDCT -Dinput.dir=$SERVER_DATA/snomedct-20140731-mini >&! mvn.log
+mvn install -PRF2-full -Drun.config=$SERVER_CONFIG -Dterminology=SNOMEDCT -Dinput.dir=$SERVER_DATA/snomedct-20140731-minif >&! mvn.log
 if ($status != 0) then
     echo "ERROR loading SNOMEDCT"
     cat mvn.log

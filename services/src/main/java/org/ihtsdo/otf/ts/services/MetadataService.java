@@ -5,7 +5,6 @@ import java.util.Map;
 
 import org.ihtsdo.otf.ts.helpers.Configurable;
 
-// TODO: Auto-generated Javadoc
 /**
  * Services to retrieve metadata objects.
  *

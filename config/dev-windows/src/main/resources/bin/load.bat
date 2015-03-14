@@ -40,7 +40,7 @@ del /Q mvn.log
 
 echo     Load SNOMEDCT ...%date% %time%
 cd %SERVER_CODE%/admin/loader
-call mvn install -PRF2-snapshot -Drun.config=%SERVER_CONFIG% -Dterminology=SNOMEDCT -Dinput.dir=%SERVER_DATA%/snomedct-20140731-mini 1> mvn.log
+call mvn install -PRF2-full -Drun.config=%SERVER_CONFIG% -Dterminology=SNOMEDCT -Dinput.dir=%SERVER_DATA%/snomedct-20140731-minif 1> mvn.log
 IF %ERRORLEVEL% NEQ 0 (set error=1
 goto trailer)
 del /Q mvn.log

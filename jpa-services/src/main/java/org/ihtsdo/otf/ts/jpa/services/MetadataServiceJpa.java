@@ -656,7 +656,7 @@ public class MetadataServiceJpa extends RootServiceJpa implements
 
     javax.persistence.Query query =
         manager
-            .createQuery("SELECT max(c.version) from ConceptJpa c where terminology = :terminology");
+            .createQuery("SELECT max(c.terminologyVersion) from ConceptJpa c where terminology = :terminology");
 
     query.setParameter("terminology", terminology);
     Object o = query.getSingleResult();
