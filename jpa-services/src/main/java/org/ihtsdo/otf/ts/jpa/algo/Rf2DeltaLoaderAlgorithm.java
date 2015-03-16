@@ -26,7 +26,6 @@ import org.ihtsdo.otf.ts.rf2.jpa.DescriptionJpa;
 import org.ihtsdo.otf.ts.rf2.jpa.LanguageRefSetMemberJpa;
 import org.ihtsdo.otf.ts.rf2.jpa.RelationshipJpa;
 import org.ihtsdo.otf.ts.services.MetadataService;
-import org.ihtsdo.otf.ts.services.helpers.ConceptReportHelper;
 import org.ihtsdo.otf.ts.services.helpers.ProgressEvent;
 import org.ihtsdo.otf.ts.services.helpers.ProgressListener;
 import org.ihtsdo.otf.ts.services.helpers.PushBackReader;
@@ -310,6 +309,11 @@ public class Rf2DeltaLoaderAlgorithm extends HistoryServiceJpa implements
       }
       Logger.getLogger(this.getClass()).info("    changed = " + ct);
 
+      // Commit the content changes
+      Logger.getLogger(this.getClass()).info("  Committing");
+      commit();
+      clear();
+      
       // QA
       Logger
           .getLogger(this.getClass())
@@ -354,11 +358,6 @@ public class Rf2DeltaLoaderAlgorithm extends HistoryServiceJpa implements
       Logger.getLogger(this.getClass()).info(
           "      elapsed time = " + getTotalElapsedTimeStr(startTimeOrig));
 
-      // Commit the content changes
-      Logger.getLogger(this.getClass()).info("  Committing");
-      commit();
-      clear();
-      
       Logger.getLogger(this.getClass()).info("Done ...");
 
     } catch (Exception e) {
@@ -511,8 +510,6 @@ public class Rf2DeltaLoaderAlgorithm extends HistoryServiceJpa implements
           Logger.getLogger(this.getClass()).debug(
               "        add concept " + newConcept.getTerminologyId() + ".");
           newConcept = addConcept(newConcept);
-          Logger.getLogger(this.getClass()).info(
-              ConceptReportHelper.getConceptReport(newConcept));
           objectsAdded++;
         }
 
