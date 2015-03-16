@@ -56,10 +56,10 @@ public class MetadataServiceRestTest {
      * Test prerequisites
      * Terminology SNOMEDCT exists in database
      * Terminology ICD9CM exists in database
-     * The run.config has "viewer.user" and "viewer.password" specified
+     * The run.config.ts has "viewer.user" and "viewer.password" specified
      */
     
-    // test run.config has viewer user
+    // test run.config.ts has viewer user
     testUser = properties.getProperty("viewer.user");
     testPassword = properties.getProperty("viewer.password");
     
