@@ -153,11 +153,11 @@ public class Rf2DeltaLoaderAlgorithm extends HistoryServiceJpa implements
 
       // Log memory usage
       Runtime runtime = Runtime.getRuntime();
-      Logger.getLogger(this.getClass()).info("MEMORY USAGE:");
+      Logger.getLogger(this.getClass()).debug("MEMORY USAGE:");
       Logger.getLogger(this.getClass())
-          .info(" Total: " + runtime.totalMemory());
-      Logger.getLogger(this.getClass()).info(" Free:  " + runtime.freeMemory());
-      Logger.getLogger(this.getClass()).info(" Max:   " + runtime.maxMemory());
+          .debug(" Total: " + runtime.totalMemory());
+      Logger.getLogger(this.getClass()).debug(" Free:  " + runtime.freeMemory());
+      Logger.getLogger(this.getClass()).debug(" Max:   " + runtime.maxMemory());
       SimpleDateFormat ft = new SimpleDateFormat("hh:mm:ss a"); // format for
 
       // Track system level information
@@ -300,7 +300,7 @@ public class Rf2DeltaLoaderAlgorithm extends HistoryServiceJpa implements
           "  Compute preferred names for modified concepts");
       int ct = 0;
       for (String id : deltaConceptIds) {
-        Concept concept = getSingleConcept(id, terminology, terminologyVersion);
+        Concept concept = conceptCache.get(id);
         String pn = getComputedPreferredName(concept);
         if (!pn.equals(concept.getDefaultPreferredName())) {
           ct++;
@@ -309,10 +309,6 @@ public class Rf2DeltaLoaderAlgorithm extends HistoryServiceJpa implements
         }
       }
       Logger.getLogger(this.getClass()).info("    changed = " + ct);
-      // Commit the content changes
-      Logger.getLogger(this.getClass()).info("  Committing");
-      commit();
-      clear();
 
       // QA
       Logger
@@ -357,6 +353,12 @@ public class Rf2DeltaLoaderAlgorithm extends HistoryServiceJpa implements
       // Final logging messages
       Logger.getLogger(this.getClass()).info(
           "      elapsed time = " + getTotalElapsedTimeStr(startTimeOrig));
+
+      // Commit the content changes
+      Logger.getLogger(this.getClass()).info("  Committing");
+      commit();
+      clear();
+      
       Logger.getLogger(this.getClass()).info("Done ...");
 
     } catch (Exception e) {

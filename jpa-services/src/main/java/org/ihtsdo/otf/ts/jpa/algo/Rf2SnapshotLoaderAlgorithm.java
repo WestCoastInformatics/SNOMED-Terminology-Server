@@ -147,11 +147,11 @@ public class Rf2SnapshotLoaderAlgorithm extends ContentServiceJpa implements
 
       // Log memory usage
       Runtime runtime = Runtime.getRuntime();
-      Logger.getLogger(this.getClass()).info("MEMORY USAGE:");
+      Logger.getLogger(this.getClass()).debug("MEMORY USAGE:");
       Logger.getLogger(this.getClass())
-          .info(" Total: " + runtime.totalMemory());
-      Logger.getLogger(this.getClass()).info(" Free:  " + runtime.freeMemory());
-      Logger.getLogger(this.getClass()).info(" Max:   " + runtime.maxMemory());
+          .debug(" Total: " + runtime.totalMemory());
+      Logger.getLogger(this.getClass()).debug(" Free:  " + runtime.freeMemory());
+      Logger.getLogger(this.getClass()).debug(" Max:   " + runtime.maxMemory());
 
       SimpleDateFormat ft = new SimpleDateFormat("hh:mm:ss a"); // format for
 
@@ -472,10 +472,10 @@ public class Rf2SnapshotLoaderAlgorithm extends ContentServiceJpa implements
 
     // print memory information
     Runtime runtime = Runtime.getRuntime();
-    Logger.getLogger(this.getClass()).info("MEMORY USAGE:");
-    Logger.getLogger(this.getClass()).info(" Total: " + runtime.totalMemory());
-    Logger.getLogger(this.getClass()).info(" Free:  " + runtime.freeMemory());
-    Logger.getLogger(this.getClass()).info(" Max:   " + runtime.maxMemory());
+    Logger.getLogger(this.getClass()).debug("MEMORY USAGE:");
+    Logger.getLogger(this.getClass()).debug(" Total: " + runtime.totalMemory());
+    Logger.getLogger(this.getClass()).debug(" Free:  " + runtime.freeMemory());
+    Logger.getLogger(this.getClass()).debug(" Max:   " + runtime.maxMemory());
 
   }
 
@@ -554,10 +554,10 @@ public class Rf2SnapshotLoaderAlgorithm extends ContentServiceJpa implements
 
     // print memory information
     Runtime runtime = Runtime.getRuntime();
-    Logger.getLogger(this.getClass()).info("MEMORY USAGE:");
-    Logger.getLogger(this.getClass()).info(" Total: " + runtime.totalMemory());
-    Logger.getLogger(this.getClass()).info(" Free:  " + runtime.freeMemory());
-    Logger.getLogger(this.getClass()).info(" Max:   " + runtime.maxMemory());
+    Logger.getLogger(this.getClass()).debug("MEMORY USAGE:");
+    Logger.getLogger(this.getClass()).debug(" Total: " + runtime.totalMemory());
+    Logger.getLogger(this.getClass()).debug(" Free:  " + runtime.freeMemory());
+    Logger.getLogger(this.getClass()).debug(" Max:   " + runtime.maxMemory());
   }
 
   /**
@@ -662,10 +662,10 @@ public class Rf2SnapshotLoaderAlgorithm extends ContentServiceJpa implements
 
     // print memory information
     Runtime runtime = Runtime.getRuntime();
-    Logger.getLogger(this.getClass()).info("MEMORY USAGE:");
-    Logger.getLogger(this.getClass()).info(" Total: " + runtime.totalMemory());
-    Logger.getLogger(this.getClass()).info(" Free:  " + runtime.freeMemory());
-    Logger.getLogger(this.getClass()).info(" Max:   " + runtime.maxMemory());
+    Logger.getLogger(this.getClass()).debug("MEMORY USAGE:");
+    Logger.getLogger(this.getClass()).debug(" Total: " + runtime.totalMemory());
+    Logger.getLogger(this.getClass()).debug(" Free:  " + runtime.freeMemory());
+    Logger.getLogger(this.getClass()).debug(" Max:   " + runtime.maxMemory());
   }
 
   /**
@@ -692,10 +692,10 @@ public class Rf2SnapshotLoaderAlgorithm extends ContentServiceJpa implements
 
     // Log memory information
     Runtime runtime = Runtime.getRuntime();
-    Logger.getLogger(this.getClass()).info("MEMORY USAGE:");
-    Logger.getLogger(this.getClass()).info(" Total: " + runtime.totalMemory());
-    Logger.getLogger(this.getClass()).info(" Free:  " + runtime.freeMemory());
-    Logger.getLogger(this.getClass()).info(" Max:   " + runtime.maxMemory());
+    Logger.getLogger(this.getClass()).debug("MEMORY USAGE:");
+    Logger.getLogger(this.getClass()).debug(" Total: " + runtime.totalMemory());
+    Logger.getLogger(this.getClass()).debug(" Free:  " + runtime.freeMemory());
+    Logger.getLogger(this.getClass()).debug(" Max:   " + runtime.maxMemory());
 
   }
 
@@ -902,10 +902,10 @@ public class Rf2SnapshotLoaderAlgorithm extends ContentServiceJpa implements
 
     // print memory information
     Runtime runtime = Runtime.getRuntime();
-    Logger.getLogger(this.getClass()).info("MEMORY USAGE:");
-    Logger.getLogger(this.getClass()).info(" Total: " + runtime.totalMemory());
-    Logger.getLogger(this.getClass()).info(" Free:  " + runtime.freeMemory());
-    Logger.getLogger(this.getClass()).info(" Max:   " + runtime.maxMemory());
+    Logger.getLogger(this.getClass()).debug("MEMORY USAGE:");
+    Logger.getLogger(this.getClass()).debug(" Total: " + runtime.totalMemory());
+    Logger.getLogger(this.getClass()).debug(" Free:  " + runtime.freeMemory());
+    Logger.getLogger(this.getClass()).debug(" Max:   " + runtime.maxMemory());
   }
 
   /**
@@ -982,10 +982,10 @@ public class Rf2SnapshotLoaderAlgorithm extends ContentServiceJpa implements
 
     // print memory information
     Runtime runtime = Runtime.getRuntime();
-    Logger.getLogger(this.getClass()).info("MEMORY USAGE:");
-    Logger.getLogger(this.getClass()).info(" Total: " + runtime.totalMemory());
-    Logger.getLogger(this.getClass()).info(" Free:  " + runtime.freeMemory());
-    Logger.getLogger(this.getClass()).info(" Max:   " + runtime.maxMemory());
+    Logger.getLogger(this.getClass()).debug("MEMORY USAGE:");
+    Logger.getLogger(this.getClass()).debug(" Total: " + runtime.totalMemory());
+    Logger.getLogger(this.getClass()).debug(" Free:  " + runtime.freeMemory());
+    Logger.getLogger(this.getClass()).debug(" Max:   " + runtime.maxMemory());
   }
 
   /**
@@ -1052,10 +1052,10 @@ public class Rf2SnapshotLoaderAlgorithm extends ContentServiceJpa implements
 
     // print memory information
     Runtime runtime = Runtime.getRuntime();
-    Logger.getLogger(this.getClass()).info("MEMORY USAGE:");
-    Logger.getLogger(this.getClass()).info(" Total: " + runtime.totalMemory());
-    Logger.getLogger(this.getClass()).info(" Free:  " + runtime.freeMemory());
-    Logger.getLogger(this.getClass()).info(" Max:   " + runtime.maxMemory());
+    Logger.getLogger(this.getClass()).debug("MEMORY USAGE:");
+    Logger.getLogger(this.getClass()).debug(" Total: " + runtime.totalMemory());
+    Logger.getLogger(this.getClass()).debug(" Free:  " + runtime.freeMemory());
+    Logger.getLogger(this.getClass()).debug(" Max:   " + runtime.maxMemory());
   }
 
   /**
@@ -1122,10 +1122,10 @@ public class Rf2SnapshotLoaderAlgorithm extends ContentServiceJpa implements
 
     // print memory information
     Runtime runtime = Runtime.getRuntime();
-    Logger.getLogger(this.getClass()).info("MEMORY USAGE:");
-    Logger.getLogger(this.getClass()).info(" Total: " + runtime.totalMemory());
-    Logger.getLogger(this.getClass()).info(" Free:  " + runtime.freeMemory());
-    Logger.getLogger(this.getClass()).info(" Max:   " + runtime.maxMemory());
+    Logger.getLogger(this.getClass()).debug("MEMORY USAGE:");
+    Logger.getLogger(this.getClass()).debug(" Total: " + runtime.totalMemory());
+    Logger.getLogger(this.getClass()).debug(" Free:  " + runtime.freeMemory());
+    Logger.getLogger(this.getClass()).debug(" Max:   " + runtime.maxMemory());
   }
 
   /**
@@ -1195,10 +1195,10 @@ public class Rf2SnapshotLoaderAlgorithm extends ContentServiceJpa implements
 
     // print memory information
     Runtime runtime = Runtime.getRuntime();
-    Logger.getLogger(this.getClass()).info("MEMORY USAGE:");
-    Logger.getLogger(this.getClass()).info(" Total: " + runtime.totalMemory());
-    Logger.getLogger(this.getClass()).info(" Free:  " + runtime.freeMemory());
-    Logger.getLogger(this.getClass()).info(" Max:   " + runtime.maxMemory());
+    Logger.getLogger(this.getClass()).debug("MEMORY USAGE:");
+    Logger.getLogger(this.getClass()).debug(" Total: " + runtime.totalMemory());
+    Logger.getLogger(this.getClass()).debug(" Free:  " + runtime.freeMemory());
+    Logger.getLogger(this.getClass()).debug(" Max:   " + runtime.maxMemory());
   }
 
   /**
@@ -1271,10 +1271,10 @@ public class Rf2SnapshotLoaderAlgorithm extends ContentServiceJpa implements
 
     // print memory information
     Runtime runtime = Runtime.getRuntime();
-    Logger.getLogger(this.getClass()).info("MEMORY USAGE:");
-    Logger.getLogger(this.getClass()).info(" Total: " + runtime.totalMemory());
-    Logger.getLogger(this.getClass()).info(" Free:  " + runtime.freeMemory());
-    Logger.getLogger(this.getClass()).info(" Max:   " + runtime.maxMemory());
+    Logger.getLogger(this.getClass()).debug("MEMORY USAGE:");
+    Logger.getLogger(this.getClass()).debug(" Total: " + runtime.totalMemory());
+    Logger.getLogger(this.getClass()).debug(" Free:  " + runtime.freeMemory());
+    Logger.getLogger(this.getClass()).debug(" Max:   " + runtime.maxMemory());
   }
 
   /**
@@ -1345,10 +1345,10 @@ public class Rf2SnapshotLoaderAlgorithm extends ContentServiceJpa implements
 
     // print memory information
     Runtime runtime = Runtime.getRuntime();
-    Logger.getLogger(this.getClass()).info("MEMORY USAGE:");
-    Logger.getLogger(this.getClass()).info(" Total: " + runtime.totalMemory());
-    Logger.getLogger(this.getClass()).info(" Free:  " + runtime.freeMemory());
-    Logger.getLogger(this.getClass()).info(" Max:   " + runtime.maxMemory());
+    Logger.getLogger(this.getClass()).debug("MEMORY USAGE:");
+    Logger.getLogger(this.getClass()).debug(" Total: " + runtime.totalMemory());
+    Logger.getLogger(this.getClass()).debug(" Free:  " + runtime.freeMemory());
+    Logger.getLogger(this.getClass()).debug(" Max:   " + runtime.maxMemory());
   }
 
   /**
@@ -1420,10 +1420,10 @@ public class Rf2SnapshotLoaderAlgorithm extends ContentServiceJpa implements
 
     // print memory information
     Runtime runtime = Runtime.getRuntime();
-    Logger.getLogger(this.getClass()).info("MEMORY USAGE:");
-    Logger.getLogger(this.getClass()).info(" Total: " + runtime.totalMemory());
-    Logger.getLogger(this.getClass()).info(" Free:  " + runtime.freeMemory());
-    Logger.getLogger(this.getClass()).info(" Max:   " + runtime.maxMemory());
+    Logger.getLogger(this.getClass()).debug("MEMORY USAGE:");
+    Logger.getLogger(this.getClass()).debug(" Total: " + runtime.totalMemory());
+    Logger.getLogger(this.getClass()).debug(" Free:  " + runtime.freeMemory());
+    Logger.getLogger(this.getClass()).debug(" Max:   " + runtime.maxMemory());
   }
 
   /**
@@ -1494,9 +1494,9 @@ public class Rf2SnapshotLoaderAlgorithm extends ContentServiceJpa implements
 
     // print memory information
     Runtime runtime = Runtime.getRuntime();
-    Logger.getLogger(this.getClass()).info("MEMORY USAGE:");
-    Logger.getLogger(this.getClass()).info(" Total: " + runtime.totalMemory());
-    Logger.getLogger(this.getClass()).info(" Free:  " + runtime.freeMemory());
-    Logger.getLogger(this.getClass()).info(" Max:   " + runtime.maxMemory());
+    Logger.getLogger(this.getClass()).debug("MEMORY USAGE:");
+    Logger.getLogger(this.getClass()).debug(" Total: " + runtime.totalMemory());
+    Logger.getLogger(this.getClass()).debug(" Free:  " + runtime.freeMemory());
+    Logger.getLogger(this.getClass()).debug(" Max:   " + runtime.maxMemory());
   }
 }

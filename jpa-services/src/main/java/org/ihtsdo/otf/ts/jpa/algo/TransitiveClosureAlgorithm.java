@@ -139,9 +139,9 @@ public class TransitiveClosureAlgorithm extends ContentServiceJpa implements
         manager
             .createQuery(
                 "select r from RelationshipJpa r where active=1 "
-                    + "and terminology=:terminology "
-                    + "and version=:version "
-                    + "and typeId=:typeId and characteristicTypeId=:characteristicTypeId")
+                    + "and terminology = :terminology "
+                    + "and terminologyVersion = :version "
+                    + "and typeId = :typeId and characteristicTypeId = :characteristicTypeId")
             .setParameter("terminology", terminology)
             .setParameter("version", version)
             .setParameter("typeId", isaRel)

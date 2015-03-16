@@ -1025,6 +1025,7 @@ public class ContentServiceRestImpl extends RootServiceRestImpl implements
       algorithm.setReleaseVersion(sorter.getFileVersion());
       algorithm.setReaders(readers);
       algorithm.compute();
+      algorithm.close();
 
       // Compute transitive closure
       Logger.getLogger(this.getClass()).info(
@@ -1136,6 +1137,7 @@ public class ContentServiceRestImpl extends RootServiceRestImpl implements
           throw new Exception("A release info already exists for " + release);
         }
       }
+      historyService.close();
 
       // Sort files
       Logger.getLogger(getClass()).info("  Sort RF2 Files");
@@ -1156,6 +1158,7 @@ public class ContentServiceRestImpl extends RootServiceRestImpl implements
       algorithm.setReleaseVersion(releases.get(0));
       algorithm.setReaders(readers);
       algorithm.compute();
+      algorithm.close();
 
       // Load deltas
       for (String release : releases) {
@@ -1169,6 +1172,7 @@ public class ContentServiceRestImpl extends RootServiceRestImpl implements
         algorithm2.setReleaseVersion(release);
         algorithm2.setReaders(readers);
         algorithm2.compute();
+        algorithm2.close();
 
       }
 
@@ -1263,6 +1267,7 @@ public class ContentServiceRestImpl extends RootServiceRestImpl implements
       algorithm.setReleaseVersion(releaseVersion);
       algorithm.setReaders(readers);
       algorithm.compute();
+      algorithm.close();
 
       //
       // Create ReleaseInfo for this release if it does not already exist
