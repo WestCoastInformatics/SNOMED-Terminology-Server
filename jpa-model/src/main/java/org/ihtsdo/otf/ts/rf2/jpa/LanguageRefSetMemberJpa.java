@@ -15,7 +15,7 @@ import org.ihtsdo.otf.ts.rf2.LanguageRefSetMember;
 @Entity
 @Audited
 @Table(name = "language_refset_members", uniqueConstraints = @UniqueConstraint(columnNames = {
-    "terminologyId", "terminology", "version", "id"
+    "terminologyId", "terminology", "terminologyVersion", "id"
 }))
 @XmlRootElement(name = "language")
 public class LanguageRefSetMemberJpa extends AbstractDescriptionRefSetMember

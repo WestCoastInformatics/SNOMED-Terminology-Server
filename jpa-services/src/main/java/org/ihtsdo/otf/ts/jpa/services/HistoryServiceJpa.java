@@ -70,7 +70,7 @@ public class HistoryServiceJpa extends ContentServiceJpa implements
   @Override
   public ConceptList findConceptsModifiedSinceDate(String terminology,
     Date date, PfsParameter pfs) throws Exception {
-    Logger.getLogger(ContentServiceJpa.class).debug(
+    Logger.getLogger(getClass()).debug(
         "History Service - find concepts modified since date " + terminology
             + "," + date);
     int[] totalCt = new int[1];
@@ -96,7 +96,7 @@ public class HistoryServiceJpa extends ContentServiceJpa implements
   @Override
   public ConceptList findConceptRevisions(Long id, Date startDate,
     Date endDate, PfsParameter pfs) {
-    Logger.getLogger(ContentServiceJpa.class).debug(
+    Logger.getLogger(getClass()).debug(
         "History Service - find concept revisions " + id + "," + startDate
             + ", " + endDate);
 
@@ -121,7 +121,7 @@ public class HistoryServiceJpa extends ContentServiceJpa implements
   @Override
   public Concept findConceptReleaseRevision(Long id, Date release)
     throws Exception {
-    Logger.getLogger(ContentServiceJpa.class).debug(
+    Logger.getLogger(getClass()).debug(
         "History Service - find concept release revision " + id + ","
             + ConfigUtility.DATE_FORMAT.format(release));
 
@@ -139,7 +139,7 @@ public class HistoryServiceJpa extends ContentServiceJpa implements
   @Override
   public DescriptionList findDescriptionsModifiedSinceDate(String terminology,
     Date date, PfsParameter pfs) throws Exception {
-    Logger.getLogger(ContentServiceJpa.class).debug(
+    Logger.getLogger(getClass()).debug(
         "History Service - find descriptions modified since date "
             + terminology + ", " + date);
     int[] totalCt = new int[1];
@@ -165,7 +165,7 @@ public class HistoryServiceJpa extends ContentServiceJpa implements
   @Override
   public DescriptionList findDescriptionRevisions(Long id, Date startDate,
     Date endDate, PfsParameter pfs) {
-    Logger.getLogger(ContentServiceJpa.class).debug(
+    Logger.getLogger(getClass()).debug(
         "History Service - find description revisions " + id + "," + startDate
             + ", " + endDate);
     List<DescriptionJpa> revisions =
@@ -189,7 +189,7 @@ public class HistoryServiceJpa extends ContentServiceJpa implements
   @Override
   public Description findDescriptionReleaseRevision(Long id, Date release)
     throws Exception {
-    Logger.getLogger(ContentServiceJpa.class).debug(
+    Logger.getLogger(getClass()).debug(
         "History Service - find description release revision " + id + ","
             + release);
 
@@ -207,7 +207,7 @@ public class HistoryServiceJpa extends ContentServiceJpa implements
   @Override
   public RelationshipList findRelationshipsModifiedSinceDate(
     String terminology, Date date, PfsParameter pfs) throws Exception {
-    Logger.getLogger(ContentServiceJpa.class).debug(
+    Logger.getLogger(getClass()).debug(
         "History Service - find relationships modified since date "
             + terminology + ", " + date);
     int[] totalCt = new int[1];
@@ -233,7 +233,7 @@ public class HistoryServiceJpa extends ContentServiceJpa implements
   @Override
   public RelationshipList findRelationshipRevisions(Long id, Date startDate,
     Date endDate, PfsParameter pfs) {
-    Logger.getLogger(ContentServiceJpa.class).debug(
+    Logger.getLogger(getClass()).debug(
         "History Service - find relationship revisions " + id + "," + startDate
             + ", " + endDate);
     List<RelationshipJpa> revisions =
@@ -257,7 +257,7 @@ public class HistoryServiceJpa extends ContentServiceJpa implements
   @Override
   public Relationship findRelationshipReleaseRevision(Long id, Date release)
     throws Exception {
-    Logger.getLogger(ContentServiceJpa.class).debug(
+    Logger.getLogger(getClass()).debug(
         "History Service - find relationship release revision " + id + ","
             + release);
 
@@ -275,7 +275,7 @@ public class HistoryServiceJpa extends ContentServiceJpa implements
   @Override
   public LanguageRefSetMemberList findLanguageRefSetMembersModifiedSinceDate(
     String terminology, Date date, PfsParameter pfs) throws Exception {
-    Logger.getLogger(ContentServiceJpa.class).debug(
+    Logger.getLogger(getClass()).debug(
         "History Service - find language refset members modified since date "
             + terminology + ", " + date);
     int[] totalCt = new int[1];
@@ -301,7 +301,7 @@ public class HistoryServiceJpa extends ContentServiceJpa implements
   @Override
   public LanguageRefSetMemberList findLanguageRefSetMemberRevisions(Long id,
     Date startDate, Date endDate, PfsParameter pfs) {
-    Logger.getLogger(ContentServiceJpa.class).debug(
+    Logger.getLogger(getClass()).debug(
         "History Service - find language revsest revisions" + id + ","
             + startDate + ", " + endDate);
     List<LanguageRefSetMemberJpa> revisions =
@@ -325,7 +325,7 @@ public class HistoryServiceJpa extends ContentServiceJpa implements
   @Override
   public LanguageRefSetMember findLanguageRefSetMemberReleaseRevision(Long id,
     Date release) throws Exception {
-    Logger.getLogger(ContentServiceJpa.class).debug(
+    Logger.getLogger(getClass()).debug(
         "History Service - find language refset member release revision " + id
             + "," + release);
 
@@ -344,7 +344,7 @@ public class HistoryServiceJpa extends ContentServiceJpa implements
   @SuppressWarnings("unchecked")
   @Override
   public ReleaseInfoList getReleaseHistory(String terminology) throws Exception {
-    Logger.getLogger(ContentServiceJpa.class).debug(
+    Logger.getLogger(getClass()).debug(
         "History Service - get release history " + terminology);
     javax.persistence.Query query =
         manager
@@ -373,7 +373,7 @@ public class HistoryServiceJpa extends ContentServiceJpa implements
    */
   @Override
   public ReleaseInfo getCurrentReleaseInfo(String terminology) throws Exception {
-    Logger.getLogger(ContentServiceJpa.class).debug(
+    Logger.getLogger(getClass()).debug(
         "History Service - get current release info " + terminology);
     List<ReleaseInfo> results = getReleaseHistory(terminology).getObjects();
     // get max release that is published and not planned
@@ -396,7 +396,7 @@ public class HistoryServiceJpa extends ContentServiceJpa implements
   @Override
   public ReleaseInfo getPreviousReleaseInfo(String terminology)
     throws Exception {
-    Logger.getLogger(ContentServiceJpa.class).debug(
+    Logger.getLogger(getClass()).debug(
         "History Service - get previous release info " + terminology);
     List<ReleaseInfo> results = getReleaseHistory(terminology).getObjects();
     // get one before the max release that is published
@@ -422,7 +422,7 @@ public class HistoryServiceJpa extends ContentServiceJpa implements
    */
   @Override
   public ReleaseInfo getPlannedReleaseInfo(String terminology) throws Exception {
-    Logger.getLogger(ContentServiceJpa.class).debug(
+    Logger.getLogger(getClass()).debug(
         "History Service - get planned release info " + terminology);
     List<ReleaseInfo> results = getReleaseHistory(terminology).getObjects();
     // get one before the max release that is published
@@ -445,7 +445,7 @@ public class HistoryServiceJpa extends ContentServiceJpa implements
   @Override
   public ReleaseInfo getReleaseInfo(String terminology, String name)
     throws ParseException {
-    Logger.getLogger(ContentServiceJpa.class).debug(
+    Logger.getLogger(getClass()).debug(
         "History Service - get release info " + terminology + ", " + name);
     javax.persistence.Query query =
         manager.createQuery("select r from ReleaseInfoJpa r "
@@ -513,7 +513,7 @@ public class HistoryServiceJpa extends ContentServiceJpa implements
    */
   @Override
   public ReleaseInfo addReleaseInfo(ReleaseInfo releaseInfo) throws Exception {
-    Logger.getLogger(ContentServiceJpa.class).debug(
+    Logger.getLogger(getClass()).debug(
         "History Service - add release info " + releaseInfo.getName());
     try {
       if (getTransactionPerOperation()) {
@@ -541,7 +541,7 @@ public class HistoryServiceJpa extends ContentServiceJpa implements
    */
   @Override
   public void updateReleaseInfo(ReleaseInfo releaseInfo) throws Exception {
-    Logger.getLogger(ContentServiceJpa.class).debug(
+    Logger.getLogger(getClass()).debug(
         "History Service - update release info " + releaseInfo.getName());
     try {
       if (getTransactionPerOperation()) {
@@ -566,7 +566,7 @@ public class HistoryServiceJpa extends ContentServiceJpa implements
    */
   @Override
   public void removeReleaseInfo(Long id) throws Exception {
-    Logger.getLogger(ContentServiceJpa.class).debug(
+    Logger.getLogger(getClass()).debug(
         "History  Service - remove release info " + id);
     tx = manager.getTransaction();
     // retrieve this release info
@@ -624,7 +624,7 @@ public class HistoryServiceJpa extends ContentServiceJpa implements
               "terminology", terminology);
       Date tempDate = (Date) query.getSingleResult();
       minDate = tempDate;
-      Logger.getLogger(ContentServiceJpa.class).debug(
+      Logger.getLogger(getClass()).debug(
           "  date is null, use " + minDate);
     }
     FullTextEntityManager fullTextEntityManager =
@@ -708,7 +708,7 @@ public class HistoryServiceJpa extends ContentServiceJpa implements
               "terminology", terminology);
       Date tempDate = (Date) query.getSingleResult();
       minDate = tempDate;
-      Logger.getLogger(ContentServiceJpa.class).debug(
+      Logger.getLogger(getClass()).debug(
           "  date is null, use " + minDate);
     }
 

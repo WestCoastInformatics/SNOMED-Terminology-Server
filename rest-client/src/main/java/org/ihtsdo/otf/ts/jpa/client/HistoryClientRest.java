@@ -34,7 +34,6 @@ import com.sun.jersey.api.client.Client;
 import com.sun.jersey.api.client.ClientResponse;
 import com.sun.jersey.api.client.WebResource;
 
-// TODO: Auto-generated Javadoc
 /**
  * A client for connecting to a history REST service.
  */
@@ -119,7 +118,7 @@ public class HistoryClientRest implements HistoryServiceRest {
             .post(ClientResponse.class, pfsString);
 
     String resultString = response.getEntity(String.class);
-    if (response.getClientResponseStatus().getFamily() == Family.SUCCESSFUL) {
+    if (response.getStatusInfo().getFamily() == Family.SUCCESSFUL) {
       Logger.getLogger(this.getClass()).debug(resultString.substring(0,Math.min(resultString.length(),3999)));
     } else {
       throw new Exception(resultString);
@@ -153,7 +152,7 @@ public class HistoryClientRest implements HistoryServiceRest {
             .header("Authorization", authToken).get(ClientResponse.class);
 
     String resultString = response.getEntity(String.class);
-    if (response.getClientResponseStatus().getFamily() == Family.SUCCESSFUL) {
+    if (response.getStatusInfo().getFamily() == Family.SUCCESSFUL) {
       Logger.getLogger(this.getClass()).debug(resultString.substring(0,Math.min(resultString.length(),3999)));
     } else {
       throw new Exception(resultString);
@@ -192,7 +191,7 @@ public class HistoryClientRest implements HistoryServiceRest {
             .post(ClientResponse.class, pfsString);
 
     String resultString = response.getEntity(String.class);
-    if (response.getClientResponseStatus().getFamily() == Family.SUCCESSFUL) {
+    if (response.getStatusInfo().getFamily() == Family.SUCCESSFUL) {
       Logger.getLogger(this.getClass()).debug(resultString.substring(0,Math.min(resultString.length(),3999)));
     } else {
       throw new Exception(resultString);
@@ -233,7 +232,7 @@ public class HistoryClientRest implements HistoryServiceRest {
             .post(ClientResponse.class, pfsString);
 
     String resultString = response.getEntity(String.class);
-    if (response.getClientResponseStatus().getFamily() == Family.SUCCESSFUL) {
+    if (response.getStatusInfo().getFamily() == Family.SUCCESSFUL) {
       Logger.getLogger(this.getClass()).debug(resultString.substring(0,Math.min(resultString.length(),3999)));
     } else {
       throw new Exception(resultString);
@@ -267,7 +266,7 @@ public class HistoryClientRest implements HistoryServiceRest {
             .header("Authorization", authToken).get(ClientResponse.class);
 
     String resultString = response.getEntity(String.class);
-    if (response.getClientResponseStatus().getFamily() == Family.SUCCESSFUL) {
+    if (response.getStatusInfo().getFamily() == Family.SUCCESSFUL) {
       Logger.getLogger(this.getClass()).debug(resultString.substring(0,Math.min(resultString.length(),3999)));
     } else {
       throw new Exception(resultString);
@@ -307,7 +306,7 @@ public class HistoryClientRest implements HistoryServiceRest {
             .post(ClientResponse.class, pfsString);
 
     String resultString = response.getEntity(String.class);
-    if (response.getClientResponseStatus().getFamily() == Family.SUCCESSFUL) {
+    if (response.getStatusInfo().getFamily() == Family.SUCCESSFUL) {
       Logger.getLogger(this.getClass()).debug(resultString.substring(0,Math.min(resultString.length(),3999)));
     } else {
       throw new Exception(resultString);
@@ -349,7 +348,7 @@ public class HistoryClientRest implements HistoryServiceRest {
             .post(ClientResponse.class, pfsString);
 
     String resultString = response.getEntity(String.class);
-    if (response.getClientResponseStatus().getFamily() == Family.SUCCESSFUL) {
+    if (response.getStatusInfo().getFamily() == Family.SUCCESSFUL) {
       Logger.getLogger(this.getClass()).debug(resultString.substring(0,Math.min(resultString.length(),3999)));
     } else {
       throw new Exception(resultString);
@@ -383,7 +382,7 @@ public class HistoryClientRest implements HistoryServiceRest {
             .header("Authorization", authToken).get(ClientResponse.class);
 
     String resultString = response.getEntity(String.class);
-    if (response.getClientResponseStatus().getFamily() == Family.SUCCESSFUL) {
+    if (response.getStatusInfo().getFamily() == Family.SUCCESSFUL) {
       Logger.getLogger(this.getClass()).debug(resultString.substring(0,Math.min(resultString.length(),3999)));
     } else {
       throw new Exception(resultString);
@@ -423,7 +422,7 @@ public class HistoryClientRest implements HistoryServiceRest {
             .post(ClientResponse.class, pfsString);
 
     String resultString = response.getEntity(String.class);
-    if (response.getClientResponseStatus().getFamily() == Family.SUCCESSFUL) {
+    if (response.getStatusInfo().getFamily() == Family.SUCCESSFUL) {
       Logger.getLogger(this.getClass()).debug(resultString.substring(0,Math.min(resultString.length(),3999)));
     } else {
       throw new Exception(resultString);
@@ -465,7 +464,7 @@ public class HistoryClientRest implements HistoryServiceRest {
             .post(ClientResponse.class, pfsString);
 
     String resultString = response.getEntity(String.class);
-    if (response.getClientResponseStatus().getFamily() == Family.SUCCESSFUL) {
+    if (response.getStatusInfo().getFamily() == Family.SUCCESSFUL) {
       Logger.getLogger(this.getClass()).debug(resultString.substring(0,Math.min(resultString.length(),3999)));
     } else {
       throw new Exception(resultString);
@@ -499,7 +498,7 @@ public class HistoryClientRest implements HistoryServiceRest {
             .header("Authorization", authToken).get(ClientResponse.class);
 
     String resultString = response.getEntity(String.class);
-    if (response.getClientResponseStatus().getFamily() == Family.SUCCESSFUL) {
+    if (response.getStatusInfo().getFamily() == Family.SUCCESSFUL) {
       Logger.getLogger(this.getClass()).debug(resultString.substring(0,Math.min(resultString.length(),3999)));
     } else {
       throw new Exception(resultString);
@@ -538,7 +537,7 @@ public class HistoryClientRest implements HistoryServiceRest {
             .post(ClientResponse.class, pfsString);
 
     String resultString = response.getEntity(String.class);
-    if (response.getClientResponseStatus().getFamily() == Family.SUCCESSFUL) {
+    if (response.getStatusInfo().getFamily() == Family.SUCCESSFUL) {
       Logger.getLogger(this.getClass()).debug(resultString.substring(0,Math.min(resultString.length(),3999)));
     } else {
       throw new Exception(resultString);
@@ -573,7 +572,7 @@ public class HistoryClientRest implements HistoryServiceRest {
       return null;
     }
     String resultString = response.getEntity(String.class);
-    if (response.getClientResponseStatus().getFamily() == Family.SUCCESSFUL) {
+    if (response.getStatusInfo().getFamily() == Family.SUCCESSFUL) {
       Logger.getLogger(this.getClass()).debug(resultString.substring(0,Math.min(resultString.length(),3999)));
     }
     // handle null response
@@ -611,7 +610,7 @@ public class HistoryClientRest implements HistoryServiceRest {
       return null;
     }
     String resultString = response.getEntity(String.class);
-    if (response.getClientResponseStatus().getFamily() == Family.SUCCESSFUL) {
+    if (response.getStatusInfo().getFamily() == Family.SUCCESSFUL) {
       Logger.getLogger(this.getClass()).debug(resultString.substring(0,Math.min(resultString.length(),3999)));
     }
     // handle null response
@@ -649,7 +648,7 @@ public class HistoryClientRest implements HistoryServiceRest {
       return null;
     }
     String resultString = response.getEntity(String.class);
-    if (response.getClientResponseStatus().getFamily() == Family.SUCCESSFUL) {
+    if (response.getStatusInfo().getFamily() == Family.SUCCESSFUL) {
       Logger.getLogger(this.getClass()).debug(resultString.substring(0,Math.min(resultString.length(),3999)));
     }
     // handle null response
@@ -687,7 +686,7 @@ public class HistoryClientRest implements HistoryServiceRest {
       return null;
     }
     String resultString = response.getEntity(String.class);
-    if (response.getClientResponseStatus().getFamily() == Family.SUCCESSFUL) {
+    if (response.getStatusInfo().getFamily() == Family.SUCCESSFUL) {
       Logger.getLogger(this.getClass()).debug(resultString.substring(0,Math.min(resultString.length(),3999)));
     }
     // handle null response
@@ -725,7 +724,7 @@ public class HistoryClientRest implements HistoryServiceRest {
       return null;
     }
     String resultString = response.getEntity(String.class);
-    if (response.getClientResponseStatus().getFamily() == Family.SUCCESSFUL) {
+    if (response.getStatusInfo().getFamily() == Family.SUCCESSFUL) {
       Logger.getLogger(this.getClass()).debug(resultString.substring(0,Math.min(resultString.length(),3999)));
     } else {
       throw new Exception(resultString);
@@ -763,7 +762,7 @@ public class HistoryClientRest implements HistoryServiceRest {
             .put(ClientResponse.class, riString);
 
     String resultString = response.getEntity(String.class);
-    if (response.getClientResponseStatus().getFamily() == Family.SUCCESSFUL) {
+    if (response.getStatusInfo().getFamily() == Family.SUCCESSFUL) {
       Logger.getLogger(this.getClass()).debug(resultString.substring(0,Math.min(resultString.length(),3999)));
     } else {
       throw new Exception(resultString);
@@ -801,7 +800,7 @@ public class HistoryClientRest implements HistoryServiceRest {
             .header("Content-type", MediaType.APPLICATION_XML)
             .post(ClientResponse.class, riString);
 
-    if (response.getClientResponseStatus().getFamily() == Family.SUCCESSFUL) {
+    if (response.getStatusInfo().getFamily() == Family.SUCCESSFUL) {
       // do nothing
     } else {
       throw new Exception("Unexpected status " + response.getStatus());
@@ -827,7 +826,7 @@ public class HistoryClientRest implements HistoryServiceRest {
         resource.accept(MediaType.APPLICATION_XML)
             .header("Authorization", authToken).delete(ClientResponse.class);
 
-    if (response.getClientResponseStatus().getFamily() == Family.SUCCESSFUL) {
+    if (response.getStatusInfo().getFamily() == Family.SUCCESSFUL) {
       // do nothing
     } else {
       throw new Exception("Unexpected status " + response.getStatus());
@@ -850,7 +849,7 @@ public class HistoryClientRest implements HistoryServiceRest {
         resource.accept(MediaType.APPLICATION_XML)
             .header("Authorization", authToken).get(ClientResponse.class);
 
-    if (response.getClientResponseStatus().getFamily() == Family.SUCCESSFUL) {
+    if (response.getStatusInfo().getFamily() == Family.SUCCESSFUL) {
       // do nothing
     } else {
       throw new Exception("Unexpected status " + response.getStatus());

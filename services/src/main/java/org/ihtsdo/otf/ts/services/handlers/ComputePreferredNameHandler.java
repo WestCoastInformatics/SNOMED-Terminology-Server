@@ -7,7 +7,6 @@ import org.ihtsdo.otf.ts.rf2.Concept;
 import org.ihtsdo.otf.ts.rf2.Description;
 import org.ihtsdo.otf.ts.rf2.LanguageRefSetMember;
 
-// TODO: Auto-generated Javadoc
 /**
  * Generically represents an algorithm for computing preferred names.
  */

@@ -57,7 +57,7 @@ public class ValidationClientRest implements ValidationServiceRest {
             .post(ClientResponse.class, conceptString);
 
     String resultString = response.getEntity(String.class);
-    if (response.getClientResponseStatus().getFamily() == Family.SUCCESSFUL) {
+    if (response.getStatusInfo().getFamily() == Family.SUCCESSFUL) {
       Logger.getLogger(this.getClass()).debug(resultString);
     } else {
       throw new Exception(resultString);

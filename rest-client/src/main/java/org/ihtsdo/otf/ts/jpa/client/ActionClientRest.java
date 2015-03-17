@@ -57,7 +57,7 @@ public class ActionClientRest implements ActionServiceRest {
             .post(ClientResponse.class, projectString);
 
     String resultString = response.getEntity(String.class);
-    if (response.getClientResponseStatus().getFamily() == Family.SUCCESSFUL) {
+    if (response.getStatusInfo().getFamily() == Family.SUCCESSFUL) {
       Logger.getLogger(this.getClass()).debug(resultString);
     } else {
       throw new Exception(resultString);
@@ -77,7 +77,7 @@ public class ActionClientRest implements ActionServiceRest {
             .header("Authorization", authToken).get(ClientResponse.class);
 
     String resultString = response.getEntity(String.class);
-    if (response.getClientResponseStatus().getFamily() == Family.SUCCESSFUL) {
+    if (response.getStatusInfo().getFamily() == Family.SUCCESSFUL) {
       Logger.getLogger(this.getClass()).debug(resultString);
     } else {
       throw new Exception(resultString);
@@ -103,7 +103,7 @@ public class ActionClientRest implements ActionServiceRest {
             .header("Authorization", authToken).get(ClientResponse.class);
 
     String resultString = response.getEntity(String.class);
-    if (response.getClientResponseStatus().getFamily() == Family.SUCCESSFUL) {
+    if (response.getStatusInfo().getFamily() == Family.SUCCESSFUL) {
       Logger.getLogger(this.getClass()).debug(resultString);
     } else {
       throw new Exception(resultString);
@@ -129,7 +129,7 @@ public class ActionClientRest implements ActionServiceRest {
             .header("Authorization", authToken).post(ClientResponse.class);
 
     String resultString = response.getEntity(String.class);
-    if (response.getClientResponseStatus().getFamily() == Family.SUCCESSFUL) {
+    if (response.getStatusInfo().getFamily() == Family.SUCCESSFUL) {
       Logger.getLogger(this.getClass()).debug(resultString);
     } else {
       throw new Exception(resultString);
@@ -155,7 +155,7 @@ public class ActionClientRest implements ActionServiceRest {
             .header("Authorization", authToken).post(ClientResponse.class);
 
     String resultString = response.getEntity(String.class);
-    if (response.getClientResponseStatus().getFamily() == Family.SUCCESSFUL) {
+    if (response.getStatusInfo().getFamily() == Family.SUCCESSFUL) {
       Logger.getLogger(this.getClass()).debug(resultString);
     } else {
       throw new Exception(resultString);
@@ -179,7 +179,7 @@ public class ActionClientRest implements ActionServiceRest {
             .header("Authorization", authToken).post(ClientResponse.class);
 
     String resultString = response.getEntity(String.class);
-    if (response.getClientResponseStatus().getFamily() == Family.SUCCESSFUL) {
+    if (response.getStatusInfo().getFamily() == Family.SUCCESSFUL) {
       Logger.getLogger(this.getClass()).debug(resultString);
     } else {
       throw new Exception(resultString);
@@ -205,7 +205,7 @@ public class ActionClientRest implements ActionServiceRest {
             .header("Authorization", authToken).post(ClientResponse.class);
 
     String resultString = response.getEntity(String.class);
-    if (response.getClientResponseStatus().getFamily() == Family.SUCCESSFUL) {
+    if (response.getStatusInfo().getFamily() == Family.SUCCESSFUL) {
       Logger.getLogger(this.getClass()).debug(resultString);
     } else {
       throw new Exception(resultString);
@@ -231,7 +231,7 @@ public class ActionClientRest implements ActionServiceRest {
             .header("Authorization", authToken).get(ClientResponse.class);
 
     String resultString = response.getEntity(String.class);
-    if (response.getClientResponseStatus().getFamily() == Family.SUCCESSFUL) {
+    if (response.getStatusInfo().getFamily() == Family.SUCCESSFUL) {
       Logger.getLogger(this.getClass()).debug(resultString);
     } else {
       throw new Exception(resultString);
@@ -263,7 +263,7 @@ public class ActionClientRest implements ActionServiceRest {
             .header("Authorization", authToken).get(ClientResponse.class);
 
     String resultString = response.getEntity(String.class);
-    if (response.getClientResponseStatus().getFamily() == Family.SUCCESSFUL) {
+    if (response.getStatusInfo().getFamily() == Family.SUCCESSFUL) {
       Logger.getLogger(this.getClass()).debug(resultString);
     } else {
       throw new Exception(resultString);
@@ -296,7 +296,7 @@ public class ActionClientRest implements ActionServiceRest {
             .header("Authorization", authToken).get(ClientResponse.class);
 
     String resultString = response.getEntity(String.class);
-    if (response.getClientResponseStatus().getFamily() == Family.SUCCESSFUL) {
+    if (response.getStatusInfo().getFamily() == Family.SUCCESSFUL) {
       Logger.getLogger(this.getClass()).debug(resultString);
     } else {
       throw new Exception(resultString);
@@ -326,7 +326,7 @@ public class ActionClientRest implements ActionServiceRest {
     ClientResponse response =
         resource.accept(MediaType.APPLICATION_XML)
             .header("Authorization", authToken).post(ClientResponse.class);
-    if (response.getClientResponseStatus().getFamily() == Family.SUCCESSFUL) {
+    if (response.getStatusInfo().getFamily() == Family.SUCCESSFUL) {
       // do nothing
     } else {
       throw new Exception("Unexpected status " + response.getStatus());
@@ -351,7 +351,7 @@ public class ActionClientRest implements ActionServiceRest {
         resource.accept(MediaType.APPLICATION_XML)
             .header("Authorization", authToken).put(ClientResponse.class);
 
-    if (response.getClientResponseStatus().getFamily() == Family.SUCCESSFUL) {
+    if (response.getStatusInfo().getFamily() == Family.SUCCESSFUL) {
       // do nothing
     } else {
       throw new Exception("Unexpected status " + response.getStatus());

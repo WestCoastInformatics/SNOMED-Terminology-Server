@@ -11,7 +11,6 @@ import org.hibernate.search.jpa.FullTextEntityManager;
 import org.hibernate.search.jpa.Search;
 import org.ihtsdo.otf.ts.algo.Algorithm;
 import org.ihtsdo.otf.ts.jpa.ProjectJpa;
-import org.ihtsdo.otf.ts.jpa.services.ContentServiceJpa;
 import org.ihtsdo.otf.ts.jpa.services.RootServiceJpa;
 import org.ihtsdo.otf.ts.rf2.jpa.ConceptJpa;
 import org.ihtsdo.otf.ts.services.ContentService;
@@ -22,8 +21,7 @@ import org.ihtsdo.otf.ts.services.helpers.ProgressListener;
  * Implementation of an algorithm to compute transitive closure using the
  * {@link ContentService}.
  */
-public class LuceneReindexAlgorithm extends RootServiceJpa implements
-    Algorithm {
+public class LuceneReindexAlgorithm extends RootServiceJpa implements Algorithm {
 
   /** Listeners */
   private List<ProgressListener> listeners = new ArrayList<>();
@@ -33,8 +31,8 @@ public class LuceneReindexAlgorithm extends RootServiceJpa implements
 
   /** The terminology. */
   private String indexedObjects;
-  
-  /**  The full text entity manager. */
+
+  /** The full text entity manager. */
   private FullTextEntityManager fullTextEntityManager;
 
   /**
@@ -108,10 +106,10 @@ public class LuceneReindexAlgorithm extends RootServiceJpa implements
         objectsToReindex.add(object);
 
     }
-    
-    Logger.getLogger(ContentServiceJpa.class).info("Starting reindexing for:");
+
+    Logger.getLogger(getClass()).info("Starting reindexing for:");
     for (String objectToReindex : objectsToReindex) {
-      Logger.getLogger(ContentServiceJpa.class).info("  " + objectToReindex);
+      Logger.getLogger(getClass()).info("  " + objectToReindex);
     }
 
     // full text entity manager
@@ -120,28 +118,24 @@ public class LuceneReindexAlgorithm extends RootServiceJpa implements
 
     // Concepts
     if (objectsToReindex.contains("ConceptJpa")) {
-      Logger.getLogger(ContentServiceJpa.class).info(
-          "  Creating indexes for ConceptJpa");
+      Logger.getLogger(getClass()).info("  Creating indexes for ConceptJpa");
       fullTextEntityManager.purgeAll(ConceptJpa.class);
       fullTextEntityManager.flushToIndexes();
       fullTextEntityManager.createIndexer(ConceptJpa.class)
           .batchSizeToLoadObjects(100).cacheMode(CacheMode.NORMAL)
-          .threadsToLoadObjects(4).threadsForSubsequentFetching(8)
-          .startAndWait();
+          .threadsToLoadObjects(4).startAndWait();
 
       objectsToReindex.remove("ConceptJpa");
-    }   
+    }
 
     // Projects
     if (objectsToReindex.contains("ProjectJpa")) {
-      Logger.getLogger(ContentServiceJpa.class).info(
-          "  Creating indexes for ProjectJpa");
+      Logger.getLogger(getClass()).info("  Creating indexes for ProjectJpa");
       fullTextEntityManager.purgeAll(ProjectJpa.class);
       fullTextEntityManager.flushToIndexes();
       fullTextEntityManager.createIndexer(ProjectJpa.class)
           .batchSizeToLoadObjects(100).cacheMode(CacheMode.NORMAL)
-          .threadsToLoadObjects(4).threadsForSubsequentFetching(8)
-          .startAndWait();
+          .threadsToLoadObjects(4).startAndWait();
 
       objectsToReindex.remove("ProjectJpa");
     }
@@ -153,9 +147,9 @@ public class LuceneReindexAlgorithm extends RootServiceJpa implements
     }
 
     // Cleanup
-    Logger.getLogger(ContentServiceJpa.class).info("done ...");
+    Logger.getLogger(getClass()).info("done ...");
   }
-  
+
   /**
    * Clear lucene indexes.
    *

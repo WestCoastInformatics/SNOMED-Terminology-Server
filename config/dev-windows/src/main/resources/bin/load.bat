@@ -26,49 +26,49 @@ pause
 
 echo     Run Createdb ...%date% %time%
 cd %SERVER_CODE%/admin/db
-call mvn install -PCreatedb -Drun.config=%SERVER_CONFIG% 1> mvn.log
+call mvn install -PCreatedb -Drun.config.ts=%SERVER_CONFIG% 1> mvn.log
 IF %ERRORLEVEL% NEQ 0 (set error=1
 goto trailer)
 del /Q mvn.log
 
 echo     Clear indexes ...%date% %time%
 cd %SERVER_CODE%/admin/lucene
-call mvn install -PReindex -Drun.config=%SERVER_CONFIG% 1> mvn.log
+call mvn install -PReindex -Drun.config.ts=%SERVER_CONFIG% 1> mvn.log
 IF %ERRORLEVEL% NEQ 0 (set error=1
 goto trailer)
 del /Q mvn.log
 
 echo     Load SNOMEDCT ...%date% %time%
 cd %SERVER_CODE%/admin/loader
-call mvn install -PRF2-snapshot -Drun.config=%SERVER_CONFIG% -Dterminology=SNOMEDCT -Dinput.dir=%SERVER_DATA%/snomedct-20140731-mini 1> mvn.log
+call mvn install -PRF2-full -Drun.config.ts=%SERVER_CONFIG% -Dterminology=SNOMEDCT -Dinput.dir=%SERVER_DATA%/snomedct-20140731-minif 1> mvn.log
 IF %ERRORLEVEL% NEQ 0 (set error=1
 goto trailer)
 del /Q mvn.log
 
 echo     Load ICD9CM ...%date% %time%
 cd %SERVER_CODE%/admin/loader
-call mvn install -PClaML -Drun.config=%SERVER_CONFIG% -Dterminology=ICD9CM -Dversion=2013 -Dinput.file=%SERVER_DATA%/icd9cm-2013.xml 1> mvn.log
+call mvn install -PClaML -Drun.config.ts=%SERVER_CONFIG% -Dterminology=ICD9CM -Dversion=2013 -Dinput.file=%SERVER_DATA%/icd9cm-2013.xml 1> mvn.log
 IF %ERRORLEVEL% NEQ 0 (set error=1
 goto trailer)
 del /Q mvn.log
 
 echo     Add SNOMED project ...%date% %time%
 cd %SERVER_CODE%/admin/loader
-call mvn install -PAddProject -Drun.config=%SERVER_CONFIG% -Dname="Sample Project" -Ddescription="Sample project." -Dterminology=SNOMEDCT -Dversion=latest -Dscope.concepts=138875005 -Dscope.descendants.flag=true -Dadmin.user=admin 1> mvn.log
+call mvn install -PAddProject -Drun.config.ts=%SERVER_CONFIG% -Dname="Sample Project" -Ddescription="Sample project." -Dterminology=SNOMEDCT -Dversion=latest -Dscope.concepts=138875005 -Dscope.descendants.flag=true -Dadmin.user=admin 1> mvn.log
 IF %ERRORLEVEL% NEQ 0 (set error=1
 goto trailer)
 del /Q mvn.log
 
 echo     Start SNOMED editing ...%date% %time%
 cd %SERVER_CODE%/admin/release
-call mvn install -PStartEditingCycle -Drelease.version=20150131 -Dterminology=SNOMEDCT -Dversion=latest -Drun.config=%SERVER_CONFIG% 1> mvn.log
+call mvn install -PStartEditingCycle -Drelease.version=20150131 -Dterminology=SNOMEDCT -Dversion=latest -Drun.config.ts=%SERVER_CONFIG% 1> mvn.log
 IF %ERRORLEVEL% NEQ 0 (set error=1
 goto trailer)
 del /Q mvn.log
 
 echo     Start ICD9CM editing ...%date% %time%
 cd %SERVER_CODE%/admin/release
-call mvn install -PStartEditingCycle -Drelease.version=20150101 -Dterminology=ICD9CM -Dversion=2013 -Drun.config=%SERVER_CONFIG% 1> mvn.log
+call mvn install -PStartEditingCycle -Drelease.version=20150101 -Dterminology=ICD9CM -Dversion=2013 -Drun.config.ts=%SERVER_CONFIG% 1> mvn.log
 IF %ERRORLEVEL% NEQ 0 (set error=1
 goto trailer)
 del /Q mvn.log

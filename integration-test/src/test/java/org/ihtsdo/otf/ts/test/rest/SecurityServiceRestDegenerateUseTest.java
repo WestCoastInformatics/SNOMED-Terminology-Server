@@ -91,7 +91,6 @@ public class SecurityServiceRestDegenerateUseTest extends
    *
    * @throws Exception the exception
    */
-  @SuppressWarnings("static-method")
   @Test
   public void testDegenerateUseRestSecurity002() throws Exception {
 
@@ -102,12 +101,12 @@ public class SecurityServiceRestDegenerateUseTest extends
     User user = new UserJpa();
 
     // Procedure 1: Testing add services
-    Logger.getLogger(SecurityServiceRestDegenerateUseTest.class).info(
+    Logger.getLogger(getClass()).info(
         "Procedure 1: ADD services");
 
     // Add user with null argument
     // TEST: Exception
-    Logger.getLogger(SecurityServiceRestDegenerateUseTest.class).info(
+    Logger.getLogger(getClass()).info(
         "  Adding user with null argument");
     try {
       service.addUser(null, authToken);
@@ -118,7 +117,7 @@ public class SecurityServiceRestDegenerateUseTest extends
 
     // Add user with incomplete user information (e.g. blank name or email)
     // TEST: Should throw deserialization error
-    Logger.getLogger(SecurityServiceRestDegenerateUseTest.class).info(
+    Logger.getLogger(getClass()).info(
         "  Adding user with incomplete fields");
     for (Field field : UserJpa.class.getFields()) {
 
@@ -144,7 +143,7 @@ public class SecurityServiceRestDegenerateUseTest extends
     }
 
     // Procedure 2: Testing get services
-    Logger.getLogger(SecurityServiceRestDegenerateUseTest.class).info(
+    Logger.getLogger(getClass()).info(
         "Procedure 2: GET services");
 
     // Get user by id with null id
@@ -180,7 +179,7 @@ public class SecurityServiceRestDegenerateUseTest extends
     }
 
     // Procedure 3: Testing update services
-    Logger.getLogger(SecurityServiceRestDegenerateUseTest.class).info(
+    Logger.getLogger(getClass()).info(
         "Procedure 3: UPDATE services");
 
     // Update user with null argument
@@ -241,7 +240,7 @@ public class SecurityServiceRestDegenerateUseTest extends
     }
 
     // Procedure 4: Testing delete services
-    Logger.getLogger(SecurityServiceRestDegenerateUseTest.class).info(
+    Logger.getLogger(getClass()).info(
         "Procedure 4: DELETE services");
 
     // Delete user with null id

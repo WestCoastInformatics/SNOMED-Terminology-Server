@@ -79,7 +79,7 @@ public class ProjectJpa implements Project {
 
   /** The terminology version. */
   @Column(nullable = false)
-  private String version;
+  private String terminologyVersion;
 
   /** The leads. */
   @ManyToMany(targetEntity = UserJpa.class, fetch = FetchType.LAZY)
@@ -149,7 +149,7 @@ public class ProjectJpa implements Project {
     isPublic = project.isPublic();
     moduleId = project.getModuleId();
     terminology = project.getTerminology();
-    version = project.getTerminologyVersion();
+    terminologyVersion = project.getTerminologyVersion();
     leads = new HashSet<>(project.getLeads());
     authors = new HashSet<>(project.getAuthors());
     administrators = new HashSet<>(project.getAdministrators());
@@ -354,15 +354,15 @@ public class ProjectJpa implements Project {
   @Override
   @Field(index = Index.YES, analyze = Analyze.NO, store = Store.NO)
   public String getTerminologyVersion() {
-    return version;
+    return terminologyVersion;
   }
 
   /* (non-Javadoc)
    * @see org.ihtsdo.otf.ts.Project#setTerminologyVersion(java.lang.String)
    */
   @Override
-  public void setTerminologyVersion(String version) {
-    this.version = version;
+  public void setTerminologyVersion(String terminologyVersion) {
+    this.terminologyVersion = terminologyVersion;
   }
 
   /* (non-Javadoc)
@@ -587,7 +587,7 @@ public class ProjectJpa implements Project {
     result =
         prime
             * result
-            + ((version == null) ? 0 : version.hashCode());
+            + ((terminologyVersion == null) ? 0 : terminologyVersion.hashCode());
     return result;
   }
 
@@ -632,10 +632,10 @@ public class ProjectJpa implements Project {
         return false;
     } else if (!terminology.equals(other.terminology))
       return false;
-    if (version == null) {
-      if (other.version != null)
+    if (terminologyVersion == null) {
+      if (other.terminologyVersion != null)
         return false;
-    } else if (!version.equals(other.version))
+    } else if (!terminologyVersion.equals(other.terminologyVersion))
       return false;
     return true;
   }

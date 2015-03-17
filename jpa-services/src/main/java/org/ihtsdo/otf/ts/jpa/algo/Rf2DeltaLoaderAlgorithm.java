@@ -1,6 +1,5 @@
 package org.ihtsdo.otf.ts.jpa.algo;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -15,7 +14,6 @@ import org.ihtsdo.otf.ts.helpers.ConceptList;
 import org.ihtsdo.otf.ts.helpers.DescriptionList;
 import org.ihtsdo.otf.ts.helpers.LanguageRefSetMemberList;
 import org.ihtsdo.otf.ts.helpers.RelationshipList;
-import org.ihtsdo.otf.ts.jpa.services.ContentServiceJpa;
 import org.ihtsdo.otf.ts.jpa.services.HistoryServiceJpa;
 import org.ihtsdo.otf.ts.jpa.services.MetadataServiceJpa;
 import org.ihtsdo.otf.ts.rf2.Concept;
@@ -26,9 +24,7 @@ import org.ihtsdo.otf.ts.rf2.jpa.ConceptJpa;
 import org.ihtsdo.otf.ts.rf2.jpa.DescriptionJpa;
 import org.ihtsdo.otf.ts.rf2.jpa.LanguageRefSetMemberJpa;
 import org.ihtsdo.otf.ts.rf2.jpa.RelationshipJpa;
-import org.ihtsdo.otf.ts.services.HistoryService;
 import org.ihtsdo.otf.ts.services.MetadataService;
-import org.ihtsdo.otf.ts.services.helpers.ConceptReportHelper;
 import org.ihtsdo.otf.ts.services.helpers.ProgressEvent;
 import org.ihtsdo.otf.ts.services.helpers.ProgressListener;
 import org.ihtsdo.otf.ts.services.helpers.PushBackReader;
@@ -36,7 +32,7 @@ import org.ihtsdo.otf.ts.services.helpers.PushBackReader;
 /**
  * Implementation of an algorithm to import RF2 delta data.
  */
-public class Rf2DeltaLoaderAlgorithm extends ContentServiceJpa implements
+public class Rf2DeltaLoaderAlgorithm extends HistoryServiceJpa implements
     Algorithm {
 
   /** Listeners. */
@@ -46,7 +42,7 @@ public class Rf2DeltaLoaderAlgorithm extends ContentServiceJpa implements
   private String terminology;
 
   /** The terminology version. */
-  private String version;
+  private String terminologyVersion;
 
   /** The release version. */
   private String releaseVersion;
@@ -88,15 +84,13 @@ public class Rf2DeltaLoaderAlgorithm extends ContentServiceJpa implements
   /** The existing language ref set member ids. */
   private Set<String> existingLanguageRefSetMemberIds = new HashSet<>();
 
-  /**  The history service. */
-  private HistoryService historyService;
-
   /**
    * Instantiates an empty {@link Rf2DeltaLoaderAlgorithm}.
    * @throws Exception if anything goes wrong
    */
   public Rf2DeltaLoaderAlgorithm() throws Exception {
     super();
+
   }
 
   /**
@@ -111,10 +105,10 @@ public class Rf2DeltaLoaderAlgorithm extends ContentServiceJpa implements
   /**
    * Sets the terminology version.
    *
-   * @param version the terminology version
+   * @param terminologyVersion the terminology version
    */
-  public void setTerminologyVersion(String version) {
-    this.version = version;
+  public void setTerminologyVersion(String terminologyVersion) {
+    this.terminologyVersion = terminologyVersion;
   }
 
   /**
@@ -149,39 +143,44 @@ public class Rf2DeltaLoaderAlgorithm extends ContentServiceJpa implements
   public void compute() throws Exception {
     try {
       Logger.getLogger(this.getClass()).info("Start loading delta");
+      Logger.getLogger(this.getClass()).info("  terminology = " + terminology);
+      Logger.getLogger(this.getClass()).info(
+          "  version = " + terminologyVersion);
+      Logger.getLogger(this.getClass()).info(
+          "  releaseVersion = " + releaseVersion);
 
       // Log memory usage
       Runtime runtime = Runtime.getRuntime();
-      Logger.getLogger(this.getClass()).info("MEMORY USAGE:");
+      Logger.getLogger(this.getClass()).debug("MEMORY USAGE:");
+      Logger.getLogger(this.getClass()).debug(
+          " Total: " + runtime.totalMemory());
       Logger.getLogger(this.getClass())
-          .info(" Total: " + runtime.totalMemory());
-      Logger.getLogger(this.getClass()).info(" Free:  " + runtime.freeMemory());
-      Logger.getLogger(this.getClass()).info(" Max:   " + runtime.maxMemory());
-      SimpleDateFormat ft = new SimpleDateFormat("hh:mm:ss a"); // format for
+          .debug(" Free:  " + runtime.freeMemory());
+      Logger.getLogger(this.getClass()).debug(" Max:   " + runtime.maxMemory());
 
       // Track system level information
       long startTimeOrig = System.nanoTime();
 
       // Setup history service
-      historyService = new HistoryServiceJpa();
-      historyService.setTransactionPerOperation(false);
-      historyService.beginTransaction();
+      // Turn of ID computation when loading a terminology
+      setAssignIdentifiersFlag(false);
+      setTransactionPerOperation(false);
+      beginTransaction();
 
       // Previous computation of terminology version is based on file name
       // but for delta/daily build files, this is not the current version
       // look up the current version instead
       MetadataService metadataService = new MetadataServiceJpa();
-      version = metadataService.getLatestVersion(terminology);
+      terminologyVersion = metadataService.getLatestVersion(terminology);
       metadataService.close();
-      if (version == null) {
+      if (terminologyVersion == null) {
         throw new Exception("Unable to determine terminology version.");
       }
 
       // Precache all existing concept entires (not connected data like
       // rels/descs)
       Logger.getLogger(this.getClass()).info("  Cache concepts");
-      ConceptList conceptList =
-          historyService.getAllConcepts(terminology, version);
+      ConceptList conceptList = getAllConcepts(terminology, terminologyVersion);
       for (Concept c : conceptList.getObjects()) {
         existingConceptCache.put(c.getTerminologyId(), c);
       }
@@ -194,22 +193,21 @@ public class Rf2DeltaLoaderAlgorithm extends ContentServiceJpa implements
           "  Construct terminology id sets for quality assurance");
       Logger.getLogger(this.getClass()).info("  Cache description ids");
       existingDescriptionIds =
-          new HashSet<>(historyService.getAllDescriptionTerminologyIds(
-              terminology, version).getObjects());
+          new HashSet<>(getAllDescriptionTerminologyIds(terminology,
+              terminologyVersion).getObjects());
       Logger.getLogger(this.getClass()).info(
           "    count = " + existingDescriptionIds.size());
       Logger.getLogger(this.getClass()).info(
           "  Cache language refset member ids");
       existingLanguageRefSetMemberIds =
-          new HashSet<>(historyService
-              .getAllLanguageRefSetMemberTerminologyIds(terminology,
-                  version).getObjects());
+          new HashSet<>(getAllLanguageRefSetMemberTerminologyIds(terminology,
+              terminologyVersion).getObjects());
       Logger.getLogger(this.getClass()).info(
           "    count = " + existingLanguageRefSetMemberIds.size());
       Logger.getLogger(this.getClass()).info("  Cache relationship ids");
       existingRelationshipIds =
-          new HashSet<>(historyService.getAllRelationshipTerminologyIds(
-              terminology, version).getObjects());
+          new HashSet<>(getAllRelationshipTerminologyIds(terminology,
+              terminologyVersion).getObjects());
       Logger.getLogger(this.getClass()).info(
           "    count = " + existingRelationshipIds.size());
 
@@ -218,27 +216,18 @@ public class Rf2DeltaLoaderAlgorithm extends ContentServiceJpa implements
       //
       Logger.getLogger(this.getClass()).info("    Loading Concepts ...");
       loadConcepts();
-      Logger.getLogger(this.getClass()).info(
-          "      evaluated = " + Integer.toString(objectCt) + " (Ended at "
-              + ft.format(new Date()) + ")");
 
       //
       // Load relationships - stated and inferred
       //
       Logger.getLogger(this.getClass()).info("    Loading Relationships ...");
       loadRelationships();
-      Logger.getLogger(this.getClass()).info(
-          "      evaluated = " + Integer.toString(objectCt) + " (Ended at "
-              + ft.format(new Date()) + ")");
 
       //
       // Load descriptions and definitions
       //
       Logger.getLogger(this.getClass()).info("    Loading Descriptions ...");
       loadDescriptions();
-      Logger.getLogger(this.getClass()).info(
-          "      evaluated = " + Integer.toString(objectCt) + " (Ended at "
-              + ft.format(new Date()) + ")");
 
       //
       // Load language refset members
@@ -246,9 +235,6 @@ public class Rf2DeltaLoaderAlgorithm extends ContentServiceJpa implements
       Logger.getLogger(this.getClass())
           .info("    Loading Language Ref Sets...");
       loadLanguageRefSetMembers();
-      Logger.getLogger(this.getClass()).info(
-          "      evaluated = " + Integer.toString(objectCt) + " (Ended at "
-              + ft.format(new Date()) + ")");
 
       // Skip other delta data structures
       // TODO: implement this
@@ -295,23 +281,42 @@ public class Rf2DeltaLoaderAlgorithm extends ContentServiceJpa implements
       Logger.getLogger(this.getClass()).info(
           "    " + nLanguagesUpdated + " language ref set members");
 
+      // Iterate over concepts
+      Logger.getLogger(this.getClass()).info(
+          "  Compute preferred names for modified concepts");
+      int ct = 0;
+      for (String id : deltaConceptIds) {
+        Concept concept = conceptCache.get(id);
+        String pn = getComputedPreferredName(concept);
+        if (!pn.equals(concept.getDefaultPreferredName())) {
+          ct++;
+          concept.setDefaultPreferredName(pn);
+          updateConcept(concept);
+        }
+      }
+      Logger.getLogger(this.getClass()).info("    changed = " + ct);
+
+      // Commit the content changes
+      Logger.getLogger(this.getClass()).info("  Committing");
+      commit();
+      clear();
+
       // QA
       Logger
           .getLogger(this.getClass())
           .info(
               "Checking database contents against number of previously modified objects");
       ConceptList modifiedConcepts =
-          historyService.findConceptsModifiedSinceDate(terminology,
-              deltaLoaderStartDate, null);
+          findConceptsModifiedSinceDate(terminology, deltaLoaderStartDate, null);
       RelationshipList modifiedRelationships =
-          historyService.findRelationshipsModifiedSinceDate(terminology,
-              deltaLoaderStartDate, null);
+          findRelationshipsModifiedSinceDate(terminology, deltaLoaderStartDate,
+              null);
       DescriptionList modifiedDescriptions =
-          historyService.findDescriptionsModifiedSinceDate(terminology,
-              deltaLoaderStartDate, null);
+          findDescriptionsModifiedSinceDate(terminology, deltaLoaderStartDate,
+              null);
       LanguageRefSetMemberList modifiedLanguageRefSetMembers =
-          historyService.findLanguageRefSetMembersModifiedSinceDate(
-              terminology, deltaLoaderStartDate, null);
+          findLanguageRefSetMembersModifiedSinceDate(terminology,
+              deltaLoaderStartDate, null);
 
       // Report
       Logger.getLogger(this.getClass()).info(
@@ -335,29 +340,10 @@ public class Rf2DeltaLoaderAlgorithm extends ContentServiceJpa implements
                   + " languageRefSetMembers expected, found"
                   + modifiedLanguageRefSetMembers.getCount()
               : "  LanguageRefSetMember count matches");
-
-      // Iterate over concepts
-      Logger.getLogger(this.getClass()).info(
-          "  Compute preferred names for modified concepts");
-      int ct = 0;
-      for (Concept concept : modifiedConcepts.getObjects()) {
-        concept = historyService.getConcept(concept.getId());
-        String pn = historyService.getComputedPreferredName(concept);
-        if (!pn.equals(concept.getDefaultPreferredName())) {
-          ct++;
-          concept.setDefaultPreferredName(pn);
-          historyService.updateConcept(concept);
-        }
-      }
-      Logger.getLogger(this.getClass()).info("    changed = " + ct);
-
-      // Commit the content changes
-      Logger.getLogger(this.getClass()).info("  Committing");
-      historyService.commit();
-
       // Final logging messages
       Logger.getLogger(this.getClass()).info(
           "      elapsed time = " + getTotalElapsedTimeStr(startTimeOrig));
+
       Logger.getLogger(this.getClass()).info("Done ...");
 
     } catch (Exception e) {
@@ -501,25 +487,19 @@ public class Rf2DeltaLoaderAlgorithm extends ContentServiceJpa implements
         newConcept.setModuleId(fields[3]);
         newConcept.setDefinitionStatusId(fields[4]);
         newConcept.setTerminology(terminology);
-        newConcept.setTerminologyVersion(version);
+        newConcept.setTerminologyVersion(terminologyVersion);
         newConcept.setDefaultPreferredName("TBD");
         newConcept.setLastModifiedBy("loader");
 
         // If concept is new, add it
         if (concept == null) {
-          Logger.getLogger(this.getClass()).info(
-              "        add concept " + newConcept.getTerminologyId() + ".");
-          newConcept = historyService.addConcept(newConcept);
-          Logger.getLogger(this.getClass()).info(
-              ConceptReportHelper.getConceptReport(newConcept));
+          newConcept = addConcept(newConcept);
           objectsAdded++;
         }
 
         // If concept has changed, update it
         else if (!newConcept.equals(concept)) {
-          Logger.getLogger(this.getClass()).info(
-              "        update concept " + newConcept.getTerminologyId());
-          historyService.updateConcept(newConcept);
+          updateConcept(newConcept);
           objectsUpdated++;
         }
 
@@ -577,8 +557,7 @@ public class Rf2DeltaLoaderAlgorithm extends ContentServiceJpa implements
         } else {
           // retrieve concept
           concept =
-              historyService.getSingleConcept(fields[4], terminology,
-                  version);
+              getSingleConcept(fields[4], terminology, terminologyVersion);
         }
 
         // if the concept is not null
@@ -593,8 +572,7 @@ public class Rf2DeltaLoaderAlgorithm extends ContentServiceJpa implements
             description = descriptionCache.get(fields[0]);
           } else if (existingDescriptionIds.contains(fields[0])) {
             description =
-                historyService.getDescription(fields[0], terminology,
-                    version);
+                getDescription(fields[0], terminology, terminologyVersion);
           }
 
           // Throw exception if it cant be found
@@ -627,24 +605,19 @@ public class Rf2DeltaLoaderAlgorithm extends ContentServiceJpa implements
           newDescription.setTerm(fields[7]);
           newDescription.setCaseSignificanceId(fields[8]);
           newDescription.setTerminology(terminology);
-          newDescription.setTerminologyVersion(version);
+          newDescription.setTerminologyVersion(terminologyVersion);
           newDescription.setLastModifiedBy("loader");
 
           // If description is new, add it
           if (description == null) {
-            Logger.getLogger(this.getClass()).info(
-                "        add description " + newDescription.getTerminologyId());
-            newDescription = historyService.addDescription(newDescription);
+            newDescription = addDescription(newDescription);
             cacheDescription(newDescription);
             objectsAdded++;
           }
 
           // If description has changed, update it
           else if (!newDescription.equals(description)) {
-            Logger.getLogger(this.getClass()).info(
-                "        update description "
-                    + newDescription.getTerminologyId());
-            historyService.updateDescription(newDescription);
+            updateDescription(newDescription);
             cacheDescription(newDescription);
             objectsUpdated++;
           }
@@ -704,8 +677,7 @@ public class Rf2DeltaLoaderAlgorithm extends ContentServiceJpa implements
           description = descriptionCache.get(fields[5]);
         } else {
           description =
-              historyService.getDescription(fields[5], terminology,
-                  version);
+              getDescription(fields[5], terminology, terminologyVersion);
         }
 
         // get the concept
@@ -729,8 +701,8 @@ public class Rf2DeltaLoaderAlgorithm extends ContentServiceJpa implements
         } else if (existingLanguageRefSetMemberIds.contains(fields[0])) {
           // retrieve languageRefSetMember
           languageRefSetMember =
-              historyService.getLanguageRefSetMember(fields[0], terminology,
-                  version);
+              getLanguageRefSetMember(fields[0], terminology,
+                  terminologyVersion);
         }
 
         if (languageRefSetMember == null
@@ -761,26 +733,20 @@ public class Rf2DeltaLoaderAlgorithm extends ContentServiceJpa implements
         newLanguageRefSetMember.setRefSetId(fields[4]);
         newLanguageRefSetMember.setAcceptabilityId(fields[6]);
         newLanguageRefSetMember.setTerminology(terminology);
-        newLanguageRefSetMember.setTerminologyVersion(version);
+        newLanguageRefSetMember.setTerminologyVersion(terminologyVersion);
         newLanguageRefSetMember.setLastModifiedBy("loader");
 
         // If language refset entry is new, add it
         if (languageRefSetMember == null) {
-          Logger.getLogger(this.getClass()).info(
-              "        add language "
-                  + newLanguageRefSetMember.getTerminologyId());
           newLanguageRefSetMember =
-              historyService.addLanguageRefSetMember(newLanguageRefSetMember);
+              addLanguageRefSetMember(newLanguageRefSetMember);
           cacheLanguageRefSetMember(newLanguageRefSetMember);
           objectsAdded++;
         }
 
         // If language refset entry is changed, update it
         else if (!newLanguageRefSetMember.equals(languageRefSetMember)) {
-          Logger.getLogger(this.getClass()).info(
-              "        update language "
-                  + newLanguageRefSetMember.getTerminologyId());
-          historyService.updateLanguageRefSetMember(newLanguageRefSetMember);
+          updateLanguageRefSetMember(newLanguageRefSetMember);
           cacheLanguageRefSetMember(newLanguageRefSetMember);
           objectsUpdated++;
         }
@@ -837,8 +803,7 @@ public class Rf2DeltaLoaderAlgorithm extends ContentServiceJpa implements
           sourceConcept = existingConceptCache.get(fields[4]);
         } else {
           sourceConcept =
-              historyService.getSingleConcept(fields[4], terminology,
-                  version);
+              getSingleConcept(fields[4], terminology, terminologyVersion);
         }
         if (sourceConcept == null) {
           throw new Exception("Relationship " + fields[0] + " source concept "
@@ -852,8 +817,7 @@ public class Rf2DeltaLoaderAlgorithm extends ContentServiceJpa implements
           destinationConcept = existingConceptCache.get(fields[5]);
         } else {
           destinationConcept =
-              historyService.getSingleConcept(fields[5], terminology,
-                  version);
+              getSingleConcept(fields[5], terminology, terminologyVersion);
         }
         if (destinationConcept == null) {
           throw new Exception("Relationship " + fields[0]
@@ -870,8 +834,7 @@ public class Rf2DeltaLoaderAlgorithm extends ContentServiceJpa implements
           relationship = relationshipCache.get(fields[0]);
         } else if (existingRelationshipIds.contains(fields[0])) {
           relationship =
-              historyService.getRelationship(fields[0], terminology,
-                  version);
+              getRelationship(fields[0], terminology, terminologyVersion);
 
         }
 
@@ -900,26 +863,21 @@ public class Rf2DeltaLoaderAlgorithm extends ContentServiceJpa implements
         newRelationship.setTypeId(fields[7]); // typeId
         newRelationship.setCharacteristicTypeId(fields[8]); // characteristicTypeId
         newRelationship.setTerminology(terminology);
-        newRelationship.setTerminologyVersion(version);
+        newRelationship.setTerminologyVersion(terminologyVersion);
         newRelationship.setModifierId(fields[9]);
         newRelationship.setSourceConcept(sourceConcept);
         newRelationship.setDestinationConcept(destinationConcept);
         newRelationship.setLastModifiedBy("loader");
         // If relationship is new, add it
         if (!existingRelationshipIds.contains(fields[0])) {
-          Logger.getLogger(this.getClass()).info(
-              "        add relationship " + newRelationship.getTerminologyId());
-          newRelationship = historyService.addRelationship(newRelationship);
+          newRelationship = addRelationship(newRelationship);
           cacheRelationship(newRelationship);
           objectsAdded++;
         }
 
         // If relationship is changed, update it
         else if (relationship != null && !newRelationship.equals(relationship)) {
-          Logger.getLogger(this.getClass()).info(
-              "        update relationship "
-                  + newRelationship.getTerminologyId());
-          historyService.updateRelationship(newRelationship);
+          updateRelationship(newRelationship);
           cacheRelationship(newRelationship);
           objectsUpdated++;
         }
@@ -941,8 +899,8 @@ public class Rf2DeltaLoaderAlgorithm extends ContentServiceJpa implements
   /**
    * Retires concepts that were removed from prior deltas. Find concepts in the
    * DB that are not in the current delta and which have effective times greater
-   * than the latest release date. The latest release date is the
-   * "version" in this case.
+   * than the latest release date. The latest release date is the "version" in
+   * this case.
    * @throws Exception
    */
   public void retireRemovedConcepts() throws Exception {
@@ -981,7 +939,7 @@ public class Rf2DeltaLoaderAlgorithm extends ContentServiceJpa implements
           ct++;
           concept.setActive(false);
           // effective time is left null - to indicate a change
-          historyService.updateConcept(concept);
+          updateConcept(concept);
         }
       }
     }

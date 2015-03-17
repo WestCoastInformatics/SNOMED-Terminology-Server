@@ -33,10 +33,6 @@
 
     <!-- JPA dependencies -->
     <dependency>
-      <groupId>org.hibernate.javax.persistence</groupId>
-      <artifactId>hibernate-jpa-2.0-api</artifactId>
-    </dependency>
-    <dependency>
       <groupId>javax.transaction</groupId>
       <artifactId>jta</artifactId>
     </dependency>
@@ -46,7 +42,7 @@
     </dependency>
     <dependency>
       <groupId>org.hibernate</groupId>
-      <artifactId>hibernate-search</artifactId>
+      <artifactId>hibernate-search-orm</artifactId>
     </dependency>
     <dependency>
       <groupId>org.hibernate</groupId>
@@ -59,6 +55,10 @@
     <dependency>
       <groupId>org.hibernate</groupId>
       <artifactId>hibernate-validator</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.lucene</groupId>
+      <artifactId>lucene-queryparser</artifactId>
     </dependency>
     <dependency>
       <groupId>mysql</groupId>
@@ -85,10 +85,10 @@
       <artifactId>jackson-module-jaxb-annotations</artifactId>
     </dependency>
 
-	<dependency>
-		<groupId>au.csiro</groupId>
-		<artifactId>snorocket-snapi</artifactId>
-	</dependency>
+    <dependency>
+      <groupId>au.csiro</groupId>
+      <artifactId>snorocket-snapi</artifactId>
+    </dependency>
 
     <!-- Unit tests -->
     <dependency>

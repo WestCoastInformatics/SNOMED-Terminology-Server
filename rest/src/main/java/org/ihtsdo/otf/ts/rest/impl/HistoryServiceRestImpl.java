@@ -43,8 +43,11 @@ import com.wordnik.swagger.annotations.ApiParam;
  */
 @Path("/history")
 @Api(value = "/history", description = "Operations to retrieve historical RF2 content for a terminology.")
+@Consumes({
+  MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML
+})
 @Produces({
-    MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML
+  MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML
 })
 public class HistoryServiceRestImpl extends RootServiceRestImpl implements
     HistoryServiceRest {
@@ -73,16 +76,13 @@ public class HistoryServiceRestImpl extends RootServiceRestImpl implements
   @POST
   @Path("/concept/{terminology}/{date:([0-9][0-9][0-9][0-9][0-1][0-9][0-3][0-9]|null)}")
   @ApiOperation(value = "Get concepts modified since a date", notes = "Gets concepts changed since a date.", response = ConceptList.class)
-  @Produces({
-      MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML
-  })
   public ConceptList findConceptsModifiedSinceDate(
     @ApiParam(value = "Concept terminology , e.g. SNOMEDCT", required = true) @PathParam("terminology") String terminology,
     @ApiParam(value = "Date in the format YYYYMMDD , e.g. 20140731 or \"null\"", required = true) @PathParam("date") String date,
     @ApiParam(value = "PFS Parameter, e.g. '{ \"startIndex\":\"1\", \"maxResults\":\"5\" }'", required = false) PfsParameterJpa pfs,
     @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken) {
 
-    Logger.getLogger(ContentServiceRestImpl.class).info(
+    Logger.getLogger(getClass()).info(
         "RESTful call (History): /concept/" + terminology + "/" + date);
 
     try {
@@ -129,9 +129,6 @@ public class HistoryServiceRestImpl extends RootServiceRestImpl implements
   @POST
   @Path("/concept/revisions/{id}/{startDate:([0-9][0-9][0-9][0-9][0-1][0-9][0-3][0-9]|null)}/{endDate:([0-9][0-9][0-9][0-9][0-1][0-9][0-3][0-9]|null)}/all")
   @ApiOperation(value = "Get concepts revisions in a date range", notes = "Gets all concept revisions in a date range. Use a null date to leave it open ended", response = ConceptList.class)
-  @Produces({
-      MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML
-  })
   public ConceptList findConceptRevisions(
     @ApiParam(value = "Concept unique id, i.e. 1", required = true) @PathParam("id") String id,
     @ApiParam(value = "Date in the format YYYYMMDD , e.g. 20140731 or \"null\"", required = true) @PathParam("startDate") String startDate,
@@ -139,7 +136,7 @@ public class HistoryServiceRestImpl extends RootServiceRestImpl implements
     @ApiParam(value = "PFS Parameter, e.g. '{ \"startIndex\":\"1\", \"maxResults\":\"5\" }'", required = false) PfsParameterJpa pfs,
     @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken) {
 
-    Logger.getLogger(ContentServiceRestImpl.class).info(
+    Logger.getLogger(getClass()).info(
         "RESTful call (History): /concept/revisions/" + id + "/" + startDate
             + "/" + endDate + "/all");
 
@@ -166,15 +163,12 @@ public class HistoryServiceRestImpl extends RootServiceRestImpl implements
   @POST
   @Path("/concept/revisions/{id}/{release: [0-9][0-9][0-9][0-9][0-1][0-9][0-3][0-9]}/release")
   @ApiOperation(value = "Get concepts release revision", notes = "Gets concept release revision.", response = Concept.class)
-  @Produces({
-      MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML
-  })
   public Concept findConceptReleaseRevision(
     @ApiParam(value = "Concept id, e.g. 2", required = true) @PathParam("id") String id,
     @ApiParam(value = "Release date in the format YYYYMMDD , e.g. 20140731", required = true) @PathParam("release") String release,
     @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken) {
 
-    Logger.getLogger(ContentServiceRestImpl.class).info(
+    Logger.getLogger(getClass()).info(
         "RESTful call (History): /concept/revisions/" + id + "/" + release);
 
     try {
@@ -207,16 +201,13 @@ public class HistoryServiceRestImpl extends RootServiceRestImpl implements
   @POST
   @Path("/description/{terminology}/{date:([0-9][0-9][0-9][0-9][0-1][0-9][0-3][0-9]|null)}")
   @ApiOperation(value = "Get descriptions modified since a date", notes = "Gets descriptions changed since a date.", response = DescriptionList.class)
-  @Produces({
-      MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML
-  })
   public DescriptionList findDescriptionsModifiedSinceDate(
     @ApiParam(value = "Description terminology , e.g. SNOMEDCT", required = true) @PathParam("terminology") String terminology,
     @ApiParam(value = "Date in the format YYYYMMDD , e.g. 20140731 or \"null\"", required = true) @PathParam("date") String date,
     @ApiParam(value = "PFS Parameter, e.g. '{ \"startIndex\":\"1\", \"maxResults\":\"5\" }'", required = false) PfsParameterJpa pfs,
     @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken) {
 
-    Logger.getLogger(ContentServiceRestImpl.class).info(
+    Logger.getLogger(getClass()).info(
         "RESTful call (History): /description/" + terminology + "/" + date);
 
     try {
@@ -258,9 +249,6 @@ public class HistoryServiceRestImpl extends RootServiceRestImpl implements
   @POST
   @Path("/description/revisions/{id}/{startDate:([0-9][0-9][0-9][0-9][0-1][0-9][0-3][0-9]|null)}/{endDate:([0-9][0-9][0-9][0-9][0-1][0-9][0-3][0-9]|null)}/all")
   @ApiOperation(value = "Get descriptions revisions in a date range", notes = "Gets all description revisions in a date range. Use a null date to leave it open ended", response = DescriptionList.class)
-  @Produces({
-      MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML
-  })
   public DescriptionList findDescriptionRevisions(
     @ApiParam(value = "Concept terminology , e.g. SNOMEDCT", required = true) @PathParam("id") String id,
     @ApiParam(value = "Date in the format YYYYMMDD, e.g. 20140731 or \"null\"", required = true) @PathParam("startDate") String startDate,
@@ -268,7 +256,7 @@ public class HistoryServiceRestImpl extends RootServiceRestImpl implements
     @ApiParam(value = "PFS Parameter, e.g. '{ \"startIndex\":\"1\", \"maxResults\":\"5\" }'", required = false) PfsParameterJpa pfs,
     @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken) {
 
-    Logger.getLogger(ContentServiceRestImpl.class).info(
+    Logger.getLogger(getClass()).info(
         "RESTful call (History): /description/revisions/" + id + "/"
             + startDate + "/" + endDate + "/all");
 
@@ -295,15 +283,12 @@ public class HistoryServiceRestImpl extends RootServiceRestImpl implements
   @POST
   @Path("/description/revisions/{id}/{release: [0-9][0-9][0-9][0-9][0-1][0-9][0-3][0-9]}/release")
   @ApiOperation(value = "Get descriptions release revision", notes = "Gets description release revision", response = Description.class)
-  @Produces({
-      MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML
-  })
   public Description findDescriptionReleaseRevision(
     @ApiParam(value = "Concept id , e.g. 2", required = true) @PathParam("id") String id,
     @ApiParam(value = "Release date in the format YYYYMMDD , e.g. latest", required = true) @PathParam("release") String release,
     @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken) {
 
-    Logger.getLogger(ContentServiceRestImpl.class).info(
+    Logger.getLogger(getClass()).info(
         "RESTful call (History): /description/revisions/" + id + "/" + release);
 
     try {
@@ -336,16 +321,13 @@ public class HistoryServiceRestImpl extends RootServiceRestImpl implements
   @POST
   @Path("/relationship/{terminology}/{date:([0-9][0-9][0-9][0-9][0-1][0-9][0-3][0-9]|null)}")
   @ApiOperation(value = "Get relationships modified since a date", notes = "Gets relationships changed since a date.", response = RelationshipList.class)
-  @Produces({
-      MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML
-  })
   public RelationshipList findRelationshipsModifiedSinceDate(
     @ApiParam(value = "Relationship terminology , e.g. SNOMEDCT", required = true) @PathParam("terminology") String terminology,
     @ApiParam(value = "Date in the format YYYYMMDD, e.g. 20140731 or \"null\"", required = true) @PathParam("date") String date,
     @ApiParam(value = "PFS Parameter, e.g. '{ \"startIndex\":\"1\", \"maxResults\":\"5\" }'", required = false) PfsParameterJpa pfs,
     @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken) {
 
-    Logger.getLogger(ContentServiceRestImpl.class).info(
+    Logger.getLogger(getClass()).info(
         "RESTful call (History): /relationship/" + terminology + "/" + date);
 
     try {
@@ -387,9 +369,6 @@ public class HistoryServiceRestImpl extends RootServiceRestImpl implements
   @POST
   @Path("/relationship/revisions/{id}/{startDate:([0-9][0-9][0-9][0-9][0-1][0-9][0-3][0-9]|null)}/{endDate:([0-9][0-9][0-9][0-9][0-1][0-9][0-3][0-9]|null)}/all")
   @ApiOperation(value = "Get relationships revisions in a date range", notes = "Gets all relationship revisions in a date range. Use a null date to leave it open ended", response = RelationshipList.class)
-  @Produces({
-      MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML
-  })
   public RelationshipList findRelationshipRevisions(
     @ApiParam(value = "Concept terminology , e.g. SNOMEDCT", required = true) @PathParam("id") String id,
     @ApiParam(value = "Date in the format YYYYMMDD, e.g. 20140731 or \"null\"", required = true) @PathParam("startDate") String startDate,
@@ -397,7 +376,7 @@ public class HistoryServiceRestImpl extends RootServiceRestImpl implements
     @ApiParam(value = "PFS Parameter, e.g. '{ \"startIndex\":\"1\", \"maxResults\":\"5\" }'", required = false) PfsParameterJpa pfs,
     @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken) {
 
-    Logger.getLogger(ContentServiceRestImpl.class).info(
+    Logger.getLogger(getClass()).info(
         "RESTful call (History): /relationship/revisions/" + id + "/"
             + startDate + "/" + endDate + "/all");
 
@@ -424,15 +403,12 @@ public class HistoryServiceRestImpl extends RootServiceRestImpl implements
   @POST
   @Path("/relationship/revisions/{id}/{release: [0-9][0-9][0-9][0-9][0-1][0-9][0-3][0-9]}/release")
   @ApiOperation(value = "Get relationships release revision", notes = "Gets relationship release revision", response = Relationship.class)
-  @Produces({
-      MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML
-  })
   public Relationship findRelationshipReleaseRevision(
     @ApiParam(value = "Concept id, e.g. 2", required = true) @PathParam("id") String id,
     @ApiParam(value = "Release date in the format YYYYMMDD , e.g. latest", required = true) @PathParam("release") String release,
     @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken) {
 
-    Logger.getLogger(ContentServiceRestImpl.class)
+    Logger.getLogger(getClass())
         .info(
             "RESTful call (History): /relationship/revisions/" + id + "/"
                 + release);
@@ -467,16 +443,13 @@ public class HistoryServiceRestImpl extends RootServiceRestImpl implements
   @POST
   @Path("/language/{terminology}/{date:([0-9][0-9][0-9][0-9][0-1][0-9][0-3][0-9]|null)}")
   @ApiOperation(value = "Get language refset members modified since a date", notes = "Gets language refset members changed since a date.", response = LanguageRefSetMemberList.class)
-  @Produces({
-      MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML
-  })
   public LanguageRefSetMemberList findLanguageRefSetMembersModifiedSinceDate(
     @ApiParam(value = "LanguageRefSetMember terminology , e.g. SNOMEDCT", required = true) @PathParam("terminology") String terminology,
     @ApiParam(value = "Date in the format YYYYMMDD, e.g. 20140731 or \"null\"", required = true) @PathParam("date") String date,
     @ApiParam(value = "PFS Parameter, e.g. '{ \"startIndex\":\"1\", \"maxResults\":\"5\" }'", required = false) PfsParameterJpa pfs,
     @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken) {
 
-    Logger.getLogger(ContentServiceRestImpl.class).info(
+    Logger.getLogger(getClass()).info(
         "RESTful call (History): /language/" + terminology + "/" + date);
 
     try {
@@ -519,9 +492,6 @@ public class HistoryServiceRestImpl extends RootServiceRestImpl implements
   @POST
   @Path("/language/revisions/{id}/{startDate:([0-9][0-9][0-9][0-9][0-1][0-9][0-3][0-9]|null)}/{endDate:([0-9][0-9][0-9][0-9][0-1][0-9][0-3][0-9]|null)}/all")
   @ApiOperation(value = "Get language refset members revisions in a date range", notes = "Gets all language refset members revisions in a date range. Use a null date to leave it open ended", response = LanguageRefSetMemberList.class)
-  @Produces({
-      MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML
-  })
   public LanguageRefSetMemberList findLanguageRefSetMemberRevisions(
     @ApiParam(value = "Concept terminology , e.g. SNOMEDCT", required = true) @PathParam("id") String id,
     @ApiParam(value = "Date in the format YYYYMMDD, e.g. 20140731 or \"null\"", required = true) @PathParam("startDate") String startDate,
@@ -529,7 +499,7 @@ public class HistoryServiceRestImpl extends RootServiceRestImpl implements
     @ApiParam(value = "PFS Parameter, e.g. '{ \"startIndex\":\"1\", \"maxResults\":\"5\" }'", required = false) PfsParameterJpa pfs,
     @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken) {
 
-    Logger.getLogger(ContentServiceRestImpl.class).info(
+    Logger.getLogger(getClass()).info(
         "RESTful call (History): /language/revisions/" + id + "/" + startDate
             + "/" + endDate + "/all");
 
@@ -564,15 +534,12 @@ public class HistoryServiceRestImpl extends RootServiceRestImpl implements
   @POST
   @Path("/language/revisions/{id}/{release: [0-9][0-9][0-9][0-9][0-1][0-9][0-3][0-9]}/release")
   @ApiOperation(value = "Get language refset members release revision", notes = "Gets language refset members release revision", response = LanguageRefSetMember.class)
-  @Produces({
-      MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML
-  })
   public LanguageRefSetMember findLanguageRefSetMemberReleaseRevision(
     @ApiParam(value = "Concept id, e.g. 2", required = true) @PathParam("id") String id,
     @ApiParam(value = "Release date in the format YYYYMMDD , e.g. latest", required = true) @PathParam("release") String release,
     @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken) {
 
-    Logger.getLogger(ContentServiceRestImpl.class).info(
+    Logger.getLogger(getClass()).info(
         "RESTful call (History): /language/revisions/" + id + "/" + release);
 
     try {
@@ -605,9 +572,6 @@ public class HistoryServiceRestImpl extends RootServiceRestImpl implements
   @POST
   @Path("/concept/{terminology}/{date:([0-9][0-9][0-9][0-9][0-1][0-9][0-3][0-9]|null)}/deep")
   @ApiOperation(value = "Get concepts modified since a date", notes = "Gets concepts where the concept or any part of it changed since specified date.", response = ConceptList.class)
-  @Produces({
-      MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML
-  })
   public ConceptList findConceptsDeepModifiedSinceDate(
     @ApiParam(value = "Concept terminology , e.g. SNOMEDCT", required = true) @PathParam("terminology") String terminology,
     @ApiParam(value = "Date in the format YYYYMMDD, e.g. 20140731 or \"null\"", required = true) @PathParam("date") String date,
@@ -615,7 +579,7 @@ public class HistoryServiceRestImpl extends RootServiceRestImpl implements
     @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken)
     throws Exception {
 
-    Logger.getLogger(ContentServiceRestImpl.class).info(
+    Logger.getLogger(getClass()).info(
         "RESTful call (History): /concept/" + terminology + "/" + date
             + "/deep");
 
@@ -648,14 +612,11 @@ public class HistoryServiceRestImpl extends RootServiceRestImpl implements
   @GET
   @Path("/releases/{terminology}")
   @ApiOperation(value = "Get release history", notes = "Gets all release info objects.", response = ReleaseInfoList.class)
-  @Produces({
-      MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML
-  })
   public ReleaseInfoList getReleaseHistory(
     @ApiParam(value = "Release info terminology , e.g. SNOMEDCT", required = true) @PathParam("terminology") String terminology,
     @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken)
     throws Exception {
-    Logger.getLogger(ContentServiceRestImpl.class).info(
+    Logger.getLogger(getClass()).info(
         "RESTful call (History): /release/history/");
 
     try {
@@ -684,14 +645,11 @@ public class HistoryServiceRestImpl extends RootServiceRestImpl implements
   @GET
   @Path("/release/{terminology}/current")
   @ApiOperation(value = "Get current release info", notes = "Gets release info for current release", response = ReleaseInfo.class)
-  @Produces({
-      MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML
-  })
   public ReleaseInfo getCurrentReleaseInfo(
     @ApiParam(value = "Release info terminology , e.g. SNOMEDCT", required = true) @PathParam("terminology") String terminology,
     @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken)
     throws Exception {
-    Logger.getLogger(ContentServiceRestImpl.class).info(
+    Logger.getLogger(getClass()).info(
         "RESTful call (History): /release/current/");
 
     try {
@@ -720,14 +678,11 @@ public class HistoryServiceRestImpl extends RootServiceRestImpl implements
   @GET
   @Path("/release/{terminology}/previous")
   @ApiOperation(value = "Get previous release info", notes = "Gets release info for previous release", response = ReleaseInfo.class)
-  @Produces({
-      MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML
-  })
   public ReleaseInfo getPreviousReleaseInfo(
     @ApiParam(value = "Release info terminology , e.g. SNOMEDCT", required = true) @PathParam("terminology") String terminology,
     @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken)
     throws Exception {
-    Logger.getLogger(ContentServiceRestImpl.class).info(
+    Logger.getLogger(getClass()).info(
         "RESTful call (History): /release/previous/");
 
     try {
@@ -749,14 +704,11 @@ public class HistoryServiceRestImpl extends RootServiceRestImpl implements
   @GET
   @Path("/release/{terminology}/planned")
   @ApiOperation(value = "Get planned release info", notes = "Gets release info for planned release", response = ReleaseInfo.class)
-  @Produces({
-      MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML
-  })
   public ReleaseInfo getPlannedReleaseInfo(
     @ApiParam(value = "Release info terminology , e.g. SNOMEDCT", required = true) @PathParam("terminology") String terminology,
     @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken)
     throws Exception {
-    Logger.getLogger(ContentServiceRestImpl.class).info(
+    Logger.getLogger(getClass()).info(
         "RESTful call (History): /release/planned/");
 
     try {
@@ -785,15 +737,12 @@ public class HistoryServiceRestImpl extends RootServiceRestImpl implements
   @GET
   @Path("/release/{terminology}/{name}")
   @ApiOperation(value = "Get release info", notes = "Gets release info for specified release name and terminology", response = ReleaseInfo.class)
-  @Produces({
-      MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML
-  })
   public ReleaseInfo getReleaseInfo(
     @ApiParam(value = "Release info terminology , e.g. SNOMEDCT", required = true) @PathParam("terminology") String terminology,
     @ApiParam(value = "Release version info, e.g. 'latest'", required = true) @PathParam("name") String name,
     @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken)
     throws Exception {
-    Logger.getLogger(ContentServiceRestImpl.class).info(
+    Logger.getLogger(getClass()).info(
         "RESTful call (History): /release/" + name);
 
     try {
@@ -822,14 +771,11 @@ public class HistoryServiceRestImpl extends RootServiceRestImpl implements
   @PUT
   @Path("/release/add")
   @ApiOperation(value = "Add release info", notes = "Adds the specified release info", response = ReleaseInfo.class)
-  @Produces({
-      MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML
-  })
   public ReleaseInfo addReleaseInfo(
     @ApiParam(value = "Release info object, e.g. see output of /release/current", required = true) ReleaseInfoJpa releaseInfo,
     @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken)
     throws Exception {
-    Logger.getLogger(ContentServiceRestImpl.class).info(
+    Logger.getLogger(getClass()).info(
         "RESTful call (History): /release/add " + releaseInfo.getName());
 
     try {
@@ -858,14 +804,11 @@ public class HistoryServiceRestImpl extends RootServiceRestImpl implements
   @POST
   @Path("/release/update")
   @ApiOperation(value = "Update release info", notes = "Updatess the specified release info")
-  @Produces({
-      MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML
-  })
   public void updateReleaseInfo(
     @ApiParam(value = "Release info object, e.g. see output of /release/current", required = true) ReleaseInfoJpa releaseInfo,
     @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken)
     throws Exception {
-    Logger.getLogger(ContentServiceRestImpl.class).info(
+    Logger.getLogger(getClass()).info(
         "RESTful call (History): /release/update " + releaseInfo.getName());
 
     try {
@@ -891,14 +834,11 @@ public class HistoryServiceRestImpl extends RootServiceRestImpl implements
   @DELETE
   @Path("/release/remove/{id}")
   @ApiOperation(value = "Remove release info", notes = "Removes the release info for the specified id")
-  @Produces({
-      MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML
-  })
   public void removeReleaseInfo(
     @ApiParam(value = "Release info object id, e.g. 2", required = true) @PathParam("id") Long id,
     @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken)
     throws Exception {
-    Logger.getLogger(ContentServiceRestImpl.class).info(
+    Logger.getLogger(getClass()).info(
         "RESTful call (History): /release/remove/" + id);
 
     try {
@@ -924,15 +864,12 @@ public class HistoryServiceRestImpl extends RootServiceRestImpl implements
   @GET
   @Path("/release/startEditingCycle/{releaseVersion}/{terminology}/{version}")
   @ApiOperation(value = "Start the editing cycle", notes = "Marks the start of the editing cycle for the specified release for the specified terminology/version")
-  @Consumes({
-      MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML
-  })
   public void startEditingCycle(
     @ApiParam(value = "Release version, e.g. 20150131", required = true) @PathParam("releaseVersion") String releaseVersion,
     @ApiParam(value = "Terminology, e.g. SNOMEDCT", required = true) @PathParam("terminology") String terminology,
     @ApiParam(value = "Terminology version, e.g. latest", required = true) @PathParam("version") String version,
     @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken) {
-    Logger.getLogger(ContentServiceRestImpl.class).info(
+    Logger.getLogger(getClass()).info(
         "RESTful call (History): /release/startEditingCycle/" + releaseVersion
             + "/" + terminology + "/" + version);
     try {

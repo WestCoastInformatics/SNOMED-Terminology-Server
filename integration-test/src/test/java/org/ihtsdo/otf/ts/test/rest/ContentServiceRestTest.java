@@ -16,7 +16,6 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Ignore;
 
-// TODO: Auto-generated Javadoc
 /**
  * Implementation of the "Content Service REST Normal Use" Test Cases.
  */
@@ -57,10 +56,10 @@ public class ContentServiceRestTest {
      * Test prerequisites
      * Terminology SNOMEDCT exists in database
      * Terminology ICD9CM exists in database
-     * The run.config has "viewer.user" and "viewer.password" specified
+     * The run.config.ts has "viewer.user" and "viewer.password" specified
      */
     
-    // test run.config has viewer user
+    // test run.config.ts has viewer user
     testUser = properties.getProperty("viewer.user");
     testPassword = properties.getProperty("viewer.password");
     

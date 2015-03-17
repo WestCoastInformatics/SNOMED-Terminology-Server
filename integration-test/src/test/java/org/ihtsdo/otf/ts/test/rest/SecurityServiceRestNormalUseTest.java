@@ -48,7 +48,6 @@ public class SecurityServiceRestNormalUseTest extends SecurityServiceRestTest {
    *
    * @throws Exception the exception
    */
-  @SuppressWarnings("static-method")
   @Test
   public void testNormalUseRestSecurity002() throws Exception {
 
@@ -62,7 +61,7 @@ public class SecurityServiceRestNormalUseTest extends SecurityServiceRestTest {
     /**
      * Procedure 1: add a user
      */
-    Logger.getLogger(SecurityServiceRestNormalUseTest.class).info(
+    Logger.getLogger(getClass()).info(
         "  Procedure 1");
 
     user = new UserJpa();
@@ -78,7 +77,7 @@ public class SecurityServiceRestNormalUseTest extends SecurityServiceRestTest {
     /**
      * Procedure 2: get a user
      */
-    Logger.getLogger(SecurityServiceRestNormalUseTest.class).info(
+    Logger.getLogger(getClass()).info(
         "  Procedure 2");
 
     user = service.getUser(user.getId(), adminAuthToken);
@@ -87,7 +86,7 @@ public class SecurityServiceRestNormalUseTest extends SecurityServiceRestTest {
     /**
      * Procedure 3: update a user
      */
-    Logger.getLogger(SecurityServiceRestNormalUseTest.class).info(
+    Logger.getLogger(getClass()).info(
         "  Procedure 3");
 
     user.setEmail("new email");
@@ -98,7 +97,7 @@ public class SecurityServiceRestNormalUseTest extends SecurityServiceRestTest {
     /**
      * Procedure 4: remove a user
      */
-    Logger.getLogger(SecurityServiceRestNormalUseTest.class).info(
+    Logger.getLogger(getClass()).info(
         "  Procedure 4");
 
     service.removeUser(user.getId(), adminAuthToken);
@@ -108,7 +107,7 @@ public class SecurityServiceRestNormalUseTest extends SecurityServiceRestTest {
     /**
      * Procedure 5: authenticate a user that does not exist
      */
-    Logger.getLogger(SecurityServiceRestNormalUseTest.class).info(
+    Logger.getLogger(getClass()).info(
         "  Procedure 5");
 
     // get the existing test user if it exists
@@ -137,7 +136,7 @@ public class SecurityServiceRestNormalUseTest extends SecurityServiceRestTest {
      * Procedure 6: Authenticate a user that exists in database with changed
      * details
      */
-    Logger.getLogger(SecurityServiceRestNormalUseTest.class).info(
+    Logger.getLogger(getClass()).info(
         "  Procedure 6");
 
     // save the email, modify it, re-retrieve, and verify change persisted

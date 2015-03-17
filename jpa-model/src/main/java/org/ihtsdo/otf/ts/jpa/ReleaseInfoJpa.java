@@ -64,7 +64,7 @@ public class ReleaseInfoJpa implements ReleaseInfo {
   private String terminology;
 
   /** The terminology version. */
-  private String version;
+  private String terminologyVersion;
 
   /**
    * Instantiates an empty {@link ReleaseInfoJpa}.
@@ -88,7 +88,7 @@ public class ReleaseInfoJpa implements ReleaseInfo {
     planned = releaseInfo.isPlanned();
     published = releaseInfo.isPublished();
     terminology = releaseInfo.getTerminology();
-    version = releaseInfo.getTerminologyVersion();
+    terminologyVersion = releaseInfo.getTerminologyVersion();
   }
 
   /**
@@ -292,7 +292,7 @@ public class ReleaseInfoJpa implements ReleaseInfo {
    */
   @Override
   public String getTerminologyVersion() {
-    return version;
+    return terminologyVersion;
   }
 
   /*
@@ -303,8 +303,8 @@ public class ReleaseInfoJpa implements ReleaseInfo {
    * )
    */
   @Override
-  public void setTerminologyVersion(String version) {
-    this.version = version;
+  public void setTerminologyVersion(String terminologyVersion) {
+    this.terminologyVersion = terminologyVersion;
   }
 
   /*
@@ -326,7 +326,7 @@ public class ReleaseInfoJpa implements ReleaseInfo {
     result =
         prime
             * result
-            + ((version == null) ? 0 : version.hashCode());
+            + ((terminologyVersion == null) ? 0 : terminologyVersion.hashCode());
     return result;
   }
 
@@ -363,10 +363,10 @@ public class ReleaseInfoJpa implements ReleaseInfo {
         return false;
     } else if (!terminology.equals(other.terminology))
       return false;
-    if (version == null) {
-      if (other.version != null)
+    if (terminologyVersion == null) {
+      if (other.terminologyVersion != null)
         return false;
-    } else if (!version.equals(other.version))
+    } else if (!terminologyVersion.equals(other.terminologyVersion))
       return false;
     return true;
   }
@@ -379,6 +379,6 @@ public class ReleaseInfoJpa implements ReleaseInfo {
   @Override
   public String toString() {
     return name + ", " + description + ", " + effectiveTime + ", " + planned
-        + ", " + published + ", " + terminology + ", " + version;
+        + ", " + published + ", " + terminology + ", " + terminologyVersion;
   }
 }

@@ -42,9 +42,9 @@ public interface SearchResult {
   public String getTerminologyVersion();
 
   /**
-   * @param version the version to set
+   * @param terminologyVersion the version to set
    */
-  public void setTerminologyVersion(String version);
+  public void setTerminologyVersion(String terminologyVersion);
 
   /**
    * @return the value

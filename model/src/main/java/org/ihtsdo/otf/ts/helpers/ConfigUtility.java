@@ -59,7 +59,8 @@ import com.sun.jersey.api.client.WebResource;
 public class ConfigUtility {
 
   /** The date format. */
-  public final static FastDateFormat DATE_FORMAT = FastDateFormat.getInstance("yyyyMMdd");
+  public final static FastDateFormat DATE_FORMAT = FastDateFormat
+      .getInstance("yyyyMMdd");
 
   /** The config. */
   public static Properties config = null;
@@ -86,7 +87,6 @@ public class ConfigUtility {
     }
   }
 
-
   /**
    * Indicates whether or not the server is active.
    *
@@ -101,10 +101,11 @@ public class ConfigUtility {
       // Attempt to logout to verify service is up (this works like a "ping").
       Client client = Client.create();
       WebResource resource =
-          client.resource(config.getProperty("base.url") + "/security/logout/dummy");
+          client.resource(config.getProperty("base.url")
+              + "/security/logout/dummy");
       resource.accept(MediaType.APPLICATION_JSON);
       ClientResponse response = resource.get(ClientResponse.class);
-      if (response.getClientResponseStatus().getFamily() == Family.SUCCESSFUL) {
+      if (response.getStatusInfo().getFamily() == Family.SUCCESSFUL) {
         return true;
       } else {
         return false;
@@ -113,7 +114,7 @@ public class ConfigUtility {
       return false;
     }
   }
-  
+
   /**
    * Returns the config properties.
    * @return the config properties
@@ -122,9 +123,9 @@ public class ConfigUtility {
    */
   public static Properties getConfigProperties() throws Exception {
     if (config == null) {
-      String configFileName = System.getProperty("run.config");
+      String configFileName = System.getProperty("run.config.ts");
       Logger.getLogger(ConfigUtility.class.getName()).info(
-          "  run.config = " + configFileName);
+          "  run.config.ts = " + configFileName);
       config = new Properties();
       FileReader in = new FileReader(new File(configFileName));
       config.load(in);
@@ -536,5 +537,5 @@ public class ConfigUtility {
       }
     }
   }
-  
+
 }

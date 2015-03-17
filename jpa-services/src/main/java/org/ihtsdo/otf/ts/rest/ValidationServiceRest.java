@@ -9,7 +9,7 @@ import org.ihtsdo.otf.ts.rf2.jpa.ConceptJpa;
 public interface ValidationServiceRest {
 
   /**
-   * Validates the specified concept. Checks are defined the "run.config"
+   * Validates the specified concept. Checks are defined the "run.config.ts"
    * setting for the deployed server.
    *
    * @param concept the concept

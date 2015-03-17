@@ -139,6 +139,7 @@ public class Rf2FileSorter {
     fileMap.put("DescriptionType", "descriptionTypeByRefset.sort");
 
     // Sort files
+    int[] fields = null;
     for (String key : dirMap.keySet()) {
       Logger.getLogger(this.getClass()).info("  Sorting for " + key);
       final File file = findFile(new File(inputDir + dirMap.get(key)), key);
@@ -158,7 +159,6 @@ public class Rf2FileSorter {
       }
 
       // Determine fields to sort by
-      int[] fields = null;
       if (sortByEffectiveTime) {
         fields = new int[] {
             1, sortByMap.get(key)
@@ -186,14 +186,7 @@ public class Rf2FileSorter {
         new File(outputDir + "/" + fileMap.get("sct2_TextDefinition_"));
     File mergedDesc =
         ConfigUtility.mergeSortedFiles(descriptionsFile, textDefinitionsFile,
-            new Comparator<String>() {
-              @Override
-              public int compare(String s1, String s2) {
-                String v1[] = s1.split("\t");
-                String v2[] = s2.split("\t");
-                return v1[0].compareTo(v2[0]);
-              }
-            }, outputDir, ""); // header line
+            getComparator(fields), outputDir, "");
     Files.move(mergedDesc, new File(outputDir + "/"
         + "descriptionsAllByDescription.sort"));
 
@@ -206,14 +199,7 @@ public class Rf2FileSorter {
 
     File mergedRel =
         ConfigUtility.mergeSortedFiles(relationshipsFile,
-            statedRelationshipsFile, new Comparator<String>() {
-              @Override
-              public int compare(String s1, String s2) {
-                String v1[] = s1.split("\t");
-                String v2[] = s2.split("\t");
-                return v1[0].compareTo(v2[0]);
-              }
-            }, outputDir, ""); // header line
+            statedRelationshipsFile, getComparator(fields), outputDir, "");
 
     // rename the temporary file
     Files.move(mergedRel, new File(outputDir + "/"
@@ -266,20 +252,7 @@ public class Rf2FileSorter {
     throws Exception {
     Comparator<String> comp;
     // Comparator to split on \t and sort by sortColumn
-    comp = new Comparator<String>() {
-      @Override
-      public int compare(String s1, String s2) {
-        String v1[] = s1.split("\t");
-        String v2[] = s2.split("\t");
-        for (final int sortColumn : sortColumns) {
-          final int cmp = v1[sortColumn].compareTo(v2[sortColumn]);
-          if (cmp != 0) {
-            return cmp;
-          }
-        }
-        return 0;
-      }
-    };
+    comp = getComparator(sortColumns);
 
     StringBuilder columns = new StringBuilder();
     boolean first = true;
@@ -297,4 +270,27 @@ public class Rf2FileSorter {
 
   }
 
+  /**
+   * Returns the comparator.
+   *
+   * @param sortColumns the sort columns
+   * @return the comparator
+   */
+  @SuppressWarnings("static-method")
+  private Comparator<String> getComparator(final int[] sortColumns) {
+    return new Comparator<String>() {
+      @Override
+      public int compare(String s1, String s2) {
+        String v1[] = s1.split("\t");
+        String v2[] = s2.split("\t");
+        for (final int sortColumn : sortColumns) {
+          final int cmp = v1[sortColumn].compareTo(v2[sortColumn]);
+          if (cmp != 0) {
+            return cmp;
+          }
+        }
+        return 0;
+      }
+    };
+  }
 }

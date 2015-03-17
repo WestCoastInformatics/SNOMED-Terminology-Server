@@ -16,10 +16,20 @@
  */
 package org.ihtsdo.otf.ts.mojo;
 
+import java.util.Properties;
+
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoFailureException;
-import org.ihtsdo.otf.ts.jpa.services.ContentServiceJpa;
-import org.ihtsdo.otf.ts.services.ContentService;
+import org.ihtsdo.otf.ts.ReleaseInfo;
+import org.ihtsdo.otf.ts.helpers.ConfigUtility;
+import org.ihtsdo.otf.ts.jpa.client.ContentClientRest;
+import org.ihtsdo.otf.ts.jpa.client.HistoryClientRest;
+import org.ihtsdo.otf.ts.jpa.services.SecurityServiceJpa;
+import org.ihtsdo.otf.ts.rest.ContentServiceRest;
+import org.ihtsdo.otf.ts.rest.HistoryServiceRest;
+import org.ihtsdo.otf.ts.rest.impl.ContentServiceRestImpl;
+import org.ihtsdo.otf.ts.rest.impl.HistoryServiceRestImpl;
+import org.ihtsdo.otf.ts.services.SecurityService;
 
 /**
  * Goal which removes a terminology from a database.
@@ -47,6 +57,12 @@ public class TerminologyRemoverMojo extends AbstractMojo {
   private String version;
 
   /**
+   * Whether to run this mojo against an active server
+   * @parameter
+   */
+  private boolean server = false;
+
+  /**
    * Instantiates a {@link TerminologyRemoverMojo} from the specified
    * parameters.
    * 
@@ -66,9 +82,64 @@ public class TerminologyRemoverMojo extends AbstractMojo {
     getLog().info("  terminology = " + terminology);
     getLog().info("  version = " + version);
     try {
-      ContentService contentService = new ContentServiceJpa();
-      contentService.clearConcepts(terminology, version);
-      contentService.close();
+
+      Properties properties = ConfigUtility.getConfigProperties();
+
+      boolean serverRunning = ConfigUtility.isServerActive();
+      
+      getLog().info("Server status detected:  " + (!serverRunning ? "DOWN" : "UP"));
+
+      if (serverRunning && !server) {
+        throw new MojoFailureException("Mojo expects server to be down, but server is running");
+      }
+      
+      if (!serverRunning&& server) {
+        throw new MojoFailureException("Mojo expects server to be running, but server is down");
+      }
+      
+      // authenticate
+      SecurityService service = new SecurityServiceJpa();
+      String authToken =
+          service.authenticate(properties.getProperty("admin.user"),
+              properties.getProperty("admin.password"));
+      service.close();
+
+      if (!serverRunning) {
+        getLog().info("Running directly");
+        
+        getLog().info("  Remove concepts");
+        ContentServiceRest contentService = new ContentServiceRestImpl();
+        contentService.removeTerminology(terminology, version, authToken);
+
+        getLog().info("  Remove release info");
+        HistoryServiceRest historyService = new HistoryServiceRestImpl();
+        for (ReleaseInfo info : historyService.getReleaseHistory(terminology, authToken)
+            .getObjects()) {
+          if (info.getTerminology().equals(terminology)
+              && info.getTerminologyVersion().equals(version)) {
+            historyService.removeReleaseInfo(info.getId(), authToken);
+          }
+        }
+  
+
+      } else {
+        getLog().info("Running against server");
+
+        getLog().info("  Remove concepts");
+        ContentClientRest contentService = new ContentClientRest(properties);
+        contentService.removeTerminology(terminology, version, authToken);
+
+        getLog().info("  Remove release info");
+        HistoryClientRest historyService = new HistoryClientRest(properties);
+        for (ReleaseInfo info : historyService.getReleaseHistory(terminology, authToken)
+            .getObjects()) {
+          if (info.getTerminology().equals(terminology)
+              && info.getTerminologyVersion().equals(version)) {
+            historyService.removeReleaseInfo(info.getId(), authToken);
+          }
+        }      
+      }
+      
       getLog().info("done ...");
     } catch (Exception e) {
       e.printStackTrace();

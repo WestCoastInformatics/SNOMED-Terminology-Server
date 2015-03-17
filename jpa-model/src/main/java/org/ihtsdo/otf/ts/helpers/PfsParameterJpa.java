@@ -2,11 +2,8 @@ package org.ihtsdo.otf.ts.helpers;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
-// TODO: Auto-generated Javadoc
 /**
- * The Jpa implementation of the paging/filtering/sorting object.
- *
- * @author ${author}
+ * The JPA enabled implementation of the paging/filtering/sorting object.
  */
 @XmlRootElement
 public class PfsParameterJpa implements PfsParameter {

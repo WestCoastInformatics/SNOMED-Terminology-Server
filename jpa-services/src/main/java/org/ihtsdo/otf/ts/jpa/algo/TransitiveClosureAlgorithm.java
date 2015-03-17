@@ -38,7 +38,7 @@ public class TransitiveClosureAlgorithm extends ContentServiceJpa implements
   private String terminology;
 
   /** The terminology version. */
-  private String version;
+  private String terminologyVersion;
 
   /** The descendants map. */
   private Map<Long, Set<Long>> descendantsMap = new HashMap<>();
@@ -66,10 +66,10 @@ public class TransitiveClosureAlgorithm extends ContentServiceJpa implements
   /**
    * Sets the terminology version.
    *
-   * @param version the terminology version
+   * @param terminologyVersion the terminology version
    */
-  public void setTerminologyVersion(String version) {
-    this.version = version;
+  public void setTerminologyVersion(String terminologyVersion) {
+    this.terminologyVersion = terminologyVersion;
   }
 
   /*
@@ -79,7 +79,7 @@ public class TransitiveClosureAlgorithm extends ContentServiceJpa implements
    */
   @Override
   public void compute() throws Exception {
-    computeTransitiveClosure(terminology, version);
+    computeTransitiveClosure(terminology, terminologyVersion);
   }
 
   /*
@@ -89,7 +89,7 @@ public class TransitiveClosureAlgorithm extends ContentServiceJpa implements
    */
   @Override
   public void reset() throws Exception {
-    clearTransitiveClosure(terminology, version);
+    clearTransitiveClosure(terminology, terminologyVersion);
   }
 
   /**
@@ -139,9 +139,9 @@ public class TransitiveClosureAlgorithm extends ContentServiceJpa implements
         manager
             .createQuery(
                 "select r from RelationshipJpa r where active=1 "
-                    + "and terminology=:terminology "
-                    + "and version=:version "
-                    + "and typeId=:typeId and characteristicTypeId=:characteristicTypeId")
+                    + "and terminology = :terminology "
+                    + "and terminologyVersion = :version "
+                    + "and typeId = :typeId and characteristicTypeId = :characteristicTypeId")
             .setParameter("terminology", terminology)
             .setParameter("version", version)
             .setParameter("typeId", isaRel)

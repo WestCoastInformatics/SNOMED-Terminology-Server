@@ -21,7 +21,6 @@ import org.ihtsdo.otf.ts.helpers.UserList;
 import org.ihtsdo.otf.ts.jpa.UserJpa;
 import org.ihtsdo.otf.ts.jpa.services.SecurityServiceJpa;
 import org.ihtsdo.otf.ts.rest.SecurityServiceRest;
-import org.ihtsdo.otf.ts.rest.todo.ContentChangeServiceRestImpl;
 import org.ihtsdo.otf.ts.services.SecurityService;
 
 import com.wordnik.swagger.annotations.Api;
@@ -33,8 +32,11 @@ import com.wordnik.swagger.annotations.ApiParam;
  */
 @Path("/security")
 @Api(value = "/security", description = "Operations supporting security.")
+@Consumes({
+  MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML
+})
 @Produces({
-    MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML
+  MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML
 })
 public class SecurityServiceRestImpl extends RootServiceRestImpl implements
     SecurityServiceRest {
@@ -52,15 +54,12 @@ public class SecurityServiceRestImpl extends RootServiceRestImpl implements
   @Consumes({
     MediaType.TEXT_PLAIN
   })
-  @Produces({
-      MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML
-  })
   @ApiOperation(value = "Authenticate a user.", notes = "Performs authentication on specified username and password and returns a token upon successful authentication. Throws 401 error if not.", response = String.class)
   public String authenticate(
     @ApiParam(value = "Username, e.g. 'guest'", required = true) @PathParam("username") String username,
     @ApiParam(value = "Password, as string post data, e.g. 'guest'", required = true) String password) throws Exception {
 
-    Logger.getLogger(SecurityServiceRestImpl.class)
+    Logger.getLogger(getClass())
         .info(
             "RESTful call (Authentication): /authentication for user = "
                 + username);
@@ -89,14 +88,11 @@ public class SecurityServiceRestImpl extends RootServiceRestImpl implements
   @Override
   @GET
   @Path("/logout/{authToken}")
-  @Produces({
-      MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML
-  })
   @ApiOperation(value = "Logs out an auth token.", notes = "Performs logout on specified auth token.", response = String.class)
   public boolean logout(
     @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @PathParam("authToken") String authToken) throws Exception {
 
-    Logger.getLogger(SecurityServiceRestImpl.class).info(
+    Logger.getLogger(getClass()).info(
         "RESTful call (Authentication): /logout for authToken = " + authToken);
     SecurityService securityService = new SecurityServiceJpa();
     try {
@@ -125,13 +121,10 @@ public class SecurityServiceRestImpl extends RootServiceRestImpl implements
   @GET
   @Path("/user/id/{id}")
   @ApiOperation(value = "Get user by id", notes = "Gets the user for the specified id.", response = User.class)
-  @Produces({
-      MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML
-  })
   public User getUser(
     @ApiParam(value = "User internal id, e.g. 2", required = true) @PathParam("id") Long id,
     @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken) throws Exception {
-    Logger.getLogger(ContentServiceRestImpl.class).info(
+    Logger.getLogger(getClass()).info(
         "RESTful call (Content): /user/id/" + id);
     SecurityService securityService = new SecurityServiceJpa();
     try {
@@ -157,13 +150,10 @@ public class SecurityServiceRestImpl extends RootServiceRestImpl implements
   @GET
   @Path("/user/name/{username}")
   @ApiOperation(value = "Get user by name", notes = "Gets the user for the specified name.", response = User.class)
-  @Produces({
-      MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML
-  })
   public User getUser(
     @ApiParam(value = "Username, e.g. \"guest\"", required = true) @PathParam("username") String username,
     @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken) throws Exception {
-    Logger.getLogger(ContentServiceRestImpl.class).info(
+    Logger.getLogger(getClass()).info(
         "RESTful call (Content): /user/name/" + username);
     SecurityService securityService = new SecurityServiceJpa();
     try {
@@ -188,12 +178,9 @@ public class SecurityServiceRestImpl extends RootServiceRestImpl implements
   @GET
   @Path("/user/users")
   @ApiOperation(value = "Get all users", notes = "Gets all users.", response = UserList.class)
-  @Produces({
-      MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML
-  })
   public UserList getUsers(
     @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken) throws Exception {
-    Logger.getLogger(ContentServiceRestImpl.class).info(
+    Logger.getLogger(getClass()).info(
         "RESTful call (Content): /user/users");
     SecurityService securityService = new SecurityServiceJpa();
     try {
@@ -220,14 +207,11 @@ public class SecurityServiceRestImpl extends RootServiceRestImpl implements
   @PUT
   @Path("/user/add")
   @ApiOperation(value = "Add new user", notes = "Creates a new user.", response = User.class)
-  @Produces({
-      MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML
-  })
   public User addUser(
     @ApiParam(value = "User, e.g. newUser", required = true) UserJpa user,
     @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken)
     throws Exception {
-    Logger.getLogger(ContentChangeServiceRestImpl.class).info(
+    Logger.getLogger(getClass()).info(
         "RESTful call PUT (ContentChange): /user/add " + user);
 
     SecurityService securityService = new SecurityServiceJpa();
@@ -257,14 +241,11 @@ public class SecurityServiceRestImpl extends RootServiceRestImpl implements
   @DELETE
   @Path("/user/remove/{id}")
   @ApiOperation(value = "Remove user by id", notes = "Removes the user for the specified id.")
-  @Produces({
-      MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML
-  })
   public void removeUser(
     @ApiParam(value = "User internal id, e.g. 2", required = true) @PathParam("id") Long id,
     @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken)
     throws Exception {
-    Logger.getLogger(ContentServiceRestImpl.class).info(
+    Logger.getLogger(getClass()).info(
         "RESTful DELETE call (ContentChange): /user/remove/id/" + id);
     
     SecurityService securityService = new SecurityServiceJpa();
@@ -285,14 +266,11 @@ public class SecurityServiceRestImpl extends RootServiceRestImpl implements
   @POST
   @Path("/user/update")
   @ApiOperation(value = "Update user", notes = "Updates the specified user.")
-  @Produces({
-      MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML
-  })
   public void updateUser(
     @ApiParam(value = "User, e.g. update", required = true) UserJpa user,
     @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken)
     throws Exception {
-    Logger.getLogger(ContentChangeServiceRestImpl.class).info(
+    Logger.getLogger(getClass()).info(
         "RESTful call POST (ContentChange): /user/update " + user);
     SecurityService securityService = new SecurityServiceJpa();
     try {

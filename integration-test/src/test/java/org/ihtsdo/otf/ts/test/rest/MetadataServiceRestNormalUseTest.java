@@ -126,7 +126,7 @@ public class MetadataServiceRestNormalUseTest extends MetadataServiceRestTest {
   @Test
   public void testNormalUseRestMetadata003() throws Exception {
 
-    Logger.getLogger(MetadataServiceRestNormalUseTest.class).info(
+    Logger.getLogger(getClass()).info(
         "Running testNormalUseRestMetadata003");
 
     // test SNOMED metadata
@@ -146,7 +146,7 @@ public class MetadataServiceRestNormalUseTest extends MetadataServiceRestTest {
   @Test
   public void testNormalUseRestMetadata004() throws Exception {
 
-    Logger.getLogger(MetadataServiceRestNormalUseTest.class).info(
+    Logger.getLogger(getClass()).info(
         "Running testNormalUseRestMetadata004");
 
     // test SNOMED metadata

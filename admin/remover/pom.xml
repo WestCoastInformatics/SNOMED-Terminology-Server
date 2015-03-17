@@ -78,6 +78,7 @@
                   <terminology>${terminology}</terminology>
                   <!-- Leave blank to remove all -->
                   <releaseInfoNames>${release.info.names}</releaseInfoNames>
+                  <server>${server}</server>
                 </configuration>
               </execution>
             </executions>

@@ -1,5 +1,6 @@
 package org.ihtsdo.otf.ts.rest.todo;
 
+import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.HeaderParam;
 import javax.ws.rs.POST;
@@ -18,7 +19,6 @@ import org.ihtsdo.otf.ts.jpa.ProjectJpa;
 import org.ihtsdo.otf.ts.jpa.services.ActionServiceJpa;
 import org.ihtsdo.otf.ts.jpa.services.SecurityServiceJpa;
 import org.ihtsdo.otf.ts.rest.ActionServiceRest;
-import org.ihtsdo.otf.ts.rest.impl.ContentServiceRestImpl;
 import org.ihtsdo.otf.ts.rest.impl.RootServiceRestImpl;
 import org.ihtsdo.otf.ts.services.ActionService;
 import org.ihtsdo.otf.ts.services.SecurityService;
@@ -32,6 +32,9 @@ import com.wordnik.swagger.annotations.ApiParam;
  */
 @Path("/action")
 @Api(value = "/action", description = "Operations to perform actions on terminology.")
+@Consumes({
+    MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML
+})
 @Produces({
     MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML
 })
@@ -62,14 +65,11 @@ public class ActionServiceRestImpl extends RootServiceRestImpl implements
   @POST
   @Path("/configure")
   @ApiOperation(value = "Configure service for a session", notes = "Takes configuration information and returns a reusable session token.", response = String.class)
-  @Produces({
-      MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML
-  })
   public String configureActionService(
     @ApiParam(value = "Project, e.g. the result of a content service get project call", required = true) ProjectJpa project,
     @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken) {
 
-    Logger.getLogger(ContentServiceRestImpl.class).info(
+    Logger.getLogger(getClass()).info(
         "RESTful call (Action): /configure");
 
     try {
@@ -101,7 +101,7 @@ public class ActionServiceRestImpl extends RootServiceRestImpl implements
     @ApiParam(value = "Session token, e.g. value from /action/configure", required = true) @HeaderParam("sessionToken") String sessionToken,
     @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken) {
 
-    Logger.getLogger(ContentServiceRestImpl.class).info(
+    Logger.getLogger(getClass()).info(
         "RESTful call (Action): /clear/" + sessionToken);
 
     try {
@@ -133,14 +133,11 @@ public class ActionServiceRestImpl extends RootServiceRestImpl implements
   @GET
   @Path("/progress/{sessionToken}")
   @ApiOperation(value = "Get session progress", notes = "Gets the progress for the current activity for the specified session token.", response = Float.class)
-  @Produces({
-      MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML
-  })
   public float getProgress(
     @ApiParam(value = "Session token, e.g. value from /action/configure", required = true) @HeaderParam("sessionToken") String sessionToken,
     @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken) {
 
-    Logger.getLogger(ContentServiceRestImpl.class).info(
+    Logger.getLogger(getClass()).info(
         "RESTful call (Action): /progress/" + sessionToken);
 
     try {
@@ -171,14 +168,11 @@ public class ActionServiceRestImpl extends RootServiceRestImpl implements
   @POST
   @Path("/cancel/{sessionToken}")
   @ApiOperation(value = "Cancel session operation", notes = "Cancels the current activity for the specified session token.")
-  @Produces({
-      MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML
-  })
   public void cancel(
     @ApiParam(value = "Session token, e.g. value from /action/configure", required = true) @HeaderParam("sessionToken") String sessionToken,
     @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken) {
 
-    Logger.getLogger(ContentServiceRestImpl.class).info(
+    Logger.getLogger(getClass()).info(
         "RESTful call (Action): /cancel/" + sessionToken);
 
     try {
@@ -208,14 +202,11 @@ public class ActionServiceRestImpl extends RootServiceRestImpl implements
   @POST
   @Path("/classify/{sessionToken}/prepare")
   @ApiOperation(value = "Prepare classification data", notes = "Prepares classification data for the specified session token.")
-  @Produces({
-      MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML
-  })
   public void prepareToClassify(
     @ApiParam(value = "Session token, e.g. value from /action/configure", required = true) @HeaderParam("sessionToken") String sessionToken,
     @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken) {
 
-    Logger.getLogger(ContentServiceRestImpl.class).info(
+    Logger.getLogger(getClass()).info(
         "RESTful call (Action): /classify/" + sessionToken + "/prepare");
 
     try {
@@ -247,14 +238,11 @@ public class ActionServiceRestImpl extends RootServiceRestImpl implements
   @POST
   @Path("/classify/{sessionToken}")
   @ApiOperation(value = "Classification", notes = "Classifies data for the specified session token.")
-  @Produces({
-      MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML
-  })
   public void classify(
     @ApiParam(value = "Session token, e.g. value from /action/configure", required = true) @HeaderParam("sessionToken") String sessionToken,
     @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken) {
 
-    Logger.getLogger(ContentServiceRestImpl.class).info(
+    Logger.getLogger(getClass()).info(
         "RESTful call (Action): /classify/" + sessionToken);
 
     try {
@@ -283,14 +271,11 @@ public class ActionServiceRestImpl extends RootServiceRestImpl implements
   @POST
   @Path("/classify/{sessionToken}/incremental")
   @ApiOperation(value = "Incremental classification", notes = "Incrementally classifies data for the specified session token.")
-  @Produces({
-      MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML
-  })
   public void incrementalClassify(
     @ApiParam(value = "Session token, e.g. value from /action/configure", required = true) @HeaderParam("sessionToken") String sessionToken,
     @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken) {
 
-    Logger.getLogger(ContentServiceRestImpl.class).info(
+    Logger.getLogger(getClass()).info(
         "RESTful call (Action): /classify/" + sessionToken + "/incremental");
 
     try {
@@ -320,14 +305,11 @@ public class ActionServiceRestImpl extends RootServiceRestImpl implements
   @GET
   @Path("/classify/{sessionToken}/equivalents")
   @ApiOperation(value = "Get classification equivalents", notes = "Gets classicifaction equivalencies for the specified session token.", response = KeyValuesMap.class)
-  @Produces({
-      MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML
-  })
   public KeyValuesMap getClassificationEquivalents(
     @ApiParam(value = "Session token, e.g. value from /action/configure", required = true) @HeaderParam("sessionToken") String sessionToken,
     @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken) {
 
-    Logger.getLogger(ContentServiceRestImpl.class).info(
+    Logger.getLogger(getClass()).info(
         "RESTful call (Action): /classify/" + sessionToken + "/equivalents");
 
     try {
@@ -364,14 +346,11 @@ public class ActionServiceRestImpl extends RootServiceRestImpl implements
   @GET
   @Path("/classify/{sessionToken}/old")
   @ApiOperation(value = "Get inferred relationships no longer active after classification", notes = "Gets inferred relationships no longer active after classification for the specified session token.", response = RelationshipList.class)
-  @Produces({
-      MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML
-  })
   public RelationshipList getOldInferredRelationships(
     @ApiParam(value = "Session token, e.g. value from /action/configure", required = true) @HeaderParam("sessionToken") String sessionToken,
     @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken) {
 
-    Logger.getLogger(ContentServiceRestImpl.class).info(
+    Logger.getLogger(getClass()).info(
         "RESTful call (Action): /classify/" + sessionToken + "/old");
 
     try {
@@ -408,14 +387,11 @@ public class ActionServiceRestImpl extends RootServiceRestImpl implements
   @GET
   @Path("/classify/{sessionToken}/new")
   @ApiOperation(value = "Get new inferred relationships after classification", notes = "Gets new inferred relationships after classification for the specified session token.", response = RelationshipList.class)
-  @Produces({
-      MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML
-  })
   public RelationshipList getNewInferredRelationships(
     @ApiParam(value = "Session token, e.g. value from /action/configure", required = true) @HeaderParam("sessionToken") String sessionToken,
     @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken) {
 
-    Logger.getLogger(ContentServiceRestImpl.class).info(
+    Logger.getLogger(getClass()).info(
         "RESTful call (Action): /classify/" + sessionToken + "/new");
 
     try {
@@ -445,14 +421,11 @@ public class ActionServiceRestImpl extends RootServiceRestImpl implements
   @POST
   @Path("/classify/{sessionToken}/old/retire")
   @ApiOperation(value = "Retire inferred relationships no longer active after classification", notes = "Retires inferred relationships no longer active after classification for the specified session token.", response = RelationshipList.class)
-  @Produces({
-      MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML
-  })
   public void retireOldInferredRelationships(
     @ApiParam(value = "Session token, e.g. value from /action/configure", required = true) @HeaderParam("sessionToken") String sessionToken,
     @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken) {
 
-    Logger.getLogger(ContentServiceRestImpl.class).info(
+    Logger.getLogger(getClass()).info(
         "RESTful call (Action): /classify/" + sessionToken + "/old/retire");
 
     try {
@@ -488,14 +461,11 @@ public class ActionServiceRestImpl extends RootServiceRestImpl implements
   @PUT
   @Path("/classify/{sessionToken}/new/add")
   @ApiOperation(value = "Add new inferred relationships after classification", notes = "Adds new inferred relationships after classification for the specified session token.", response = RelationshipList.class)
-  @Produces({
-      MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML
-  })
   public void addNewInferredRelationships(
     @ApiParam(value = "Session token, e.g. value from /action/configure", required = true) @HeaderParam("sessionToken") String sessionToken,
     @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken) {
 
-    Logger.getLogger(ContentServiceRestImpl.class).info(
+    Logger.getLogger(getClass()).info(
         "RESTful call (Action): /classify/" + sessionToken + "/new");
 
     try {

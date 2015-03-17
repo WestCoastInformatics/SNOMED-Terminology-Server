@@ -16,12 +16,11 @@ import java.util.Set;
 import javax.persistence.NoResultException;
 
 import org.apache.log4j.Logger;
-import org.apache.lucene.queryParser.ParseException;
-import org.apache.lucene.queryParser.QueryParser;
+import org.apache.lucene.queryparser.classic.ParseException;
+import org.apache.lucene.queryparser.classic.QueryParser;
 import org.apache.lucene.search.Query;
 import org.apache.lucene.search.Sort;
 import org.apache.lucene.search.SortField;
-import org.apache.lucene.util.Version;
 import org.hibernate.search.SearchFactory;
 import org.hibernate.search.annotations.Analyze;
 import org.hibernate.search.jpa.FullTextEntityManager;
@@ -104,7 +103,7 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
   /** The listeners enabled. */
   private boolean listenersEnabled = true;
 
-  /** The config properties */
+  /** The config properties. */
   private static Properties config = null;
 
   /** The listener. */
@@ -224,18 +223,13 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
           "Identifier assignment handler did not properly initialize, serious error.");
     }
 
-    /*
-     * if (pnHandlerMap == null) { throw new Exception(
-     * "Identifier compute preferred name handler did not properly initialize, serious error."
-     * ); }
-     */
-    // if (plannedEffectiveTime == null) {
-    // plannedEffectiveTime = getPlannedEffectiveTime();
-    // }
   }
 
   /** The last modified flag. */
   private boolean lastModifiedFlag = false;
+
+  /** The assign identifiers flag. */
+  private boolean assignIdentifiersFlag = false;
 
   /*
    * (non-Javadoc)
@@ -283,7 +277,7 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
   @Override
   public ConceptList getConcepts(String terminology, String version,
     PfsParameter pfs) throws Exception {
-    Logger.getLogger(ContentServiceJpa.class).debug(
+    Logger.getLogger(getClass()).debug(
         "Content Service - get concepts " + terminology + "/" + version);
 
     // Prepare results
@@ -303,8 +297,8 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
         Search.getFullTextEntityManager(manager);
     SearchFactory searchFactory = fullTextEntityManager.getSearchFactory();
     Query luceneQuery;
-    QueryParser queryParser =
-        new QueryParser(Version.LUCENE_36, "all",
+    QueryParser queryParser = 
+        new QueryParser("all",
             searchFactory.getAnalyzer(ConceptJpa.class));
     luceneQuery = queryParser.parse(finalQuery.toString());
     FullTextQuery fullTextQuery =
@@ -335,7 +329,7 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
    */
   @Override
   public Concept getConcept(Long id) throws Exception {
-    Logger.getLogger(ContentServiceJpa.class).debug(
+    Logger.getLogger(getClass()).debug(
         "Content Service - get concept " + id);
     Concept c = manager.find(ConceptJpa.class, id);
     return c;
@@ -352,12 +346,12 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
   @Override
   public ConceptList getConcepts(String terminologyId, String terminology,
     String version) throws Exception {
-    Logger.getLogger(ContentServiceJpa.class).debug(
+    Logger.getLogger(getClass()).debug(
         "Content Service - get concept " + terminologyId + "/" + terminology
             + "/" + version);
     javax.persistence.Query query =
         manager
-            .createQuery("select c from ConceptJpa c where terminologyId = :terminologyId and version = :version and terminology = :terminology");
+            .createQuery("select c from ConceptJpa c where terminologyId = :terminologyId and terminologyVersion = :version and terminology = :terminology");
     /*
      * Try to retrieve the single expected result If zero or more than one
      * result are returned, log error and set result to null
@@ -392,12 +386,12 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
   @Override
   public Concept getSingleConcept(String terminologyId, String terminology,
     String version) throws Exception {
-    Logger.getLogger(ContentServiceJpa.class).debug(
+    Logger.getLogger(getClass()).debug(
         "Content Service - get single concept " + terminologyId + "/"
             + terminology + "/" + version);
     ConceptList cl = getConcepts(terminologyId, terminology, version);
     if (cl == null || cl.getTotalCount() == 0) {
-      Logger.getLogger(ContentServiceJpa.class).debug("  empty concept ");
+      Logger.getLogger(getClass()).debug("  empty concept ");
       return null;
     }
     if (cl.getTotalCount() > 1) {
@@ -417,11 +411,11 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
   @SuppressWarnings("unchecked")
   @Override
   public ConceptList getAllConcepts(String terminology, String version) {
-    Logger.getLogger(ContentServiceJpa.class).debug(
+    Logger.getLogger(getClass()).debug(
         "Content Service - get concepts " + terminology + "/" + version);
     javax.persistence.Query query =
         manager
-            .createQuery("select c from ConceptJpa c where version = :version and terminology = :terminology");
+            .createQuery("select c from ConceptJpa c where terminologyVersion = :version and terminology = :terminology");
     /*
      * Try to retrieve the single expected result If zero or more than one
      * result are returned, log error and set result to null
@@ -458,7 +452,7 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
     ConceptList list = new ConceptListJpa();
     String queryStr =
         "select a from TransitiveRelationshipJpa tr, ConceptJpa super, ConceptJpa a "
-            + " where super.version = :version "
+            + " where super.terminologyVersion = :version "
             + " and super.terminology = :terminology "
             + " and super.terminologyId = :terminologyId"
             + " and tr.superTypeConcept = super"
@@ -468,7 +462,7 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
     javax.persistence.Query ctQuery =
         manager
             .createQuery("select count(*) from TransitiveRelationshipJpa tr, ConceptJpa super"
-                + " where super.version = :version "
+                + " where super.terminologyVersion = :version "
                 + " and super.terminology = :terminology "
                 + " and super.terminologyId = :terminologyId"
                 + " and tr.superTypeConcept = super");
@@ -488,6 +482,13 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
     return list;
   }
 
+  /*
+   * (non-Javadoc)
+   * 
+   * @see
+   * org.ihtsdo.otf.ts.services.ContentService#getAncestorConcepts(org.ihtsdo
+   * .otf.ts.rf2.Concept, org.ihtsdo.otf.ts.helpers.PfsParameter)
+   */
   @SuppressWarnings("unchecked")
   @Override
   public ConceptList getAncestorConcepts(Concept concept, PfsParameter pfs)
@@ -501,7 +502,7 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
     ConceptList list = new ConceptListJpa();
     String queryStr =
         "select a from TransitiveRelationshipJpa tr, ConceptJpa a, ConceptJpa sub "
-            + " where sub.version = :version "
+            + " where sub.terminologyVersion = :version "
             + " and sub.terminology = :terminology "
             + " and sub.terminologyId = :terminologyId"
             + " and tr.superTypeConcept = a" + " and tr.subTypeConcept = sub";
@@ -510,7 +511,7 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
     javax.persistence.Query ctQuery =
         manager
             .createQuery("select count(*) from TransitiveRelationshipJpa tr, ConceptJpa sub"
-                + " where sub.version = :version "
+                + " where sub.terminologyVersion = :version "
                 + " and sub.terminology = :terminology "
                 + " and sub.terminologyId = :terminologyId"
                 + " and tr.subTypeConcept = sub");
@@ -547,7 +548,7 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
             + " where r.destinationConcept = c"
             + " and c.terminology = :terminology "
             + " and c.terminologyId = :terminologyId"
-            + " and c.version = :version");
+            + " and c.terminologyVersion = :version");
     query.setParameter("terminologyId", concept.getTerminologyId());
     query.setParameter("terminology", concept.getTerminology());
     query.setParameter("version", concept.getTerminologyVersion());
@@ -602,27 +603,34 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
    * org.ihtsdo.otf.mapping.services.ContentService#addConcept(org.ihtsdo.otf
    * .mapping.rf2.Concept)
    */
+  @SuppressWarnings("null")
   @Override
   public Concept addConcept(Concept concept) throws Exception {
-    Logger.getLogger(ContentServiceJpa.class).debug(
+    Logger.getLogger(getClass()).debug(
         "Content Service - add concept " + concept.getTerminologyId());
     // Assign id
-    IdentifierAssignmentHandler idHandler =
-        idHandlerMap.get(concept.getTerminology());
-    String id = idHandler.getTerminologyId(concept);
-    concept.setTerminologyId(id);
+    IdentifierAssignmentHandler idHandler = null;
+    if (assignIdentifiersFlag) {
+      idHandler = idHandlerMap.get(concept.getTerminology());
+      String id = idHandler.getTerminologyId(concept);
+      concept.setTerminologyId(id);
+    }
     // Process Cascade.ALL data structures
     Date date = new Date();
     for (Description description : concept.getDescriptions()) {
-      id = idHandler.getTerminologyId(description);
-      description.setTerminologyId(id);
+      if (assignIdentifiersFlag) {
+        String id = idHandler.getTerminologyId(description);
+        description.setTerminologyId(id);
+      }
       if (lastModifiedFlag) {
         description.setLastModified(date);
         description.setLastModifiedBy(concept.getLastModifiedBy());
       }
       for (LanguageRefSetMember member : description.getLanguageRefSetMembers()) {
-        id = idHandler.getTerminologyId(member);
-        member.setTerminologyId(id);
+        if (assignIdentifiersFlag) {
+          String id = idHandler.getTerminologyId(member);
+          member.setTerminologyId(id);
+        }
         if (lastModifiedFlag) {
           member.setLastModifiedBy(concept.getLastModifiedBy());
           member.setLastModified(date);
@@ -630,8 +638,10 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
       }
     }
     for (Relationship relationship : concept.getRelationships()) {
-      id = idHandler.getTerminologyId(relationship);
-      relationship.setTerminologyId(idHandler.getTerminologyId(relationship));
+      if (assignIdentifiersFlag) {
+        String id = idHandler.getTerminologyId(relationship);
+        relationship.setTerminologyId(id);
+      }
       if (lastModifiedFlag) {
         relationship.setLastModifiedBy(concept.getLastModifiedBy());
         relationship.setLastModified(date);
@@ -660,23 +670,25 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
    */
   @Override
   public void updateConcept(Concept concept) throws Exception {
-    Logger.getLogger(ContentServiceJpa.class).debug(
+    Logger.getLogger(getClass()).debug(
         "Content Service - update concept " + concept.getTerminologyId());
 
     // Id assignment should not change
     final IdentifierAssignmentHandler idHandler =
         idHandlerMap.get(concept.getTerminology());
-    if (!idHandler.allowConceptIdChangeOnUpdate()) {
-      Concept concept2 = getConcept(concept.getId());
-      if (!idHandler.getTerminologyId(concept).equals(
-          idHandler.getTerminologyId(concept2))) {
-        throw new Exception("Update cannot be used to change object identity.");
+    if (assignIdentifiersFlag) {
+      if (!idHandler.allowConceptIdChangeOnUpdate()) {
+        Concept concept2 = getConcept(concept.getId());
+        if (!idHandler.getTerminologyId(concept).equals(
+            idHandler.getTerminologyId(concept2))) {
+          throw new Exception(
+              "Update cannot be used to change object identity.");
+        }
+      } else {
+        // set concept id on update
+        concept.setTerminologyId(idHandler.getTerminologyId(concept));
       }
-    } else {
-      // set concept id on update
-      concept.setTerminologyId(idHandler.getTerminologyId(concept));
     }
-
     // update component
     this.updateComponent(concept);
 
@@ -697,7 +709,7 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
    */
   @Override
   public void removeConcept(Long id) throws Exception {
-    Logger.getLogger(ContentServiceJpa.class).debug(
+    Logger.getLogger(getClass()).debug(
         "Content Service - remove concept " + id);
     // Remove the component
     Concept concept = removeComponent(id, ConceptJpa.class);
@@ -717,7 +729,7 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
    */
   @Override
   public Description getDescription(Long id) throws Exception {
-    Logger.getLogger(ContentServiceJpa.class).debug(
+    Logger.getLogger(getClass()).debug(
         "Content Service - get description " + id);
     Description c = manager.find(DescriptionJpa.class, id);
     return c;
@@ -733,12 +745,12 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
   @Override
   public Description getDescription(String terminologyId, String terminology,
     String version) throws Exception {
-    Logger.getLogger(ContentServiceJpa.class).debug(
+    Logger.getLogger(getClass()).debug(
         "Content Service - get description " + terminologyId + "/"
             + terminology + "/" + version);
     javax.persistence.Query query =
         manager
-            .createQuery("select c from DescriptionJpa c where terminologyId = :terminologyId and version = :version and terminology = :terminology");
+            .createQuery("select c from DescriptionJpa c where terminologyId = :terminologyId and terminologyVersion = :version and terminology = :terminology");
     /*
      * Try to retrieve the single expected result If zero or more than one
      * result are returned, log error and set result to null
@@ -750,7 +762,7 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
       query.setParameter("version", version);
       return (Description) query.getSingleResult();
     } catch (NoResultException e) {
-      Logger.getLogger(ContentServiceJpa.class).warn(
+      Logger.getLogger(getClass()).warn(
           "Could not retrieve description " + terminologyId
               + ", terminology = " + terminology + ", version = " + version
               + " returned no results!");
@@ -766,19 +778,24 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
    * org.ihtsdo.otf.mapping.services.ContentService#addDescription(org.ihtsdo
    * .otf.mapping.rf2.Description)
    */
+  @SuppressWarnings("null")
   @Override
   public Description addDescription(Description description) throws Exception {
-    Logger.getLogger(ContentServiceJpa.class).debug(
+    Logger.getLogger(getClass()).debug(
         "Content Service - add description " + description.getTerminologyId());
     // Assign id
-    IdentifierAssignmentHandler idHandler =
-        idHandlerMap.get(description.getTerminology());
-    description.setTerminologyId(idHandler.getTerminologyId(description));
+    IdentifierAssignmentHandler idHandler = null;
+    if (assignIdentifiersFlag) {
+      idHandler = idHandlerMap.get(description.getTerminology());
+      description.setTerminologyId(idHandler.getTerminologyId(description));
+    }
 
     // Process Cascade.ALL data structures
     Date date = new Date();
     for (LanguageRefSetMember member : description.getLanguageRefSetMembers()) {
-      member.setTerminologyId(idHandler.getTerminologyId(member));
+      if (assignIdentifiersFlag) {
+        member.setTerminologyId(idHandler.getTerminologyId(member));
+      }
       if (lastModifiedFlag) {
         member.setLastModifiedBy(description.getLastModifiedBy());
         member.setLastModified(date);
@@ -806,13 +823,13 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
    */
   @Override
   public void updateDescription(Description description) throws Exception {
-    Logger.getLogger(ContentServiceJpa.class).debug(
+    Logger.getLogger(getClass()).debug(
         "Content Service - update description "
             + description.getTerminologyId());
     // Id assignment should not change
     final IdentifierAssignmentHandler idHandler =
         idHandlerMap.get(description.getTerminology());
-    if (!idHandler.allowIdChangeOnUpdate()) {
+    if (!idHandler.allowIdChangeOnUpdate() && assignIdentifiersFlag) {
       Description description2 = getDescription(description.getId());
       if (!idHandler.getTerminologyId(description).equals(
           idHandler.getTerminologyId(description2))) {
@@ -841,7 +858,7 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
    */
   @Override
   public void removeDescription(Long id) throws Exception {
-    Logger.getLogger(ContentServiceJpa.class).debug(
+    Logger.getLogger(getClass()).debug(
         "Content Service - remove description " + id);
     // Remove the component
     Description description = removeComponent(id, DescriptionJpa.class);
@@ -861,7 +878,7 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
    */
   @Override
   public Relationship getRelationship(Long id) throws Exception {
-    Logger.getLogger(ContentServiceJpa.class).debug(
+    Logger.getLogger(getClass()).debug(
         "Content Service - get relationship " + id);
     Relationship c = manager.find(RelationshipJpa.class, id);
     return c;
@@ -877,12 +894,12 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
   @Override
   public Relationship getRelationship(String terminologyId, String terminology,
     String version) throws Exception {
-    Logger.getLogger(ContentServiceJpa.class).debug(
+    Logger.getLogger(getClass()).debug(
         "Content Service - get relationship " + terminologyId + "/"
             + terminology + "/" + version);
     javax.persistence.Query query =
         manager
-            .createQuery("select c from RelationshipJpa c where terminologyId = :terminologyId and version = :version and terminology = :terminology");
+            .createQuery("select c from RelationshipJpa c where terminologyId = :terminologyId and terminologyVersion = :version and terminology = :terminology");
     /*
      * Try to retrieve the single expected result If zero or more than one
      * result are returned, log error and set result to null
@@ -895,7 +912,7 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
       return c;
     } catch (Exception e) {
 
-      Logger.getLogger(ContentServiceJpa.class).debug(
+      Logger.getLogger(getClass()).debug(
           "Relationship query for terminologyId = " + terminologyId
               + ", terminology = " + terminology + ", version = " + version
               + " threw an exception!");
@@ -913,14 +930,15 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
   @Override
   public Relationship addRelationship(Relationship relationship)
     throws Exception {
-    Logger.getLogger(ContentServiceJpa.class)
+    Logger.getLogger(getClass())
         .debug(
             "Content Service - add relationship "
                 + relationship.getTerminologyId());
     // Assign id
-    relationship.setTerminologyId(idHandlerMap.get(
-        relationship.getTerminology()).getTerminologyId(relationship));
-
+    if (assignIdentifiersFlag) {
+      relationship.setTerminologyId(idHandlerMap.get(
+          relationship.getTerminology()).getTerminologyId(relationship));
+    }
     // Add component
     Relationship newRelationship = addComponent(relationship);
 
@@ -942,13 +960,13 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
    */
   @Override
   public void updateRelationship(Relationship relationship) throws Exception {
-    Logger.getLogger(ContentServiceJpa.class).debug(
+    Logger.getLogger(getClass()).debug(
         "Content Service - update relationship "
             + relationship.getTerminologyId());
     // Id assignment should not change
     final IdentifierAssignmentHandler idHandler =
         idHandlerMap.get(relationship.getTerminology());
-    if (!idHandler.allowIdChangeOnUpdate()) {
+    if (!idHandler.allowIdChangeOnUpdate() && assignIdentifiersFlag) {
       Relationship relationship2 = getRelationship(relationship.getId());
       if (!idHandler.getTerminologyId(relationship).equals(
           idHandler.getTerminologyId(relationship2))) {
@@ -977,7 +995,7 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
    */
   @Override
   public void removeRelationship(Long id) throws Exception {
-    Logger.getLogger(ContentServiceJpa.class).debug(
+    Logger.getLogger(getClass()).debug(
         "Content Service - remove relationship " + id);
     // Remove the component
     Relationship relationship = removeComponent(id, RelationshipJpa.class);
@@ -999,13 +1017,15 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
   @Override
   public TransitiveRelationship addTransitiveRelationship(
     TransitiveRelationship relationship) throws Exception {
-    Logger.getLogger(ContentServiceJpa.class).debug(
+    Logger.getLogger(getClass()).debug(
         "Content Service - add transitive relationship "
             + relationship.getSuperTypeConcept() + "/"
             + relationship.getSubTypeConcept());
     // Assign id
-    relationship.setTerminologyId(idHandlerMap.get(
-        relationship.getTerminology()).getTerminologyId(relationship));
+    if (assignIdentifiersFlag) {
+      relationship.setTerminologyId(idHandlerMap.get(
+          relationship.getTerminology()).getTerminologyId(relationship));
+    }
 
     // Add component
     return addComponent(relationship);
@@ -1023,14 +1043,14 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
   @Override
   public void updateTransitiveRelationship(TransitiveRelationship relationship)
     throws Exception {
-    Logger.getLogger(ContentServiceJpa.class).debug(
+    Logger.getLogger(getClass()).debug(
         "Content Service - add transitive relationship "
             + relationship.getSuperTypeConcept() + "/"
             + relationship.getSubTypeConcept());
     // Id assignment should not change
     final IdentifierAssignmentHandler idHandler =
         idHandlerMap.get(relationship.getTerminology());
-    if (!idHandler.allowIdChangeOnUpdate()) {
+    if (!idHandler.allowIdChangeOnUpdate() && assignIdentifiersFlag) {
       Relationship relationship2 = getRelationship(relationship.getId());
       if (!idHandler.getTerminologyId(relationship).equals(
           idHandler.getTerminologyId(relationship2))) {
@@ -1054,7 +1074,7 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
    */
   @Override
   public void removeTransitiveRelationship(Long id) throws Exception {
-    Logger.getLogger(ContentServiceJpa.class).debug(
+    Logger.getLogger(getClass()).debug(
         "Content Service - remove transitive relationship " + id);
     // Remove the component
     removeComponent(id, TransitiveRelationshipJpa.class);
@@ -1072,7 +1092,7 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
   @Override
   public AttributeValueRefSetMember<? extends Component> getAttributeValueRefSetMember(
     Long id) throws Exception {
-    Logger.getLogger(ContentServiceJpa.class).debug(
+    Logger.getLogger(getClass()).debug(
         "Content Service - get attribute value refset member " + id);
     AttributeValueRefSetMember<?> c =
         manager.find(AbstractAttributeValueRefSetMemberJpa.class, id);
@@ -1089,12 +1109,12 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
   @Override
   public AttributeValueRefSetMember<? extends Component> getAttributeValueRefSetMember(
     String terminologyId, String terminology, String version) throws Exception {
-    Logger.getLogger(ContentServiceJpa.class).debug(
+    Logger.getLogger(getClass()).debug(
         "Content Service - get attribute value refset member " + terminologyId
             + "/" + terminology + "/" + version);
     javax.persistence.Query query =
         manager
-            .createQuery("select c from AttributeValueRefSetMemberJpa c where terminologyId = :terminologyId and version = :version and terminology = :terminology");
+            .createQuery("select c from AttributeValueRefSetMemberJpa c where terminologyId = :terminologyId and terminologyVersion = :version and terminology = :terminology");
     /*
      * Try to retrieve the single expected result If zero or more than one
      * result are returned, log error and set result to null
@@ -1126,18 +1146,18 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
   public AttributeValueRefSetMemberList findAttributeValueRefSetMembers(
     String refsetId, String terminology, String version, PfsParameter pfs)
     throws Exception {
-    Logger.getLogger(ContentServiceJpa.class).debug(
+    Logger.getLogger(getClass()).debug(
         "Content Service - get association reference refset members "
             + refsetId + "/" + terminology + "/" + version);
     javax.persistence.Query query =
         applyPfsToQuery("select a from AttributeValueRefSetMemberJpa a "
-            + "where refSetId = :refsetId " + "and version = :version "
+            + "where refSetId = :refsetId " + "and terminologyVersion = :version "
             + "and terminology = :terminology", pfs);
     javax.persistence.Query ctQuery =
         manager
             .createQuery("select count(a) ct from AttributeValueRefSetMemberJpa a "
                 + "where refSetId = :refsetId "
-                + "and version = :version "
+                + "and terminologyVersion = :version "
                 + "and terminology = :terminology");
     try {
       AttributeValueRefSetMemberList list =
@@ -1179,12 +1199,14 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
   @Override
   public AttributeValueRefSetMember<? extends Component> addAttributeValueRefSetMember(
     AttributeValueRefSetMember<? extends Component> member) throws Exception {
-    Logger.getLogger(ContentServiceJpa.class).debug(
+    Logger.getLogger(getClass()).debug(
         "Content Service - add attribute value refset member"
             + member.getTerminologyId());
     // Assign id
-    member.setTerminologyId(idHandlerMap.get(member.getTerminology())
-        .getTerminologyId(member));
+    if (assignIdentifiersFlag) {
+      member.setTerminologyId(idHandlerMap.get(member.getTerminology())
+          .getTerminologyId(member));
+    }
 
     // Add component
     AttributeValueRefSetMember<? extends Component> newMember =
@@ -1209,13 +1231,13 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
   @Override
   public void updateAttributeValueRefSetMember(
     AttributeValueRefSetMember<? extends Component> member) throws Exception {
-    Logger.getLogger(ContentServiceJpa.class).debug(
+    Logger.getLogger(getClass()).debug(
         "Content Service - update attribute value refset member "
             + member.getTerminologyId());
     // Id assignment should not change
     final IdentifierAssignmentHandler idHandler =
         idHandlerMap.get(member.getTerminology());
-    if (!idHandler.allowIdChangeOnUpdate()) {
+    if (!idHandler.allowIdChangeOnUpdate() && assignIdentifiersFlag) {
       AttributeValueRefSetMember<? extends Component> member2 =
           getAttributeValueRefSetMember(member.getId());
       if (!idHandler.getTerminologyId(member).equals(
@@ -1245,7 +1267,7 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
    */
   @Override
   public void removeAttributeValueRefSetMember(Long id) throws Exception {
-    Logger.getLogger(ContentServiceJpa.class).debug(
+    Logger.getLogger(getClass()).debug(
         "Content Service - remove attribute value refset member " + id);
     // Remove the component
     RefSetMember<?> member =
@@ -1269,7 +1291,7 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
   @Override
   public AssociationReferenceRefSetMember<? extends Component> getAssociationReferenceRefSetMember(
     Long id) throws Exception {
-    Logger.getLogger(ContentServiceJpa.class).debug(
+    Logger.getLogger(getClass()).debug(
         "Content Service - get association reference refset member " + id);
     AssociationReferenceRefSetMember<?> c =
         manager.find(AbstractAssociationReferenceRefSetMemberJpa.class, id);
@@ -1289,18 +1311,18 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
   public AssociationReferenceRefSetMemberList findAssociationReferenceRefSetMembers(
     String refsetId, String terminology, String version, PfsParameter pfs)
     throws Exception {
-    Logger.getLogger(ContentServiceJpa.class).debug(
+    Logger.getLogger(getClass()).debug(
         "Content Service - get association reference refset members "
             + refsetId + "/" + terminology + "/" + version);
     javax.persistence.Query query =
         applyPfsToQuery("select a from AssociationReferenceRefSetMemberJpa a "
-            + "where refSetId = :refsetId " + "and version = :version "
+            + "where refSetId = :refsetId " + "and terminologyVersion = :version "
             + "and terminology = :terminology", pfs);
     javax.persistence.Query ctQuery =
         manager
             .createQuery("select count(a) from AssociationReferenceRefSetMemberJpa a "
                 + "where refSetId = :refsetId "
-                + "and version = :version "
+                + "and terminologyVersion = :version "
                 + "and terminology = :terminology");
     try {
       AssociationReferenceRefSetMemberList list =
@@ -1333,12 +1355,12 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
   @Override
   public AssociationReferenceRefSetMember<? extends Component> getAssociationReferenceRefSetMember(
     String terminologyId, String terminology, String version) throws Exception {
-    Logger.getLogger(ContentServiceJpa.class).debug(
+    Logger.getLogger(getClass()).debug(
         "Content Service - get association reference refset member "
             + terminologyId + "/" + terminology + "/" + version);
     javax.persistence.Query query =
         manager
-            .createQuery("select c from AbstractAssociationReferenceRefSetMemberJpa c where terminologyId = :terminologyId and version = :version and terminology = :terminology");
+            .createQuery("select c from AbstractAssociationReferenceRefSetMemberJpa c where terminologyId = :terminologyId and terminologyVersion = :version and terminology = :terminology");
     /*
      * Try to retrieve the single expected result If zero or more than one
      * result are returned, log error and set result to null
@@ -1367,13 +1389,14 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
   public AssociationReferenceRefSetMember<? extends Component> addAssociationReferenceRefSetMember(
     AssociationReferenceRefSetMember<? extends Component> member)
     throws Exception {
-    Logger.getLogger(ContentServiceJpa.class).debug(
+    Logger.getLogger(getClass()).debug(
         "Content Service - add association reference refset member"
             + member.getTerminologyId());
     // Assign id
+    if (assignIdentifiersFlag) {
     member.setTerminologyId(idHandlerMap.get(member.getTerminology())
         .getTerminologyId(member));
-
+    }
     // Add component
     AssociationReferenceRefSetMember<? extends Component> newMember =
         addComponent(member);
@@ -1398,13 +1421,13 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
   public void updateAssociationReferenceRefSetMember(
     AssociationReferenceRefSetMember<? extends Component> member)
     throws Exception {
-    Logger.getLogger(ContentServiceJpa.class).debug(
+    Logger.getLogger(getClass()).debug(
         "Content Service - update association reference refset member "
             + member.getTerminologyId());
     // Id assignment should not change
     final IdentifierAssignmentHandler idHandler =
         idHandlerMap.get(member.getTerminology());
-    if (!idHandler.allowIdChangeOnUpdate()) {
+    if (!idHandler.allowIdChangeOnUpdate() && assignIdentifiersFlag) {
       AssociationReferenceRefSetMember<? extends Component> member2 =
           getAssociationReferenceRefSetMember(member.getId());
       if (!idHandler.getTerminologyId(member).equals(
@@ -1433,7 +1456,7 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
    */
   @Override
   public void removeAssociationReferenceRefSetMember(Long id) throws Exception {
-    Logger.getLogger(ContentServiceJpa.class).debug(
+    Logger.getLogger(getClass()).debug(
         "Content Service - remove association reference refset member " + id);
 
     RefSetMember<? extends Component> member =
@@ -1459,7 +1482,7 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
   @Override
   public ComplexMapRefSetMember getComplexMapRefSetMember(Long id)
     throws Exception {
-    Logger.getLogger(ContentServiceJpa.class).debug(
+    Logger.getLogger(getClass()).debug(
         "Content Service - get complex map refset member " + id);
     ComplexMapRefSetMember c =
         manager.find(ComplexMapRefSetMemberJpa.class, id);
@@ -1476,12 +1499,12 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
   @Override
   public ComplexMapRefSetMember getComplexMapRefSetMember(String terminologyId,
     String terminology, String version) throws Exception {
-    Logger.getLogger(ContentServiceJpa.class).debug(
+    Logger.getLogger(getClass()).debug(
         "Content Service - get complex map refset member " + terminologyId
             + "/" + terminology + "/" + version);
     javax.persistence.Query query =
         manager
-            .createQuery("select c from ComplexMapRefSetMemberJpa c where terminologyId = :terminologyId and version = :version and terminology = :terminology");
+            .createQuery("select c from ComplexMapRefSetMemberJpa c where terminologyId = :terminologyId and terminologyVersion = :version and terminology = :terminology");
     /*
      * Try to retrieve the single expected result If zero or more than one
      * result are returned, log error and set result to null
@@ -1511,16 +1534,16 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
   public ComplexMapRefSetMemberList findComplexMapRefSetMembers(
     String refsetId, String terminology, String version, PfsParameter pfs)
     throws Exception {
-    Logger.getLogger(ContentServiceJpa.class).debug(
+    Logger.getLogger(getClass()).debug(
         "Content Service - get association reference refset members "
             + refsetId + "/" + terminology + "/" + version);
     javax.persistence.Query query =
         applyPfsToQuery("select a from ComplexMapRefSetMemberJpa a "
-            + "where refSetId = :refsetId " + "and version = :version "
+            + "where refSetId = :refsetId " + "and terminologyVersion = :version "
             + "and terminology = :terminology", pfs);
     javax.persistence.Query ctQuery =
         manager.createQuery("select count(a) from ComplexMapRefSetMemberJpa a "
-            + "where refSetId = :refsetId " + "and version = :version "
+            + "where refSetId = :refsetId " + "and terminologyVersion = :version "
             + "and terminology = :terminology");
     try {
       ComplexMapRefSetMemberList list = new ComplexMapRefSetMemberListJpa();
@@ -1551,13 +1574,14 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
   @Override
   public ComplexMapRefSetMember addComplexMapRefSetMember(
     ComplexMapRefSetMember member) throws Exception {
-    Logger.getLogger(ContentServiceJpa.class).debug(
+    Logger.getLogger(getClass()).debug(
         "Content Service - add complex map refset member"
             + member.getTerminologyId());
     // Assign id
+    if (assignIdentifiersFlag) {
     member.setTerminologyId(idHandlerMap.get(member.getTerminology())
         .getTerminologyId(member));
-
+    }
     // Add component
     ComplexMapRefSetMember newMember = addComponent(member);
 
@@ -1581,13 +1605,13 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
   @Override
   public void updateComplexMapRefSetMember(ComplexMapRefSetMember member)
     throws Exception {
-    Logger.getLogger(ContentServiceJpa.class).debug(
+    Logger.getLogger(getClass()).debug(
         "Content Service - update complex map refset member "
             + member.getTerminologyId());
     // Id assignment should not change
     final IdentifierAssignmentHandler idHandler =
         idHandlerMap.get(member.getTerminology());
-    if (!idHandler.allowIdChangeOnUpdate()) {
+    if (!idHandler.allowIdChangeOnUpdate() && assignIdentifiersFlag) {
       ComplexMapRefSetMember member2 =
           getComplexMapRefSetMember(member.getId());
       if (!idHandler.getTerminologyId(member).equals(
@@ -1617,7 +1641,7 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
    */
   @Override
   public void removeComplexMapRefSetMember(Long id) throws Exception {
-    Logger.getLogger(ContentServiceJpa.class).debug(
+    Logger.getLogger(getClass()).debug(
         "Content Service - remove complex map refset member " + id);
     // Remove the component
     RefSetMember<?> member =
@@ -1640,7 +1664,7 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
    */
   @Override
   public LanguageRefSetMember getLanguageRefSetMember(Long id) throws Exception {
-    Logger.getLogger(ContentServiceJpa.class).debug(
+    Logger.getLogger(getClass()).debug(
         "Content Service - get language refset member " + id);
     LanguageRefSetMember c = manager.find(LanguageRefSetMemberJpa.class, id);
     return c;
@@ -1656,12 +1680,12 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
   @Override
   public LanguageRefSetMember getLanguageRefSetMember(String terminologyId,
     String terminology, String version) throws Exception {
-    Logger.getLogger(ContentServiceJpa.class).debug(
+    Logger.getLogger(getClass()).debug(
         "Content Service - get language refset member " + terminologyId + "/"
             + terminology + "/" + version);
     javax.persistence.Query query =
         manager
-            .createQuery("select c from LanguageRefSetMemberJpa c where terminologyId = :terminologyId and version = :version and terminology = :terminology");
+            .createQuery("select c from LanguageRefSetMemberJpa c where terminologyId = :terminologyId and terminologyVersion = :version and terminology = :terminology");
     /*
      * Try to retrieve the single expected result If zero or more than one
      * result are returned, log error and set result to null
@@ -1689,16 +1713,16 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
   @Override
   public LanguageRefSetMemberList findLanguageRefSetMembers(String refsetId,
     String terminology, String version, PfsParameter pfs) throws Exception {
-    Logger.getLogger(ContentServiceJpa.class).debug(
+    Logger.getLogger(getClass()).debug(
         "Content Service - get association reference refset members "
             + refsetId + "/" + terminology + "/" + version);
     javax.persistence.Query query =
         applyPfsToQuery("select a from LanguageRefSetMemberJpa a "
-            + "where refSetId = :refsetId " + "and version = :version "
+            + "where refSetId = :refsetId " + "and terminologyVersion = :version "
             + "and terminology = :terminology", pfs);
     javax.persistence.Query ctQuery =
         manager.createQuery("select count(a) from LanguageRefSetMemberJpa a "
-            + "where refSetId = :refsetId " + "and version = :version "
+            + "where refSetId = :refsetId " + "and terminologyVersion = :version "
             + "and terminology = :terminology");
     try {
       LanguageRefSetMemberList list = new LanguageRefSetMemberListJpa();
@@ -1730,13 +1754,14 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
   @Override
   public LanguageRefSetMember addLanguageRefSetMember(
     LanguageRefSetMember member) throws Exception {
-    Logger.getLogger(ContentServiceJpa.class).debug(
+    Logger.getLogger(getClass()).debug(
         "Content Service - add language refset member"
             + member.getTerminologyId());
     // Assign id
+    if (assignIdentifiersFlag) {
     member.setTerminologyId(idHandlerMap.get(member.getTerminology())
         .getTerminologyId(member));
-
+    }
     // Add component
     LanguageRefSetMember newMember = addComponent(member);
 
@@ -1759,13 +1784,13 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
   @Override
   public void updateLanguageRefSetMember(LanguageRefSetMember member)
     throws Exception {
-    Logger.getLogger(ContentServiceJpa.class).debug(
+    Logger.getLogger(getClass()).debug(
         "Content Service - update language refset member "
             + member.getTerminologyId());
     // Id assignment should not change
     final IdentifierAssignmentHandler idHandler =
         idHandlerMap.get(member.getTerminology());
-    if (!idHandler.allowIdChangeOnUpdate()) {
+    if (!idHandler.allowIdChangeOnUpdate() && assignIdentifiersFlag) {
       LanguageRefSetMember member2 = getLanguageRefSetMember(member.getId());
       if (!idHandler.getTerminologyId(member).equals(
           idHandler.getTerminologyId(member2))) {
@@ -1794,7 +1819,7 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
    */
   @Override
   public void removeLanguageRefSetMember(Long id) throws Exception {
-    Logger.getLogger(ContentServiceJpa.class).debug(
+    Logger.getLogger(getClass()).debug(
         "Content Service - remove language refset member " + id);
     // Remove the component
     RefSetMember<?> member = removeComponent(id, LanguageRefSetMemberJpa.class);
@@ -1816,7 +1841,7 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
   @Override
   public SimpleMapRefSetMember getSimpleMapRefSetMember(Long id)
     throws Exception {
-    Logger.getLogger(ContentServiceJpa.class).debug(
+    Logger.getLogger(getClass()).debug(
         "Content Service - get simple map refset member " + id);
     SimpleMapRefSetMember c = manager.find(SimpleMapRefSetMemberJpa.class, id);
     return c;
@@ -1832,12 +1857,12 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
   @Override
   public SimpleMapRefSetMember getSimpleMapRefSetMember(String terminologyId,
     String terminology, String version) throws Exception {
-    Logger.getLogger(ContentServiceJpa.class).debug(
+    Logger.getLogger(getClass()).debug(
         "Content Service - get simple map refset member " + terminologyId + "/"
             + terminology + "/" + version);
     javax.persistence.Query query =
         manager
-            .createQuery("select c from SimpleMapRefSetMemberJpa c where terminologyId = :terminologyId and version = :version and terminology = :terminology");
+            .createQuery("select c from SimpleMapRefSetMemberJpa c where terminologyId = :terminologyId and terminologyVersion = :version and terminology = :terminology");
     /*
      * Try to retrieve the single expected result If zero or more than one
      * result are returned, log error and set result to null
@@ -1865,16 +1890,16 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
   @Override
   public SimpleMapRefSetMemberList findSimpleMapRefSetMembers(String refsetId,
     String terminology, String version, PfsParameter pfs) throws Exception {
-    Logger.getLogger(ContentServiceJpa.class).debug(
+    Logger.getLogger(getClass()).debug(
         "Content Service - get association reference refset members "
             + refsetId + "/" + terminology + "/" + version);
     javax.persistence.Query query =
         applyPfsToQuery("select a from SimpleMapRefSetMemberJpa a "
-            + "where refSetId = :refsetId " + "and version = :version "
+            + "where refSetId = :refsetId " + "and terminologyVersion = :version "
             + "and terminology = :terminology", pfs);
     javax.persistence.Query ctQuery =
         manager.createQuery("select count(a) from SimpleMapRefSetMemberJpa a "
-            + "where refSetId = :refsetId " + "and version = :version "
+            + "where refSetId = :refsetId " + "and terminologyVersion = :version "
             + "and terminology = :terminology");
     try {
       SimpleMapRefSetMemberList list = new SimpleMapRefSetMemberListJpa();
@@ -1905,13 +1930,14 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
   @Override
   public SimpleMapRefSetMember addSimpleMapRefSetMember(
     SimpleMapRefSetMember member) throws Exception {
-    Logger.getLogger(ContentServiceJpa.class).debug(
+    Logger.getLogger(getClass()).debug(
         "Content Service - add simple map refset member"
             + member.getTerminologyId());
     // Assign id
+    if (assignIdentifiersFlag) {
     member.setTerminologyId(idHandlerMap.get(member.getTerminology())
         .getTerminologyId(member));
-
+    }
     // Add component
     SimpleMapRefSetMember newMember = addComponent(member);
 
@@ -1934,13 +1960,13 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
   @Override
   public void updateSimpleMapRefSetMember(SimpleMapRefSetMember member)
     throws Exception {
-    Logger.getLogger(ContentServiceJpa.class).debug(
+    Logger.getLogger(getClass()).debug(
         "Content Service - update simple map refset member "
             + member.getTerminologyId());
     // Id assignment should not change
     final IdentifierAssignmentHandler idHandler =
         idHandlerMap.get(member.getTerminology());
-    if (!idHandler.allowIdChangeOnUpdate()) {
+    if (!idHandler.allowIdChangeOnUpdate() && assignIdentifiersFlag) {
       SimpleMapRefSetMember member2 = getSimpleMapRefSetMember(member.getId());
       if (!idHandler.getTerminologyId(member).equals(
           idHandler.getTerminologyId(member2))) {
@@ -1969,7 +1995,7 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
    */
   @Override
   public void removeSimpleMapRefSetMember(Long id) throws Exception {
-    Logger.getLogger(ContentServiceJpa.class).debug(
+    Logger.getLogger(getClass()).debug(
         "Content Service - remove simple map refset member " + id);
     // Remove the component
     RefSetMember<?> member =
@@ -1991,7 +2017,7 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
    */
   @Override
   public SimpleRefSetMember getSimpleRefSetMember(Long id) throws Exception {
-    Logger.getLogger(ContentServiceJpa.class).debug(
+    Logger.getLogger(getClass()).debug(
         "Content Service - get simple refset member " + id);
     SimpleRefSetMember c = manager.find(SimpleRefSetMemberJpa.class, id);
     return c;
@@ -2007,12 +2033,12 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
   @Override
   public SimpleRefSetMember getSimpleRefSetMember(String terminologyId,
     String terminology, String version) throws Exception {
-    Logger.getLogger(ContentServiceJpa.class).debug(
+    Logger.getLogger(getClass()).debug(
         "Content Service - get simple refset member " + terminologyId + "/"
             + terminology + "/" + version);
     javax.persistence.Query query =
         manager
-            .createQuery("select c from SimpleRefSetMemberJpa c where terminologyId = :terminologyId and version = :version and terminology = :terminology");
+            .createQuery("select c from SimpleRefSetMemberJpa c where terminologyId = :terminologyId and terminologyVersion = :version and terminology = :terminology");
     /*
      * Try to retrieve the single expected result If zero or more than one
      * result are returned, log error and set result to null
@@ -2040,16 +2066,16 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
   @Override
   public SimpleRefSetMemberList findSimpleRefSetMembers(String refsetId,
     String terminology, String version, PfsParameter pfs) throws Exception {
-    Logger.getLogger(ContentServiceJpa.class).debug(
+    Logger.getLogger(getClass()).debug(
         "Content Service - get association reference refset members "
             + refsetId + "/" + terminology + "/" + version);
     javax.persistence.Query query =
         applyPfsToQuery("select a from SimpleRefSetMemberJpa a "
-            + "where refSetId = :refsetId " + "and version = :version "
+            + "where refSetId = :refsetId " + "and terminologyVersion = :version "
             + "and terminology = :terminology", pfs);
     javax.persistence.Query ctQuery =
         manager.createQuery("select count(a) from SimpleRefSetMemberJpa a "
-            + "where refSetId = :refsetId " + "and version = :version "
+            + "where refSetId = :refsetId " + "and terminologyVersion = :version "
             + "and terminology = :terminology");
     try {
       SimpleRefSetMemberList list = new SimpleRefSetMemberListJpa();
@@ -2080,13 +2106,14 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
   @Override
   public SimpleRefSetMember addSimpleRefSetMember(SimpleRefSetMember member)
     throws Exception {
-    Logger.getLogger(ContentServiceJpa.class).debug(
+    Logger.getLogger(getClass()).debug(
         "Content Service - add simple refset member"
             + member.getTerminologyId());
     // Assign id
+    if (assignIdentifiersFlag) {
     member.setTerminologyId(idHandlerMap.get(member.getTerminology())
         .getTerminologyId(member));
-
+    }
     // Add component
     SimpleRefSetMember newMember = addComponent(member);
 
@@ -2110,13 +2137,13 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
   @Override
   public void updateSimpleRefSetMember(SimpleRefSetMember member)
     throws Exception {
-    Logger.getLogger(ContentServiceJpa.class).debug(
+    Logger.getLogger(getClass()).debug(
         "Content Service - update simple refset member "
             + member.getTerminologyId());
     // Id assignment should not change
     final IdentifierAssignmentHandler idHandler =
         idHandlerMap.get(member.getTerminology());
-    if (!idHandler.allowIdChangeOnUpdate()) {
+    if (!idHandler.allowIdChangeOnUpdate() && assignIdentifiersFlag) {
       SimpleRefSetMember member2 = getSimpleRefSetMember(member.getId());
       if (!idHandler.getTerminologyId(member).equals(
           idHandler.getTerminologyId(member2))) {
@@ -2145,7 +2172,7 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
    */
   @Override
   public void removeSimpleRefSetMember(Long id) throws Exception {
-    Logger.getLogger(ContentServiceJpa.class).debug(
+    Logger.getLogger(getClass()).debug(
         "Content Service - remove simple refset member " + id);
     // Remove the component
     RefSetMember<?> member = removeComponent(id, SimpleRefSetMemberJpa.class);
@@ -2167,7 +2194,7 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
   @Override
   public RefsetDescriptorRefSetMember getRefsetDescriptorRefSetMember(Long id)
     throws Exception {
-    Logger.getLogger(ContentServiceJpa.class).debug(
+    Logger.getLogger(getClass()).debug(
         "Content Service - get refset descriptor refset member " + id);
     RefsetDescriptorRefSetMember c =
         manager.find(RefsetDescriptorRefSetMemberJpa.class, id);
@@ -2184,12 +2211,12 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
   @Override
   public RefsetDescriptorRefSetMember getRefsetDescriptorRefSetMember(
     String terminologyId, String terminology, String version) throws Exception {
-    Logger.getLogger(ContentServiceJpa.class).debug(
+    Logger.getLogger(getClass()).debug(
         "Content Service - get refset descriptor refset member "
             + terminologyId + "/" + terminology + "/" + version);
     javax.persistence.Query query =
         manager
-            .createQuery("select c from RefsetDescriptorRefSetMemberJpa c where terminologyId = :terminologyId and version = :version and terminology = :terminology");
+            .createQuery("select c from RefsetDescriptorRefSetMemberJpa c where terminologyId = :terminologyId and terminologyVersion = :version and terminology = :terminology");
     /*
      * Try to retrieve the single expected result If zero or more than one
      * result are returned, log error and set result to null
@@ -2216,12 +2243,12 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
   @Override
   public RefsetDescriptorRefSetMemberList getRefsetDescriptorRefSetMembersForRefset(
     String terminologyId, String terminology, String version) {
-    Logger.getLogger(ContentServiceJpa.class).debug(
+    Logger.getLogger(getClass()).debug(
         "Content Service - get refset descriptor refset member for refset "
             + terminologyId + "/" + terminology + "/" + version);
     javax.persistence.Query query =
         manager
-            .createQuery("select c from RefsetDescriptorRefSetMemberJpa c where referencedComponentId = :terminologyId and version = :version and terminology = :terminology order by attributeOrder and active = 1");
+            .createQuery("select c from RefsetDescriptorRefSetMemberJpa c where referencedComponentId = :terminologyId and terminologyVersion = :version and terminology = :terminology order by attributeOrder and active = 1");
 
     try {
       query.setParameter("terminologyId", terminologyId);
@@ -2249,13 +2276,14 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
   @Override
   public RefsetDescriptorRefSetMember addRefsetDescriptorRefSetMember(
     RefsetDescriptorRefSetMember member) throws Exception {
-    Logger.getLogger(ContentServiceJpa.class).debug(
+    Logger.getLogger(getClass()).debug(
         "Content Service - add refset descriptor refset member"
             + member.getTerminologyId());
     // Assign id
+    if (assignIdentifiersFlag) {
     member.setTerminologyId(idHandlerMap.get(member.getTerminology())
         .getTerminologyId(member));
-
+    }
     // Add component
     RefsetDescriptorRefSetMember newMember = addComponent(member);
 
@@ -2279,13 +2307,13 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
   @Override
   public void updateRefsetDescriptorRefSetMember(
     RefsetDescriptorRefSetMember member) throws Exception {
-    Logger.getLogger(ContentServiceJpa.class).debug(
+    Logger.getLogger(getClass()).debug(
         "Content Service - update refset descriptor refset member "
             + member.getTerminologyId());
     // Id assignment should not change
     final IdentifierAssignmentHandler idHandler =
         idHandlerMap.get(member.getTerminology());
-    if (!idHandler.allowIdChangeOnUpdate()) {
+    if (!idHandler.allowIdChangeOnUpdate() && assignIdentifiersFlag) {
       RefsetDescriptorRefSetMember member2 =
           getRefsetDescriptorRefSetMember(member.getId());
       if (!idHandler.getTerminologyId(member).equals(
@@ -2315,7 +2343,7 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
    */
   @Override
   public void removeRefsetDescriptorRefSetMember(Long id) throws Exception {
-    Logger.getLogger(ContentServiceJpa.class).debug(
+    Logger.getLogger(getClass()).debug(
         "Content Service - remove refset descriptor refset member " + id);
     // Remove the component
     RefSetMember<?> member =
@@ -2338,7 +2366,7 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
   @Override
   public DescriptionTypeRefSetMember getDescriptionTypeRefSetMember(Long id)
     throws Exception {
-    Logger.getLogger(ContentServiceJpa.class).debug(
+    Logger.getLogger(getClass()).debug(
         "Content Service - get description type refset member " + id);
     DescriptionTypeRefSetMember c =
         manager.find(DescriptionTypeRefSetMemberJpa.class, id);
@@ -2355,12 +2383,12 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
   @Override
   public DescriptionTypeRefSetMember getDescriptionTypeRefSetMember(
     String terminologyId, String terminology, String version) throws Exception {
-    Logger.getLogger(ContentServiceJpa.class).debug(
+    Logger.getLogger(getClass()).debug(
         "Content Service - get description type refset member " + terminologyId
             + "/" + terminology + "/" + version);
     javax.persistence.Query query =
         manager
-            .createQuery("select c from DescriptionTypeRefSetMemberJpa c where referencedComponentId = :terminologyId and version = :version and terminology = :terminology and active = 1");
+            .createQuery("select c from DescriptionTypeRefSetMemberJpa c where referencedComponentId = :terminologyId and terminologyVersion = :version and terminology = :terminology and active = 1");
     /*
      * Try to retrieve the single expected result If zero or more than one
      * result are returned, log error and set result to null
@@ -2387,12 +2415,12 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
   @Override
   public DescriptionTypeRefSetMember getDescriptionTypeRefSetMemberForDescriptionType(
     String terminologyId, String terminology, String version) throws Exception {
-    Logger.getLogger(ContentServiceJpa.class).debug(
+    Logger.getLogger(getClass()).debug(
         "Content Service - get description type refset member for description type "
             + terminologyId + "/" + terminology + "/" + version);
     javax.persistence.Query query =
         manager
-            .createQuery("select c from DescriptionTypeRefSetMemberJpa c where terminologyId = :terminologyId and version = :version and terminology = :terminology");
+            .createQuery("select c from DescriptionTypeRefSetMemberJpa c where terminologyId = :terminologyId and terminologyVersion = :version and terminology = :terminology");
     /*
      * Try to retrieve the single expected result If zero or more than one
      * result are returned, log error and set result to null
@@ -2419,13 +2447,14 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
   @Override
   public DescriptionTypeRefSetMember addDescriptionTypeRefSetMember(
     DescriptionTypeRefSetMember member) throws Exception {
-    Logger.getLogger(ContentServiceJpa.class).debug(
+    Logger.getLogger(getClass()).debug(
         "Content Service - add description type refset member"
             + member.getTerminologyId());
     // Assign id
+    if (assignIdentifiersFlag) {
     member.setTerminologyId(idHandlerMap.get(member.getTerminology())
         .getTerminologyId(member));
-
+    }
     // Add component
     DescriptionTypeRefSetMember newMember = addComponent(member);
 
@@ -2449,13 +2478,13 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
   @Override
   public void updateDescriptionTypeRefSetMember(
     DescriptionTypeRefSetMember member) throws Exception {
-    Logger.getLogger(ContentServiceJpa.class).debug(
+    Logger.getLogger(getClass()).debug(
         "Content Service - update description type refset member "
             + member.getTerminologyId());
     // Id assignment should not change
     final IdentifierAssignmentHandler idHandler =
         idHandlerMap.get(member.getTerminology());
-    if (!idHandler.allowIdChangeOnUpdate()) {
+    if (!idHandler.allowIdChangeOnUpdate() && assignIdentifiersFlag) {
       DescriptionTypeRefSetMember member2 =
           getDescriptionTypeRefSetMember(member.getId());
       if (!idHandler.getTerminologyId(member).equals(
@@ -2485,7 +2514,7 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
    */
   @Override
   public void removeDescriptionTypeRefSetMember(Long id) throws Exception {
-    Logger.getLogger(ContentServiceJpa.class).debug(
+    Logger.getLogger(getClass()).debug(
         "Content Service - remove description type refset member " + id);
     // Remove the component
     RefSetMember<?> member =
@@ -2508,7 +2537,7 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
   @Override
   public ModuleDependencyRefSetMember getModuleDependencyRefSetMember(Long id)
     throws Exception {
-    Logger.getLogger(ContentServiceJpa.class).debug(
+    Logger.getLogger(getClass()).debug(
         "Content Service - get module dependency refset member " + id);
     ModuleDependencyRefSetMember c =
         manager.find(ModuleDependencyRefSetMemberJpa.class, id);
@@ -2525,12 +2554,12 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
   @Override
   public ModuleDependencyRefSetMember getModuleDependencyRefSetMember(
     String terminologyId, String terminology, String version) throws Exception {
-    Logger.getLogger(ContentServiceJpa.class).debug(
+    Logger.getLogger(getClass()).debug(
         "Content Service - get module dependency refset member "
             + terminologyId + "/" + terminology + "/" + version);
     javax.persistence.Query query =
         manager
-            .createQuery("select c from ModuleDependencyRefSetMemberJpa c where terminologyId = :terminologyId and version = :version and terminology = :terminology");
+            .createQuery("select c from ModuleDependencyRefSetMemberJpa c where terminologyId = :terminologyId and terminologyVersion = :version and terminology = :terminology");
     /*
      * Try to retrieve the single expected result If zero or more than one
      * result are returned, log error and set result to null
@@ -2557,12 +2586,12 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
   @Override
   public ModuleDependencyRefSetMemberList getModuleDependencyRefSetMembersForModule(
     String terminologyId, String terminology, String version) throws Exception {
-    Logger.getLogger(ContentServiceJpa.class).debug(
+    Logger.getLogger(getClass()).debug(
         "Content Service - get module dependency refset member for module "
             + terminologyId + "/" + terminology + "/" + version);
     javax.persistence.Query query =
         manager
-            .createQuery("select c from ModuleDependencyRefSetMemberJpa c where moduleId = :terminologyId and version = :version and terminology = :terminology and active = 1 order by sourceEffectiveTime");
+            .createQuery("select c from ModuleDependencyRefSetMemberJpa c where moduleId = :terminologyId and terminologyVersion = :version and terminology = :terminology and active = 1 order by sourceEffectiveTime");
     try {
       query.setParameter("terminologyId", terminologyId);
       query.setParameter("terminology", terminology);
@@ -2589,13 +2618,14 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
   @Override
   public ModuleDependencyRefSetMember addModuleDependencyRefSetMember(
     ModuleDependencyRefSetMember member) throws Exception {
-    Logger.getLogger(ContentServiceJpa.class).debug(
+    Logger.getLogger(getClass()).debug(
         "Content Service - add module dependency refset member"
             + member.getTerminologyId());
     // Assign id
+    if (assignIdentifiersFlag) {
     member.setTerminologyId(idHandlerMap.get(member.getTerminology())
         .getTerminologyId(member));
-
+    }
     // Add component
     ModuleDependencyRefSetMember newMember = addComponent(member);
 
@@ -2618,13 +2648,13 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
   @Override
   public void updateModuleDependencyRefSetMember(
     ModuleDependencyRefSetMember member) throws Exception {
-    Logger.getLogger(ContentServiceJpa.class).debug(
+    Logger.getLogger(getClass()).debug(
         "Content Service - update module dependency refset member "
             + member.getTerminologyId());
     // Id assignment should not change
     final IdentifierAssignmentHandler idHandler =
         idHandlerMap.get(member.getTerminology());
-    if (!idHandler.allowIdChangeOnUpdate()) {
+    if (!idHandler.allowIdChangeOnUpdate() && assignIdentifiersFlag) {
       ModuleDependencyRefSetMember member2 =
           getModuleDependencyRefSetMember(member.getId());
       if (!idHandler.getTerminologyId(member).equals(
@@ -2654,7 +2684,7 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
    */
   @Override
   public void removeModuleDependencyRefSetMember(Long id) throws Exception {
-    Logger.getLogger(ContentServiceJpa.class).debug(
+    Logger.getLogger(getClass()).debug(
         "Content Service - remove module dependency refset member " + id);
     // Remove the component
     RefSetMember<?> member =
@@ -2678,12 +2708,12 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
   @Override
   public SearchResultList findConceptsForQuery(String terminology,
     String version, String searchString, PfsParameter pfs) throws Exception {
-    Logger.getLogger(ContentServiceJpa.class).info(
+    Logger.getLogger(getClass()).info(
         "Content Service - find concepts " + terminology + "/" + version + "/"
             + searchString);
 
     if (pfs != null) {
-      Logger.getLogger(ContentServiceJpa.class).info(
+      Logger.getLogger(getClass()).info(
           "  pfs = " + pfs.toString());
     }
 
@@ -2708,7 +2738,7 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
     Query luceneQuery;
     try {
       QueryParser queryParser =
-          new QueryParser(Version.LUCENE_36, "all",
+          new QueryParser("all",
               searchFactory.getAnalyzer(ConceptJpa.class));
       luceneQuery = queryParser.parse(finalQuery.toString());
     } catch (ParseException e) {
@@ -2772,13 +2802,13 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
   @Override
   public StringList getAllRelationshipTerminologyIds(String terminology,
     String version) {
-    Logger.getLogger(ContentServiceJpa.class).debug(
+    Logger.getLogger(getClass()).debug(
         "Content Service - get all relationship terminology ids " + terminology
             + "/" + version);
     javax.persistence.Query query =
         manager
             .createQuery(
-                "select c.terminologyId from RelationshipJpa c where terminology=:terminology and version=:version")
+                "select c.terminologyId from RelationshipJpa c where terminology = :terminology and terminologyVersion = :version")
             .setParameter("terminology", terminology)
             .setParameter("version", version);
 
@@ -2801,13 +2831,13 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
   @Override
   public StringList getAllDescriptionTerminologyIds(String terminology,
     String version) {
-    Logger.getLogger(ContentServiceJpa.class).debug(
+    Logger.getLogger(getClass()).debug(
         "Content Service - get all description terminology ids " + terminology
             + "/" + version);
     javax.persistence.Query query =
         manager
             .createQuery(
-                "select c.terminologyId from DescriptionJpa c where terminology=:terminology and version=:version")
+                "select c.terminologyId from DescriptionJpa c where terminology = :terminology and terminologyVersion = :version")
             .setParameter("terminology", terminology)
             .setParameter("version", version);
 
@@ -2829,13 +2859,13 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
   @Override
   public StringList getAllLanguageRefSetMemberTerminologyIds(
     String terminology, String version) {
-    Logger.getLogger(ContentServiceJpa.class).debug(
+    Logger.getLogger(getClass()).debug(
         "Content Service - get all language refset member terminology ids "
             + terminology + "/" + version);
     javax.persistence.Query query =
         manager
             .createQuery(
-                "select c.terminologyId from LanguageRefSetMemberJpa c where terminology=:terminology and version=:version")
+                "select c.terminologyId from LanguageRefSetMemberJpa c where terminology = :terminology and terminologyVersion = :version")
             .setParameter("terminology", terminology)
             .setParameter("version", version);
 
@@ -2868,7 +2898,7 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
       javax.persistence.Query query =
           manager.createQuery("DELETE From TransitiveRelationshipJpa "
               + " c where terminology = :terminology "
-              + " and version = :version");
+              + " and terminologyVersion = :version");
       query.setParameter("terminology", terminology);
       query.setParameter("version", version);
       int deleteRecords = query.executeUpdate();
@@ -2921,7 +2951,7 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
         javax.persistence.Query query =
             manager.createQuery("DELETE FROM " + type
                 + " WHERE terminology = :terminology "
-                + " AND version = :version");
+                + " AND terminologyVersion = :version");
         query.setParameter("terminology", terminology);
         query.setParameter("version", version);
         int deleteRecords = query.executeUpdate();
@@ -3003,7 +3033,7 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
    */
   @Override
   public Project getProject(Long id) {
-    Logger.getLogger(ContentServiceJpa.class).debug(
+    Logger.getLogger(getClass()).debug(
         "Content Service - get project " + id);
     Project project = manager.find(ProjectJpa.class, id);
     return project;
@@ -3017,7 +3047,7 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
   @Override
   @SuppressWarnings("unchecked")
   public ProjectList getProjects() {
-    Logger.getLogger(ContentServiceJpa.class).debug(
+    Logger.getLogger(getClass()).debug(
         "Content Service - get projects");
     javax.persistence.Query query =
         manager.createQuery("select a from ProjectJpa a");
@@ -3079,7 +3109,7 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
    */
   @Override
   public Project addProject(Project project) {
-    Logger.getLogger(ContentServiceJpa.class).debug(
+    Logger.getLogger(getClass()).debug(
         "Content Service - add project - " + project);
     try {
       // Set last modified date
@@ -3114,7 +3144,7 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
    */
   @Override
   public void updateProject(Project project) {
-    Logger.getLogger(ContentServiceJpa.class).debug(
+    Logger.getLogger(getClass()).debug(
         "Content Service - update project - " + project);
 
     try {
@@ -3148,7 +3178,7 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
    */
   @Override
   public void removeProject(Long id) {
-    Logger.getLogger(ContentServiceJpa.class).debug(
+    Logger.getLogger(getClass()).debug(
         "Content Service - remove project " + id);
     try {
       // Get transaction and object
@@ -3239,7 +3269,7 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
         }
 
         Sort sort =
-            new Sort(new SortField(sortField, SortField.STRING,
+            new Sort(new SortField(sortField, SortField.Type.STRING,
                 !pfs.isAscending()));
         fullTextQuery.setSort(sort);
       }
@@ -3531,7 +3561,7 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
       // update
       if (getTransactionPerOperation()) {
         tx = manager.getTransaction();
-        tx.begin();
+        tx.begin(); 
         manager.merge(component);
         tx.commit();
       } else {
@@ -3640,6 +3670,17 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
   @Override
   public void setLastModifiedFlag(boolean lastModifiedFlag) {
     this.lastModifiedFlag = lastModifiedFlag;
+  }
+
+  /*
+   * (non-Javadoc)
+   * 
+   * @see
+   * org.ihtsdo.otf.ts.services.ContentService#setAssignIdentifiersFlag(boolean)
+   */
+  @Override
+  public void setAssignIdentifiersFlag(boolean assignIdentifiersFlag) {
+    this.assignIdentifiersFlag = assignIdentifiersFlag;
   }
 
 }

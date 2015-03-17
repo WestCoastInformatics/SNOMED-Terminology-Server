@@ -980,6 +980,13 @@ public interface ContentService extends RootService {
   public void setLastModifiedFlag(boolean lastModifiedFlag);
 
   /**
+   * Sets the assign identifiers flag.
+   *
+   * @param assignIdentifiersFlag the assign identifiers flag
+   */
+  public void setAssignIdentifiersFlag(boolean assignIdentifiersFlag);
+
+  /**
    * Returns the concepts in scope.
    *
    * @param project the project

@@ -21,7 +21,7 @@ import org.ihtsdo.otf.ts.rf2.Relationship;
 // @UniqueConstraint here is being used to create an index, not to enforce
 // uniqueness
 @Table(name = "relationships", uniqueConstraints = @UniqueConstraint(columnNames = {
-    "terminologyId", "terminology", "version", "id"
+    "terminologyId", "terminology", "terminologyVersion", "id"
 }))
 @Audited
 @XmlRootElement(name = "relationship")

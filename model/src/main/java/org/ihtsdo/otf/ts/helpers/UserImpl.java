@@ -3,7 +3,6 @@ package org.ihtsdo.otf.ts.helpers;
 import org.ihtsdo.otf.ts.User;
 import org.ihtsdo.otf.ts.UserRole;
 
-// TODO: Auto-generated Javadoc
 /**
  * Local implementation of {@link User}.
  */

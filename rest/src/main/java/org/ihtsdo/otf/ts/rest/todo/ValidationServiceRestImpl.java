@@ -1,5 +1,6 @@
 package org.ihtsdo.otf.ts.rest.todo;
 
+import javax.ws.rs.Consumes;
 import javax.ws.rs.HeaderParam;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
@@ -28,8 +29,11 @@ import com.wordnik.swagger.annotations.ApiParam;
  */
 @Path("/validation")
 @Api(value = "/validation", description = "Operations providing content validation.")
+@Consumes({
+  MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML
+})
 @Produces({
-    MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML
+  MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML
 })
 public class ValidationServiceRestImpl extends RootServiceRestImpl implements
     ValidationServiceRest {
@@ -57,15 +61,12 @@ public class ValidationServiceRestImpl extends RootServiceRestImpl implements
   @POST
   @Path("/concept")
   @ApiOperation(value = "Validate concept", notes = "Performs validation checks on the concept and returns the results", response = ValidationResult.class)
-  @Produces({
-      MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML
-  })
   public ValidationResult validateConcept(
     @ApiParam(value = "The concept to validate, e.g. 'TBD'", required = true) ConceptJpa concept,
     @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken)
     throws Exception {
 
-    Logger.getLogger(ValidationServiceRestImpl.class).info(
+    Logger.getLogger(getClass()).info(
         "RESTful call (Validation): /concept " + concept.getTerminologyId());
 
     String user = "";

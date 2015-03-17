@@ -70,7 +70,7 @@ public class ContentClientRest implements ContentServiceRest {
             .put(ClientResponse.class, projectString);
 
     String resultString = response.getEntity(String.class);
-    if (response.getClientResponseStatus().getFamily() == Family.SUCCESSFUL) {
+    if (response.getStatusInfo().getFamily() == Family.SUCCESSFUL) {
       Logger.getLogger(getClass()).debug(resultString);
     } else {
       throw new Exception(resultString);
@@ -103,7 +103,7 @@ public class ContentClientRest implements ContentServiceRest {
             .header("Authorization", authToken).get(ClientResponse.class);
 
     String resultString = response.getEntity(String.class);
-    if (response.getClientResponseStatus().getFamily() == Family.SUCCESSFUL) {
+    if (response.getStatusInfo().getFamily() == Family.SUCCESSFUL) {
       Logger.getLogger(this.getClass()).debug(resultString);
     } else {
       throw new Exception(resultString);
@@ -135,7 +135,7 @@ public class ContentClientRest implements ContentServiceRest {
             .header("Authorization", authToken).get(ClientResponse.class);
 
     String resultString = response.getEntity(String.class);
-    if (response.getClientResponseStatus().getFamily() == Family.SUCCESSFUL) {
+    if (response.getStatusInfo().getFamily() == Family.SUCCESSFUL) {
       Logger.getLogger(this.getClass()).debug(resultString);
     } else {
       throw new Exception(resultString);
@@ -167,7 +167,7 @@ public class ContentClientRest implements ContentServiceRest {
             .header("Authorization", authToken).get(ClientResponse.class);
 
     String resultString = response.getEntity(String.class);
-    if (response.getClientResponseStatus().getFamily() == Family.SUCCESSFUL) {
+    if (response.getStatusInfo().getFamily() == Family.SUCCESSFUL) {
       Logger.getLogger(this.getClass()).debug(resultString);
     } else {
       throw new Exception(resultString);
@@ -197,7 +197,7 @@ public class ContentClientRest implements ContentServiceRest {
             .header("Authorization", authToken).get(ClientResponse.class);
 
     String resultString = response.getEntity(String.class);
-    if (response.getClientResponseStatus().getFamily() == Family.SUCCESSFUL) {
+    if (response.getStatusInfo().getFamily() == Family.SUCCESSFUL) {
       Logger.getLogger(this.getClass()).debug(resultString);
     } else {
       throw new Exception(resultString);
@@ -235,7 +235,7 @@ public class ContentClientRest implements ContentServiceRest {
             .post(ClientResponse.class, pfsString);
 
     String resultString = response.getEntity(String.class);
-    if (response.getClientResponseStatus().getFamily() == Family.SUCCESSFUL) {
+    if (response.getStatusInfo().getFamily() == Family.SUCCESSFUL) {
       Logger.getLogger(this.getClass()).debug(resultString);
     } else {
       throw new Exception(resultString);
@@ -275,7 +275,7 @@ public class ContentClientRest implements ContentServiceRest {
             .post(ClientResponse.class, pfsString);
 
     String resultString = response.getEntity(String.class);
-    if (response.getClientResponseStatus().getFamily() == Family.SUCCESSFUL) {
+    if (response.getStatusInfo().getFamily() == Family.SUCCESSFUL) {
       Logger.getLogger(this.getClass()).debug(resultString);
     } else {
       throw new Exception(resultString);
@@ -313,7 +313,7 @@ public class ContentClientRest implements ContentServiceRest {
             .post(ClientResponse.class, pfsString);
 
     String resultString = response.getEntity(String.class);
-    if (response.getClientResponseStatus().getFamily() == Family.SUCCESSFUL) {
+    if (response.getStatusInfo().getFamily() == Family.SUCCESSFUL) {
       Logger.getLogger(this.getClass()).debug(resultString);
     } else {
       throw new Exception(resultString);
@@ -352,7 +352,7 @@ public class ContentClientRest implements ContentServiceRest {
             .post(ClientResponse.class, pfsString);
 
     String resultString = response.getEntity(String.class);
-    if (response.getClientResponseStatus().getFamily() == Family.SUCCESSFUL) {
+    if (response.getStatusInfo().getFamily() == Family.SUCCESSFUL) {
       Logger.getLogger(this.getClass()).debug(resultString);
     } else {
       throw new Exception(resultString);
@@ -383,7 +383,7 @@ public class ContentClientRest implements ContentServiceRest {
             .header("Authorization", authToken).get(ClientResponse.class);
 
     String resultString = response.getEntity(String.class);
-    if (response.getClientResponseStatus().getFamily() == Family.SUCCESSFUL) {
+    if (response.getStatusInfo().getFamily() == Family.SUCCESSFUL) {
       Logger.getLogger(this.getClass()).debug(resultString);
     } else {
       throw new Exception(resultString);
@@ -416,7 +416,7 @@ public class ContentClientRest implements ContentServiceRest {
             .header("Authorization", authToken).get(ClientResponse.class);
 
     String resultString = response.getEntity(String.class);
-    if (response.getClientResponseStatus().getFamily() == Family.SUCCESSFUL) {
+    if (response.getStatusInfo().getFamily() == Family.SUCCESSFUL) {
       Logger.getLogger(this.getClass()).debug(resultString);
     } else {
       throw new Exception(resultString);
@@ -448,7 +448,7 @@ public class ContentClientRest implements ContentServiceRest {
             .header("Authorization", authToken).get(ClientResponse.class);
 
     String resultString = response.getEntity(String.class);
-    if (response.getClientResponseStatus().getFamily() == Family.SUCCESSFUL) {
+    if (response.getStatusInfo().getFamily() == Family.SUCCESSFUL) {
       Logger.getLogger(this.getClass()).debug(resultString);
     } else {
       throw new Exception(resultString);
@@ -481,7 +481,7 @@ public class ContentClientRest implements ContentServiceRest {
             .header("Authorization", authToken).get(ClientResponse.class);
 
     String resultString = response.getEntity(String.class);
-    if (response.getClientResponseStatus().getFamily() == Family.SUCCESSFUL) {
+    if (response.getStatusInfo().getFamily() == Family.SUCCESSFUL) {
       Logger.getLogger(this.getClass()).debug(resultString);
     } else {
       throw new Exception(resultString);
@@ -513,7 +513,7 @@ public class ContentClientRest implements ContentServiceRest {
             .header("Authorization", authToken).get(ClientResponse.class);
 
     String resultString = response.getEntity(String.class);
-    if (response.getClientResponseStatus().getFamily() == Family.SUCCESSFUL) {
+    if (response.getStatusInfo().getFamily() == Family.SUCCESSFUL) {
       Logger.getLogger(this.getClass()).debug(resultString);
     } else {
       throw new Exception(resultString);
@@ -545,7 +545,7 @@ public class ContentClientRest implements ContentServiceRest {
             .header("Authorization", authToken).get(ClientResponse.class);
 
     String resultString = response.getEntity(String.class);
-    if (response.getClientResponseStatus().getFamily() == Family.SUCCESSFUL) {
+    if (response.getStatusInfo().getFamily() == Family.SUCCESSFUL) {
       Logger.getLogger(this.getClass()).debug(resultString);
     } else {
       throw new Exception(resultString);
@@ -577,7 +577,7 @@ public class ContentClientRest implements ContentServiceRest {
             .header("Authorization", authToken).get(ClientResponse.class);
 
     String resultString = response.getEntity(String.class);
-    if (response.getClientResponseStatus().getFamily() == Family.SUCCESSFUL) {
+    if (response.getStatusInfo().getFamily() == Family.SUCCESSFUL) {
       Logger.getLogger(this.getClass()).debug(resultString);
     } else {
       throw new Exception(resultString);
@@ -612,7 +612,7 @@ public class ContentClientRest implements ContentServiceRest {
             .header("Authorization", authToken).get(ClientResponse.class);
 
     String resultString = response.getEntity(String.class);
-    if (response.getClientResponseStatus().getFamily() == Family.SUCCESSFUL) {
+    if (response.getStatusInfo().getFamily() == Family.SUCCESSFUL) {
       Logger.getLogger(this.getClass()).debug(resultString);
     } else {
       throw new Exception(resultString);
@@ -645,7 +645,7 @@ public class ContentClientRest implements ContentServiceRest {
             .header("Authorization", authToken).get(ClientResponse.class);
 
     String resultString = response.getEntity(String.class);
-    if (response.getClientResponseStatus().getFamily() == Family.SUCCESSFUL) {
+    if (response.getStatusInfo().getFamily() == Family.SUCCESSFUL) {
       Logger.getLogger(this.getClass()).debug(resultString);
     } else {
       throw new Exception(resultString);
@@ -675,7 +675,7 @@ public class ContentClientRest implements ContentServiceRest {
             .header("Authorization", authToken).get(ClientResponse.class);
 
     String resultString = response.getEntity(String.class);
-    if (response.getClientResponseStatus().getFamily() == Family.SUCCESSFUL) {
+    if (response.getStatusInfo().getFamily() == Family.SUCCESSFUL) {
       Logger.getLogger(this.getClass()).debug(resultString);
     } else {
       throw new Exception(resultString);
@@ -705,7 +705,7 @@ public class ContentClientRest implements ContentServiceRest {
             .header("Authorization", authToken).get(ClientResponse.class);
 
     String resultString = response.getEntity(String.class);
-    if (response.getClientResponseStatus().getFamily() == Family.SUCCESSFUL) {
+    if (response.getStatusInfo().getFamily() == Family.SUCCESSFUL) {
       Logger.getLogger(this.getClass()).debug(resultString);
     } else {
       throw new Exception(resultString);
@@ -738,7 +738,7 @@ public class ContentClientRest implements ContentServiceRest {
             .header("Content-type", MediaType.TEXT_PLAIN)
             .post(ClientResponse.class, indexedObjects);
 
-    if (response.getClientResponseStatus().getFamily() == Family.SUCCESSFUL) {
+    if (response.getStatusInfo().getFamily() == Family.SUCCESSFUL) {
       // do nothing
     } else {
       if (response.getStatus() != 204)
@@ -770,7 +770,7 @@ public class ContentClientRest implements ContentServiceRest {
             .header("Content-type", MediaType.APPLICATION_XML)
             .post(ClientResponse.class, inputDir);
 
-    if (response.getClientResponseStatus().getFamily() == Family.SUCCESSFUL) {
+    if (response.getStatusInfo().getFamily() == Family.SUCCESSFUL) {
       // do nothing
     } else {
       throw new Exception("Unexpected status " + response.getStatus());
@@ -801,7 +801,7 @@ public class ContentClientRest implements ContentServiceRest {
             .header("Content-type", MediaType.APPLICATION_XML)
             .post(ClientResponse.class, inputDir);
 
-    if (response.getClientResponseStatus().getFamily() == Family.SUCCESSFUL) {
+    if (response.getStatusInfo().getFamily() == Family.SUCCESSFUL) {
       // do nothing
     } else {
       throw new Exception("Unexpected status " + response.getStatus());
@@ -830,7 +830,7 @@ public class ContentClientRest implements ContentServiceRest {
             .header("Content-type", MediaType.APPLICATION_XML)
             .post(ClientResponse.class, inputDir);
 
-    if (response.getClientResponseStatus().getFamily() == Family.SUCCESSFUL) {
+    if (response.getStatusInfo().getFamily() == Family.SUCCESSFUL) {
       // do nothing
     } else {
       throw new Exception("Unexpected status " + response.getStatus());
@@ -861,7 +861,7 @@ public class ContentClientRest implements ContentServiceRest {
             .header("Content-type", MediaType.APPLICATION_XML)
             .post(ClientResponse.class, inputFile);
 
-    if (response.getClientResponseStatus().getFamily() == Family.SUCCESSFUL) {
+    if (response.getStatusInfo().getFamily() == Family.SUCCESSFUL) {
       // do nothing
     } else {
       throw new Exception("Unexpected status " + response.getStatus());
@@ -881,7 +881,7 @@ public class ContentClientRest implements ContentServiceRest {
             .header("Content-type", MediaType.APPLICATION_XML)
             .get(ClientResponse.class);
 
-    if (response.getClientResponseStatus().getFamily() == Family.SUCCESSFUL) {
+    if (response.getStatusInfo().getFamily() == Family.SUCCESSFUL) {
       // do nothing
     } else {
       throw new Exception("Unexpected status " + response.getStatus());
