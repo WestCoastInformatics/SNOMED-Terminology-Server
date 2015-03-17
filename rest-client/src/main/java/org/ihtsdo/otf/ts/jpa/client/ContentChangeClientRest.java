@@ -59,7 +59,7 @@ public class ContentChangeClientRest implements ContentChangeServiceRest {
             .header("Authorization", authToken).get(ClientResponse.class);
 
     String resultString = response.getEntity(String.class);
-    if (response.getClientResponseStatus().getFamily() == Family.SUCCESSFUL) {
+    if (response.getStatusInfo().getFamily() == Family.SUCCESSFUL) {
       Logger.getLogger(this.getClass()).debug(resultString);
     } else {
       throw new Exception(resultString);
@@ -96,7 +96,7 @@ public class ContentChangeClientRest implements ContentChangeServiceRest {
             .put(ClientResponse.class, conceptString);
 
     String resultString = response.getEntity(String.class);
-    if (response.getClientResponseStatus().getFamily() == Family.SUCCESSFUL) {
+    if (response.getStatusInfo().getFamily() == Family.SUCCESSFUL) {
       Logger.getLogger(getClass()).debug(resultString);
     } else {
       throw new Exception(resultString);
@@ -134,7 +134,7 @@ public class ContentChangeClientRest implements ContentChangeServiceRest {
             .header("Content-type", MediaType.APPLICATION_XML)
             .post(ClientResponse.class, conceptString);
 
-    if (response.getClientResponseStatus().getFamily() == Family.SUCCESSFUL) {
+    if (response.getStatusInfo().getFamily() == Family.SUCCESSFUL) {
       // do nothing
     } else {
       throw new Exception("Unexpected status " + response.getStatus());
@@ -159,7 +159,7 @@ public class ContentChangeClientRest implements ContentChangeServiceRest {
         resource.accept(MediaType.APPLICATION_XML)
             .header("Authorization", authToken).delete(ClientResponse.class);
 
-    if (response.getClientResponseStatus().getFamily() == Family.SUCCESSFUL) {
+    if (response.getStatusInfo().getFamily() == Family.SUCCESSFUL) {
       // do nothing
     } else {
       throw new Exception("Unexpected status " + response.getStatus());
@@ -193,7 +193,7 @@ public class ContentChangeClientRest implements ContentChangeServiceRest {
             .put(ClientResponse.class, descriptionString);
 
     String resultString = response.getEntity(String.class);
-    if (response.getClientResponseStatus().getFamily() == Family.SUCCESSFUL) {
+    if (response.getStatusInfo().getFamily() == Family.SUCCESSFUL) {
       Logger.getLogger(getClass()).debug(resultString);
     } else {
       throw new Exception(resultString);
@@ -232,7 +232,7 @@ public class ContentChangeClientRest implements ContentChangeServiceRest {
             .header("Content-type", MediaType.APPLICATION_XML)
             .post(ClientResponse.class, descriptionString);
 
-    if (response.getClientResponseStatus().getFamily() == Family.SUCCESSFUL) {
+    if (response.getStatusInfo().getFamily() == Family.SUCCESSFUL) {
       // do nothing
     } else {
       throw new Exception("Unexpected status " + response.getStatus());
@@ -257,7 +257,7 @@ public class ContentChangeClientRest implements ContentChangeServiceRest {
         resource.accept(MediaType.APPLICATION_XML)
             .header("Authorization", authToken).delete(ClientResponse.class);
 
-    if (response.getClientResponseStatus().getFamily() == Family.SUCCESSFUL) {
+    if (response.getStatusInfo().getFamily() == Family.SUCCESSFUL) {
       // do nothing
     } else {
       throw new Exception("Unexpected status " + response.getStatus());
@@ -291,7 +291,7 @@ public class ContentChangeClientRest implements ContentChangeServiceRest {
             .put(ClientResponse.class, relationshipString);
 
     String resultString = response.getEntity(String.class);
-    if (response.getClientResponseStatus().getFamily() == Family.SUCCESSFUL) {
+    if (response.getStatusInfo().getFamily() == Family.SUCCESSFUL) {
       Logger.getLogger(getClass()).debug(resultString);
     } else {
       throw new Exception(resultString);
@@ -330,7 +330,7 @@ public class ContentChangeClientRest implements ContentChangeServiceRest {
             .header("Content-type", MediaType.APPLICATION_XML)
             .post(ClientResponse.class, relationshipString);
 
-    if (response.getClientResponseStatus().getFamily() == Family.SUCCESSFUL) {
+    if (response.getStatusInfo().getFamily() == Family.SUCCESSFUL) {
       // do nothing
     } else {
       throw new Exception("Unexpected status " + response.getStatus());
@@ -355,7 +355,7 @@ public class ContentChangeClientRest implements ContentChangeServiceRest {
         resource.accept(MediaType.APPLICATION_XML)
             .header("Authorization", authToken).delete(ClientResponse.class);
 
-    if (response.getClientResponseStatus().getFamily() == Family.SUCCESSFUL) {
+    if (response.getStatusInfo().getFamily() == Family.SUCCESSFUL) {
       // do nothing
     } else {
       throw new Exception("Unexpected status " + response.getStatus());
@@ -387,7 +387,7 @@ public class ContentChangeClientRest implements ContentChangeServiceRest {
             .put(ClientResponse.class, memberString);
 
     String resultString = response.getEntity(String.class);
-    if (response.getClientResponseStatus().getFamily() == Family.SUCCESSFUL) {
+    if (response.getStatusInfo().getFamily() == Family.SUCCESSFUL) {
       Logger.getLogger(getClass()).debug(resultString);
     } else {
       throw new Exception(resultString);
@@ -425,7 +425,7 @@ public class ContentChangeClientRest implements ContentChangeServiceRest {
             .header("Content-type", MediaType.APPLICATION_XML)
             .post(ClientResponse.class, memberString);
 
-    if (response.getClientResponseStatus().getFamily() == Family.SUCCESSFUL) {
+    if (response.getStatusInfo().getFamily() == Family.SUCCESSFUL) {
       // do nothing
     } else {
       throw new Exception("Unexpected status " + response.getStatus());
@@ -451,7 +451,7 @@ public class ContentChangeClientRest implements ContentChangeServiceRest {
         resource.accept(MediaType.APPLICATION_XML)
             .header("Authorization", authToken).delete(ClientResponse.class);
 
-    if (response.getClientResponseStatus().getFamily() == Family.SUCCESSFUL) {
+    if (response.getStatusInfo().getFamily() == Family.SUCCESSFUL) {
       // do nothing
     } else {
       throw new Exception("Unexpected status " + response.getStatus());
@@ -485,7 +485,7 @@ public class ContentChangeClientRest implements ContentChangeServiceRest {
             .put(ClientResponse.class, memberString);
 
     String resultString = response.getEntity(String.class);
-    if (response.getClientResponseStatus().getFamily() == Family.SUCCESSFUL) {
+    if (response.getStatusInfo().getFamily() == Family.SUCCESSFUL) {
       Logger.getLogger(getClass()).debug(resultString);
     } else {
       throw new Exception(resultString);
@@ -525,7 +525,7 @@ public class ContentChangeClientRest implements ContentChangeServiceRest {
             .header("Content-type", MediaType.APPLICATION_XML)
             .post(ClientResponse.class, memberString);
 
-    if (response.getClientResponseStatus().getFamily() == Family.SUCCESSFUL) {
+    if (response.getStatusInfo().getFamily() == Family.SUCCESSFUL) {
       // do nothing
     } else {
       throw new Exception("Unexpected status " + response.getStatus());
@@ -551,7 +551,7 @@ public class ContentChangeClientRest implements ContentChangeServiceRest {
         resource.accept(MediaType.APPLICATION_XML)
             .header("Authorization", authToken).delete(ClientResponse.class);
 
-    if (response.getClientResponseStatus().getFamily() == Family.SUCCESSFUL) {
+    if (response.getStatusInfo().getFamily() == Family.SUCCESSFUL) {
       // do nothing
     } else {
       throw new Exception("Unexpected status " + response.getStatus());
@@ -577,7 +577,7 @@ public class ContentChangeClientRest implements ContentChangeServiceRest {
         resource.accept(MediaType.APPLICATION_XML)
             .header("Authorization", authToken).post(ClientResponse.class);
 
-    if (response.getClientResponseStatus().getFamily() == Family.SUCCESSFUL) {
+    if (response.getStatusInfo().getFamily() == Family.SUCCESSFUL) {
       // do nothing
     } else {
       throw new Exception("Unexpected status " + response.getStatus());
@@ -602,7 +602,7 @@ public class ContentChangeClientRest implements ContentChangeServiceRest {
         resource.accept(MediaType.APPLICATION_XML)
             .header("Authorization", authToken).post(ClientResponse.class);
 
-    if (response.getClientResponseStatus().getFamily() == Family.SUCCESSFUL) {
+    if (response.getStatusInfo().getFamily() == Family.SUCCESSFUL) {
       // do nothing
     } else {
       throw new Exception("Unexpected status " + response.getStatus());
@@ -627,7 +627,7 @@ public class ContentChangeClientRest implements ContentChangeServiceRest {
         resource.accept(MediaType.APPLICATION_XML)
             .header("Authorization", authToken).post(ClientResponse.class);
 
-    if (response.getClientResponseStatus().getFamily() == Family.SUCCESSFUL) {
+    if (response.getStatusInfo().getFamily() == Family.SUCCESSFUL) {
       // do nothing
     } else {
       throw new Exception("Unexpected status " + response.getStatus());
@@ -658,7 +658,7 @@ public class ContentChangeClientRest implements ContentChangeServiceRest {
             .put(ClientResponse.class, projectString);
 
     String resultString = response.getEntity(String.class);
-    if (response.getClientResponseStatus().getFamily() == Family.SUCCESSFUL) {
+    if (response.getStatusInfo().getFamily() == Family.SUCCESSFUL) {
       Logger.getLogger(getClass()).debug(resultString);
     } else {
       throw new Exception(resultString);
@@ -696,7 +696,7 @@ public class ContentChangeClientRest implements ContentChangeServiceRest {
             .header("Content-type", MediaType.APPLICATION_XML)
             .post(ClientResponse.class, projectString);
 
-    if (response.getClientResponseStatus().getFamily() == Family.SUCCESSFUL) {
+    if (response.getStatusInfo().getFamily() == Family.SUCCESSFUL) {
       // do nothing
     } else {
       throw new Exception("Unexpected status " + response.getStatus());
@@ -720,7 +720,7 @@ public class ContentChangeClientRest implements ContentChangeServiceRest {
         resource.accept(MediaType.APPLICATION_XML)
             .header("Authorization", authToken).delete(ClientResponse.class);
 
-    if (response.getClientResponseStatus().getFamily() == Family.SUCCESSFUL) {
+    if (response.getStatusInfo().getFamily() == Family.SUCCESSFUL) {
       // do nothing
     } else {
       throw new Exception("Unexpected status " + response.getStatus());
@@ -740,7 +740,7 @@ public class ContentChangeClientRest implements ContentChangeServiceRest {
         resource.accept(MediaType.APPLICATION_XML)
             .header("Authorization", authToken).delete(ClientResponse.class);
 
-    if (response.getClientResponseStatus().getFamily() == Family.SUCCESSFUL) {
+    if (response.getStatusInfo().getFamily() == Family.SUCCESSFUL) {
 
       StartEditingCycleAlgorithm algorithm =
           new StartEditingCycleAlgorithm(releaseVersion, terminology, version);

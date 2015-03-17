@@ -16,12 +16,11 @@ import java.util.Set;
 import javax.persistence.NoResultException;
 
 import org.apache.log4j.Logger;
-import org.apache.lucene.queryParser.ParseException;
-import org.apache.lucene.queryParser.QueryParser;
+import org.apache.lucene.queryparser.classic.ParseException;
+import org.apache.lucene.queryparser.classic.QueryParser;
 import org.apache.lucene.search.Query;
 import org.apache.lucene.search.Sort;
 import org.apache.lucene.search.SortField;
-import org.apache.lucene.util.Version;
 import org.hibernate.search.SearchFactory;
 import org.hibernate.search.annotations.Analyze;
 import org.hibernate.search.jpa.FullTextEntityManager;
@@ -298,8 +297,8 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
         Search.getFullTextEntityManager(manager);
     SearchFactory searchFactory = fullTextEntityManager.getSearchFactory();
     Query luceneQuery;
-    QueryParser queryParser =
-        new QueryParser(Version.LUCENE_36, "all",
+    QueryParser queryParser = 
+        new QueryParser("all",
             searchFactory.getAnalyzer(ConceptJpa.class));
     luceneQuery = queryParser.parse(finalQuery.toString());
     FullTextQuery fullTextQuery =
@@ -2739,7 +2738,7 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
     Query luceneQuery;
     try {
       QueryParser queryParser =
-          new QueryParser(Version.LUCENE_36, "all",
+          new QueryParser("all",
               searchFactory.getAnalyzer(ConceptJpa.class));
       luceneQuery = queryParser.parse(finalQuery.toString());
     } catch (ParseException e) {
@@ -3270,7 +3269,7 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
         }
 
         Sort sort =
-            new Sort(new SortField(sortField, SortField.STRING,
+            new Sort(new SortField(sortField, SortField.Type.STRING,
                 !pfs.isAscending()));
         fullTextQuery.setSort(sort);
       }
@@ -3562,7 +3561,7 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
       // update
       if (getTransactionPerOperation()) {
         tx = manager.getTransaction();
-        tx.begin();
+        tx.begin(); 
         manager.merge(component);
         tx.commit();
       } else {

@@ -52,7 +52,7 @@ public class IhtsdoSecurityServiceHandler implements SecurityServiceHandler {
     resource.type(MediaType.APPLICATION_FORM_URLENCODED_TYPE);
     ClientResponse response = resource.post(ClientResponse.class, form);
     String resultString = "";
-    if (response.getClientResponseStatus().getFamily() == Family.SUCCESSFUL) {
+    if (response.getStatusInfo().getFamily() == Family.SUCCESSFUL) {
       resultString = response.getEntity(String.class);
     } else {
       resultString = response.getEntity(String.class);

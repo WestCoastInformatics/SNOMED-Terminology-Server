@@ -1,6 +1,5 @@
 package org.ihtsdo.otf.ts.jpa.algo;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -153,11 +152,11 @@ public class Rf2DeltaLoaderAlgorithm extends HistoryServiceJpa implements
       // Log memory usage
       Runtime runtime = Runtime.getRuntime();
       Logger.getLogger(this.getClass()).debug("MEMORY USAGE:");
+      Logger.getLogger(this.getClass()).debug(
+          " Total: " + runtime.totalMemory());
       Logger.getLogger(this.getClass())
-          .debug(" Total: " + runtime.totalMemory());
-      Logger.getLogger(this.getClass()).debug(" Free:  " + runtime.freeMemory());
+          .debug(" Free:  " + runtime.freeMemory());
       Logger.getLogger(this.getClass()).debug(" Max:   " + runtime.maxMemory());
-      SimpleDateFormat ft = new SimpleDateFormat("hh:mm:ss a"); // format for
 
       // Track system level information
       long startTimeOrig = System.nanoTime();
@@ -217,27 +216,18 @@ public class Rf2DeltaLoaderAlgorithm extends HistoryServiceJpa implements
       //
       Logger.getLogger(this.getClass()).info("    Loading Concepts ...");
       loadConcepts();
-      Logger.getLogger(this.getClass()).info(
-          "      evaluated = " + Integer.toString(objectCt) + " (Ended at "
-              + ft.format(new Date()) + ")");
 
       //
       // Load relationships - stated and inferred
       //
       Logger.getLogger(this.getClass()).info("    Loading Relationships ...");
       loadRelationships();
-      Logger.getLogger(this.getClass()).info(
-          "      evaluated = " + Integer.toString(objectCt) + " (Ended at "
-              + ft.format(new Date()) + ")");
 
       //
       // Load descriptions and definitions
       //
       Logger.getLogger(this.getClass()).info("    Loading Descriptions ...");
       loadDescriptions();
-      Logger.getLogger(this.getClass()).info(
-          "      evaluated = " + Integer.toString(objectCt) + " (Ended at "
-              + ft.format(new Date()) + ")");
 
       //
       // Load language refset members
@@ -245,9 +235,6 @@ public class Rf2DeltaLoaderAlgorithm extends HistoryServiceJpa implements
       Logger.getLogger(this.getClass())
           .info("    Loading Language Ref Sets...");
       loadLanguageRefSetMembers();
-      Logger.getLogger(this.getClass()).info(
-          "      evaluated = " + Integer.toString(objectCt) + " (Ended at "
-              + ft.format(new Date()) + ")");
 
       // Skip other delta data structures
       // TODO: implement this
@@ -313,24 +300,23 @@ public class Rf2DeltaLoaderAlgorithm extends HistoryServiceJpa implements
       Logger.getLogger(this.getClass()).info("  Committing");
       commit();
       clear();
-      
+
       // QA
       Logger
           .getLogger(this.getClass())
           .info(
               "Checking database contents against number of previously modified objects");
       ConceptList modifiedConcepts =
-          findConceptsModifiedSinceDate(terminology,
-              deltaLoaderStartDate, null);
+          findConceptsModifiedSinceDate(terminology, deltaLoaderStartDate, null);
       RelationshipList modifiedRelationships =
-          findRelationshipsModifiedSinceDate(terminology,
-              deltaLoaderStartDate, null);
+          findRelationshipsModifiedSinceDate(terminology, deltaLoaderStartDate,
+              null);
       DescriptionList modifiedDescriptions =
-          findDescriptionsModifiedSinceDate(terminology,
-              deltaLoaderStartDate, null);
+          findDescriptionsModifiedSinceDate(terminology, deltaLoaderStartDate,
+              null);
       LanguageRefSetMemberList modifiedLanguageRefSetMembers =
-          findLanguageRefSetMembersModifiedSinceDate(
-              terminology, deltaLoaderStartDate, null);
+          findLanguageRefSetMembersModifiedSinceDate(terminology,
+              deltaLoaderStartDate, null);
 
       // Report
       Logger.getLogger(this.getClass()).info(
@@ -507,16 +493,12 @@ public class Rf2DeltaLoaderAlgorithm extends HistoryServiceJpa implements
 
         // If concept is new, add it
         if (concept == null) {
-          Logger.getLogger(this.getClass()).debug(
-              "        add concept " + newConcept.getTerminologyId() + ".");
           newConcept = addConcept(newConcept);
           objectsAdded++;
         }
 
         // If concept has changed, update it
         else if (!newConcept.equals(concept)) {
-          Logger.getLogger(this.getClass()).debug(
-              "        update concept " + newConcept.getTerminologyId());
           updateConcept(newConcept);
           objectsUpdated++;
         }
@@ -575,8 +557,7 @@ public class Rf2DeltaLoaderAlgorithm extends HistoryServiceJpa implements
         } else {
           // retrieve concept
           concept =
-              getSingleConcept(fields[4], terminology,
-                  terminologyVersion);
+              getSingleConcept(fields[4], terminology, terminologyVersion);
         }
 
         // if the concept is not null
@@ -591,8 +572,7 @@ public class Rf2DeltaLoaderAlgorithm extends HistoryServiceJpa implements
             description = descriptionCache.get(fields[0]);
           } else if (existingDescriptionIds.contains(fields[0])) {
             description =
-                getDescription(fields[0], terminology,
-                    terminologyVersion);
+                getDescription(fields[0], terminology, terminologyVersion);
           }
 
           // Throw exception if it cant be found
@@ -630,8 +610,6 @@ public class Rf2DeltaLoaderAlgorithm extends HistoryServiceJpa implements
 
           // If description is new, add it
           if (description == null) {
-            Logger.getLogger(this.getClass()).debug(
-                "        add description " + newDescription.getTerminologyId());
             newDescription = addDescription(newDescription);
             cacheDescription(newDescription);
             objectsAdded++;
@@ -639,9 +617,6 @@ public class Rf2DeltaLoaderAlgorithm extends HistoryServiceJpa implements
 
           // If description has changed, update it
           else if (!newDescription.equals(description)) {
-            Logger.getLogger(this.getClass()).debug(
-                "        update description "
-                    + newDescription.getTerminologyId());
             updateDescription(newDescription);
             cacheDescription(newDescription);
             objectsUpdated++;
@@ -702,8 +677,7 @@ public class Rf2DeltaLoaderAlgorithm extends HistoryServiceJpa implements
           description = descriptionCache.get(fields[5]);
         } else {
           description =
-              getDescription(fields[5], terminology,
-                  terminologyVersion);
+              getDescription(fields[5], terminology, terminologyVersion);
         }
 
         // get the concept
@@ -764,9 +738,6 @@ public class Rf2DeltaLoaderAlgorithm extends HistoryServiceJpa implements
 
         // If language refset entry is new, add it
         if (languageRefSetMember == null) {
-          Logger.getLogger(this.getClass()).debug(
-              "        add language "
-                  + newLanguageRefSetMember.getTerminologyId());
           newLanguageRefSetMember =
               addLanguageRefSetMember(newLanguageRefSetMember);
           cacheLanguageRefSetMember(newLanguageRefSetMember);
@@ -775,9 +746,6 @@ public class Rf2DeltaLoaderAlgorithm extends HistoryServiceJpa implements
 
         // If language refset entry is changed, update it
         else if (!newLanguageRefSetMember.equals(languageRefSetMember)) {
-          Logger.getLogger(this.getClass()).debug(
-              "        update language "
-                  + newLanguageRefSetMember.getTerminologyId());
           updateLanguageRefSetMember(newLanguageRefSetMember);
           cacheLanguageRefSetMember(newLanguageRefSetMember);
           objectsUpdated++;
@@ -835,8 +803,7 @@ public class Rf2DeltaLoaderAlgorithm extends HistoryServiceJpa implements
           sourceConcept = existingConceptCache.get(fields[4]);
         } else {
           sourceConcept =
-              getSingleConcept(fields[4], terminology,
-                  terminologyVersion);
+              getSingleConcept(fields[4], terminology, terminologyVersion);
         }
         if (sourceConcept == null) {
           throw new Exception("Relationship " + fields[0] + " source concept "
@@ -850,8 +817,7 @@ public class Rf2DeltaLoaderAlgorithm extends HistoryServiceJpa implements
           destinationConcept = existingConceptCache.get(fields[5]);
         } else {
           destinationConcept =
-              getSingleConcept(fields[5], terminology,
-                  terminologyVersion);
+              getSingleConcept(fields[5], terminology, terminologyVersion);
         }
         if (destinationConcept == null) {
           throw new Exception("Relationship " + fields[0]
@@ -868,8 +834,7 @@ public class Rf2DeltaLoaderAlgorithm extends HistoryServiceJpa implements
           relationship = relationshipCache.get(fields[0]);
         } else if (existingRelationshipIds.contains(fields[0])) {
           relationship =
-              getRelationship(fields[0], terminology,
-                  terminologyVersion);
+              getRelationship(fields[0], terminology, terminologyVersion);
 
         }
 
@@ -905,8 +870,6 @@ public class Rf2DeltaLoaderAlgorithm extends HistoryServiceJpa implements
         newRelationship.setLastModifiedBy("loader");
         // If relationship is new, add it
         if (!existingRelationshipIds.contains(fields[0])) {
-          Logger.getLogger(this.getClass()).debug(
-              "        add relationship " + newRelationship.getTerminologyId());
           newRelationship = addRelationship(newRelationship);
           cacheRelationship(newRelationship);
           objectsAdded++;
@@ -914,9 +877,6 @@ public class Rf2DeltaLoaderAlgorithm extends HistoryServiceJpa implements
 
         // If relationship is changed, update it
         else if (relationship != null && !newRelationship.equals(relationship)) {
-          Logger.getLogger(this.getClass()).debug(
-              "        update relationship "
-                  + newRelationship.getTerminologyId());
           updateRelationship(newRelationship);
           cacheRelationship(newRelationship);
           objectsUpdated++;

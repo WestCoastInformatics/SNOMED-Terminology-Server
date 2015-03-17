@@ -105,7 +105,7 @@ public class ConfigUtility {
               + "/security/logout/dummy");
       resource.accept(MediaType.APPLICATION_JSON);
       ClientResponse response = resource.get(ClientResponse.class);
-      if (response.getClientResponseStatus().getFamily() == Family.SUCCESSFUL) {
+      if (response.getStatusInfo().getFamily() == Family.SUCCESSFUL) {
         return true;
       } else {
         return false;
