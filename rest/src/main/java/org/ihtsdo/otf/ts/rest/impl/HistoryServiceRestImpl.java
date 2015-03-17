@@ -78,7 +78,7 @@ public class HistoryServiceRestImpl extends RootServiceRestImpl implements
   })
   public ConceptList findConceptsModifiedSinceDate(
     @ApiParam(value = "Concept terminology , e.g. SNOMEDCT", required = true) @PathParam("terminology") String terminology,
-    @ApiParam(value = "Date in the format YYYYMMDD , e.g. latest or \"null\"", required = true) @PathParam("date") String date,
+    @ApiParam(value = "Date in the format YYYYMMDD , e.g. 20140731 or \"null\"", required = true) @PathParam("date") String date,
     @ApiParam(value = "PFS Parameter, e.g. '{ \"startIndex\":\"1\", \"maxResults\":\"5\" }'", required = false) PfsParameterJpa pfs,
     @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken) {
 
@@ -133,9 +133,9 @@ public class HistoryServiceRestImpl extends RootServiceRestImpl implements
       MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML
   })
   public ConceptList findConceptRevisions(
-    @ApiParam(value = "Concept terminology , e.g. SNOMEDCT", required = true) @PathParam("id") String id,
-    @ApiParam(value = "Date in the format YYYYMMDD , e.g. latest or \"null\"", required = true) @PathParam("startDate") String startDate,
-    @ApiParam(value = "Date in the format YYYYMMDD , e.g. latest or \"null\"", required = true) @PathParam("endDate") String endDate,
+    @ApiParam(value = "Concept unique id, i.e. 1", required = true) @PathParam("id") String id,
+    @ApiParam(value = "Date in the format YYYYMMDD , e.g. 20140731 or \"null\"", required = true) @PathParam("startDate") String startDate,
+    @ApiParam(value = "Date in the format YYYYMMDD , e.g. 20140731 or \"null\"", required = true) @PathParam("endDate") String endDate,
     @ApiParam(value = "PFS Parameter, e.g. '{ \"startIndex\":\"1\", \"maxResults\":\"5\" }'", required = false) PfsParameterJpa pfs,
     @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken) {
 
@@ -171,7 +171,7 @@ public class HistoryServiceRestImpl extends RootServiceRestImpl implements
   })
   public Concept findConceptReleaseRevision(
     @ApiParam(value = "Concept id, e.g. 2", required = true) @PathParam("id") String id,
-    @ApiParam(value = "Release date in the format YYYYMMDD , e.g. latest", required = true) @PathParam("release") String release,
+    @ApiParam(value = "Release date in the format YYYYMMDD , e.g. 20140731", required = true) @PathParam("release") String release,
     @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken) {
 
     Logger.getLogger(ContentServiceRestImpl.class).info(
@@ -212,7 +212,7 @@ public class HistoryServiceRestImpl extends RootServiceRestImpl implements
   })
   public DescriptionList findDescriptionsModifiedSinceDate(
     @ApiParam(value = "Description terminology , e.g. SNOMEDCT", required = true) @PathParam("terminology") String terminology,
-    @ApiParam(value = "Date in the format YYYYMMDD , e.g. latest or \"null\"", required = true) @PathParam("date") String date,
+    @ApiParam(value = "Date in the format YYYYMMDD , e.g. 20140731 or \"null\"", required = true) @PathParam("date") String date,
     @ApiParam(value = "PFS Parameter, e.g. '{ \"startIndex\":\"1\", \"maxResults\":\"5\" }'", required = false) PfsParameterJpa pfs,
     @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken) {
 
@@ -263,8 +263,8 @@ public class HistoryServiceRestImpl extends RootServiceRestImpl implements
   })
   public DescriptionList findDescriptionRevisions(
     @ApiParam(value = "Concept terminology , e.g. SNOMEDCT", required = true) @PathParam("id") String id,
-    @ApiParam(value = "Date in the format YYYYMMDD , e.g. latest or \"null\"", required = true) @PathParam("startDate") String startDate,
-    @ApiParam(value = "Date in the format YYYYMMDD , e.g. latest or \"null\"", required = true) @PathParam("endDate") String endDate,
+    @ApiParam(value = "Date in the format YYYYMMDD, e.g. 20140731 or \"null\"", required = true) @PathParam("startDate") String startDate,
+    @ApiParam(value = "Date in the format YYYYMMDD, e.g. 20140731 or \"null\"", required = true) @PathParam("endDate") String endDate,
     @ApiParam(value = "PFS Parameter, e.g. '{ \"startIndex\":\"1\", \"maxResults\":\"5\" }'", required = false) PfsParameterJpa pfs,
     @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken) {
 
@@ -341,7 +341,7 @@ public class HistoryServiceRestImpl extends RootServiceRestImpl implements
   })
   public RelationshipList findRelationshipsModifiedSinceDate(
     @ApiParam(value = "Relationship terminology , e.g. SNOMEDCT", required = true) @PathParam("terminology") String terminology,
-    @ApiParam(value = "Date in the format YYYYMMDD , e.g. latest or \"null\"", required = true) @PathParam("date") String date,
+    @ApiParam(value = "Date in the format YYYYMMDD, e.g. 20140731 or \"null\"", required = true) @PathParam("date") String date,
     @ApiParam(value = "PFS Parameter, e.g. '{ \"startIndex\":\"1\", \"maxResults\":\"5\" }'", required = false) PfsParameterJpa pfs,
     @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken) {
 
@@ -392,8 +392,8 @@ public class HistoryServiceRestImpl extends RootServiceRestImpl implements
   })
   public RelationshipList findRelationshipRevisions(
     @ApiParam(value = "Concept terminology , e.g. SNOMEDCT", required = true) @PathParam("id") String id,
-    @ApiParam(value = "Date in the format YYYYMMDD , e.g. latest or \"null\"", required = true) @PathParam("startDate") String startDate,
-    @ApiParam(value = "Date in the format YYYYMMDD , e.g. latest or \"null\"", required = true) @PathParam("endDate") String endDate,
+    @ApiParam(value = "Date in the format YYYYMMDD, e.g. 20140731 or \"null\"", required = true) @PathParam("startDate") String startDate,
+    @ApiParam(value = "Date in the format YYYYMMDD, e.g. 20140731 or \"null\"", required = true) @PathParam("endDate") String endDate,
     @ApiParam(value = "PFS Parameter, e.g. '{ \"startIndex\":\"1\", \"maxResults\":\"5\" }'", required = false) PfsParameterJpa pfs,
     @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken) {
 
@@ -472,7 +472,7 @@ public class HistoryServiceRestImpl extends RootServiceRestImpl implements
   })
   public LanguageRefSetMemberList findLanguageRefSetMembersModifiedSinceDate(
     @ApiParam(value = "LanguageRefSetMember terminology , e.g. SNOMEDCT", required = true) @PathParam("terminology") String terminology,
-    @ApiParam(value = "Date in the format YYYYMMDD , e.g. latest or \"null\"", required = true) @PathParam("date") String date,
+    @ApiParam(value = "Date in the format YYYYMMDD, e.g. 20140731 or \"null\"", required = true) @PathParam("date") String date,
     @ApiParam(value = "PFS Parameter, e.g. '{ \"startIndex\":\"1\", \"maxResults\":\"5\" }'", required = false) PfsParameterJpa pfs,
     @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken) {
 
@@ -524,8 +524,8 @@ public class HistoryServiceRestImpl extends RootServiceRestImpl implements
   })
   public LanguageRefSetMemberList findLanguageRefSetMemberRevisions(
     @ApiParam(value = "Concept terminology , e.g. SNOMEDCT", required = true) @PathParam("id") String id,
-    @ApiParam(value = "Date in the format YYYYMMDD , e.g. latest or \"null\"", required = true) @PathParam("startDate") String startDate,
-    @ApiParam(value = "Date in the format YYYYMMDD , e.g. latest or \"null\"", required = true) @PathParam("endDate") String endDate,
+    @ApiParam(value = "Date in the format YYYYMMDD, e.g. 20140731 or \"null\"", required = true) @PathParam("startDate") String startDate,
+    @ApiParam(value = "Date in the format YYYYMMDD, e.g. 20140731 or \"null\"", required = true) @PathParam("endDate") String endDate,
     @ApiParam(value = "PFS Parameter, e.g. '{ \"startIndex\":\"1\", \"maxResults\":\"5\" }'", required = false) PfsParameterJpa pfs,
     @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken) {
 
@@ -610,7 +610,7 @@ public class HistoryServiceRestImpl extends RootServiceRestImpl implements
   })
   public ConceptList findConceptsDeepModifiedSinceDate(
     @ApiParam(value = "Concept terminology , e.g. SNOMEDCT", required = true) @PathParam("terminology") String terminology,
-    @ApiParam(value = "Date in the format YYYYMMDD , e.g. latest or \"null\"", required = true) @PathParam("date") String date,
+    @ApiParam(value = "Date in the format YYYYMMDD, e.g. 20140731 or \"null\"", required = true) @PathParam("date") String date,
     @ApiParam(value = "PFS Parameter, e.g. '{ \"startIndex\":\"1\", \"maxResults\":\"5\" }'", required = false) PfsParameterJpa pfs,
     @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken)
     throws Exception {
@@ -922,13 +922,13 @@ public class HistoryServiceRestImpl extends RootServiceRestImpl implements
    */
   @Override
   @GET
-  @Path("/startEditingCycle/{releaseVersion}/{terminology}/{version}")
+  @Path("/release/startEditingCycle/{releaseVersion}/{terminology}/{version}")
   @ApiOperation(value = "Start the editing cycle", notes = "Marks the start of the editing cycle for the specified release for the specified terminology/version")
   @Consumes({
       MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML
   })
   public void startEditingCycle(
-    @ApiParam(value = "Release version, e.g. 20150131", required = true) @PathParam("release") String releaseVersion,
+    @ApiParam(value = "Release version, e.g. 20150131", required = true) @PathParam("releaseVersion") String releaseVersion,
     @ApiParam(value = "Terminology, e.g. SNOMEDCT", required = true) @PathParam("terminology") String terminology,
     @ApiParam(value = "Terminology version, e.g. latest", required = true) @PathParam("version") String version,
     @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken) {

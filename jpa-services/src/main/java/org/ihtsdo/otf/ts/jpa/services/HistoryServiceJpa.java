@@ -10,6 +10,8 @@ import javax.persistence.NoResultException;
 
 import org.apache.log4j.Logger;
 import org.apache.lucene.search.Query;
+import org.apache.lucene.search.Sort;
+import org.apache.lucene.search.SortField;
 import org.hibernate.envers.AuditReader;
 import org.hibernate.envers.AuditReaderFactory;
 import org.hibernate.envers.query.AuditEntity;
@@ -654,6 +656,7 @@ public class HistoryServiceJpa extends ContentServiceJpa implements
                   qb.keyword()
                       .onFields("terminologyId", "defaultPreferredName")
                       .matching(pfs.getQueryRestriction()).createQuery())
+                      
               .createQuery();
 
     }
@@ -666,6 +669,10 @@ public class HistoryServiceJpa extends ContentServiceJpa implements
     if (pfs != null && pfs.getStartIndex() != -1 && pfs.getMaxResults() != -1) {
       ftquery.setFirstResult(pfs.getStartIndex());
       ftquery.setMaxResults(pfs.getMaxResults());
+      
+      if (pfs.getSortField() != null && !pfs.getSortField().isEmpty()) {
+        ftquery.setSort(new Sort(new SortField(pfs.getSortField(), SortField.STRING, !pfs.isAscending())));
+      }
 
     }
     totalCt[0] = ftquery.getResultSize();
@@ -783,6 +790,9 @@ public class HistoryServiceJpa extends ContentServiceJpa implements
    * @return the t
    * @throws ParseException the parse exception
    */
+  // TODO Do we want this to find the most recent version, or only this specific date?
+  // Should this trigger on effectiveTime, lastModified, or Version?
+  // Unsure what we're going for here, clarify
   private <T> T findReleaseRevision(Long id, Date release, Class<T> clazz)
     throws ParseException {
 

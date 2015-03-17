@@ -5,12 +5,48 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.ihtsdo.otf.ts.helpers.AbstractResultList;
+import org.apache.log4j.Logger;
 import org.ihtsdo.otf.ts.helpers.LocalException;
 import org.ihtsdo.otf.ts.helpers.PfsParameter;
 import org.ihtsdo.otf.ts.helpers.PfsParameterJpa;
+import org.ihtsdo.otf.ts.helpers.ResultList;
 
 public class DegenerateUseMethodTestHelper {
+
+  public enum ExpectedFailure {
+
+    // expect exception (DEFAULT if not specified)
+    EXCEPTION,
+
+    // use this to skip testing a parameter
+    SKIP,
+
+    // use this if no erroneous behavior can be tested, but don't want to skip
+    // parameter
+    NONE,
+
+    // String cases where empty result throws exception, but null value does not
+    STRING_EMPTY_EXCEPTION_NULL_EXCEPTION, // identical to EXCEPTION, included
+                                           // for completeness
+    STRING_EMPTY_EXCEPTION_NULL_NO_RESULTS, // null erroneously returns no
+                                            // results
+    STRING_EMPTY_EXCEPTION_NULL_SUCCESS, // null successfully runs
+
+    // cases where empty result erroneously returns no results
+    STRING_EMPTY_NO_RESULTS_NULL_EXCEPTION, // null throws exception
+    STRING_EMPTY_NO_RESULTS_NULL_NO_RESULTS, // null erroneously returns no
+                                             // results
+    STRING_EMPTY_NO_RESULTS_NULL_SUCCESS, // null successfully runs
+
+    // cases where empty value successfully runs, but null does not
+    STRING_EMPTY_SUCCESS_NULL_EXCEPTION, // null throws exception
+    STRING_EMPTY_SUCCESS_NULL_NO_RESULTS, // null erroneously returns results
+    STRING_EMPTY_SUCCESS_NULL_SUCCESS, // identical to NONE, included for
+                                       // completeness
+
+    // expect success, but empty ResultList
+    NO_RESULTS,
+  };
 
   /**
    * Test a object's method for invalid and null values Assumes invalid values
@@ -22,30 +58,34 @@ public class DegenerateUseMethodTestHelper {
    */
   public static void testDegenerateArguments(Object obj, Method method,
     Object[] validParameters) throws Exception, LocalException {
-    System.out.println("Testing " + obj.getClass().getName() + ", method "
-        + method.getName());
+
     testDegenerateArguments(obj, method, validParameters, null);
   }
 
   public static void testDegenerateArguments(Object obj, Method method,
-    Object[] validParameters, boolean[] isFieldValueTested) throws Exception {
+    Object[] validParameters, ExpectedFailure[] expectedFailures)
+    throws Exception {
 
     // check assumptions
     if (obj == null)
       throw new Exception("Class to test method for not specified");
     if (method == null)
       throw new Exception("Method to test not specified");
-    if (validParameters != null && isFieldValueTested != null) {
-      if (validParameters.length != isFieldValueTested.length)
+    if (validParameters != null && expectedFailures != null) {
+      if (validParameters.length != expectedFailures.length)
         throw new Exception(
             "Specified list of whether to test field values does not match length of list of parameters");
     }
+
+    Logger.getLogger(DegenerateUseMethodTestHelper.class).info(
+        "Testing " + obj.getClass().getName() + ", method " + method.getName());
 
     // first invoke the method with correct methods to ensure properly invoked
     try {
       method.invoke(obj, validParameters);
     } catch (Exception e) {
-      throw new Exception("Could not validate method with valid parameters, error thrown");
+      throw new Exception(
+          "Could not validate method with valid parameters, error thrown");
     }
 
     // construct the base valid parameter list
@@ -56,108 +96,326 @@ public class DegenerateUseMethodTestHelper {
     // cycle over parameters
     for (int i = 0; i < validParameters.length; i++) {
 
-      if (isFieldValueTested != null && isFieldValueTested[i] == false) {
-        System.out.println("  Skipping parameter " + i);
-      } else {
-        System.out.println("  Testing parameter " + i);
+      // if expected failures array null, or this value null, expect an
+      // Exception
+      ExpectedFailure expectedFailure;
+      if (expectedFailures == null || expectedFailures[i] == null)
+        expectedFailure = ExpectedFailure.EXCEPTION;
+      else
+        expectedFailure = expectedFailures[i];
 
-        // instantiate parameters list from base valid parameter list
-        List<Object> parameters = new ArrayList<>(validParameterList);
+      // System.out.println("  Testing parameter " + i);
 
-        System.out.println("  Valid parameters: "
-            + validParameterList.toString());
+      // instantiate parameters list from base valid parameter list
+      List<Object> parameters = new ArrayList<>(validParameterList);
 
-        // the invalid value to test with
-        Object invalidValue = null;
+      // System.out
+      // .println("  Valid parameters: " + validParameterList.toString());
 
-        // construct the bad parameter based on type (supports String, Long,
-        // Integer)
-        // PfsParameter handled below
-        Class<? extends Object> parameterType = validParameters[i].getClass();
-        if (parameterType.equals(String.class)) {
-          invalidValue = parameterType.cast(" ");
-        } else if (parameterType.equals(Long.class)
-            || parameterType.equals(long.class)) {
-          invalidValue = parameterType.cast(-5L);
-        } else if (parameterType.equals(Integer.class)
-            || parameterType.equals(int.class)) {
-          invalidValue = parameterType.cast(-5);
+      // the invalid value to test with
+      Object invalidValue = null;
+
+      // construct the bad parameter based on type (supports String, Long,
+      // Integer)
+      // PfsParameter handled below
+      Class<? extends Object> parameterType = validParameters[i].getClass();
+      if (parameterType.equals(String.class)) {
+        invalidValue = parameterType.cast("");
+      } else if (parameterType.equals(Long.class)
+          || parameterType.equals(long.class)) {
+        invalidValue = parameterType.cast(-5L);
+      } else if (parameterType.equals(Integer.class)
+          || parameterType.equals(int.class)) {
+        invalidValue = parameterType.cast(-5);
+      }
+
+      Logger.getLogger(DegenerateUseMethodTestHelper.class).info(
+          "Object parameter tested of type " + parameterType.toString()
+              + " with expected failure mode " + expectedFailure);
+
+      // if not a pfs parameter, test object
+      if (!parameterType.equals(PfsParameterJpa.class)
+          && !parameterType.equals(PfsParameter.class)) {
+
+        // replace the bad parameter
+        parameters.set(i, invalidValue);
+        invoke(obj, method, parameters.toArray(), invalidValue, expectedFailure);
+
+        // if not primitive, test null
+        if (!parameterType.isPrimitive()) {
+          parameters.set(i, null);
+          invoke(obj, method, parameters.toArray(), null, expectedFailure);
         }
 
-        if (!parameterType.equals(PfsParameterJpa.class)
-            && !parameterType.equals(PfsParameter.class)) {
+      }
 
-          if (isFieldValueTested != null) {
-            System.out.println("Field value tested = " + isFieldValueTested[i]);
-          }
+      // pfs parameter testing
+      else {
 
-          // replace the bad parameter
-          parameters.set(i, invalidValue);
-          invoke(obj, method, parameters.toArray());
+        PfsParameter pfs =
+            new PfsParameterJpa((PfsParameter) validParameters[i]);
 
-          // if not primitive, test null
-          if (!parameterType.isPrimitive()) {
-            parameters.set(i, null);
-            invoke(obj, method, parameters.toArray());
-          }
+        // test invalid sort field (does not exist)
+        pfs.setSortField("-");
+        parameters.set(i, pfs);
 
-          // pfs parameter testing
-        } else {
+        invoke(obj, method, parameters.toArray(), pfs, expectedFailure);
 
-          PfsParameter pfs;
+        // test invalid start index (< -1)
+        pfs = new PfsParameterJpa((PfsParameter) validParameters[i]);
+        pfs.setStartIndex(-5);
+        pfs.setMaxResults(10);
+        parameters.set(i, pfs);
 
-          pfs = new PfsParameterJpa((PfsParameter) validParameters[i]);
+        invoke(obj, method, parameters.toArray(), pfs, expectedFailure);
 
-          // test invalid sort field (does not exist)
-          pfs.setSortField("-");
-          parameters.set(i, pfs);
-          System.out.println("  Testing with invalid pfs: " + pfs.toString());
+        // test bad query restriction (bad lucene syntax)
+        pfs = new PfsParameterJpa((PfsParameter) validParameters[i]);
+        pfs.setQueryRestriction("BAD_SYNTAX*:*!~bad");
+        parameters.set(i, pfs);
 
-          invoke(obj, method, parameters.toArray());
+        invoke(obj, method, parameters.toArray(), pfs, expectedFailure);
 
-          // test invalid start index (< -1)
-          pfs = new PfsParameterJpa((PfsParameter) validParameters[i]);
-          pfs.setStartIndex(-5);
-          pfs.setMaxResults(10);
-          parameters.set(i, pfs);
-          System.out.println("  Testing with invalid pfs: " + pfs.toString());
-
-          invoke(obj, method, parameters.toArray());
-
-          // test bad query restriction (bad lucene syntax)
-          pfs = new PfsParameterJpa((PfsParameter) validParameters[i]);
-          pfs.setQueryRestriction("BAD_SYNTAX*:*!~bad");
-          parameters.set(i, pfs);
-          System.out.println("  Testing with invalid pfs: " + pfs.toString());
-
-          invoke(obj, method, parameters.toArray());
-        }
       }
     }
   }
 
-  private static void invoke(Object obj, Method method, Object[] parameters)
-    throws Exception {
-    String debugStr = "";
-    for (Object o : parameters) {
-      debugStr += " " + (o == null ? "null" : o.toString());
+  private static void invoke(Object obj, Method method, Object[] parameters,
+    Object parameter, ExpectedFailure expectedFailure) throws Exception {
 
-    }
-    System.out.println("    Testing with parameters: " + debugStr);
+    /*
+     * String debugStr = ""; for (Object o : parameters) { debugStr += " " + (o
+     * == null ? "null" : o.toString());
+     * 
+     * } System.out.println("  Testing with parameters: " + debugStr); if
+     * (parameter == null) System.out.println("    NULL PARAMETER"); else {
+     * System.out.println("    class = " + parameter.getClass().toString()); if
+     * (parameter.getClass().equals(String.class)) {
+     * System.out.println("    empty = " + ((String) parameter).isEmpty()); } }
+     */
 
-    try {
-      method.invoke(obj, parameters);
+    if (expectedFailure.equals(ExpectedFailure.SKIP)) {
+      // do nothing, skip this test
+    } else {
+      Logger.getLogger(DegenerateUseMethodTestHelper.class).info(
+          "Testing value "
+              + (parameter == null ? "null" : parameter.toString()));
 
-      // if successful, throw new LocalException, caught and rethrown below
-      throw new Exception(
-          "Method invocation with invalid parameters did not throw expected exception");
-    } catch (IllegalAccessException | IllegalArgumentException e) {
-      throw new Exception("Failed to correctly invoke method");
-    } catch (InvocationTargetException e) {
-      System.out.println("      Failed (expected)");
-    } catch (LocalException e) {
-      throw new Exception(e.getMessage());
+      try {
+        ResultList<?> results = (ResultList<?>) method.invoke(obj, parameters);
+
+        Logger.getLogger(DegenerateUseMethodTestHelper.class).info(
+            "Call succeeded for tested value "
+                + (parameter == null ? "null" : parameter.toString()));
+
+        // switch on expected failure type -- NOTE: exception types are handled
+        // below, SKIP handled above
+        switch (expectedFailure) {
+
+          case NONE:
+            // do nothing, expect success
+            break;
+          case NO_RESULTS:
+            // check that no results returned
+            if (results.getCount() != 0) {
+              throw new Exception("Test expecting no results returned objects");
+            }
+            break;
+          case STRING_EMPTY_NO_RESULTS_NULL_NO_RESULTS:
+            // if parameter is string or null
+            if (parameter == null || parameter.getClass().equals(String.class)) {
+
+              // check assumption: empty string
+              if (((String) parameter).isEmpty() == false) {
+                throw new Exception(
+                    "Empty string test used non-empty string as parameter");
+              }
+
+              // check no results
+              if (results.getCount() != 0) {
+                throw new Exception(
+                    "Test expecting no results returned objects");
+              }
+            }
+
+            // if parameter non-null and is not string
+            else {
+              throw new Exception(
+                  "Test of String parameter used non-String object");
+            }
+
+            break;
+          case STRING_EMPTY_NO_RESULTS_NULL_SUCCESS:
+
+            // if parameter is null, do nothing
+            if (parameter == null) {
+              // do nothing
+            }
+
+            // if parameter is non-null and a string
+            else if (parameter.getClass().equals(String.class)) {
+
+              // check assumption: empty string
+              if (((String) parameter).isEmpty() == false) {
+                throw new Exception(
+                    "Empty string test used non-empty string as parameter");
+              }
+
+              // check no results
+              if (results.getCount() != 0) {
+                throw new Exception(
+                    "Test expecting no results returned objects");
+              }
+            }
+
+            // if parameter non-null but is not string
+            else {
+              throw new Exception(
+                  "Test of String parameter used non-String object");
+            }
+          case STRING_EMPTY_SUCCESS_NULL_NO_RESULTS:
+            // if parameter null
+            if (parameter == null) {
+
+              // check no results
+              if (results.getCount() != 0) {
+                throw new Exception(
+                    "Test expecting no results returned objects");
+              }
+            }
+
+            // if parameter non-null but is not string
+            else if (!parameter.getClass().equals(String.class)) {
+              throw new Exception(
+                  "Test of String parameter used non-String object");
+            }
+
+            // otherwise, empty string succeeds,
+            else {
+              // check assumption: empty string
+              if (((String) parameter).isEmpty() == false) {
+                throw new Exception(
+                    "Empty string test used non-empty string as parameter");
+              }
+            }
+
+            break;
+          case STRING_EMPTY_SUCCESS_NULL_SUCCESS:
+            if (parameter == null) {
+              // do nothing
+            } else {
+              // check assumption: empty string
+              if (((String) parameter).isEmpty() == false) {
+                throw new Exception(
+                    "Empty string test used non-empty string as parameter");
+
+                // do nothing
+              }
+
+            }
+            break;
+          default:
+            throw new Exception(
+                "Unexpected failure type detected, could not validate results");
+
+        }
+
+        Logger.getLogger(DegenerateUseMethodTestHelper.class).info(
+            "  Successful call expected");
+
+      } catch (IllegalAccessException | IllegalArgumentException e) {
+        throw new Exception("Failed to correctly invoke method");
+      } catch (InvocationTargetException e) {
+
+        switch (expectedFailure) {
+          case EXCEPTION:
+            // do nothing, expected exception
+            break;
+
+          case STRING_EMPTY_EXCEPTION_NULL_EXCEPTION:
+            if (parameter == null) {
+              // do nothing, expected exception
+            }
+
+            else if (parameter.getClass().equals(String.class)) {
+              // check assumption: empty string
+              if (((String) parameter).isEmpty() == false) {
+                throw new Exception(
+                    "Empty string test used non-empty string as parameter");
+              }
+
+              // do nothing
+            } else {
+              throw new Exception(
+                  "Test expecting String value given non-String parameter");
+            }
+
+            break;
+          case STRING_EMPTY_EXCEPTION_NULL_NO_RESULTS:
+            if (parameter == null) {
+              throw new Exception("Testing string parameter with null value threw an unexpected exception");
+
+            } else if (parameter.getClass().equals(String.class)) {
+              // check assumption: empty string
+              if (((String) parameter).isEmpty() == false) {
+                throw new Exception(
+                    "Empty string test used non-empty string as parameter");
+              }
+
+              // do nothing
+            } else {
+              throw new Exception(
+                  "Test expecting String value given non-String parameter");
+            }
+            break;
+          case STRING_EMPTY_EXCEPTION_NULL_SUCCESS:
+            if (parameter == null) {
+              throw new Exception("Testing string parameter with null value threw an unexpected exception");
+
+            } else if (parameter.getClass().equals(String.class)) {
+              // check assumption: empty string
+              if (((String) parameter).isEmpty() == false) {
+                throw new Exception(
+                    "Empty string test used non-empty string as parameter");
+              }
+
+              // do nothing
+            } else {
+              throw new Exception(
+                  "Test expecting String value given non-String parameter");
+            }
+            break;
+          case STRING_EMPTY_NO_RESULTS_NULL_EXCEPTION:
+            if (parameter == null) {
+              // do nothing, expected exception
+
+            } else if (parameter.getClass().equals(String.class)) {
+              throw new Exception("Test expecting no results for empty string threw unexpected exception");
+            } else {
+              throw new Exception(
+                  "Test expecting String value given non-String parameter");
+            }
+            break;
+          case STRING_EMPTY_SUCCESS_NULL_EXCEPTION:
+            if (parameter == null) {
+              // do nothing, expected exception
+
+            } else if (parameter.getClass().equals(String.class)) {
+              throw new Exception("Test expecting success for empty string threw unexpected exception");
+            } else {
+              throw new Exception(
+                  "Test expecting String value given non-String parameter");
+            }
+            break;
+          default:
+            throw new Exception("Call failed (not expected) with value "
+                + (parameter == null ? "null" : parameter.toString()));
+        }
+
+      
+      } catch (LocalException e) {
+        throw new Exception(e.getMessage());
+      }
     }
   }
-
 }
