@@ -1,17 +1,15 @@
 package org.ihtsdo.otf.ts.mojo;
 
-import java.util.HashSet;
 import java.util.Properties;
-import java.util.Set;
 
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
-import org.ihtsdo.otf.ts.ValidationResult;
 import org.ihtsdo.otf.ts.helpers.ConfigUtility;
-import org.ihtsdo.otf.ts.helpers.LocalException;
 import org.ihtsdo.otf.ts.jpa.algo.ReleaseRf2BeginAlgorithm;
+import org.ihtsdo.otf.ts.jpa.client.HistoryClientRest;
 import org.ihtsdo.otf.ts.jpa.services.SecurityServiceJpa;
+import org.ihtsdo.otf.ts.rest.impl.HistoryServiceRestImpl;
 import org.ihtsdo.otf.ts.services.SecurityService;
 
 /**
@@ -60,7 +58,7 @@ public class ReleaseRf2BeginMojo extends AbstractMojo {
    * @parameter saveIdentifiers
    * @required
    */
-  private String saveIdentifiers = null;
+  private boolean saveIdentifiers = false;
 
   /**
    * Whether to run this mojo against an active server
@@ -73,7 +71,6 @@ public class ReleaseRf2BeginMojo extends AbstractMojo {
    * 
    * @see org.apache.maven.plugin.Mojo#execute()
    */
-  @SuppressWarnings("unused")
   @Override
   public void execute() throws MojoExecutionException, MojoFailureException {
     try {
@@ -111,39 +108,16 @@ public class ReleaseRf2BeginMojo extends AbstractMojo {
       if (!serverRunning) {
         getLog().info("Running directly");
 
-        // Call release processing algo here
+        HistoryClientRest historyService = new HistoryClientRest(properties);
+        historyService.beginRf2Release(releaseVersion, terminology, validate,
+            workflowStatusValues, saveIdentifiers, authToken);
 
       } else {
         getLog().info("Running against server");
 
-        // Call release processing client here
-      }
-
-      // Perform the operation
-      Set<String> statusSet = new HashSet<>();
-      if (workflowStatusValues != null) {
-        for (String status : workflowStatusValues.split(",")) {
-          statusSet.add(status);
-        }
-      }
-      ReleaseRf2BeginAlgorithm algorithm =
-          new ReleaseRf2BeginAlgorithm(releaseVersion, terminology, validate,
-              statusSet, saveIdentifiers.toLowerCase().equals("true"));
-      try {
-        algorithm.compute();
-      } catch (LocalException e) {
-        // validation failure
-        ValidationResult result = algorithm.getValidationResult();
-        getLog().info("  VALIDATION FAILED");
-        for (String error : result.getErrors()) {
-          getLog().info("    ERROR: " + error);
-        }
-        for (String warning : result.getWarnings()) {
-          getLog().info("    WARNING: " + warning);
-        }
-        if (!result.isValid()) {
-          throw new Exception("Validation Failed");
-        }
+        HistoryServiceRestImpl historyService = new HistoryServiceRestImpl();
+        historyService.beginRf2Release(releaseVersion, terminology, validate,
+            workflowStatusValues, saveIdentifiers, authToken);
       }
 
       getLog().info("...done");

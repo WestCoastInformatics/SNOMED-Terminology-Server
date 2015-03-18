@@ -1,7 +1,7 @@
 package org.ihtsdo.otf.ts.rest.impl;
 
-import java.util.Arrays;
 import java.util.HashSet;
+import java.util.Set;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
@@ -17,10 +17,12 @@ import javax.ws.rs.core.MediaType;
 import org.apache.log4j.Logger;
 import org.ihtsdo.otf.ts.ReleaseInfo;
 import org.ihtsdo.otf.ts.UserRole;
+import org.ihtsdo.otf.ts.ValidationResult;
 import org.ihtsdo.otf.ts.helpers.ConceptList;
 import org.ihtsdo.otf.ts.helpers.ConfigUtility;
 import org.ihtsdo.otf.ts.helpers.DescriptionList;
 import org.ihtsdo.otf.ts.helpers.LanguageRefSetMemberList;
+import org.ihtsdo.otf.ts.helpers.LocalException;
 import org.ihtsdo.otf.ts.helpers.PfsParameterJpa;
 import org.ihtsdo.otf.ts.helpers.RelationshipList;
 import org.ihtsdo.otf.ts.helpers.ReleaseInfoList;
@@ -917,14 +919,33 @@ public class HistoryServiceRestImpl extends RootServiceRestImpl implements
     try {
       authenticate(securityService, authToken, "begin release",
           UserRole.ADMINISTRATOR);
-      // Perform operations
+
+      // Perform the operation
+      Set<String> statusSet = new HashSet<>();
+      if (workflowStatusValues != null) {
+        for (String status : workflowStatusValues.split(",")) {
+          statusSet.add(status);
+        }
+      }
       ReleaseRf2BeginAlgorithm algorithm =
           new ReleaseRf2BeginAlgorithm(releaseVersion, terminology, validate,
-              new HashSet<String>(
-                  Arrays.asList(workflowStatusValues.split(","))),
-              saveIdentifiers);
-      algorithm.compute();
-      algorithm.close();
+              statusSet, saveIdentifiers);
+      try {
+        algorithm.compute();
+      } catch (LocalException e) {
+        // validation failure
+        ValidationResult result = algorithm.getValidationResult();
+        Logger.getLogger(getClass()).info("  VALIDATION FAILED");
+        for (String error : result.getErrors()) {
+          Logger.getLogger(getClass()).info("    ERROR: " + error);
+        }
+        for (String warning : result.getWarnings()) {
+          Logger.getLogger(getClass()).info("    WARNING: " + warning);
+        }
+        if (!result.isValid()) {
+          throw new Exception("Validation Failed");
+        }
+      }
 
     } catch (Exception e) {
       handleException(e, "start editing cycle");
@@ -968,8 +989,12 @@ public class HistoryServiceRestImpl extends RootServiceRestImpl implements
     }
   }
 
-  /* (non-Javadoc)
-   * @see org.ihtsdo.otf.ts.rest.HistoryServiceRest#finishRf2Release(java.lang.String, java.lang.String, java.lang.String)
+  /*
+   * (non-Javadoc)
+   * 
+   * @see
+   * org.ihtsdo.otf.ts.rest.HistoryServiceRest#finishRf2Release(java.lang.String
+   * , java.lang.String, java.lang.String)
    */
   @Override
   @POST
