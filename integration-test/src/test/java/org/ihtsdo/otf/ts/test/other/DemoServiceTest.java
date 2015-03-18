@@ -77,14 +77,14 @@ public class DemoServiceTest {
   @SuppressWarnings("null")
   @Test
   public void testDemo() throws Exception {
-    Logger.getLogger(this.getClass()).info("Start demo ..." + new Date());
+    Logger.getLogger(getClass()).info("Start demo ..." + new Date());
 
     //
     // Create a concept
     // * Obtain 10001005 Bacterial sepsis from the DB
     // * change it
     // * insert it as a "new" concept.
-    Logger.getLogger(this.getClass())
+    Logger.getLogger(getClass())
         .info("  Read 10001005 - Bacterial sepsis");
     Concept parent =
         contentClient.getSingleConcept("10001005", "SNOMEDCT", "latest",
@@ -92,13 +92,13 @@ public class DemoServiceTest {
     Concept concept =
         contentClient.getSingleConcept("10001005", "SNOMEDCT", "latest",
             authToken);
-    Logger.getLogger(this.getClass()).info("  Clear id and effectiveTime");
+    Logger.getLogger(getClass()).info("  Clear id and effectiveTime");
     concept.setWorkflowStatus(null);
     concept.setId(null);
     concept.setTerminologyId(null);
     concept.setEffectiveTime(null);
     // Change the FN and PT descriptions - keep only 2
-    Logger.getLogger(this.getClass()).info("  Change descriptions");
+    Logger.getLogger(getClass()).info("  Change descriptions");
     Set<Description> descs = new HashSet<>(concept.getDescriptions());
     concept.getDescriptions().clear();
     for (Description description : descs) {
@@ -129,7 +129,7 @@ public class DemoServiceTest {
         }
       }
     }
-    Logger.getLogger(this.getClass()).info("  Change relationships");
+    Logger.getLogger(getClass()).info("  Change relationships");
     // Rewire an active, stated, isa relationship to the parent
     for (Relationship relationship : concept.getRelationships()) {
       if (TerminologyUtility.isHierarchicalIsaRelationship(relationship)
@@ -150,22 +150,22 @@ public class DemoServiceTest {
     }
 
     // at this point concept has descriptions and relationships as well.
-    Logger.getLogger(this.getClass()).info("  Insert it as a new concept");
+    Logger.getLogger(getClass()).info("  Insert it as a new concept");
     concept = editClient.addConcept((ConceptJpa) concept, authToken);
-    Logger.getLogger(this.getClass()).info("    id = " + concept.getId());
-    Logger.getLogger(this.getClass()).info(
+    Logger.getLogger(getClass()).info("    id = " + concept.getId());
+    Logger.getLogger(getClass()).info(
         "    terminologyId = " + concept.getTerminologyId());
-    Logger.getLogger(this.getClass()).info(
+    Logger.getLogger(getClass()).info(
         "    effectiveTime = " + concept.getEffectiveTime());
-    Logger.getLogger(this.getClass()).info(
+    Logger.getLogger(getClass()).info(
         "    lastModified = " + concept.getLastModified());
-    Logger.getLogger(this.getClass()).info(
+    Logger.getLogger(getClass()).info(
         "    lastModifiedBy = " + concept.getLastModifiedBy());
-    Logger.getLogger(this.getClass()).info(
+    Logger.getLogger(getClass()).info(
         "    defaultPreferredName = " + concept.getDefaultPreferredName());
 
     // log concept
-    Logger.getLogger(this.getClass()).info(
+    Logger.getLogger(getClass()).info(
         ConceptReportHelper.getConceptReport(concept));
 
     // pause
@@ -179,7 +179,7 @@ public class DemoServiceTest {
     //
     // Add description for "es"
     // * "La sepsis bacteriana xxx"
-    Logger.getLogger(this.getClass()).info("  Add description for es");
+    Logger.getLogger(getClass()).info("  Add description for es");
     Description newDescription = null;
     for (Description description : concept.getDescriptions()) {
       if (description.getTerm().equals("Bacterial sepsis XXX")) {
@@ -203,19 +203,19 @@ public class DemoServiceTest {
 
     newDescription =
         editClient.addDescription((DescriptionJpa) newDescription, authToken);
-    Logger.getLogger(this.getClass())
+    Logger.getLogger(getClass())
         .info("    id = " + newDescription.getId());
-    Logger.getLogger(this.getClass()).info(
+    Logger.getLogger(getClass()).info(
         "    terminologyId = " + newDescription.getTerminologyId());
-    Logger.getLogger(this.getClass()).info(
+    Logger.getLogger(getClass()).info(
         "    effectiveTime = " + newDescription.getEffectiveTime());
-    Logger.getLogger(this.getClass()).info(
+    Logger.getLogger(getClass()).info(
         "    lastModified = " + newDescription.getLastModified());
-    Logger.getLogger(this.getClass()).info(
+    Logger.getLogger(getClass()).info(
         "    lastModifiedBy = " + newDescription.getLastModifiedBy());
     // log concept
     concept = contentClient.getConcept(concept.getId(), authToken);
-    Logger.getLogger(this.getClass()).info(
+    Logger.getLogger(getClass()).info(
         ConceptReportHelper.getConceptReport(concept));
 
     // pause
@@ -229,7 +229,7 @@ public class DemoServiceTest {
     // retire the concept
     // * set concept inactive
     // * set active relationships inactive
-    Logger.getLogger(this.getClass()).info("  Retire concept");
+    Logger.getLogger(getClass()).info("  Retire concept");
 
     concept.setActive(false);
     for (Relationship relationship : concept.getRelationships()) {
@@ -242,12 +242,12 @@ public class DemoServiceTest {
     editClient.updateConcept((ConceptJpa) concept, authToken);
     // log concept
     concept = contentClient.getConcept(concept.getId(), authToken);
-    Logger.getLogger(this.getClass()).info(
+    Logger.getLogger(getClass()).info(
         ConceptReportHelper.getConceptReport(concept));
     
     // add a "reason for inactivation" - though typically you wouldn't do
     // this with a concept that had not yet been published
-    Logger.getLogger(this.getClass()).info("  Add reason for inactivation");
+    Logger.getLogger(getClass()).info("  Add reason for inactivation");
     concept = contentClient.getConcept(concept.getId(), authToken);
     AssociationReferenceConceptRefSetMember armember =
         new AssociationReferenceConceptRefSetMemberJpa();
@@ -266,14 +266,14 @@ public class DemoServiceTest {
     armember =
         contentClient.getAssociationReferenceConceptRefSetMember(
             armember.getId(), authToken);
-    Logger.getLogger(this.getClass()).info("  MEMBER = " + armember);
+    Logger.getLogger(getClass()).info("  MEMBER = " + armember);
 
     // pause
     System.out.println("\nPause to show concept in Swagger API");
     in.readLine();
 
     // un-retire the concept and retire the "reason for inactivation"
-    Logger.getLogger(this.getClass()).info("  Unretire concept");
+    Logger.getLogger(getClass()).info("  Unretire concept");
     concept = contentClient.getConcept(concept.getId(), authToken);
     concept.setActive(true);
     for (Relationship relationship : concept.getRelationships()) {
@@ -287,17 +287,17 @@ public class DemoServiceTest {
 
     // remove "reason for inactivation" - though typically you wouldn't do
     // this with a concept that had not yet been published
-    Logger.getLogger(this.getClass()).info("  Retire reason for inactivation");
+    Logger.getLogger(getClass()).info("  Retire reason for inactivation");
     editClient.removeAssociationReferenceRefSetMember(armember.getId(),
         authToken);
     armember =
         contentClient.getAssociationReferenceConceptRefSetMember(
             armember.getId(), authToken);
-    Logger.getLogger(this.getClass()).info("  MEMBER = " + armember);
+    Logger.getLogger(getClass()).info("  MEMBER = " + armember);
 
     // log concept
     concept = contentClient.getConcept(concept.getId(), authToken);
-    Logger.getLogger(this.getClass()).info(
+    Logger.getLogger(getClass()).info(
         ConceptReportHelper.getConceptReport(concept));
 
     // pause
@@ -306,7 +306,7 @@ public class DemoServiceTest {
 
     // change the preferred name by retiring the preferred description and
     // adding another
-    Logger.getLogger(this.getClass()).info("  Change preferred name");
+    Logger.getLogger(getClass()).info("  Change preferred name");
     for (Description description : concept.getDescriptions()) {
       if (description.getTerm().equals("Bacterial sepsis XXX")) {
         Description newPt = new DescriptionJpa(description, true, false);
@@ -333,7 +333,7 @@ public class DemoServiceTest {
     }
     // log concept
     concept = contentClient.getConcept(concept.getId(), authToken);
-    Logger.getLogger(this.getClass()).info(
+    Logger.getLogger(getClass()).info(
         ConceptReportHelper.getConceptReport(concept));
 
     // pause
@@ -341,7 +341,7 @@ public class DemoServiceTest {
     in.readLine();
     
     // Clean everything up
-    Logger.getLogger(this.getClass()).info("  Cleanup");
+    Logger.getLogger(getClass()).info("  Cleanup");
     editClient.removeAssociationReferenceRefSetMember(armember.getId(), authToken);
     editClient.removeConcept(concept.getId(), authToken);
 

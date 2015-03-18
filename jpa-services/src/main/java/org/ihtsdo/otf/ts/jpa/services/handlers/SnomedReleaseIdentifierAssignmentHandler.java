@@ -162,7 +162,7 @@ public class SnomedReleaseIdentifierAssignmentHandler extends
         return true;
       } else {
         String vc = Verhoeff.generateVerhoeff(str.substring(0,str.length()-2));
-        Logger.getLogger(this.getClass()).info(
+        Logger.getLogger(getClass()).info(
             "Unexpected numeric identifier with bad Verhoeff digit " + str + ", should be "  +vc);
         return true;
       }

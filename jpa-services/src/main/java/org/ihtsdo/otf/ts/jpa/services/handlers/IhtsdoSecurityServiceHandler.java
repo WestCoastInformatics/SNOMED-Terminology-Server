@@ -39,7 +39,7 @@ public class IhtsdoSecurityServiceHandler implements SecurityServiceHandler {
   @Override
   @SuppressWarnings("unchecked")
   public User authenticate(String username, String password) throws Exception {
-    Logger.getLogger(this.getClass()).info(
+    Logger.getLogger(getClass()).info(
         "Authenticating " + username + "/*********");
 
     Form form = new Form();

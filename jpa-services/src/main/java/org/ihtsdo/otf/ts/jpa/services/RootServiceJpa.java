@@ -52,7 +52,7 @@ public class RootServiceJpa implements RootService {
       throw new Exception("Factory is null, serious problem.");
     }
     if (!factory.isOpen()) {
-      Logger.getLogger(this.getClass()).info(
+      Logger.getLogger(getClass()).info(
           "Setting root service entity manager factory.");
       Properties config = ConfigUtility.getConfigProperties();
       factory = Persistence.createEntityManagerFactory("TermServiceDS", config);
@@ -76,7 +76,7 @@ public class RootServiceJpa implements RootService {
       throw new Exception("Factory is null, serious problem.");
     }
     if (!factory.isOpen()) {
-      Logger.getLogger(this.getClass()).info(
+      Logger.getLogger(getClass()).info(
           "Setting root service entity manager factory.");
       Properties config = ConfigUtility.getConfigProperties();
       factory = Persistence.createEntityManagerFactory("TermServiceDS", config);

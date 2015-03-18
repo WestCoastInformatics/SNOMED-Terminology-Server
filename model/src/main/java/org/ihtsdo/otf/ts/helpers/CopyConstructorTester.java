@@ -41,7 +41,6 @@ public class CopyConstructorTester extends ProxyTester {
 
   /**
    * Creates an object from the object.
-   * TODO: actually test deep copy too
    * @param interfaceType the interface type
    * @return true, if successful
    * @throws Exception the exception

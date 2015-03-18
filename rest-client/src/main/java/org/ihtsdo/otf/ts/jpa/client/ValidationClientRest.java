@@ -49,7 +49,7 @@ public class ValidationClientRest implements ValidationServiceRest {
 
     String conceptString =
         (concept != null ? ConfigUtility.getStringForGraph(concept) : null);
-    Logger.getLogger(this.getClass()).info(conceptString);
+    Logger.getLogger(getClass()).info(conceptString);
     ClientResponse response =
         resource.accept(MediaType.APPLICATION_XML)
             .header("Authorization", authToken)
@@ -58,7 +58,7 @@ public class ValidationClientRest implements ValidationServiceRest {
 
     String resultString = response.getEntity(String.class);
     if (response.getStatusInfo().getFamily() == Family.SUCCESSFUL) {
-      Logger.getLogger(this.getClass()).debug(resultString);
+      Logger.getLogger(getClass()).debug(resultString);
     } else {
       throw new Exception(resultString);
     }

@@ -297,9 +297,8 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
         Search.getFullTextEntityManager(manager);
     SearchFactory searchFactory = fullTextEntityManager.getSearchFactory();
     Query luceneQuery;
-    QueryParser queryParser = 
-        new QueryParser("all",
-            searchFactory.getAnalyzer(ConceptJpa.class));
+    QueryParser queryParser =
+        new QueryParser("all", searchFactory.getAnalyzer(ConceptJpa.class));
     luceneQuery = queryParser.parse(finalQuery.toString());
     FullTextQuery fullTextQuery =
         fullTextEntityManager
@@ -329,8 +328,7 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
    */
   @Override
   public Concept getConcept(Long id) throws Exception {
-    Logger.getLogger(getClass()).debug(
-        "Content Service - get concept " + id);
+    Logger.getLogger(getClass()).debug("Content Service - get concept " + id);
     Concept c = manager.find(ConceptJpa.class, id);
     return c;
   }
@@ -368,11 +366,6 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
 
     } catch (NoResultException e) {
       return null;
-      /*
-       * throw new LocalException( "Concept query for terminologyId = " +
-       * terminologyId + ", terminology = " + terminology + ", version = " +
-       * version + " returned no results!", e);
-       */
     }
   }
 
@@ -709,8 +702,8 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
    */
   @Override
   public void removeConcept(Long id) throws Exception {
-    Logger.getLogger(getClass()).debug(
-        "Content Service - remove concept " + id);
+    Logger.getLogger(getClass())
+        .debug("Content Service - remove concept " + id);
     // Remove the component
     Concept concept = removeComponent(id, ConceptJpa.class);
 
@@ -826,7 +819,7 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
     Logger.getLogger(getClass()).debug(
         "Content Service - update description "
             + description.getTerminologyId());
-    // Id assignment should not change
+    // Id assignment
     final IdentifierAssignmentHandler idHandler =
         idHandlerMap.get(description.getTerminology());
     if (!idHandler.allowIdChangeOnUpdate() && assignIdentifiersFlag) {
@@ -836,7 +829,6 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
         throw new Exception("Update cannot be used to change object identity.");
       }
     }
-    // don't set id on update
 
     // update component
     this.updateComponent(description);
@@ -899,7 +891,7 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
             + terminology + "/" + version);
     javax.persistence.Query query =
         manager
-            .createQuery("select c from RelationshipJpa c where terminologyId = :terminologyId and terminologyVersion = :version and terminology = :terminology");
+            .createQuery("select r from RelationshipJpa r where terminologyId = :terminologyId and terminologyVersion = :version and terminology = :terminology");
     /*
      * Try to retrieve the single expected result If zero or more than one
      * result are returned, log error and set result to null
@@ -963,7 +955,7 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
     Logger.getLogger(getClass()).debug(
         "Content Service - update relationship "
             + relationship.getTerminologyId());
-    // Id assignment should not change
+    // Id assignment
     final IdentifierAssignmentHandler idHandler =
         idHandlerMap.get(relationship.getTerminology());
     if (!idHandler.allowIdChangeOnUpdate() && assignIdentifiersFlag) {
@@ -973,7 +965,6 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
         throw new Exception("Update cannot be used to change object identity.");
       }
     }
-    // don't set id on update
 
     // update component
     this.updateComponent(relationship);
@@ -1151,7 +1142,8 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
             + refsetId + "/" + terminology + "/" + version);
     javax.persistence.Query query =
         applyPfsToQuery("select a from AttributeValueRefSetMemberJpa a "
-            + "where refSetId = :refsetId " + "and terminologyVersion = :version "
+            + "where refSetId = :refsetId "
+            + "and terminologyVersion = :version "
             + "and terminology = :terminology", pfs);
     javax.persistence.Query ctQuery =
         manager
@@ -1200,7 +1192,7 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
   public AttributeValueRefSetMember<? extends Component> addAttributeValueRefSetMember(
     AttributeValueRefSetMember<? extends Component> member) throws Exception {
     Logger.getLogger(getClass()).debug(
-        "Content Service - add attribute value refset member"
+        "Content Service - add attribute value refset member "
             + member.getTerminologyId());
     // Assign id
     if (assignIdentifiersFlag) {
@@ -1316,7 +1308,8 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
             + refsetId + "/" + terminology + "/" + version);
     javax.persistence.Query query =
         applyPfsToQuery("select a from AssociationReferenceRefSetMemberJpa a "
-            + "where refSetId = :refsetId " + "and terminologyVersion = :version "
+            + "where refSetId = :refsetId "
+            + "and terminologyVersion = :version "
             + "and terminology = :terminology", pfs);
     javax.persistence.Query ctQuery =
         manager
@@ -1390,12 +1383,12 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
     AssociationReferenceRefSetMember<? extends Component> member)
     throws Exception {
     Logger.getLogger(getClass()).debug(
-        "Content Service - add association reference refset member"
+        "Content Service - add association reference refset member "
             + member.getTerminologyId());
     // Assign id
     if (assignIdentifiersFlag) {
-    member.setTerminologyId(idHandlerMap.get(member.getTerminology())
-        .getTerminologyId(member));
+      member.setTerminologyId(idHandlerMap.get(member.getTerminology())
+          .getTerminologyId(member));
     }
     // Add component
     AssociationReferenceRefSetMember<? extends Component> newMember =
@@ -1539,11 +1532,13 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
             + refsetId + "/" + terminology + "/" + version);
     javax.persistence.Query query =
         applyPfsToQuery("select a from ComplexMapRefSetMemberJpa a "
-            + "where refSetId = :refsetId " + "and terminologyVersion = :version "
+            + "where refSetId = :refsetId "
+            + "and terminologyVersion = :version "
             + "and terminology = :terminology", pfs);
     javax.persistence.Query ctQuery =
         manager.createQuery("select count(a) from ComplexMapRefSetMemberJpa a "
-            + "where refSetId = :refsetId " + "and terminologyVersion = :version "
+            + "where refSetId = :refsetId "
+            + "and terminologyVersion = :version "
             + "and terminology = :terminology");
     try {
       ComplexMapRefSetMemberList list = new ComplexMapRefSetMemberListJpa();
@@ -1575,12 +1570,12 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
   public ComplexMapRefSetMember addComplexMapRefSetMember(
     ComplexMapRefSetMember member) throws Exception {
     Logger.getLogger(getClass()).debug(
-        "Content Service - add complex map refset member"
+        "Content Service - add complex map refset member "
             + member.getTerminologyId());
     // Assign id
     if (assignIdentifiersFlag) {
-    member.setTerminologyId(idHandlerMap.get(member.getTerminology())
-        .getTerminologyId(member));
+      member.setTerminologyId(idHandlerMap.get(member.getTerminology())
+          .getTerminologyId(member));
     }
     // Add component
     ComplexMapRefSetMember newMember = addComponent(member);
@@ -1718,11 +1713,13 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
             + refsetId + "/" + terminology + "/" + version);
     javax.persistence.Query query =
         applyPfsToQuery("select a from LanguageRefSetMemberJpa a "
-            + "where refSetId = :refsetId " + "and terminologyVersion = :version "
+            + "where refSetId = :refsetId "
+            + "and terminologyVersion = :version "
             + "and terminology = :terminology", pfs);
     javax.persistence.Query ctQuery =
         manager.createQuery("select count(a) from LanguageRefSetMemberJpa a "
-            + "where refSetId = :refsetId " + "and terminologyVersion = :version "
+            + "where refSetId = :refsetId "
+            + "and terminologyVersion = :version "
             + "and terminology = :terminology");
     try {
       LanguageRefSetMemberList list = new LanguageRefSetMemberListJpa();
@@ -1755,12 +1752,12 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
   public LanguageRefSetMember addLanguageRefSetMember(
     LanguageRefSetMember member) throws Exception {
     Logger.getLogger(getClass()).debug(
-        "Content Service - add language refset member"
+        "Content Service - add language refset member "
             + member.getTerminologyId());
     // Assign id
     if (assignIdentifiersFlag) {
-    member.setTerminologyId(idHandlerMap.get(member.getTerminology())
-        .getTerminologyId(member));
+      member.setTerminologyId(idHandlerMap.get(member.getTerminology())
+          .getTerminologyId(member));
     }
     // Add component
     LanguageRefSetMember newMember = addComponent(member);
@@ -1895,11 +1892,13 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
             + refsetId + "/" + terminology + "/" + version);
     javax.persistence.Query query =
         applyPfsToQuery("select a from SimpleMapRefSetMemberJpa a "
-            + "where refSetId = :refsetId " + "and terminologyVersion = :version "
+            + "where refSetId = :refsetId "
+            + "and terminologyVersion = :version "
             + "and terminology = :terminology", pfs);
     javax.persistence.Query ctQuery =
         manager.createQuery("select count(a) from SimpleMapRefSetMemberJpa a "
-            + "where refSetId = :refsetId " + "and terminologyVersion = :version "
+            + "where refSetId = :refsetId "
+            + "and terminologyVersion = :version "
             + "and terminology = :terminology");
     try {
       SimpleMapRefSetMemberList list = new SimpleMapRefSetMemberListJpa();
@@ -1931,12 +1930,12 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
   public SimpleMapRefSetMember addSimpleMapRefSetMember(
     SimpleMapRefSetMember member) throws Exception {
     Logger.getLogger(getClass()).debug(
-        "Content Service - add simple map refset member"
+        "Content Service - add simple map refset member "
             + member.getTerminologyId());
     // Assign id
     if (assignIdentifiersFlag) {
-    member.setTerminologyId(idHandlerMap.get(member.getTerminology())
-        .getTerminologyId(member));
+      member.setTerminologyId(idHandlerMap.get(member.getTerminology())
+          .getTerminologyId(member));
     }
     // Add component
     SimpleMapRefSetMember newMember = addComponent(member);
@@ -2071,11 +2070,13 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
             + refsetId + "/" + terminology + "/" + version);
     javax.persistence.Query query =
         applyPfsToQuery("select a from SimpleRefSetMemberJpa a "
-            + "where refSetId = :refsetId " + "and terminologyVersion = :version "
+            + "where refSetId = :refsetId "
+            + "and terminologyVersion = :version "
             + "and terminology = :terminology", pfs);
     javax.persistence.Query ctQuery =
         manager.createQuery("select count(a) from SimpleRefSetMemberJpa a "
-            + "where refSetId = :refsetId " + "and terminologyVersion = :version "
+            + "where refSetId = :refsetId "
+            + "and terminologyVersion = :version "
             + "and terminology = :terminology");
     try {
       SimpleRefSetMemberList list = new SimpleRefSetMemberListJpa();
@@ -2107,12 +2108,12 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
   public SimpleRefSetMember addSimpleRefSetMember(SimpleRefSetMember member)
     throws Exception {
     Logger.getLogger(getClass()).debug(
-        "Content Service - add simple refset member"
+        "Content Service - add simple refset member "
             + member.getTerminologyId());
     // Assign id
     if (assignIdentifiersFlag) {
-    member.setTerminologyId(idHandlerMap.get(member.getTerminology())
-        .getTerminologyId(member));
+      member.setTerminologyId(idHandlerMap.get(member.getTerminology())
+          .getTerminologyId(member));
     }
     // Add component
     SimpleRefSetMember newMember = addComponent(member);
@@ -2277,12 +2278,12 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
   public RefsetDescriptorRefSetMember addRefsetDescriptorRefSetMember(
     RefsetDescriptorRefSetMember member) throws Exception {
     Logger.getLogger(getClass()).debug(
-        "Content Service - add refset descriptor refset member"
+        "Content Service - add refset descriptor refset member "
             + member.getTerminologyId());
     // Assign id
     if (assignIdentifiersFlag) {
-    member.setTerminologyId(idHandlerMap.get(member.getTerminology())
-        .getTerminologyId(member));
+      member.setTerminologyId(idHandlerMap.get(member.getTerminology())
+          .getTerminologyId(member));
     }
     // Add component
     RefsetDescriptorRefSetMember newMember = addComponent(member);
@@ -2448,12 +2449,12 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
   public DescriptionTypeRefSetMember addDescriptionTypeRefSetMember(
     DescriptionTypeRefSetMember member) throws Exception {
     Logger.getLogger(getClass()).debug(
-        "Content Service - add description type refset member"
+        "Content Service - add description type refset member "
             + member.getTerminologyId());
     // Assign id
     if (assignIdentifiersFlag) {
-    member.setTerminologyId(idHandlerMap.get(member.getTerminology())
-        .getTerminologyId(member));
+      member.setTerminologyId(idHandlerMap.get(member.getTerminology())
+          .getTerminologyId(member));
     }
     // Add component
     DescriptionTypeRefSetMember newMember = addComponent(member);
@@ -2619,12 +2620,12 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
   public ModuleDependencyRefSetMember addModuleDependencyRefSetMember(
     ModuleDependencyRefSetMember member) throws Exception {
     Logger.getLogger(getClass()).debug(
-        "Content Service - add module dependency refset member"
+        "Content Service - add module dependency refset member "
             + member.getTerminologyId());
     // Assign id
     if (assignIdentifiersFlag) {
-    member.setTerminologyId(idHandlerMap.get(member.getTerminology())
-        .getTerminologyId(member));
+      member.setTerminologyId(idHandlerMap.get(member.getTerminology())
+          .getTerminologyId(member));
     }
     // Add component
     ModuleDependencyRefSetMember newMember = addComponent(member);
@@ -2713,8 +2714,7 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
             + searchString);
 
     if (pfs != null) {
-      Logger.getLogger(getClass()).info(
-          "  pfs = " + pfs.toString());
+      Logger.getLogger(getClass()).info("  pfs = " + pfs.toString());
     }
 
     // Prepare results
@@ -2738,8 +2738,7 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
     Query luceneQuery;
     try {
       QueryParser queryParser =
-          new QueryParser("all",
-              searchFactory.getAnalyzer(ConceptJpa.class));
+          new QueryParser("all", searchFactory.getAnalyzer(ConceptJpa.class));
       luceneQuery = queryParser.parse(finalQuery.toString());
     } catch (ParseException e) {
       throw new LocalException(
@@ -2866,6 +2865,33 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
         manager
             .createQuery(
                 "select c.terminologyId from LanguageRefSetMemberJpa c where terminology = :terminology and terminologyVersion = :version")
+            .setParameter("terminology", terminology)
+            .setParameter("version", version);
+
+    List<String> terminologyIds = query.getResultList();
+    StringList list = new StringList();
+    list.setObjects(terminologyIds);
+    list.setTotalCount(list.getCount());
+    return list;
+  }
+
+  /*
+   * (non-Javadoc)
+   * 
+   * @see org.ihtsdo.otf.ts.services.ContentService#
+   * getAllSimpleRefSetMemberTerminologyIds(java.lang.String, java.lang.String)
+   */
+  @SuppressWarnings("unchecked")
+  @Override
+  public StringList getAllSimpleRefSetMemberTerminologyIds(String terminology,
+    String version) {
+    Logger.getLogger(getClass()).debug(
+        "Content Service - get all simple refset member terminology ids "
+            + terminology + "/" + version);
+    javax.persistence.Query query =
+        manager
+            .createQuery(
+                "select c.terminologyId from SimpleRefSetMemberJpa c where terminology = :terminology and terminologyVersion = :version")
             .setParameter("terminology", terminology)
             .setParameter("version", version);
 
@@ -3033,8 +3059,7 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
    */
   @Override
   public Project getProject(Long id) {
-    Logger.getLogger(getClass()).debug(
-        "Content Service - get project " + id);
+    Logger.getLogger(getClass()).debug("Content Service - get project " + id);
     Project project = manager.find(ProjectJpa.class, id);
     return project;
   }
@@ -3047,8 +3072,7 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
   @Override
   @SuppressWarnings("unchecked")
   public ProjectList getProjects() {
-    Logger.getLogger(getClass()).debug(
-        "Content Service - get projects");
+    Logger.getLogger(getClass()).debug("Content Service - get projects");
     javax.persistence.Query query =
         manager.createQuery("select a from ProjectJpa a");
     try {
@@ -3178,8 +3202,8 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
    */
   @Override
   public void removeProject(Long id) {
-    Logger.getLogger(getClass()).debug(
-        "Content Service - remove project " + id);
+    Logger.getLogger(getClass())
+        .debug("Content Service - remove project " + id);
     try {
       // Get transaction and object
       tx = manager.getTransaction();
@@ -3514,8 +3538,6 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
         component.setLastModified(new Date());
       }
 
-      // Leave effective time alone
-
       // add
       if (getTransactionPerOperation()) {
         tx = manager.getTransaction();
@@ -3550,18 +3572,10 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
         component.setLastModified(new Date());
       }
 
-      // set effective time to null unless this is the planned effective time
-      if (component.getEffectiveTime() != null
-          && !component.getEffectiveTime().equals(
-              getPlannedEffectiveTime(component.getTerminology(),
-                  component.getTerminologyVersion()))) {
-        component.setEffectiveTime(null);
-      }
-
       // update
       if (getTransactionPerOperation()) {
         tx = manager.getTransaction();
-        tx.begin(); 
+        tx.begin();
         manager.merge(component);
         tx.commit();
       } else {
@@ -3632,6 +3646,7 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
    * @param version the version
    * @return the planned effective time
    */
+  @SuppressWarnings("unused")
   private Date getPlannedEffectiveTime(String terminology, String version) {
     if (plannedEffectiveTimeMap.containsKey(terminology + version)) {
       return plannedEffectiveTimeMap.get(terminology + version);

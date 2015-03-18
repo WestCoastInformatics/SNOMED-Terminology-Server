@@ -1,14 +1,18 @@
 package org.ihtsdo.otf.ts.mojo;
 
 import java.util.HashSet;
+import java.util.Properties;
 import java.util.Set;
 
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.ihtsdo.otf.ts.ValidationResult;
+import org.ihtsdo.otf.ts.helpers.ConfigUtility;
 import org.ihtsdo.otf.ts.helpers.LocalException;
 import org.ihtsdo.otf.ts.jpa.algo.ReleaseRf2BeginAlgorithm;
+import org.ihtsdo.otf.ts.jpa.services.SecurityServiceJpa;
+import org.ihtsdo.otf.ts.services.SecurityService;
 
 /**
  * Mojo wrapper around {@link ReleaseRf2BeginAlgorithm}.
@@ -58,11 +62,18 @@ public class ReleaseRf2BeginMojo extends AbstractMojo {
    */
   private String saveIdentifiers = null;
 
+  /**
+   * Whether to run this mojo against an active server
+   * @parameter
+   */
+  private boolean server = false;
+
   /*
    * (non-Javadoc)
    * 
    * @see org.apache.maven.plugin.Mojo#execute()
    */
+  @SuppressWarnings("unused")
   @Override
   public void execute() throws MojoExecutionException, MojoFailureException {
     try {
@@ -74,6 +85,40 @@ public class ReleaseRf2BeginMojo extends AbstractMojo {
       getLog().info("  workflowStatusValues = " + workflowStatusValues);
       getLog().info("  saveIdentfiers = " + saveIdentifiers);
 
+      getLog().info("  Expect server up: " + server);
+
+      Properties properties = ConfigUtility.getConfigProperties();
+      boolean serverRunning = ConfigUtility.isServerActive();
+      getLog().info(
+          "Server status detected:  " + (!serverRunning ? "DOWN" : "UP"));
+      if (serverRunning && !server) {
+        throw new MojoFailureException(
+            "Mojo expects server to be down, but server is running");
+      }
+
+      if (!serverRunning && server) {
+        throw new MojoFailureException(
+            "Mojo expects server to be running, but server is down");
+      }
+
+      // authenticate
+      SecurityService service = new SecurityServiceJpa();
+      String authToken =
+          service.authenticate(properties.getProperty("admin.user"),
+              properties.getProperty("admin.password"));
+      service.close();
+
+      if (!serverRunning) {
+        getLog().info("Running directly");
+
+        // Call release processing algo here
+
+      } else {
+        getLog().info("Running against server");
+
+        // Call release processing client here
+      }
+
       // Perform the operation
       Set<String> statusSet = new HashSet<>();
       if (workflowStatusValues != null) {
@@ -82,8 +127,8 @@ public class ReleaseRf2BeginMojo extends AbstractMojo {
         }
       }
       ReleaseRf2BeginAlgorithm algorithm =
-          new ReleaseRf2BeginAlgorithm(releaseVersion, terminology, validate, statusSet,
-              saveIdentifiers.toLowerCase().equals("true"));
+          new ReleaseRf2BeginAlgorithm(releaseVersion, terminology, validate,
+              statusSet, saveIdentifiers.toLowerCase().equals("true"));
       try {
         algorithm.compute();
       } catch (LocalException e) {

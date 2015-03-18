@@ -1,5 +1,8 @@
 package org.ihtsdo.otf.ts.rest.impl;
 
+import java.util.Arrays;
+import java.util.HashSet;
+
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -22,6 +25,9 @@ import org.ihtsdo.otf.ts.helpers.PfsParameterJpa;
 import org.ihtsdo.otf.ts.helpers.RelationshipList;
 import org.ihtsdo.otf.ts.helpers.ReleaseInfoList;
 import org.ihtsdo.otf.ts.jpa.ReleaseInfoJpa;
+import org.ihtsdo.otf.ts.jpa.algo.ReleaseRf2BeginAlgorithm;
+import org.ihtsdo.otf.ts.jpa.algo.ReleaseRf2FinishAlgorithm;
+import org.ihtsdo.otf.ts.jpa.algo.ReleaseRf2PerformAlgorithm;
 import org.ihtsdo.otf.ts.jpa.algo.StartEditingCycleAlgorithm;
 import org.ihtsdo.otf.ts.jpa.services.HistoryServiceJpa;
 import org.ihtsdo.otf.ts.jpa.services.SecurityServiceJpa;
@@ -44,10 +50,10 @@ import com.wordnik.swagger.annotations.ApiParam;
 @Path("/history")
 @Api(value = "/history", description = "Operations to retrieve historical RF2 content for a terminology.")
 @Consumes({
-  MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML
+    MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML
 })
 @Produces({
-  MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML
+    MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML
 })
 public class HistoryServiceRestImpl extends RootServiceRestImpl implements
     HistoryServiceRest {
@@ -877,9 +883,115 @@ public class HistoryServiceRestImpl extends RootServiceRestImpl implements
           UserRole.ADMINISTRATOR);
       // Perform operations
       StartEditingCycleAlgorithm algorithm =
-          new StartEditingCycleAlgorithm(releaseVersion, terminology,
-              version);
+          new StartEditingCycleAlgorithm(releaseVersion, terminology, version);
       algorithm.compute();
+    } catch (Exception e) {
+      handleException(e, "start editing cycle");
+    }
+  }
+
+  /*
+   * (non-Javadoc)
+   * 
+   * @see
+   * org.ihtsdo.otf.ts.rest.HistoryServiceRest#beginRf2Release(java.lang.String,
+   * java.lang.String, boolean, java.lang.String, boolean, java.lang.String)
+   */
+  @Override
+  @POST
+  @Path("/release/begin/{terminology}/{releaseVersion}/{validate}/{workflowStatusValues}/{saveIdentifiers}")
+  @ApiOperation(value = "Begin a release", notes = "Begins release processing for the specified terminology and release version")
+  public void beginRf2Release(
+    @ApiParam(value = "Release version, e.g. 20150131", required = true) @PathParam("releaseVersion") String releaseVersion,
+    @ApiParam(value = "Terminology, e.g. SNOMEDCT", required = true) @PathParam("terminology") String terminology,
+    @ApiParam(value = "Validation flag, e.g. true", required = true) @PathParam("validate") boolean validate,
+    @ApiParam(value = "Workflow status values, e.g. \"WF1,WF2\"", required = true) @PathParam("workflowStatusValues") String workflowStatusValues,
+    @ApiParam(value = "Save ids flag, e.g. true", required = true) @PathParam("saveIdentifiers") boolean saveIdentifiers,
+    @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken)
+    throws Exception {
+    Logger.getLogger(getClass()).info(
+        "RESTful call (History): /release/begin/ " + terminology + "/"
+            + releaseVersion + "/" + validate + "/" + workflowStatusValues
+            + "/" + saveIdentifiers);
+
+    try {
+      authenticate(securityService, authToken, "begin release",
+          UserRole.ADMINISTRATOR);
+      // Perform operations
+      ReleaseRf2BeginAlgorithm algorithm =
+          new ReleaseRf2BeginAlgorithm(releaseVersion, terminology, validate,
+              new HashSet<String>(
+                  Arrays.asList(workflowStatusValues.split(","))),
+              saveIdentifiers);
+      algorithm.compute();
+      algorithm.close();
+
+    } catch (Exception e) {
+      handleException(e, "start editing cycle");
+    }
+  }
+
+  /*
+   * (non-Javadoc)
+   * 
+   * @see
+   * org.ihtsdo.otf.ts.rest.HistoryServiceRest#processRf2Release(java.lang.String
+   * , java.lang.String, java.lang.String, java.lang.String, java.lang.String)
+   */
+  @Override
+  @POST
+  @Path("/release/perform/{terminology}/{releaseVersion}/{moduleId}")
+  @ApiOperation(value = "Process a release", notes = "Perform release processing for the specified terminology and release version")
+  public void processRf2Release(
+    @ApiParam(value = "Release version, e.g. 20150131", required = true) @PathParam("release") String releaseVersion,
+    @ApiParam(value = "Terminology, e.g. SNOMEDCT", required = true) @PathParam("terminology") String terminology,
+    @ApiParam(value = "Output directory, e.g. /tmp", required = true) String outputDir,
+    @ApiParam(value = "Module id, e.g. 17374234001", required = true) @PathParam("moduleId") String moduleId,
+    @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken)
+    throws Exception {
+    Logger.getLogger(getClass()).info(
+        "RESTful call (History): /release/perform/" + terminology + "/"
+            + releaseVersion + "/" + moduleId);
+
+    try {
+      authenticate(securityService, authToken, "perform release",
+          UserRole.ADMINISTRATOR);
+      // Perform operations
+      ReleaseRf2PerformAlgorithm algorithm =
+          new ReleaseRf2PerformAlgorithm(releaseVersion, terminology,
+              outputDir, moduleId);
+      algorithm.compute();
+      algorithm.close();
+
+    } catch (Exception e) {
+      handleException(e, "start editing cycle");
+    }
+  }
+
+  /* (non-Javadoc)
+   * @see org.ihtsdo.otf.ts.rest.HistoryServiceRest#finishRf2Release(java.lang.String, java.lang.String, java.lang.String)
+   */
+  @Override
+  @POST
+  @Path("/release/finish/{terminology}/{releaseVersion}")
+  @ApiOperation(value = "Finish a release", notes = "Finishes release processing for the specified terminology and release version")
+  public void finishRf2Release(
+    @ApiParam(value = "Release version, e.g. 20150131", required = true) @PathParam("release") String releaseVersion,
+    @ApiParam(value = "Terminology, e.g. SNOMEDCT", required = true) @PathParam("terminology") String terminology,
+    @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken)
+    throws Exception {
+    Logger.getLogger(getClass()).info(
+        "RESTful call (History): /release/finish/" + terminology);
+
+    try {
+      authenticate(securityService, authToken, "perform release",
+          UserRole.ADMINISTRATOR);
+      // Perform operations
+      ReleaseRf2FinishAlgorithm algorithm =
+          new ReleaseRf2FinishAlgorithm(releaseVersion, terminology);
+      algorithm.compute();
+      algorithm.close();
+
     } catch (Exception e) {
       handleException(e, "start editing cycle");
     }

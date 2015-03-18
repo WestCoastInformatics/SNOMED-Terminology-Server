@@ -60,11 +60,11 @@ public class ContentServiceTest {
    */
   @Test
   public void test001GetSingleConceptSNOMEDCT() throws Exception {
-    Logger.getLogger(this.getClass()).info(
+    Logger.getLogger(getClass()).info(
         "TEST - " + "10013000, SNOMEDCT, latest, " + authToken);
     Concept c =
         client.getSingleConcept("10013000", "SNOMEDCT", "latest", authToken);
-    Logger.getLogger(this.getClass()).info(
+    Logger.getLogger(getClass()).info(
         ConceptReportHelper.getConceptReport(c));
     getConceptAssertions(c);
   }
@@ -77,9 +77,9 @@ public class ContentServiceTest {
   public void test004GetConcept() throws Exception {
     Concept c =
         client.getSingleConcept("10013000", "SNOMEDCT", "latest", authToken);
-    Logger.getLogger(this.getClass()).info("TEST - " + c.getId());
+    Logger.getLogger(getClass()).info("TEST - " + c.getId());
     c = client.getConcept(c.getId(), authToken);
-    Logger.getLogger(this.getClass()).info(
+    Logger.getLogger(getClass()).info(
         ConceptReportHelper.getConceptReport(c));
     getConceptAssertions(c);
   }
@@ -123,13 +123,13 @@ public class ContentServiceTest {
    */
   @Test
   public void test001GetSingleConceptICD9CM() throws Exception {
-    Logger.getLogger(this.getClass()).info(
+    Logger.getLogger(getClass()).info(
         "TEST - " + "339.8, ICD9CM, 2013, " + authToken);
     Concept c = client.getSingleConcept("339.8", "ICD9CM", "2013", authToken);
     assertNotNull(c);
     assertNotEquals(c.getDefaultPreferredName(),
         "No default preferred name found");
-    Logger.getLogger(this.getClass()).info(
+    Logger.getLogger(getClass()).info(
         "  defaultPreferredName = " + c.getDefaultPreferredName());
   }
 
@@ -140,12 +140,12 @@ public class ContentServiceTest {
   @Test
   public void test004GetConceptICD9CM() throws Exception {
     Concept c = client.getSingleConcept("339.8", "ICD9CM", "2013", authToken);
-    Logger.getLogger(this.getClass()).info("TEST - " + c.getId());
+    Logger.getLogger(getClass()).info("TEST - " + c.getId());
     c = client.getConcept(c.getId(), authToken);
     assertNotNull(c);
     assertNotEquals(c.getDefaultPreferredName(),
         "No default preferred name found");
-    Logger.getLogger(this.getClass()).info(
+    Logger.getLogger(getClass()).info(
         "  defaultPreferredName = " + c.getDefaultPreferredName());
   }
 
@@ -155,7 +155,7 @@ public class ContentServiceTest {
    */
   @Test
   public void test002GetConceptsSNOMEDCT() throws Exception {
-    Logger.getLogger(this.getClass()).info(
+    Logger.getLogger(getClass()).info(
         "TEST - " + "10013000, SNOMEDCT, latest, " + authToken);
     ConceptList c =
         client.getConcepts("10013000", "SNOMEDCT", "latest", authToken);
@@ -163,7 +163,7 @@ public class ContentServiceTest {
     assertEquals(c.getTotalCount(), 1);
     assertNotEquals(c.getObjects().get(0).getDefaultPreferredName(),
         "No default preferred name found");
-    Logger.getLogger(this.getClass()).info(
+    Logger.getLogger(getClass()).info(
         " defaultPreferredName = "
             + c.getObjects().get(0).getDefaultPreferredName());
   }
@@ -174,14 +174,14 @@ public class ContentServiceTest {
    */
   @Test
   public void test002GetConceptsICD9CM() throws Exception {
-    Logger.getLogger(this.getClass()).info(
+    Logger.getLogger(getClass()).info(
         "TEST - " + "339.8, ICD9CM, 2013, " + authToken);
     ConceptList c = client.getConcepts("339.8", "ICD9CM", "2013", authToken);
     assertNotNull(c);
     assertEquals(c.getTotalCount(), 1);
     assertNotEquals(c.getObjects().get(0).getDefaultPreferredName(),
         "No default preferred name found");
-    Logger.getLogger(this.getClass()).info(
+    Logger.getLogger(getClass()).info(
         " defaultPreferredName = "
             + c.getObjects().get(0).getDefaultPreferredName());
   }
@@ -192,13 +192,13 @@ public class ContentServiceTest {
    */
   @Test
   public void test003FindConceptsSNOMEDCT() throws Exception {
-    Logger.getLogger(this.getClass()).info(
+    Logger.getLogger(getClass()).info(
         "TEST - " + "SNOMEDCT, latest, sulphur, " + authToken);
     SearchResultList results =
         client.findConceptsForQuery("SNOMEDCT", "latest", "sulphur",
             new PfsParameterJpa(), authToken);
     for (SearchResult result : results.getObjects())
-      Logger.getLogger(this.getClass()).info(result);
+      Logger.getLogger(getClass()).info(result);
   }
 
   /**
@@ -207,13 +207,13 @@ public class ContentServiceTest {
    */
   @Test
   public void test003FindConceptsICD9CM() throws Exception {
-    Logger.getLogger(this.getClass()).info(
+    Logger.getLogger(getClass()).info(
         "TEST - " + "ICD9CM, 2013, sulphur, " + authToken);
     SearchResultList results =
         client.findConceptsForQuery("ICD9CM", "2013", "sulphur",
             new PfsParameterJpa(), authToken);
     for (SearchResult result : results.getObjects())
-      Logger.getLogger(this.getClass()).info(result);
+      Logger.getLogger(getClass()).info(result);
   }
 
   /**
@@ -222,7 +222,7 @@ public class ContentServiceTest {
    */
   @Test
   public void test005GetDescriptionSNOMED() throws Exception {
-    Logger.getLogger(this.getClass()).info(
+    Logger.getLogger(getClass()).info(
         "TEST - " + "100114019, SNOMEDCT, latest, " + authToken);
     Description description =
         client.getDescription("100114019", "SNOMEDCT", "latest", authToken);
@@ -237,11 +237,11 @@ public class ContentServiceTest {
    */
   @Test
   public void test005GetDescriptionICD9CM() throws Exception {
-    Logger.getLogger(this.getClass()).info(
+    Logger.getLogger(getClass()).info(
         "TEST - " + "D0000674, ICD9CM, 2013, " + authToken);
     Description description =
         client.getDescription("D0000674", "ICD9CM", "2013", authToken);
-    Logger.getLogger(this.getClass()).info("  " + description);
+    Logger.getLogger(getClass()).info("  " + description);
     assertNotNull(description);
     assertEquals(
         description.getTerm(),
@@ -255,7 +255,7 @@ public class ContentServiceTest {
    */
   @Test
   public void test006GetDescriptionSNOMED() throws Exception {
-    Logger.getLogger(this.getClass()).info(
+    Logger.getLogger(getClass()).info(
         "TEST - " + "100114019, SNOMEDCT, latest, " + authToken);
     Description description =
         client.getDescription("100114019", "SNOMEDCT", "latest", authToken);
@@ -288,7 +288,7 @@ public class ContentServiceTest {
    */
   @Test
   public void test007GetRelationshipSNOMED() throws Exception {
-    Logger.getLogger(this.getClass()).info(
+    Logger.getLogger(getClass()).info(
         "TEST - " + "3244643023, SNOMEDCT, latest, " + authToken);
     Relationship relationship =
         client.getRelationship("3244643023", "SNOMEDCT", "latest", authToken);
@@ -324,7 +324,7 @@ public class ContentServiceTest {
    */
   @Test
   public void test008GetRelationshipSNOMED() throws Exception {
-    Logger.getLogger(this.getClass()).info(
+    Logger.getLogger(getClass()).info(
         "TEST - " + "3244643023, SNOMEDCT, latest, " + authToken);
     Relationship relationship =
         client.getRelationship("3244643023", "SNOMEDCT", "latest", authToken);
@@ -352,7 +352,7 @@ public class ContentServiceTest {
    */
   @Test
   public void test009GetLanguageRefSetMemberSNOMED() throws Exception {
-    Logger.getLogger(this.getClass()).info(
+    Logger.getLogger(getClass()).info(
         "TEST - " + "82671181-8241-5e3e-923e-1d756c6ca9ec, SNOMEDCT, latest, " + authToken);
     LanguageRefSetMember member =
         client.getLanguageRefSetMember("82671181-8241-5e3e-923e-1d756c6ca9ec", "SNOMEDCT", "latest", authToken);
@@ -381,7 +381,7 @@ public class ContentServiceTest {
    */
   @Test
   public void test010GetLanguageRefSetMemberSNOMED() throws Exception {
-    Logger.getLogger(this.getClass()).info(
+    Logger.getLogger(getClass()).info(
         "TEST - " + "82671181-8241-5e3e-923e-1d756c6ca9ec, SNOMEDCT, latest, " + authToken);
     LanguageRefSetMember member =
         client.getLanguageRefSetMember("82671181-8241-5e3e-923e-1d756c6ca9ec", "SNOMEDCT", "latest", authToken);

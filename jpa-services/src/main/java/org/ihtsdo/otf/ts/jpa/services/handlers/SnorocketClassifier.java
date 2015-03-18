@@ -924,7 +924,7 @@ public class SnorocketClassifier implements Classifier {
     for (int i = 0; i < listeners.size(); i++) {
       listeners.get(i).updateProgress(pe);
     }
-    Logger.getLogger(this.getClass()).info("    " + pct + "% " + note);
+    Logger.getLogger(getClass()).info("    " + pct + "% " + note);
   }
 
   /**

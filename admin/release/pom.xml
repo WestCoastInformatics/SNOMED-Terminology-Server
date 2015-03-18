@@ -23,14 +23,6 @@
     <terminology></terminology>
     <!-- Default terminology version, specify with -Dversion= -->
     <version></version>
-    <!-- Default validate flag value -->
-    <validate>false</validate>
-    <!-- Default workflow status values -->
-    <workflow.status.values></workflow.status.values>
-    <!-- Indicates whether ids should be saved -->
-    <save.identifiers>false</save.identifiers>
-    <!-- Indicates whether ids should be saved -->
-    <save.identifiers>false</save.identifiers>
     <!-- Indicates whether to run against a server (true/false) -->
     <server>false</server>
   </properties>
@@ -97,7 +89,62 @@
         </plugins>
       </build>
     </profile>
-
+    
+    <!-- Begin an RF2 release -->
+    <profile>
+      <id>ReleaseRf2Perform</id>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.ihtsdo.otf.term-server</groupId>
+            <artifactId>term-server-admin-mojo</artifactId>
+            <version>${releaseVersion}</version>
+            <executions>
+              <execution>
+                <id>release-rf2</id>
+                <phase>package</phase>
+                <goals>
+                  <goal>release-rf2</goal>
+                </goals>
+                <configuration>
+                  <releaseVersion>${release.version}</releaseVersion>
+                  <terminology>${terminology}</terminology>
+                  <outputDir>${output.dir}</outputDir>
+                  <moduleId>${module.id}</moduleId>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+    
+        <!-- Begin an RF2 release -->
+    <profile>
+      <id>ReleaseRf2Finish</id>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.ihtsdo.otf.term-server</groupId>
+            <artifactId>term-server-admin-mojo</artifactId>
+            <version>${releaseVersion}</version>
+            <executions>
+              <execution>
+                <id>release-rf2-finish</id>
+                <phase>package</phase>
+                <goals>
+                  <goal>release-rf2-finish</goal>
+                </goals>
+                <configuration>
+                  <releaseVersion>${release.version}</releaseVersion>
+                  <terminology>${terminology}</terminology>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
 
   </profiles>
 </project>

@@ -1028,7 +1028,7 @@ public class ContentServiceRestImpl extends RootServiceRestImpl implements
       algorithm.close();
 
       // Compute transitive closure
-      Logger.getLogger(this.getClass()).info(
+      Logger.getLogger(getClass()).info(
           "  Compute transitive closure from  " + terminology + "/" + version);
       TransitiveClosureAlgorithm algo = new TransitiveClosureAlgorithm();
       algo.setTerminology(terminology);
@@ -1177,7 +1177,7 @@ public class ContentServiceRestImpl extends RootServiceRestImpl implements
       }
 
       // Compute transitive closure
-      Logger.getLogger(this.getClass()).info(
+      Logger.getLogger(getClass()).info(
           "  Compute transitive closure from  " + terminology + "/" + version);
       TransitiveClosureAlgorithm algo = new TransitiveClosureAlgorithm();
       algo.setTerminology(terminology);
@@ -1292,7 +1292,7 @@ public class ContentServiceRestImpl extends RootServiceRestImpl implements
       historyService.close();
 
       // Compute transitive closure
-      Logger.getLogger(this.getClass()).info(
+      Logger.getLogger(getClass()).info(
           "  Compute transitive closure from  " + terminology + "/" + version);
       TransitiveClosureAlgorithm algo = new TransitiveClosureAlgorithm();
       algo.setTerminology(terminology);

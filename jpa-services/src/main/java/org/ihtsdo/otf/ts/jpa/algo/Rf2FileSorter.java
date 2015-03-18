@@ -71,10 +71,10 @@ public class Rf2FileSorter {
    * @throws Exception the exception
    */
   public void sortFiles(File inputDir, File outputDir) throws Exception {
-    Logger.getLogger(this.getClass()).info("Start sorting files");
+    Logger.getLogger(getClass()).info("Start sorting files");
 
     // Remove and remake output dir
-    Logger.getLogger(this.getClass()).info("  Remove and remake output dir");
+    Logger.getLogger(getClass()).info("  Remove and remake output dir");
     ConfigUtility.deleteDirectory(outputDir);
     if (!outputDir.mkdirs()) {
       throw new Exception("Problem making output dir: " + outputDir);
@@ -141,9 +141,9 @@ public class Rf2FileSorter {
     // Sort files
     int[] fields = null;
     for (String key : dirMap.keySet()) {
-      Logger.getLogger(this.getClass()).info("  Sorting for " + key);
+      Logger.getLogger(getClass()).info("  Sorting for " + key);
       final File file = findFile(new File(inputDir + dirMap.get(key)), key);
-      Logger.getLogger(this.getClass()).info("    file = " + file);
+      Logger.getLogger(getClass()).info("    file = " + file);
 
       // Determine file version from filename
       if (fileVersion == null) {
@@ -179,7 +179,7 @@ public class Rf2FileSorter {
     }
 
     // Merge description files - special handling
-    Logger.getLogger(this.getClass()).info("  Merging description files...");
+    Logger.getLogger(getClass()).info("  Merging description files...");
     File descriptionsFile =
         new File(outputDir + "/" + fileMap.get("sct2_Description_"));
     File textDefinitionsFile =
@@ -191,7 +191,7 @@ public class Rf2FileSorter {
         + "descriptionsAllByDescription.sort"));
 
     // Merge relationship files
-    Logger.getLogger(this.getClass()).info("  Merging relationship files...");
+    Logger.getLogger(getClass()).info("  Merging relationship files...");
     File relationshipsFile =
         new File(outputDir + "/" + fileMap.get("sct2_Relationship_"));
     File statedRelationshipsFile =
@@ -206,7 +206,7 @@ public class Rf2FileSorter {
         + "relationshipsAllBySourceConcept.sort"));
 
     Thread.sleep(1000);
-    Logger.getLogger(this.getClass()).info("Done...");
+    Logger.getLogger(getClass()).info("Done...");
 
   }
 
@@ -235,7 +235,7 @@ public class Rf2FileSorter {
         return null;
       }
     }
-    Logger.getLogger(this.getClass()).info(
+    Logger.getLogger(getClass()).info(
         "      " + prefix + " = " + file.toString() + " " + file.exists());
     return file;
   }
@@ -263,7 +263,7 @@ public class Rf2FileSorter {
       }
       columns.append(sortColumn);
     }
-    Logger.getLogger(this.getClass()).info(
+    Logger.getLogger(getClass()).info(
         "    Sorting " + fileIn.getName() + "  into " + fileOut.toString()
             + " by columns " + columns);
     FileSorter.sortFile(fileIn.toString(), fileOut.toString(), comp);

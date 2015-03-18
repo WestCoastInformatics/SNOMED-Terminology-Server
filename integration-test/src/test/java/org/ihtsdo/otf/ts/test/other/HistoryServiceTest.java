@@ -52,7 +52,7 @@ public class HistoryServiceTest {
    */
   @Test
   public void testReleaseInfo() throws Exception {
-    Logger.getLogger(this.getClass()).debug("Test ReleaseInfo");
+    Logger.getLogger(getClass()).debug("Test ReleaseInfo");
 
     // Add release info
     ReleaseInfoJpa info = new ReleaseInfoJpa();
@@ -102,7 +102,7 @@ public class HistoryServiceTest {
   public void testFindConceptsModifiedSince() throws Exception {
     // Find concepts as of 20140131 and it should be everything
     // as lastModified date is set at time of load
-    Logger.getLogger(this.getClass()).debug(
+    Logger.getLogger(getClass()).debug(
         "Find concepts modified since: SNOMEDCT, 20140131");
     PfsParameterJpa pfs = new PfsParameterJpa();
     pfs.setStartIndex(0);
@@ -129,7 +129,7 @@ public class HistoryServiceTest {
   public void findDescriptionsModifiedSince() throws Exception {
     // Find descriptions as of 20140131 and it should be everything
     // as lastModified date is set at time of load
-    Logger.getLogger(this.getClass()).debug(
+    Logger.getLogger(getClass()).debug(
         "Find descriptions modified since: SNOMEDCT, 20140131");
     PfsParameterJpa pfs = new PfsParameterJpa();
     pfs.setStartIndex(0);
@@ -155,7 +155,7 @@ public class HistoryServiceTest {
   public void findRelationshipsModifiedSince() throws Exception {
     // Find relationships as of 20140131 and it should be everything
     // as lastModified date is set at time of load
-    Logger.getLogger(this.getClass()).debug(
+    Logger.getLogger(getClass()).debug(
         "Find relationships modified since: SNOMEDCT, 20140131");
     PfsParameterJpa pfs = new PfsParameterJpa();
     pfs.setStartIndex(0);
@@ -181,7 +181,7 @@ public class HistoryServiceTest {
   public void findLanguageRefSetMemberModifiedSince() throws Exception {
     // Find languageRefSetMembers as of 20140131 and it should be everything
     // as lastModified date is set at time of load
-    Logger.getLogger(this.getClass()).debug(
+    Logger.getLogger(getClass()).debug(
         "Find language refset members modified since: SNOMEDCT, 20140131");
     PfsParameterJpa pfs = new PfsParameterJpa();
     pfs.setStartIndex(0);

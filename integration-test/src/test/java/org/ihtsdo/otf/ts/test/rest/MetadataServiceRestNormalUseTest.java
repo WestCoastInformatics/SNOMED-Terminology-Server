@@ -189,7 +189,7 @@ public class MetadataServiceRestNormalUseTest extends MetadataServiceRestTest {
      * characteristic types
      */
 
-    Logger.getLogger(this.getClass()).info(
+    Logger.getLogger(getClass()).info(
         "Testing SNOMEDCT metadata retrieval, " + keyValuePairLists.getCount()
             + " pair lists found (" + MetadataKeys.values().length
             + " expected)");
@@ -210,7 +210,7 @@ public class MetadataServiceRestNormalUseTest extends MetadataServiceRestTest {
         charTypes = keyValuePairList;
     }
 
-    Logger.getLogger(this.getClass()).info(
+    Logger.getLogger(getClass()).info(
         "Retrieved relationship types and characteristic types for testing");
     System.out.println(relTypes);
     System.out.println(charTypes);
@@ -225,7 +225,7 @@ public class MetadataServiceRestNormalUseTest extends MetadataServiceRestTest {
       Set<String> expectedNames = new HashSet<>();
       Set<KeyValuePair> pairsNotMatched = new HashSet<>();
 
-      Logger.getLogger(this.getClass()).info(
+      Logger.getLogger(getClass()).info(
           "Checking " + keyValuePairList.getKeyValuePairList().size() + " "
               + keyValuePairList.getName());
 
@@ -334,11 +334,11 @@ public class MetadataServiceRestNormalUseTest extends MetadataServiceRestTest {
 
           if (pairsNotMatched.size() > 0) {
             Logger
-                .getLogger(this.getClass())
+                .getLogger(getClass())
                 .error(
                     "The following hierarchical relationship types are not found in the set of relationship types:");
             for (KeyValuePair pair : pairsNotMatched) {
-              Logger.getLogger(this.getClass()).error(
+              Logger.getLogger(getClass()).error(
                   "  " + pair.getKey() + ", " + pair.getValue());
             }
           }
@@ -394,11 +394,11 @@ public class MetadataServiceRestNormalUseTest extends MetadataServiceRestTest {
 
           if (pairsNotMatched.size() > 0) {
             Logger
-                .getLogger(this.getClass())
+                .getLogger(getClass())
                 .error(
                     "The following non-grouping relationship types are not found in the set of relationship types:");
             for (KeyValuePair pair : pairsNotMatched) {
-              Logger.getLogger(this.getClass()).error(
+              Logger.getLogger(getClass()).error(
                   "  " + pair.getKey() + ", " + pair.getValue());
             }
           }
@@ -461,11 +461,11 @@ public class MetadataServiceRestNormalUseTest extends MetadataServiceRestTest {
           if (pairsNotMatched.size() > 0) {
             categorySuccessCt--;
             Logger
-                .getLogger(this.getClass())
+                .getLogger(getClass())
                 .error(
                     "The following inferred characteristic types are not found in the set of characteristic types:");
             for (KeyValuePair pair : pairsNotMatched) {
-              Logger.getLogger(this.getClass()).error(
+              Logger.getLogger(getClass()).error(
                   "  " + pair.getKey() + ", " + pair.getValue());
             }
           }
@@ -486,11 +486,11 @@ public class MetadataServiceRestNormalUseTest extends MetadataServiceRestTest {
 
           if (pairsNotMatched.size() > 0) {
             Logger
-                .getLogger(this.getClass())
+                .getLogger(getClass())
                 .error(
                     "The following stated characteristic types are not found in the set of characteristic types:");
             for (KeyValuePair pair : pairsNotMatched) {
-              Logger.getLogger(this.getClass()).error(
+              Logger.getLogger(getClass()).error(
                   "  " + pair.getKey() + ", " + pair.getValue());
             }
           }
@@ -512,22 +512,22 @@ public class MetadataServiceRestNormalUseTest extends MetadataServiceRestTest {
         }
 
         if (expectedSize != pairs.size()) {
-          Logger.getLogger(this.getClass()).warn(
+          Logger.getLogger(getClass()).warn(
               "  Expected size " + expectedSize + " did not match actual size "
                   + pairs.size());
-          Logger.getLogger(this.getClass()).info("  Retrieved pairs were: ");
+          Logger.getLogger(getClass()).info("  Retrieved pairs were: ");
           for (KeyValuePair pair : pairs) {
-            Logger.getLogger(this.getClass()).info("    " + pair.toString());
+            Logger.getLogger(getClass()).info("    " + pair.toString());
           }
         }
 
         else if (testCase == null) {
-          Logger.getLogger(this.getClass()).warn(
+          Logger.getLogger(getClass()).warn(
               "  Could not find pair for id = " + expectedId + ", names "
                   + expectedNames.toString());
-          Logger.getLogger(this.getClass()).info("  Available pairs were: ");
+          Logger.getLogger(getClass()).info("  Available pairs were: ");
           for (KeyValuePair pair : pairs) {
-            Logger.getLogger(this.getClass()).info("    " + pair.toString());
+            Logger.getLogger(getClass()).info("    " + pair.toString());
           }
         } else {
           categorySuccessCt++;
@@ -535,7 +535,7 @@ public class MetadataServiceRestNormalUseTest extends MetadataServiceRestTest {
       }
     }
 
-    Logger.getLogger(this.getClass()).info(
+    Logger.getLogger(getClass()).info(
         "SNOMEDCT Metadata Categories Validated:  " + categorySuccessCt
             + " out of " + MetadataKeys.values().length);
 
@@ -558,7 +558,7 @@ public class MetadataServiceRestNormalUseTest extends MetadataServiceRestTest {
      * inferred characteristic types are characteristic types
      */
 
-    Logger.getLogger(this.getClass()).info(
+    Logger.getLogger(getClass()).info(
         "Testing ICD9CM metadata retrieval, " + keyValuePairLists.getCount()
             + " pair lists found (" + MetadataKeys.values().length
             + " expected)");
@@ -587,7 +587,7 @@ public class MetadataServiceRestNormalUseTest extends MetadataServiceRestTest {
       int expectedSize = -1;
       Set<KeyValuePair> pairsNotMatched = new HashSet<>();
 
-      Logger.getLogger(this.getClass()).info(
+      Logger.getLogger(getClass()).info(
           "Checking " + keyValuePairList.getKeyValuePairList().size() + " "
               + keyValuePairList.getName());
 
@@ -619,11 +619,11 @@ public class MetadataServiceRestNormalUseTest extends MetadataServiceRestTest {
           if (pairsNotMatched.size() > 0) {
             categorySuccessCt--;
             Logger
-                .getLogger(this.getClass())
+                .getLogger(getClass())
                 .error(
                     "The following hierarchical relationship types are not found in the set of relationship types:");
             for (KeyValuePair pair : pairsNotMatched) {
-              Logger.getLogger(this.getClass()).error(
+              Logger.getLogger(getClass()).error(
                   "  " + pair.getKey() + ", " + pair.getValue());
             }
           }
@@ -643,11 +643,11 @@ public class MetadataServiceRestNormalUseTest extends MetadataServiceRestTest {
           if (pairsNotMatched.size() > 0) {
             categorySuccessCt--;
             Logger
-                .getLogger(this.getClass())
+                .getLogger(getClass())
                 .error(
                     "The following inferred characteristic types are not found in the set of characteristic types:");
             for (KeyValuePair pair : pairsNotMatched) {
-              Logger.getLogger(this.getClass()).error(
+              Logger.getLogger(getClass()).error(
                   "  " + pair.getKey() + ", " + pair.getValue());
             }
           }
@@ -679,18 +679,18 @@ public class MetadataServiceRestNormalUseTest extends MetadataServiceRestTest {
           if (pairsNotMatched.size() > 0) {
             categorySuccessCt--;
             Logger
-                .getLogger(this.getClass())
+                .getLogger(getClass())
                 .error(
                     "The following stated characteristic types are not found in the set of characteristic types:");
             for (KeyValuePair pair : pairsNotMatched) {
-              Logger.getLogger(this.getClass()).error(
+              Logger.getLogger(getClass()).error(
                   "  " + pair.getKey() + ", " + pair.getValue());
             }
           }
           break;
         default:
           if (keyValuePairList.getKeyValuePairList().size() != 0)
-            Logger.getLogger(this.getClass()).error(
+            Logger.getLogger(getClass()).error(
                 "Unexpected metadata type retrieved:  "
                     + keyValuePairList.getName());
           break;
@@ -700,12 +700,12 @@ public class MetadataServiceRestNormalUseTest extends MetadataServiceRestTest {
 
       // if pairs retrieved do not match expected size, output error
       if (pairs.size() != 0 && expectedSize != pairs.size()) {
-        Logger.getLogger(this.getClass()).warn(
+        Logger.getLogger(getClass()).warn(
             "  Expected size " + expectedSize + " did not match actual size "
                 + pairs.size());
-        Logger.getLogger(this.getClass()).info("  Retrieved pairs were: ");
+        Logger.getLogger(getClass()).info("  Retrieved pairs were: ");
         for (KeyValuePair pair : pairs) {
-          Logger.getLogger(this.getClass()).info("    " + pair.toString());
+          Logger.getLogger(getClass()).info("    " + pair.toString());
         }
 
         // if pairs retrieved match expected size, increment the counter
@@ -719,7 +719,7 @@ public class MetadataServiceRestNormalUseTest extends MetadataServiceRestTest {
       }
     }
 
-    Logger.getLogger(this.getClass()).info(
+    Logger.getLogger(getClass()).info(
         "ICD9CM  Metadata Categories Validated:  " + categorySuccessCt
             + " out of " + MetadataKeys.values().length);
 

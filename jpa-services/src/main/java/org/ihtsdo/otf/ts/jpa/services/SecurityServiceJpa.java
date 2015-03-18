@@ -116,7 +116,7 @@ public class SecurityServiceJpa extends RootServiceJpa implements
     tokenUsernameMap.put(token, authUser.getUserName());
     tokenTimeoutMap.put(token, new Date(new Date().getTime() + timeout));
 
-    Logger.getLogger(this.getClass()).info("User = " + authUser.getUserName());
+    Logger.getLogger(getClass()).info("User = " + authUser.getUserName());
 
     return token;
   }

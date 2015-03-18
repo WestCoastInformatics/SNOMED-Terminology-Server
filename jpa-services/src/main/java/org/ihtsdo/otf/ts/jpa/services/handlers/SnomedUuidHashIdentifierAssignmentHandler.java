@@ -50,7 +50,7 @@ public class SnomedUuidHashIdentifierAssignmentHandler implements
   @Override
   public String getTerminologyId(Concept concept) throws Exception {
     // If the concept already has an sctid return it
-    Logger.getLogger(this.getClass()).debug("assigning concept id");
+    Logger.getLogger(getClass()).debug("assigning concept id");
     StringBuilder sb = new StringBuilder();
     List<Concept> concepts =
         TerminologyUtility.getActiveParentConcepts(concept);
@@ -66,7 +66,7 @@ public class SnomedUuidHashIdentifierAssignmentHandler implements
     }
     sb.append(concept.getDefaultPreferredName());
     String id = TerminologyUtility.getUuid(sb.toString()).toString();
-    Logger.getLogger(this.getClass()).debug("  setting id " + id);
+    Logger.getLogger(getClass()).debug("  setting id " + id);
     return id;
   }
 

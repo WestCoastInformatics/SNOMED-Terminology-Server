@@ -2,7 +2,6 @@ package org.ihtsdo.otf.ts.jpa.algo;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
 import org.apache.log4j.Logger;
 import org.ihtsdo.otf.ts.algo.Algorithm;
@@ -22,12 +21,10 @@ public class ReleaseRf2FinishAlgorithm extends ContentServiceJpa implements
     Algorithm {
 
   /** The release version. */
-  @SuppressWarnings("unused")
   private String releaseVersion = null;
 
-  /** The workflow status values. */
-  @SuppressWarnings("unused")
-  private Set<String> workflowStatusValues = null;
+  /** The terminology. */
+  private String terminology = null;
 
   /** Listeners. */
   private List<ProgressListener> listeners = new ArrayList<>();
@@ -39,14 +36,14 @@ public class ReleaseRf2FinishAlgorithm extends ContentServiceJpa implements
    * Instantiates an empty {@link ReleaseRf2FinishAlgorithm}.
    *
    * @param releaseVersion the release version
-   * @param workflowStatusValues the workflow status values
+   * @param terminology the terminology
    * @throws Exception if anything goes wrong
    */
-  public ReleaseRf2FinishAlgorithm(String releaseVersion,
-      Set<String> workflowStatusValues) throws Exception {
+  public ReleaseRf2FinishAlgorithm(String releaseVersion, String terminology)
+      throws Exception {
     super();
     this.releaseVersion = releaseVersion;
-    this.workflowStatusValues = workflowStatusValues;
+    this.terminology = terminology;
   }
 
   /*
@@ -67,7 +64,12 @@ public class ReleaseRf2FinishAlgorithm extends ContentServiceJpa implements
    */
   @Override
   public void compute() throws Exception {
-    // TBD
+    fireProgressEvent(0, "Starting finish RF2 release");
+    Logger.getLogger(getClass()).info("  releaseVersion = " + releaseVersion);
+    Logger.getLogger(getClass()).info("  terminology = " + terminology);
+
+    // done, log and close
+    fireProgressEvent(100, "Finished finish RF2 release");
   }
 
   /*
@@ -115,7 +117,7 @@ public class ReleaseRf2FinishAlgorithm extends ContentServiceJpa implements
     for (int i = 0; i < listeners.size(); i++) {
       listeners.get(i).updateProgress(pe);
     }
-    Logger.getLogger(this.getClass()).info("    " + pct + "% " + note);
+    Logger.getLogger(getClass()).info("    " + pct + "% " + note);
   }
 
 }

@@ -6,35 +6,49 @@ import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.ihtsdo.otf.ts.helpers.ConfigUtility;
-import org.ihtsdo.otf.ts.jpa.algo.ReleaseRf2FinishAlgorithm;
 import org.ihtsdo.otf.ts.jpa.client.HistoryClientRest;
 import org.ihtsdo.otf.ts.jpa.services.SecurityServiceJpa;
 import org.ihtsdo.otf.ts.rest.impl.HistoryServiceRestImpl;
 import org.ihtsdo.otf.ts.services.SecurityService;
 
 /**
- * Mojo wrapper around {@link ReleaseRf2FinishAlgorithm}.
+ * Loads unpublished complex maps.
  * 
  * See admin/release/pom.xml for sample usage.
  * 
- * @goal release-rf2-finish
+ * @goal release-rf2
  * @phase package
  */
-public class ReleaseRf2FinishMojo extends AbstractMojo {
+public class ReleaseRf2ProcessingMojo extends AbstractMojo {
 
   /**
-   * The release version
-   * @parameter
-   * @required
+   * The effective time of release.
+   *
+   * @parameter effectiveTime
    */
   private String releaseVersion = null;
 
   /**
-   * The terminology
-   * @parameter
+   * The terminology.
+   * @parameter moduleId
    * @required
    */
   private String terminology = null;
+
+  /**
+   * The output directory.
+   * @parameter outputDir
+   * @required
+   */
+  private String outputDir = null;
+
+  /**
+   * The module id.
+   * 
+   * @parameter moduleId
+   * @required
+   */
+  private String moduleId = null;
 
   /**
    * Whether to run this mojo against an active server
@@ -42,18 +56,14 @@ public class ReleaseRf2FinishMojo extends AbstractMojo {
    */
   private boolean server = false;
 
-  /*
-   * (non-Javadoc)
-   * 
-   * @see org.apache.maven.plugin.Mojo#execute()
-   */
   @Override
   public void execute() throws MojoExecutionException, MojoFailureException {
     try {
-      // log start
-      getLog().info("Finishing Release");
-      getLog().info("  releaseVersion = " + releaseVersion);
+      getLog().info("Processing release");
       getLog().info("  terminology = " + terminology);
+      getLog().info("  outputDir = " + outputDir);
+      getLog().info("  releaseVersion = " + releaseVersion);
+      getLog().info("  moduleId = " + moduleId);
       getLog().info("  Expect server up: " + server);
 
       Properties properties = ConfigUtility.getConfigProperties();
@@ -81,17 +91,18 @@ public class ReleaseRf2FinishMojo extends AbstractMojo {
         getLog().info("Running directly");
 
         HistoryClientRest historyService = new HistoryClientRest(properties);
-        historyService.finishRf2Release(releaseVersion, terminology, authToken);
+        historyService.processRf2Release(releaseVersion, terminology,
+            outputDir, moduleId, authToken);
 
       } else {
         getLog().info("Running against server");
 
         HistoryServiceRestImpl historyService = new HistoryServiceRestImpl();
-        historyService.finishRf2Release(releaseVersion, terminology, authToken);
+        historyService.processRf2Release(releaseVersion, terminology,
+            outputDir, moduleId, authToken);
       }
     } catch (Exception e) {
-      e.printStackTrace();
-      throw new MojoExecutionException("Performing release finish failed.", e);
+      throw new MojoFailureException("Unexpected Failure", e);
     }
 
   }

@@ -59,14 +59,14 @@ public class ValidationServiceTest {
    */
   @Test
   public void testNewConceptMinRequirementsCheck() throws Exception {
-    Logger.getLogger(this.getClass()).info(
+    Logger.getLogger(getClass()).info(
         "TEST - 10013000, SNOMEDCT, latest, " + authToken);
 
     // Test that this concept is valid
     ConceptJpa concept =
         (ConceptJpa) contentClient.getSingleConcept("10013000", "SNOMEDCT",
             "latest", authToken);
-    Logger.getLogger(this.getClass()).info(
+    Logger.getLogger(getClass()).info(
         ConceptReportHelper.getConceptReport(concept));
     ValidationResult result = client.validateConcept(concept, authToken);
     Assert.assertTrue(result.isValid());
@@ -92,7 +92,7 @@ public class ValidationServiceTest {
     Assert.assertEquals(concept.getDescriptions().size(),2);
 
     // Validation should pass
-    Logger.getLogger(this.getClass()).info(
+    Logger.getLogger(getClass()).info(
         ConceptReportHelper.getConceptReport(concept));
     result = client.validateConcept(concept, authToken);
     Assert.assertTrue(result.isValid());
@@ -110,10 +110,10 @@ public class ValidationServiceTest {
     Assert.assertEquals(concept.getDescriptions().size(),1);
 
     // Validation should fail
-    Logger.getLogger(this.getClass()).info(
+    Logger.getLogger(getClass()).info(
         ConceptReportHelper.getConceptReport(concept));
     result = client.validateConcept(concept, authToken);
-    Logger.getLogger(this.getClass()).info(result.toString());
+    Logger.getLogger(getClass()).info(result.toString());
     Assert.assertFalse(result.isValid());
 
     // Add PT back and remove FN
@@ -130,7 +130,7 @@ public class ValidationServiceTest {
     Assert.assertEquals(concept.getDescriptions().size(),1);
 
     // Validation should fail
-    Logger.getLogger(this.getClass()).info(
+    Logger.getLogger(getClass()).info(
         ConceptReportHelper.getConceptReport(concept));
     result = client.validateConcept(concept, authToken);
     Assert.assertFalse(result.isValid());
@@ -146,7 +146,7 @@ public class ValidationServiceTest {
       }
     }
     // Validation should pass
-    Logger.getLogger(this.getClass()).info(
+    Logger.getLogger(getClass()).info(
         ConceptReportHelper.getConceptReport(concept));
     result = client.validateConcept(concept, authToken);
     Assert.assertFalse(result.isValid());

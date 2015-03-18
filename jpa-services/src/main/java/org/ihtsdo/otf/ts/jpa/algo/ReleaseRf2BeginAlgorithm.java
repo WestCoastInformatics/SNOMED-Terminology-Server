@@ -24,7 +24,7 @@ import org.ihtsdo.otf.ts.services.helpers.ProgressEvent;
 import org.ihtsdo.otf.ts.services.helpers.ProgressListener;
 
 /**
- * An algorithm for performing an RF2 release. The following steps are included
+ * An algorithm for beginning an RF2 release. The following steps are included
  * 
  * <pre>
  *   - Mark the release info start date
@@ -119,7 +119,7 @@ public class ReleaseRf2BeginAlgorithm extends ContentServiceJpa implements
     //
     else if (info.getReleaseBeginDate() == null) {
       Date date = new Date();
-      Logger.getLogger(this.getClass()).info(
+      Logger.getLogger(getClass()).info(
           "  Set release begin date = " + date);
       info.setReleaseBeginDate(date);
       historyService.updateReleaseInfo(info);
@@ -146,7 +146,7 @@ public class ReleaseRf2BeginAlgorithm extends ContentServiceJpa implements
     fireProgressEvent(2, "  Validate concepts");
     validationResult = new ValidationResultJpa();
     if (validate) {
-      Logger.getLogger(this.getClass()).info("  VALIDATE all concepts");
+      Logger.getLogger(getClass()).info("  VALIDATE all concepts");
       ValidationService validationService = new ValidationServiceJpa();
       int ct = 0;
       int progress = 0;
@@ -176,10 +176,10 @@ public class ReleaseRf2BeginAlgorithm extends ContentServiceJpa implements
               validationService.validateConcept(concept);
           if (!conceptValidation.isValid()) {
             validationResult.merge(conceptValidation);
-            Logger.getLogger(this.getClass()).info(
+            Logger.getLogger(getClass()).info(
                 "    INVALID concept - " + concept.getTerminologyId());
           } else {
-            Logger.getLogger(this.getClass()).debug(
+            Logger.getLogger(getClass()).debug(
                 "    VALID concept - " + concept.getTerminologyId());
 
           }
@@ -187,7 +187,7 @@ public class ReleaseRf2BeginAlgorithm extends ContentServiceJpa implements
       }
 
     } else {
-      Logger.getLogger(this.getClass()).info("  DO NOT VALIDATE all concepts");
+      Logger.getLogger(getClass()).info("  DO NOT VALIDATE all concepts");
     }
     // handle validation failures
     if (!validationResult.isValid()) {
@@ -195,7 +195,7 @@ public class ReleaseRf2BeginAlgorithm extends ContentServiceJpa implements
     } else {
       // show warnings
       for (String warning : validationResult.getWarnings()) {
-        Logger.getLogger(this.getClass()).warn("      WARNING:" + warning);
+        Logger.getLogger(getClass()).warn("      WARNING:" + warning);
       }
     }
 
@@ -267,7 +267,7 @@ public class ReleaseRf2BeginAlgorithm extends ContentServiceJpa implements
     for (int i = 0; i < listeners.size(); i++) {
       listeners.get(i).updateProgress(pe);
     }
-    Logger.getLogger(this.getClass()).info("    " + pct + "% " + note);
+    Logger.getLogger(getClass()).info("    " + pct + "% " + note);
   }
 
 }

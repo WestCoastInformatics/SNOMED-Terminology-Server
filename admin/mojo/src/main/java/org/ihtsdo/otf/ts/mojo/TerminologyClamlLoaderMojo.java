@@ -1,12 +1,15 @@
 package org.ihtsdo.otf.ts.mojo;
 
-import java.io.File;
+import java.util.Properties;
 
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
-import org.ihtsdo.otf.ts.jpa.algo.ClamlLoaderAlgorithm;
-import org.ihtsdo.otf.ts.jpa.algo.TransitiveClosureAlgorithm;
+import org.ihtsdo.otf.ts.helpers.ConfigUtility;
+import org.ihtsdo.otf.ts.jpa.client.ContentClientRest;
+import org.ihtsdo.otf.ts.jpa.services.SecurityServiceJpa;
+import org.ihtsdo.otf.ts.rest.impl.ContentServiceRestImpl;
+import org.ihtsdo.otf.ts.services.SecurityService;
 
 /**
  * Converts claml data to RF2 objects.
@@ -44,39 +47,63 @@ public class TerminologyClamlLoaderMojo extends AbstractMojo {
   String inputFile;
 
   /**
+   * Whether to run this mojo against an active server
+   * @parameter
+   */
+  private boolean server = false;
+
+  /**
    * Executes the plugin.
    * @throws MojoExecutionException the mojo execution exception
    */
   @Override
   public void execute() throws MojoExecutionException {
-    getLog().info("Starting load of ClaML");
-    getLog().info("  terminology = " + terminology);
-    getLog().info("  version = " + version);
-    getLog().info("  inputFile = " + inputFile);
-
     try {
+      getLog().info("Starting load of ClaML");
+      getLog().info("  terminology = " + terminology);
+      getLog().info("  version = " + version);
+      getLog().info("  inputFile = " + inputFile);
+      getLog().info("  Expect server up   : " + server);
 
-      // Check the input directory
-      if (!new File(inputFile).exists()) {
+      Properties properties = ConfigUtility.getConfigProperties();
+
+      boolean serverRunning = ConfigUtility.isServerActive();
+
+      getLog().info(
+          "Server status detected:  " + (!serverRunning ? "DOWN" : "UP"));
+
+      if (serverRunning && !server) {
         throw new MojoFailureException(
-            "Specified input file does not exist " + inputFile);
+            "Mojo expects server to be down, but server is running");
       }
 
-      // Load snapshot
-      ClamlLoaderAlgorithm algorithm = new ClamlLoaderAlgorithm();
-      algorithm.setTerminology(terminology);
-      algorithm.setTerminologyVersion(version);
-      algorithm.setInputFile(inputFile);
-      algorithm.compute();
+      if (!serverRunning && server) {
+        throw new MojoFailureException(
+            "Mojo expects server to be running, but server is down");
+      }
 
-      // Let service begin its own transaction
-      getLog().info("Start computing transtive closure");
-      TransitiveClosureAlgorithm algo = new TransitiveClosureAlgorithm();
-      algo.setTerminology(terminology);
-      algo.setTerminologyVersion(version);
-      algo.reset();
-      algo.compute();
-      algo.close();
+      // authenticate
+      SecurityService service = new SecurityServiceJpa();
+      String authToken =
+          service.authenticate(properties.getProperty("admin.user"),
+              properties.getProperty("admin.password"));
+      service.close();
+
+      if (!serverRunning) {
+        getLog().info("Running directly");
+
+        ContentServiceRestImpl contentService = new ContentServiceRestImpl();
+        contentService.loadTerminologyClaml(terminology, version, inputFile,
+            authToken);
+
+      } else {
+        getLog().info("Running against server");
+
+        // invoke the client
+        ContentClientRest contentService = new ContentClientRest(properties);
+        contentService.loadTerminologyClaml(terminology, version, inputFile,
+            authToken);
+      }
 
       getLog().info("done ...");
 
@@ -84,10 +111,8 @@ public class TerminologyClamlLoaderMojo extends AbstractMojo {
       e.printStackTrace();
       throw new MojoExecutionException(
           "Conversion of Claml to RF2 objects failed", e);
-    } 
+    }
 
   }
-
-
 
 }

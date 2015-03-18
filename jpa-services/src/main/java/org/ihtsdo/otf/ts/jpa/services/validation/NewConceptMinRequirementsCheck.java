@@ -122,7 +122,7 @@ public class NewConceptMinRequirementsCheck implements ValidationCheck {
 
       }
       if (!fnFound) {
-        Logger.getLogger(this.getClass()).info(
+        Logger.getLogger(getClass()).info(
             "Concept is missing an active preferred FN description: " + fnType
                 + ", " + preferredId + ", " + languageId);
         result
@@ -130,7 +130,7 @@ public class NewConceptMinRequirementsCheck implements ValidationCheck {
                 + fnType + ", " + preferredId + ", " + languageId);
       }
       if (!ptFound) {
-        Logger.getLogger(this.getClass()).info(
+        Logger.getLogger(getClass()).info(
             "Concept is missing a active preferred SY description: " + ptType
                 + ", " + preferredId + ", " + languageId);
         result
