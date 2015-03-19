@@ -52,7 +52,7 @@ public class SecurityClientRest implements SecurityServiceRest {
     ClientResponse response = resource.post(ClientResponse.class, password);
     String resultString = response.getEntity(String.class);
     if (response.getStatusInfo().getFamily() == Family.SUCCESSFUL) {
-      Logger.getLogger(this.getClass()).info(resultString);
+      Logger.getLogger(getClass()).info(resultString);
     } else {
       throw new LocalException(resultString);
     }
@@ -74,9 +74,9 @@ public class SecurityClientRest implements SecurityServiceRest {
     resource.accept(MediaType.APPLICATION_JSON);
     ClientResponse response = resource.get(ClientResponse.class);
     String resultString = response.getEntity(String.class);
-    Logger.getLogger(this.getClass()).info("status: " + response.getStatus());
+    Logger.getLogger(getClass()).info("status: " + response.getStatus());
     if (response.getStatusInfo().getFamily() == Family.SUCCESSFUL) {
-      Logger.getLogger(this.getClass()).info(resultString);
+      Logger.getLogger(getClass()).info(resultString);
     } else {
       throw new Exception(resultString);
     }
@@ -105,7 +105,7 @@ public class SecurityClientRest implements SecurityServiceRest {
 
     String resultString = response.getEntity(String.class);
     if (response.getStatusInfo().getFamily() == Family.SUCCESSFUL) {
-      Logger.getLogger(this.getClass()).debug(resultString);
+      Logger.getLogger(getClass()).debug(resultString);
     } else {
       throw new Exception(resultString);
     }
@@ -137,7 +137,7 @@ public class SecurityClientRest implements SecurityServiceRest {
     
     String resultString = response.getEntity(String.class);
     if (response.getStatusInfo().getFamily() == Family.SUCCESSFUL) {
-      Logger.getLogger(this.getClass()).debug(resultString);
+      Logger.getLogger(getClass()).debug(resultString);
     } else {
       throw new Exception(resultString);
     }
@@ -165,7 +165,7 @@ public class SecurityClientRest implements SecurityServiceRest {
 
     String resultString = response.getEntity(String.class);
     if (response.getStatusInfo().getFamily() == Family.SUCCESSFUL) {
-      Logger.getLogger(this.getClass()).debug(resultString);
+      Logger.getLogger(getClass()).debug(resultString);
     } else {
       throw new Exception(resultString);
     }
@@ -192,7 +192,7 @@ public class SecurityClientRest implements SecurityServiceRest {
 
     String userString =
         (user != null ? ConfigUtility.getStringForGraph(user) : null);
-    Logger.getLogger(this.getClass()).info(userString);
+    Logger.getLogger(getClass()).info(userString);
     ClientResponse response =
         resource.accept(MediaType.APPLICATION_XML)
             .header("Authorization", authToken)
@@ -201,7 +201,7 @@ public class SecurityClientRest implements SecurityServiceRest {
 
     String resultString = response.getEntity(String.class);
     if (response.getStatusInfo().getFamily() == Family.SUCCESSFUL) {
-      Logger.getLogger(this.getClass()).debug(resultString);
+      Logger.getLogger(getClass()).debug(resultString);
     } else {
       throw new Exception(resultString);
     }
@@ -252,7 +252,7 @@ public class SecurityClientRest implements SecurityServiceRest {
 
     String userString =
         (user != null ? ConfigUtility.getStringForGraph(user) : null);
-    Logger.getLogger(this.getClass()).info(userString);
+    Logger.getLogger(getClass()).info(userString);
     ClientResponse response =
         resource.accept(MediaType.APPLICATION_XML)
             .header("Authorization", authToken)

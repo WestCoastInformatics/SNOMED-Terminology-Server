@@ -909,6 +909,16 @@ public interface ContentService extends RootService {
     String terminology, String version);
 
   /**
+   * Returns the all simple ref set member terminology ids.
+   *
+   * @param terminology the terminology
+   * @param version the version
+   * @return the all simple ref set member terminology ids
+   */
+  public StringList getAllSimpleRefSetMemberTerminologyIds(
+    String terminology, String version);
+
+  /**
    * Clear transitive closure.
    *
    * @param terminology the terminology

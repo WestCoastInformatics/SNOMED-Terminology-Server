@@ -485,6 +485,11 @@ public class ConfigUtility {
    */
   public static void sendEmail(String subject, String from, String recipients,
     String body, Properties details, boolean authFlag) throws Exception {
+    // avoid sending mail if disabled
+    if ("false".equals(details.getProperty("mail.enabled"))) {
+      // do nothing
+      return;
+    }
     Session session = null;
     if (authFlag) {
       Authenticator auth = new SMTPAuthenticator();

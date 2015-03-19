@@ -7,16 +7,12 @@ import org.ihtsdo.otf.ts.helpers.Configurable;
 
 /**
  * Services to retrieve metadata objects.
- *
- * @author ${author}
  */
 public interface MetadataService extends RootService, Configurable {
 
   
   /**
    * An enum for the keys of the get all metadata call.
-   *
-   * @author ${author}
    */
   public enum MetadataKeys {
     /** The Modules. */

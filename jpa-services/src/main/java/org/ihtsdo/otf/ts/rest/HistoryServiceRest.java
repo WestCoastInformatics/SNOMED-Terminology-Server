@@ -300,4 +300,43 @@ public interface HistoryServiceRest {
   public void startEditingCycle(String releaseVersion, String terminology,
     String version, String authToken) throws Exception;
 
+  /**
+   * Begin rf2 release.
+   *
+   * @param releaseVersion the release version
+   * @param terminology the terminology
+   * @param validate the validate
+   * @param workflowStatusValues the workflow status values
+   * @param saveIdentifiers the save identifiers
+   * @param authToken the auth token
+   * @throws Exception the exception
+   */
+  public void beginRf2Release(String releaseVersion, String terminology,
+    boolean validate, String workflowStatusValues, boolean saveIdentifiers,
+    String authToken) throws Exception;
+
+  /**
+   * Process rf2 release.
+   *
+   * @param releaseVersion the release version
+   * @param terminology the terminology
+   * @param outputDir the output dir
+   * @param moduleId the module id
+   * @param authToken the auth token
+   * @throws Exception the exception
+   */
+  public void processRf2Release(String releaseVersion, String terminology,
+    String outputDir, String moduleId, String authToken) throws Exception;
+
+  /**
+   * Finish rf2 release.
+   *
+   * @param releaseVersion the release version
+   * @param terminology the terminology
+   * @param authToken the auth token
+   * @throws Exception the exception
+   */
+  public void finishRf2Release(String releaseVersion, String terminology,
+    String authToken) throws Exception;
+
 }

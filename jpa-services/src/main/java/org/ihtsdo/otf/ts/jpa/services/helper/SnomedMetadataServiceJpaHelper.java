@@ -363,7 +363,7 @@ public class SnomedMetadataServiceJpaHelper extends ContentServiceJpa implements
         getDescendantConcepts("447634004", terminology, version,
             isaRelationshipType);
 
-    Logger.getLogger(this.getClass()).debug(
+    Logger.getLogger(getClass()).debug(
         "Descendants of 447634004 " + descendants);
     for (Concept descendant : descendants) {
       if (descendant.isActive()) {
@@ -379,7 +379,7 @@ public class SnomedMetadataServiceJpaHelper extends ContentServiceJpa implements
         getDescendantConcepts("447247004", terminology, version,
             isaRelationshipType);
 
-    Logger.getLogger(this.getClass()).debug(
+    Logger.getLogger(getClass()).debug(
         "Descendants of 447247004 " + descendants);
     for (Concept descendant : descendants) {
       if (descendant.isActive()) {

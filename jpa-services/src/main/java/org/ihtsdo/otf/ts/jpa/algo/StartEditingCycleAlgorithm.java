@@ -73,7 +73,7 @@ public class StartEditingCycleAlgorithm extends ContentServiceJpa implements
    */
   @Override
   public void compute() throws Exception {
-    Logger.getLogger(this.getClass()).info(
+    Logger.getLogger(getClass()).info(
         "Starting editing cycle for " + releaseVersion);
 
     // Check that there is a planned release info entry that has not yet been
@@ -84,7 +84,7 @@ public class StartEditingCycleAlgorithm extends ContentServiceJpa implements
       throw new Exception("Editing cycle already started for " + releaseVersion);
     }
 
-    Logger.getLogger(this.getClass()).info("  Create release info");
+    Logger.getLogger(getClass()).info("  Create release info");
     info = new ReleaseInfoJpa();
     info.setDescription("RF2 Release for " + releaseVersion);
     info.setEffectiveTime(ConfigUtility.DATE_FORMAT.parse(releaseVersion));
@@ -96,7 +96,7 @@ public class StartEditingCycleAlgorithm extends ContentServiceJpa implements
     service.addReleaseInfo(info);
     service.close();
 
-    Logger.getLogger(this.getClass()).info("Done starting editing cycle");
+    Logger.getLogger(getClass()).info("Done starting editing cycle");
 
   }
 
@@ -145,7 +145,7 @@ public class StartEditingCycleAlgorithm extends ContentServiceJpa implements
     for (int i = 0; i < listeners.size(); i++) {
       listeners.get(i).updateProgress(pe);
     }
-    Logger.getLogger(this.getClass()).info("    " + pct + "% " + note);
+    Logger.getLogger(getClass()).info("    " + pct + "% " + note);
   }
 
 }

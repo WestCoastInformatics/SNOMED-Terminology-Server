@@ -40,7 +40,7 @@ public class ClassificationTest {
    */
   @Test
   public void testClassify() throws Exception {
-    Logger.getLogger(this.getClass()).info("TEST Classify");
+    Logger.getLogger(getClass()).info("TEST Classify");
 
 
 //    String token = actionService.configureActionService(null);

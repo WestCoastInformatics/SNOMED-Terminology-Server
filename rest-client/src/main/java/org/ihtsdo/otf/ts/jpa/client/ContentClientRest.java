@@ -104,7 +104,7 @@ public class ContentClientRest implements ContentServiceRest {
 
     String resultString = response.getEntity(String.class);
     if (response.getStatusInfo().getFamily() == Family.SUCCESSFUL) {
-      Logger.getLogger(this.getClass()).debug(resultString);
+      Logger.getLogger(getClass()).debug(resultString);
     } else {
       throw new Exception(resultString);
     }
@@ -136,7 +136,7 @@ public class ContentClientRest implements ContentServiceRest {
 
     String resultString = response.getEntity(String.class);
     if (response.getStatusInfo().getFamily() == Family.SUCCESSFUL) {
-      Logger.getLogger(this.getClass()).debug(resultString);
+      Logger.getLogger(getClass()).debug(resultString);
     } else {
       throw new Exception(resultString);
     }
@@ -168,7 +168,7 @@ public class ContentClientRest implements ContentServiceRest {
 
     String resultString = response.getEntity(String.class);
     if (response.getStatusInfo().getFamily() == Family.SUCCESSFUL) {
-      Logger.getLogger(this.getClass()).debug(resultString);
+      Logger.getLogger(getClass()).debug(resultString);
     } else {
       throw new Exception(resultString);
     }
@@ -198,7 +198,7 @@ public class ContentClientRest implements ContentServiceRest {
 
     String resultString = response.getEntity(String.class);
     if (response.getStatusInfo().getFamily() == Family.SUCCESSFUL) {
-      Logger.getLogger(this.getClass()).debug(resultString);
+      Logger.getLogger(getClass()).debug(resultString);
     } else {
       throw new Exception(resultString);
     }
@@ -227,7 +227,7 @@ public class ContentClientRest implements ContentServiceRest {
             + terminology + "/" + version + "/query/" + searchString);
     String pfsString =
         (pfs != null ? ConfigUtility.getStringForGraph(pfs) : null);
-    Logger.getLogger(this.getClass()).debug(pfsString);
+    Logger.getLogger(getClass()).debug(pfsString);
     ClientResponse response =
         resource.accept(MediaType.APPLICATION_XML)
             .header("Authorization", authToken)
@@ -236,7 +236,7 @@ public class ContentClientRest implements ContentServiceRest {
 
     String resultString = response.getEntity(String.class);
     if (response.getStatusInfo().getFamily() == Family.SUCCESSFUL) {
-      Logger.getLogger(this.getClass()).debug(resultString);
+      Logger.getLogger(getClass()).debug(resultString);
     } else {
       throw new Exception(resultString);
     }
@@ -267,7 +267,7 @@ public class ContentClientRest implements ContentServiceRest {
             + "/descendants");
     String pfsString =
         (pfs != null ? ConfigUtility.getStringForGraph(pfs) : null);
-    Logger.getLogger(this.getClass()).debug(pfsString);
+    Logger.getLogger(getClass()).debug(pfsString);
     ClientResponse response =
         resource.accept(MediaType.APPLICATION_XML)
             .header("Authorization", authToken)
@@ -276,7 +276,7 @@ public class ContentClientRest implements ContentServiceRest {
 
     String resultString = response.getEntity(String.class);
     if (response.getStatusInfo().getFamily() == Family.SUCCESSFUL) {
-      Logger.getLogger(this.getClass()).debug(resultString);
+      Logger.getLogger(getClass()).debug(resultString);
     } else {
       throw new Exception(resultString);
     }
@@ -305,7 +305,7 @@ public class ContentClientRest implements ContentServiceRest {
             + terminology + "/" + version + "/" + terminologyId + "/children");
     String pfsString =
         (pfs != null ? ConfigUtility.getStringForGraph(pfs) : null);
-    Logger.getLogger(this.getClass()).debug(pfsString);
+    Logger.getLogger(getClass()).debug(pfsString);
     ClientResponse response =
         resource.accept(MediaType.APPLICATION_XML)
             .header("Authorization", authToken)
@@ -314,7 +314,7 @@ public class ContentClientRest implements ContentServiceRest {
 
     String resultString = response.getEntity(String.class);
     if (response.getStatusInfo().getFamily() == Family.SUCCESSFUL) {
-      Logger.getLogger(this.getClass()).debug(resultString);
+      Logger.getLogger(getClass()).debug(resultString);
     } else {
       throw new Exception(resultString);
     }
@@ -344,7 +344,7 @@ public class ContentClientRest implements ContentServiceRest {
             + terminology + "/" + version + "/" + terminologyId + "/ancestors");
     String pfsString =
         (pfs != null ? ConfigUtility.getStringForGraph(pfs) : null);
-    Logger.getLogger(this.getClass()).debug(pfsString);
+    Logger.getLogger(getClass()).debug(pfsString);
     ClientResponse response =
         resource.accept(MediaType.APPLICATION_XML)
             .header("Authorization", authToken)
@@ -353,7 +353,7 @@ public class ContentClientRest implements ContentServiceRest {
 
     String resultString = response.getEntity(String.class);
     if (response.getStatusInfo().getFamily() == Family.SUCCESSFUL) {
-      Logger.getLogger(this.getClass()).debug(resultString);
+      Logger.getLogger(getClass()).debug(resultString);
     } else {
       throw new Exception(resultString);
     }
@@ -384,7 +384,7 @@ public class ContentClientRest implements ContentServiceRest {
 
     String resultString = response.getEntity(String.class);
     if (response.getStatusInfo().getFamily() == Family.SUCCESSFUL) {
-      Logger.getLogger(this.getClass()).debug(resultString);
+      Logger.getLogger(getClass()).debug(resultString);
     } else {
       throw new Exception(resultString);
     }
@@ -417,7 +417,7 @@ public class ContentClientRest implements ContentServiceRest {
 
     String resultString = response.getEntity(String.class);
     if (response.getStatusInfo().getFamily() == Family.SUCCESSFUL) {
-      Logger.getLogger(this.getClass()).debug(resultString);
+      Logger.getLogger(getClass()).debug(resultString);
     } else {
       throw new Exception(resultString);
     }
@@ -449,7 +449,7 @@ public class ContentClientRest implements ContentServiceRest {
 
     String resultString = response.getEntity(String.class);
     if (response.getStatusInfo().getFamily() == Family.SUCCESSFUL) {
-      Logger.getLogger(this.getClass()).debug(resultString);
+      Logger.getLogger(getClass()).debug(resultString);
     } else {
       throw new Exception(resultString);
     }
@@ -482,7 +482,7 @@ public class ContentClientRest implements ContentServiceRest {
 
     String resultString = response.getEntity(String.class);
     if (response.getStatusInfo().getFamily() == Family.SUCCESSFUL) {
-      Logger.getLogger(this.getClass()).debug(resultString);
+      Logger.getLogger(getClass()).debug(resultString);
     } else {
       throw new Exception(resultString);
     }
@@ -514,7 +514,7 @@ public class ContentClientRest implements ContentServiceRest {
 
     String resultString = response.getEntity(String.class);
     if (response.getStatusInfo().getFamily() == Family.SUCCESSFUL) {
-      Logger.getLogger(this.getClass()).debug(resultString);
+      Logger.getLogger(getClass()).debug(resultString);
     } else {
       throw new Exception(resultString);
     }
@@ -546,7 +546,7 @@ public class ContentClientRest implements ContentServiceRest {
 
     String resultString = response.getEntity(String.class);
     if (response.getStatusInfo().getFamily() == Family.SUCCESSFUL) {
-      Logger.getLogger(this.getClass()).debug(resultString);
+      Logger.getLogger(getClass()).debug(resultString);
     } else {
       throw new Exception(resultString);
     }
@@ -578,7 +578,7 @@ public class ContentClientRest implements ContentServiceRest {
 
     String resultString = response.getEntity(String.class);
     if (response.getStatusInfo().getFamily() == Family.SUCCESSFUL) {
-      Logger.getLogger(this.getClass()).debug(resultString);
+      Logger.getLogger(getClass()).debug(resultString);
     } else {
       throw new Exception(resultString);
     }
@@ -613,7 +613,7 @@ public class ContentClientRest implements ContentServiceRest {
 
     String resultString = response.getEntity(String.class);
     if (response.getStatusInfo().getFamily() == Family.SUCCESSFUL) {
-      Logger.getLogger(this.getClass()).debug(resultString);
+      Logger.getLogger(getClass()).debug(resultString);
     } else {
       throw new Exception(resultString);
     }
@@ -646,7 +646,7 @@ public class ContentClientRest implements ContentServiceRest {
 
     String resultString = response.getEntity(String.class);
     if (response.getStatusInfo().getFamily() == Family.SUCCESSFUL) {
-      Logger.getLogger(this.getClass()).debug(resultString);
+      Logger.getLogger(getClass()).debug(resultString);
     } else {
       throw new Exception(resultString);
     }
@@ -676,7 +676,7 @@ public class ContentClientRest implements ContentServiceRest {
 
     String resultString = response.getEntity(String.class);
     if (response.getStatusInfo().getFamily() == Family.SUCCESSFUL) {
-      Logger.getLogger(this.getClass()).debug(resultString);
+      Logger.getLogger(getClass()).debug(resultString);
     } else {
       throw new Exception(resultString);
     }
@@ -706,7 +706,7 @@ public class ContentClientRest implements ContentServiceRest {
 
     String resultString = response.getEntity(String.class);
     if (response.getStatusInfo().getFamily() == Family.SUCCESSFUL) {
-      Logger.getLogger(this.getClass()).debug(resultString);
+      Logger.getLogger(getClass()).debug(resultString);
     } else {
       throw new Exception(resultString);
     }
