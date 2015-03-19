@@ -8,9 +8,11 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
+import org.ihtsdo.otf.ts.ReleaseInfo;
 import org.ihtsdo.otf.ts.algo.Algorithm;
 import org.ihtsdo.otf.ts.helpers.ConfigUtility;
-import org.ihtsdo.otf.ts.jpa.services.ContentServiceJpa;
+import org.ihtsdo.otf.ts.jpa.ReleaseInfoJpa;
+import org.ihtsdo.otf.ts.jpa.services.HistoryServiceJpa;
 import org.ihtsdo.otf.ts.rf2.AssociationReferenceConceptRefSetMember;
 import org.ihtsdo.otf.ts.rf2.AssociationReferenceDescriptionRefSetMember;
 import org.ihtsdo.otf.ts.rf2.AssociationReferenceRefSetMember;
@@ -49,7 +51,7 @@ import org.ihtsdo.otf.ts.services.helpers.PushBackReader;
 /**
  * Implementation of an algorithm to import RF2 snapshot data.
  */
-public class Rf2SnapshotLoaderAlgorithm extends ContentServiceJpa implements
+public class Rf2SnapshotLoaderAlgorithm extends HistoryServiceJpa implements
     Algorithm {
 
   /** Listeners. */
@@ -209,6 +211,10 @@ public class Rf2SnapshotLoaderAlgorithm extends ContentServiceJpa implements
           "    elapsed time = " + getElapsedTime(startTime) + "s"
               + " (Ended at " + ft.format(new Date()) + ")");
 
+      // At this point, cascade data structures are handled
+      // and we can commit.
+      
+      
       //
       // Load Simple RefSets (Content)
       //
@@ -305,6 +311,28 @@ public class Rf2SnapshotLoaderAlgorithm extends ContentServiceJpa implements
           "    elaped time = " + getElapsedTime(startTime).toString() + "s"
               + " (Ended at " + ft.format(new Date()) + ")");
 
+
+      //
+      // Create ReleaseInfo for this release if it does not already exist
+      //
+      ReleaseInfo info =
+          getReleaseInfo(terminology, releaseVersion);
+      if (info == null) {
+        info = new ReleaseInfoJpa();
+        info.setName(releaseVersion);
+        info.setEffectiveTime(ConfigUtility.DATE_FORMAT.parse(releaseVersion));
+        info.setDescription(terminology + " " + releaseVersion + " release");
+        info.setPlanned(false);
+        info.setPublished(true);
+        info.setReleaseBeginDate(info.getEffectiveTime());
+        info.setReleaseFinishDate(info.getEffectiveTime());
+        info.setTerminology(terminology);
+        info.setTerminologyVersion(terminologyVersion);
+        info.setLastModified(ConfigUtility.DATE_FORMAT.parse(releaseVersion));
+        info.setLastModifiedBy("loader");
+        addReleaseInfo(info);
+      }
+      
       // Clear concept cache
       // clear and commit
       commit();
@@ -453,6 +481,7 @@ public class Rf2SnapshotLoaderAlgorithm extends ContentServiceJpa implements
         concept.setTerminology(terminology);
         concept.setTerminologyVersion(terminologyVersion);
         concept.setDefaultPreferredName("null");
+        concept.setLastModified(ConfigUtility.DATE_FORMAT.parse(releaseVersion));
         concept.setLastModifiedBy("loader");
         concept.setPublished(true);
         concept.setWorkflowStatus("PUBLISHED");
@@ -521,6 +550,7 @@ public class Rf2SnapshotLoaderAlgorithm extends ContentServiceJpa implements
         relationship.setTerminology(terminology);
         relationship.setTerminologyVersion(terminologyVersion);
         relationship.setModifierId(fields[9]);
+        relationship.setLastModified(ConfigUtility.DATE_FORMAT.parse(releaseVersion));
         relationship.setLastModifiedBy("loader");
         relationship.setPublished(true);
 
@@ -568,9 +598,6 @@ public class Rf2SnapshotLoaderAlgorithm extends ContentServiceJpa implements
    */
   private void loadDescriptionsAndLanguageRefSets() throws Exception {
 
-    Concept concept;
-    Description description;
-    LanguageRefSetMember language;
     int descCt = 0; // counter for descriptions
     int langCt = 0; // counter for language ref set members
     int skipCt = 0; // counter for number of language ref set members skipped
@@ -580,10 +607,10 @@ public class Rf2SnapshotLoaderAlgorithm extends ContentServiceJpa implements
         getComputePreferredNameHandler(terminology);
 
     // Load and persist first description
-    description = getNextDescription();
+    Description description = getNextDescription();
 
     // Load first language ref set member
-    language = getNextLanguage();
+    LanguageRefSetMember language = getNextLanguage();
 
     // Loop while there are descriptions
     while (description != null) {
@@ -623,7 +650,7 @@ public class Rf2SnapshotLoaderAlgorithm extends ContentServiceJpa implements
         if (pnHandler.isPreferredName(description, language)) {
 
           // retrieve the concept for this description
-          concept = description.getConcept();
+          final Concept concept = description.getConcept();
           if (defaultPreferredNames.get(concept.getId()) != null) {
             Logger.getLogger(getClass()).info(
                 "Multiple default preferred names for concept "
@@ -677,7 +704,7 @@ public class Rf2SnapshotLoaderAlgorithm extends ContentServiceJpa implements
   private void setDefaultPreferredNames() throws Exception {
 
     objectCt = 0;
-    for (Concept concept : conceptCache.values()) {
+    for (final Concept concept : conceptCache.values()) {
       concept.getDescriptions();
       concept.getRelationships();
       if (defaultPreferredNames.get(concept.getId()) != null) {
@@ -739,6 +766,7 @@ public class Rf2SnapshotLoaderAlgorithm extends ContentServiceJpa implements
         description.setCaseSignificanceId(fields[8]);
         description.setTerminology(terminology);
         description.setTerminologyVersion(terminologyVersion);
+        description.setLastModified(ConfigUtility.DATE_FORMAT.parse(releaseVersion));
         description.setLastModifiedBy("loader");
         description.setPublished(true);
 
@@ -808,11 +836,12 @@ public class Rf2SnapshotLoaderAlgorithm extends ContentServiceJpa implements
         // Terminology attributes
         member.setTerminology(terminology);
         member.setTerminologyVersion(terminologyVersion);
+        member.setLastModified(ConfigUtility.DATE_FORMAT.parse(releaseVersion));
         member.setLastModifiedBy("loader");
         member.setPublished(true);
 
         // Set a dummy description with terminology id only
-        Description description = new DescriptionJpa();
+        final Description description = new DescriptionJpa();
         description.setTerminologyId(fields[5]);
         member.setDescription(description);
         return member;
@@ -849,7 +878,7 @@ public class Rf2SnapshotLoaderAlgorithm extends ContentServiceJpa implements
     while ((line = reader.readLine()) != null) {
 
       line = line.replace("\r", "");
-      String fields[] = line.split("\t");
+      final String fields[] = line.split("\t");
 
       if (!fields[0].equals("id")) { // header
 
@@ -864,11 +893,11 @@ public class Rf2SnapshotLoaderAlgorithm extends ContentServiceJpa implements
         if (conceptCache.containsKey(fields[5])) {
           member = new AttributeValueConceptRefSetMemberJpa();
           // Retrieve concept -- firstToken is referencedComponentId
-          Concept concept = conceptCache.get(fields[5]);
+          final Concept concept = conceptCache.get(fields[5]);
           ((AttributeValueConceptRefSetMember) member).setComponent(concept);
         } else if (descriptionCache.containsKey(fields[5])) {
           member = new AttributeValueDescriptionRefSetMemberJpa();
-          Description description = descriptionCache.get(fields[5]);
+          final Description description = descriptionCache.get(fields[5]);
           ((AttributeValueDescriptionRefSetMember) member)
               .setComponent(description);
         } else {
@@ -881,6 +910,7 @@ public class Rf2SnapshotLoaderAlgorithm extends ContentServiceJpa implements
         member.setEffectiveTime(ConfigUtility.DATE_FORMAT.parse(fields[1]));
         member.setLastModified(ConfigUtility.DATE_FORMAT.parse(fields[1]));
         member.setActive(fields[2].equals("1"));
+        member.setLastModified(ConfigUtility.DATE_FORMAT.parse(releaseVersion));
         member.setLastModifiedBy("loader");
         member.setPublished(true);
         member.setModuleId(fields[3]);
@@ -929,7 +959,7 @@ public class Rf2SnapshotLoaderAlgorithm extends ContentServiceJpa implements
     while ((line = reader.readLine()) != null) {
 
       line = line.replace("\r", "");
-      String fields[] = line.split("\t");
+      final String fields[] = line.split("\t");
 
       if (!fields[0].equals("id")) { // header
 
@@ -944,12 +974,12 @@ public class Rf2SnapshotLoaderAlgorithm extends ContentServiceJpa implements
         if (conceptCache.containsKey(fields[5])) {
           member = new AssociationReferenceConceptRefSetMemberJpa();
           // Retrieve concept -- firstToken is referencedComponentId
-          Concept concept = conceptCache.get(fields[5]);
+          final Concept concept = conceptCache.get(fields[5]);
           ((AssociationReferenceConceptRefSetMember) member)
               .setComponent(concept);
         } else if (descriptionCache.containsKey(fields[5])) {
           member = new AssociationReferenceDescriptionRefSetMemberJpa();
-          Description description = descriptionCache.get(fields[5]);
+          final Description description = descriptionCache.get(fields[5]);
           ((AssociationReferenceDescriptionRefSetMember) member)
               .setComponent(description);
         } else {
@@ -971,6 +1001,7 @@ public class Rf2SnapshotLoaderAlgorithm extends ContentServiceJpa implements
         // Terminology attributes
         member.setTerminology(terminology);
         member.setTerminologyVersion(terminologyVersion);
+        member.setLastModified(ConfigUtility.DATE_FORMAT.parse(releaseVersion));
         member.setLastModifiedBy("loader");
         member.setPublished(true);
 
@@ -1033,6 +1064,7 @@ public class Rf2SnapshotLoaderAlgorithm extends ContentServiceJpa implements
         // Terminology attributes
         member.setTerminology(terminology);
         member.setTerminologyVersion(terminologyVersion);
+        member.setLastModified(ConfigUtility.DATE_FORMAT.parse(releaseVersion));
         member.setLastModifiedBy("loader");
         member.setPublished(true);
 
@@ -1103,6 +1135,7 @@ public class Rf2SnapshotLoaderAlgorithm extends ContentServiceJpa implements
         // Terminology attributes
         member.setTerminology(terminology);
         member.setTerminologyVersion(terminologyVersion);
+        member.setLastModified(ConfigUtility.DATE_FORMAT.parse(releaseVersion));
         member.setLastModifiedBy("loader");
         member.setPublished(true);
 
@@ -1177,6 +1210,7 @@ public class Rf2SnapshotLoaderAlgorithm extends ContentServiceJpa implements
         // Terminology attributes
         member.setTerminology(terminology);
         member.setTerminologyVersion(terminologyVersion);
+        member.setLastModified(ConfigUtility.DATE_FORMAT.parse(releaseVersion));
         member.setLastModifiedBy("loader");
         member.setPublished(true);
 
@@ -1253,6 +1287,7 @@ public class Rf2SnapshotLoaderAlgorithm extends ContentServiceJpa implements
         // Terminology attributes
         member.setTerminology(terminology);
         member.setTerminologyVersion(terminologyVersion);
+        member.setLastModified(ConfigUtility.DATE_FORMAT.parse(releaseVersion));
         member.setLastModifiedBy("loader");
         member.setPublished(true);
 
@@ -1329,6 +1364,7 @@ public class Rf2SnapshotLoaderAlgorithm extends ContentServiceJpa implements
         // Terminology attributes
         member.setTerminology(terminology);
         member.setTerminologyVersion(terminologyVersion);
+        member.setLastModified(ConfigUtility.DATE_FORMAT.parse(releaseVersion));
         member.setLastModifiedBy("loader");
         member.setPublished(true);
 
@@ -1405,6 +1441,7 @@ public class Rf2SnapshotLoaderAlgorithm extends ContentServiceJpa implements
         // Terminology attributes
         member.setTerminology(terminology);
         member.setTerminologyVersion(terminologyVersion);
+        member.setLastModified(ConfigUtility.DATE_FORMAT.parse(releaseVersion));
         member.setLastModifiedBy("loader");
         member.setPublished(true);
 
@@ -1480,6 +1517,7 @@ public class Rf2SnapshotLoaderAlgorithm extends ContentServiceJpa implements
         // Terminology attributes
         member.setTerminology(terminology);
         member.setTerminologyVersion(terminologyVersion);
+        member.setLastModified(ConfigUtility.DATE_FORMAT.parse(releaseVersion));
         member.setLastModifiedBy("loader");
         member.setPublished(true);
 
