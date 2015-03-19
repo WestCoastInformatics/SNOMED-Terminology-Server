@@ -77,7 +77,7 @@ public class HistoryClientRest implements HistoryServiceRest {
 
     String resultString = response.getEntity(String.class);
    
-    if (response.getClientResponseStatus().getFamily() == Family.SUCCESSFUL) {
+    if (response.getStatusInfo().getFamily() == Family.SUCCESSFUL) {
       Logger.getLogger(this.getClass()).debug(resultString.substring(0,Math.min(resultString.length(),3999)));
     } else {
       throw new Exception(resultString);

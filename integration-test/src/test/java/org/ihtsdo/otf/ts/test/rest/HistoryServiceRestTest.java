@@ -1,21 +1,16 @@
 package org.ihtsdo.otf.ts.test.rest;
 
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.HashSet;
 import java.util.Properties;
 import java.util.Set;
 
 import org.apache.log4j.Logger;
 import org.ihtsdo.otf.ts.helpers.ConfigUtility;
-import org.ihtsdo.otf.ts.helpers.PfsParameter;
-import org.ihtsdo.otf.ts.helpers.PfsParameterJpa;
 import org.ihtsdo.otf.ts.helpers.ResultList;
 import org.ihtsdo.otf.ts.jpa.client.HistoryClientRest;
 import org.ihtsdo.otf.ts.jpa.client.SecurityClientRest;
-import org.ihtsdo.otf.ts.rf2.Component;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;

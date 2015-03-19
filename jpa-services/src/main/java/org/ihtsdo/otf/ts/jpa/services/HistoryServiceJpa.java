@@ -12,6 +12,7 @@ import org.apache.log4j.Logger;
 import org.apache.lucene.search.Query;
 import org.apache.lucene.search.Sort;
 import org.apache.lucene.search.SortField;
+import org.apache.lucene.search.SortField.Type;
 import org.hibernate.envers.AuditReader;
 import org.hibernate.envers.AuditReaderFactory;
 import org.hibernate.envers.query.AuditEntity;
@@ -671,7 +672,7 @@ public class HistoryServiceJpa extends ContentServiceJpa implements
       ftquery.setMaxResults(pfs.getMaxResults());
       
       if (pfs.getSortField() != null && !pfs.getSortField().isEmpty()) {
-        ftquery.setSort(new Sort(new SortField(pfs.getSortField(), SortField.STRING, !pfs.isAscending())));
+        ftquery.setSort(new Sort(new SortField(pfs.getSortField(), Type.STRING, !pfs.isAscending())));
       }
 
     }

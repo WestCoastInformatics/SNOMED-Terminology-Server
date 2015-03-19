@@ -254,7 +254,6 @@ public class ContentServiceRestNormalUseTest extends ContentServiceRestTest {
     assertTrue(searchResults.getObjects().get(0).getTerminologyId()
         .equals("93563005"));
 
-    // TODO Test ordering (ascending/descending)
   }
 
   /**

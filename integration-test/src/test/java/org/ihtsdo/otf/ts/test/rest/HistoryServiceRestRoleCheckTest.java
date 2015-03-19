@@ -3,21 +3,6 @@
  */
 package org.ihtsdo.otf.ts.test.rest;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
-
-import java.util.Date;
-
-import org.ihtsdo.otf.ts.ReleaseInfo;
-import org.ihtsdo.otf.ts.helpers.ReleaseInfoList;
-import org.ihtsdo.otf.ts.jpa.ReleaseInfoJpa;
-import org.ihtsdo.otf.ts.rf2.jpa.ConceptJpa;
-import org.ihtsdo.otf.ts.rf2.jpa.DescriptionJpa;
-import org.ihtsdo.otf.ts.rf2.jpa.LanguageRefSetMemberJpa;
-import org.ihtsdo.otf.ts.rf2.jpa.RelationshipJpa;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;

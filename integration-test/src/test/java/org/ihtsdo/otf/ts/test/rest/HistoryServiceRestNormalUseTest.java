@@ -14,7 +14,6 @@ import java.lang.reflect.Method;
 import java.util.Date;
 
 import org.ihtsdo.otf.ts.ReleaseInfo;
-import org.ihtsdo.otf.ts.helpers.ConfigUtility;
 import org.ihtsdo.otf.ts.helpers.PfsParameter;
 import org.ihtsdo.otf.ts.helpers.PfsParameterJpa;
 import org.ihtsdo.otf.ts.helpers.ReleaseInfoList;
