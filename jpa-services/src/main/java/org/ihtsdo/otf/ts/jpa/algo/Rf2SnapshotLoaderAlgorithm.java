@@ -213,7 +213,9 @@ public class Rf2SnapshotLoaderAlgorithm extends HistoryServiceJpa implements
 
       // At this point, cascade data structures are handled
       // and we can commit.
-      
+      commit();
+      clear();
+      beginTransaction();
       
       //
       // Load Simple RefSets (Content)

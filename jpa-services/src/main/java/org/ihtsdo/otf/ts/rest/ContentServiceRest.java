@@ -62,20 +62,6 @@ public interface ContentServiceRest {
     String version, String authToken) throws Exception;
 
   /**
-   * Returns the concept for user.
-   *
-   * @param terminologyId the terminology id
-   * @param terminology the terminology
-   * @param version the version
-   * @param authToken the auth token
-   * @return the concept for user
-   * @throws Exception the exception
-   */
-  // Commented out as part of change service
-  //public Concept getConceptForUser(String terminologyId, String terminology,
-  //  String version, String authToken) throws Exception;
-
-  /**
    * Returns the single concept for the specified parameters. If there are more
    * than one, it throws an exception. The returned concept includes
    * descriptions language refsets and relationships.
