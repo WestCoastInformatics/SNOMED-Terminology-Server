@@ -2,6 +2,7 @@ package org.ihtsdo.otf.ts;
 
 import java.util.Date;
 
+// TODO: Auto-generated Javadoc
 /**
  * Represents information about a release.
  */
@@ -146,4 +147,32 @@ public interface ReleaseInfo {
    * @param terminologyVersion the terminology version
    */
   public void setTerminologyVersion(String terminologyVersion);
+
+  /**
+   * Returns the last modified by.
+   *
+   * @return the last modified by
+   */
+  public String getLastModifiedBy();
+  
+  /**
+   * Sets the last modified by.
+   *
+   * @param lastModifiedBy the last modified by
+   */
+  public void setLastModifiedBy(String lastModifiedBy);
+
+  /**
+   * Returns the last modified.
+   *
+   * @return the last modified
+   */
+  public Date getLastModified();
+
+  /**
+   * Sets the last modified.
+   *
+   * @param lastModified the last modified
+   */
+  public void setLastModified(Date lastModified);
 }

@@ -11,9 +11,11 @@ import java.util.Set;
 import javax.persistence.FlushModeType;
 
 import org.apache.log4j.Logger;
+import org.ihtsdo.otf.ts.ReleaseInfo;
 import org.ihtsdo.otf.ts.algo.Algorithm;
 import org.ihtsdo.otf.ts.helpers.ConceptList;
 import org.ihtsdo.otf.ts.helpers.ConfigUtility;
+import org.ihtsdo.otf.ts.jpa.ReleaseInfoJpa;
 import org.ihtsdo.otf.ts.jpa.services.HistoryServiceJpa;
 import org.ihtsdo.otf.ts.rf2.ComplexMapRefSetMember;
 import org.ihtsdo.otf.ts.rf2.Concept;
@@ -371,9 +373,32 @@ public class Rf2DeltaLoaderAlgorithm extends HistoryServiceJpa implements
 
       // Commit the content changes
       Logger.getLogger(getClass()).info("  Committing");
+
+      //
+      // Create ReleaseInfo for this release if it does not already exist
+      //
+      ReleaseInfo info =
+          getReleaseInfo(terminology, releaseVersion);
+      if (info == null) {
+        info = new ReleaseInfoJpa();
+        info.setName(releaseVersion);
+        info.setEffectiveTime(ConfigUtility.DATE_FORMAT.parse(releaseVersion));
+        info.setDescription(terminology + " " + releaseVersion + " release");
+        info.setPlanned(false);
+        info.setPublished(true);
+        info.setReleaseBeginDate(info.getEffectiveTime());
+        info.setReleaseFinishDate(info.getEffectiveTime());
+        info.setTerminology(terminology);
+        info.setTerminologyVersion(terminologyVersion);
+        info.setLastModified(ConfigUtility.DATE_FORMAT.parse(releaseVersion));
+        info.setLastModifiedBy("loader");
+        addReleaseInfo(info);
+      }
+
+      // Commit and clear resources
       commit();
       clear();
-
+      
       Logger.getLogger(getClass()).info(
           "      elapsed time = " + getTotalElapsedTimeStr(startTimeOrig));
 
@@ -524,6 +549,7 @@ public class Rf2DeltaLoaderAlgorithm extends HistoryServiceJpa implements
         newConcept.setTerminologyVersion(terminologyVersion);
         newConcept.setDefaultPreferredName("TBD");
         newConcept.setLastModifiedBy("loader");
+        newConcept.setLastModified(ConfigUtility.DATE_FORMAT.parse(releaseVersion));
         newConcept.setPublished(true);
 
         // If concept is new, add it
@@ -649,6 +675,7 @@ public class Rf2DeltaLoaderAlgorithm extends HistoryServiceJpa implements
           newDescription.setTerminology(terminology);
           newDescription.setTerminologyVersion(terminologyVersion);
           newDescription.setLastModifiedBy("loader");
+          newDescription.setLastModified(ConfigUtility.DATE_FORMAT.parse(releaseVersion));
           newDescription.setPublished(true);
 
           // If description is new, add it
@@ -792,6 +819,7 @@ public class Rf2DeltaLoaderAlgorithm extends HistoryServiceJpa implements
         newMember.setTerminology(terminology);
         newMember.setTerminologyVersion(terminologyVersion);
         newMember.setLastModifiedBy("loader");
+        newMember.setLastModified(ConfigUtility.DATE_FORMAT.parse(releaseVersion));
         newMember.setPublished(true);
 
         // If language refset entry is new, add it
@@ -901,6 +929,7 @@ public class Rf2DeltaLoaderAlgorithm extends HistoryServiceJpa implements
         newMember.setRefSetId(fields[4]);
         newMember.setConcept(concept);
         newMember.setLastModifiedBy("loader");
+        newMember.setLastModified(ConfigUtility.DATE_FORMAT.parse(releaseVersion));
         newMember.setPublished(true);
 
         // If simple refset entry is new, add it
@@ -1675,6 +1704,7 @@ public class Rf2DeltaLoaderAlgorithm extends HistoryServiceJpa implements
         newRelationship.setSourceConcept(sourceConcept);
         newRelationship.setDestinationConcept(destinationConcept);
         newRelationship.setLastModifiedBy("loader");
+        newRelationship.setLastModified(ConfigUtility.DATE_FORMAT.parse(releaseVersion));
         newRelationship.setPublished(true);
 
         // If relationship is new, add it
