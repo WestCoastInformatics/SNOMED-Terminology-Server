@@ -1033,6 +1033,7 @@ public class Rf2DeltaLoaderAlgorithm extends HistoryServiceJpa implements
         newMember.setConcept(concept);
         newMember.setMapTarget(fields[6]);
         newMember.setLastModifiedBy("loader");
+        newMember.setLastModified(ConfigUtility.DATE_FORMAT.parse(releaseVersion));
         newMember.setPublished(true);
 
         // If simple map refset entry is new, add it
@@ -1141,6 +1142,7 @@ public class Rf2DeltaLoaderAlgorithm extends HistoryServiceJpa implements
         newMember.setMapTarget(fields[10]);
         newMember.setMapRelationId(fields[11]);
         newMember.setLastModifiedBy("loader");
+        newMember.setLastModified(ConfigUtility.DATE_FORMAT.parse(releaseVersion));
         newMember.setPublished(true);
 
         // If complex map refset entry is new, add it
@@ -1251,6 +1253,7 @@ public class Rf2DeltaLoaderAlgorithm extends HistoryServiceJpa implements
         newMember.setMapRelationId(fields[11]);
         // TODO: what do we do with categoryId, field 12?
         newMember.setLastModifiedBy("loader");
+        newMember.setLastModified(ConfigUtility.DATE_FORMAT.parse(releaseVersion));
         newMember.setPublished(true);
 
         // If complex map refset entry is new, add it
@@ -1355,6 +1358,7 @@ public class Rf2DeltaLoaderAlgorithm extends HistoryServiceJpa implements
         newMember.setConcept(concept);
 
         newMember.setLastModifiedBy("loader");
+        newMember.setLastModified(ConfigUtility.DATE_FORMAT.parse(releaseVersion));
         newMember.setPublished(true);
 
         // If description type refset entry is new, add it
@@ -1462,6 +1466,7 @@ public class Rf2DeltaLoaderAlgorithm extends HistoryServiceJpa implements
         newMember.setAttributeOrder(Integer.valueOf(fields[8]));
         
         newMember.setLastModifiedBy("loader");
+        newMember.setLastModified(ConfigUtility.DATE_FORMAT.parse(releaseVersion));
         newMember.setPublished(true);
 
         // If refset descriptor refset entry is new, add it
@@ -1570,6 +1575,7 @@ public class Rf2DeltaLoaderAlgorithm extends HistoryServiceJpa implements
             .parse(fields[7]));
         
         newMember.setLastModifiedBy("loader");
+        newMember.setLastModified(ConfigUtility.DATE_FORMAT.parse(releaseVersion));
         newMember.setPublished(true);
 
         // If module dependency refset entry is new, add it
