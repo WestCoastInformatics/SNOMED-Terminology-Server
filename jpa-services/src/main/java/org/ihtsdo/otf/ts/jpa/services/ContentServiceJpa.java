@@ -2949,30 +2949,6 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
     return list;
   }
   
-  /* (non-Javadoc)
-   * @see org.ihtsdo.otf.ts.services.ContentService#getAllExtendedMapRefSetMemberTerminologyIds(java.lang.String, java.lang.String)
-   */
-  @SuppressWarnings("unchecked")
-  @Override
-  public StringList getAllExtendedMapRefSetMemberTerminologyIds(String terminology,
-    String version) {
-    Logger.getLogger(getClass()).debug(
-        "Content Service - get all extended map refset member terminology ids "
-            + terminology + "/" + version);
-    // TODO: how do we differentiate from complex map refset members?
-    javax.persistence.Query query =
-        manager
-            .createQuery(
-                "select c.terminologyId from ComplexMapRefSetMemberJpa c where terminology = :terminology and terminologyVersion = :version")
-            .setParameter("terminology", terminology)
-            .setParameter("version", version);
-
-    List<String> terminologyIds = query.getResultList();
-    StringList list = new StringList();
-    list.setObjects(terminologyIds);
-    list.setTotalCount(list.getCount());
-    return list;
-  }
   
   /* (non-Javadoc)
    * @see org.ihtsdo.otf.ts.services.ContentService#getAllDescriptionTypeRefSetMemberTerminologyIds(java.lang.String, java.lang.String)

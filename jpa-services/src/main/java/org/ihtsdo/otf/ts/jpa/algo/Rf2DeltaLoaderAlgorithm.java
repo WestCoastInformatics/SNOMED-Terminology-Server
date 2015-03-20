@@ -100,11 +100,8 @@ public class Rf2DeltaLoaderAlgorithm extends HistoryServiceJpa implements
   /** The existing simple map ref set member ids. */
   private Set<String> existingSimpleMapRefSetMemberIds = new HashSet<>();
   
-  /** The existing complex map ref set member ids. */
+  /** The existing complex map ref set member ids. This also includes extended map ref set member ids.*/
   private Set<String> existingComplexMapRefSetMemberIds = new HashSet<>();
-  
-  /** The existing extended map ref set member ids. */
-  private Set<String> existingExtendedMapRefSetMemberIds = new HashSet<>();
  
   /** The existing description type ref set member ids. */
   private Set<String> existingDescriptionTypeRefSetMemberIds = new HashSet<>();
@@ -254,13 +251,6 @@ public class Rf2DeltaLoaderAlgorithm extends HistoryServiceJpa implements
               terminologyVersion).getObjects());
       Logger.getLogger(getClass()).info(
           "    count = " + existingComplexMapRefSetMemberIds.size());
-
-      Logger.getLogger(getClass()).info("  Cache extended map refset member ids");
-      existingExtendedMapRefSetMemberIds =
-          new HashSet<>(getAllExtendedMapRefSetMemberTerminologyIds(terminology,
-              terminologyVersion).getObjects());
-      Logger.getLogger(getClass()).info(
-          "    count = " + existingExtendedMapRefSetMemberIds.size());
 
       Logger.getLogger(getClass()).info("  Cache description type refset member ids");
       existingDescriptionTypeRefSetMemberIds =
@@ -1229,7 +1219,6 @@ public class Rf2DeltaLoaderAlgorithm extends HistoryServiceJpa implements
           member = getComplexMapRefSetMember(fields[0], terminology, terminologyVersion);
         }
 
-        // TODO: confirm we are using ComplexMap objects here for extended map refset members
         ComplexMapRefSetMember newMember = null;
         if (member == null) {
           newMember = new ComplexMapRefSetMemberJpa();
@@ -1250,8 +1239,8 @@ public class Rf2DeltaLoaderAlgorithm extends HistoryServiceJpa implements
         newMember.setMapRule(fields[8]);
         newMember.setMapAdvice(fields[9]);
         newMember.setMapTarget(fields[10]);
-        newMember.setMapRelationId(fields[11]);
-        // TODO: what do we do with categoryId, field 12?
+        // field 11 is correlationId and is a fixed value based on terminology
+        newMember.setMapRelationId(fields[12]);
         newMember.setLastModifiedBy("loader");
         newMember.setLastModified(ConfigUtility.DATE_FORMAT.parse(releaseVersion));
         newMember.setPublished(true);

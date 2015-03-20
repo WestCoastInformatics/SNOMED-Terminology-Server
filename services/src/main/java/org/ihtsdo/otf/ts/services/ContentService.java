@@ -939,16 +939,6 @@ public interface ContentService extends RootService {
 		    String terminology, String version);
 
   /**
-   * Gets the all extended map ref set member terminology ids.
-   *
-   * @param terminology the terminology
-   * @param version the version
-   * @return the all extended map ref set member terminology ids
-   */
-  public StringList getAllExtendedMapRefSetMemberTerminologyIds(
-		    String terminology, String version);
-  
-  /**
    * Gets the all description type ref set member terminology ids.
    *
    * @param terminology the terminology
