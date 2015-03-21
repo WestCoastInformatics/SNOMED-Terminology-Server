@@ -182,8 +182,11 @@ tsApp
 
 								// ensure query string has minimum length
 								if (queryStr.length < 3) {
+									alert("You must use at least three characters to search");
 									return;
 								}
+								
+								$scope.concept = null;
 
 								// find concepts
 								$http(
