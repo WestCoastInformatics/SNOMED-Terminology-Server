@@ -226,10 +226,10 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
   }
 
   /** The last modified flag. */
-  private boolean lastModifiedFlag = false;
+  protected boolean lastModifiedFlag = false;
 
   /** The assign identifiers flag. */
-  private boolean assignIdentifiersFlag = false;
+  protected boolean assignIdentifiersFlag = false;
 
   /*
    * (non-Javadoc)

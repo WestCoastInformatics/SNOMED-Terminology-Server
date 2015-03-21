@@ -21,9 +21,9 @@ import org.ihtsdo.otf.ts.ReleaseInfo;
  */
 @Entity
 @Table(name = "release_infos", uniqueConstraints = {
-    @UniqueConstraint(columnNames = {
-        "name", "terminology"
-    })
+  @UniqueConstraint(columnNames = {
+      "name", "terminology"
+  })
 })
 @Audited
 @XmlRootElement(name = "releaseInfo")
@@ -66,6 +66,12 @@ public class ReleaseInfoJpa implements ReleaseInfo {
   /** The terminology version. */
   private String terminologyVersion;
 
+  /** The last modified by. */
+  private String lastModifiedBy;
+
+  /** The last modified. */
+  private Date lastModified;
+
   /**
    * Instantiates an empty {@link ReleaseInfoJpa}.
    */
@@ -100,7 +106,6 @@ public class ReleaseInfoJpa implements ReleaseInfo {
   public String getObjectId() {
     return (id == null ? "" : id.toString());
   }
-
 
   /*
    * (non-Javadoc)
@@ -310,6 +315,41 @@ public class ReleaseInfoJpa implements ReleaseInfo {
   /*
    * (non-Javadoc)
    * 
+   * @see org.ihtsdo.otf.ts.ReleaseInfo#getLastModifiedBy()
+   */
+  @Override
+  public String getLastModifiedBy() {
+    return lastModifiedBy;
+  }
+
+  @Override
+  public void setLastModifiedBy(String lastModifiedBy) {
+    this.lastModifiedBy = lastModifiedBy;
+  }
+
+  /*
+   * (non-Javadoc)
+   * 
+   * @see org.ihtsdo.otf.ts.ReleaseInfo#getLastModified()
+   */
+  @Override
+  public Date getLastModified() {
+    return lastModified;
+  }
+
+  /*
+   * (non-Javadoc)
+   * 
+   * @see org.ihtsdo.otf.ts.ReleaseInfo#setLastModified(java.util.Date)
+   */
+  @Override
+  public void setLastModified(Date lastModified) {
+    this.lastModified = lastModified;
+  }
+
+  /*
+   * (non-Javadoc)
+   * 
    * @see java.lang.Object#hashCode()
    */
   @Override
@@ -381,4 +421,5 @@ public class ReleaseInfoJpa implements ReleaseInfo {
     return name + ", " + description + ", " + effectiveTime + ", " + planned
         + ", " + published + ", " + terminology + ", " + terminologyVersion;
   }
+
 }

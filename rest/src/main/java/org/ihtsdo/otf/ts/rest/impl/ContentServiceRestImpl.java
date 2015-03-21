@@ -29,7 +29,6 @@ import org.ihtsdo.otf.ts.helpers.PfsParameterJpa;
 import org.ihtsdo.otf.ts.helpers.ProjectList;
 import org.ihtsdo.otf.ts.helpers.SearchResultList;
 import org.ihtsdo.otf.ts.jpa.ProjectJpa;
-import org.ihtsdo.otf.ts.jpa.ReleaseInfoJpa;
 import org.ihtsdo.otf.ts.jpa.algo.ClamlLoaderAlgorithm;
 import org.ihtsdo.otf.ts.jpa.algo.LuceneReindexAlgorithm;
 import org.ihtsdo.otf.ts.jpa.algo.Rf2DeltaLoaderAlgorithm;
@@ -100,8 +99,7 @@ public class ContentServiceRestImpl extends RootServiceRestImpl implements
     throws Exception {
     Logger.getLogger(getClass()).info(
         "RESTful call PUT (ContentChange): /project/add " + project);
-    Logger.getLogger(getClass()).debug(
-        project.toString());
+    Logger.getLogger(getClass()).debug(project.toString());
 
     try {
       authenticate(securityService, authToken, "add project", UserRole.AUTHOR);
@@ -923,8 +921,7 @@ public class ContentServiceRestImpl extends RootServiceRestImpl implements
           UserRole.ADMINISTRATOR);
 
       // Load snapshot
-      Logger.getLogger(getClass()).info(
-          "Load ClaML data from " + inputFile);
+      Logger.getLogger(getClass()).info("Load ClaML data from " + inputFile);
       ClamlLoaderAlgorithm algorithm = new ClamlLoaderAlgorithm();
       algorithm.setTerminology(terminology);
       algorithm.setTerminologyVersion(version);
@@ -932,8 +929,7 @@ public class ContentServiceRestImpl extends RootServiceRestImpl implements
       algorithm.compute();
 
       // Let service begin its own transaction
-      Logger.getLogger(getClass()).info(
-          "Start computing transtive closure");
+      Logger.getLogger(getClass()).info("Start computing transtive closure");
       TransitiveClosureAlgorithm algo = new TransitiveClosureAlgorithm();
       algo.setTerminology(terminology);
       algo.setTerminologyVersion(version);
@@ -982,12 +978,9 @@ public class ContentServiceRestImpl extends RootServiceRestImpl implements
       authenticate(securityService, authToken, "start editing cycle",
           UserRole.ADMINISTRATOR);
 
-      Logger.getLogger(getClass()).info(
-          "Starting RF2 delta loader");
-      Logger.getLogger(getClass()).info(
-          "  terminology = " + terminology);
-      Logger.getLogger(getClass())
-          .info("  inputDir = " + inputDir);
+      Logger.getLogger(getClass()).info("Starting RF2 delta loader");
+      Logger.getLogger(getClass()).info("  terminology = " + terminology);
+      Logger.getLogger(getClass()).info("  inputDir = " + inputDir);
 
       // Check the input directory
       File inputDirFile = new File(inputDir);
@@ -1012,7 +1005,6 @@ public class ContentServiceRestImpl extends RootServiceRestImpl implements
       sorter.setRequireAllFiles(false);
       File outputDir = new File(inputDirFile, "/RF2-sorted-temp/");
       sorter.sortFiles(inputDirFile, outputDir);
-      String releaseVersion = sorter.getFileVersion();
 
       // Open readers
       Rf2Readers readers = new Rf2Readers(outputDir);
@@ -1036,28 +1028,6 @@ public class ContentServiceRestImpl extends RootServiceRestImpl implements
       algo.reset();
       algo.compute();
 
-      //
-      // Create ReleaseInfo for this release if it does not already exist
-      //
-      HistoryService historyService = new HistoryServiceJpa();
-      historyService.setLastModifiedFlag(false);
-      ReleaseInfo info =
-          historyService.getReleaseInfo(terminology, releaseVersion);
-      if (info == null) {
-        info = new ReleaseInfoJpa();
-        info.setName(releaseVersion);
-        info.setEffectiveTime(ConfigUtility.DATE_FORMAT.parse(releaseVersion));
-        info.setDescription(terminology + " " + releaseVersion + " release");
-        info.setPlanned(false);
-        info.setPublished(true);
-        info.setReleaseBeginDate(info.getEffectiveTime());
-        info.setReleaseFinishDate(info.getEffectiveTime());
-        info.setTerminology(terminology);
-        info.setTerminologyVersion(version);
-        historyService.addReleaseInfo(info);
-      }
-      historyService.close();
-
       // Clean-up
       readers.closeReaders();
       Logger.getLogger(getClass()).info("...done");
@@ -1079,6 +1049,7 @@ public class ContentServiceRestImpl extends RootServiceRestImpl implements
    * org.ihtsdo.otf.ts.rest.ContentServiceRest#loadTerminologyRf2Full(java.lang
    * .String, java.lang.String, java.lang.String, java.lang.String)
    */
+  @SuppressWarnings("resource")
   @Override
   @POST
   @Path("/terminology/load/rf2/full/{terminology}/{version}")
@@ -1113,13 +1084,21 @@ public class ContentServiceRestImpl extends RootServiceRestImpl implements
       // Get the release versions
       Logger.getLogger(getClass()).info("  Get release versions");
       Rf2FileSorter sorter = new Rf2FileSorter();
-      File conceptsFile = sorter.findFile(new File(inputDir,"Terminology"), "sct2_Concept");
+      File conceptsFile =
+          sorter.findFile(new File(inputDir, "Terminology"), "sct2_Concept");
       Set<String> releaseSet = new HashSet<>();
       BufferedReader reader = new BufferedReader(new FileReader(conceptsFile));
       String line;
       while ((line = reader.readLine()) != null) {
         final String fields[] = line.split("\t");
-        releaseSet.add(fields[1]);
+        if (!fields[1].equals("effectiveTime")) {
+          try {
+            ConfigUtility.DATE_FORMAT.parse(fields[1]);
+          } catch (Exception e) {
+            throw new Exception("Improperly formatted date found: " + fields[1]);
+          }
+          releaseSet.add(fields[1]);
+        }
       }
       reader.close();
       List<String> releases = new ArrayList<>(releaseSet);
@@ -1130,7 +1109,7 @@ public class ContentServiceRestImpl extends RootServiceRestImpl implements
       Logger.getLogger(getClass()).info("  Releases to process");
       for (String release : releases) {
         Logger.getLogger(getClass()).info("    release = " + release);
-        
+
         ReleaseInfo releaseInfo =
             historyService.getReleaseInfo(terminology, release);
         if (releaseInfo != null) {
@@ -1253,8 +1232,7 @@ public class ContentServiceRestImpl extends RootServiceRestImpl implements
       File outputDir = new File(inputDirFile, "/RF2-sorted-temp/");
       sorter.sortFiles(inputDirFile, outputDir);
       String releaseVersion = sorter.getFileVersion();
-      Logger.getLogger(getClass()).info(
-          "  releaseVersion = " + releaseVersion);
+      Logger.getLogger(getClass()).info("  releaseVersion = " + releaseVersion);
 
       // Open readers
       Rf2Readers readers = new Rf2Readers(outputDir);
@@ -1268,28 +1246,6 @@ public class ContentServiceRestImpl extends RootServiceRestImpl implements
       algorithm.setReaders(readers);
       algorithm.compute();
       algorithm.close();
-
-      //
-      // Create ReleaseInfo for this release if it does not already exist
-      //
-      HistoryService historyService = new HistoryServiceJpa();
-      historyService.setLastModifiedFlag(false);
-      ReleaseInfo info =
-          historyService.getReleaseInfo(terminology, releaseVersion);
-      if (info == null) {
-        info = new ReleaseInfoJpa();
-        info.setName(releaseVersion);
-        info.setEffectiveTime(ConfigUtility.DATE_FORMAT.parse(releaseVersion));
-        info.setDescription(terminology + " " + releaseVersion + " release");
-        info.setPlanned(false);
-        info.setPublished(true);
-        info.setReleaseBeginDate(info.getEffectiveTime());
-        info.setReleaseFinishDate(info.getEffectiveTime());
-        info.setTerminology(terminology);
-        info.setTerminologyVersion(version);
-        historyService.addReleaseInfo(info);
-      }
-      historyService.close();
 
       // Compute transitive closure
       Logger.getLogger(getClass()).info(
