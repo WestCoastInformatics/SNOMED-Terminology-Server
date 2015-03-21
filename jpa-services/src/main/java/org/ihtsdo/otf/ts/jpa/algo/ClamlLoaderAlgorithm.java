@@ -138,7 +138,6 @@ public class ClamlLoaderAlgorithm extends ContentServiceJpa implements
    * 
    * @see org.ihtsdo.otf.mapping.jpa.algo.Algorithm#compute()
    */
-  @SuppressWarnings("null")
   /**
    * Compute.
    *

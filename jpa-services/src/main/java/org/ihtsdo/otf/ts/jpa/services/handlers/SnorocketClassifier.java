@@ -372,7 +372,6 @@ public class SnorocketClassifier implements Classifier {
    * @param snorelB the snorel b
    * @throws Exception the exception
    */
-  @SuppressWarnings("null")
   private void compareAndWriteBack(List<Relationship> snorelA,
     List<Relationship> snorelB) throws Exception {
 

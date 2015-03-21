@@ -67,6 +67,9 @@ public class SecurityServiceRestImpl extends RootServiceRestImpl implements
     try {
       String authToken = securityService.authenticate(username, password);
       securityService.close();
+      
+      if (authToken == null)
+        throw new LocalException("Unable to authenticate user");
       return authToken;
     } catch (LocalException e) {
       securityService.close();

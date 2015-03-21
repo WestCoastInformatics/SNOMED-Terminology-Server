@@ -1,0 +1,10 @@
+/* quick style for horiontal placement with padding */
+
+.ts-container {
+	padding-left: 25px;
+}
+
+.ts-panel {
+	padding: 10px;
+	float: left;
+}

@@ -79,7 +79,7 @@ public class HelperUnit011Test {
    * @throws Exception the exception
    */
   @SuppressWarnings({
-      "static-method", "unused"
+      "static-method"
   })
   @Test
   public void testHelperDegenerateUse011() throws Exception {

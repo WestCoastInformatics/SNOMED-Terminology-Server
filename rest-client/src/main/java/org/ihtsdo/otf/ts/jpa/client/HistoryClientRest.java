@@ -856,4 +856,26 @@ public class HistoryClientRest implements HistoryServiceRest {
     }
   }
 
+  @Override
+  public void beginRf2Release(String releaseVersion, String terminology,
+    boolean validate, String workflowStatusValues, boolean saveIdentifiers,
+    String authToken) throws Exception {
+    // TODO Auto-generated method stub
+    
+  }
+
+  @Override
+  public void processRf2Release(String releaseVersion, String terminology,
+    String outputDir, String moduleId, String authToken) throws Exception {
+    // TODO Auto-generated method stub
+    
+  }
+
+  @Override
+  public void finishRf2Release(String releaseVersion, String terminology,
+    String authToken) throws Exception {
+    // TODO Auto-generated method stub
+    
+  }
+
 }
