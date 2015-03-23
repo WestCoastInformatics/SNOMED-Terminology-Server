@@ -17,6 +17,12 @@ import org.ihtsdo.otf.ts.helpers.ConceptList;
 import org.ihtsdo.otf.ts.helpers.ConfigUtility;
 import org.ihtsdo.otf.ts.jpa.ReleaseInfoJpa;
 import org.ihtsdo.otf.ts.jpa.services.HistoryServiceJpa;
+import org.ihtsdo.otf.ts.rf2.AssociationReferenceConceptRefSetMember;
+import org.ihtsdo.otf.ts.rf2.AssociationReferenceDescriptionRefSetMember;
+import org.ihtsdo.otf.ts.rf2.AssociationReferenceRefSetMember;
+import org.ihtsdo.otf.ts.rf2.AttributeValueConceptRefSetMember;
+import org.ihtsdo.otf.ts.rf2.AttributeValueDescriptionRefSetMember;
+import org.ihtsdo.otf.ts.rf2.AttributeValueRefSetMember;
 import org.ihtsdo.otf.ts.rf2.ComplexMapRefSetMember;
 import org.ihtsdo.otf.ts.rf2.Concept;
 import org.ihtsdo.otf.ts.rf2.Description;
@@ -27,6 +33,10 @@ import org.ihtsdo.otf.ts.rf2.RefsetDescriptorRefSetMember;
 import org.ihtsdo.otf.ts.rf2.Relationship;
 import org.ihtsdo.otf.ts.rf2.SimpleMapRefSetMember;
 import org.ihtsdo.otf.ts.rf2.SimpleRefSetMember;
+import org.ihtsdo.otf.ts.rf2.jpa.AssociationReferenceConceptRefSetMemberJpa;
+import org.ihtsdo.otf.ts.rf2.jpa.AssociationReferenceDescriptionRefSetMemberJpa;
+import org.ihtsdo.otf.ts.rf2.jpa.AttributeValueConceptRefSetMemberJpa;
+import org.ihtsdo.otf.ts.rf2.jpa.AttributeValueDescriptionRefSetMemberJpa;
 import org.ihtsdo.otf.ts.rf2.jpa.ComplexMapRefSetMemberJpa;
 import org.ihtsdo.otf.ts.rf2.jpa.ConceptJpa;
 import org.ihtsdo.otf.ts.rf2.jpa.DescriptionJpa;
@@ -111,6 +121,12 @@ public class Rf2DeltaLoaderAlgorithm extends HistoryServiceJpa implements
   
   /** The existing module dependency ref set member ids. */
   private Set<String> existingModuleDependencyRefSetMemberIds = new HashSet<>();
+  
+  /** The existing attribute value ref set member ids. */
+  private Set<String> existingAttributeValueRefSetMemberIds = new HashSet<>();
+  
+  /** The existing association reference ref set member ids. */
+  private Set<String> existingAssociationReferenceRefSetMemberIds = new HashSet<>();
   
   /**
    * Instantiates an empty {@link Rf2DeltaLoaderAlgorithm}.
@@ -273,6 +289,20 @@ public class Rf2DeltaLoaderAlgorithm extends HistoryServiceJpa implements
       Logger.getLogger(getClass()).info(
           "    count = " + existingModuleDependencyRefSetMemberIds.size());
       
+      Logger.getLogger(getClass()).info("  Cache attribute value refset member ids");
+      existingAttributeValueRefSetMemberIds =
+          new HashSet<>(getAllAttributeValueRefSetMemberTerminologyIds(terminology,
+              terminologyVersion).getObjects());
+      Logger.getLogger(getClass()).info(
+          "    count = " + existingAttributeValueRefSetMemberIds.size());
+      
+      Logger.getLogger(getClass()).info("  Cache association reference refset member ids");
+      existingAssociationReferenceRefSetMemberIds =
+          new HashSet<>(getAllAssociationReferenceRefSetMemberTerminologyIds(terminology,
+              terminologyVersion).getObjects());
+      Logger.getLogger(getClass()).info(
+          "    count = " + existingAssociationReferenceRefSetMemberIds.size());
+      
       //
       // Load concepts
       //
@@ -339,8 +369,18 @@ public class Rf2DeltaLoaderAlgorithm extends HistoryServiceJpa implements
       Logger.getLogger(getClass()).info("    Loading Module Dependency Ref Sets...");
       loadModuleDependencyRefSetMembers();      
       
-      // Skip other delta data structures
-      // TODO: implement this
+      //
+      // Load module dependency refset members
+      //
+      Logger.getLogger(getClass()).info("    Loading Attribute Value Ref Sets...");
+      loadAttributeValueRefSetMembers();      
+      
+      //
+      // Load association reference refset members
+      //
+      Logger.getLogger(getClass()).info("    Loading Association Reference Ref Sets...");
+      loadAssociationReferenceRefSetMembers();      
+
 
       // Compute preferred names
       Logger.getLogger(getClass()).info(
@@ -1592,6 +1632,256 @@ public class Rf2DeltaLoaderAlgorithm extends HistoryServiceJpa implements
     Logger.getLogger(getClass()).info("      updated = " + objectsUpdated);
 
   }
+  
+  /**
+   * Load attribute value ref set members.
+   *
+   * @throws Exception the exception
+   */
+  @SuppressWarnings("resource")
+  private void loadAttributeValueRefSetMembers() throws Exception {
+
+    // Setup variables
+    String line = "";
+    objectCt = 0;
+    int objectsAdded = 0;
+    int objectsUpdated = 0;
+
+    // Iterate through description type refset reader
+    PushBackReader reader = readers.getReader(Rf2Readers.Keys.ATTRIBUTE_VALUE);
+    while ((line = reader.readLine()) != null) {
+
+      // split line
+      String fields[] = line.split("\t");
+
+      // if not header
+      if (!fields[0].equals("id")) {
+
+        // Skip if the effective time is before the release version
+        if (fields[1].compareTo(releaseVersion) < 0) {
+          continue;
+        }
+
+        // Stop if the effective time is past the release version
+        if (fields[1].compareTo(releaseVersion) > 0) {
+          reader.push(line);
+          break;
+        }
+
+        
+        AttributeValueRefSetMember<?> member = null;
+        
+        // Get concept from cache or from db
+        Concept concept = null;
+        Description description = null;
+        if (conceptCache.containsKey(fields[5])) {
+          concept = conceptCache.get(fields[5]);
+        } else if (existingConceptCache.containsKey(fields[5])) {
+          concept = existingConceptCache.get(fields[5]);
+        } 
+        if (descriptionCache.containsKey(fields[5])) {
+          description = descriptionCache.get(fields[5]);
+        } 
+        if (concept == null && description == null) {
+          throw new Exception(
+            "Attribute value member connected to nonexistent object");             
+        }
+
+        // Get the member from the DB, if null, create a new one
+        // No cache necessary because we will not encounter the
+        // same object more than once per delta and nothing else
+        // is connected to it.
+        if (existingAttributeValueRefSetMemberIds.contains(fields[0])) {
+          member = getAttributeValueRefSetMember(fields[0], terminology, terminologyVersion);
+        }
+
+
+        AttributeValueRefSetMember<?> newMember = null;
+        if (concept != null) {
+          if (member == null) {
+            newMember = new AttributeValueConceptRefSetMemberJpa();
+          } else {
+            newMember = new AttributeValueConceptRefSetMemberJpa((AttributeValueConceptRefSetMember) member);
+          }
+          ((AttributeValueConceptRefSetMember)newMember).setComponent(concept);
+      
+        }
+        
+        if (description != null) {
+          if (member == null) {
+            newMember = new AttributeValueDescriptionRefSetMemberJpa();
+          } else {
+            newMember = new AttributeValueDescriptionRefSetMemberJpa((AttributeValueDescriptionRefSetMember) member);
+          }
+          ((AttributeValueDescriptionRefSetMember)newMember).setComponent(description);
+        }
+          
+        newMember.setTerminologyId(fields[0]);
+        newMember.setTerminology(terminology);
+        newMember.setTerminologyVersion(terminologyVersion);
+        newMember.setEffectiveTime(ConfigUtility.DATE_FORMAT.parse(fields[1]));
+        newMember.setActive(fields[2].equals("1"));
+        newMember.setModuleId(fields[3]);
+        newMember.setRefSetId(fields[4]);
+        // Attribute value unique attributes
+        newMember.setValueId(fields[6]);
+          
+        newMember.setLastModifiedBy("loader");
+        newMember.setLastModified(ConfigUtility.DATE_FORMAT.parse(releaseVersion));
+        newMember.setPublished(true);
+                 
+        // If attribute value refset entry is new, add it
+        if (member == null) {
+          newMember = addAttributeValueRefSetMember(newMember);
+          objectsAdded++;
+        }
+
+        // If attribute value refset entry is changed, update it
+        else if (!newMember.equals(member)) {
+          // do not worry about assembling concept structure here
+          // since cascade does not control the collection, simply update the member.
+          updateAttributeValueRefSetMember(newMember);
+          objectsUpdated++;
+        }
+
+        // Otherwise, reset effective time (for modified check later)
+        else {
+          newMember.setEffectiveTime(member.getEffectiveTime());
+        }
+        
+      }
+    }
+
+    Logger.getLogger(getClass()).info("      new = " + objectsAdded);
+    Logger.getLogger(getClass()).info("      updated = " + objectsUpdated);
+
+  }
+  
+  /**
+   * Load association reference ref set members.
+   *
+   * @throws Exception the exception
+   */
+  @SuppressWarnings("resource")
+  private void loadAssociationReferenceRefSetMembers() throws Exception {
+
+	    // Setup variables
+	    String line = "";
+	    objectCt = 0;
+	    int objectsAdded = 0;
+	    int objectsUpdated = 0;
+
+	    // Iterate through description type refset reader
+	    PushBackReader reader = readers.getReader(Rf2Readers.Keys.ASSOCIATION_REFERENCE);
+	    while ((line = reader.readLine()) != null) {
+
+	      // split line
+	      String fields[] = line.split("\t");
+
+	      // if not header
+	      if (!fields[0].equals("id")) {
+
+	        // Skip if the effective time is before the release version
+	        if (fields[1].compareTo(releaseVersion) < 0) {
+	          continue;
+	        }
+
+	        // Stop if the effective time is past the release version
+	        if (fields[1].compareTo(releaseVersion) > 0) {
+	          reader.push(line);
+	          break;
+	        }
+
+	        
+	        AssociationReferenceRefSetMember<?> member = null;
+	        
+	        // Get concept from cache or from db
+	        Concept concept = null;
+	        Description description = null;
+	        if (conceptCache.containsKey(fields[5])) {
+	          concept = conceptCache.get(fields[5]);
+	        } else if (existingConceptCache.containsKey(fields[5])) {
+	          concept = existingConceptCache.get(fields[5]);
+	        } 
+	        if (descriptionCache.containsKey(fields[5])) {
+	          description = descriptionCache.get(fields[5]);
+	        } 
+	        if (concept == null && description == null) {
+	          throw new Exception(
+	            "Association reference member connected to nonexistent object");             
+	        }
+
+	        // Get the member from the DB, if null, create a new one
+	        // No cache necessary because we will not encounter the
+	        // same object more than once per delta and nothing else
+	        // is connected to it.
+	        if (existingAssociationReferenceRefSetMemberIds.contains(fields[0])) {
+	          member = getAssociationReferenceRefSetMember(fields[0], terminology, terminologyVersion);
+	        }
+
+
+	        AssociationReferenceRefSetMember<?> newMember = null;
+	        if (concept != null) {
+	          if (member == null) {
+	            newMember = new AssociationReferenceConceptRefSetMemberJpa();
+	          } else {
+	            newMember = new AssociationReferenceConceptRefSetMemberJpa((AssociationReferenceConceptRefSetMember) member);
+	          }
+	          ((AssociationReferenceConceptRefSetMember)newMember).setComponent(concept);
+	      
+	        }
+	        
+	        if (description != null) {
+	          if (member == null) {
+	            newMember = new AssociationReferenceDescriptionRefSetMemberJpa();
+	          } else {
+	            newMember = new AssociationReferenceDescriptionRefSetMemberJpa((AssociationReferenceDescriptionRefSetMember) member);
+	          }
+	          ((AssociationReferenceDescriptionRefSetMember)newMember).setComponent(description);
+	        }
+	          
+	        newMember.setTerminologyId(fields[0]);
+	        newMember.setTerminology(terminology);
+	        newMember.setTerminologyVersion(terminologyVersion);
+	        newMember.setEffectiveTime(ConfigUtility.DATE_FORMAT.parse(fields[1]));
+	        newMember.setActive(fields[2].equals("1"));
+	        newMember.setModuleId(fields[3]);
+	        newMember.setRefSetId(fields[4]);
+	        // Attribute value unique attributes
+	        newMember.setTargetComponentId(fields[6]);
+	          
+	        newMember.setLastModifiedBy("loader");
+	        newMember.setLastModified(ConfigUtility.DATE_FORMAT.parse(releaseVersion));
+	        newMember.setPublished(true);
+	                 
+	        // If attribute value refset entry is new, add it
+	        if (member == null) {
+	          newMember = addAssociationReferenceRefSetMember(newMember);
+	          objectsAdded++;
+	        }
+
+	        // If attribute value refset entry is changed, update it
+	        else if (!newMember.equals(member)) {
+	          // do not worry about assembling concept structure here
+	          // since cascade does not control the collection, simply update the member.
+	          updateAssociationReferenceRefSetMember(newMember);
+	          objectsUpdated++;
+	        }
+
+	        // Otherwise, reset effective time (for modified check later)
+	        else {
+	          newMember.setEffectiveTime(member.getEffectiveTime());
+	        }
+	        
+	      }
+	    }
+
+	    Logger.getLogger(getClass()).info("      new = " + objectsAdded);
+	    Logger.getLogger(getClass()).info("      updated = " + objectsUpdated);
+
+	  }
+  
+  
   /**
    * Load relationships.
    *

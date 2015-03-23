@@ -2389,7 +2389,7 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
             + "/" + terminology + "/" + version);
     javax.persistence.Query query =
         manager
-            .createQuery("select c from DescriptionTypeRefSetMemberJpa c where referencedComponentId = :terminologyId and terminologyVersion = :version and terminology = :terminology and active = 1");
+            .createQuery("select c from DescriptionTypeRefSetMemberJpa c where terminologyId = :terminologyId and terminologyVersion = :version and terminology = :terminology and active = 1");
     /*
      * Try to retrieve the single expected result If zero or more than one
      * result are returned, log error and set result to null
@@ -3012,6 +3012,54 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
         manager
             .createQuery(
                 "select c.terminologyId from ModuleDependencyRefSetMemberJpa c where terminology = :terminology and terminologyVersion = :version")
+            .setParameter("terminology", terminology)
+            .setParameter("version", version);
+
+    List<String> terminologyIds = query.getResultList();
+    StringList list = new StringList();
+    list.setObjects(terminologyIds);
+    list.setTotalCount(list.getCount());
+    return list;
+  }
+  
+  /* (non-Javadoc)
+   * @see org.ihtsdo.otf.ts.services.ContentService#getAllAttributeValueRefSetMemberTerminologyIds(java.lang.String, java.lang.String)
+   */
+  @SuppressWarnings("unchecked")
+  @Override
+  public StringList getAllAttributeValueRefSetMemberTerminologyIds(String terminology,
+    String version) {
+    Logger.getLogger(getClass()).debug(
+        "Content Service - get all attribute value refset member terminology ids "
+            + terminology + "/" + version);
+    javax.persistence.Query query =
+        manager
+            .createQuery(
+                "select c.terminologyId from AttributeValueConceptRefSetMemberJpa c where terminology = :terminology and terminologyVersion = :version")
+            .setParameter("terminology", terminology)
+            .setParameter("version", version);
+
+    List<String> terminologyIds = query.getResultList();
+    StringList list = new StringList();
+    list.setObjects(terminologyIds);
+    list.setTotalCount(list.getCount());
+    return list;
+  }
+  
+  /* (non-Javadoc)
+   * @see org.ihtsdo.otf.ts.services.ContentService#getAllAssociationReferenceRefSetMemberTerminologyIds(java.lang.String, java.lang.String)
+   */
+  @SuppressWarnings("unchecked")
+  @Override
+  public StringList getAllAssociationReferenceRefSetMemberTerminologyIds(String terminology,
+    String version) {
+    Logger.getLogger(getClass()).debug(
+        "Content Service - get all association reference refset member terminology ids "
+            + terminology + "/" + version);
+    javax.persistence.Query query =
+        manager
+            .createQuery(
+                "select c.terminologyId from AssociationReferenceConceptRefSetMemberJpa c where terminology = :terminology and terminologyVersion = :version")
             .setParameter("terminology", terminology)
             .setParameter("version", version);
 

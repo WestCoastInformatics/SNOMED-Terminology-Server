@@ -969,6 +969,26 @@ public interface ContentService extends RootService {
 		    String terminology, String version);
   
   /**
+   * Gets the all attribute value ref set member terminology ids.
+   *
+   * @param terminology the terminology
+   * @param version the version
+   * @return the all attribute value ref set member terminology ids
+   */
+  public StringList getAllAttributeValueRefSetMemberTerminologyIds(
+		    String terminology, String version);
+  
+  /**
+   * Gets the all association reference ref set member terminology ids.
+   *
+   * @param terminology the terminology
+   * @param version the version
+   * @return the all association reference ref set member terminology ids
+   */
+  public StringList getAllAssociationReferenceRefSetMemberTerminologyIds(
+		    String terminology, String version);
+  
+  /**
    * Clear transitive closure.
    *
    * @param terminology the terminology
