@@ -69,21 +69,6 @@ public class ContentServiceTest {
   }
 
   /**
-   * Test getting a concept by id.
-   * @throws Exception
-   */
-  @Test
-  public void test004GetConcept() throws Exception {
-    Concept c =
-        client.getSingleConcept("10013000", "SNOMEDCT", "latest", authToken);
-    Logger.getLogger(getClass()).info("TEST - " + c.getId());
-    c = client.getConcept(c.getId(), authToken);
-    Logger.getLogger(getClass()).info(
-        ConceptReportHelper.getConceptReport(c));
-    getConceptAssertions(c);
-  }
-
-  /**
    * Returns the concept assertions.
    *
    * @param c the c
@@ -125,22 +110,6 @@ public class ContentServiceTest {
     Logger.getLogger(getClass()).info(
         "TEST - " + "339.8, ICD9CM, 2013, " + authToken);
     Concept c = client.getSingleConcept("339.8", "ICD9CM", "2013", authToken);
-    assertNotNull(c);
-    assertNotEquals(c.getDefaultPreferredName(),
-        "No default preferred name found");
-    Logger.getLogger(getClass()).info(
-        "  defaultPreferredName = " + c.getDefaultPreferredName());
-  }
-
-  /**
-   * Test get single concept for ICD9CM by id.
-   * @throws Exception
-   */
-  @Test
-  public void test004GetConceptICD9CM() throws Exception {
-    Concept c = client.getSingleConcept("339.8", "ICD9CM", "2013", authToken);
-    Logger.getLogger(getClass()).info("TEST - " + c.getId());
-    c = client.getConcept(c.getId(), authToken);
     assertNotNull(c);
     assertNotEquals(c.getDefaultPreferredName(),
         "No default preferred name found");
@@ -247,40 +216,6 @@ public class ContentServiceTest {
         "Tuberculous pleurisy, tubercle bacilli not found by bacteriological examination, but tuberculosis confirmed histologically");
     // TODO: need more tests
   }
-
-  /**
-   * Test get description for SNOMED.
-   * @throws Exception
-   */
-  @Test
-  public void test006GetDescriptionSNOMED() throws Exception {
-    Logger.getLogger(getClass()).info(
-        "TEST - " + "100114019, SNOMEDCT, latest, " + authToken);
-    Description description =
-        client.getDescription("100114019", "SNOMEDCT", "latest", authToken);
-    description = client.getDescription(description.getId(), authToken);
-    assertNotNull(description);
-    assertEquals(description.getTerm(), "Histidine");
-    // TODO: need more tests
-  }
-
-  /**
-   * Test get description for ICD9CM.
-   * @throws Exception
-   */
-  @SuppressWarnings("static-method")
-  @Test
-  public void test006GetDescriptionICD9CM() throws Exception {
-    Description description =
-        client.getDescription("D0000674", "ICD9CM", "2013", authToken);
-    description = client.getDescription(description.getId(), authToken);
-    assertNotNull(description);
-    assertEquals(
-        description.getTerm(),
-        "Tuberculous pleurisy, tubercle bacilli not found by bacteriological examination, but tuberculosis confirmed histologically");
-    // TODO: need more tests
-  }
-
 
 
   /**

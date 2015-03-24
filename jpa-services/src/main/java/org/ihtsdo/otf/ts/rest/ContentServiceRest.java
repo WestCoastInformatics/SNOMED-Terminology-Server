@@ -70,17 +70,6 @@ public interface ContentServiceRest {
     String version, String authToken) throws Exception;
 
   /**
-   * Gets the concept for the specified identifier.
-   *
-   * @param id the internal concept id. Used when other REST APIs return
-   *          information that includes internal identifiers.
-   * @param authToken the auth token
-   * @return the concept
-   * @throws Exception the exception
-   */
-  public Concept getConcept(Long id, String authToken) throws Exception;
-
-  /**
    * Returns the concept children.
    *
    * @param terminologyId the terminology id
@@ -136,17 +125,6 @@ public interface ContentServiceRest {
    */
   public Description getDescription(String terminologyId, String terminology,
     String version, String authToken) throws Exception;
-
-  /**
-   * Gets the description for the specified identifier.
-   *
-   * @param id the internal description id. Used when other REST APIs return
-   *          information that includes internal identifiers.
-   * @param authToken the auth token
-   * @return the description
-   * @throws Exception the exception
-   */
-  public Description getDescription(Long id, String authToken) throws Exception;
 
   /**
    * Find association reference ref set members.

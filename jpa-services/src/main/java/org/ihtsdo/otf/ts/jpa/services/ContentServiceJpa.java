@@ -3232,6 +3232,7 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
   /* (non-Javadoc)
    * @see org.ihtsdo.otf.ts.services.ContentService#getAllSimpleMapRefSetMemberTerminologyIds(java.lang.String, java.lang.String)
    */
+  @SuppressWarnings("unchecked")
   @Override
   public StringList getAllSimpleMapRefSetMemberTerminologyIds(String terminology,
   	String version) {

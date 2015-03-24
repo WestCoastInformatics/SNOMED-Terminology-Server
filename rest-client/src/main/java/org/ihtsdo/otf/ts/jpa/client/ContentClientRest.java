@@ -146,37 +146,6 @@ public class ContentClientRest implements ContentServiceRest {
             ConceptJpa.class);
     return c;
   }
-
-  /*
-   * (non-Javadoc)
-   * 
-   * @see org.ihtsdo.otf.ts.rest.ContentServiceRest#getConcept(java.lang.Long,
-   * java.lang.String)
-   */
-  @Override
-  public Concept getConcept(Long id, String authToken) throws Exception {
-    Client client = Client.create();
-    WebResource resource =
-        client.resource(config.getProperty("base.url") + "/content/concept/id/"
-            + id);
-    ClientResponse response =
-        resource.accept(MediaType.APPLICATION_XML)
-            .header("Authorization", authToken).get(ClientResponse.class);
-
-    String resultString = response.getEntity(String.class);
-    if (response.getStatusInfo().getFamily() == Family.SUCCESSFUL) {
-      Logger.getLogger(getClass()).debug(resultString);
-    } else {
-      throw new Exception(resultString);
-    }
-
-    // converting to object
-    ConceptJpa c =
-        (ConceptJpa) ConfigUtility.getGraphForString(resultString,
-            ConceptJpa.class);
-    return c;
-  }
-
   /*
    * (non-Javadoc)
    * 
@@ -330,37 +299,6 @@ public class ContentClientRest implements ContentServiceRest {
         (ConceptListJpa) ConfigUtility.getGraphForString(resultString,
             ConceptListJpa.class);
     return list;
-  }
-
-  /*
-   * (non-Javadoc)
-   * 
-   * @see
-   * org.ihtsdo.otf.ts.rest.ContentServiceRest#getDescription(java.lang.Long,
-   * java.lang.String)
-   */
-  @Override
-  public Description getDescription(Long id, String authToken) throws Exception {
-    Client client = Client.create();
-    WebResource resource =
-        client.resource(config.getProperty("base.url")
-            + "/content/description/id/" + id);
-    ClientResponse response =
-        resource.accept(MediaType.APPLICATION_XML)
-            .header("Authorization", authToken).get(ClientResponse.class);
-
-    String resultString = response.getEntity(String.class);
-    if (response.getStatusInfo().getFamily() == Family.SUCCESSFUL) {
-      Logger.getLogger(getClass()).debug(resultString);
-    } else {
-      throw new Exception(resultString);
-    }
-
-    // converting to object
-    DescriptionJpa description =
-        (DescriptionJpa) ConfigUtility.getGraphForString(resultString,
-            DescriptionJpa.class);
-    return description;
   }
 
   /*

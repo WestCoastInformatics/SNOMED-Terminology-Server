@@ -180,42 +180,6 @@ public class ContentServiceRestImpl extends RootServiceRestImpl implements
   /*
    * (non-Javadoc)
    * 
-   * @see org.ihtsdo.otf.ts.rest.ContentServiceRest#getConcept(java.lang.Long)
-   */
-  @Override
-  @GET
-  @Path("/concept/id/{id}")
-  @ApiOperation(value = "Get concept by id", notes = "Gets the concept for the specified id.", response = Concept.class)
-  public Concept getConcept(
-    @ApiParam(value = "Concept internal id, e.g. 2", required = true) @PathParam("id") Long id,
-    @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken) {
-    Logger.getLogger(getClass()).info(
-        "RESTful call (Content): /concept/id/" + id);
-
-    try {
-      authenticate(securityService, authToken, "retrieve the concept",
-          UserRole.VIEWER);
-
-      ContentService contentService = new ContentServiceJpa();
-      Concept concept = contentService.getConcept(id);
-
-      if (concept != null) {
-        contentService.getGraphResolutionHandler().resolve(
-            concept,
-            TerminologyUtility.getHierarchcialIsaRels(concept.getTerminology(),
-                concept.getTerminologyVersion()));
-      }
-      contentService.close();
-      return concept;
-    } catch (Exception e) {
-      handleException(e, "trying to retrieve a concept");
-      return null;
-    }
-  }
-
-  /*
-   * (non-Javadoc)
-   * 
    * @see
    * org.ihtsdo.otf.mapping.rest.ContentServiceRest#findConceptsForQuery(java
    * .lang.String, java.lang.String, java.lang.String, java.lang.String)
@@ -386,40 +350,6 @@ public class ContentServiceRestImpl extends RootServiceRestImpl implements
     }
   }
 
-  /*
-   * (non-Javadoc)
-   * 
-   * @see
-   * org.ihtsdo.otf.ts.rest.ContentServiceRest#getDescription(java.lang.Long,
-   * java.lang.String)
-   */
-  @Override
-  @GET
-  @Path("/description/id/{id}")
-  @ApiOperation(value = "Get description by id", notes = "Gets the description for the specified id.", response = Description.class)
-  public Description getDescription(
-    @ApiParam(value = "Description internal id, e.g. 2", required = true) @PathParam("id") Long id,
-    @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken) {
-    Logger.getLogger(getClass()).info(
-        "RESTful call (Content): /description/id/" + id);
-
-    try {
-      authenticate(securityService, authToken, "retrieve the description",
-          UserRole.VIEWER);
-
-      ContentService contentService = new ContentServiceJpa();
-      Description description = contentService.getDescription(id);
-
-      if (description != null) {
-        contentService.getGraphResolutionHandler().resolve(description);
-      }
-      contentService.close();
-      return description;
-    } catch (Exception e) {
-      handleException(e, "trying to retrieve a description");
-      return null;
-    }
-  }
 
   /*
    * (non-Javadoc)

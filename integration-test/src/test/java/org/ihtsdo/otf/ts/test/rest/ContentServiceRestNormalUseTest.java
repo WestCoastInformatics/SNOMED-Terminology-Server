@@ -120,16 +120,6 @@ public class ContentServiceRestNormalUseTest extends ContentServiceRestTest {
       fail("Get concepts threw unexpected exception");
     }
 
-    // Get concept by id
-    // getConcept(concept.getId(), ...)
-    // TEST: Returns one concept, terminology id 138875005
-    try {
-      newConcept = contentService.getConcept(concept.getId(), authToken);
-      assertTrue(concept.equals(newConcept));
-    } catch (Exception e) {
-      fail("Get concept by id threw unexpected exception");
-    }
-
     /** Procedure 2: Get concepts for ICD9CM */
 
     try {
@@ -341,13 +331,6 @@ public class ContentServiceRestNormalUseTest extends ContentServiceRestTest {
     // TEST:﻿ Description has concept equal to retrieved concept
     assertTrue(description.getConcept().getId().equals(concept.getId()));
 
-    // Get description by id (from previous description)
-    description2 =
-        contentService.getDescription(description.getId(), authToken);
-
-    // TEST: Descriptions are equal
-    assertTrue(description.equals(description2));
-
     /**
      * Test retrieval of ICD9CM descriptions
      */
@@ -371,13 +354,6 @@ public class ContentServiceRestNormalUseTest extends ContentServiceRestTest {
 
     // TEST:﻿ Description has concept equal to retrieved concept
     assertTrue(description.getConcept().getId().equals(concept.getId()));
-
-    // Get description by id (from previous description)
-    description2 =
-        contentService.getDescription(description.getId(), authToken);
-
-    // TEST: Descriptions are equal
-    assertTrue(description.equals(description2));
 
   }
 
