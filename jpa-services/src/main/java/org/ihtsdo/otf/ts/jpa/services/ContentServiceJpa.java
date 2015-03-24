@@ -2699,7 +2699,7 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
             + "/" + terminology + "/" + version);
     javax.persistence.Query query =
         manager
-            .createQuery("select c from DescriptionTypeRefSetMemberJpa c where referencedComponentId = :terminologyId and terminologyVersion = :version and terminology = :terminology and active = 1");
+            .createQuery("select c from DescriptionTypeRefSetMemberJpa c where terminologyId = :terminologyId and terminologyVersion = :version and terminology = :terminology and active = 1");
     /*
      * Try to retrieve the single expected result If zero or more than one
      * result are returned, log error and set result to null
@@ -3229,6 +3229,174 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
     return list;
   }
 
+  /* (non-Javadoc)
+   * @see org.ihtsdo.otf.ts.services.ContentService#getAllSimpleMapRefSetMemberTerminologyIds(java.lang.String, java.lang.String)
+   */
+  @Override
+  public StringList getAllSimpleMapRefSetMemberTerminologyIds(String terminology,
+  	String version) {
+	Logger.getLogger(getClass()).debug(
+	            "Content Service - get all simple map refset member terminology ids "
+	                + terminology + "/" + version);
+	javax.persistence.Query query =
+	    manager
+	        .createQuery(
+	            "select c.terminologyId from SimpleMapRefSetMemberJpa c where terminology = :terminology and terminologyVersion = :version")
+	        .setParameter("terminology", terminology)
+	        .setParameter("version", version);
+
+	List<String> terminologyIds = query.getResultList();
+	StringList list = new StringList();
+	list.setObjects(terminologyIds);
+	list.setTotalCount(list.getCount());
+	return list;
+  }
+  
+  /* (non-Javadoc)
+   * @see org.ihtsdo.otf.ts.services.ContentService#getAllComplexMapRefSetMemberTerminologyIds(java.lang.String, java.lang.String)
+   */
+  @SuppressWarnings("unchecked")
+  @Override
+  public StringList getAllComplexMapRefSetMemberTerminologyIds(String terminology,
+    String version) {
+    Logger.getLogger(getClass()).debug(
+        "Content Service - get all complex map refset member terminology ids "
+            + terminology + "/" + version);
+    javax.persistence.Query query =
+        manager
+            .createQuery(
+                "select c.terminologyId from ComplexMapRefSetMemberJpa c where terminology = :terminology and terminologyVersion = :version")
+            .setParameter("terminology", terminology)
+            .setParameter("version", version);
+
+    List<String> terminologyIds = query.getResultList();
+    StringList list = new StringList();
+    list.setObjects(terminologyIds);
+    list.setTotalCount(list.getCount());
+    return list;
+  }
+  
+  
+  /* (non-Javadoc)
+   * @see org.ihtsdo.otf.ts.services.ContentService#getAllDescriptionTypeRefSetMemberTerminologyIds(java.lang.String, java.lang.String)
+   */
+  @SuppressWarnings("unchecked")
+  @Override
+  public StringList getAllDescriptionTypeRefSetMemberTerminologyIds(String terminology,
+    String version) {
+    Logger.getLogger(getClass()).debug(
+        "Content Service - get all description type refset member terminology ids "
+            + terminology + "/" + version);
+    javax.persistence.Query query =
+        manager
+            .createQuery(
+                "select c.terminologyId from DescriptionTypeRefSetMemberJpa c where terminology = :terminology and terminologyVersion = :version")
+            .setParameter("terminology", terminology)
+            .setParameter("version", version);
+
+    List<String> terminologyIds = query.getResultList();
+    StringList list = new StringList();
+    list.setObjects(terminologyIds);
+    list.setTotalCount(list.getCount());
+    return list;
+  }
+  
+  /* (non-Javadoc)
+   * @see org.ihtsdo.otf.ts.services.ContentService#getAllRefsetDescriptorRefSetMemberTerminologyIds(java.lang.String, java.lang.String)
+   */
+  @SuppressWarnings("unchecked")
+  @Override
+  public StringList getAllRefsetDescriptorRefSetMemberTerminologyIds(String terminology,
+    String version) {
+    Logger.getLogger(getClass()).debug(
+        "Content Service - get all refset descriptor refset member terminology ids "
+            + terminology + "/" + version);
+    javax.persistence.Query query =
+        manager
+            .createQuery(
+                "select c.terminologyId from RefsetDescriptorRefSetMemberJpa c where terminology = :terminology and terminologyVersion = :version")
+            .setParameter("terminology", terminology)
+            .setParameter("version", version);
+
+    List<String> terminologyIds = query.getResultList();
+    StringList list = new StringList();
+    list.setObjects(terminologyIds);
+    list.setTotalCount(list.getCount());
+    return list;
+  }
+  
+  /* (non-Javadoc)
+   * @see org.ihtsdo.otf.ts.services.ContentService#getAllModuleDependencyRefSetMemberTerminologyIds(java.lang.String, java.lang.String)
+   */
+  @SuppressWarnings("unchecked")
+  @Override
+  public StringList getAllModuleDependencyRefSetMemberTerminologyIds(String terminology,
+    String version) {
+    Logger.getLogger(getClass()).debug(
+        "Content Service - get all module dependency refset member terminology ids "
+            + terminology + "/" + version);
+    javax.persistence.Query query =
+        manager
+            .createQuery(
+                "select c.terminologyId from ModuleDependencyRefSetMemberJpa c where terminology = :terminology and terminologyVersion = :version")
+            .setParameter("terminology", terminology)
+            .setParameter("version", version);
+
+    List<String> terminologyIds = query.getResultList();
+    StringList list = new StringList();
+    list.setObjects(terminologyIds);
+    list.setTotalCount(list.getCount());
+    return list;
+  }
+  
+  /* (non-Javadoc)
+   * @see org.ihtsdo.otf.ts.services.ContentService#getAllAttributeValueRefSetMemberTerminologyIds(java.lang.String, java.lang.String)
+   */
+  @SuppressWarnings("unchecked")
+  @Override
+  public StringList getAllAttributeValueRefSetMemberTerminologyIds(String terminology,
+    String version) {
+    Logger.getLogger(getClass()).debug(
+        "Content Service - get all attribute value refset member terminology ids "
+            + terminology + "/" + version);
+    javax.persistence.Query query =
+        manager
+            .createQuery(
+                "select c.terminologyId from AttributeValueConceptRefSetMemberJpa c where terminology = :terminology and terminologyVersion = :version")
+            .setParameter("terminology", terminology)
+            .setParameter("version", version);
+
+    List<String> terminologyIds = query.getResultList();
+    StringList list = new StringList();
+    list.setObjects(terminologyIds);
+    list.setTotalCount(list.getCount());
+    return list;
+  }
+  
+  /* (non-Javadoc)
+   * @see org.ihtsdo.otf.ts.services.ContentService#getAllAssociationReferenceRefSetMemberTerminologyIds(java.lang.String, java.lang.String)
+   */
+  @SuppressWarnings("unchecked")
+  @Override
+  public StringList getAllAssociationReferenceRefSetMemberTerminologyIds(String terminology,
+    String version) {
+    Logger.getLogger(getClass()).debug(
+        "Content Service - get all association reference refset member terminology ids "
+            + terminology + "/" + version);
+    javax.persistence.Query query =
+        manager
+            .createQuery(
+                "select c.terminologyId from AssociationReferenceConceptRefSetMemberJpa c where terminology = :terminology and terminologyVersion = :version")
+            .setParameter("terminology", terminology)
+            .setParameter("version", version);
+
+    List<String> terminologyIds = query.getResultList();
+    StringList list = new StringList();
+    list.setObjects(terminologyIds);
+    list.setTotalCount(list.getCount());
+    return list;
+  }
+  
   /*
    * (non-Javadoc)
    * 
@@ -3783,5 +3951,7 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
   public void setAssignIdentifiersFlag(boolean assignIdentifiersFlag) {
     this.assignIdentifiersFlag = assignIdentifiersFlag;
   }
+
+
 
 }

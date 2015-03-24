@@ -1029,6 +1029,76 @@ public interface ContentService extends RootService {
     String version);
 
   /**
+   * Gets the all simple map ref set member terminology ids.
+   *
+   * @param terminology the terminology
+   * @param version the version
+   * @return the all simple map ref set member terminology ids
+   */
+  public StringList getAllSimpleMapRefSetMemberTerminologyIds(
+		    String terminology, String version);
+  
+  /**
+   * Gets the all complex map ref set member terminology ids.
+   *
+   * @param terminology the terminology
+   * @param version the version
+   * @return the all complex map ref set member terminology ids
+   */
+  public StringList getAllComplexMapRefSetMemberTerminologyIds(
+		    String terminology, String version);
+
+  /**
+   * Gets the all description type ref set member terminology ids.
+   *
+   * @param terminology the terminology
+   * @param version the version
+   * @return the all description type ref set member terminology ids
+   */
+  public StringList getAllDescriptionTypeRefSetMemberTerminologyIds(
+		    String terminology, String version);
+  
+  /**
+   * Gets the all refset descriptor ref set member terminology ids.
+   *
+   * @param terminology the terminology
+   * @param version the version
+   * @return the all refset descriptor ref set member terminology ids
+   */
+  public StringList getAllRefsetDescriptorRefSetMemberTerminologyIds(
+		    String terminology, String version);
+  
+  /**
+   * Gets the all module dependency ref set member terminology ids.
+   *
+   * @param terminology the terminology
+   * @param version the version
+   * @return the all module dependency ref set member terminology ids
+   */
+  public StringList getAllModuleDependencyRefSetMemberTerminologyIds(
+		    String terminology, String version);
+  
+  /**
+   * Gets the all attribute value ref set member terminology ids.
+   *
+   * @param terminology the terminology
+   * @param version the version
+   * @return the all attribute value ref set member terminology ids
+   */
+  public StringList getAllAttributeValueRefSetMemberTerminologyIds(
+		    String terminology, String version);
+  
+  /**
+   * Gets the all association reference ref set member terminology ids.
+   *
+   * @param terminology the terminology
+   * @param version the version
+   * @return the all association reference ref set member terminology ids
+   */
+  public StringList getAllAssociationReferenceRefSetMemberTerminologyIds(
+		    String terminology, String version);
+  
+  /**
    * Clear transitive closure.
    *
    * @param terminology the terminology
