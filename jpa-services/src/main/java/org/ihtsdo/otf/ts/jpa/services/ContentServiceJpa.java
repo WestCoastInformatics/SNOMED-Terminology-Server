@@ -3035,13 +3035,24 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
     javax.persistence.Query query =
         manager
             .createQuery(
-                "select c.terminologyId from AttributeValueConceptRefSetMemberJpa c where terminology = :terminology and terminologyVersion = :version")
+                "select c.terminologyId from AbstractAttributeValueRefSetMemberJpa c where terminology = :terminology and terminologyVersion = :version")
             .setParameter("terminology", terminology)
             .setParameter("version", version);
 
     List<String> terminologyIds = query.getResultList();
     StringList list = new StringList();
     list.setObjects(terminologyIds);
+    
+    /*query =
+        manager
+            .createQuery(
+                "select d.terminologyId from AttributeValueDescriptionRefSetMemberJpa d where terminology = :terminology and terminologyVersion = :version")
+            .setParameter("terminology", terminology)
+            .setParameter("version", version);    
+    List<String> descriptionTerminologyIds = query.getResultList();  
+    for (String id : descriptionTerminologyIds) {
+    	list.addObject(id);
+    }*/
     list.setTotalCount(list.getCount());
     return list;
   }
@@ -3059,13 +3070,25 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
     javax.persistence.Query query =
         manager
             .createQuery(
-                "select c.terminologyId from AssociationReferenceConceptRefSetMemberJpa c where terminology = :terminology and terminologyVersion = :version")
+                "select c.terminologyId from AbstractAssociationReferenceRefSetMemberJpa c where terminology = :terminology and terminologyVersion = :version")
             .setParameter("terminology", terminology)
             .setParameter("version", version);
 
     List<String> terminologyIds = query.getResultList();
     StringList list = new StringList();
     list.setObjects(terminologyIds);
+    
+    /*query =
+        manager
+            .createQuery(
+                "select d.terminologyId from AssociationReferenceDescriptionRefSetMemberJpa d where terminology = :terminology and terminologyVersion = :version")
+            .setParameter("terminology", terminology)
+            .setParameter("version", version);    
+    List<String> descriptionTerminologyIds = query.getResultList();  
+    for (String id : descriptionTerminologyIds) {
+        list.addObject(id);
+    }*/
+        
     list.setTotalCount(list.getCount());
     return list;
   }

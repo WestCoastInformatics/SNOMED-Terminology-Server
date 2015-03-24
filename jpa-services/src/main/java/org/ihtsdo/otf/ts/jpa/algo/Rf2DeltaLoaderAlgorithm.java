@@ -1681,7 +1681,9 @@ public class Rf2DeltaLoaderAlgorithm extends HistoryServiceJpa implements
         } 
         if (descriptionCache.containsKey(fields[5])) {
           description = descriptionCache.get(fields[5]);
-        } 
+        } else if (existingDescriptionIds.contains(fields[5])) {
+          description = getDescription(fields[5], terminology, terminologyVersion);
+        }
         if (concept == null && description == null) {
           throw new Exception(
             "Attribute value member connected to nonexistent object");             
@@ -1805,7 +1807,9 @@ public class Rf2DeltaLoaderAlgorithm extends HistoryServiceJpa implements
 	        } 
 	        if (descriptionCache.containsKey(fields[5])) {
 	          description = descriptionCache.get(fields[5]);
-	        } 
+	        } else if (existingDescriptionIds.contains(fields[5])) {
+	          description = getDescription(fields[5], terminology, terminologyVersion);
+	        }
 	        if (concept == null && description == null) {
 	          throw new Exception(
 	            "Association reference member connected to nonexistent object");             
