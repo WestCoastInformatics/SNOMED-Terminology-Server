@@ -180,6 +180,11 @@ public class Rf2SnapshotLoaderAlgorithm extends HistoryServiceJpa implements
           "    elapsed time = " + getElapsedTime(startTime) + "s"
               + " (Ended at " + ft.format(new Date()) + ")");
 
+      
+      commit();
+      clear();
+      beginTransaction();
+
       //
       // Load descriptions and language refsets
       //

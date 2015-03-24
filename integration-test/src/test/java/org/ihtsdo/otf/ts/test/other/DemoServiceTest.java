@@ -214,9 +214,9 @@ public class DemoServiceTest {
     Logger.getLogger(getClass()).info(
         "    lastModifiedBy = " + newDescription.getLastModifiedBy());
     // log concept
-    concept = contentClient.getConcept(concept.getId(), authToken);
-    Logger.getLogger(getClass()).info(
-        ConceptReportHelper.getConceptReport(concept));
+//    concept = contentClient.getConcept(concept.getId(), authToken);
+//    Logger.getLogger(getClass()).info(
+//        ConceptReportHelper.getConceptReport(concept));
 
     // pause
     System.out.println("Pause to show concept in Swagger API");
@@ -240,15 +240,11 @@ public class DemoServiceTest {
       }
     }
     editClient.updateConcept((ConceptJpa) concept, authToken);
-    // log concept
-    concept = contentClient.getConcept(concept.getId(), authToken);
-    Logger.getLogger(getClass()).info(
-        ConceptReportHelper.getConceptReport(concept));
-    
+
     // add a "reason for inactivation" - though typically you wouldn't do
     // this with a concept that had not yet been published
     Logger.getLogger(getClass()).info("  Add reason for inactivation");
-    concept = contentClient.getConcept(concept.getId(), authToken);
+
     AssociationReferenceConceptRefSetMember armember =
         new AssociationReferenceConceptRefSetMemberJpa();
     armember.setConcept(concept);
@@ -263,10 +259,10 @@ public class DemoServiceTest {
             (AssociationReferenceConceptRefSetMemberJpa) armember, authToken);
 
     // log member
-    armember =
-        contentClient.getAssociationReferenceConceptRefSetMember(
-            armember.getId(), authToken);
-    Logger.getLogger(getClass()).info("  MEMBER = " + armember);
+//    armember =
+//        contentClient.getAssociationReferenceConceptRefSetMember(
+//            armember.getId(), authToken);
+//    Logger.getLogger(getClass()).info("  MEMBER = " + armember);
 
     // pause
     System.out.println("\nPause to show concept in Swagger API");
@@ -274,7 +270,6 @@ public class DemoServiceTest {
 
     // un-retire the concept and retire the "reason for inactivation"
     Logger.getLogger(getClass()).info("  Unretire concept");
-    concept = contentClient.getConcept(concept.getId(), authToken);
     concept.setActive(true);
     for (Relationship relationship : concept.getRelationships()) {
       // inactivate stated rels
@@ -290,13 +285,12 @@ public class DemoServiceTest {
     Logger.getLogger(getClass()).info("  Retire reason for inactivation");
     editClient.removeAssociationReferenceRefSetMember(armember.getId(),
         authToken);
-    armember =
-        contentClient.getAssociationReferenceConceptRefSetMember(
-            armember.getId(), authToken);
-    Logger.getLogger(getClass()).info("  MEMBER = " + armember);
+//    armember =
+//        contentClient.getAssociationReferenceConceptRefSetMember(
+//            armember.getId(), authToken);
+//    Logger.getLogger(getClass()).info("  MEMBER = " + armember);
 
     // log concept
-    concept = contentClient.getConcept(concept.getId(), authToken);
     Logger.getLogger(getClass()).info(
         ConceptReportHelper.getConceptReport(concept));
 
@@ -332,7 +326,6 @@ public class DemoServiceTest {
       }      
     }
     // log concept
-    concept = contentClient.getConcept(concept.getId(), authToken);
     Logger.getLogger(getClass()).info(
         ConceptReportHelper.getConceptReport(concept));
 

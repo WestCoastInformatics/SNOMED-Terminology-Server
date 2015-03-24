@@ -6,7 +6,6 @@ package org.ihtsdo.otf.ts.test.rest;
 import static org.junit.Assert.assertTrue;
 
 import org.ihtsdo.otf.ts.helpers.PfsParameterJpa;
-import org.ihtsdo.otf.ts.rf2.AssociationReferenceConceptRefSetMember;
 import org.ihtsdo.otf.ts.rf2.Concept;
 import org.ihtsdo.otf.ts.rf2.Description;
 import org.ihtsdo.otf.ts.rf2.LanguageRefSetMember;
@@ -280,46 +279,7 @@ public class ContentServiceRestDegenerateUseTest extends ContentServiceRestTest 
             getParameterTypes(validParameters)), validParameters);
   }
   
-  
-  /**
-   * Test retrieval of SNOMEDCT refsetMembers
-   * NOTE:  Ref Set Member id hardcoded, as concept's set is @XmlTransient
-   */
-  /**
-   * Test relationship services
-   *
-   * @throws Exception the exception
-   */
-  @Test
-  public void testDegenerateUseRestContent006() throws Exception {
 
-    String refSetMemberTerminologyId = "d9835599-19ac-56bd-89ad-18b37713dfbd";
-
-    AssociationReferenceConceptRefSetMember refsetMember = 
-        contentService.getAssociationReferenceConceptRefSetMember(
-            refSetMemberTerminologyId, 
-            testTerminology, testVersion, authToken);
-
-    // get relationship
-    validParameters = new Object[] {
-        refsetMember.getTerminologyId(), testTerminology, testVersion, authToken
-    };
-
-    DegenerateUseMethodTestHelper.testDegenerateArguments(
-        contentService,
-        contentService.getClass().getMethod("getAssociationReferenceConceptRefSetMember",
-            getParameterTypes(validParameters)), validParameters);
-
-    // get relationship
-    validParameters = new Object[] {
-        refsetMember.getId(), authToken
-    };
-
-    DegenerateUseMethodTestHelper.testDegenerateArguments(
-        contentService,
-        contentService.getClass().getMethod("getAssociationReferenceConceptRefSetMember",
-            getParameterTypes(validParameters)), validParameters);
-  }
   
   /**
    * Teardown.

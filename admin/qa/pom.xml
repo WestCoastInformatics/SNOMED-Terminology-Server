@@ -78,10 +78,25 @@
                         AND a.defaultPreferredName = b.term);
                       </value>
                     </property>
+                    
+                    <property>
+                      <name>Duplicate relationships from
+                        source/destination/group/type</name>
+                      <value>
+                        SELECT a.terminologyId, b.terminologyId, a.relationshipGroup, a.typeId,
+                        a.terminology
+                        FROM
+                        relationships a, concepts b, concepts c
+                        WHERE a.sourceConcept_id = b.id and a.destinationConcept_id = c.id
+                        GROUP BY a.terminologyId, b.terminologyId, a.relationshipGroup,
+                        a.typeId, a.terminology
+                        HAVING count(*)>1;
+                      </value>
+                    </property>
 
-  <!-- Validate projects -->
-  <!-- Validate release info -->
-  
+                    <!-- Validate projects -->
+                    <!-- Validate release info -->
+
                   </queries>
                 </configuration>
               </execution>

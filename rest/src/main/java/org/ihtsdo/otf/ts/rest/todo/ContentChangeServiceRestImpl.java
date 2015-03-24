@@ -19,6 +19,7 @@ import org.ihtsdo.otf.ts.jpa.ProjectJpa;
 import org.ihtsdo.otf.ts.jpa.algo.StartEditingCycleAlgorithm;
 import org.ihtsdo.otf.ts.jpa.algo.TransitiveClosureAlgorithm;
 import org.ihtsdo.otf.ts.jpa.services.ContentServiceJpa;
+import org.ihtsdo.otf.ts.jpa.services.ProjectServiceJpa;
 import org.ihtsdo.otf.ts.jpa.services.SecurityServiceJpa;
 import org.ihtsdo.otf.ts.jpa.services.helper.TerminologyUtility;
 import org.ihtsdo.otf.ts.rest.ContentChangeServiceRest;
@@ -34,6 +35,7 @@ import org.ihtsdo.otf.ts.rf2.jpa.DescriptionJpa;
 import org.ihtsdo.otf.ts.rf2.jpa.LanguageRefSetMemberJpa;
 import org.ihtsdo.otf.ts.rf2.jpa.RelationshipJpa;
 import org.ihtsdo.otf.ts.services.ContentService;
+import org.ihtsdo.otf.ts.services.ProjectService;
 import org.ihtsdo.otf.ts.services.SecurityService;
 import org.ihtsdo.otf.ts.services.helpers.ConceptReportHelper;
 
@@ -825,9 +827,9 @@ public class ContentChangeServiceRestImpl extends RootServiceRestImpl implements
       authenticate(securityService, authToken, "add project", UserRole.AUTHOR);
 
       // Create service and configure transaction scope
-      ContentService contentService = new ContentServiceJpa();
-      contentService.setTransactionPerOperation(false);
-      contentService.beginTransaction();
+      ProjectService projectService = new ProjectServiceJpa();
+      projectService.setTransactionPerOperation(false);
+      projectService.beginTransaction();
 
       // Run graph resolver
       if (project != null) {
@@ -838,11 +840,11 @@ public class ContentChangeServiceRestImpl extends RootServiceRestImpl implements
         throw new Exception("Unexpected null project");
       }
 
-      Project newProject = contentService.addProject(project);
+      Project newProject = projectService.addProject(project);
 
       // Commit, close, and return
-      contentService.commit();
-      contentService.close();
+      projectService.commit();
+      projectService.close();
       return newProject;
     } catch (Exception e) {
       handleException(e, "trying to add a project");
@@ -878,15 +880,15 @@ public class ContentChangeServiceRestImpl extends RootServiceRestImpl implements
           UserRole.AUTHOR);
 
       // Create service and configure transaction scope
-      ContentService contentService = new ContentServiceJpa();
-      contentService.setTransactionPerOperation(false);
-      contentService.beginTransaction();
+      ProjectService projectService = new ProjectServiceJpa();
+      projectService.setTransactionPerOperation(false);
+      projectService.beginTransaction();
 
       // update project
-      contentService.updateProject(project);
+      projectService.updateProject(project);
       // Commit, close, and return
-      contentService.commit();
-      contentService.close();
+      projectService.commit();
+      projectService.close();
 
     } catch (Exception e) {
       handleException(e, "trying to update a project");
@@ -915,9 +917,9 @@ public class ContentChangeServiceRestImpl extends RootServiceRestImpl implements
       authenticate(securityService, authToken, "remove project",
           UserRole.AUTHOR);
       // Remove project
-      ContentService contentService = new ContentServiceJpa();
-      contentService.removeProject(id);
-      contentService.close();
+      ProjectService projectService = new ProjectServiceJpa();
+      projectService.removeProject(id);
+      projectService.close();
     } catch (Exception e) {
       handleException(e, "trying to remove a project");
     }
