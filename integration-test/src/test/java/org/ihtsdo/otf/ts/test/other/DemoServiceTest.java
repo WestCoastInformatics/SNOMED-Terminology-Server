@@ -263,10 +263,10 @@ public class DemoServiceTest {
             (AssociationReferenceConceptRefSetMemberJpa) armember, authToken);
 
     // log member
-    armember =
-        contentClient.getAssociationReferenceConceptRefSetMember(
-            armember.getId(), authToken);
-    Logger.getLogger(getClass()).info("  MEMBER = " + armember);
+//    armember =
+//        contentClient.getAssociationReferenceConceptRefSetMember(
+//            armember.getId(), authToken);
+//    Logger.getLogger(getClass()).info("  MEMBER = " + armember);
 
     // pause
     System.out.println("\nPause to show concept in Swagger API");
@@ -290,10 +290,10 @@ public class DemoServiceTest {
     Logger.getLogger(getClass()).info("  Retire reason for inactivation");
     editClient.removeAssociationReferenceRefSetMember(armember.getId(),
         authToken);
-    armember =
-        contentClient.getAssociationReferenceConceptRefSetMember(
-            armember.getId(), authToken);
-    Logger.getLogger(getClass()).info("  MEMBER = " + armember);
+//    armember =
+//        contentClient.getAssociationReferenceConceptRefSetMember(
+//            armember.getId(), authToken);
+//    Logger.getLogger(getClass()).info("  MEMBER = " + armember);
 
     // log concept
     concept = contentClient.getConcept(concept.getId(), authToken);

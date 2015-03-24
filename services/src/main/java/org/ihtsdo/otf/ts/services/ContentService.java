@@ -3,17 +3,16 @@
  */
 package org.ihtsdo.otf.ts.services;
 
-import org.ihtsdo.otf.ts.Project;
-import org.ihtsdo.otf.ts.UserRole;
 import org.ihtsdo.otf.ts.helpers.AssociationReferenceRefSetMemberList;
 import org.ihtsdo.otf.ts.helpers.AttributeValueRefSetMemberList;
 import org.ihtsdo.otf.ts.helpers.ComplexMapRefSetMemberList;
 import org.ihtsdo.otf.ts.helpers.ConceptList;
+import org.ihtsdo.otf.ts.helpers.DescriptionTypeRefSetMemberList;
 import org.ihtsdo.otf.ts.helpers.LanguageRefSetMemberList;
 import org.ihtsdo.otf.ts.helpers.ModuleDependencyRefSetMemberList;
 import org.ihtsdo.otf.ts.helpers.PfsParameter;
-import org.ihtsdo.otf.ts.helpers.ProjectList;
 import org.ihtsdo.otf.ts.helpers.RefsetDescriptorRefSetMemberList;
+import org.ihtsdo.otf.ts.helpers.RelationshipList;
 import org.ihtsdo.otf.ts.helpers.SearchCriteriaList;
 import org.ihtsdo.otf.ts.helpers.SearchResultList;
 import org.ihtsdo.otf.ts.helpers.SimpleMapRefSetMemberList;
@@ -37,6 +36,7 @@ import org.ihtsdo.otf.ts.services.handlers.ComputePreferredNameHandler;
 import org.ihtsdo.otf.ts.services.handlers.GraphResolutionHandler;
 import org.ihtsdo.otf.ts.services.handlers.IdentifierAssignmentHandler;
 
+// TODO: Auto-generated Javadoc
 /**
  * Generically represents a service for accessing content.
  */
@@ -252,6 +252,18 @@ public interface ContentService extends RootService {
   public void removeRelationship(Long id) throws Exception;
 
   /**
+   * Returns the inverse relationships for concept.
+   *
+   * @param terminologyId the terminology id
+   * @param terminology the terminology
+   * @param version the version
+   * @return the inverse relationships for concept
+   * @throws Exception the exception
+   */
+  public RelationshipList getInverseRelationshipsForConcept(
+    String terminologyId, String terminology, String version) throws Exception;
+
+  /**
    * Adds the transitive relationship.
    * 
    * @param transitiveRelationship the transitive relationship
@@ -311,6 +323,18 @@ public interface ContentService extends RootService {
    */
   public LanguageRefSetMemberList findLanguageRefSetMembers(String refsetId,
     String terminology, String version, PfsParameter pfs) throws Exception;
+
+  /**
+   * Returns the language ref set members for description.
+   *
+   * @param terminologyId the terminology id
+   * @param terminology the terminology
+   * @param version the version
+   * @return the language ref set members for description
+   * @throws Exception the exception
+   */
+  public LanguageRefSetMemberList getLanguageRefSetMembersForDescription(
+    String terminologyId, String terminology, String version) throws Exception;
 
   /**
    * Adds the language refset member.
@@ -375,6 +399,30 @@ public interface ContentService extends RootService {
   public AttributeValueRefSetMemberList findAttributeValueRefSetMembers(
     String refsetId, String terminology, String version, PfsParameter pfs)
     throws Exception;
+
+  /**
+   * Get attribute value ref set members for concept.
+   *
+   * @param terminologyId the terminology id
+   * @param terminology the terminology
+   * @param version the version
+   * @return the attribute value ref set member list
+   * @throws Exception the exception
+   */
+  public AttributeValueRefSetMemberList getAttributeValueRefSetMembersForConcept(
+    String terminologyId, String terminology, String version) throws Exception;
+
+  /**
+   * Get attribute value ref set members for description.
+   *
+   * @param terminologyId the terminology id
+   * @param terminology the terminology
+   * @param version the version
+   * @return the attribute value ref set member list
+   * @throws Exception the exception
+   */
+  public AttributeValueRefSetMemberList getAttributeValueRefSetMembersForDescription(
+    String terminologyId, String terminology, String version) throws Exception;
 
   /**
    * Adds the attribute value refset member.
@@ -442,6 +490,30 @@ public interface ContentService extends RootService {
     throws Exception;
 
   /**
+   * Get association reference ref set members for concept.
+   *
+   * @param terminologyId the terminology id
+   * @param terminology the terminology
+   * @param version the version
+   * @return the association reference ref set member list
+   * @throws Exception the exception
+   */
+  public AssociationReferenceRefSetMemberList getAssociationReferenceRefSetMembersForConcept(
+    String terminologyId, String terminology, String version) throws Exception;
+
+  /**
+   * Get association reference ref set members for description.
+   *
+   * @param terminologyId the terminology id
+   * @param terminology the terminology
+   * @param version the version
+   * @return the association reference ref set member list
+   * @throws Exception the exception
+   */
+  public AssociationReferenceRefSetMemberList getAssociationReferenceRefSetMembersForDescription(
+    String terminologyId, String terminology, String version) throws Exception;
+
+  /**
    * Adds the association reference refset member.
    * 
    * @param member the association reference refset member
@@ -507,6 +579,18 @@ public interface ContentService extends RootService {
     throws Exception;
 
   /**
+   * Returns the complex map ref set members for concept.
+   *
+   * @param terminologyId the terminology id
+   * @param terminology the terminology
+   * @param version the version
+   * @return the complex map ref set members for concept
+   * @throws Exception the exception
+   */
+  public ComplexMapRefSetMemberList getComplexMapRefSetMembersForConcept(
+    String terminologyId, String terminology, String version) throws Exception;
+
+  /**
    * Adds the complex map refset member.
    * 
    * @param member the complex map refset member
@@ -567,6 +651,18 @@ public interface ContentService extends RootService {
    */
   public SimpleMapRefSetMemberList findSimpleMapRefSetMembers(String refsetId,
     String terminology, String version, PfsParameter pfs) throws Exception;
+
+  /**
+   * Returns the simple map ref set members for concept.
+   *
+   * @param terminologyId the terminology id
+   * @param terminology the terminology
+   * @param version the version
+   * @return the simple map ref set members for concept
+   * @throws Exception the exception
+   */
+  public SimpleMapRefSetMemberList getSimpleMapRefSetMembersForConcept(
+    String terminologyId, String terminology, String version) throws Exception;
 
   /**
    * Adds the simple map refset member.
@@ -630,6 +726,18 @@ public interface ContentService extends RootService {
     String terminology, String version, PfsParameter pfs) throws Exception;
 
   /**
+   * Returns the simple ref set members for concept.
+   *
+   * @param terminologyId the terminology id
+   * @param terminology the terminology
+   * @param version the version
+   * @return the simple ref set members for concept
+   * @throws Exception the exception
+   */
+  public SimpleRefSetMemberList getSimpleRefSetMembersForConcept(
+    String terminologyId, String terminology, String version) throws Exception;
+
+  /**
    * Adds the simple refset member.
    * 
    * @param member the simple refset member
@@ -687,7 +795,7 @@ public interface ContentService extends RootService {
    * @param version the version
    * @return the refset descriptor ref set members for refset
    */
-  public RefsetDescriptorRefSetMemberList getRefsetDescriptorRefSetMembersForRefset(
+  public RefsetDescriptorRefSetMemberList getRefsetDescriptorRefSetMembers(
     String terminologyId, String terminology, String version);
 
   /**
@@ -741,16 +849,18 @@ public interface ContentService extends RootService {
     String terminologyId, String terminology, String version) throws Exception;
 
   /**
-   * Returns the description type ref set member for description type.
+   * Returns the description type ref set members for the specified parameters.
    *
    * @param terminologyId the terminology id
    * @param terminology the terminology
    * @param version the version
+   * @param pfs the pfs
    * @return the description type ref set member for description type
    * @throws Exception the exception
    */
-  public DescriptionTypeRefSetMember getDescriptionTypeRefSetMemberForDescriptionType(
-    String terminologyId, String terminology, String version) throws Exception;
+  public DescriptionTypeRefSetMemberList findDescriptionTypeRefSetMembers(
+    String terminologyId, String terminology, String version, PfsParameter pfs)
+    throws Exception;
 
   /**
    * Adds the description type refset member.
@@ -915,8 +1025,8 @@ public interface ContentService extends RootService {
    * @param version the version
    * @return the all simple ref set member terminology ids
    */
-  public StringList getAllSimpleRefSetMemberTerminologyIds(
-    String terminology, String version);
+  public StringList getAllSimpleRefSetMemberTerminologyIds(String terminology,
+    String version);
 
   /**
    * Clear transitive closure.
@@ -996,64 +1106,4 @@ public interface ContentService extends RootService {
    */
   public void setAssignIdentifiersFlag(boolean assignIdentifiersFlag);
 
-  /**
-   * Returns the concepts in scope.
-   *
-   * @param project the project
-   * @return the concepts in scope
-   * @throws Exception the exception
-   */
-  public ConceptList getConceptsInScope(Project project) throws Exception;
-
-  /**
-   * Returns the project.
-   *
-   * @param id the id
-   * @return the project
-   */
-  public Project getProject(Long id);
-
-  /**
-   * Adds the project.
-   *
-   * @param project the project
-   * @return the project
-   */
-  public Project addProject(Project project);
-
-  /**
-   * Update project.
-   *
-   * @param project the project
-   */
-  public void updateProject(Project project);
-
-  /**
-   * Removes the project.
-   *
-   * @param projectId the project id
-   */
-  public void removeProject(Long projectId);
-
-  /**
-   * Returns the projects.
-   *
-   * @return the projects
-   */
-  public ProjectList getProjects();
-
-  /**
-   * Returns the user role for project.
-   *
-   * @param username the username
-   * @param projectId the project id
-   * @return the user role for project
-   * @throws Exception the exception
-   */
-  public UserRole getUserRoleForProject(String username, Long projectId)
-    throws Exception;
-
-  
-  
-  
 }

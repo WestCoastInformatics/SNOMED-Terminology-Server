@@ -18,7 +18,6 @@ import org.ihtsdo.otf.ts.jpa.client.ContentClientRest;
 import org.ihtsdo.otf.ts.jpa.client.SecurityClientRest;
 import org.ihtsdo.otf.ts.rf2.Concept;
 import org.ihtsdo.otf.ts.rf2.Description;
-import org.ihtsdo.otf.ts.rf2.LanguageRefSetMember;
 import org.ihtsdo.otf.ts.rf2.Relationship;
 import org.ihtsdo.otf.ts.services.helpers.ConceptReportHelper;
 import org.junit.After;
@@ -282,119 +281,6 @@ public class ContentServiceTest {
     // TODO: need more tests
   }
 
-  /**
-   * Test get relationship for SNOMED. 10001005 246075003 3244643023 409822003
-   * @throws Exception
-   */
-  @Test
-  public void test007GetRelationshipSNOMED() throws Exception {
-    Logger.getLogger(getClass()).info(
-        "TEST - " + "3244643023, SNOMEDCT, latest, " + authToken);
-    Relationship relationship =
-        client.getRelationship("3244643023", "SNOMEDCT", "latest", authToken);
-    assertNotNull(relationship);
-    Concept source =
-        client.getSingleConcept(relationship.getSourceConcept()
-            .getTerminologyId(), "SNOMEDCT", "latest", authToken);
-    assertNotNull(source);
-    Concept destination =
-        client.getSingleConcept(relationship.getDestinationConcept()
-            .getTerminologyId(), "SNOMEDCT", "latest", authToken);
-    assertNotNull(destination);
-    assertEquals(relationship.getSourceConcept().getTerminologyId(),
-        source.getTerminologyId());
-    assertEquals(relationship.getDestinationConcept().getTerminologyId(),
-        destination.getTerminologyId());
-    assertEquals(relationship.getTypeId(), "246075003");
-    // TODO: need more tests
-  }
-
-  /**
-   * Test get relationship for ICD9CM.
-   * @throws Exception
-   */
-  @Test
-  public void test007GetRelationshipICD9CM() throws Exception {
-    // N/A - no reliable relationship ids in ICD9CM
-  }
-
-  /**
-   * Test get relationship for SNOMED.
-   * @throws Exception
-   */
-  @Test
-  public void test008GetRelationshipSNOMED() throws Exception {
-    Logger.getLogger(getClass()).info(
-        "TEST - " + "3244643023, SNOMEDCT, latest, " + authToken);
-    Relationship relationship =
-        client.getRelationship("3244643023", "SNOMEDCT", "latest", authToken);
-    relationship = client.getRelationship(relationship.getId(), authToken);
-    assertNotNull(relationship);
-    Concept source =
-        client.getSingleConcept(relationship.getSourceConcept()
-            .getTerminologyId(), "SNOMEDCT", "latest", authToken);
-    assertNotNull(source);
-    Concept destination =
-        client.getSingleConcept(relationship.getDestinationConcept()
-            .getTerminologyId(), "SNOMEDCT", "latest", authToken);
-    assertNotNull(destination);
-    assertEquals(relationship.getSourceConcept().getTerminologyId(),
-        source.getTerminologyId());
-    assertEquals(relationship.getDestinationConcept().getTerminologyId(),
-        destination.getTerminologyId());
-    assertEquals(relationship.getTypeId(), "246075003");
-  }
-
-  /**
-   * Test get language refset member for SNOMED.
-   * 100114019  82671181-8241-5e3e-923e-1d756c6ca9ec    900000000000548007
-   * @throws Exception
-   */
-  @Test
-  public void test009GetLanguageRefSetMemberSNOMED() throws Exception {
-    Logger.getLogger(getClass()).info(
-        "TEST - " + "82671181-8241-5e3e-923e-1d756c6ca9ec, SNOMEDCT, latest, " + authToken);
-    LanguageRefSetMember member =
-        client.getLanguageRefSetMember("82671181-8241-5e3e-923e-1d756c6ca9ec", "SNOMEDCT", "latest", authToken);
-    assertNotNull(member);
-    Description description = client.getDescription(
-        member.getDescription().getTerminologyId(),
-        "SNOMEDCT", "latest", authToken);
-    assertNotNull(description);
-    assertEquals("100114019", description.getTerminologyId());
-    assertEquals("900000000000548007", member.getAcceptabilityId());
-
-  }
-
-  /**
-   * Test get language refset member for ICD9CM.
-   * @throws Exception
-   */
-  @Test
-  public void test009GetLanguageRefSetMemberICD9CM() throws Exception {
-     // N/A - no language refset members in ICD9CM.
-  }
-
-  /**
-   * Test get language refset member for SNOMED.
-   * @throws Exception
-   */
-  @Test
-  public void test010GetLanguageRefSetMemberSNOMED() throws Exception {
-    Logger.getLogger(getClass()).info(
-        "TEST - " + "82671181-8241-5e3e-923e-1d756c6ca9ec, SNOMEDCT, latest, " + authToken);
-    LanguageRefSetMember member =
-        client.getLanguageRefSetMember("82671181-8241-5e3e-923e-1d756c6ca9ec", "SNOMEDCT", "latest", authToken);
-    member = client.getLanguageRefSetMember(member.getId(), authToken);
-    assertNotNull(member);
-    Description description = client.getDescription(
-        member.getDescription().getTerminologyId(),
-        "SNOMEDCT", "latest", authToken);
-    assertNotNull(description);
-    assertEquals("100114019", description.getTerminologyId());
-    assertEquals("900000000000548007", member.getAcceptabilityId());
-
-  }
 
 
   /**

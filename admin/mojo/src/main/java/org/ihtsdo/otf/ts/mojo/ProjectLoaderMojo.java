@@ -25,9 +25,9 @@ import org.apache.maven.plugin.MojoFailureException;
 import org.ihtsdo.otf.ts.Project;
 import org.ihtsdo.otf.ts.helpers.ConfigUtility;
 import org.ihtsdo.otf.ts.jpa.ProjectJpa;
-import org.ihtsdo.otf.ts.jpa.client.ContentClientRest;
+import org.ihtsdo.otf.ts.jpa.client.ProjectClientRest;
 import org.ihtsdo.otf.ts.jpa.services.SecurityServiceJpa;
-import org.ihtsdo.otf.ts.rest.impl.ContentServiceRestImpl;
+import org.ihtsdo.otf.ts.rest.impl.ProjectServiceRestImpl;
 import org.ihtsdo.otf.ts.services.SecurityService;
 
 /**
@@ -179,15 +179,15 @@ public class ProjectLoaderMojo extends AbstractMojo {
       if (!serverRunning) {
         getLog().info("Running directly");
 
-        ContentServiceRestImpl contentService = new ContentServiceRestImpl();
-        contentService.addProject(project, authToken);
+        ProjectServiceRestImpl projectService = new ProjectServiceRestImpl();
+        projectService.addProject(project, authToken);
 
       } else {
         getLog().info("Running against server");
 
         // invoke the client
-        ContentClientRest client = new ContentClientRest(properties);
-        client.addProject(project, authToken);
+        ProjectClientRest projectService = new ProjectClientRest(properties);
+        projectService.addProject(project, authToken);
       }
       service.close();
       getLog().info("done ...");

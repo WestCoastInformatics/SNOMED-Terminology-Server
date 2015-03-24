@@ -3,33 +3,26 @@
  */
 package org.ihtsdo.otf.ts.rest;
 
-import org.ihtsdo.otf.ts.Project;
+import org.ihtsdo.otf.ts.helpers.AssociationReferenceRefSetMemberList;
+import org.ihtsdo.otf.ts.helpers.AttributeValueRefSetMemberList;
+import org.ihtsdo.otf.ts.helpers.ComplexMapRefSetMemberList;
 import org.ihtsdo.otf.ts.helpers.ConceptList;
+import org.ihtsdo.otf.ts.helpers.DescriptionTypeRefSetMemberList;
+import org.ihtsdo.otf.ts.helpers.LanguageRefSetMemberList;
+import org.ihtsdo.otf.ts.helpers.ModuleDependencyRefSetMemberList;
 import org.ihtsdo.otf.ts.helpers.PfsParameterJpa;
-import org.ihtsdo.otf.ts.helpers.ProjectList;
+import org.ihtsdo.otf.ts.helpers.RefsetDescriptorRefSetMemberList;
+import org.ihtsdo.otf.ts.helpers.RelationshipList;
 import org.ihtsdo.otf.ts.helpers.SearchResultList;
-import org.ihtsdo.otf.ts.jpa.ProjectJpa;
-import org.ihtsdo.otf.ts.rf2.AssociationReferenceConceptRefSetMember;
+import org.ihtsdo.otf.ts.helpers.SimpleMapRefSetMemberList;
+import org.ihtsdo.otf.ts.helpers.SimpleRefSetMemberList;
 import org.ihtsdo.otf.ts.rf2.Concept;
 import org.ihtsdo.otf.ts.rf2.Description;
-import org.ihtsdo.otf.ts.rf2.LanguageRefSetMember;
-import org.ihtsdo.otf.ts.rf2.Relationship;
 
 /**
  * Represents a content available via a REST service.
  */
 public interface ContentServiceRest {
-
-  /**
-   * Adds the project.
-   *
-   * @param project the project
-   * @param authToken the auth token
-   * @return the project
-   * @throws Exception the exception
-   */
-  public Project addProject(ProjectJpa project, String authToken)
-    throws Exception;
 
   /**
    * Returns the concept for search string.
@@ -156,109 +149,263 @@ public interface ContentServiceRest {
   public Description getDescription(Long id, String authToken) throws Exception;
 
   /**
-   * Returns the relationship for the specified parameters.
+   * Find association reference ref set members.
    *
-   * @param terminologyId the terminology id
+   * @param refSetId the ref set id
    * @param terminology the terminology
    * @param version the version
+   * @param pfs the pfs
    * @param authToken the auth token
-   * @return the relationship
+   * @return the association reference ref set member list
    * @throws Exception the exception
    */
-  public Relationship getRelationship(String terminologyId, String terminology,
-    String version, String authToken) throws Exception;
+  public AssociationReferenceRefSetMemberList findAssociationReferenceRefSetMembers(
+    String refSetId, String terminology, String version, PfsParameterJpa pfs,
+    String authToken) throws Exception;
 
   /**
-   * Gets the relationship for the specified identifier.
+   * Find attribute value ref set members.
    *
-   * @param id the internal relationship id. Used when other REST APIs return
-   *          information that includes internal identifiers.
+   * @param refSetId the ref set id
+   * @param terminology the terminology
+   * @param version the version
+   * @param pfs the pfs
    * @param authToken the auth token
-   * @return the relationship
+   * @return the attribute value ref set member list
    * @throws Exception the exception
    */
-  public Relationship getRelationship(Long id, String authToken)
+  public AttributeValueRefSetMemberList findAttributeValueRefSetMembers(
+    String refSetId, String terminology, String version, PfsParameterJpa pfs,
+    String authToken) throws Exception;
+
+  /**
+   * Find complex map ref set members.
+   *
+   * @param refSetId the ref set id
+   * @param terminology the terminology
+   * @param version the version
+   * @param pfs the pfs
+   * @param authToken the auth token
+   * @return the complex map ref set member list
+   * @throws Exception the exception
+   */
+  public ComplexMapRefSetMemberList findComplexMapRefSetMembers(
+    String refSetId, String terminology, String version, PfsParameterJpa pfs,
+    String authToken) throws Exception;
+
+  /**
+   * Find description type ref set members.
+   *
+   * @param refSetId the ref set id
+   * @param terminology the terminology
+   * @param version the version
+   * @param pfs the pfs
+   * @param authToken the auth token
+   * @return the description type ref set member list
+   * @throws Exception the exception
+   */
+  public DescriptionTypeRefSetMemberList findDescriptionTypeRefSetMembers(
+    String refSetId, String terminology, String version, PfsParameterJpa pfs,
+    String authToken) throws Exception;
+
+  /**
+   * Find language ref set members.
+   *
+   * @param refSetId the ref set id
+   * @param terminology the terminology
+   * @param version the version
+   * @param pfs the pfs
+   * @param authToken the auth token
+   * @return the language ref set member list
+   * @throws Exception the exception
+   */
+  public LanguageRefSetMemberList findLanguageRefSetMembers(String refSetId,
+    String terminology, String version, PfsParameterJpa pfs, String authToken)
     throws Exception;
 
   /**
-   * Returns the language refset member for the specified parameters.
+   * Get module dependency ref set members for the specified module.
    *
-   * @param terminologyId the terminology id
+   * @param moduleId the ref set id
    * @param terminology the terminology
    * @param version the version
    * @param authToken the auth token
-   * @return the language refset member
+   * @return the module dependency ref set member list
    * @throws Exception the exception
    */
-  public LanguageRefSetMember getLanguageRefSetMember(String terminologyId,
-    String terminology, String version, String authToken) throws Exception;
-
-  /**
-   * Gets the language refset member for the specified identifier.
-   *
-   * @param id the internal language refset member id. Used when other REST APIs
-   *          return information that includes internal identifiers.
-   * @param authToken the auth token
-   * @return the language refset member
-   * @throws Exception the exception
-   */
-  public LanguageRefSetMember getLanguageRefSetMember(Long id, String authToken)
+  public ModuleDependencyRefSetMemberList getModuleDependencyRefSetMembersForModule(
+    String moduleId, String terminology, String version, String authToken)
     throws Exception;
 
   /**
-   * Returns the association reference concept ref set member.
+   * Get refset descriptor ref set members.
+   *
+   * @param refSetId the ref set id
+   * @param terminology the terminology
+   * @param version the version
+   * @param authToken the auth token
+   * @return the refset descriptor ref set member list
+   * @throws Exception the exception
+   */
+  public RefsetDescriptorRefSetMemberList getRefsetDescriptorRefSetMembers(
+    String refSetId, String terminology, String version, String authToken)
+    throws Exception;
+
+  /**
+   * Find simple map ref set members.
+   *
+   * @param refSetId the ref set id
+   * @param terminology the terminology
+   * @param version the version
+   * @param pfs the pfs
+   * @param authToken the auth token
+   * @return the simple map ref set member list
+   * @throws Exception the exception
+   */
+  public SimpleMapRefSetMemberList findSimpleMapRefSetMembers(String refSetId,
+    String terminology, String version, PfsParameterJpa pfs, String authToken)
+    throws Exception;
+
+  /**
+   * Find simple ref set members.
+   *
+   * @param refSetId the ref set id
+   * @param terminology the terminology
+   * @param version the version
+   * @param pfs the pfs
+   * @param authToken the auth token
+   * @return the simple ref set member list
+   * @throws Exception the exception
+   */
+  public SimpleRefSetMemberList findSimpleRefSetMembers(String refSetId,
+    String terminology, String version, PfsParameterJpa pfs, String authToken)
+    throws Exception;
+
+  /**
+   * Returns the association reference ref set members for concept.
    *
    * @param terminologyId the terminology id
    * @param terminology the terminology
    * @param version the version
    * @param authToken the auth token
-   * @return the association reference concept ref set member
+   * @return the association reference ref set members for concept
    * @throws Exception the exception
    */
-  public AssociationReferenceConceptRefSetMember getAssociationReferenceConceptRefSetMember(
+  public AssociationReferenceRefSetMemberList getAssociationReferenceRefSetMembersForConcept(
     String terminologyId, String terminology, String version, String authToken)
     throws Exception;
 
   /**
-   * Returns the association reference concept ref set member.
+   * Returns the association reference ref set members for description.
    *
-   * @param id the id
+   * @param terminologyId the terminology id
+   * @param terminology the terminology
+   * @param version the version
    * @param authToken the auth token
-   * @return the association reference concept ref set member
+   * @return the association reference ref set members for description
    * @throws Exception the exception
    */
-  public AssociationReferenceConceptRefSetMember getAssociationReferenceConceptRefSetMember(
-    Long id, String authToken) throws Exception;
-
-  /**
-   * Returns the concepts in scope.
-   *
-   * @param projectId the project id
-   * @param authToken the auth token
-   * @return the concepts in scope
-   * @throws Exception the exception
-   */
-  public ConceptList getConceptsInScope(Long projectId, String authToken)
+  public AssociationReferenceRefSetMemberList getAssociationReferenceRefSetMembersForDescription(
+    String terminologyId, String terminology, String version, String authToken)
     throws Exception;
 
   /**
-   * Returns the project.
+   * Returns the attribute value ref set members for concept.
    *
-   * @param id the id
+   * @param terminologyId the terminology id
+   * @param terminology the terminology
+   * @param version the version
    * @param authToken the auth token
-   * @return the project
+   * @return the attribute value ref set members for concept
    * @throws Exception the exception
    */
-  public Project getProject(Long id, String authToken) throws Exception;
+  public AttributeValueRefSetMemberList getAttributeValueRefSetMembersForConcept(
+    String terminologyId, String terminology, String version, String authToken)
+    throws Exception;
 
   /**
-   * Returns the projects.
+   * Returns the attribute value ref set members for description.
    *
+   * @param terminologyId the terminology id
+   * @param terminology the terminology
+   * @param version the version
    * @param authToken the auth token
-   * @return the projects
+   * @return the attribute value ref set members for description
    * @throws Exception the exception
    */
-  public ProjectList getProjects(String authToken) throws Exception;
+  public AttributeValueRefSetMemberList getAttributeValueRefSetMembersForDescription(
+    String terminologyId, String terminology, String version, String authToken)
+    throws Exception;
+
+  /**
+   * Returns the complex map ref set members for concept.
+   *
+   * @param terminologyId the terminology id
+   * @param terminology the terminology
+   * @param version the version
+   * @param authToken the auth token
+   * @return the complex map ref set members for concept
+   * @throws Exception the exception
+   */
+  public ComplexMapRefSetMemberList getComplexMapRefSetMembersForConcept(
+    String terminologyId, String terminology, String version, String authToken)
+    throws Exception;
+
+  /**
+   * Returns the language ref set members for description.
+   *
+   * @param terminologyId the terminology id
+   * @param terminology the terminology
+   * @param version the version
+   * @param authToken the auth token
+   * @return the language ref set members for description
+   * @throws Exception the exception
+   */
+  public LanguageRefSetMemberList getLanguageRefSetMembersForDescription(
+    String terminologyId, String terminology, String version, String authToken)
+    throws Exception;
+
+  /**
+   * Returns the simple map ref set members for concept.
+   *
+   * @param terminologyId the terminology id
+   * @param terminology the terminology
+   * @param version the version
+   * @param authToken the auth token
+   * @return the simple map ref set members for concept
+   * @throws Exception the exception
+   */
+  public SimpleMapRefSetMemberList getSimpleMapRefSetMembersForConcept(
+    String terminologyId, String terminology, String version, String authToken)
+    throws Exception;
+
+  /**
+   * Returns the simple ref set members for concept.
+   *
+   * @param terminologyId the terminology id
+   * @param terminology the terminology
+   * @param version the version
+   * @param authToken the auth token
+   * @return the simple ref set members for concept
+   * @throws Exception the exception
+   */
+  public SimpleRefSetMemberList getSimpleRefSetMembersForConcept(
+    String terminologyId, String terminology, String version, String authToken)
+    throws Exception;
+
+  /**
+   * Returns the inverse relationships for concept.
+   *
+   * @param terminologyId the terminology id
+   * @param terminology the terminology
+   * @param version the version
+   * @param authToken the auth token
+   * @return the inverse relationships for concept
+   * @throws Exception the exception
+   */
+  public RelationshipList getInverseRelationshipsForConcept(
+    String terminologyId, String terminology, String version, String authToken)
+    throws Exception;
 
   /**
    * Recomputes lucene indexes for the specified objects as a comma-separated
@@ -270,8 +417,7 @@ public interface ContentServiceRest {
    */
   public void luceneReindex(String indexedObjects, String authToken)
     throws Exception;
-  
-  
+
   /**
    * Compute transitive closure for latest version of a terminology.
    *
@@ -279,7 +425,8 @@ public interface ContentServiceRest {
    * @param authToken the auth token
    * @throws Exception the exception
    */
-  public void computeTransitiveClosure(String terminology, String authToken) throws Exception;
+  public void computeTransitiveClosure(String terminology, String authToken)
+    throws Exception;
 
   /**
    * Load terminology snapshot from RF2 directory.
@@ -290,9 +437,8 @@ public interface ContentServiceRest {
    * @param authToken the auth token
    * @throws Exception the exception
    */
-  public void loadTerminologyRf2Snapshot(String terminology,
-    String version, String inputDir, String authToken)
-    throws Exception;
+  public void loadTerminologyRf2Snapshot(String terminology, String version,
+    String inputDir, String authToken) throws Exception;
 
   /**
    * Load terminology full from RF2 directory.
@@ -303,9 +449,8 @@ public interface ContentServiceRest {
    * @param authToken the auth token
    * @throws Exception the exception
    */
-  public void loadTerminologyRf2Full(String terminology,
-    String version, String inputDir, String authToken)
-    throws Exception;
+  public void loadTerminologyRf2Full(String terminology, String version,
+    String inputDir, String authToken) throws Exception;
 
   /**
    * Load terminology delta from RF2 directory.
@@ -327,9 +472,8 @@ public interface ContentServiceRest {
    * @param authToken the auth token
    * @throws Exception the exception
    */
-  public void loadTerminologyClaml(String terminology,
-    String version, String inputFile, String authToken)
-    throws Exception;
+  public void loadTerminologyClaml(String terminology, String version,
+    String inputFile, String authToken) throws Exception;
 
   /**
    * Removes the terminology.
