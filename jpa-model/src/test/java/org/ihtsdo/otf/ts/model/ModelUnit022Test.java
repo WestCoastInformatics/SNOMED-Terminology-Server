@@ -85,6 +85,17 @@ public class ModelUnit022Test {
     assertTrue(tester.testCopyConstructor(User.class));
   }
 
+
+  /**
+   * Test not null fields.
+   *
+   * @throws Exception the exception
+   */
+  @Test
+  public void testModelNotNullField022() throws Exception {
+    // n/a
+  }
+  
   /**
    * Teardown.
    */

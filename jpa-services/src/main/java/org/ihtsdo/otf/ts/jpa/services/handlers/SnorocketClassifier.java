@@ -372,6 +372,7 @@ public class SnorocketClassifier implements Classifier {
    * @param snorelB the snorel b
    * @throws Exception the exception
    */
+  @SuppressWarnings("null")
   private void compareAndWriteBack(List<Relationship> snorelA,
     List<Relationship> snorelB) throws Exception {
 
@@ -851,7 +852,7 @@ public class SnorocketClassifier implements Classifier {
     ContentService service = new ContentServiceJpa();
     org.ihtsdo.otf.ts.rf2.Concept roleRoot =
         service.getConcept((long) roleRootConcept);
-    ConceptList list = service.getDescendantConcepts(roleRoot, null);
+    ConceptList list = service.findDescendantConcepts(roleRoot, null);
 
     roles = new int[list.getCount() + 1];
     // add isa

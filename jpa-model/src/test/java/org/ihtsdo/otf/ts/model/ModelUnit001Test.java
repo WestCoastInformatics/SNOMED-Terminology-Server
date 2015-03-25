@@ -10,6 +10,7 @@ import org.ihtsdo.otf.ts.Project;
 import org.ihtsdo.otf.ts.helpers.CopyConstructorTester;
 import org.ihtsdo.otf.ts.helpers.EqualsHashcodeTester;
 import org.ihtsdo.otf.ts.helpers.GetterSetterTester;
+import org.ihtsdo.otf.ts.helpers.NullableFieldTester;
 import org.ihtsdo.otf.ts.helpers.XmlSerializationTester;
 import org.ihtsdo.otf.ts.jpa.ProjectJpa;
 import org.junit.After;
@@ -124,6 +125,27 @@ public class ModelUnit001Test {
     // Set up objects
     tester.proxy(Set.class, 1, s1);
     assertTrue(tester.testXmlSerialization());
+  }
+  
+  /**
+   * Test not null fields.
+   *
+   * @throws Exception the exception
+   */
+  @Test
+  public void testModelNotNullField001() throws Exception {
+    Logger.getLogger(getClass()).debug("TEST testModelNotNullField001");
+    NullableFieldTester tester = new NullableFieldTester(object);
+    tester.include("lastModified");
+    tester.include("lastModifiedBy");
+    tester.include("name");
+    tester.include("description");
+    tester.include("isPublic");
+    tester.include("terminology");
+    tester.include("terminologyVersion");
+    tester.include("scopeDescendantsFlag");
+    tester.include("scopeExcludesDescendantsFlag");
+    assertTrue(tester.testNotNullFields());
   }
 
   /**

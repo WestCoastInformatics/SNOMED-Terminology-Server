@@ -216,51 +216,6 @@ public class ContentServiceRestImpl extends RootServiceRestImpl implements
       return null;
     }
   }
-  
-  /*
-   * (non-Javadoc)
-   * 
-   * @see
-   * org.ihtsdo.otf.ts.rest.ContentServiceRest#getDescendantConcepts(java.lang
-   * .String, java.lang.String, java.lang.String,
-   * org.ihtsdo.otf.ts.helpers.PfsParameterJpa, java.lang.String)
-   */
-  @Override
-  @POST
-  @Path("/concepts/{terminology}/{version}/{terminologyId}/parents")
-  @ApiOperation(value = "Get descendants", notes = "Gets the descendant concepts for the specified id.", response = ConceptList.class)
-  public ConceptList getParentConcepts(
-    @ApiParam(value = "Concept terminology id, e.g. 102751005", required = true) @PathParam("terminologyId") String terminologyId,
-    @ApiParam(value = "Concept terminology name, e.g. SNOMEDCT", required = true) @PathParam("terminology") String terminology,
-    @ApiParam(value = "Concept terminology version, e.g. latest", required = true) @PathParam("version") String version,
-    @ApiParam(value = "PFS Parameter, e.g. '{ \"startIndex\":\"1\", \"maxResults\":\"5\" }'", required = false) PfsParameterJpa pfs,
-    @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken) {
-
-    Logger.getLogger(getClass()).info(
-        "RESTful call (Content): /concept/" + terminology + "/" + version + "/"
-            + terminologyId + "/parents");
-
-    try {
-      authenticate(securityService, authToken,
-          "retrieve the parent concepts", UserRole.VIEWER);
-
-      ContentService contentService = new ContentServiceJpa();
-      Concept concept =
-          contentService.getSingleConcept(terminologyId, terminology, version);
-      ConceptList list = contentService.getParentConcepts(concept, pfs);
-      for (Concept c : list.getObjects()) {
-        contentService.getGraphResolutionHandler().resolve(
-            c,
-            TerminologyUtility.getHierarchcialIsaRels(c.getTerminology(),
-                c.getTerminologyVersion()));
-      }
-      contentService.close();
-      return list;
-    } catch (Exception e) {
-      handleException(e, "trying to retrieve parent concepts");
-      return null;
-    }
-  }
 
   /*
    * (non-Javadoc)
@@ -292,7 +247,7 @@ public class ContentServiceRestImpl extends RootServiceRestImpl implements
       ContentService contentService = new ContentServiceJpa();
       Concept concept =
           contentService.getSingleConcept(terminologyId, terminology, version);
-      ConceptList list = contentService.getChildConcepts(concept, pfs);
+      ConceptList list = contentService.findChildConcepts(concept, pfs);
       for (Concept c : list.getObjects()) {
         contentService.getGraphResolutionHandler().resolve(
             c,
@@ -337,7 +292,7 @@ public class ContentServiceRestImpl extends RootServiceRestImpl implements
       ContentService contentService = new ContentServiceJpa();
       Concept concept =
           contentService.getSingleConcept(terminologyId, terminology, version);
-      ConceptList list = contentService.getDescendantConcepts(concept, pfs);
+      ConceptList list = contentService.findDescendantConcepts(concept, pfs);
       for (Concept c : list.getObjects()) {
         contentService.getGraphResolutionHandler().resolve(
             c,
@@ -382,7 +337,7 @@ public class ContentServiceRestImpl extends RootServiceRestImpl implements
       ContentService contentService = new ContentServiceJpa();
       Concept concept =
           contentService.getSingleConcept(terminologyId, terminology, version);
-      ConceptList list = contentService.getAncestorConcepts(concept, pfs);
+      ConceptList list = contentService.findAncestorConcepts(concept, pfs);
       for (Concept c : list.getObjects()) {
         contentService.getGraphResolutionHandler().resolve(
             c,

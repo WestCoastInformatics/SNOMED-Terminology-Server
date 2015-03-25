@@ -7,6 +7,7 @@ import org.ihtsdo.otf.ts.User;
 import org.ihtsdo.otf.ts.helpers.CopyConstructorTester;
 import org.ihtsdo.otf.ts.helpers.EqualsHashcodeTester;
 import org.ihtsdo.otf.ts.helpers.GetterSetterTester;
+import org.ihtsdo.otf.ts.helpers.NullableFieldTester;
 import org.ihtsdo.otf.ts.helpers.XmlSerializationTester;
 import org.ihtsdo.otf.ts.jpa.UserJpa;
 import org.junit.After;
@@ -96,6 +97,22 @@ public class ModelUnit003Test {
     Logger.getLogger(getClass()).debug("TEST testModelXmlTransient003");
     XmlSerializationTester tester = new XmlSerializationTester(object);
     assertTrue(tester.testXmlSerialization());
+  }
+
+  /**
+   * Test not null fields.
+   *
+   * @throws Exception the exception
+   */
+  @Test
+  public void testModelNotNullField003() throws Exception {
+    Logger.getLogger(getClass()).debug("TEST testModelNotNullField003");
+    NullableFieldTester tester = new NullableFieldTester(object);
+    tester.include("name");
+    tester.include("userName");
+    tester.include("email");
+    tester.include("applicationRole");
+    assertTrue(tester.testNotNullFields());
   }
 
   /**

@@ -715,7 +715,7 @@ public class SnomedMetadataServiceJpaHelper extends ContentServiceJpa implements
     throws Exception {
     ContentService contentService = new ContentServiceJpa();
     ConceptList list =
-        contentService.getDescendantConcepts(contentService.getSingleConcept(
+        contentService.findDescendantConcepts(contentService.getSingleConcept(
             terminologyId, terminology, version), null);
 
     // convert concept list to set

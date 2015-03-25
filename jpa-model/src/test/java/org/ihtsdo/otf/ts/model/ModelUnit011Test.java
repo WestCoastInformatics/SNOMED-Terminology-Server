@@ -6,6 +6,7 @@ import org.apache.log4j.Logger;
 import org.ihtsdo.otf.ts.helpers.CopyConstructorTester;
 import org.ihtsdo.otf.ts.helpers.EqualsHashcodeTester;
 import org.ihtsdo.otf.ts.helpers.GetterSetterTester;
+import org.ihtsdo.otf.ts.helpers.NullableFieldTester;
 import org.ihtsdo.otf.ts.helpers.XmlSerializationTester;
 import org.ihtsdo.otf.ts.rf2.Concept;
 import org.ihtsdo.otf.ts.rf2.TransitiveRelationship;
@@ -133,6 +134,28 @@ public class ModelUnit011Test {
     c.setDefaultPreferredName("1");
     tester.proxy(Concept.class, 1, c);
     assertTrue(tester.testXmlSerialization());
+  }
+  
+  /**
+   * Test not null fields.
+   *
+   * @throws Exception the exception
+   */
+  @Test
+  public void testModelNotNullField011() throws Exception {
+    Logger.getLogger(getClass()).debug("TEST testModelNotNullField011");
+    NullableFieldTester tester = new NullableFieldTester(object);
+    tester.include("lastModified");
+    tester.include("lastModifiedBy");
+    tester.include("active");
+    tester.include("published");
+    tester.include("publishable");
+    tester.include("moduleId");
+    tester.include("terminologyId");
+    tester.include("terminology");
+    tester.include("terminologyVersion");
+
+    assertTrue(tester.testNotNullFields());
   }
 
   /**

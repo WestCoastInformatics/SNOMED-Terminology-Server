@@ -584,7 +584,7 @@ public class ClamlMetadataServiceJpaHelper extends ContentServiceJpa implements
     Concept concept = getConcept(id);
 
     ContentService contentService = new ContentServiceJpa();
-    ConceptList list = contentService.getDescendantConcepts(concept, null);
+    ConceptList list = contentService.findDescendantConcepts(concept, null);
 
     // convert concept list to map
     for (Concept desc : list.getObjects()) {

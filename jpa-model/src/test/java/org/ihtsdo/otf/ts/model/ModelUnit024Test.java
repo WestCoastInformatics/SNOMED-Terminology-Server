@@ -98,6 +98,17 @@ public class ModelUnit024Test {
     XmlSerializationTester tester = new XmlSerializationTester(object);
     assertTrue(tester.testXmlSerialization());
   }
+  
+
+  /**
+   * Test not null fields.
+   *
+   * @throws Exception the exception
+   */
+  @Test
+  public void testModelNotNullField024() throws Exception {
+    // n/a
+  }
 
   /**
    * Teardown.
