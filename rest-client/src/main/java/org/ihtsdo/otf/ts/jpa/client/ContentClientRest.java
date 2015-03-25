@@ -92,30 +92,6 @@ public class ContentClientRest implements ContentServiceRest {
   }
 
   /*
-   * Commented out as not part of change service (non-Javadoc)
-   * 
-   * @see
-   * org.ihtsdo.otf.ts.rest.ContentServiceRest#getConceptForUser(java.lang.String
-   * , java.lang.String, java.lang.String, java.lang.String)
-   * 
-   * @Override public Concept getConceptForUser(String terminologyId, String
-   * terminology, String version, String authToken) throws Exception { Client
-   * client = Client.create(); WebResource resource =
-   * client.resource(config.getProperty("base.url") + "/content/concept/" +
-   * terminology + "/" + version + "/" + terminologyId + "/foruser");
-   * ClientResponse response = resource.accept(MediaType.APPLICATION_XML)
-   * .header("Authorization", authToken).get(ClientResponse.class);
-   * 
-   * String resultString = response.getEntity(String.class); if
-   * (response.getStatusInfo().getFamily() == Family.SUCCESSFUL) {
-   * Logger.getLogger(getClass()).debug(resultString); } else { throw new
-   * Exception(resultString); }
-   * 
-   * // converting to object ConceptJpa concept = (ConceptJpa)
-   * ConfigUtility.getGraphForString(resultString, ConceptJpa.class); return
-   * concept; }
-   */
-  /*
    * (non-Javadoc)
    * 
    * @see
