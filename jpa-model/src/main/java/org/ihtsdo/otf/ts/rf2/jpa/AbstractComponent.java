@@ -13,6 +13,7 @@ import javax.xml.bind.annotation.XmlID;
 import org.hibernate.envers.Audited;
 import org.hibernate.search.annotations.Analyze;
 import org.hibernate.search.annotations.Field;
+import org.hibernate.search.annotations.Fields;
 import org.hibernate.search.annotations.Index;
 import org.hibernate.search.annotations.Store;
 import org.ihtsdo.otf.ts.rf2.Component;
@@ -414,7 +415,10 @@ public abstract class AbstractComponent implements Component {
    * @see org.ihtsdo.otf.ts.rf2.Component#getLabel()
    */
   @Override
-  @Field(index = Index.YES, analyze = Analyze.YES, store = Store.NO)
+  @Fields( {
+    @Field(index = Index.YES, analyze = Analyze.YES, store = Store.NO),
+    @Field(name = "labelSort", analyze=Analyze.NO, store = Store.NO)  
+  })
   public String getLabel() {
     return label;
   }

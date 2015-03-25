@@ -4,6 +4,7 @@ import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
 
 import org.ihtsdo.otf.ts.UserRole;
+import org.ihtsdo.otf.ts.helpers.LocalException;
 import org.ihtsdo.otf.ts.services.SecurityService;
 import org.ihtsdo.otf.ts.services.handlers.ExceptionHandler;
 
@@ -24,6 +25,7 @@ public class RootServiceRestImpl {
    *
    * @param e the e
    * @param whatIsHappening the what is happening
+   * @throws LocalException
    */
   @SuppressWarnings("static-method")
   public void handleException(Exception e, String whatIsHappening) {
@@ -32,8 +34,16 @@ public class RootServiceRestImpl {
     } catch (Exception e1) {
       // do nothing
     }
+
     e.printStackTrace();
-    // throw the exception as-is, e.g. for 401 errors
+
+    // throw the local exception as a web application exception
+    if (e instanceof LocalException) {
+      throw new WebApplicationException(Response.status(500)
+          .entity(e.getMessage()).build());
+    }
+
+    // throw the web application exception as-is, e.g. for 401 errors
     if (e instanceof WebApplicationException) {
       throw (WebApplicationException) e;
     }

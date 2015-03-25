@@ -12,6 +12,7 @@ import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.persistence.UniqueConstraint;
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlID;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
@@ -114,8 +115,7 @@ public class ConceptJpa extends AbstractComponent implements Concept {
       null;
 
   /** The associationReference RefSet members. */
-  @OneToMany(mappedBy = "concept", cascade = CascadeType.ALL, orphanRemoval = true,
-       targetEntity = AssociationReferenceConceptRefSetMemberJpa.class)
+  @OneToMany(mappedBy = "concept", cascade = CascadeType.ALL, orphanRemoval = true, targetEntity = AssociationReferenceConceptRefSetMemberJpa.class)
   private Set<AssociationReferenceConceptRefSetMember> associationReferenceRefSetMembers =
       null;
 
@@ -767,45 +767,11 @@ public class ConceptJpa extends AbstractComponent implements Concept {
   /*
    * (non-Javadoc)
    * 
-   * @see org.ihtsdo.otf.ts.rf2.jpa.AbstractComponent#getEffectiveTime()
-   */
-  @Field(index = Index.YES, analyze = Analyze.NO, store = Store.NO)
-  @Override
-  public Date getEffectiveTime() {
-    return super.getEffectiveTime();
-  }
-
-  /*
-   * (non-Javadoc)
-   * 
-   * @see org.ihtsdo.otf.ts.rf2.jpa.AbstractComponent#getTerminology()
-   */
-  @Field(index = Index.YES, analyze = Analyze.NO, store = Store.NO)
-  @Override
-  public String getTerminology() {
-    return super.getTerminology();
-  }
-
-  /*
-   * (non-Javadoc)
-   * 
-   * @see org.ihtsdo.otf.ts.rf2.jpa.AbstractComponent#getTerminologyVersion()
-   */
-  @Field(index = Index.YES, analyze = Analyze.NO, store = Store.NO)
-  @Override
-  public String getTerminologyVersion() {
-    return super.getTerminologyVersion();
-  }
-
-  /*
-   * (non-Javadoc)
-   * 
    * @see org.ihtsdo.otf.ts.rf2.Concept#getDefaultPreferredName()
    */
   @Override
   @Fields({
       @Field(index = Index.YES, analyze = Analyze.YES, store = Store.NO),
-      @Field(name = "all", index = Index.YES, analyze = Analyze.YES, store = Store.NO),
       @Field(name = "defaultPreferredNameSort", index = Index.YES, analyze = Analyze.NO, store = Store.NO)
   })
   @Analyzer(definition = "noStopWord")

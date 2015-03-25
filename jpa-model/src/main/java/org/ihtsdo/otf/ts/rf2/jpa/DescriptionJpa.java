@@ -218,7 +218,7 @@ public class DescriptionJpa extends AbstractComponent implements Description {
   @Override
   @Fields({
       @Field(index = Index.YES, analyze = Analyze.YES, store = Store.NO),
-      @Field(name = "all", index = Index.YES, analyze = Analyze.YES, store = Store.NO)
+      @Field(name = "termSort", index = Index.YES, analyze = Analyze.NO, store = Store.NO)
   })
   @Analyzer(definition = "noStopWord")
   public String getTerm() {

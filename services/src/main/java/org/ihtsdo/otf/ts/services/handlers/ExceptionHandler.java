@@ -50,7 +50,7 @@ public class ExceptionHandler {
 
     e.printStackTrace();
     if (e instanceof LocalException) {
-      throw e;
+      throw (LocalException) e;
     }
     if (e instanceof WebApplicationException) {
       throw (WebApplicationException) e;

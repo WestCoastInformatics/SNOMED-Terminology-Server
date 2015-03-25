@@ -530,8 +530,9 @@ public class HistoryServiceRestNormalUseTest extends HistoryServiceRestTest {
   /**
    * Test revisions method for normal use.
    *
-   * @param clazz the clazz
-   * @param textDate, Component c
+   * @param clazz the clazz of the component being tested
+   * @param textDate
+   * @param c the object used for testing
    * @throws Exception
    */
   private ResultList<?> testNormalUseRevisionsMethod(Class<?> clazz,

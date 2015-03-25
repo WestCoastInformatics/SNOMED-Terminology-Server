@@ -37,8 +37,11 @@ import org.ihtsdo.otf.ts.services.handlers.ComputePreferredNameHandler;
 import org.ihtsdo.otf.ts.services.handlers.GraphResolutionHandler;
 import org.ihtsdo.otf.ts.services.handlers.IdentifierAssignmentHandler;
 
+// TODO: Auto-generated Javadoc
 /**
  * Generically represents a service for accessing content.
+ *
+ * @author ${author}
  */
 public interface ContentService extends RootService {
 
@@ -135,6 +138,18 @@ public interface ContentService extends RootService {
    */
   public ConceptList getDescendantConcepts(Concept concept,
     PfsParameter pfsParameter) throws Exception;
+  
+
+  /**
+   * Returns the parent concepts.
+   *
+   * @param concept the concept
+   * @param pfs the pfs
+   * @return the parent concepts
+   * @throws Exception 
+   */
+  public ConceptList getParentConcepts(Concept concept, PfsParameter pfs) throws Exception;
+
 
   /**
    * Get ancestor concepts.

@@ -16,6 +16,7 @@ import java.util.Set;
 import javax.persistence.NoResultException;
 
 import org.apache.log4j.Logger;
+import org.apache.lucene.queryparser.classic.MultiFieldQueryParser;
 import org.apache.lucene.queryparser.classic.ParseException;
 import org.apache.lucene.queryparser.classic.QueryParser;
 import org.apache.lucene.search.Query;
@@ -39,6 +40,7 @@ import org.ihtsdo.otf.ts.helpers.ComplexMapRefSetMemberListJpa;
 import org.ihtsdo.otf.ts.helpers.ConceptList;
 import org.ihtsdo.otf.ts.helpers.ConceptListJpa;
 import org.ihtsdo.otf.ts.helpers.ConfigUtility;
+import org.ihtsdo.otf.ts.helpers.IndexUtility;
 import org.ihtsdo.otf.ts.helpers.LanguageRefSetMemberList;
 import org.ihtsdo.otf.ts.helpers.LanguageRefSetMemberListJpa;
 import org.ihtsdo.otf.ts.helpers.LocalException;
@@ -123,9 +125,32 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
                 handlerName, WorkflowListener.class);
         listeners.add(handlerService);
       }
+
     } catch (Exception e) {
       e.printStackTrace();
       listeners = null;
+    }
+  }
+
+  private static String[] conceptFieldNames = {};
+  static {
+
+    try {
+      conceptFieldNames = IndexUtility.getIndexedStringFieldNames(ConceptJpa.class).toArray(new String[]{});
+
+      // for testing
+     /* conceptFieldNames = new String[] {
+          "defaultPreferredName", "terminologyId", "descriptions.term"
+      };*/
+
+      for (String conceptFieldName : conceptFieldNames) {
+        System.out.println(conceptFieldName);
+      }
+
+
+    } catch (Exception e) {
+      e.printStackTrace();
+      conceptFieldNames = null;
     }
   }
 
@@ -221,6 +246,11 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
     if (idHandlerMap == null) {
       throw new Exception(
           "Identifier assignment handler did not properly initialize, serious error.");
+    }
+
+    if (conceptFieldNames == null) {
+      throw new Exception(
+          "Concept indexsed field names did not properly initialize, serious error.");
     }
 
   }
@@ -475,6 +505,60 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
     return list;
   }
 
+  @SuppressWarnings("unchecked")
+  @Override
+  public ConceptList getParentConcepts(Concept concept, PfsParameter pfs)
+    throws Exception {
+
+    ConceptList ancestorConcepts = getAncestorConcepts(concept, null);
+    ConceptList parentConcepts = new ConceptListJpa();
+
+    for (Concept ancestor : ancestorConcepts.getObjects()) {
+
+      // get children of this concept
+      ConceptList childrenConcepts = getChildConcepts(ancestor, null);
+
+      // cycle over children
+      for (Concept child : childrenConcepts.getObjects()) {
+
+        // if concept is a direct child of this ancestor
+        if (child.getId().equals(concept.getId())) {
+
+          // add this concept if not already contained
+          if (!parentConcepts.contains(ancestor)) {
+            parentConcepts.addObject(ancestor);
+          }
+        }
+      }
+    }
+
+    // set total count
+    parentConcepts.setTotalCount(parentConcepts.getCount());
+
+    // if paging/filtering/sorting required
+    if (pfs != null) {
+
+      // filtering -- not supported
+
+      // sorting
+      Comparator<Concept> comparator = getPfsComparator(Concept.class, pfs);
+      if (comparator != null) {
+        parentConcepts.sortBy(comparator);
+      }
+
+      // paging
+      if (pfs.getStartIndex() != -1 && pfs.getMaxResults() != -1) {
+
+        parentConcepts.setObjects(parentConcepts.getObjects().subList(
+            Math.min(pfs.getStartIndex(), parentConcepts.getTotalCount()),
+            Math.min(pfs.getStartIndex() + pfs.getMaxResults(),
+                parentConcepts.getTotalCount())));
+      }
+    }
+
+    return parentConcepts;
+  }
+
   /*
    * (non-Javadoc)
    * 
@@ -556,8 +640,10 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
       // It's a set so dont worry about stated vs. inferred
       if (r.isActive() && TerminologyUtility.isHierarchicalIsaRelationship(r)) {
 
-        // add to children list
-        childrenConcepts.addObject(r.getSourceConcept());
+        // add to children list if not already present (want unique results)
+        if (!childrenConcepts.contains(r.getSourceConcept())) {
+          childrenConcepts.addObject(r.getSourceConcept());
+        }
       }
     }
 
@@ -2736,7 +2822,9 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
     Query luceneQuery;
     try {
       QueryParser queryParser =
-          new QueryParser("all", searchFactory.getAnalyzer(ConceptJpa.class));
+          new MultiFieldQueryParser(conceptFieldNames,
+              searchFactory.getAnalyzer(ConceptJpa.class));
+
       luceneQuery = queryParser.parse(finalQuery.toString());
     } catch (ParseException e) {
       throw new LocalException(
@@ -2749,7 +2837,7 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
     results.setTotalCount(fullTextQuery.getResultSize());
 
     // Apply paging and sorting parameters
-    applyPfsToLuceneQuery(ConceptJpa.class, fullTextQuery, pfs);
+    // applyPfsToLuceneQuery(ConceptJpa.class, fullTextQuery, pfs);
 
     // execute the query
     @SuppressWarnings("unchecked")
@@ -3259,7 +3347,6 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
 
       // if sort field is specified, set sort key
       if (pfs.getSortField() != null && !pfs.getSortField().isEmpty()) {
-
         Map<String, Boolean> nameToAnalyzedMap =
             this.getNameAnalyzedPairsFromAnnotation(clazz, pfs.getSortField());
         String sortField = null;

@@ -392,7 +392,6 @@ public class Rf2DeltaLoaderAlgorithm extends HistoryServiceJpa implements
    *
    * @throws Exception the exception
    */
-  @SuppressWarnings("resource")
   private void loadConcepts() throws Exception {
 
     // Setup vars
