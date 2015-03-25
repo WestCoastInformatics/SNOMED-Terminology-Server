@@ -41,7 +41,7 @@ public class ProjectServiceRestNormalUseTest extends ProjectServiceRestTest {
   }
 
   /**
-   * Test Get and Find methods for concepts.
+   * Test add/update/remove project.
    *
    * @throws Exception the exception
    */
@@ -84,14 +84,13 @@ public class ProjectServiceRestNormalUseTest extends ProjectServiceRestTest {
     // Remove the project
     projectService.removeProject(project2.getId(), adminAuthToken);
 
-    // TEST: verify that it is removed.
+    // TEST: verify that it is removed (call should fail)
     project3 = projectService.getProject(project2.getId(), adminAuthToken);
-
     Assert.assertNull(project3);
   }
 
   /**
-   * Test transitive closure methods (ancestors, descendants, children).
+   * Test get project(s).
    *
    * @throws Exception the exception
    */
@@ -101,7 +100,7 @@ public class ProjectServiceRestNormalUseTest extends ProjectServiceRestTest {
   }
 
   /**
-   * Test Get methods for descriptions.
+   * Test find concepts in scope.
    *
    * @throws Exception the exception
    */
