@@ -216,6 +216,7 @@
               <filtering>true</filtering>
               <includes>
                 <include>index.html</include>
+                <include>swagger.html</include>
               </includes>
             </resource>
             <resource>
@@ -223,6 +224,7 @@
               <filtering>false</filtering>
               <excludes>
                 <exclude>index.html</exclude>
+                <exclude>swagger.html</exclude>
               </excludes>
             </resource>
           </webResources>

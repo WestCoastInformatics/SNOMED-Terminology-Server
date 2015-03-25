@@ -128,7 +128,6 @@ public class Rf2Readers {
    * @return the reader
    * @throws Exception the exception
    */
-  @SuppressWarnings("resource")
   private PushBackReader getReader(String filename) throws Exception {
     File file = new File(inputDir, filename);
     if (file != null && file.exists()) {

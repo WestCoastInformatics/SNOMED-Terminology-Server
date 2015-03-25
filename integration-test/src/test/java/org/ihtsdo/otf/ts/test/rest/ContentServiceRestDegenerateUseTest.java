@@ -11,6 +11,7 @@ import org.ihtsdo.otf.ts.rf2.Description;
 import org.ihtsdo.otf.ts.rf2.LanguageRefSetMember;
 import org.ihtsdo.otf.ts.rf2.Relationship;
 import org.ihtsdo.otf.ts.test.helpers.DegenerateUseMethodTestHelper;
+import org.ihtsdo.otf.ts.test.helpers.DegenerateUseMethodTestHelper.ExpectedFailure;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -81,8 +82,14 @@ public class ContentServiceRestDegenerateUseTest extends ContentServiceRestTest 
         contentService,
         contentService.getClass().getMethod("getConcepts",
             getParameterTypes(validParameters)), validParameters,
-        new boolean[] {
-            false, false, false, true
+
+        // String fields will fail on empty strings, return no results on null
+        // (correct behavior)
+        new ExpectedFailure[] {
+            ExpectedFailure.STRING_INVALID_EXCEPTION_NULL_NO_RESULTS,
+            ExpectedFailure.STRING_INVALID_EXCEPTION_NULL_NO_RESULTS,
+            ExpectedFailure.STRING_INVALID_EXCEPTION_NULL_NO_RESULTS,
+            ExpectedFailure.EXCEPTION
         });
 
     // get single concept
@@ -93,14 +100,20 @@ public class ContentServiceRestDegenerateUseTest extends ContentServiceRestTest 
         contentService,
         contentService.getClass().getMethod("getSingleConcept",
             getParameterTypes(validParameters)), validParameters,
-        new boolean[] {
-            false, false, false, true
+        // null/empty terminology id always throws exception, terminology,
+        // terminology version all return no
+        // results
+        new ExpectedFailure[] {
+            ExpectedFailure.EXCEPTION, ExpectedFailure.EXCEPTION,
+            ExpectedFailure.EXCEPTION, ExpectedFailure.EXCEPTION
         });
 
     // get concept by id
     validParameters = new Object[] {
         concept.getId(), authToken
     };
+
+    // all fields expect Exception
     DegenerateUseMethodTestHelper.testDegenerateArguments(
         contentService,
         contentService.getClass().getMethod("getConcept",
@@ -113,13 +126,17 @@ public class ContentServiceRestDegenerateUseTest extends ContentServiceRestTest 
             new PfsParameterJpa(), authToken
         };
 
-    // Find method helper should not test terminology, version, or search string
     DegenerateUseMethodTestHelper.testDegenerateArguments(
         contentService,
         contentService.getClass().getMethod("findConceptsForQuery",
             getParameterTypes(validParameters)), validParameters,
-        new boolean[] {
-            false, false, false, true, true
+        // terminology id, terminology, terminology version all return no
+        // results
+        new ExpectedFailure[] {
+            ExpectedFailure.STRING_INVALID_EXCEPTION_NULL_NO_RESULTS,
+            ExpectedFailure.STRING_INVALID_EXCEPTION_NULL_NO_RESULTS,
+            ExpectedFailure.STRING_INVALID_EXCEPTION_NULL_NO_RESULTS,
+            ExpectedFailure.EXCEPTION, ExpectedFailure.EXCEPTION
         });
 
     // test for invalid values manually
@@ -215,7 +232,7 @@ public class ContentServiceRestDegenerateUseTest extends ContentServiceRestTest 
         contentService.getClass().getMethod("getDescription",
             getParameterTypes(validParameters)), validParameters);
   }
-  
+
   /**
    * Test relationship services
    *
@@ -227,9 +244,11 @@ public class ContentServiceRestDegenerateUseTest extends ContentServiceRestTest 
     Relationship relationship = concept.getRelationships().iterator().next();
 
     // get relationship
-    validParameters = new Object[] {
-        relationship.getTerminologyId(), testTerminology, testVersion, authToken
-    };
+    validParameters =
+        new Object[] {
+            relationship.getTerminologyId(), testTerminology, testVersion,
+            authToken
+        };
 
     DegenerateUseMethodTestHelper.testDegenerateArguments(
         contentService,
@@ -246,7 +265,7 @@ public class ContentServiceRestDegenerateUseTest extends ContentServiceRestTest 
         contentService.getClass().getMethod("getRelationship",
             getParameterTypes(validParameters)), validParameters);
   }
-  
+
   /**
    * Test description services
    *
@@ -256,7 +275,8 @@ public class ContentServiceRestDegenerateUseTest extends ContentServiceRestTest 
   public void testDegenerateUseRestContent005() throws Exception {
 
     Description description = concept.getDescriptions().iterator().next();
-    LanguageRefSetMember language = description.getLanguageRefSetMembers().iterator().next();
+    LanguageRefSetMember language =
+        description.getLanguageRefSetMembers().iterator().next();
 
     // get language
     validParameters = new Object[] {
@@ -278,9 +298,21 @@ public class ContentServiceRestDegenerateUseTest extends ContentServiceRestTest 
         contentService.getClass().getMethod("getLanguageRefSetMember",
             getParameterTypes(validParameters)), validParameters);
   }
-  
 
-  
+  /**
+   * Test retrieval of SNOMEDCT refsetMembers NOTE: Ref Set Member id hardcoded,
+   * as concept's set is @XmlTransient
+   */
+  /**
+   * Test relationship services
+   *
+   * @throws Exception the exception
+   */
+  @Test
+  public void testDegenerateUseRestContent006() throws Exception {
+
+  }
+
   /**
    * Teardown.
    *

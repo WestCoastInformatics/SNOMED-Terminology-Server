@@ -10,6 +10,9 @@ import javax.persistence.NoResultException;
 
 import org.apache.log4j.Logger;
 import org.apache.lucene.search.Query;
+import org.apache.lucene.search.Sort;
+import org.apache.lucene.search.SortField;
+import org.apache.lucene.search.SortField.Type;
 import org.hibernate.envers.AuditReader;
 import org.hibernate.envers.AuditReaderFactory;
 import org.hibernate.envers.query.AuditEntity;
@@ -19,27 +22,60 @@ import org.hibernate.search.jpa.FullTextEntityManager;
 import org.hibernate.search.jpa.Search;
 import org.hibernate.search.query.dsl.QueryBuilder;
 import org.ihtsdo.otf.ts.ReleaseInfo;
+import org.ihtsdo.otf.ts.helpers.AssociationReferenceRefSetMemberList;
+import org.ihtsdo.otf.ts.helpers.AssociationReferenceRefSetMemberListJpa;
+import org.ihtsdo.otf.ts.helpers.AttributeValueRefSetMemberList;
+import org.ihtsdo.otf.ts.helpers.AttributeValueRefSetMemberListJpa;
+import org.ihtsdo.otf.ts.helpers.ComplexMapRefSetMemberList;
+import org.ihtsdo.otf.ts.helpers.ComplexMapRefSetMemberListJpa;
 import org.ihtsdo.otf.ts.helpers.ConceptList;
 import org.ihtsdo.otf.ts.helpers.ConceptListJpa;
 import org.ihtsdo.otf.ts.helpers.ConfigUtility;
 import org.ihtsdo.otf.ts.helpers.DescriptionList;
 import org.ihtsdo.otf.ts.helpers.DescriptionListJpa;
+import org.ihtsdo.otf.ts.helpers.DescriptionTypeRefSetMemberList;
+import org.ihtsdo.otf.ts.helpers.DescriptionTypeRefSetMemberListJpa;
 import org.ihtsdo.otf.ts.helpers.LanguageRefSetMemberList;
 import org.ihtsdo.otf.ts.helpers.LanguageRefSetMemberListJpa;
+import org.ihtsdo.otf.ts.helpers.ModuleDependencyRefSetMemberList;
+import org.ihtsdo.otf.ts.helpers.ModuleDependencyRefSetMemberListJpa;
 import org.ihtsdo.otf.ts.helpers.PfsParameter;
+import org.ihtsdo.otf.ts.helpers.RefsetDescriptorRefSetMemberList;
+import org.ihtsdo.otf.ts.helpers.RefsetDescriptorRefSetMemberListJpa;
 import org.ihtsdo.otf.ts.helpers.RelationshipList;
 import org.ihtsdo.otf.ts.helpers.RelationshipListJpa;
 import org.ihtsdo.otf.ts.helpers.ReleaseInfoList;
 import org.ihtsdo.otf.ts.helpers.ReleaseInfoListJpa;
+import org.ihtsdo.otf.ts.helpers.SimpleMapRefSetMemberList;
+import org.ihtsdo.otf.ts.helpers.SimpleMapRefSetMemberListJpa;
+import org.ihtsdo.otf.ts.helpers.SimpleRefSetMemberList;
+import org.ihtsdo.otf.ts.helpers.SimpleRefSetMemberListJpa;
 import org.ihtsdo.otf.ts.jpa.ReleaseInfoJpa;
+import org.ihtsdo.otf.ts.rf2.AssociationReferenceRefSetMember;
+import org.ihtsdo.otf.ts.rf2.AttributeValueRefSetMember;
+import org.ihtsdo.otf.ts.rf2.ComplexMapRefSetMember;
+import org.ihtsdo.otf.ts.rf2.Component;
 import org.ihtsdo.otf.ts.rf2.Concept;
 import org.ihtsdo.otf.ts.rf2.Description;
+import org.ihtsdo.otf.ts.rf2.DescriptionTypeRefSetMember;
 import org.ihtsdo.otf.ts.rf2.LanguageRefSetMember;
+import org.ihtsdo.otf.ts.rf2.ModuleDependencyRefSetMember;
+import org.ihtsdo.otf.ts.rf2.RefsetDescriptorRefSetMember;
 import org.ihtsdo.otf.ts.rf2.Relationship;
+import org.ihtsdo.otf.ts.rf2.SimpleMapRefSetMember;
+import org.ihtsdo.otf.ts.rf2.SimpleRefSetMember;
+import org.ihtsdo.otf.ts.rf2.jpa.AbstractAssociationReferenceRefSetMemberJpa;
+import org.ihtsdo.otf.ts.rf2.jpa.AbstractAttributeValueRefSetMemberJpa;
+import org.ihtsdo.otf.ts.rf2.jpa.ComplexMapRefSetMemberJpa;
 import org.ihtsdo.otf.ts.rf2.jpa.ConceptJpa;
 import org.ihtsdo.otf.ts.rf2.jpa.DescriptionJpa;
+import org.ihtsdo.otf.ts.rf2.jpa.DescriptionTypeRefSetMemberJpa;
 import org.ihtsdo.otf.ts.rf2.jpa.LanguageRefSetMemberJpa;
+import org.ihtsdo.otf.ts.rf2.jpa.ModuleDependencyRefSetMemberJpa;
+import org.ihtsdo.otf.ts.rf2.jpa.RefsetDescriptorRefSetMemberJpa;
 import org.ihtsdo.otf.ts.rf2.jpa.RelationshipJpa;
+import org.ihtsdo.otf.ts.rf2.jpa.SimpleMapRefSetMemberJpa;
+import org.ihtsdo.otf.ts.rf2.jpa.SimpleRefSetMemberJpa;
 import org.ihtsdo.otf.ts.services.HistoryService;
 
 /**
@@ -331,6 +367,570 @@ public class HistoryServiceJpa extends ContentServiceJpa implements
         findReleaseRevision(id, release, LanguageRefSetMemberJpa.class);
     return revision;
   }
+  
+  /*
+   * (non-Javadoc)
+   * 
+   * @see org.ihtsdo.otf.mapping.services.ContentService#
+   * getAbstractAssociationReferenceRefSetMembersModifiedSinceDate(java.lang.String, java.util.Date)
+   */
+  @SuppressWarnings("rawtypes")
+  @Override
+  public AssociationReferenceRefSetMemberList findAbstractAssociationReferenceRefSetMembersModifiedSinceDate(
+    String terminology, Date date, PfsParameter pfs) throws Exception {
+    Logger.getLogger(getClass()).debug(
+        "History Service - find abstractAssociationReferenceRefSetMembers modified since date "
+            + terminology + ", " + date);
+    int[] totalCt = new int[1];
+    List<AbstractAssociationReferenceRefSetMemberJpa> results =
+        findModifiedSinceDateFromQuery(AbstractAssociationReferenceRefSetMemberJpa.class, terminology,
+            date, pfs, totalCt);
+    AssociationReferenceRefSetMemberList resultList = new AssociationReferenceRefSetMemberListJpa();
+    resultList.setTotalCount(totalCt[0]);
+    for (AssociationReferenceRefSetMember<?> abstractAssociationReferenceRefSetMember : results) {
+      resultList.addObject(abstractAssociationReferenceRefSetMember);
+    }
+    return resultList;
+  }
+
+  /*
+   * (non-Javadoc)
+   * 
+   * @see
+   * org.ihtsdo.otf.ts.services.HistoryService#findAbstractAssociationReferenceRefSetMemberRevisions(java
+   * .lang.Long, java.util.Date, java.util.Date, boolean,
+   * org.ihtsdo.otf.ts.helpers.PfsParameter)
+   */
+  @SuppressWarnings({
+      "rawtypes", "unchecked"
+  })
+  @Override
+  public AssociationReferenceRefSetMemberList findAbstractAssociationReferenceRefSetMemberRevisions(Long id, Date startDate,
+    Date endDate, PfsParameter pfs) {
+    Logger.getLogger(getClass()).debug(
+        "History Service - find abstractAssociationReferenceRefSetMember revisions " + id + "," + startDate
+            + ", " + endDate);
+    List<AbstractAssociationReferenceRefSetMemberJpa> revisions =
+        findRevisions(id, AbstractAssociationReferenceRefSetMemberJpa.class, startDate, endDate, pfs);
+   
+    // Repackage as AbstractAssociationReferenceRefSetMemberList
+    AssociationReferenceRefSetMemberList results = new AssociationReferenceRefSetMemberListJpa();
+    results.setTotalCount(revisions.size());
+    for (AssociationReferenceRefSetMember<? extends Component> associationReferenceRefSetMember : revisions) {
+      results.addObject(associationReferenceRefSetMember);
+    }
+    return results;
+  }
+
+  /*
+   * (non-Javadoc)
+   * 
+   * @see
+   * org.ihtsdo.otf.ts.services.HistoryService#findAbstractAssociationReferenceRefSetMemberReleaseRevision
+   * (java.lang.Long, java.lang.String)
+   */
+  @SuppressWarnings("unchecked")
+  @Override
+  public AssociationReferenceRefSetMember<?> findAbstractAssociationReferenceRefSetMemberReleaseRevision(Long id, Date release)
+    throws Exception {
+    Logger.getLogger(getClass()).debug(
+        "History Service - find abstractAssociationReferenceRefSetMember release revision " + id + ","
+            + release);
+
+    AbstractAssociationReferenceRefSetMemberJpa<? extends Component> revision =
+        findReleaseRevision(id, release, AbstractAssociationReferenceRefSetMemberJpa.class);
+    return revision;
+  }
+  
+  /*
+   * (non-Javadoc)
+   * 
+   * @see org.ihtsdo.otf.mapping.services.ContentService#
+   * getAttributeValueRefSetMembersModifiedSinceDate(java.lang.String, java.util.Date)
+   */
+  @SuppressWarnings({
+      "rawtypes"
+  })
+  @Override
+  public AttributeValueRefSetMemberList findAttributeValueRefSetMembersModifiedSinceDate(
+    String terminology, Date date, PfsParameter pfs) throws Exception {
+    Logger.getLogger(getClass()).debug(
+        "History Service - find attributeValueRefSetMembers modified since date "
+            + terminology + ", " + date);
+    int[] totalCt = new int[1];
+    List<AbstractAttributeValueRefSetMemberJpa> results =
+        findModifiedSinceDateFromQuery(AbstractAttributeValueRefSetMemberJpa.class, terminology,
+            date, pfs, totalCt);
+    AttributeValueRefSetMemberList resultList = new AttributeValueRefSetMemberListJpa();
+    resultList.setTotalCount(totalCt[0]);
+    for (AttributeValueRefSetMember<?> attributeValueRefSetMember : results) {
+      resultList.addObject(attributeValueRefSetMember);
+    }
+    return resultList;
+  }
+
+  /*
+   * (non-Javadoc)
+   * 
+   * @see
+   * org.ihtsdo.otf.ts.services.HistoryService#findAttributeValueRefSetMemberRevisions(java
+   * .lang.Long, java.util.Date, java.util.Date, boolean,
+   * org.ihtsdo.otf.ts.helpers.PfsParameter)
+   */
+  @SuppressWarnings({
+      "rawtypes"
+  })
+  @Override
+  public AttributeValueRefSetMemberList findAttributeValueRefSetMemberRevisions(Long id, Date startDate,
+    Date endDate, PfsParameter pfs) {
+    Logger.getLogger(getClass()).debug(
+        "History Service - find attributeValueRefSetMember revisions " + id + "," + startDate
+            + ", " + endDate);
+    List<AbstractAttributeValueRefSetMemberJpa> revisions =
+        findRevisions(id, AbstractAttributeValueRefSetMemberJpa.class, startDate, endDate, pfs);
+    // Repackage as AttributeValueRefSetMemberList
+    AttributeValueRefSetMemberList results = new AttributeValueRefSetMemberListJpa();
+    results.setTotalCount(revisions.size());
+    for (AttributeValueRefSetMember<?> AttributeValueRefSetMember : revisions) {
+      results.addObject(AttributeValueRefSetMember);
+    }
+    return results;
+  }
+
+  /*
+   * (non-Javadoc)
+   * 
+   * @see
+   * org.ihtsdo.otf.ts.services.HistoryService#findAttributeValueRefSetMemberReleaseRevision
+   * (java.lang.Long, java.lang.String)
+   */
+  @Override
+  public AttributeValueRefSetMember<?> findAttributeValueRefSetMemberReleaseRevision(Long id, Date release)
+    throws Exception {
+    Logger.getLogger(getClass()).debug(
+        "History Service - find attributeValueRefSetMember release revision " + id + ","
+            + release);
+
+    AbstractAttributeValueRefSetMemberJpa<?> revision =
+        findReleaseRevision(id, release, AbstractAttributeValueRefSetMemberJpa.class);
+    return revision;
+  }
+  
+
+  /*
+   * (non-Javadoc)
+   * 
+   * @see org.ihtsdo.otf.mapping.services.ContentService#
+   * getComplexMapRefSetMembersModifiedSinceDate(java.lang.String, java.util.Date)
+   */
+  @Override
+  public ComplexMapRefSetMemberList findComplexMapRefSetMembersModifiedSinceDate(
+    String terminology, Date date, PfsParameter pfs) throws Exception {
+    Logger.getLogger(getClass()).debug(
+        "History Service - find complexMapRefSetMembers modified since date "
+            + terminology + ", " + date);
+    int[] totalCt = new int[1];
+    List<ComplexMapRefSetMemberJpa> results =
+        findModifiedSinceDateFromQuery(ComplexMapRefSetMemberJpa.class, terminology,
+            date, pfs, totalCt);
+    ComplexMapRefSetMemberList resultList = new ComplexMapRefSetMemberListJpa();
+    resultList.setTotalCount(totalCt[0]);
+    for (ComplexMapRefSetMemberJpa complexMapRefSetMember : results) {
+      resultList.addObject(complexMapRefSetMember);
+    }
+    return resultList;
+  }
+
+  /*
+   * (non-Javadoc)
+   * 
+   * @see
+   * org.ihtsdo.otf.ts.services.HistoryService#findComplexMapRefSetMemberRevisions(java
+   * .lang.Long, java.util.Date, java.util.Date, boolean,
+   * org.ihtsdo.otf.ts.helpers.PfsParameter)
+   */
+  @Override
+  public ComplexMapRefSetMemberList findComplexMapRefSetMemberRevisions(Long id, Date startDate,
+    Date endDate, PfsParameter pfs) {
+    Logger.getLogger(getClass()).debug(
+        "History Service - find complexMapRefSetMember revisions " + id + "," + startDate
+            + ", " + endDate);
+    List<ComplexMapRefSetMemberJpa> revisions =
+        findRevisions(id, ComplexMapRefSetMemberJpa.class, startDate, endDate, pfs);
+    // Repackage as ComplexMapRefSetMemberList
+    ComplexMapRefSetMemberList results = new ComplexMapRefSetMemberListJpa();
+    results.setTotalCount(revisions.size());
+    for (ComplexMapRefSetMemberJpa ComplexMapRefSetMember : revisions) {
+      results.addObject(ComplexMapRefSetMember);
+    }
+    return results;
+  }
+
+  /*
+   * (non-Javadoc)
+   * 
+   * @see
+   * org.ihtsdo.otf.ts.services.HistoryService#findComplexMapRefSetMemberReleaseRevision
+   * (java.lang.Long, java.lang.String)
+   */
+  @Override
+  public ComplexMapRefSetMember findComplexMapRefSetMemberReleaseRevision(Long id, Date release)
+    throws Exception {
+    Logger.getLogger(getClass()).debug(
+        "History Service - find complexMapRefSetMember release revision " + id + ","
+            + release);
+
+    ComplexMapRefSetMemberJpa revision =
+        findReleaseRevision(id, release, ComplexMapRefSetMemberJpa.class);
+    return revision;
+  }
+  
+
+  /*
+   * (non-Javadoc)
+   * 
+   * @see org.ihtsdo.otf.mapping.services.ContentService#
+   * getDescriptionTypeRefSetMembersModifiedSinceDate(java.lang.String, java.util.Date)
+   */
+  @Override
+  public DescriptionTypeRefSetMemberList findDescriptionTypeRefSetMembersModifiedSinceDate(
+    String terminology, Date date, PfsParameter pfs) throws Exception {
+    Logger.getLogger(getClass()).debug(
+        "History Service - find descriptionTypeRefSetMembers modified since date "
+            + terminology + ", " + date);
+    int[] totalCt = new int[1];
+    List<DescriptionTypeRefSetMemberJpa> results =
+        findModifiedSinceDateFromQuery(DescriptionTypeRefSetMemberJpa.class, terminology,
+            date, pfs, totalCt);
+    DescriptionTypeRefSetMemberList resultList = new DescriptionTypeRefSetMemberListJpa();
+    resultList.setTotalCount(totalCt[0]);
+    for (DescriptionTypeRefSetMemberJpa descriptionTypeRefSetMember : results) {
+      resultList.addObject(descriptionTypeRefSetMember);
+    }
+    return resultList;
+  }
+
+  /*
+   * (non-Javadoc)
+   * 
+   * @see
+   * org.ihtsdo.otf.ts.services.HistoryService#findDescriptionTypeRefSetMemberRevisions(java
+   * .lang.Long, java.util.Date, java.util.Date, boolean,
+   * org.ihtsdo.otf.ts.helpers.PfsParameter)
+   */
+  @Override
+  public DescriptionTypeRefSetMemberList findDescriptionTypeRefSetMemberRevisions(Long id, Date startDate,
+    Date endDate, PfsParameter pfs) {
+    Logger.getLogger(getClass()).debug(
+        "History Service - find descriptionTypeRefSetMember revisions " + id + "," + startDate
+            + ", " + endDate);
+    List<DescriptionTypeRefSetMemberJpa> revisions =
+        findRevisions(id, DescriptionTypeRefSetMemberJpa.class, startDate, endDate, pfs);
+    // Repackage as DescriptionTypeRefSetMemberList
+    DescriptionTypeRefSetMemberList results = new DescriptionTypeRefSetMemberListJpa();
+    results.setTotalCount(revisions.size());
+    for (DescriptionTypeRefSetMemberJpa DescriptionTypeRefSetMember : revisions) {
+      results.addObject(DescriptionTypeRefSetMember);
+    }
+    return results;
+  }
+
+  /*
+   * (non-Javadoc)
+   * 
+   * @see
+   * org.ihtsdo.otf.ts.services.HistoryService#findDescriptionTypeRefSetMemberReleaseRevision
+   * (java.lang.Long, java.lang.String)
+   */
+  @Override
+  public DescriptionTypeRefSetMember findDescriptionTypeRefSetMemberReleaseRevision(Long id, Date release)
+    throws Exception {
+    Logger.getLogger(getClass()).debug(
+        "History Service - find descriptionTypeRefSetMember release revision " + id + ","
+            + release);
+
+    DescriptionTypeRefSetMemberJpa revision =
+        findReleaseRevision(id, release, DescriptionTypeRefSetMemberJpa.class);
+    return revision;
+  }
+
+  
+
+  /*
+   * (non-Javadoc)
+   * 
+   * @see org.ihtsdo.otf.mapping.services.ContentService#
+   * getModuleDependencyRefSetMembersModifiedSinceDate(java.lang.String, java.util.Date)
+   */
+  @Override
+  public ModuleDependencyRefSetMemberList findModuleDependencyRefSetMembersModifiedSinceDate(
+    String terminology, Date date, PfsParameter pfs) throws Exception {
+    Logger.getLogger(getClass()).debug(
+        "History Service - find moduleDependencyRefSetMembers modified since date "
+            + terminology + ", " + date);
+    int[] totalCt = new int[1];
+    List<ModuleDependencyRefSetMemberJpa> results =
+        findModifiedSinceDateFromQuery(ModuleDependencyRefSetMemberJpa.class, terminology,
+            date, pfs, totalCt);
+    ModuleDependencyRefSetMemberList resultList = new ModuleDependencyRefSetMemberListJpa();
+    resultList.setTotalCount(totalCt[0]);
+    for (ModuleDependencyRefSetMemberJpa moduleDependencyRefSetMember : results) {
+      resultList.addObject(moduleDependencyRefSetMember);
+    }
+    return resultList;
+  }
+
+  /*
+   * (non-Javadoc)
+   * 
+   * @see
+   * org.ihtsdo.otf.ts.services.HistoryService#findModuleDependencyRefSetMemberRevisions(java
+   * .lang.Long, java.util.Date, java.util.Date, boolean,
+   * org.ihtsdo.otf.ts.helpers.PfsParameter)
+   */
+  @Override
+  public ModuleDependencyRefSetMemberList findModuleDependencyRefSetMemberRevisions(Long id, Date startDate,
+    Date endDate, PfsParameter pfs) {
+    Logger.getLogger(getClass()).debug(
+        "History Service - find moduleDependencyRefSetMember revisions " + id + "," + startDate
+            + ", " + endDate);
+    List<ModuleDependencyRefSetMemberJpa> revisions =
+        findRevisions(id, ModuleDependencyRefSetMemberJpa.class, startDate, endDate, pfs);
+    // Repackage as ModuleDependencyRefSetMemberList
+    ModuleDependencyRefSetMemberList results = new ModuleDependencyRefSetMemberListJpa();
+    results.setTotalCount(revisions.size());
+    for (ModuleDependencyRefSetMemberJpa ModuleDependencyRefSetMember : revisions) {
+      results.addObject(ModuleDependencyRefSetMember);
+    }
+    return results;
+  }
+
+  /*
+   * (non-Javadoc)
+   * 
+   * @see
+   * org.ihtsdo.otf.ts.services.HistoryService#findModuleDependencyRefSetMemberReleaseRevision
+   * (java.lang.Long, java.lang.String)
+   */
+  @Override
+  public ModuleDependencyRefSetMember findModuleDependencyRefSetMemberReleaseRevision(Long id, Date release)
+    throws Exception {
+    Logger.getLogger(getClass()).debug(
+        "History Service - find moduleDependencyRefSetMember release revision " + id + ","
+            + release);
+
+    ModuleDependencyRefSetMemberJpa revision =
+        findReleaseRevision(id, release, ModuleDependencyRefSetMemberJpa.class);
+    return revision;
+  }
+  
+
+  /*
+   * (non-Javadoc)
+   * 
+   * @see org.ihtsdo.otf.mapping.services.ContentService#
+   * getRefsetDescriptorRefSetMembersModifiedSinceDate(java.lang.String, java.util.Date)
+   */
+  @Override
+  public RefsetDescriptorRefSetMemberList findRefsetDescriptorRefSetMembersModifiedSinceDate(
+    String terminology, Date date, PfsParameter pfs) throws Exception {
+    Logger.getLogger(getClass()).debug(
+        "History Service - find refsetDescriptorRefSetMembers modified since date "
+            + terminology + ", " + date);
+    int[] totalCt = new int[1];
+    List<RefsetDescriptorRefSetMemberJpa> results =
+        findModifiedSinceDateFromQuery(RefsetDescriptorRefSetMemberJpa.class, terminology,
+            date, pfs, totalCt);
+    RefsetDescriptorRefSetMemberList resultList = new RefsetDescriptorRefSetMemberListJpa();
+    resultList.setTotalCount(totalCt[0]);
+    for (RefsetDescriptorRefSetMemberJpa refsetDescriptorRefSetMember : results) {
+      resultList.addObject(refsetDescriptorRefSetMember);
+    }
+    return resultList;
+  }
+
+  /*
+   * (non-Javadoc)
+   * 
+   * @see
+   * org.ihtsdo.otf.ts.services.HistoryService#findRefsetDescriptorRefSetMemberRevisions(java
+   * .lang.Long, java.util.Date, java.util.Date, boolean,
+   * org.ihtsdo.otf.ts.helpers.PfsParameter)
+   */
+  @Override
+  public RefsetDescriptorRefSetMemberList findRefsetDescriptorRefSetMemberRevisions(Long id, Date startDate,
+    Date endDate, PfsParameter pfs) {
+    Logger.getLogger(getClass()).debug(
+        "History Service - find refsetDescriptorRefSetMember revisions " + id + "," + startDate
+            + ", " + endDate);
+    List<RefsetDescriptorRefSetMemberJpa> revisions =
+        findRevisions(id, RefsetDescriptorRefSetMemberJpa.class, startDate, endDate, pfs);
+    // Repackage as RefsetDescriptorRefSetMemberList
+    RefsetDescriptorRefSetMemberList results = new RefsetDescriptorRefSetMemberListJpa();
+    results.setTotalCount(revisions.size());
+    for (RefsetDescriptorRefSetMemberJpa RefsetDescriptorRefSetMember : revisions) {
+      results.addObject(RefsetDescriptorRefSetMember);
+    }
+    return results;
+  }
+
+  /*
+   * (non-Javadoc)
+   * 
+   * @see
+   * org.ihtsdo.otf.ts.services.HistoryService#findRefsetDescriptorRefSetMemberReleaseRevision
+   * (java.lang.Long, java.lang.String)
+   */
+  @Override
+  public RefsetDescriptorRefSetMember findRefsetDescriptorRefSetMemberReleaseRevision(Long id, Date release)
+    throws Exception {
+    Logger.getLogger(getClass()).debug(
+        "History Service - find refsetDescriptorRefSetMember release revision " + id + ","
+            + release);
+
+    RefsetDescriptorRefSetMemberJpa revision =
+        findReleaseRevision(id, release, RefsetDescriptorRefSetMemberJpa.class);
+    return revision;
+  }
+  
+
+  /*
+   * (non-Javadoc)
+   * 
+   * @see org.ihtsdo.otf.mapping.services.ContentService#
+   * getSimpleMapRefSetMembersModifiedSinceDate(java.lang.String, java.util.Date)
+   */
+  @Override
+  public SimpleMapRefSetMemberList findSimpleMapRefSetMembersModifiedSinceDate(
+    String terminology, Date date, PfsParameter pfs) throws Exception {
+    Logger.getLogger(getClass()).debug(
+        "History Service - find simpleMapRefSetMembers modified since date "
+            + terminology + ", " + date);
+    int[] totalCt = new int[1];
+    List<SimpleMapRefSetMemberJpa> results =
+        findModifiedSinceDateFromQuery(SimpleMapRefSetMemberJpa.class, terminology,
+            date, pfs, totalCt);
+    SimpleMapRefSetMemberList resultList = new SimpleMapRefSetMemberListJpa();
+    resultList.setTotalCount(totalCt[0]);
+    for (SimpleMapRefSetMemberJpa simpleMapRefSetMember : results) {
+      resultList.addObject(simpleMapRefSetMember);
+    }
+    return resultList;
+  }
+
+  /*
+   * (non-Javadoc)
+   * 
+   * @see
+   * org.ihtsdo.otf.ts.services.HistoryService#findSimpleMapRefSetMemberRevisions(java
+   * .lang.Long, java.util.Date, java.util.Date, boolean,
+   * org.ihtsdo.otf.ts.helpers.PfsParameter)
+   */
+  @Override
+  public SimpleMapRefSetMemberList findSimpleMapRefSetMemberRevisions(Long id, Date startDate,
+    Date endDate, PfsParameter pfs) {
+    Logger.getLogger(getClass()).debug(
+        "History Service - find simpleMapRefSetMember revisions " + id + "," + startDate
+            + ", " + endDate);
+    List<SimpleMapRefSetMemberJpa> revisions =
+        findRevisions(id, SimpleMapRefSetMemberJpa.class, startDate, endDate, pfs);
+    // Repackage as SimpleMapRefSetMemberList
+    SimpleMapRefSetMemberList results = new SimpleMapRefSetMemberListJpa();
+    results.setTotalCount(revisions.size());
+    for (SimpleMapRefSetMemberJpa SimpleMapRefSetMember : revisions) {
+      results.addObject(SimpleMapRefSetMember);
+    }
+    return results;
+  }
+
+  /*
+   * (non-Javadoc)
+   * 
+   * @see
+   * org.ihtsdo.otf.ts.services.HistoryService#findSimpleMapRefSetMemberReleaseRevision
+   * (java.lang.Long, java.lang.String)
+   */
+  @Override
+  public SimpleMapRefSetMember findSimpleMapRefSetMemberReleaseRevision(Long id, Date release)
+    throws Exception {
+    Logger.getLogger(getClass()).debug(
+        "History Service - find simpleMapRefSetMember release revision " + id + ","
+            + release);
+
+    SimpleMapRefSetMemberJpa revision =
+        findReleaseRevision(id, release, SimpleMapRefSetMemberJpa.class);
+    return revision;
+  }
+  
+
+  /*
+   * (non-Javadoc)
+   * 
+   * @see org.ihtsdo.otf.mapping.services.ContentService#
+   * getSimpleRefSetMembersModifiedSinceDate(java.lang.String, java.util.Date)
+   */
+  @Override
+  public SimpleRefSetMemberList findSimpleRefSetMembersModifiedSinceDate(
+    String terminology, Date date, PfsParameter pfs) throws Exception {
+    Logger.getLogger(getClass()).debug(
+        "History Service - find simpleRefSetMembers modified since date "
+            + terminology + ", " + date);
+    int[] totalCt = new int[1];
+    List<SimpleRefSetMemberJpa> results =
+        findModifiedSinceDateFromQuery(SimpleRefSetMemberJpa.class, terminology,
+            date, pfs, totalCt);
+    SimpleRefSetMemberList resultList = new SimpleRefSetMemberListJpa();
+    resultList.setTotalCount(totalCt[0]);
+    for (SimpleRefSetMemberJpa simpleRefSetMember : results) {
+      resultList.addObject(simpleRefSetMember);
+    }
+    return resultList;
+  }
+
+  /*
+   * (non-Javadoc)
+   * 
+   * @see
+   * org.ihtsdo.otf.ts.services.HistoryService#findSimpleRefSetMemberRevisions(java
+   * .lang.Long, java.util.Date, java.util.Date, boolean,
+   * org.ihtsdo.otf.ts.helpers.PfsParameter)
+   */
+  @Override
+  public SimpleRefSetMemberList findSimpleRefSetMemberRevisions(Long id, Date startDate,
+    Date endDate, PfsParameter pfs) {
+    Logger.getLogger(getClass()).debug(
+        "History Service - find simpleRefSetMember revisions " + id + "," + startDate
+            + ", " + endDate);
+    List<SimpleRefSetMemberJpa> revisions =
+        findRevisions(id, SimpleRefSetMemberJpa.class, startDate, endDate, pfs);
+    // Repackage as SimpleRefSetMemberList
+    SimpleRefSetMemberList results = new SimpleRefSetMemberListJpa();
+    results.setTotalCount(revisions.size());
+    for (SimpleRefSetMemberJpa SimpleRefSetMember : revisions) {
+      results.addObject(SimpleRefSetMember);
+    }
+    return results;
+  }
+
+  /*
+   * (non-Javadoc)
+   * 
+   * @see
+   * org.ihtsdo.otf.ts.services.HistoryService#findSimpleRefSetMemberReleaseRevision
+   * (java.lang.Long, java.lang.String)
+   */
+  @Override
+  public SimpleRefSetMember findSimpleRefSetMemberReleaseRevision(Long id, Date release)
+    throws Exception {
+    Logger.getLogger(getClass()).debug(
+        "History Service - find simpleRefSetMember release revision " + id + ","
+            + release);
+
+    SimpleRefSetMemberJpa revision =
+        findReleaseRevision(id, release, SimpleRefSetMemberJpa.class);
+    return revision;
+  }
+
 
   /*
    * (non-Javadoc)
@@ -528,7 +1128,9 @@ public class HistoryServiceJpa extends ContentServiceJpa implements
         manager.persist(releaseInfo);
       }
     } catch (Exception e) {
-      if (tx.isActive()) { tx.rollback();} 
+      if (tx.isActive()) {
+        tx.rollback();
+      }
       throw e;
     }
 
@@ -559,7 +1161,9 @@ public class HistoryServiceJpa extends ContentServiceJpa implements
         manager.merge(releaseInfo);
       }
     } catch (Exception e) {
-      if (tx.isActive()) { tx.rollback();} 
+      if (tx.isActive()) {
+        tx.rollback();
+      }
       throw e;
     }
   }
@@ -595,7 +1199,9 @@ public class HistoryServiceJpa extends ContentServiceJpa implements
         }
       }
     } catch (Exception e) {
-      if (tx.isActive()) { tx.rollback();} 
+      if (tx.isActive()) {
+        tx.rollback();
+      }
       throw e;
     }
 
@@ -630,8 +1236,7 @@ public class HistoryServiceJpa extends ContentServiceJpa implements
               "terminology", terminology);
       Date tempDate = (Date) query.getSingleResult();
       minDate = tempDate;
-      Logger.getLogger(getClass()).debug(
-          "  date is null, use " + minDate);
+      Logger.getLogger(getClass()).debug("  date is null, use " + minDate);
     }
     FullTextEntityManager fullTextEntityManager =
         Search.getFullTextEntityManager(manager);
@@ -662,6 +1267,7 @@ public class HistoryServiceJpa extends ContentServiceJpa implements
                   qb.keyword()
                       .onFields("terminologyId", "defaultPreferredName")
                       .matching(pfs.getQueryRestriction()).createQuery())
+
               .createQuery();
 
     }
@@ -674,8 +1280,14 @@ public class HistoryServiceJpa extends ContentServiceJpa implements
     if (pfs != null && pfs.getStartIndex() != -1 && pfs.getMaxResults() != -1) {
       ftquery.setFirstResult(pfs.getStartIndex());
       ftquery.setMaxResults(pfs.getMaxResults());
-
     }
+
+    if (pfs != null && pfs.getSortField() != null
+        && !pfs.getSortField().isEmpty()) {
+      ftquery.setSort(new Sort(new SortField(pfs.getSortField(), Type.STRING,
+          !pfs.isAscending())));
+    }
+
     totalCt[0] = ftquery.getResultSize();
     return ftquery.getResultList();
   }
@@ -709,8 +1321,7 @@ public class HistoryServiceJpa extends ContentServiceJpa implements
               "terminology", terminology);
       Date tempDate = (Date) query.getSingleResult();
       minDate = tempDate;
-      Logger.getLogger(getClass()).debug(
-          "  date is null, use " + minDate);
+      Logger.getLogger(getClass()).debug("  date is null, use " + minDate);
     }
 
     javax.persistence.Query query =
@@ -791,6 +1402,10 @@ public class HistoryServiceJpa extends ContentServiceJpa implements
    * @return the t
    * @throws ParseException the parse exception
    */
+  // TODO Do we want this to find the most recent version, or only this specific
+  // date?
+  // Should this trigger on effectiveTime, lastModified, or Version?
+  // Unsure what we're going for here, clarify
   private <T> T findReleaseRevision(Long id, Date release, Class<T> clazz)
     throws ParseException {
 

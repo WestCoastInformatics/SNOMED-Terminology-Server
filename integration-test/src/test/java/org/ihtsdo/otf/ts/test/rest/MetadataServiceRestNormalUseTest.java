@@ -178,7 +178,6 @@ public class MetadataServiceRestNormalUseTest extends MetadataServiceRestTest {
    * @return true, if successful
    * @throws Exception the exception
    */
-  @SuppressWarnings("null")
   private boolean testSnomedMetadata(KeyValuePairLists keyValuePairLists)
     throws Exception {
 
