@@ -6,7 +6,6 @@ package org.ihtsdo.otf.ts.test.rest;
 import static org.junit.Assert.assertTrue;
 
 import org.ihtsdo.otf.ts.helpers.PfsParameterJpa;
-import org.ihtsdo.otf.ts.rf2.AssociationReferenceConceptRefSetMember;
 import org.ihtsdo.otf.ts.rf2.Concept;
 import org.ihtsdo.otf.ts.rf2.Description;
 import org.ihtsdo.otf.ts.rf2.LanguageRefSetMember;
@@ -87,9 +86,9 @@ public class ContentServiceRestDegenerateUseTest extends ContentServiceRestTest 
         // String fields will fail on empty strings, return no results on null
         // (correct behavior)
         new ExpectedFailure[] {
-            ExpectedFailure.STRING_EMPTY_EXCEPTION_NULL_NO_RESULTS,
-            ExpectedFailure.STRING_EMPTY_EXCEPTION_NULL_NO_RESULTS,
-            ExpectedFailure.STRING_EMPTY_EXCEPTION_NULL_NO_RESULTS,
+            ExpectedFailure.STRING_INVALID_EXCEPTION_NULL_NO_RESULTS,
+            ExpectedFailure.STRING_INVALID_EXCEPTION_NULL_NO_RESULTS,
+            ExpectedFailure.STRING_INVALID_EXCEPTION_NULL_NO_RESULTS,
             ExpectedFailure.EXCEPTION
         });
 
@@ -134,9 +133,9 @@ public class ContentServiceRestDegenerateUseTest extends ContentServiceRestTest 
         // terminology id, terminology, terminology version all return no
         // results
         new ExpectedFailure[] {
-            ExpectedFailure.STRING_EMPTY_EXCEPTION_NULL_NO_RESULTS,
-            ExpectedFailure.STRING_EMPTY_EXCEPTION_NULL_NO_RESULTS,
-            ExpectedFailure.STRING_EMPTY_EXCEPTION_NULL_NO_RESULTS,
+            ExpectedFailure.STRING_INVALID_EXCEPTION_NULL_NO_RESULTS,
+            ExpectedFailure.STRING_INVALID_EXCEPTION_NULL_NO_RESULTS,
+            ExpectedFailure.STRING_INVALID_EXCEPTION_NULL_NO_RESULTS,
             ExpectedFailure.EXCEPTION, ExpectedFailure.EXCEPTION
         });
 
@@ -312,35 +311,6 @@ public class ContentServiceRestDegenerateUseTest extends ContentServiceRestTest 
   @Test
   public void testDegenerateUseRestContent006() throws Exception {
 
-    String refSetMemberTerminologyId = "d9835599-19ac-56bd-89ad-18b37713dfbd";
-
-    AssociationReferenceConceptRefSetMember refsetMember =
-        contentService.getAssociationReferenceConceptRefSetMember(
-            refSetMemberTerminologyId, testTerminology, testVersion, authToken);
-
-    // get relationship
-    validParameters =
-        new Object[] {
-            refsetMember.getTerminologyId(), testTerminology, testVersion,
-            authToken
-        };
-
-    DegenerateUseMethodTestHelper.testDegenerateArguments(
-        contentService,
-        contentService.getClass().getMethod(
-            "getAssociationReferenceConceptRefSetMember",
-            getParameterTypes(validParameters)), validParameters);
-
-    // get relationship
-    validParameters = new Object[] {
-        refsetMember.getId(), authToken
-    };
-
-    DegenerateUseMethodTestHelper.testDegenerateArguments(
-        contentService,
-        contentService.getClass().getMethod(
-            "getAssociationReferenceConceptRefSetMember",
-            getParameterTypes(validParameters)), validParameters);
   }
 
   /**

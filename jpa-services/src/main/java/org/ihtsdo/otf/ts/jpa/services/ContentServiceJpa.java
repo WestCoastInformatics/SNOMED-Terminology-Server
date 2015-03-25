@@ -37,6 +37,8 @@ import org.ihtsdo.otf.ts.helpers.ComplexMapRefSetMemberListJpa;
 import org.ihtsdo.otf.ts.helpers.ConceptList;
 import org.ihtsdo.otf.ts.helpers.ConceptListJpa;
 import org.ihtsdo.otf.ts.helpers.ConfigUtility;
+import org.ihtsdo.otf.ts.helpers.DescriptionTypeRefSetMemberList;
+import org.ihtsdo.otf.ts.helpers.DescriptionTypeRefSetMemberListJpa;
 import org.ihtsdo.otf.ts.helpers.IndexUtility;
 import org.ihtsdo.otf.ts.helpers.LanguageRefSetMemberList;
 import org.ihtsdo.otf.ts.helpers.LanguageRefSetMemberListJpa;
@@ -501,7 +503,6 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
     return list;
   }
 
-  @SuppressWarnings("unchecked")
   @Override
   public ConceptList getParentConcepts(Concept concept, PfsParameter pfs)
     throws Exception {

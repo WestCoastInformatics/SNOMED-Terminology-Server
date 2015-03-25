@@ -1,0 +1,295 @@
+<html ng-app="tsApp">
+<head>
+<meta http-equiv="Content-Language" content="en" />
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>Terminology Server Demonstration Portal</title>
+<style type="text/css" media="all"></style>
+
+
+
+<!-- Bootstrap core CSS  -->
+<link href="ui/components/bootstrap/dist/css/bootstrap.css" rel="stylesheet">
+
+<!-- Angular core  -->
+<script type="text/javascript" src="./ui/components/angular/angular.js"></script>
+
+<!-- Angular/Boostrap UI Components -->
+<script type="text/javascript"
+  src="ui/components/angular-bootstrap/ui-bootstrap.js"></script>
+<script type="text/javascript"
+  src="ui/components/angular-bootstrap/ui-bootstrap-tpls.js"></script>
+
+
+<!-- Terminology server Angular application -->
+<script src="ui/js/app.js"></script>
+<link href="ui/css/tsApp.css" rel="stylesheet">
+</head>
+<body>
+
+  <div ng-controller="tsIndexCtrl">
+
+    <!--  Javascript detection -->
+    <noscript>
+      <style type="text/css">
+.container {
+	display: none;
+}
+</style>
+      <div class="alert alert-danger">You must have Javascript enabled to
+        use the Terminology Server Demo</div>
+    </noscript>
+
+
+    <!--  header -->
+
+    <nav style="background-color: #FFFFFF"
+      class="navbar navbar-default navbar-fixed-top" role="navigation">
+      <div class="container-fluid">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header">
+          <img class="pull-left" src="images/logo.jpg">
+          <p class="navbar-brand">&nbsp;Terminology Server Demo</p>
+        </div>
+      </div>
+    </nav>
+
+
+    <div class="ts-container">
+
+      <!-- Error Messages -->
+      <div id="errorMsg" class="border-error alert-error"
+        ng-show="error.length > 0">
+        <h4 class="alert alert-danger alert-error">
+          {{error}}
+          <div style="display: inline; float: right; width: 3%;">
+            <i class="glyphicon glyphicon-remove" ng-click="clearError()"></i>
+          </div>
+        </h4>
+      </div>
+
+      <!-- Login form -->
+      <div ng-show="authToken == null">
+        <div>
+          <div class="ts-panel">
+            <strong>Enter User and Password</strong><br>
+            <form>
+              <input style="margin-top: 5px;" id="userField" ng-model="userName"
+                type="text" placeholder="Username" /><br> <input
+                style="margin-top: 5px;" id="passwordField" type="password"
+                placeholder="Password" ng-model="password" /><br>
+              <button style="margin-top: 10px;" id="userLoginButton"
+                type="submit" ng-click="login(userName, password)">Login</button>
+              <p><a
+                href="https://uts.nlm.nih.gov/license.html#emailTemporaryPassword">Forgot
+                Password?</a></p>
+
+            </form>
+          </div>
+
+
+        </div>
+
+      </div>
+
+      <!-- Content displayed after log in -->
+      <div ng-show="authToken != null">
+
+        <table class="table">
+
+          <tr>
+            <td>Select terminology</td>
+            <td><select ng-model="terminology"
+              ng-options="terminology as terminology.name + ', ' + terminology.version
+					for terminology in terminologies"></select>
+            </td>
+          <tr>
+            <td style="width: 15%;">Enter search terms</td>
+            <td><form>
+                <input ng-model="conceptQuery">
+                <button class="btn btn-small btn-primary" type="submit"
+                  ng-click="findConcepts(terminology, conceptQuery)">Search</button>
+                <button class="btn btn-small btn-warning" type="cancel"
+                  ng-click="conceptQuery = null">Clear</button>
+                <br> z<em>Searchable terms include concept names, e.g.
+                  ossification, and concept ids, e.g. 728.1 (for ICD9CM),
+                  102276005 (for SNOMEDCT)</em></td>
+
+            </form>
+          </tr>
+        </table>
+
+
+
+        <!--  Side-by-side table and concept display -->
+        <div class="container-fluid"">
+
+          <div class="row">
+            <div class="col-md-4">
+
+              <div class="alert alert-success" style="heighth: 15px"
+                ng-show="searchResults.length > 0">
+                {{searchResults.length}} Results (Click a row for details)</div>
+
+
+              <div class="alert alert-danger"
+                ng-show="searchResults.length == 0">Search returned no
+                results.</div>
+
+              <table class="table table-hover"
+                ng-show="searchResults.length > 0">
+
+                <tbody>
+                  <tr
+                    ng-repeat="
+								searchResult in
+								searchResults"
+                    ng-class="searchResult.rowClass"
+                    ng-click="getConcept(terminology.name, terminology.version, searchResult.terminologyId)">
+                    <td>{{searchResult.terminologyId}}</a></td>
+                    <td>{{searchResult.value}}</td>
+                </tbody>
+              </table>
+            </div>
+
+            <div class="col-md-1" ng-show="component != null"
+              style="border-left: 1px solid #d9edf7; border-right: 1px solid #d9edf7;">
+
+              <div class="dropdown alert alert-info">
+                <div class="dropdown-toggle">
+                  View: {{navSelected}} <span class="caret"></span>
+                </div>
+                <ul class="dropdown-menu">
+                  <li><a ng-click="navSelected = 'Structure'">Structure</a></li>
+                  <li><a ng-click="navSelected = 'Parents'">Parents
+                      ({{parentConcepts.length}})</a></li>
+                  <li><a ng-click="navSelected = 'Children'">Children
+                      ({{childConcepts.length}})</a></li>
+                </ul>
+              </div>
+              <!-- 
+
+              <div class="alert alert-info">Select View</div>
+              <button class="btn btn-sm btn-primary btn-structure"
+                ng-disabled="navSelected === 'Structure'"
+                ng-click="navSelected = 'Structure'">Structure</button>
+              <button class="btn btn-sm btn-primary btn-structure"
+                ng-disabled="navSelected === 'Parents'"
+                ng-click="navSelected = 'Parents'">Parents
+                ({{parentConcepts.length}})</button>
+              <button class="btn btn-sm btn-primary btn-structure"
+                ng-disabled="navSelected === 'Children'"
+                ng-click="navSelected = 'Children'">Children
+                ({{childConcepts.length}})</button>
+
+              <div style="margin-top: 15px;" class="alert alert-info">View:
+                {{navSelected}}</div> -->
+
+              <!-- View: Structure -->
+              <div ng-show="navSelected === 'Structure'">
+                <div style="">
+                  <button class="btn btn-sm btn-primary btn-structure"
+                    ng-click="setComponent(concept, 'Concept')"
+                    ng-disabled="concept.viewed">Concept</button>
+                </div>
+                <div style="margin-left: 15px;"
+                  ng-repeat="description in concept.description">
+                  <button class="btn btn-sm btn-primary btn-structure"
+                    ng-disabled="description.viewed"
+                    ng-click="setComponent(description, 'Description')">Description</button>
+                  <div style="margin-left: 15px;"
+                    ng-repeat="language in description.language">
+                    <button class="btn btn-sm btn-primary btn-structure"
+                      ng-disabled="language.viewed"
+                      ng-click="setComponent(language, 'Language Ref Set Member')">Language</button>
+                  </div>
+                </div>
+                <div style="margin-left: 15px;"
+                  ng-repeat="relationship in concept.relationship">
+                  <button class="btn btn-sm btn-primary btn-structure"
+                    ng-disabled="relationship.viewed"
+                    ng-click="setComponent(relationship, 'Relationship')">Relationship</button>
+                </div>
+              </div>
+
+              <!--  View: Parents -->
+              <div ng-show="navSelected === 'Parents'">
+                <div ng-show="parentConcepts.length == 0"
+                  class="alert alert-warning">No parents</div>
+                <button class="btn btn-sm btn-primary btn-structure"
+                  ng-repeat="parentConcept in parentConcepts | orderBy:'terminologyId'"
+                  ng-click="getConcept(parentConcept.terminology, parentConcept.terminologyVersion, parentConcept.terminologyId)"
+                  tooltip-placement="right"
+                  tooltip="{{parentConcept.defaultPreferredName}}">{{parentConcept.terminologyId}}</button>
+
+              </div>
+
+              <!--  View: Children -->
+              <div ng-show="navSelected === 'Children'">
+                <div ng-show="childConcepts.length == 0"
+                  class="alert alert-warning">No children</div>
+                <button class="btn btn-sm btn-primary btn-structure"
+                  ng-repeat="childConcept in childConcepts | orderBy:'terminologyId'"
+                  ng-click="getConcept(childConcept.terminology, childConcept.terminologyVersion, childConcept.terminologyId)"
+                  tooltip-placement="right"
+                  tooltip="{{childConcept.defaultPreferredName}}">{{childConcept.terminologyId}}</button>
+              </div>
+            </div>
+
+
+
+
+
+            <div class="col-md-6" ng-show="component != null">
+              <div class="alert alert-info">Viewing {{componentType}}
+                {{component.terminologyId}}</div>
+
+              <div component object="component" type="{{componentType}}"></div>
+              <!-- 
+						<div component object="concept" type="Concept"></div>
+						<div component ng-repeat="description in concept.description"
+							object="description" type="Description"></div>
+						<div component ng-repeat="relationship in concept.relationship"
+							object="relationship" type="Relationship"></div>
+ -->
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <nav style="background-color: #ffffff"
+    class="navbar navbar-default navbar-fixed-bottom">
+    <div class="container-fluid">
+      <div class="navbar-header">
+        <ul class="nav navbar-nav navbar-left">
+          <li><p class="navbar-text">
+              <a class="navbar-link" href="${deploy.footer.link}"> SNOMEDCT
+                Content Copyright @2015 IHTSDO </a>
+            </p></li>
+          <li>
+            <div style="text-align: center; padding: 5px; margin: 0 0 0 0;"
+              class="alert alert-danger" ng-show="glassPane < 0">
+              The Glass Pane activity indicator may not be functioning
+              correctly.<br>Please send a screenshot to an administrator.
+              (GPC: {{glassPane}})
+            </div>
+          </li>
+        </ul>
+      </div>
+      <div class="collapse navbar-collapse">
+        <ul class="nav navbar-nav navbar-right">
+          <li>
+            <p class="navbar-text">Presented for demonstration purposes by
+              West Coast Informatics, LLC</p>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Glass Pane -->
+  <div ng-show="glassPane > 0" class="top-layer"></div>
+</body>
+</html>

@@ -25,7 +25,6 @@ public class RootServiceRestImpl {
    *
    * @param e the e
    * @param whatIsHappening the what is happening
-   * @throws LocalException
    */
   @SuppressWarnings("static-method")
   public void handleException(Exception e, String whatIsHappening) {

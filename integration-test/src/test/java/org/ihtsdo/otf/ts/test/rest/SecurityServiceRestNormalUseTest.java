@@ -39,7 +39,12 @@ public class SecurityServiceRestNormalUseTest extends SecurityServiceRestTest {
   public void testNormalUseRestSecurity001() throws Exception {
     String authToken = service.authenticate(viewerUserName, viewerUserPassword);
     if (authToken == null || authToken.isEmpty()) {
-      fail("Failed to authenticate user");
+      fail("Failed to authenticate viewer user");
+    }
+    
+    authToken = service.authenticate(adminUserName, adminUserPassword);
+    if (authToken == null || authToken.isEmpty()) {
+      fail("Failed to authenticate admin user");
     }
   }
 
@@ -89,9 +94,11 @@ public class SecurityServiceRestNormalUseTest extends SecurityServiceRestTest {
     Logger.getLogger(getClass()).info(
         "  Procedure 3");
 
+    System.out.println(user.toString());
     user.setEmail("new email");
     service.updateUser((UserJpa) user, adminAuthToken);
     user = service.getUser(badUserName, adminAuthToken);
+    System.out.println(user.toString());
     assertTrue(user.getEmail().equals("new email"));
 
     /**
@@ -177,7 +184,8 @@ public class SecurityServiceRestNormalUseTest extends SecurityServiceRestTest {
   @SuppressWarnings("static-method")
   @After
   public void teardown() throws Exception {
-    // remove the bad user if tests have failed
+    
+    // ensure the bad user has been removed
     SecurityService securityService = new SecurityServiceJpa();
     if (securityService.getUser(badUserName) != null) {
       securityService.removeUser(securityService.getUser(badUserName).getId());

@@ -3,7 +3,10 @@ package org.ihtsdo.otf.ts.test.helpers;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.log4j.Logger;
 import org.ihtsdo.otf.ts.helpers.LocalException;
@@ -18,7 +21,7 @@ import org.ihtsdo.otf.ts.helpers.ResultList;
  * @author ${author}
  */
 public class DegenerateUseMethodTestHelper {
-
+  
   /**
    * The Enum ExpectedFailure.
    *
@@ -34,41 +37,60 @@ public class DegenerateUseMethodTestHelper {
 
     /** Use this if no failure is expected */
     NONE,
-
-    /** Use when empty string throws exception and null throws exception (identical to EXCEPTION) */
-    STRING_EMPTY_EXCEPTION_NULL_EXCEPTION,
-
-    /** Use when empty string throws exceptions and null returns erroneous no results */
-    STRING_EMPTY_EXCEPTION_NULL_NO_RESULTS, 
     
-    /** Use when empty string throws exception and null succeeds */
-    STRING_EMPTY_EXCEPTION_NULL_SUCCESS, 
-    
-    /** Use when empty string returns erroneous no results and null throws exception */
-    STRING_EMPTY_NO_RESULTS_NULL_EXCEPTION, 
-    
-    /** Use when empty string returns erroneous no results and null returns erroneous null results*/
-    STRING_EMPTY_NO_RESULTS_NULL_NO_RESULTS, 
-    
-    /** Use when empty string returns erroneous no results and null succeeds */
-    STRING_EMPTY_NO_RESULTS_NULL_SUCCESS, 
-
-    /** Use when empty string succeeds and null throws exception */
-    STRING_EMPTY_SUCCESS_NULL_EXCEPTION,
-    
-    /** Use when empty string succeeds and null returns erroneous null results*/
-    STRING_EMPTY_SUCCESS_NULL_NO_RESULTS,
-    
-    /** Use when empty string succeeds and null string succeeds */
-    STRING_EMPTY_SUCCESS_NULL_SUCCESS, 
-
     /** Use to test successful call, but erroneous empty result list. */
     NO_RESULTS,
+
+    /**
+     * Use when invalid long value produces null instead of throwing exception;
+     * null still throws exception
+     */
+    LONG_INVALID_NO_RESULTS_NULL_EXCEPTION,
+
+    /**
+     * Use when empty string throws exception and null throws exception
+     * (identical to EXCEPTION)
+     */
+    STRING_INVALID_EXCEPTION_NULL_EXCEPTION,
+
+    /**
+     * Use when empty string throws exceptions and null returns erroneous no
+     * results
+     */
+    STRING_INVALID_EXCEPTION_NULL_NO_RESULTS,
+
+    /** Use when empty string throws exception and null succeeds */
+    STRING_INVALID_EXCEPTION_NULL_SUCCESS,
+
+    /**
+     * Use when empty string returns erroneous no results and null throws
+     * exception
+     */
+    STRING_INVALID_NO_RESULTS_NULL_EXCEPTION,
+
+    /**
+     * Use when empty string returns erroneous no results and null returns
+     * erroneous null results
+     */
+    STRING_INVALID_NO_RESULTS_NULL_NO_RESULTS,
+
+    /** Use when empty string returns erroneous no results and null succeeds */
+    STRING_INVALID_NO_RESULTS_NULL_SUCCESS,
+
+    /** Use when empty string succeeds and null throws exception */
+    STRING_INVALID_SUCCESS_NULL_EXCEPTION,
+
+    /** Use when empty string succeeds and null returns erroneous null results */
+    STRING_INVALID_SUCCESS_NULL_NO_RESULTS,
+
+    /** Use when empty string succeeds and null string succeeds */
+    STRING_INVALID_SUCCESS_NULL_SUCCESS,
+
   };
+  
 
   /**
-   * Test a object's method for invalid and null values Assumes invalid values
-   * are -1 (as String, Long, int) Also tests PfsParameter.
+   * Test degenerate method use with default behavior.
    *
    * @param obj the obj
    * @param method the method
@@ -79,22 +101,56 @@ public class DegenerateUseMethodTestHelper {
   public static void testDegenerateArguments(Object obj, Method method,
     Object[] validParameters) throws Exception, LocalException {
 
-    testDegenerateArguments(obj, method, validParameters, null);
+    testDegenerateArguments(obj, method, validParameters, null, null);
   }
-
+  
   /**
-   * Test degenerate arguments.
+   * Test degenerate method use with default invalid values and specified failure behavior.
    *
    * @param obj the obj
    * @param method the method
    * @param validParameters the valid parameters
    * @param expectedFailures the expected failures
    * @throws Exception the exception
+   * @throws LocalException the local exception
    */
   public static void testDegenerateArguments(Object obj, Method method,
-    Object[] validParameters, ExpectedFailure[] expectedFailures)
-    throws Exception {
+    Object[] validParameters, ExpectedFailure[] expectedFailures) throws Exception, LocalException {
 
+    testDegenerateArguments(obj, method, validParameters, null, expectedFailures);
+  }
+  
+  /**
+   * Test degenerate arguments with specified (non-default) invalid parameters.
+   *
+   * @param obj the obj
+   * @param method the method
+   * @param validParameters the valid parameters
+   * @param invalidParameters the invalid parameters
+   * @throws Exception the exception
+   * @throws LocalException the local exception
+   */
+  public static void testDegenerateArguments(Object obj, Method method,
+    Object[] validParameters, Object[] invalidParameters) throws Exception, LocalException {
+
+    testDegenerateArguments(obj, method, validParameters, invalidParameters, null);
+  }
+
+  /**
+   * Test degenerate arguments with fully specified invalid parameters and failure behavior.
+   *
+   * @param obj the obj
+   * @param method the method
+   * @param validParameters the valid parameters
+   * @param invalidParameters the invalid parameters
+   * @param expectedFailures the expected failures
+   * @throws Exception the exception
+   */
+  public static void testDegenerateArguments(Object obj, Method method,
+    Object[] validParameters, Object[] invalidParameters, ExpectedFailure[] expectedFailures)
+    throws Exception {
+    
+    
     // check assumptions
     if (obj == null)
       throw new Exception("Class to test method for not specified");
@@ -105,6 +161,11 @@ public class DegenerateUseMethodTestHelper {
         throw new Exception(
             "Specified list of whether to test field values does not match length of list of parameters");
     }
+    if (validParameters != null && invalidParameters != null) {
+      if (validParameters.length != invalidParameters.length)
+        throw new Exception(
+            "Specified list of invalid parameter values does not match length of list of parameters");
+    }
 
     Logger.getLogger(DegenerateUseMethodTestHelper.class).info(
         "Testing " + obj.getClass().getName() + ", method " + method.getName());
@@ -114,13 +175,42 @@ public class DegenerateUseMethodTestHelper {
       method.invoke(obj, validParameters);
     } catch (Exception e) {
       throw new Exception(
-          "Could not validate method with valid parameters, error thrown");
+          "Could not validate method with valid parameters, testing halted");
     }
 
     // construct the base valid parameter list
     List<Object> validParameterList = new ArrayList<>();
     for (int i = 0; i < validParameters.length; i++)
       validParameterList.add(validParameters[i]);
+    
+    // construct the base invalid parameter list
+    List<Object> invalidParameterList = new ArrayList<>();
+    
+    // if no invalid parameters specified, construct defaults
+    if (invalidParameters == null) {
+      
+      for (Object validParameter : validParameterList) {
+        
+        Class parameterType = validParameter.getClass();
+        Object invalidParameter = null;
+        
+        if (parameterType.equals(String.class)) {
+          invalidParameter = new String("");
+        } else if (parameterType.equals(Long.class)
+            || parameterType.equals(long.class)) {
+          invalidParameter = -5L;
+        } else if (parameterType.equals(Integer.class)
+            || parameterType.equals(int.class)) {
+          invalidParameter = -5;
+        }
+        
+        invalidParameterList.add(parameterType.cast(invalidParameter));
+      }
+    } else {
+      for (int i = 0; i < validParameters.length; i++) {
+        invalidParameterList.add(invalidParameters[i]);
+      }
+    }
 
     // cycle over parameters
     for (int i = 0; i < validParameters.length; i++) {
@@ -142,21 +232,10 @@ public class DegenerateUseMethodTestHelper {
       // .println("  Valid parameters: " + validParameterList.toString());
 
       // the invalid value to test with
-      Object invalidValue = null;
-
-      // construct the bad parameter based on type (supports String, Long,
-      // Integer)
-      // PfsParameter handled below
+      Object invalidValue = invalidParameterList.get(i);
+      
+      // the class of this parameter
       Class<? extends Object> parameterType = validParameters[i].getClass();
-      if (parameterType.equals(String.class)) {
-        invalidValue = parameterType.cast("");
-      } else if (parameterType.equals(Long.class)
-          || parameterType.equals(long.class)) {
-        invalidValue = parameterType.cast(-5L);
-      } else if (parameterType.equals(Integer.class)
-          || parameterType.equals(int.class)) {
-        invalidValue = parameterType.cast(-5);
-      }
 
       Logger.getLogger(DegenerateUseMethodTestHelper.class).info(
           "Object parameter tested of type " + parameterType.toString()
@@ -166,10 +245,12 @@ public class DegenerateUseMethodTestHelper {
       if (!parameterType.equals(PfsParameterJpa.class)
           && !parameterType.equals(PfsParameter.class)) {
 
-        // replace the bad parameter
-        parameters.set(i, invalidValue);
-        invoke(obj, method, parameters.toArray(), invalidValue, expectedFailure);
-
+        // if parameter not null, replace the bad parameter
+        if (invalidValue != null) {
+          parameters.set(i, invalidValue);
+          invoke(obj, method, parameters.toArray(), invalidValue, expectedFailure);
+        }
+        
         // if not primitive, test null
         if (!parameterType.isPrimitive()) {
           parameters.set(i, null);
@@ -222,17 +303,6 @@ public class DegenerateUseMethodTestHelper {
   private static void invoke(Object obj, Method method, Object[] parameters,
     Object parameter, ExpectedFailure expectedFailure) throws Exception {
 
-    /*
-     * String debugStr = ""; for (Object o : parameters) { debugStr += " " + (o
-     * == null ? "null" : o.toString());
-     * 
-     * } System.out.println("  Testing with parameters: " + debugStr); if
-     * (parameter == null) System.out.println("    NULL PARAMETER"); else {
-     * System.out.println("    class = " + parameter.getClass().toString()); if
-     * (parameter.getClass().equals(String.class)) {
-     * System.out.println("    empty = " + ((String) parameter).isEmpty()); } }
-     */
-
     if (expectedFailure.equals(ExpectedFailure.SKIP)) {
       // do nothing, skip this test
     } else {
@@ -241,7 +311,7 @@ public class DegenerateUseMethodTestHelper {
               + (parameter == null ? "null" : parameter.toString()));
 
       try {
-        ResultList<?> results = (ResultList<?>) method.invoke(obj, parameters);
+        Object result = method.invoke(obj, parameters);
 
         Logger.getLogger(DegenerateUseMethodTestHelper.class).info(
             "Call succeeded for tested value "
@@ -256,11 +326,17 @@ public class DegenerateUseMethodTestHelper {
             break;
           case NO_RESULTS:
             // check that no results returned
-            if (results.getCount() != 0) {
+            if (isEmptyObject(result)) {
               throw new Exception("Test expecting no results returned objects");
             }
             break;
-          case STRING_EMPTY_NO_RESULTS_NULL_NO_RESULTS:
+          case LONG_INVALID_NO_RESULTS_NULL_EXCEPTION:
+            // check that result returned is null
+            if (result != null) {
+              throw new Exception("Test expecting null result returned object");
+            }
+            break;
+          case STRING_INVALID_NO_RESULTS_NULL_NO_RESULTS:
             // if parameter is string or null
             if (parameter == null || parameter.getClass().equals(String.class)) {
 
@@ -271,7 +347,7 @@ public class DegenerateUseMethodTestHelper {
               }
 
               // check no results
-              if (results.getCount() != 0) {
+              if (!isEmptyObject(result)) {
                 throw new Exception(
                     "Test expecting no results returned objects");
               }
@@ -284,7 +360,7 @@ public class DegenerateUseMethodTestHelper {
             }
 
             break;
-          case STRING_EMPTY_NO_RESULTS_NULL_SUCCESS:
+          case STRING_INVALID_NO_RESULTS_NULL_SUCCESS:
 
             // if parameter is null, do nothing
             if (parameter == null) {
@@ -301,7 +377,7 @@ public class DegenerateUseMethodTestHelper {
               }
 
               // check no results
-              if (results.getCount() != 0) {
+              if (!isEmptyObject(result)) {
                 throw new Exception(
                     "Test expecting no results returned objects");
               }
@@ -312,12 +388,12 @@ public class DegenerateUseMethodTestHelper {
               throw new Exception(
                   "Test of String parameter used non-String object");
             }
-          case STRING_EMPTY_SUCCESS_NULL_NO_RESULTS:
+          case STRING_INVALID_SUCCESS_NULL_NO_RESULTS:
             // if parameter null
             if (parameter == null) {
 
               // check no results
-              if (results.getCount() != 0) {
+              if (!isEmptyObject(result)) {
                 throw new Exception(
                     "Test expecting no results returned objects");
               }
@@ -339,7 +415,7 @@ public class DegenerateUseMethodTestHelper {
             }
 
             break;
-          case STRING_EMPTY_SUCCESS_NULL_SUCCESS:
+          case STRING_INVALID_SUCCESS_NULL_SUCCESS:
             if (parameter == null) {
               // do nothing
             } else {
@@ -371,7 +447,17 @@ public class DegenerateUseMethodTestHelper {
             // do nothing, expected exception
             break;
 
-          case STRING_EMPTY_EXCEPTION_NULL_EXCEPTION:
+          case LONG_INVALID_NO_RESULTS_NULL_EXCEPTION:
+            if (parameter == null) {
+              // do nothing, expected exception
+            } else if (parameter.getClass().equals(Long.class)) {
+              throw new Exception(
+                  "Invalid long value threw exception when expecting no results");
+            }
+
+            break;
+
+          case STRING_INVALID_EXCEPTION_NULL_EXCEPTION:
             if (parameter == null) {
               // do nothing, expected exception
             }
@@ -390,7 +476,7 @@ public class DegenerateUseMethodTestHelper {
             }
 
             break;
-          case STRING_EMPTY_EXCEPTION_NULL_NO_RESULTS:
+          case STRING_INVALID_EXCEPTION_NULL_NO_RESULTS:
             if (parameter == null) {
               throw new Exception(
                   "Testing string parameter with null value threw an unexpected exception");
@@ -408,7 +494,7 @@ public class DegenerateUseMethodTestHelper {
                   "Test expecting String value given non-String parameter");
             }
             break;
-          case STRING_EMPTY_EXCEPTION_NULL_SUCCESS:
+          case STRING_INVALID_EXCEPTION_NULL_SUCCESS:
             if (parameter == null) {
               throw new Exception(
                   "Testing string parameter with null value threw an unexpected exception");
@@ -426,7 +512,7 @@ public class DegenerateUseMethodTestHelper {
                   "Test expecting String value given non-String parameter");
             }
             break;
-          case STRING_EMPTY_NO_RESULTS_NULL_EXCEPTION:
+          case STRING_INVALID_NO_RESULTS_NULL_EXCEPTION:
             if (parameter == null) {
               // do nothing, expected exception
 
@@ -438,7 +524,7 @@ public class DegenerateUseMethodTestHelper {
                   "Test expecting String value given non-String parameter");
             }
             break;
-          case STRING_EMPTY_SUCCESS_NULL_EXCEPTION:
+          case STRING_INVALID_SUCCESS_NULL_EXCEPTION:
             if (parameter == null) {
               // do nothing, expected exception
 
@@ -459,5 +545,27 @@ public class DegenerateUseMethodTestHelper {
         throw new Exception(e.getMessage());
       }
     }
+  }
+
+  // helper function to take an object and determine if it is non-null, but
+  // empty
+  private static boolean isEmptyObject(Object o) {
+
+    // return false if not-null, object is not semantically empty
+    if (o == null)
+      return false;
+
+    // if a collection, check size is 0
+    if (o instanceof Collection<?>) {
+      return ((Collection<?>) o).size() == 0;
+    }
+
+    // if a result list, check total count is 0
+    if (o instanceof ResultList<?>) {
+      return ((ResultList<?>) o).getTotalCount() == 0;
+    }
+
+    // if any other non-null object, not semantically empty
+    return false;
   }
 }

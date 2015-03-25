@@ -12,14 +12,10 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringReader;
 import java.io.StringWriter;
-import java.lang.annotation.Annotation;
-import java.lang.reflect.Method;
 import java.nio.charset.StandardCharsets;
 import java.util.Comparator;
-import java.util.HashSet;
 import java.util.Properties;
 import java.util.Scanner;
-import java.util.Set;
 
 import javax.mail.Authenticator;
 import javax.mail.Message;

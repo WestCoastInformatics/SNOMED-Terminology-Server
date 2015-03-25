@@ -1,6 +1,5 @@
 package org.ihtsdo.otf.ts.rf2.jpa;
 
-import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -12,7 +11,6 @@ import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.persistence.UniqueConstraint;
 import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlID;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
