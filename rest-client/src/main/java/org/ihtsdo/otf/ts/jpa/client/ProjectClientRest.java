@@ -7,11 +7,12 @@ import javax.ws.rs.core.Response.Status.Family;
 
 import org.apache.log4j.Logger;
 import org.ihtsdo.otf.ts.Project;
-import org.ihtsdo.otf.ts.helpers.ConceptList;
-import org.ihtsdo.otf.ts.helpers.ConceptListJpa;
 import org.ihtsdo.otf.ts.helpers.ConfigUtility;
+import org.ihtsdo.otf.ts.helpers.PfsParameterJpa;
 import org.ihtsdo.otf.ts.helpers.ProjectList;
 import org.ihtsdo.otf.ts.helpers.ProjectListJpa;
+import org.ihtsdo.otf.ts.helpers.SearchResultList;
+import org.ihtsdo.otf.ts.helpers.SearchResultListJpa;
 import org.ihtsdo.otf.ts.jpa.ProjectJpa;
 import org.ihtsdo.otf.ts.rest.ProjectServiceRest;
 
@@ -20,7 +21,7 @@ import com.sun.jersey.api.client.ClientResponse;
 import com.sun.jersey.api.client.WebResource;
 
 /**
- * A client for connecting to a content REST service.
+ * A client for connecting to a project REST service.
  */
 public class ProjectClientRest implements ProjectServiceRest {
 
@@ -36,16 +37,19 @@ public class ProjectClientRest implements ProjectServiceRest {
     this.config = config;
   }
 
-  /* (non-Javadoc)
-   * @see org.ihtsdo.otf.ts.rest.ContentServiceRest#addProject(org.ihtsdo.otf.ts.jpa.ProjectJpa, java.lang.String)
+  /*
+   * (non-Javadoc)
+   * 
+   * @see
+   * org.ihtsdo.otf.ts.rest.ProjectServiceRest#addProject(org.ihtsdo.otf.ts.
+   * jpa.ProjectJpa, java.lang.String)
    */
   @Override
   public Project addProject(ProjectJpa project, String authToken)
     throws Exception {
     Client client = Client.create();
     WebResource resource =
-        client
-            .resource(config.getProperty("base.url") + "/project/add");
+        client.resource(config.getProperty("base.url") + "/project/add");
 
     String projectString =
         (project != null ? ConfigUtility.getStringForGraph(project) : null);
@@ -75,19 +79,81 @@ public class ProjectClientRest implements ProjectServiceRest {
    * (non-Javadoc)
    * 
    * @see
-   * org.ihtsdo.otf.ts.rest.ContentServiceRest#getConceptsInScope(java.lang.
+   * org.ihtsdo.otf.ts.rest.ProjectServiceRest#updateProject(org.ihtsdo.otf.
+   * ts.jpa.ProjectJpa, java.lang.String)
+   */
+  @Override
+  public void updateProject(ProjectJpa project, String authToken)
+    throws Exception {
+    Client client = Client.create();
+    WebResource resource =
+        client.resource(config.getProperty("base.url") + "/project/update");
+
+    String projectString =
+        (project != null ? ConfigUtility.getStringForGraph(project) : null);
+    Logger.getLogger(getClass()).debug(projectString);
+    ClientResponse response =
+        resource.accept(MediaType.APPLICATION_XML)
+            .header("Authorization", authToken)
+            .header("Content-type", MediaType.APPLICATION_XML)
+            .post(ClientResponse.class, projectString);
+
+    if (response.getStatusInfo().getFamily() == Family.SUCCESSFUL) {
+      // do nothing, successful
+    } else {
+      throw new Exception("Unexpected status - " + response.getStatus());
+    }
+  }
+
+  /*
+   * (non-Javadoc)
+   * 
+   * @see
+   * org.ihtsdo.otf.ts.rest.ProjectServiceRest#removeProject(java.lang.String,
+   * java.lang.String)
+   */
+  @Override
+  public void removeProject(Long id, String authToken) throws Exception {
+    Client client = Client.create();
+    WebResource resource =
+        client.resource(config.getProperty("base.url") + "/project/remove/id/"
+            + id);
+
+    ClientResponse response =
+        resource.accept(MediaType.APPLICATION_XML)
+            .header("Authorization", authToken)
+            .header("Content-type", MediaType.APPLICATION_XML)
+            .delete(ClientResponse.class);
+
+    if (response.getStatusInfo().getFamily() == Family.SUCCESSFUL) {
+      // do nothing, successful
+    } else {
+      throw new Exception("Unexpected status - " + response.getStatus());
+    }
+  }
+
+  /*
+   * (non-Javadoc)
+   * 
+   * @see
+   * org.ihtsdo.otf.ts.rest.ProjectServiceRest#getConceptsInScope(java.lang.
    * Long, java.lang.String)
    */
   @Override
-  public ConceptList getConceptsInScope(Long projectId, String authToken)
-    throws Exception {
+  public SearchResultList findConceptsInScope(Long projectId,
+    PfsParameterJpa pfs, String authToken) throws Exception {
     Client client = Client.create();
     WebResource resource =
         client.resource(config.getProperty("base.url") + "/project/id/"
             + projectId + "/scope");
+    String pfsString =
+        (pfs != null ? ConfigUtility.getStringForGraph(pfs) : null);
+    Logger.getLogger(getClass()).debug(pfsString);
     ClientResponse response =
         resource.accept(MediaType.APPLICATION_XML)
-            .header("Authorization", authToken).get(ClientResponse.class);
+            .header("Authorization", authToken)
+            .header("Content-type", MediaType.APPLICATION_XML)
+            .post(ClientResponse.class, pfsString);
 
     String resultString = response.getEntity(String.class);
     if (response.getStatusInfo().getFamily() == Family.SUCCESSFUL) {
@@ -97,24 +163,23 @@ public class ProjectClientRest implements ProjectServiceRest {
     }
 
     // converting to object
-    ConceptListJpa list =
-        (ConceptListJpa) ConfigUtility.getGraphForString(resultString,
-            ConceptListJpa.class);
+    SearchResultListJpa list =
+        (SearchResultListJpa) ConfigUtility.getGraphForString(resultString,
+            SearchResultListJpa.class);
     return list;
   }
 
   /*
    * (non-Javadoc)
    * 
-   * @see org.ihtsdo.otf.ts.rest.ContentServiceRest#getProject(java.lang.Long,
+   * @see org.ihtsdo.otf.ts.rest.ProjectServiceRest#getProject(java.lang.Long,
    * java.lang.String)
    */
   @Override
   public Project getProject(Long id, String authToken) throws Exception {
     Client client = Client.create();
     WebResource resource =
-        client.resource(config.getProperty("base.url") + "/project/id/"
-            + id);
+        client.resource(config.getProperty("base.url") + "/project/id/" + id);
     ClientResponse response =
         resource.accept(MediaType.APPLICATION_XML)
             .header("Authorization", authToken).get(ClientResponse.class);
@@ -137,14 +202,13 @@ public class ProjectClientRest implements ProjectServiceRest {
    * (non-Javadoc)
    * 
    * @see
-   * org.ihtsdo.otf.ts.rest.ContentServiceRest#getProjects(java.lang.String)
+   * org.ihtsdo.otf.ts.rest.ProjectServiceRest#getProjects(java.lang.String)
    */
   @Override
   public ProjectList getProjects(String authToken) throws Exception {
     Client client = Client.create();
     WebResource resource =
-        client.resource(config.getProperty("base.url")
-            + "/project/projects");
+        client.resource(config.getProperty("base.url") + "/project/projects");
     ClientResponse response =
         resource.accept(MediaType.APPLICATION_XML)
             .header("Authorization", authToken).get(ClientResponse.class);

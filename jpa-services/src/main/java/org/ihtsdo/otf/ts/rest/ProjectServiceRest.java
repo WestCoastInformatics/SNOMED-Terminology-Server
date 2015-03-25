@@ -4,8 +4,9 @@
 package org.ihtsdo.otf.ts.rest;
 
 import org.ihtsdo.otf.ts.Project;
-import org.ihtsdo.otf.ts.helpers.ConceptList;
+import org.ihtsdo.otf.ts.helpers.PfsParameterJpa;
 import org.ihtsdo.otf.ts.helpers.ProjectList;
+import org.ihtsdo.otf.ts.helpers.SearchResultList;
 import org.ihtsdo.otf.ts.jpa.ProjectJpa;
 
 /**
@@ -25,15 +26,35 @@ public interface ProjectServiceRest {
     throws Exception;
 
   /**
+   * Update project.
+   *
+   * @param project the project
+   * @param authToken the auth token
+   * @throws Exception the exception
+   */
+  public void updateProject(ProjectJpa project, String authToken)
+    throws Exception;
+
+  /**
+   * Removes the project.
+   *
+   * @param projectId the project id
+   * @param authToken the auth token
+   * @throws Exception the exception
+   */
+  public void removeProject(Long projectId, String authToken) throws Exception;
+
+  /**
    * Returns the concepts in scope.
    *
    * @param projectId the project id
+   * @param pfs the pfs
    * @param authToken the auth token
    * @return the concepts in scope
    * @throws Exception the exception
    */
-  public ConceptList getConceptsInScope(Long projectId, String authToken)
-    throws Exception;
+  public SearchResultList findConceptsInScope(Long projectId,
+    PfsParameterJpa pfs, String authToken) throws Exception;
 
   /**
    * Returns the project.

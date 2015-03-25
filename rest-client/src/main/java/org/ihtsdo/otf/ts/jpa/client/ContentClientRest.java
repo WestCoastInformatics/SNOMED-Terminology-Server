@@ -146,6 +146,7 @@ public class ContentClientRest implements ContentServiceRest {
             ConceptJpa.class);
     return c;
   }
+
   /*
    * (non-Javadoc)
    * 
@@ -193,7 +194,7 @@ public class ContentClientRest implements ContentServiceRest {
    * org.ihtsdo.otf.ts.helpers.PfsParameterJpa, java.lang.String)
    */
   @Override
-  public ConceptList getDescendantConcepts(String terminologyId,
+  public ConceptList findDescendantConcepts(String terminologyId,
     String terminology, String version, PfsParameterJpa pfs, String authToken)
     throws Exception {
     Client client = Client.create();
@@ -233,8 +234,9 @@ public class ContentClientRest implements ContentServiceRest {
    * org.ihtsdo.otf.ts.helpers.PfsParameterJpa, java.lang.String)
    */
   @Override
-  public ConceptList getChildConcepts(String terminologyId, String terminology,
-    String version, PfsParameterJpa pfs, String authToken) throws Exception {
+  public ConceptList findChildConcepts(String terminologyId,
+    String terminology, String version, PfsParameterJpa pfs, String authToken)
+    throws Exception {
     Client client = Client.create();
     WebResource resource =
         client.resource(config.getProperty("base.url") + "/content/concepts/"
@@ -271,7 +273,7 @@ public class ContentClientRest implements ContentServiceRest {
    * org.ihtsdo.otf.ts.helpers.PfsParameterJpa, java.lang.String)
    */
   @Override
-  public ConceptList getAncestorConcepts(String terminologyId,
+  public ConceptList findAncestorConcepts(String terminologyId,
     String terminology, String version, PfsParameterJpa pfs, String authToken)
     throws Exception {
     Client client = Client.create();
@@ -382,7 +384,7 @@ public class ContentClientRest implements ContentServiceRest {
         resource.accept(MediaType.APPLICATION_XML)
             .header("Authorization", authToken)
             .header("Content-type", MediaType.APPLICATION_XML)
-            .post(ClientResponse.class, inputDir);
+            .put(ClientResponse.class, inputDir);
 
     if (response.getStatusInfo().getFamily() == Family.SUCCESSFUL) {
       // do nothing
@@ -411,7 +413,7 @@ public class ContentClientRest implements ContentServiceRest {
         resource.accept(MediaType.APPLICATION_XML)
             .header("Authorization", authToken)
             .header("Content-type", MediaType.APPLICATION_XML)
-            .post(ClientResponse.class, inputDir);
+            .put(ClientResponse.class, inputDir);
 
     if (response.getStatusInfo().getFamily() == Family.SUCCESSFUL) {
       // do nothing
@@ -440,7 +442,7 @@ public class ContentClientRest implements ContentServiceRest {
         resource.accept(MediaType.APPLICATION_XML)
             .header("Authorization", authToken)
             .header("Content-type", MediaType.APPLICATION_XML)
-            .post(ClientResponse.class, inputDir);
+            .put(ClientResponse.class, inputDir);
 
     if (response.getStatusInfo().getFamily() == Family.SUCCESSFUL) {
       // do nothing
@@ -469,7 +471,7 @@ public class ContentClientRest implements ContentServiceRest {
         resource.accept(MediaType.APPLICATION_XML)
             .header("Authorization", authToken)
             .header("Content-type", MediaType.APPLICATION_XML)
-            .post(ClientResponse.class, inputFile);
+            .put(ClientResponse.class, inputFile);
 
     if (response.getStatusInfo().getFamily() == Family.SUCCESSFUL) {
       // do nothing
@@ -524,7 +526,7 @@ public class ContentClientRest implements ContentServiceRest {
         resource.accept(MediaType.APPLICATION_XML)
             .header("Authorization", authToken)
             .header("Content-type", MediaType.APPLICATION_XML)
-            .post(ClientResponse.class);
+            .delete(ClientResponse.class);
 
     if (response.getStatusInfo().getFamily() == Family.SUCCESSFUL) {
       // do nothing

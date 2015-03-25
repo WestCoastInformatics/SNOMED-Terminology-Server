@@ -80,7 +80,7 @@ public interface ContentServiceRest {
    * @return the concept children
    * @throws Exception the exception
    */
-  public ConceptList getChildConcepts(String terminologyId, String terminology,
+  public ConceptList findChildConcepts(String terminologyId, String terminology,
     String version, PfsParameterJpa pfs, String authToken) throws Exception;
 
   /**
@@ -94,7 +94,7 @@ public interface ContentServiceRest {
    * @return the concept descendants
    * @throws Exception the exception
    */
-  public ConceptList getDescendantConcepts(String terminologyId,
+  public ConceptList findDescendantConcepts(String terminologyId,
     String terminology, String version, PfsParameterJpa pfs, String authToken)
     throws Exception;
 
@@ -109,7 +109,7 @@ public interface ContentServiceRest {
    * @return the ancestor concepts
    * @throws Exception the exception
    */
-  public ConceptList getAncestorConcepts(String terminologyId,
+  public ConceptList findAncestorConcepts(String terminologyId,
     String terminology, String version, PfsParameterJpa pfs, String authToken)
     throws Exception;
 
