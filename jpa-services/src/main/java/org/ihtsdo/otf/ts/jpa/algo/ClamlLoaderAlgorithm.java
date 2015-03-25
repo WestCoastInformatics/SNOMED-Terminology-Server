@@ -647,6 +647,7 @@ public class ClamlLoaderAlgorithm extends ContentServiceJpa implements
             concept.setEffectiveTime(ConfigUtility.DATE_FORMAT
                 .parse(effectiveTime));
             concept.setActive(true);
+            concept.setPublished(true);
             concept.setLastModified(new Date());
             concept.setLastModifiedBy("loader");
             concept.setWorkflowStatus("PUBLISHED");
@@ -671,6 +672,7 @@ public class ClamlLoaderAlgorithm extends ContentServiceJpa implements
           desc.setTerminologyId(rubricId);
           desc.setEffectiveTime(ConfigUtility.DATE_FORMAT.parse(effectiveTime));
           desc.setActive(true);
+          desc.setPublished(true);
           desc.setLastModified(new Date());
           desc.setLastModifiedBy("loader");
           desc.setModuleId(conceptMap.get("defaultModule").getTerminologyId());
@@ -790,6 +792,7 @@ public class ClamlLoaderAlgorithm extends ContentServiceJpa implements
             SimpleRefSetMember member = new SimpleRefSetMemberJpa();
             member.setConcept(concept);
             member.setActive(true);
+            member.setPublished(true);
             member.setLastModified(new Date());
             member.setLastModifiedBy("loader");
             member.setEffectiveTime(ConfigUtility.DATE_FORMAT
@@ -911,6 +914,7 @@ public class ClamlLoaderAlgorithm extends ContentServiceJpa implements
               relationship.setEffectiveTime(ConfigUtility.DATE_FORMAT
                   .parse(effectiveTime));
               relationship.setActive(true);
+              relationship.setPublished(true);
               relationship.setLastModified(new Date());
               relationship.setLastModifiedBy("loader");
 
@@ -966,6 +970,7 @@ public class ClamlLoaderAlgorithm extends ContentServiceJpa implements
         concept
             .setEffectiveTime(ConfigUtility.DATE_FORMAT.parse(effectiveTime));
         concept.setActive(true);
+        concept.setPublished(true);
         concept.setLastModified(new Date());
         concept.setLastModifiedBy("loader");
         concept.setModuleId(conceptMap.get("defaultModule").getTerminologyId());
@@ -987,6 +992,7 @@ public class ClamlLoaderAlgorithm extends ContentServiceJpa implements
       desc.setTerminologyId(rubricId);
       desc.setEffectiveTime(ConfigUtility.DATE_FORMAT.parse(effectiveTime));
       desc.setActive(true);
+      desc.setPublished(true);
       desc.setLastModified(new Date());
       desc.setLastModifiedBy("loader");
       desc.setModuleId(conceptMap.get("defaultModule").getTerminologyId());
