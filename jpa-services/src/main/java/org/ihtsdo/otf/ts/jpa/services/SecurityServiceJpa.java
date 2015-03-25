@@ -17,7 +17,7 @@ import org.ihtsdo.otf.ts.helpers.LocalException;
 import org.ihtsdo.otf.ts.helpers.UserList;
 import org.ihtsdo.otf.ts.helpers.UserListJpa;
 import org.ihtsdo.otf.ts.jpa.UserJpa;
-import org.ihtsdo.otf.ts.services.ContentService;
+import org.ihtsdo.otf.ts.services.ProjectService;
 import org.ihtsdo.otf.ts.services.SecurityService;
 import org.ihtsdo.otf.ts.services.handlers.SecurityServiceHandler;
 
@@ -204,7 +204,7 @@ public class SecurityServiceJpa extends RootServiceJpa implements
     }
     
     String username = getUsernameForToken(authToken);
-    ContentService service = new ContentServiceJpa();
+    ProjectService service = new ProjectServiceJpa();
     UserRole result =
         service.getUserRoleForProject(username, projectId);
     service.close();

@@ -17,15 +17,35 @@ import org.ihtsdo.otf.ts.helpers.ConceptList;
 import org.ihtsdo.otf.ts.helpers.ConfigUtility;
 import org.ihtsdo.otf.ts.jpa.ReleaseInfoJpa;
 import org.ihtsdo.otf.ts.jpa.services.HistoryServiceJpa;
+import org.ihtsdo.otf.ts.rf2.AssociationReferenceConceptRefSetMember;
+import org.ihtsdo.otf.ts.rf2.AssociationReferenceDescriptionRefSetMember;
+import org.ihtsdo.otf.ts.rf2.AssociationReferenceRefSetMember;
+import org.ihtsdo.otf.ts.rf2.AttributeValueConceptRefSetMember;
+import org.ihtsdo.otf.ts.rf2.AttributeValueDescriptionRefSetMember;
+import org.ihtsdo.otf.ts.rf2.AttributeValueRefSetMember;
+import org.ihtsdo.otf.ts.rf2.ComplexMapRefSetMember;
 import org.ihtsdo.otf.ts.rf2.Concept;
 import org.ihtsdo.otf.ts.rf2.Description;
+import org.ihtsdo.otf.ts.rf2.DescriptionTypeRefSetMember;
 import org.ihtsdo.otf.ts.rf2.LanguageRefSetMember;
+import org.ihtsdo.otf.ts.rf2.ModuleDependencyRefSetMember;
+import org.ihtsdo.otf.ts.rf2.RefsetDescriptorRefSetMember;
 import org.ihtsdo.otf.ts.rf2.Relationship;
+import org.ihtsdo.otf.ts.rf2.SimpleMapRefSetMember;
 import org.ihtsdo.otf.ts.rf2.SimpleRefSetMember;
+import org.ihtsdo.otf.ts.rf2.jpa.AssociationReferenceConceptRefSetMemberJpa;
+import org.ihtsdo.otf.ts.rf2.jpa.AssociationReferenceDescriptionRefSetMemberJpa;
+import org.ihtsdo.otf.ts.rf2.jpa.AttributeValueConceptRefSetMemberJpa;
+import org.ihtsdo.otf.ts.rf2.jpa.AttributeValueDescriptionRefSetMemberJpa;
+import org.ihtsdo.otf.ts.rf2.jpa.ComplexMapRefSetMemberJpa;
 import org.ihtsdo.otf.ts.rf2.jpa.ConceptJpa;
 import org.ihtsdo.otf.ts.rf2.jpa.DescriptionJpa;
+import org.ihtsdo.otf.ts.rf2.jpa.DescriptionTypeRefSetMemberJpa;
 import org.ihtsdo.otf.ts.rf2.jpa.LanguageRefSetMemberJpa;
+import org.ihtsdo.otf.ts.rf2.jpa.ModuleDependencyRefSetMemberJpa;
+import org.ihtsdo.otf.ts.rf2.jpa.RefsetDescriptorRefSetMemberJpa;
 import org.ihtsdo.otf.ts.rf2.jpa.RelationshipJpa;
+import org.ihtsdo.otf.ts.rf2.jpa.SimpleMapRefSetMemberJpa;
 import org.ihtsdo.otf.ts.rf2.jpa.SimpleRefSetMemberJpa;
 import org.ihtsdo.otf.ts.services.helpers.ProgressEvent;
 import org.ihtsdo.otf.ts.services.helpers.ProgressListener;
@@ -87,6 +107,27 @@ public class Rf2DeltaLoaderAlgorithm extends HistoryServiceJpa implements
   /** The existing simple ref set member ids. */
   private Set<String> existingSimpleRefSetMemberIds = new HashSet<>();
 
+  /** The existing simple map ref set member ids. */
+  private Set<String> existingSimpleMapRefSetMemberIds = new HashSet<>();
+  
+  /** The existing complex map ref set member ids. This also includes extended map ref set member ids.*/
+  private Set<String> existingComplexMapRefSetMemberIds = new HashSet<>();
+ 
+  /** The existing description type ref set member ids. */
+  private Set<String> existingDescriptionTypeRefSetMemberIds = new HashSet<>();
+  
+  /** The existing refset descriptor ref set member ids. */
+  private Set<String> existingRefsetDescriptorRefSetMemberIds = new HashSet<>();
+  
+  /** The existing module dependency ref set member ids. */
+  private Set<String> existingModuleDependencyRefSetMemberIds = new HashSet<>();
+  
+  /** The existing attribute value ref set member ids. */
+  private Set<String> existingAttributeValueRefSetMemberIds = new HashSet<>();
+  
+  /** The existing association reference ref set member ids. */
+  private Set<String> existingAssociationReferenceRefSetMemberIds = new HashSet<>();
+  
   /**
    * Instantiates an empty {@link Rf2DeltaLoaderAlgorithm}.
    * @throws Exception if anything goes wrong
@@ -213,6 +254,55 @@ public class Rf2DeltaLoaderAlgorithm extends HistoryServiceJpa implements
       Logger.getLogger(getClass()).info(
           "    count = " + existingSimpleRefSetMemberIds.size());
 
+      Logger.getLogger(getClass()).info("  Cache simple map refset member ids");
+      existingSimpleMapRefSetMemberIds =
+          new HashSet<>(getAllSimpleMapRefSetMemberTerminologyIds(terminology,
+              terminologyVersion).getObjects());
+      Logger.getLogger(getClass()).info(
+          "    count = " + existingSimpleMapRefSetMemberIds.size());
+      
+      Logger.getLogger(getClass()).info("  Cache complex map refset member ids");
+      existingComplexMapRefSetMemberIds =
+          new HashSet<>(getAllComplexMapRefSetMemberTerminologyIds(terminology,
+              terminologyVersion).getObjects());
+      Logger.getLogger(getClass()).info(
+          "    count = " + existingComplexMapRefSetMemberIds.size());
+
+      Logger.getLogger(getClass()).info("  Cache description type refset member ids");
+      existingDescriptionTypeRefSetMemberIds =
+          new HashSet<>(getAllDescriptionTypeRefSetMemberTerminologyIds(terminology,
+              terminologyVersion).getObjects());
+      Logger.getLogger(getClass()).info(
+          "    count = " + existingDescriptionTypeRefSetMemberIds.size());
+  
+      Logger.getLogger(getClass()).info("  Cache refset descriptor refset member ids");
+      existingRefsetDescriptorRefSetMemberIds =
+          new HashSet<>(getAllRefsetDescriptorRefSetMemberTerminologyIds(terminology,
+              terminologyVersion).getObjects());
+      Logger.getLogger(getClass()).info(
+          "    count = " + existingRefsetDescriptorRefSetMemberIds.size());
+      
+      Logger.getLogger(getClass()).info("  Cache module dependency refset member ids");
+      existingModuleDependencyRefSetMemberIds =
+          new HashSet<>(getAllModuleDependencyRefSetMemberTerminologyIds(terminology,
+              terminologyVersion).getObjects());
+      Logger.getLogger(getClass()).info(
+          "    count = " + existingModuleDependencyRefSetMemberIds.size());
+      
+      Logger.getLogger(getClass()).info("  Cache attribute value refset member ids");
+      existingAttributeValueRefSetMemberIds =
+          new HashSet<>(getAllAttributeValueRefSetMemberTerminologyIds(terminology,
+              terminologyVersion).getObjects());
+      Logger.getLogger(getClass()).info(
+          "    count = " + existingAttributeValueRefSetMemberIds.size());
+      
+      Logger.getLogger(getClass()).info("  Cache association reference refset member ids");
+      existingAssociationReferenceRefSetMemberIds =
+          new HashSet<>(getAllAssociationReferenceRefSetMemberTerminologyIds(terminology,
+              terminologyVersion).getObjects());
+      Logger.getLogger(getClass()).info(
+          "    count = " + existingAssociationReferenceRefSetMemberIds.size());
+      
       //
       // Load concepts
       //
@@ -242,11 +332,57 @@ public class Rf2DeltaLoaderAlgorithm extends HistoryServiceJpa implements
       //
       Logger.getLogger(getClass()).info("    Loading Simple Ref Sets...");
       loadSimpleRefSetMembers();
+      
+      //
+      // Load simple map refset members
+      //
+      Logger.getLogger(getClass()).info("    Loading Simple Map Ref Sets...");
+      loadSimpleMapRefSetMembers();      
+      
+      //
+      // Load complex map refset members
+      //
+      Logger.getLogger(getClass()).info("    Loading Complex Map Ref Sets...");
+      loadComplexMapRefSetMembers();      
+           
+      //
+      // Load extended map refset members
+      //
+      Logger.getLogger(getClass()).info("    Loading Extended Map Ref Sets...");
+      loadExtendedMapRefSetMembers();      
 
-      // Skip other delta data structures
-      // TODO: implement this
+      //
+      // Load description type refset members
+      //
+      Logger.getLogger(getClass()).info("    Loading Description Type Ref Sets...");
+      loadDescriptionTypeRefSetMembers();      
+      
+      //
+      // Load refset descriptor refset members
+      //
+      Logger.getLogger(getClass()).info("    Loading Refset Descriptor Ref Sets...");
+      loadRefsetDescriptorRefSetMembers();      
+      
+      //
+      // Load module dependency refset members
+      //
+      Logger.getLogger(getClass()).info("    Loading Module Dependency Ref Sets...");
+      loadModuleDependencyRefSetMembers();      
+      
+      //
+      // Load module dependency refset members
+      //
+      Logger.getLogger(getClass()).info("    Loading Attribute Value Ref Sets...");
+      loadAttributeValueRefSetMembers();      
+      
+      //
+      // Load association reference refset members
+      //
+      Logger.getLogger(getClass()).info("    Loading Association Reference Ref Sets...");
+      loadAssociationReferenceRefSetMembers();      
 
-      // Compute preferred namesf
+
+      // Compute preferred names
       Logger.getLogger(getClass()).info(
           "  Compute preferred names for modified concepts");
       int ct = 0;
@@ -762,7 +898,7 @@ public class Rf2DeltaLoaderAlgorithm extends HistoryServiceJpa implements
     int objectsAdded = 0;
     int objectsUpdated = 0;
 
-    // Iterate through language refset reader
+    // Iterate through simple refset reader
     PushBackReader reader = readers.getReader(Rf2Readers.Keys.SIMPLE);
     while ((line = reader.readLine()) != null) {
 
@@ -785,14 +921,14 @@ public class Rf2DeltaLoaderAlgorithm extends HistoryServiceJpa implements
 
         // Get concept from cache or from db
         Concept concept = null;
-        if (conceptCache.containsKey(fields[4])) {
-          concept = conceptCache.get(fields[4]);
-        } else if (existingConceptCache.containsKey(fields[4])) {
-          concept = existingConceptCache.get(fields[4]);
+        if (conceptCache.containsKey(fields[5])) {
+          concept = conceptCache.get(fields[5]);
+        } else if (existingConceptCache.containsKey(fields[5])) {
+          concept = existingConceptCache.get(fields[5]);
         } else {
           // retrieve concept
           concept =
-              getSingleConcept(fields[4], terminology, terminologyVersion);
+              getSingleConcept(fields[5], terminology, terminologyVersion);
         }
 
         cacheConcept(concept);
@@ -825,13 +961,13 @@ public class Rf2DeltaLoaderAlgorithm extends HistoryServiceJpa implements
         newMember.setLastModified(ConfigUtility.DATE_FORMAT.parse(releaseVersion));
         newMember.setPublished(true);
 
-        // If language refset entry is new, add it
+        // If simple refset entry is new, add it
         if (member == null) {
           newMember = addSimpleRefSetMember(newMember);
           objectsAdded++;
         }
 
-        // If language refset entry is changed, update it
+        // If simple refset entry is changed, update it
         else if (!newMember.equals(member)) {
           // do not worry about assembling concept structure here
           // since cascade does not control the collection, simply update the member.
@@ -851,6 +987,904 @@ public class Rf2DeltaLoaderAlgorithm extends HistoryServiceJpa implements
 
   }
 
+  /**
+   * Load simple map ref set members.
+   *
+   * @throws Exception the exception
+   */
+  @SuppressWarnings("resource")
+  private void loadSimpleMapRefSetMembers() throws Exception {
+
+    // Setup variables
+    String line = "";
+    objectCt = 0;
+    int objectsAdded = 0;
+    int objectsUpdated = 0;
+
+    // Iterate through simple map refset reader
+    PushBackReader reader = readers.getReader(Rf2Readers.Keys.SIMPLE_MAP);
+    while ((line = reader.readLine()) != null) {
+
+      // split line
+      String fields[] = line.split("\t");
+
+      // if not header
+      if (!fields[0].equals("id")) {
+
+        // Skip if the effective time is before the release version
+        if (fields[1].compareTo(releaseVersion) < 0) {
+          continue;
+        }
+
+        // Stop if the effective time is past the release version
+        if (fields[1].compareTo(releaseVersion) > 0) {
+          reader.push(line);
+          break;
+        }
+
+        // Get concept from cache or from db
+        Concept concept = null;
+        if (conceptCache.containsKey(fields[5])) {
+          concept = conceptCache.get(fields[5]);
+        } else if (existingConceptCache.containsKey(fields[5])) {
+          concept = existingConceptCache.get(fields[5]);
+        } else {
+          // retrieve concept
+          concept =
+              getSingleConcept(fields[5], terminology, terminologyVersion);
+        }
+
+        cacheConcept(concept);
+
+        // Get the member from the DB, if null, create a new one
+        // No cache necessary because we will not encounter the
+        // same object more than once per delta and nothing else
+        // is connected to it.
+        SimpleMapRefSetMember member = null;
+        if (existingSimpleMapRefSetMemberIds.contains(fields[0])) {
+          member = getSimpleMapRefSetMember(fields[0], terminology, terminologyVersion);
+        }
+
+        SimpleMapRefSetMember newMember = null;
+        if (member == null) {
+          newMember = new SimpleMapRefSetMemberJpa();
+        } else {
+          newMember = new SimpleMapRefSetMemberJpa(member);
+        }
+
+        newMember.setTerminologyId(fields[0]);
+        newMember.setTerminology(terminology);
+        newMember.setTerminologyVersion(terminologyVersion);
+        newMember.setEffectiveTime(ConfigUtility.DATE_FORMAT.parse(fields[1]));
+        newMember.setActive(fields[2].equals("1"));
+        newMember.setModuleId(fields[3]);
+        newMember.setRefSetId(fields[4]);
+        newMember.setConcept(concept);
+        newMember.setMapTarget(fields[6]);
+        newMember.setLastModifiedBy("loader");
+        newMember.setLastModified(ConfigUtility.DATE_FORMAT.parse(releaseVersion));
+        newMember.setPublished(true);
+
+        // If simple map refset entry is new, add it
+        if (member == null) {
+          newMember = addSimpleMapRefSetMember(newMember);
+          objectsAdded++;
+        }
+
+        // If simple map refset entry is changed, update it
+        else if (!newMember.equals(member)) {
+          // do not worry about assembling concept structure here
+          // since cascade does not control the collection, simply update the member.
+          updateSimpleMapRefSetMember(newMember);
+          objectsUpdated++;
+        }
+
+        // Otherwise, reset effective time (for modified check later)
+        else {
+          newMember.setEffectiveTime(member.getEffectiveTime());
+        }
+      }
+    }
+
+    Logger.getLogger(getClass()).info("      new = " + objectsAdded);
+    Logger.getLogger(getClass()).info("      updated = " + objectsUpdated);
+
+  }
+  
+  /**
+   * Load complex map ref set members.
+   *
+   * @throws Exception the exception
+   */
+  @SuppressWarnings("resource")
+  private void loadComplexMapRefSetMembers() throws Exception {
+
+    // Setup variables
+    String line = "";
+    objectCt = 0;
+    int objectsAdded = 0;
+    int objectsUpdated = 0;
+
+    // Iterate through complex map refset reader
+    PushBackReader reader = readers.getReader(Rf2Readers.Keys.COMPLEX_MAP);
+    while ((line = reader.readLine()) != null) {
+
+      // split line
+      String fields[] = line.split("\t");
+
+      // if not header
+      if (!fields[0].equals("id")) {
+
+        // Skip if the effective time is before the release version
+        if (fields[1].compareTo(releaseVersion) < 0) {
+          continue;
+        }
+
+        // Stop if the effective time is past the release version
+        if (fields[1].compareTo(releaseVersion) > 0) {
+          reader.push(line);
+          break;
+        }
+
+        // Get concept from cache or from db
+        Concept concept = null;
+        if (conceptCache.containsKey(fields[5])) {
+          concept = conceptCache.get(fields[5]);
+        } else if (existingConceptCache.containsKey(fields[5])) {
+          concept = existingConceptCache.get(fields[5]);
+        } else {
+          // retrieve concept
+          concept =
+              getSingleConcept(fields[5], terminology, terminologyVersion);
+        }
+
+        cacheConcept(concept);
+
+        // Get the member from the DB, if null, create a new one
+        // No cache necessary because we will not encounter the
+        // same object more than once per delta and nothing else
+        // is connected to it.
+        ComplexMapRefSetMember member = null;
+        if (existingComplexMapRefSetMemberIds.contains(fields[0])) {
+          member = getComplexMapRefSetMember(fields[0], terminology, terminologyVersion);
+        }
+
+        ComplexMapRefSetMember newMember = null;
+        if (member == null) {
+          newMember = new ComplexMapRefSetMemberJpa();
+        } else {
+          newMember = new ComplexMapRefSetMemberJpa(member);
+        }
+
+        newMember.setTerminologyId(fields[0]);
+        newMember.setTerminology(terminology);
+        newMember.setTerminologyVersion(terminologyVersion);
+        newMember.setEffectiveTime(ConfigUtility.DATE_FORMAT.parse(fields[1]));
+        newMember.setActive(fields[2].equals("1"));
+        newMember.setModuleId(fields[3]);
+        newMember.setRefSetId(fields[4]);
+        newMember.setConcept(concept);
+        newMember.setMapGroup(Integer.parseInt(fields[6]));
+        newMember.setMapPriority(Integer.parseInt(fields[7]));
+        newMember.setMapRule(fields[8]);
+        newMember.setMapAdvice(fields[9]);
+        newMember.setMapTarget(fields[10]);
+        newMember.setMapRelationId(fields[11]);
+        newMember.setLastModifiedBy("loader");
+        newMember.setLastModified(ConfigUtility.DATE_FORMAT.parse(releaseVersion));
+        newMember.setPublished(true);
+
+        // If complex map refset entry is new, add it
+        if (member == null) {
+          newMember = addComplexMapRefSetMember(newMember);
+          objectsAdded++;
+        }
+
+        // If complex map refset entry is changed, update it
+        else if (!newMember.equals(member)) {
+          // do not worry about assembling concept structure here
+          // since cascade does not control the collection, simply update the member.
+          updateComplexMapRefSetMember(newMember);
+          objectsUpdated++;
+        }
+
+        // Otherwise, reset effective time (for modified check later)
+        else {
+          newMember.setEffectiveTime(member.getEffectiveTime());
+        }
+      }
+    }
+
+    Logger.getLogger(getClass()).info("      new = " + objectsAdded);
+    Logger.getLogger(getClass()).info("      updated = " + objectsUpdated);
+
+  }
+ 
+  /**
+   * Load extended map ref set members.
+   *
+   * @throws Exception the exception
+   */
+  @SuppressWarnings("resource")
+  private void loadExtendedMapRefSetMembers() throws Exception {
+
+    // Setup variables
+    String line = "";
+    objectCt = 0;
+    int objectsAdded = 0;
+    int objectsUpdated = 0;
+
+    // Iterate through extended map refset reader
+    PushBackReader reader = readers.getReader(Rf2Readers.Keys.EXTENDED_MAP);
+    while ((line = reader.readLine()) != null) {
+
+      // split line
+      String fields[] = line.split("\t");
+
+      // if not header
+      if (!fields[0].equals("id")) {
+
+        // Skip if the effective time is before the release version
+        if (fields[1].compareTo(releaseVersion) < 0) {
+          continue;
+        }
+
+        // Stop if the effective time is past the release version
+        if (fields[1].compareTo(releaseVersion) > 0) {
+          reader.push(line);
+          break;
+        }
+
+        // Get concept from cache or from db
+        Concept concept = null;
+        if (conceptCache.containsKey(fields[5])) {
+          concept = conceptCache.get(fields[5]);
+        } else if (existingConceptCache.containsKey(fields[5])) {
+          concept = existingConceptCache.get(fields[5]);
+        } else {
+          // retrieve concept
+          concept =
+              getSingleConcept(fields[5], terminology, terminologyVersion);
+        }
+
+        cacheConcept(concept);
+
+        // Get the member from the DB, if null, create a new one
+        // No cache necessary because we will not encounter the
+        // same object more than once per delta and nothing else
+        // is connected to it.
+        ComplexMapRefSetMember member = null;
+        if (existingComplexMapRefSetMemberIds.contains(fields[0])) {
+          member = getComplexMapRefSetMember(fields[0], terminology, terminologyVersion);
+        }
+
+        ComplexMapRefSetMember newMember = null;
+        if (member == null) {
+          newMember = new ComplexMapRefSetMemberJpa();
+        } else {
+          newMember = new ComplexMapRefSetMemberJpa(member);
+        }
+
+        newMember.setTerminologyId(fields[0]);
+        newMember.setTerminology(terminology);
+        newMember.setTerminologyVersion(terminologyVersion);
+        newMember.setEffectiveTime(ConfigUtility.DATE_FORMAT.parse(fields[1]));
+        newMember.setActive(fields[2].equals("1"));
+        newMember.setModuleId(fields[3]);
+        newMember.setRefSetId(fields[4]);
+        newMember.setConcept(concept);
+        newMember.setMapGroup(Integer.parseInt(fields[6]));
+        newMember.setMapPriority(Integer.parseInt(fields[7]));
+        newMember.setMapRule(fields[8]);
+        newMember.setMapAdvice(fields[9]);
+        newMember.setMapTarget(fields[10]);
+        // field 11 is correlationId and is a fixed value based on terminology
+        newMember.setMapRelationId(fields[12]);
+        newMember.setLastModifiedBy("loader");
+        newMember.setLastModified(ConfigUtility.DATE_FORMAT.parse(releaseVersion));
+        newMember.setPublished(true);
+
+        // If complex map refset entry is new, add it
+        if (member == null) {
+          newMember = addComplexMapRefSetMember(newMember);
+          objectsAdded++;
+        }
+
+        // If complex map refset entry is changed, update it
+        else if (!newMember.equals(member)) {
+          // do not worry about assembling concept structure here
+          // since cascade does not control the collection, simply update the member.
+          updateComplexMapRefSetMember(newMember);
+          objectsUpdated++;
+        }
+
+        // Otherwise, reset effective time (for modified check later)
+        else {
+          newMember.setEffectiveTime(member.getEffectiveTime());
+        }
+      }
+    }
+
+    Logger.getLogger(getClass()).info("      new = " + objectsAdded);
+    Logger.getLogger(getClass()).info("      updated = " + objectsUpdated);
+
+  }
+  
+  
+  /**
+   * Load description type ref set members.
+   *
+   * @throws Exception the exception
+   */
+  @SuppressWarnings("resource")
+  private void loadDescriptionTypeRefSetMembers() throws Exception {
+
+    // Setup variables
+    String line = "";
+    objectCt = 0;
+    int objectsAdded = 0;
+    int objectsUpdated = 0;
+
+    // Iterate through description type refset reader
+    PushBackReader reader = readers.getReader(Rf2Readers.Keys.DESCRIPTION_TYPE);
+    while ((line = reader.readLine()) != null) {
+
+      // split line
+      String fields[] = line.split("\t");
+
+      // if not header
+      if (!fields[0].equals("id")) {
+
+        // Skip if the effective time is before the release version
+        if (fields[1].compareTo(releaseVersion) < 0) {
+          continue;
+        }
+
+        // Stop if the effective time is past the release version
+        if (fields[1].compareTo(releaseVersion) > 0) {
+          reader.push(line);
+          break;
+        }
+
+        // Get concept from cache or from db
+        Concept concept = null;
+        if (conceptCache.containsKey(fields[5])) {
+          concept = conceptCache.get(fields[5]);
+        } else if (existingConceptCache.containsKey(fields[5])) {
+          concept = existingConceptCache.get(fields[5]);
+        } else {
+          // retrieve concept
+          concept =
+              getSingleConcept(fields[5], terminology, terminologyVersion);
+        }
+
+        cacheConcept(concept);
+
+        // Get the member from the DB, if null, create a new one
+        // No cache necessary because we will not encounter the
+        // same object more than once per delta and nothing else
+        // is connected to it.
+        DescriptionTypeRefSetMember member = null;
+        if (existingDescriptionTypeRefSetMemberIds.contains(fields[0])) {
+          member = getDescriptionTypeRefSetMember(fields[0], terminology, terminologyVersion);
+        }
+
+        DescriptionTypeRefSetMember newMember = null;
+        if (member == null) {
+          newMember = new DescriptionTypeRefSetMemberJpa();
+        } else {
+          newMember = new DescriptionTypeRefSetMemberJpa(member);
+        }
+
+        newMember.setTerminologyId(fields[0]);
+        newMember.setTerminology(terminology);
+        newMember.setTerminologyVersion(terminologyVersion);
+        newMember.setEffectiveTime(ConfigUtility.DATE_FORMAT.parse(fields[1]));
+        newMember.setActive(fields[2].equals("1"));
+        newMember.setModuleId(fields[3]);
+        newMember.setRefSetId(fields[4]);
+        newMember.setConcept(concept);
+
+        newMember.setLastModifiedBy("loader");
+        newMember.setLastModified(ConfigUtility.DATE_FORMAT.parse(releaseVersion));
+        newMember.setPublished(true);
+
+        // If description type refset entry is new, add it
+        if (member == null) {
+          newMember = addDescriptionTypeRefSetMember(newMember);
+          objectsAdded++;
+        }
+
+        // If description type refset entry is changed, update it
+        else if (!newMember.equals(member)) {
+          // do not worry about assembling concept structure here
+          // since cascade does not control the collection, simply update the member.
+          updateDescriptionTypeRefSetMember(newMember);
+          objectsUpdated++;
+        }
+
+        // Otherwise, reset effective time (for modified check later)
+        else {
+          newMember.setEffectiveTime(member.getEffectiveTime());
+        }
+      }
+    }
+
+    Logger.getLogger(getClass()).info("      new = " + objectsAdded);
+    Logger.getLogger(getClass()).info("      updated = " + objectsUpdated);
+
+  }
+  
+  /**
+   * Load refset descriptor ref set members.
+   *
+   * @throws Exception the exception
+   */
+  @SuppressWarnings("resource")
+  private void loadRefsetDescriptorRefSetMembers() throws Exception {
+
+    // Setup variables
+    String line = "";
+    objectCt = 0;
+    int objectsAdded = 0;
+    int objectsUpdated = 0;
+
+    // Iterate through refset descriptor refset reader
+    PushBackReader reader = readers.getReader(Rf2Readers.Keys.REFSET_DESCRIPTOR);
+    while ((line = reader.readLine()) != null) {
+
+      // split line
+      String fields[] = line.split("\t");
+
+      // if not header
+      if (!fields[0].equals("id")) {
+
+        // Skip if the effective time is before the release version
+        if (fields[1].compareTo(releaseVersion) < 0) {
+          continue;
+        }
+
+        // Stop if the effective time is past the release version
+        if (fields[1].compareTo(releaseVersion) > 0) {
+          reader.push(line);
+          break;
+        }
+
+        // Get concept from cache or from db
+        Concept concept = null;
+        if (conceptCache.containsKey(fields[5])) {
+          concept = conceptCache.get(fields[5]);
+        } else if (existingConceptCache.containsKey(fields[5])) {
+          concept = existingConceptCache.get(fields[5]);
+        } else {
+          // retrieve concept
+          concept =
+              getSingleConcept(fields[5], terminology, terminologyVersion);
+        }
+
+        cacheConcept(concept);
+
+        // Get the member from the DB, if null, create a new one
+        // No cache necessary because we will not encounter the
+        // same object more than once per delta and nothing else
+        // is connected to it.
+        RefsetDescriptorRefSetMember member = null;
+        if (existingRefsetDescriptorRefSetMemberIds.contains(fields[0])) {
+          member = getRefsetDescriptorRefSetMember(fields[0], terminology, terminologyVersion);
+        }
+
+        RefsetDescriptorRefSetMember newMember = null;
+        if (member == null) {
+          newMember = new RefsetDescriptorRefSetMemberJpa();
+        } else {
+          newMember = new RefsetDescriptorRefSetMemberJpa(member);
+        }
+
+        newMember.setTerminologyId(fields[0]);
+        newMember.setTerminology(terminology);
+        newMember.setTerminologyVersion(terminologyVersion);
+        newMember.setEffectiveTime(ConfigUtility.DATE_FORMAT.parse(fields[1]));
+        newMember.setActive(fields[2].equals("1"));
+        newMember.setModuleId(fields[3]);
+        newMember.setRefSetId(fields[4]);
+        newMember.setConcept(concept);
+        // Refset descriptor unique attributes
+        newMember.setAttributeDescription(fields[6]);
+        newMember.setAttributeType(fields[7]);
+        newMember.setAttributeOrder(Integer.valueOf(fields[8]));
+        
+        newMember.setLastModifiedBy("loader");
+        newMember.setLastModified(ConfigUtility.DATE_FORMAT.parse(releaseVersion));
+        newMember.setPublished(true);
+
+        // If refset descriptor refset entry is new, add it
+        if (member == null) {
+          newMember = addRefsetDescriptorRefSetMember(newMember);
+          objectsAdded++;
+        }
+
+        // If description type refset entry is changed, update it
+        else if (!newMember.equals(member)) {
+          // do not worry about assembling concept structure here
+          // since cascade does not control the collection, simply update the member.
+          updateRefsetDescriptorRefSetMember(newMember);
+          objectsUpdated++;
+        }
+
+        // Otherwise, reset effective time (for modified check later)
+        else {
+          newMember.setEffectiveTime(member.getEffectiveTime());
+        }
+      }
+    }
+
+    Logger.getLogger(getClass()).info("      new = " + objectsAdded);
+    Logger.getLogger(getClass()).info("      updated = " + objectsUpdated);
+
+  }
+  
+  /**
+   * Load module dependency ref set members.
+   *
+   * @throws Exception the exception
+   */
+  @SuppressWarnings("resource")
+  private void loadModuleDependencyRefSetMembers() throws Exception {
+
+    // Setup variables
+    String line = "";
+    objectCt = 0;
+    int objectsAdded = 0;
+    int objectsUpdated = 0;
+
+    // Iterate through description type refset reader
+    PushBackReader reader = readers.getReader(Rf2Readers.Keys.MODULE_DEPENDENCY);
+    while ((line = reader.readLine()) != null) {
+
+      // split line
+      String fields[] = line.split("\t");
+
+      // if not header
+      if (!fields[0].equals("id")) {
+
+        // Skip if the effective time is before the release version
+        if (fields[1].compareTo(releaseVersion) < 0) {
+          continue;
+        }
+
+        // Stop if the effective time is past the release version
+        if (fields[1].compareTo(releaseVersion) > 0) {
+          reader.push(line);
+          break;
+        }
+
+        // Get concept from cache or from db
+        Concept concept = null;
+        if (conceptCache.containsKey(fields[5])) {
+          concept = conceptCache.get(fields[5]);
+        } else if (existingConceptCache.containsKey(fields[5])) {
+          concept = existingConceptCache.get(fields[5]);
+        } else {
+          // retrieve concept
+          concept =
+              getSingleConcept(fields[5], terminology, terminologyVersion);
+        }
+
+        cacheConcept(concept);
+
+        // Get the member from the DB, if null, create a new one
+        // No cache necessary because we will not encounter the
+        // same object more than once per delta and nothing else
+        // is connected to it.
+        ModuleDependencyRefSetMember member = null;
+        if (existingModuleDependencyRefSetMemberIds.contains(fields[0])) {
+          member = getModuleDependencyRefSetMember(fields[0], terminology, terminologyVersion);
+        }
+
+        ModuleDependencyRefSetMember newMember = null;
+        if (member == null) {
+          newMember = new ModuleDependencyRefSetMemberJpa();
+        } else {
+          newMember = new ModuleDependencyRefSetMemberJpa(member);
+        }
+
+        newMember.setTerminologyId(fields[0]);
+        newMember.setTerminology(terminology);
+        newMember.setTerminologyVersion(terminologyVersion);
+        newMember.setEffectiveTime(ConfigUtility.DATE_FORMAT.parse(fields[1]));
+        newMember.setActive(fields[2].equals("1"));
+        newMember.setModuleId(fields[3]);
+        newMember.setRefSetId(fields[4]);
+        newMember.setConcept(concept);
+        // Refset descriptor unique attributes
+        newMember.setSourceEffectiveTime(ConfigUtility.DATE_FORMAT
+            .parse(fields[6]));
+        newMember.setTargetEffectiveTime(ConfigUtility.DATE_FORMAT
+            .parse(fields[7]));
+        
+        newMember.setLastModifiedBy("loader");
+        newMember.setLastModified(ConfigUtility.DATE_FORMAT.parse(releaseVersion));
+        newMember.setPublished(true);
+
+        // If module dependency refset entry is new, add it
+        if (member == null) {
+          newMember = addModuleDependencyRefSetMember(newMember);
+          objectsAdded++;
+        }
+
+        // If module dependency refset entry is changed, update it
+        else if (!newMember.equals(member)) {
+          // do not worry about assembling concept structure here
+          // since cascade does not control the collection, simply update the member.
+          updateModuleDependencyRefSetMember(newMember);
+          objectsUpdated++;
+        }
+
+        // Otherwise, reset effective time (for modified check later)
+        else {
+          newMember.setEffectiveTime(member.getEffectiveTime());
+        }
+      }
+    }
+
+    Logger.getLogger(getClass()).info("      new = " + objectsAdded);
+    Logger.getLogger(getClass()).info("      updated = " + objectsUpdated);
+
+  }
+  
+  /**
+   * Load attribute value ref set members.
+   *
+   * @throws Exception the exception
+   */
+  @SuppressWarnings("resource")
+  private void loadAttributeValueRefSetMembers() throws Exception {
+
+    // Setup variables
+    String line = "";
+    objectCt = 0;
+    int objectsAdded = 0;
+    int objectsUpdated = 0;
+
+    // Iterate through description type refset reader
+    PushBackReader reader = readers.getReader(Rf2Readers.Keys.ATTRIBUTE_VALUE);
+    while ((line = reader.readLine()) != null) {
+
+      // split line
+      String fields[] = line.split("\t");
+
+      // if not header
+      if (!fields[0].equals("id")) {
+
+        // Skip if the effective time is before the release version
+        if (fields[1].compareTo(releaseVersion) < 0) {
+          continue;
+        }
+
+        // Stop if the effective time is past the release version
+        if (fields[1].compareTo(releaseVersion) > 0) {
+          reader.push(line);
+          break;
+        }
+
+        
+        AttributeValueRefSetMember<?> member = null;
+        
+        // Get concept from cache or from db
+        Concept concept = null;
+        Description description = null;
+        if (conceptCache.containsKey(fields[5])) {
+          concept = conceptCache.get(fields[5]);
+        } else if (existingConceptCache.containsKey(fields[5])) {
+          concept = existingConceptCache.get(fields[5]);
+        } 
+        if (descriptionCache.containsKey(fields[5])) {
+          description = descriptionCache.get(fields[5]);
+        } else if (existingDescriptionIds.contains(fields[5])) {
+          description = getDescription(fields[5], terminology, terminologyVersion);
+        }
+        if (concept == null && description == null) {
+          throw new Exception(
+            "Attribute value member connected to nonexistent object");             
+        }
+
+        // Get the member from the DB, if null, create a new one
+        // No cache necessary because we will not encounter the
+        // same object more than once per delta and nothing else
+        // is connected to it.
+        if (existingAttributeValueRefSetMemberIds.contains(fields[0])) {
+          member = getAttributeValueRefSetMember(fields[0], terminology, terminologyVersion);
+        }
+
+
+        AttributeValueRefSetMember<?> newMember = null;
+        if (concept != null) {
+          if (member == null) {
+            newMember = new AttributeValueConceptRefSetMemberJpa();
+          } else {
+            newMember = new AttributeValueConceptRefSetMemberJpa((AttributeValueConceptRefSetMember) member);
+          }
+          ((AttributeValueConceptRefSetMember)newMember).setComponent(concept);
+      
+        }
+        
+        if (description != null) {
+          if (member == null) {
+            newMember = new AttributeValueDescriptionRefSetMemberJpa();
+          } else {
+            newMember = new AttributeValueDescriptionRefSetMemberJpa((AttributeValueDescriptionRefSetMember) member);
+          }
+          ((AttributeValueDescriptionRefSetMember)newMember).setComponent(description);
+        }
+          
+        newMember.setTerminologyId(fields[0]);
+        newMember.setTerminology(terminology);
+        newMember.setTerminologyVersion(terminologyVersion);
+        newMember.setEffectiveTime(ConfigUtility.DATE_FORMAT.parse(fields[1]));
+        newMember.setActive(fields[2].equals("1"));
+        newMember.setModuleId(fields[3]);
+        newMember.setRefSetId(fields[4]);
+        // Attribute value unique attributes
+        newMember.setValueId(fields[6]);
+          
+        newMember.setLastModifiedBy("loader");
+        newMember.setLastModified(ConfigUtility.DATE_FORMAT.parse(releaseVersion));
+        newMember.setPublished(true);
+                 
+        // If attribute value refset entry is new, add it
+        if (member == null) {
+          newMember = addAttributeValueRefSetMember(newMember);
+          objectsAdded++;
+        }
+
+        // If attribute value refset entry is changed, update it
+        else if (!newMember.equals(member)) {
+          // do not worry about assembling concept structure here
+          // since cascade does not control the collection, simply update the member.
+          updateAttributeValueRefSetMember(newMember);
+          objectsUpdated++;
+        }
+
+        // Otherwise, reset effective time (for modified check later)
+        else {
+          newMember.setEffectiveTime(member.getEffectiveTime());
+        }
+        
+      }
+    }
+
+    Logger.getLogger(getClass()).info("      new = " + objectsAdded);
+    Logger.getLogger(getClass()).info("      updated = " + objectsUpdated);
+
+  }
+  
+  /**
+   * Load association reference ref set members.
+   *
+   * @throws Exception the exception
+   */
+  @SuppressWarnings("resource")
+  private void loadAssociationReferenceRefSetMembers() throws Exception {
+
+	    // Setup variables
+	    String line = "";
+	    objectCt = 0;
+	    int objectsAdded = 0;
+	    int objectsUpdated = 0;
+
+	    // Iterate through description type refset reader
+	    PushBackReader reader = readers.getReader(Rf2Readers.Keys.ASSOCIATION_REFERENCE);
+	    while ((line = reader.readLine()) != null) {
+
+	      // split line
+	      String fields[] = line.split("\t");
+
+	      // if not header
+	      if (!fields[0].equals("id")) {
+
+	        // Skip if the effective time is before the release version
+	        if (fields[1].compareTo(releaseVersion) < 0) {
+	          continue;
+	        }
+
+	        // Stop if the effective time is past the release version
+	        if (fields[1].compareTo(releaseVersion) > 0) {
+	          reader.push(line);
+	          break;
+	        }
+
+	        
+	        AssociationReferenceRefSetMember<?> member = null;
+	        
+	        // Get concept from cache or from db
+	        Concept concept = null;
+	        Description description = null;
+	        if (conceptCache.containsKey(fields[5])) {
+	          concept = conceptCache.get(fields[5]);
+	        } else if (existingConceptCache.containsKey(fields[5])) {
+	          concept = existingConceptCache.get(fields[5]);
+	        } 
+	        if (descriptionCache.containsKey(fields[5])) {
+	          description = descriptionCache.get(fields[5]);
+	        } else if (existingDescriptionIds.contains(fields[5])) {
+	          description = getDescription(fields[5], terminology, terminologyVersion);
+	        }
+	        if (concept == null && description == null) {
+	          throw new Exception(
+	            "Association reference member connected to nonexistent object");             
+	        }
+
+	        // Get the member from the DB, if null, create a new one
+	        // No cache necessary because we will not encounter the
+	        // same object more than once per delta and nothing else
+	        // is connected to it.
+	        if (existingAssociationReferenceRefSetMemberIds.contains(fields[0])) {
+	          member = getAssociationReferenceRefSetMember(fields[0], terminology, terminologyVersion);
+	        }
+
+
+	        AssociationReferenceRefSetMember<?> newMember = null;
+	        if (concept != null) {
+	          if (member == null) {
+	            newMember = new AssociationReferenceConceptRefSetMemberJpa();
+	          } else {
+	            newMember = new AssociationReferenceConceptRefSetMemberJpa((AssociationReferenceConceptRefSetMember) member);
+	          }
+	          ((AssociationReferenceConceptRefSetMember)newMember).setComponent(concept);
+	      
+	        }
+	        
+	        if (description != null) {
+	          if (member == null) {
+	            newMember = new AssociationReferenceDescriptionRefSetMemberJpa();
+	          } else {
+	            newMember = new AssociationReferenceDescriptionRefSetMemberJpa((AssociationReferenceDescriptionRefSetMember) member);
+	          }
+	          ((AssociationReferenceDescriptionRefSetMember)newMember).setComponent(description);
+	        }
+	          
+	        newMember.setTerminologyId(fields[0]);
+	        newMember.setTerminology(terminology);
+	        newMember.setTerminologyVersion(terminologyVersion);
+	        newMember.setEffectiveTime(ConfigUtility.DATE_FORMAT.parse(fields[1]));
+	        newMember.setActive(fields[2].equals("1"));
+	        newMember.setModuleId(fields[3]);
+	        newMember.setRefSetId(fields[4]);
+	        // Attribute value unique attributes
+	        newMember.setTargetComponentId(fields[6]);
+	          
+	        newMember.setLastModifiedBy("loader");
+	        newMember.setLastModified(ConfigUtility.DATE_FORMAT.parse(releaseVersion));
+	        newMember.setPublished(true);
+	                 
+	        // If attribute value refset entry is new, add it
+	        if (member == null) {
+	          newMember = addAssociationReferenceRefSetMember(newMember);
+	          objectsAdded++;
+	        }
+
+	        // If attribute value refset entry is changed, update it
+	        else if (!newMember.equals(member)) {
+	          // do not worry about assembling concept structure here
+	          // since cascade does not control the collection, simply update the member.
+	          updateAssociationReferenceRefSetMember(newMember);
+	          objectsUpdated++;
+	        }
+
+	        // Otherwise, reset effective time (for modified check later)
+	        else {
+	          newMember.setEffectiveTime(member.getEffectiveTime());
+	        }
+	        
+	      }
+	    }
+
+	    Logger.getLogger(getClass()).info("      new = " + objectsAdded);
+	    Logger.getLogger(getClass()).info("      updated = " + objectsUpdated);
+
+	  }
+  
+  
   /**
    * Load relationships.
    *

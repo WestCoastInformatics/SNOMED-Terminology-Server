@@ -180,6 +180,7 @@ public class Rf2SnapshotLoaderAlgorithm extends HistoryServiceJpa implements
           "    elapsed time = " + getElapsedTime(startTime) + "s"
               + " (Ended at " + ft.format(new Date()) + ")");
 
+      
       //
       // Load descriptions and language refsets
       //
@@ -904,7 +905,7 @@ public class Rf2SnapshotLoaderAlgorithm extends HistoryServiceJpa implements
               .setComponent(description);
         } else {
           throw new Exception(
-              "Association reference member connected to nonexistent object");
+              "Attribute value member connected to nonexistent object");
         }
 
         // Universal RefSet attributes

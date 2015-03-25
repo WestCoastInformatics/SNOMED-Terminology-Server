@@ -13,10 +13,10 @@ import org.ihtsdo.otf.ts.UserRole;
 import org.ihtsdo.otf.ts.helpers.UserList;
 import org.ihtsdo.otf.ts.jpa.ProjectJpa;
 import org.ihtsdo.otf.ts.jpa.UserJpa;
-import org.ihtsdo.otf.ts.jpa.services.ContentServiceJpa;
+import org.ihtsdo.otf.ts.jpa.services.ProjectServiceJpa;
 import org.ihtsdo.otf.ts.jpa.services.SecurityServiceJpa;
 import org.ihtsdo.otf.ts.rest.SecurityServiceRest;
-import org.ihtsdo.otf.ts.services.ContentService;
+import org.ihtsdo.otf.ts.services.ProjectService;
 import org.ihtsdo.otf.ts.services.SecurityService;
 import org.junit.After;
 import org.junit.Before;
@@ -288,8 +288,8 @@ public class SecurityServiceRestDegenerateUseTest extends
     project.addAuthor(user);
 
     // add the project
-    ContentService contentService = new ContentServiceJpa();
-    contentService.addProject(project);
+    ProjectService projectService = new ProjectServiceJpa();
+    projectService.addProject(project);
 
     // attempt to delete the user
     try {
@@ -300,8 +300,8 @@ public class SecurityServiceRestDegenerateUseTest extends
     }
 
     // delete the user and project
-    contentService.removeProject(project.getId());
-    contentService.close();
+    projectService.removeProject(project.getId());
+    projectService.close();
     service.removeUser(user.getId(), authToken);
 
   }
