@@ -461,7 +461,6 @@ public class ActionServiceJpa extends ContentServiceJpa implements
     Logger.getLogger(getClass()).info(
         "Action Service - retire old inferred relationships - " + sessionToken);
     tokenCheck(sessionToken);
-    // TODO Auto-generated method stub
 
     // get the old inferred rels and retire them
   }

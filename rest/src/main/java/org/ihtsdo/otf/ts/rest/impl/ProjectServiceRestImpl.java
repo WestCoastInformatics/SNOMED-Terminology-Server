@@ -1,8 +1,10 @@
 package org.ihtsdo.otf.ts.rest.impl;
 
 import javax.ws.rs.Consumes;
+import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.HeaderParam;
+import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
@@ -13,7 +15,9 @@ import org.apache.log4j.Logger;
 import org.ihtsdo.otf.ts.Project;
 import org.ihtsdo.otf.ts.UserRole;
 import org.ihtsdo.otf.ts.helpers.ConceptList;
+import org.ihtsdo.otf.ts.helpers.PfsParameterJpa;
 import org.ihtsdo.otf.ts.helpers.ProjectList;
+import org.ihtsdo.otf.ts.helpers.SearchResultList;
 import org.ihtsdo.otf.ts.jpa.ProjectJpa;
 import org.ihtsdo.otf.ts.jpa.services.ProjectServiceJpa;
 import org.ihtsdo.otf.ts.jpa.services.SecurityServiceJpa;
@@ -68,10 +72,10 @@ public class ProjectServiceRestImpl extends RootServiceRestImpl implements
     throws Exception {
     Logger.getLogger(getClass()).info(
         "RESTful call PUT (ContentChange): /add " + project);
-    Logger.getLogger(getClass()).debug(project.toString());
 
     try {
-      authenticate(securityService, authToken, "add project", UserRole.AUTHOR);
+      authenticate(securityService, authToken, "add project",
+          UserRole.ADMINISTRATOR);
 
       // Create service and configure transaction scope
       ProjectService projectService = new ProjectServiceJpa();
@@ -106,16 +110,93 @@ public class ProjectServiceRestImpl extends RootServiceRestImpl implements
    * (non-Javadoc)
    * 
    * @see
+   * org.ihtsdo.otf.ts.rest.ProjectServiceRest#updateProject(org.ihtsdo.otf.
+   * ts.jpa.ProjectJpa, java.lang.String)
+   */
+  @Override
+  @POST
+  @Path("/update")
+  @ApiOperation(value = "Update project", notes = "Updates the specified project.")
+  public void updateProject(
+    @ApiParam(value = "Project, e.g. existingProject", required = true) ProjectJpa project,
+    @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken)
+    throws Exception {
+    Logger.getLogger(getClass()).info(
+        "RESTful call PUT (ContentChange): /update " + project);
+
+    try {
+      authenticate(securityService, authToken, "update project",
+          UserRole.ADMINISTRATOR);
+
+      // Create service and configure transaction scope
+      ProjectService projectService = new ProjectServiceJpa();
+
+      // check to see if project already exists
+      boolean found = false;
+      for (Project p : projectService.getProjects().getObjects()) {
+        if (p.getId().equals(project.getId())) {
+          found = true;
+          break;
+        }
+      }
+      if (!found) {
+        throw new Exception("Project " + project.getId() + " does not exist.");
+      }
+
+      projectService.setTransactionPerOperation(false);
+      projectService.beginTransaction();
+
+      // Add project
+      projectService.updateProject(project);
+
+      // Commit, close, and return
+      projectService.commit();
+      projectService.close();
+
+    } catch (Exception e) {
+      handleException(e, "trying to update a project");
+    }
+  }
+
+  @Override
+  @DELETE
+  @Path("/remove/id/{id}")
+  @ApiOperation(value = "Delete project", notes = "Deletes the project with the specified id.")
+  public void removeProject(
+    @ApiParam(value = "Project id, e.g. 3", required = true) @PathParam("id") Long id,
+    @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken)
+    throws Exception {
+    Logger.getLogger(getClass()).info(
+        "RESTful call PUT (ContentChange): /remove/id/" + id);
+
+    try {
+      authenticate(securityService, authToken, "remove project",
+          UserRole.ADMINISTRATOR);
+
+      // Create service and configure transaction scope
+      ProjectService projectService = new ProjectServiceJpa();
+      projectService.removeProject(id);
+      projectService.close();
+
+    } catch (Exception e) {
+      handleException(e, "trying to remove a project");
+    }
+  }
+
+  /*
+   * (non-Javadoc)
+   * 
+   * @see
    * org.ihtsdo.otf.ts.rest.ContentServiceRest#getConceptsInScope(java.lang.
    * Long, java.lang.String)
    */
   @Override
-  @GET
+  @POST
   @Path("/id/{id}/scope")
-  @ApiOperation(value = "Get project scope for the project id", notes = "Gets all concpets in scope for this project.", response = ConceptList.class)
-  public ConceptList getConceptsInScope(
-
+  @ApiOperation(value = "Find project scope for the project id", notes = "Gets all concpets in scope for this project.", response = ConceptList.class)
+  public SearchResultList findConceptsInScope(
     @ApiParam(value = "Project internal id, e.g. 2", required = true) @PathParam("id") Long id,
+    @ApiParam(value = "PFS Parameter, e.g. '{ \"startIndex\":\"1\", \"maxResults\":\"5\" }'", required = false) PfsParameterJpa pfs,
     @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken) {
 
     Logger.getLogger(getClass()).info(
@@ -126,8 +207,9 @@ public class ProjectServiceRestImpl extends RootServiceRestImpl implements
           UserRole.VIEWER);
 
       ProjectService projectService = new ProjectServiceJpa();
-      ConceptList list =
-          projectService.getConceptsInScope(projectService.getProject(id));
+      SearchResultList list =
+          projectService
+              .findConceptsInScope(projectService.getProject(id), pfs);
       projectService.close();
       return list;
     } catch (Exception e) {
@@ -149,8 +231,7 @@ public class ProjectServiceRestImpl extends RootServiceRestImpl implements
   public Project getProject(
     @ApiParam(value = "Project internal id, e.g. 2", required = true) @PathParam("id") Long id,
     @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken) {
-    Logger.getLogger(getClass()).info(
-        "RESTful call (Content): /id/" + id);
+    Logger.getLogger(getClass()).info("RESTful call (Content): /id/" + id);
 
     try {
       authenticate(securityService, authToken, "retrieve the project",
@@ -174,21 +255,25 @@ public class ProjectServiceRestImpl extends RootServiceRestImpl implements
    */
   @Override
   @GET
-  @Path("/projects}")
+  @Path("/projects")
   @ApiOperation(value = "Get all projects", notes = "Gets all projects.", response = ConceptList.class)
   public ProjectList getProjects(
     @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken) {
-    Logger.getLogger(getClass()).info(
-        "RESTful call (Content): /projects");
+    Logger.getLogger(getClass()).info("RESTful call (Content): /projects");
 
     try {
       authenticate(securityService, authToken, "retrieve projects",
           UserRole.VIEWER);
 
       ProjectService projectService = new ProjectServiceJpa();
-      ProjectList list = projectService.getProjects();
+      ProjectList projects = projectService.getProjects();
+      for (Project project : projects.getObjects()) {
+        project.getScopeConcepts().size();
+        project.getScopeExcludesConcepts().size();
+        project.getActionWorkflowStatusValues().size();
+      }
       projectService.close();
-      return list;
+      return projects;
     } catch (Exception e) {
       handleException(e, "trying to retrieve the projects");
       return null;

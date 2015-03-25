@@ -4,7 +4,9 @@ import java.util.Comparator;
 import java.util.List;
 
 /**
- * Container for some kind of results
+ * Container for some kind of results.
+ *
+ * @author ${author}
  * @param <T> the type for sorting
  */
 public interface ResultList<T> {

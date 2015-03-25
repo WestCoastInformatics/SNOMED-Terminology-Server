@@ -5,8 +5,9 @@ package org.ihtsdo.otf.ts.services;
 
 import org.ihtsdo.otf.ts.Project;
 import org.ihtsdo.otf.ts.UserRole;
-import org.ihtsdo.otf.ts.helpers.ConceptList;
+import org.ihtsdo.otf.ts.helpers.PfsParameter;
 import org.ihtsdo.otf.ts.helpers.ProjectList;
+import org.ihtsdo.otf.ts.helpers.SearchResultList;
 
 /**
  * Generically represents a service for accessing {@link Project} information.
@@ -17,10 +18,12 @@ public interface ProjectService extends RootService {
    * Returns the concepts in scope.
    *
    * @param project the project
+   * @param pfs the pfs
    * @return the concepts in scope
    * @throws Exception the exception
    */
-  public ConceptList getConceptsInScope(Project project) throws Exception;
+  public SearchResultList findConceptsInScope(Project project, PfsParameter pfs)
+    throws Exception;
 
   /**
    * Returns the project.

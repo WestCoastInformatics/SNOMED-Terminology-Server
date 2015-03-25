@@ -141,7 +141,7 @@ public abstract class AbstractDescriptionRefSetMember extends
    */
   @XmlElement
   private String getDescriptionTerm() {
-    return description != null ? description.getTerminologyId() : "";
+    return description != null ? description.getTerm() : "";
   }
 
   /**

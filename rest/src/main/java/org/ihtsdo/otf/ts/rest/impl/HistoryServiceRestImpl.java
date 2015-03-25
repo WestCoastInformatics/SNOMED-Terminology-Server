@@ -86,7 +86,7 @@ public class HistoryServiceRestImpl extends RootServiceRestImpl implements
   @ApiOperation(value = "Get concepts modified since a date", notes = "Gets concepts changed since a date.", response = ConceptList.class)
   public ConceptList findConceptsModifiedSinceDate(
     @ApiParam(value = "Concept terminology , e.g. SNOMEDCT", required = true) @PathParam("terminology") String terminology,
-    @ApiParam(value = "Date in the format YYYYMMDD , e.g. latest or \"null\"", required = true) @PathParam("date") String date,
+    @ApiParam(value = "Date in the format YYYYMMDD , e.g. 20140731 or \"null\"", required = true) @PathParam("date") String date,
     @ApiParam(value = "PFS Parameter, e.g. '{ \"startIndex\":\"1\", \"maxResults\":\"5\" }'", required = false) PfsParameterJpa pfs,
     @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken) {
 
@@ -138,9 +138,9 @@ public class HistoryServiceRestImpl extends RootServiceRestImpl implements
   @Path("/concept/revisions/{id}/{startDate:([0-9][0-9][0-9][0-9][0-1][0-9][0-3][0-9]|null)}/{endDate:([0-9][0-9][0-9][0-9][0-1][0-9][0-3][0-9]|null)}/all")
   @ApiOperation(value = "Get concepts revisions in a date range", notes = "Gets all concept revisions in a date range. Use a null date to leave it open ended", response = ConceptList.class)
   public ConceptList findConceptRevisions(
-    @ApiParam(value = "Concept terminology , e.g. SNOMEDCT", required = true) @PathParam("id") String id,
-    @ApiParam(value = "Date in the format YYYYMMDD , e.g. latest or \"null\"", required = true) @PathParam("startDate") String startDate,
-    @ApiParam(value = "Date in the format YYYYMMDD , e.g. latest or \"null\"", required = true) @PathParam("endDate") String endDate,
+    @ApiParam(value = "Concept unique id, i.e. 1", required = true) @PathParam("id") String id,
+    @ApiParam(value = "Date in the format YYYYMMDD , e.g. 20140731 or \"null\"", required = true) @PathParam("startDate") String startDate,
+    @ApiParam(value = "Date in the format YYYYMMDD , e.g. 20140731 or \"null\"", required = true) @PathParam("endDate") String endDate,
     @ApiParam(value = "PFS Parameter, e.g. '{ \"startIndex\":\"1\", \"maxResults\":\"5\" }'", required = false) PfsParameterJpa pfs,
     @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken) {
 
@@ -173,7 +173,7 @@ public class HistoryServiceRestImpl extends RootServiceRestImpl implements
   @ApiOperation(value = "Get concepts release revision", notes = "Gets concept release revision.", response = Concept.class)
   public Concept findConceptReleaseRevision(
     @ApiParam(value = "Concept id, e.g. 2", required = true) @PathParam("id") String id,
-    @ApiParam(value = "Release date in the format YYYYMMDD , e.g. latest", required = true) @PathParam("release") String release,
+    @ApiParam(value = "Release date in the format YYYYMMDD , e.g. 20140731", required = true) @PathParam("release") String release,
     @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken) {
 
     Logger.getLogger(getClass()).info(
@@ -211,7 +211,7 @@ public class HistoryServiceRestImpl extends RootServiceRestImpl implements
   @ApiOperation(value = "Get descriptions modified since a date", notes = "Gets descriptions changed since a date.", response = DescriptionList.class)
   public DescriptionList findDescriptionsModifiedSinceDate(
     @ApiParam(value = "Description terminology , e.g. SNOMEDCT", required = true) @PathParam("terminology") String terminology,
-    @ApiParam(value = "Date in the format YYYYMMDD , e.g. latest or \"null\"", required = true) @PathParam("date") String date,
+    @ApiParam(value = "Date in the format YYYYMMDD , e.g. 20140731 or \"null\"", required = true) @PathParam("date") String date,
     @ApiParam(value = "PFS Parameter, e.g. '{ \"startIndex\":\"1\", \"maxResults\":\"5\" }'", required = false) PfsParameterJpa pfs,
     @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken) {
 
@@ -259,8 +259,8 @@ public class HistoryServiceRestImpl extends RootServiceRestImpl implements
   @ApiOperation(value = "Get descriptions revisions in a date range", notes = "Gets all description revisions in a date range. Use a null date to leave it open ended", response = DescriptionList.class)
   public DescriptionList findDescriptionRevisions(
     @ApiParam(value = "Concept terminology , e.g. SNOMEDCT", required = true) @PathParam("id") String id,
-    @ApiParam(value = "Date in the format YYYYMMDD , e.g. latest or \"null\"", required = true) @PathParam("startDate") String startDate,
-    @ApiParam(value = "Date in the format YYYYMMDD , e.g. latest or \"null\"", required = true) @PathParam("endDate") String endDate,
+    @ApiParam(value = "Date in the format YYYYMMDD, e.g. 20140731 or \"null\"", required = true) @PathParam("startDate") String startDate,
+    @ApiParam(value = "Date in the format YYYYMMDD, e.g. 20140731 or \"null\"", required = true) @PathParam("endDate") String endDate,
     @ApiParam(value = "PFS Parameter, e.g. '{ \"startIndex\":\"1\", \"maxResults\":\"5\" }'", required = false) PfsParameterJpa pfs,
     @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken) {
 
@@ -331,7 +331,7 @@ public class HistoryServiceRestImpl extends RootServiceRestImpl implements
   @ApiOperation(value = "Get relationships modified since a date", notes = "Gets relationships changed since a date.", response = RelationshipList.class)
   public RelationshipList findRelationshipsModifiedSinceDate(
     @ApiParam(value = "Relationship terminology , e.g. SNOMEDCT", required = true) @PathParam("terminology") String terminology,
-    @ApiParam(value = "Date in the format YYYYMMDD , e.g. latest or \"null\"", required = true) @PathParam("date") String date,
+    @ApiParam(value = "Date in the format YYYYMMDD, e.g. 20140731 or \"null\"", required = true) @PathParam("date") String date,
     @ApiParam(value = "PFS Parameter, e.g. '{ \"startIndex\":\"1\", \"maxResults\":\"5\" }'", required = false) PfsParameterJpa pfs,
     @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken) {
 
@@ -379,8 +379,8 @@ public class HistoryServiceRestImpl extends RootServiceRestImpl implements
   @ApiOperation(value = "Get relationships revisions in a date range", notes = "Gets all relationship revisions in a date range. Use a null date to leave it open ended", response = RelationshipList.class)
   public RelationshipList findRelationshipRevisions(
     @ApiParam(value = "Concept terminology , e.g. SNOMEDCT", required = true) @PathParam("id") String id,
-    @ApiParam(value = "Date in the format YYYYMMDD , e.g. latest or \"null\"", required = true) @PathParam("startDate") String startDate,
-    @ApiParam(value = "Date in the format YYYYMMDD , e.g. latest or \"null\"", required = true) @PathParam("endDate") String endDate,
+    @ApiParam(value = "Date in the format YYYYMMDD, e.g. 20140731 or \"null\"", required = true) @PathParam("startDate") String startDate,
+    @ApiParam(value = "Date in the format YYYYMMDD, e.g. 20140731 or \"null\"", required = true) @PathParam("endDate") String endDate,
     @ApiParam(value = "PFS Parameter, e.g. '{ \"startIndex\":\"1\", \"maxResults\":\"5\" }'", required = false) PfsParameterJpa pfs,
     @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken) {
 
@@ -453,7 +453,7 @@ public class HistoryServiceRestImpl extends RootServiceRestImpl implements
   @ApiOperation(value = "Get language refset members modified since a date", notes = "Gets language refset members changed since a date.", response = LanguageRefSetMemberList.class)
   public LanguageRefSetMemberList findLanguageRefSetMembersModifiedSinceDate(
     @ApiParam(value = "LanguageRefSetMember terminology , e.g. SNOMEDCT", required = true) @PathParam("terminology") String terminology,
-    @ApiParam(value = "Date in the format YYYYMMDD , e.g. latest or \"null\"", required = true) @PathParam("date") String date,
+    @ApiParam(value = "Date in the format YYYYMMDD, e.g. 20140731 or \"null\"", required = true) @PathParam("date") String date,
     @ApiParam(value = "PFS Parameter, e.g. '{ \"startIndex\":\"1\", \"maxResults\":\"5\" }'", required = false) PfsParameterJpa pfs,
     @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken) {
 
@@ -502,8 +502,8 @@ public class HistoryServiceRestImpl extends RootServiceRestImpl implements
   @ApiOperation(value = "Get language refset members revisions in a date range", notes = "Gets all language refset members revisions in a date range. Use a null date to leave it open ended", response = LanguageRefSetMemberList.class)
   public LanguageRefSetMemberList findLanguageRefSetMemberRevisions(
     @ApiParam(value = "Concept terminology , e.g. SNOMEDCT", required = true) @PathParam("id") String id,
-    @ApiParam(value = "Date in the format YYYYMMDD , e.g. latest or \"null\"", required = true) @PathParam("startDate") String startDate,
-    @ApiParam(value = "Date in the format YYYYMMDD , e.g. latest or \"null\"", required = true) @PathParam("endDate") String endDate,
+    @ApiParam(value = "Date in the format YYYYMMDD, e.g. 20140731 or \"null\"", required = true) @PathParam("startDate") String startDate,
+    @ApiParam(value = "Date in the format YYYYMMDD, e.g. 20140731 or \"null\"", required = true) @PathParam("endDate") String endDate,
     @ApiParam(value = "PFS Parameter, e.g. '{ \"startIndex\":\"1\", \"maxResults\":\"5\" }'", required = false) PfsParameterJpa pfs,
     @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken) {
 
@@ -582,7 +582,7 @@ public class HistoryServiceRestImpl extends RootServiceRestImpl implements
   @ApiOperation(value = "Get concepts modified since a date", notes = "Gets concepts where the concept or any part of it changed since specified date.", response = ConceptList.class)
   public ConceptList findConceptsDeepModifiedSinceDate(
     @ApiParam(value = "Concept terminology , e.g. SNOMEDCT", required = true) @PathParam("terminology") String terminology,
-    @ApiParam(value = "Date in the format YYYYMMDD , e.g. latest or \"null\"", required = true) @PathParam("date") String date,
+    @ApiParam(value = "Date in the format YYYYMMDD, e.g. 20140731 or \"null\"", required = true) @PathParam("date") String date,
     @ApiParam(value = "PFS Parameter, e.g. '{ \"startIndex\":\"1\", \"maxResults\":\"5\" }'", required = false) PfsParameterJpa pfs,
     @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken)
     throws Exception {
@@ -870,10 +870,10 @@ public class HistoryServiceRestImpl extends RootServiceRestImpl implements
    */
   @Override
   @GET
-  @Path("/startEditingCycle/{releaseVersion}/{terminology}/{version}")
+  @Path("/release/startEditingCycle/{releaseVersion}/{terminology}/{version}")
   @ApiOperation(value = "Start the editing cycle", notes = "Marks the start of the editing cycle for the specified release for the specified terminology/version")
   public void startEditingCycle(
-    @ApiParam(value = "Release version, e.g. 20150131", required = true) @PathParam("release") String releaseVersion,
+    @ApiParam(value = "Release version, e.g. 20150131", required = true) @PathParam("releaseVersion") String releaseVersion,
     @ApiParam(value = "Terminology, e.g. SNOMEDCT", required = true) @PathParam("terminology") String terminology,
     @ApiParam(value = "Terminology version, e.g. latest", required = true) @PathParam("version") String version,
     @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken) {

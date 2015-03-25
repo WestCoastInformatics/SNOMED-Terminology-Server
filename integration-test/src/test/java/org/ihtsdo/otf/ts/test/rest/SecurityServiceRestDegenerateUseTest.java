@@ -3,6 +3,7 @@ package org.ihtsdo.otf.ts.test.rest;
 import static org.junit.Assert.fail;
 
 import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import java.util.Collections;
 import java.util.Comparator;
 
@@ -18,6 +19,8 @@ import org.ihtsdo.otf.ts.jpa.services.SecurityServiceJpa;
 import org.ihtsdo.otf.ts.rest.SecurityServiceRest;
 import org.ihtsdo.otf.ts.services.ProjectService;
 import org.ihtsdo.otf.ts.services.SecurityService;
+import org.ihtsdo.otf.ts.test.helpers.DegenerateUseMethodTestHelper;
+import org.ihtsdo.otf.ts.test.helpers.DegenerateUseMethodTestHelper.ExpectedFailure;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -27,6 +30,8 @@ import org.junit.Test;
  */
 public class SecurityServiceRestDegenerateUseTest extends
     SecurityServiceRestTest {
+
+  String authToken = null;
 
   /**
    * Create test fixtures per test.
@@ -43,7 +48,9 @@ public class SecurityServiceRestDegenerateUseTest extends
     User badUser = securityService.getUser(badUserName);
     if (badUser != null)
       securityService.removeUser(badUser.getId());
-    securityService.close();
+
+    // authenticate user
+    authToken = securityService.authenticate(adminUserName, adminUserPassword);
   }
 
   /**
@@ -56,33 +63,17 @@ public class SecurityServiceRestDegenerateUseTest extends
   @Test
   public void testDegenerateUseRestSecurity001() throws Exception {
 
-    try {
-      service.authenticate(adminUserName, null);
-      fail("Authentication with null password failed to throw expected exception");
-    } catch (Exception e) {
-      // do nothing
-    }
+    Method method =
+        service.getClass().getMethod("authenticate", new Class<?>[] {
+            String.class, String.class
+        });
 
-    try {
-      service.authenticate(adminUserName, adminUserName + "_suffix");
-      fail("Authentication with bad password failed to throw expected exception");
-    } catch (Exception e) {
-      // do nothing
-    }
+    Object[] parameters = new Object[] {
+        adminUserName, adminUserPassword
+    };
 
-    try {
-      service.authenticate(properties.getProperty("bad.user"), ".");
-      fail("Authentication with non-null bad password failed to throw expected exception");
-    } catch (Exception e) {
-      // do nothing
-    }
-
-    try {
-      service.authenticate(null, ".");
-      fail("Authentciation with null user failed to throw expected exception");
-    } catch (Exception e) {
-      // do nothing
-    }
+    DegenerateUseMethodTestHelper.testDegenerateArguments(service, method,
+        parameters);
   }
 
   /**
@@ -94,35 +85,40 @@ public class SecurityServiceRestDegenerateUseTest extends
   @Test
   public void testDegenerateUseRestSecurity002() throws Exception {
 
-    // authenticate admin user for calls
-    String authToken = service.authenticate(adminUserName, adminUserName);
+    // degenerate helper parameters
+    Method method;
+    Object[] parameters;
 
     // local variables
     User user = new UserJpa();
+    user.setApplicationRole(UserRole.ADMINISTRATOR);
+    user.setName("Bad User");
+    user.setUserName(badUserName);
+    user.setEmail("baduser@example.com");
 
-    // Procedure 1: Testing add services
-    Logger.getLogger(getClass()).info(
-        "Procedure 1: ADD services");
+    /**
+     */
+    Logger.getLogger(getClass()).info("Procedure 1: ADD services");
 
-    // Add user with null argument
-    // TEST: Exception
-    Logger.getLogger(getClass()).info(
-        "  Adding user with null argument");
-    try {
-      service.addUser(null, authToken);
-      fail("ADD user with null user did not throw expected exception");
-    } catch (Exception e) {
-      // do nothing
-    }
+    method = service.getClass().getMethod("addUser", new Class<?>[] {
+        UserJpa.class, String.class
+    });
+
+    parameters = new Object[] {
+        user, authToken
+    };
+
+    // NOTE: This leaves bad user around for further use
+    DegenerateUseMethodTestHelper.testDegenerateArguments(service, method,
+        parameters);
 
     // Add user with incomplete user information (e.g. blank name or email)
     // TEST: Should throw deserialization error
-    Logger.getLogger(getClass()).info(
-        "  Adding user with incomplete fields");
+    Logger.getLogger(getClass()).info("  Adding user with incomplete fields");
     for (Field field : UserJpa.class.getFields()) {
 
       // construct the user
-      user = new UserJpa();
+      user.setObjectId(null);
       user.setName(properties.getProperty("bad.user"));
       user.setEmail("no email");
       user.setUserName(properties.getProperty("bad.user"));
@@ -142,36 +138,36 @@ public class SecurityServiceRestDegenerateUseTest extends
       }
     }
 
-    // Procedure 2: Testing get services
-    Logger.getLogger(getClass()).info(
-        "Procedure 2: GET services");
+    /**
+     * Procedure 2: Testing get services
+     */
+    Logger.getLogger(getClass()).info("Procedure 2: GET services");
 
-    // Get user by id with null id
-    // TEST: Should throw null
+    // first get the user
+    user = service.getUser(adminUserName, authToken);
 
-    try {
-      Long testLong = null;
-      service.getUser(testLong, authToken);
-      fail("GET user by null id did not throw expected exception");
-    } catch (Exception e) {
-      // do nothing
-    }
+    // test
+    method = service.getClass().getMethod("getUser", new Class<?>[] {
+        Long.class, String.class
+    });
 
-    // Get user by name with null name
-    // TEST: Should return null
-    try {
-      String str = null;
-      if (service.getUser(str, authToken) != null) {
-        fail("GET user by null string did not return null");
-      }
-    } catch (Exception e) {
-      fail("GET user by null string returned exception instead of null");
-    }
+    parameters = new Object[] {
+        user.getId(), authToken
+    };
+
+    // invalid Long value should return null
+    DegenerateUseMethodTestHelper.testDegenerateArguments(service, method,
+        parameters, new ExpectedFailure[] {
+            ExpectedFailure.LONG_INVALID_NO_RESULTS_NULL_EXCEPTION, ExpectedFailure.EXCEPTION
+        });
 
     // Get user with invalid name (does not exist in database)
     // TEST: Should return null
+    
+    // first remove bad user (created by tests above)
+    service.removeUser(service.getUser(badUserName, authToken).getId(), authToken);
     try {
-      if (service.getUser(properties.getProperty("bad.user"), authToken) != null) {
+      if (service.getUser(badUserName, authToken) != null) {
         fail("GET non-existent user did not return null");
       }
     } catch (Exception e) {
@@ -179,8 +175,7 @@ public class SecurityServiceRestDegenerateUseTest extends
     }
 
     // Procedure 3: Testing update services
-    Logger.getLogger(getClass()).info(
-        "Procedure 3: UPDATE services");
+    Logger.getLogger(getClass()).info("Procedure 3: UPDATE services");
 
     // Update user with null argument
     // TEST: Should throw exception
@@ -240,8 +235,7 @@ public class SecurityServiceRestDegenerateUseTest extends
     }
 
     // Procedure 4: Testing delete services
-    Logger.getLogger(getClass()).info(
-        "Procedure 4: DELETE services");
+    Logger.getLogger(getClass()).info("Procedure 4: DELETE services");
 
     // Delete user with null id
     // TEST: Should throw exception

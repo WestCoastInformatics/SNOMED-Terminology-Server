@@ -415,9 +415,9 @@ public abstract class AbstractComponent implements Component {
    * @see org.ihtsdo.otf.ts.rf2.Component#getLabel()
    */
   @Override
-  @Fields({
-      @Field(index = Index.YES, analyze = Analyze.YES, store = Store.NO),
-      @Field(name = "all", index = Index.YES, analyze = Analyze.YES, store = Store.NO)
+  @Fields( {
+    @Field(index = Index.YES, analyze = Analyze.YES, store = Store.NO),
+    @Field(name = "labelSort", analyze=Analyze.NO, store = Store.NO)  
   })
   public String getLabel() {
     return label;

@@ -241,7 +241,6 @@ public class ContentServiceRestNormalUseTest extends ContentServiceRestTest {
     assertTrue(searchResults.getObjects().get(0).getTerminologyId()
         .equals("93563005"));
 
-    // TODO Test ordering (ascending/descending)
   }
 
   /**
@@ -256,40 +255,40 @@ public class ContentServiceRestNormalUseTest extends ContentServiceRestTest {
 
     // Get children for SNOMEDCT concept // TEST: Expect 80 children
     conceptList =
-        contentService.getChildConcepts(snomedTestId, snomedTerminology,
+        contentService.findChildConcepts(snomedTestId, snomedTerminology,
             snomedVersion, pfs, authToken);
     assertTrue(conceptList.getCount() == 80);
 
     // Get descendants for SNOMEDCT concept // TEST: Expect 94 descendants
     conceptList =
-        contentService.getDescendantConcepts(snomedTestId, snomedTerminology,
+        contentService.findDescendantConcepts(snomedTestId, snomedTerminology,
             snomedVersion, pfs, authToken);
     assertTrue(conceptList.getCount() == 94);
 
     // Get ancestors for SNOMEDCT concept // TEST: Expect 11 ancestors
     conceptList =
-        contentService.getAncestorConcepts(snomedTestId, snomedTerminology,
+        contentService.findAncestorConcepts(snomedTestId, snomedTerminology,
             snomedVersion, pfs, authToken);
     assertTrue(conceptList.getCount() == 11);
 
     // Get children for ICD9CM concept
     // TEST: Expect 8 children
     conceptList =
-        contentService.getChildConcepts(icd9TestId, icd9Terminology,
+        contentService.findChildConcepts(icd9TestId, icd9Terminology,
             icd9Version, pfs, authToken);
     assertTrue(conceptList.getCount() == 8);
 
     // Get descendants for ICD9CM concept
     // TEST: Expect 81 descendants
     conceptList =
-        contentService.getDescendantConcepts(icd9TestId, icd9Terminology,
+        contentService.findDescendantConcepts(icd9TestId, icd9Terminology,
             icd9Version, pfs, authToken);
     assertTrue(conceptList.getCount() == 81);
 
     // Get ancestors for ICD9CM concept
     // TEST: Expect 2 ancestors
     conceptList =
-        contentService.getAncestorConcepts(icd9TestId, icd9Terminology,
+        contentService.findAncestorConcepts(icd9TestId, icd9Terminology,
             icd9Version, pfs, authToken);
     assertTrue(conceptList.getCount() == 2);
 

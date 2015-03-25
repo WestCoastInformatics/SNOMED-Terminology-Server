@@ -455,7 +455,7 @@ public class Rf2SnapshotLoaderAlgorithm extends HistoryServiceJpa implements
    * 
    * @throws Exception the exception
    */
-  @SuppressWarnings("resource")
+  
   private void loadConcepts() throws Exception {
 
     String line = "";
@@ -516,7 +516,7 @@ public class Rf2SnapshotLoaderAlgorithm extends HistoryServiceJpa implements
    * 
    * @throws Exception the exception
    */
-  @SuppressWarnings("resource")
+  
   private void loadRelationships() throws Exception {
 
     String line = "";
@@ -736,7 +736,7 @@ public class Rf2SnapshotLoaderAlgorithm extends HistoryServiceJpa implements
    * @return the next description
    * @throws Exception the exception
    */
-  @SuppressWarnings("resource")
+  
   private Description getNextDescription()
     throws Exception {
 
@@ -806,7 +806,7 @@ public class Rf2SnapshotLoaderAlgorithm extends HistoryServiceJpa implements
    * @return a partial language ref set member (lacks full description)
    * @throws Exception the exception
    */
-  @SuppressWarnings("resource")
+  
   private LanguageRefSetMember getNextLanguage() throws Exception {
 
     String line, fields[];
@@ -869,7 +869,7 @@ public class Rf2SnapshotLoaderAlgorithm extends HistoryServiceJpa implements
    * @throws Exception the exception
    */
   @SuppressWarnings({
-      "boxing", "resource"
+      "boxing"
   })
   private void loadAttributeValueRefSets() throws Exception {
 
@@ -950,7 +950,7 @@ public class Rf2SnapshotLoaderAlgorithm extends HistoryServiceJpa implements
    * @throws Exception the exception
    */
   @SuppressWarnings({
-      "boxing", "resource"
+      "boxing"
   })
   private void loadAssociationReferenceRefSets() throws Exception {
 
@@ -1032,7 +1032,7 @@ public class Rf2SnapshotLoaderAlgorithm extends HistoryServiceJpa implements
    * @throws Exception the exception
    */
 
-  @SuppressWarnings("resource")
+  
   private void loadSimpleRefSets() throws Exception {
 
     String line = "";
@@ -1103,7 +1103,7 @@ public class Rf2SnapshotLoaderAlgorithm extends HistoryServiceJpa implements
    * 
    * @throws Exception the exception
    */
-  @SuppressWarnings("resource")
+  
   private void loadSimpleMapRefSets() throws Exception {
 
     String line = "";
@@ -1175,7 +1175,7 @@ public class Rf2SnapshotLoaderAlgorithm extends HistoryServiceJpa implements
    * 
    * @throws Exception the exception
    */
-  @SuppressWarnings("resource")
+  
   private void loadComplexMapRefSets() throws Exception {
 
     String line = "";
@@ -1250,7 +1250,7 @@ public class Rf2SnapshotLoaderAlgorithm extends HistoryServiceJpa implements
    *
    * @throws Exception the exception
    */
-  @SuppressWarnings("resource")
+  
   private void loadExtendedMapRefSets() throws Exception {
 
     String line = "";
@@ -1328,7 +1328,7 @@ public class Rf2SnapshotLoaderAlgorithm extends HistoryServiceJpa implements
    *
    * @throws Exception the exception
    */
-  @SuppressWarnings("resource")
+  
   private void loadRefsetDescriptorRefSets() throws Exception {
 
     String line = "";
@@ -1404,7 +1404,7 @@ public class Rf2SnapshotLoaderAlgorithm extends HistoryServiceJpa implements
    *
    * @throws Exception the exception
    */
-  @SuppressWarnings("resource")
+  
   private void loadModuleDependencyRefSets() throws Exception {
 
     String line = "";
@@ -1481,7 +1481,7 @@ public class Rf2SnapshotLoaderAlgorithm extends HistoryServiceJpa implements
    *
    * @throws Exception the exception
    */
-  @SuppressWarnings("resource")
+  
   private void loadDescriptionTypeRefSets() throws Exception {
 
     String line = "";

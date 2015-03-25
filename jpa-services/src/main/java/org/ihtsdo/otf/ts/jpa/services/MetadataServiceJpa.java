@@ -635,7 +635,7 @@ public class MetadataServiceJpa extends RootServiceJpa implements
   public List<String> getVersions(String terminology) throws Exception {
     javax.persistence.Query query =
         manager
-            .createQuery("SELECT distinct c.version from ConceptJpa c where terminology = :terminology");
+            .createQuery("SELECT distinct c.terminologyVersion from ConceptJpa c where terminology = :terminology");
 
     query.setParameter("terminology", terminology);
     @SuppressWarnings("unchecked")
