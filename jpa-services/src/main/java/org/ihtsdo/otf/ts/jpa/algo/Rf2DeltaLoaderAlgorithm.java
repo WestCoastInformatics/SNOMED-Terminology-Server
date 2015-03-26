@@ -541,7 +541,6 @@ public class Rf2DeltaLoaderAlgorithm extends HistoryServiceJpa implements
    *
    * @throws Exception the exception
    */
-  @SuppressWarnings("resource")
   private void loadConcepts() throws Exception {
 
     // Setup vars
@@ -630,7 +629,6 @@ public class Rf2DeltaLoaderAlgorithm extends HistoryServiceJpa implements
    *
    * @throws Exception the exception
    */
-  @SuppressWarnings("resource")
   private void loadDescriptions() throws Exception {
 
     // Setup vars
@@ -767,7 +765,6 @@ public class Rf2DeltaLoaderAlgorithm extends HistoryServiceJpa implements
    *
    * @throws Exception the exception
    */
-  @SuppressWarnings("resource")
   private void loadLanguageRefSetMembers() throws Exception {
 
     // Setup variables
@@ -906,7 +903,6 @@ public class Rf2DeltaLoaderAlgorithm extends HistoryServiceJpa implements
    *
    * @throws Exception the exception
    */
-  @SuppressWarnings("resource")
   private void loadSimpleRefSetMembers() throws Exception {
 
     // Setup variables
@@ -1012,7 +1008,6 @@ public class Rf2DeltaLoaderAlgorithm extends HistoryServiceJpa implements
    *
    * @throws Exception the exception
    */
-  @SuppressWarnings("resource")
   private void loadSimpleMapRefSetMembers() throws Exception {
 
     // Setup variables
@@ -1121,7 +1116,6 @@ public class Rf2DeltaLoaderAlgorithm extends HistoryServiceJpa implements
    * @throws Exception the exception
    */
 
-  @SuppressWarnings("resource")
   private void loadComplexMapRefSetMembers() throws Exception {
 
     // Setup variables
@@ -1235,7 +1229,6 @@ public class Rf2DeltaLoaderAlgorithm extends HistoryServiceJpa implements
    * @throws Exception the exception
    */
 
-  @SuppressWarnings("resource")
   private void loadExtendedMapRefSetMembers() throws Exception {
 
     // Setup variables
@@ -1350,7 +1343,6 @@ public class Rf2DeltaLoaderAlgorithm extends HistoryServiceJpa implements
    * @throws Exception the exception
    */
 
-  @SuppressWarnings("resource")
   private void loadDescriptionTypeRefSetMembers() throws Exception {
 
     // Setup variables
@@ -1420,7 +1412,8 @@ public class Rf2DeltaLoaderAlgorithm extends HistoryServiceJpa implements
         newMember.setModuleId(fields[3]);
         newMember.setRefSetId(fields[4]);
         newMember.setConcept(concept);
-
+        newMember.setDescriptionFormat(fields[6]);
+        newMember.setDescriptionLength(Integer.parseInt(fields[7]));
         newMember.setLastModifiedBy("loader");
         newMember.setLastModified(ConfigUtility.DATE_FORMAT
             .parse(releaseVersion));
@@ -1459,7 +1452,6 @@ public class Rf2DeltaLoaderAlgorithm extends HistoryServiceJpa implements
    * @throws Exception the exception
    */
 
-  @SuppressWarnings("resource")
   private void loadRefsetDescriptorRefSetMembers() throws Exception {
 
     // Setup variables
@@ -1573,7 +1565,6 @@ public class Rf2DeltaLoaderAlgorithm extends HistoryServiceJpa implements
    * @throws Exception the exception
    */
 
-  @SuppressWarnings("resource")
   private void loadModuleDependencyRefSetMembers() throws Exception {
 
     // Setup variables
@@ -1688,7 +1679,6 @@ public class Rf2DeltaLoaderAlgorithm extends HistoryServiceJpa implements
    * @throws Exception the exception
    */
 
-  @SuppressWarnings("resource")
   private void loadAttributeValueRefSetMembers() throws Exception {
 
     // Setup variables
@@ -1828,7 +1818,6 @@ public class Rf2DeltaLoaderAlgorithm extends HistoryServiceJpa implements
    * @throws Exception the exception
    */
 
-  @SuppressWarnings("resource")
   private void loadAssociationReferenceRefSetMembers() throws Exception {
 
     // Setup variables
@@ -1970,7 +1959,6 @@ public class Rf2DeltaLoaderAlgorithm extends HistoryServiceJpa implements
    * @throws Exception the exception
    */
 
-  @SuppressWarnings("resource")
   private void loadRelationships() throws Exception {
 
     // Setup variables
