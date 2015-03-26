@@ -86,20 +86,6 @@ public interface Concept extends Component {
   public Set<Relationship> getRelationships();
 
   /**
-   * Returns the child count.
-   *
-   * @return the child count
-   */
-  public int getChildCount();
-
-  /**
-   * Sets the child count.
-   *
-   * @param ct the child count
-   */
-  public void setChildCount(int ct);
-
-  /**
    * Adds the relationship.
    * 
    * @param relationship the relationship

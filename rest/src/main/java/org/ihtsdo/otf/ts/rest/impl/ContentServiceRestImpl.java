@@ -281,13 +281,13 @@ public class ContentServiceRestImpl extends RootServiceRestImpl implements
             + terminologyId + "/parents");
 
     try {
-      authenticate(securityService, authToken, "retrieve the child concepts",
+      authenticate(securityService, authToken, "retrieve the parent concepts",
           UserRole.VIEWER);
 
       ContentService contentService = new ContentServiceJpa();
       Concept concept =
           contentService.getSingleConcept(terminologyId, terminology, version);
-      ConceptList list = contentService.findChildConcepts(concept, pfs);
+      ConceptList list = contentService.findParentConcepts(concept, pfs);
       for (Concept c : list.getObjects()) {
         contentService.getGraphResolutionHandler().resolve(
             c,
@@ -297,7 +297,7 @@ public class ContentServiceRestImpl extends RootServiceRestImpl implements
       contentService.close();
       return list;
     } catch (Exception e) {
-      handleException(e, "trying to retrieve child concepts");
+      handleException(e, "trying to retrieve parent concepts");
       return null;
     }
   }
