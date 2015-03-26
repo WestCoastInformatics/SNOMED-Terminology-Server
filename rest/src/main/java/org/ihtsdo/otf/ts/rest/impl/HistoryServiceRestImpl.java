@@ -791,6 +791,7 @@ public class HistoryServiceRestImpl extends RootServiceRestImpl implements
           UserRole.ADMINISTRATOR);
 
       HistoryService historyService = new HistoryServiceJpa();
+      releaseInfo.setLastModifiedBy(securityService.getUsernameForToken(authToken));
       ReleaseInfo result = historyService.addReleaseInfo(releaseInfo);
       historyService.close();
       return result;
@@ -824,6 +825,7 @@ public class HistoryServiceRestImpl extends RootServiceRestImpl implements
           UserRole.ADMINISTRATOR);
 
       HistoryService historyService = new HistoryServiceJpa();
+      releaseInfo.setLastModifiedBy(securityService.getUsernameForToken(authToken));
       historyService.updateReleaseInfo(releaseInfo);
       historyService.close();
     } catch (Exception e) {
@@ -869,7 +871,7 @@ public class HistoryServiceRestImpl extends RootServiceRestImpl implements
    * , java.lang.String, java.lang.String, java.lang.String)
    */
   @Override
-  @GET
+  @POST
   @Path("/release/startEditingCycle/{releaseVersion}/{terminology}/{version}")
   @ApiOperation(value = "Start the editing cycle", notes = "Marks the start of the editing cycle for the specified release for the specified terminology/version")
   public void startEditingCycle(
@@ -886,6 +888,7 @@ public class HistoryServiceRestImpl extends RootServiceRestImpl implements
       // Perform operations
       StartEditingCycleAlgorithm algorithm =
           new StartEditingCycleAlgorithm(releaseVersion, terminology, version);
+      algorithm.setUser(securityService.getUsernameForToken(authToken));
       algorithm.compute();
     } catch (Exception e) {
       handleException(e, "start editing cycle");

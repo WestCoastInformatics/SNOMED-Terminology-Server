@@ -70,7 +70,7 @@ public class ProjectServiceJpa extends RootServiceJpa implements ProjectService 
       include.add(concept);
       // get descendants
       if (project.getScopeDescendantsFlag()) {
-        for (Concept desc : contentService.getDescendantConcepts(concept, null)
+        for (Concept desc : contentService.findDescendantConcepts(concept, null)
             .getObjects()) {
           include.add(desc);
         }
@@ -87,7 +87,7 @@ public class ProjectServiceJpa extends RootServiceJpa implements ProjectService 
       exclude.add(concept);
       // get descendants
       if (project.getScopeExcludesDescendantsFlag()) {
-        for (Concept desc : contentService.getDescendantConcepts(concept, null)
+        for (Concept desc : contentService.findDescendantConcepts(concept, null)
             .getObjects()) {
           exclude.add(desc);
         }

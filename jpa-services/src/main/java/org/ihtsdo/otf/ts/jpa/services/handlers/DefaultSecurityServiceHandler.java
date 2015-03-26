@@ -116,7 +116,7 @@ public class DefaultSecurityServiceHandler implements SecurityServiceHandler {
 
     if (userList == null) {
       Logger
-          .getLogger(DefaultSecurityServiceHandler.class)
+          .getLogger(getClass())
           .warn(
               "Could not retrieve config parameter users.viewer for security handler DEFAULT");
       return userSet;
@@ -138,11 +138,11 @@ public class DefaultSecurityServiceHandler implements SecurityServiceHandler {
     String userList = properties.getProperty("users.admin");
     
     Logger
-    .getLogger(DefaultSecurityServiceHandler.class).info(properties.keySet());
+    .getLogger(getClass()).info(properties.keySet());
 
     if (userList == null) {
       Logger
-          .getLogger(DefaultSecurityServiceHandler.class)
+          .getLogger(getClass())
           .warn(
               "Could not retrieve config parameter users.admin for security handler DEFAULT");
       return userSet;

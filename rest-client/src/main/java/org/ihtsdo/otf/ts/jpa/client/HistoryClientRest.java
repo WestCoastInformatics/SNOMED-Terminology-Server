@@ -847,7 +847,7 @@ public class HistoryClientRest implements HistoryServiceRest {
             + terminology + "/" + version);
     ClientResponse response =
         resource.accept(MediaType.APPLICATION_XML)
-            .header("Authorization", authToken).get(ClientResponse.class);
+            .header("Authorization", authToken).post(ClientResponse.class);
 
     if (response.getStatusInfo().getFamily() == Family.SUCCESSFUL) {
       // do nothing

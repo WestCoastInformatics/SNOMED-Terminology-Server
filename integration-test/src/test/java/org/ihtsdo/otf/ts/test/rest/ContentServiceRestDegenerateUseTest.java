@@ -310,7 +310,7 @@ public class ContentServiceRestDegenerateUseTest extends ContentServiceRestTest 
    */
   @Test
   public void testDegenerateUseRestContent006() throws Exception {
-
+//
   }
 
   /**

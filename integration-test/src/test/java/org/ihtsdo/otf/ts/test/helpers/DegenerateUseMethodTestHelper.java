@@ -4,9 +4,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import org.apache.log4j.Logger;
 import org.ihtsdo.otf.ts.helpers.LocalException;
@@ -21,7 +19,7 @@ import org.ihtsdo.otf.ts.helpers.ResultList;
  * @author ${author}
  */
 public class DegenerateUseMethodTestHelper {
-  
+
   /**
    * The Enum ExpectedFailure.
    *
@@ -37,7 +35,7 @@ public class DegenerateUseMethodTestHelper {
 
     /** Use this if no failure is expected */
     NONE,
-    
+
     /** Use to test successful call, but erroneous empty result list. */
     NO_RESULTS,
 
@@ -86,8 +84,7 @@ public class DegenerateUseMethodTestHelper {
     /** Use when empty string succeeds and null string succeeds */
     STRING_INVALID_SUCCESS_NULL_SUCCESS,
 
-  };
-  
+  }
 
   /**
    * Test degenerate method use with default behavior.
@@ -103,9 +100,10 @@ public class DegenerateUseMethodTestHelper {
 
     testDegenerateArguments(obj, method, validParameters, null, null);
   }
-  
+
   /**
-   * Test degenerate method use with default invalid values and specified failure behavior.
+   * Test degenerate method use with default invalid values and specified
+   * failure behavior.
    *
    * @param obj the obj
    * @param method the method
@@ -115,11 +113,13 @@ public class DegenerateUseMethodTestHelper {
    * @throws LocalException the local exception
    */
   public static void testDegenerateArguments(Object obj, Method method,
-    Object[] validParameters, ExpectedFailure[] expectedFailures) throws Exception, LocalException {
+    Object[] validParameters, ExpectedFailure[] expectedFailures)
+    throws Exception, LocalException {
 
-    testDegenerateArguments(obj, method, validParameters, null, expectedFailures);
+    testDegenerateArguments(obj, method, validParameters, null,
+        expectedFailures);
   }
-  
+
   /**
    * Test degenerate arguments with specified (non-default) invalid parameters.
    *
@@ -131,13 +131,16 @@ public class DegenerateUseMethodTestHelper {
    * @throws LocalException the local exception
    */
   public static void testDegenerateArguments(Object obj, Method method,
-    Object[] validParameters, Object[] invalidParameters) throws Exception, LocalException {
+    Object[] validParameters, Object[] invalidParameters) throws Exception,
+    LocalException {
 
-    testDegenerateArguments(obj, method, validParameters, invalidParameters, null);
+    testDegenerateArguments(obj, method, validParameters, invalidParameters,
+        null);
   }
 
   /**
-   * Test degenerate arguments with fully specified invalid parameters and failure behavior.
+   * Test degenerate arguments with fully specified invalid parameters and
+   * failure behavior.
    *
    * @param obj the obj
    * @param method the method
@@ -146,11 +149,11 @@ public class DegenerateUseMethodTestHelper {
    * @param expectedFailures the expected failures
    * @throws Exception the exception
    */
+  @SuppressWarnings("null")
   public static void testDegenerateArguments(Object obj, Method method,
-    Object[] validParameters, Object[] invalidParameters, ExpectedFailure[] expectedFailures)
-    throws Exception {
-    
-    
+    Object[] validParameters, Object[] invalidParameters,
+    ExpectedFailure[] expectedFailures) throws Exception {
+
     // check assumptions
     if (obj == null)
       throw new Exception("Class to test method for not specified");
@@ -182,18 +185,18 @@ public class DegenerateUseMethodTestHelper {
     List<Object> validParameterList = new ArrayList<>();
     for (int i = 0; i < validParameters.length; i++)
       validParameterList.add(validParameters[i]);
-    
+
     // construct the base invalid parameter list
     List<Object> invalidParameterList = new ArrayList<>();
-    
+
     // if no invalid parameters specified, construct defaults
     if (invalidParameters == null) {
-      
+
       for (Object validParameter : validParameterList) {
-        
-        Class parameterType = validParameter.getClass();
+
+        Class<?> parameterType = validParameter.getClass();
         Object invalidParameter = null;
-        
+
         if (parameterType.equals(String.class)) {
           invalidParameter = new String("");
         } else if (parameterType.equals(Long.class)
@@ -203,7 +206,7 @@ public class DegenerateUseMethodTestHelper {
             || parameterType.equals(int.class)) {
           invalidParameter = -5;
         }
-        
+
         invalidParameterList.add(parameterType.cast(invalidParameter));
       }
     } else {
@@ -233,7 +236,7 @@ public class DegenerateUseMethodTestHelper {
 
       // the invalid value to test with
       Object invalidValue = invalidParameterList.get(i);
-      
+
       // the class of this parameter
       Class<? extends Object> parameterType = validParameters[i].getClass();
 
@@ -248,9 +251,10 @@ public class DegenerateUseMethodTestHelper {
         // if parameter not null, replace the bad parameter
         if (invalidValue != null) {
           parameters.set(i, invalidValue);
-          invoke(obj, method, parameters.toArray(), invalidValue, expectedFailure);
+          invoke(obj, method, parameters.toArray(), invalidValue,
+              expectedFailure);
         }
-        
+
         // if not primitive, test null
         if (!parameterType.isPrimitive()) {
           parameters.set(i, null);
@@ -300,6 +304,7 @@ public class DegenerateUseMethodTestHelper {
    * @param expectedFailure the expected failure
    * @throws Exception the exception
    */
+  @SuppressWarnings("null")
   private static void invoke(Object obj, Method method, Object[] parameters,
     Object parameter, ExpectedFailure expectedFailure) throws Exception {
 
@@ -547,8 +552,13 @@ public class DegenerateUseMethodTestHelper {
     }
   }
 
-  // helper function to take an object and determine if it is non-null, but
-  // empty
+  /**
+   * helper function to take an object and determine if it is non-null, but
+   * empty
+   *
+   * @param o the o
+   * @return <code>true</code> if so, <code>false</code> otherwise
+   */
   private static boolean isEmptyObject(Object o) {
 
     // return false if not-null, object is not semantically empty

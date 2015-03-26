@@ -71,21 +71,12 @@ public class ConceptJpa extends AbstractComponent implements Concept {
   /** The descriptions. */
   @OneToMany(mappedBy = "concept", cascade = CascadeType.ALL, orphanRemoval = true, targetEntity = DescriptionJpa.class)
   @IndexedEmbedded(targetElement = DescriptionJpa.class)
-  // PG
   private Set<Description> descriptions = null;
-
-  /** The description count. */
-  @Transient
-  private int descriptionCount = -1;
 
   /** The relationships. */
   @OneToMany(mappedBy = "sourceConcept", cascade = CascadeType.ALL, orphanRemoval = true, targetEntity = RelationshipJpa.class)
   @IndexedEmbedded(targetElement = RelationshipJpa.class)
   private Set<Relationship> relationships = null;
-
-  /** The relationship count. */
-  @Transient
-  private int relationshipCount = -1;
 
   /** The child count. */
   @Transient
@@ -279,26 +270,6 @@ public class ConceptJpa extends AbstractComponent implements Concept {
   /*
    * (non-Javadoc)
    * 
-   * @see org.ihtsdo.otf.ts.rf2.Concept#getDescriptionCount()
-   */
-  @Override
-  public int getDescriptionCount() {
-    return descriptionCount;
-  }
-
-  /*
-   * (non-Javadoc)
-   * 
-   * @see org.ihtsdo.otf.ts.rf2.Concept#setDescriptionCount(int)
-   */
-  @Override
-  public void setDescriptionCount(int ct) {
-    this.descriptionCount = ct;
-  }
-
-  /*
-   * (non-Javadoc)
-   * 
    * @see org.ihtsdo.otf.ts.rf2.Concept#setDescriptions(java.util.Set)
    */
   @Override
@@ -354,46 +325,6 @@ public class ConceptJpa extends AbstractComponent implements Concept {
       relationships = new HashSet<>();
     }
     return relationships;
-  }
-
-  /*
-   * (non-Javadoc)
-   * 
-   * @see org.ihtsdo.otf.ts.rf2.Concept#getRelationshipCount()
-   */
-  @Override
-  public int getRelationshipCount() {
-    return relationshipCount;
-  }
-
-  /*
-   * (non-Javadoc)
-   * 
-   * @see org.ihtsdo.otf.ts.rf2.Concept#setRelationshipCount(int)
-   */
-  @Override
-  public void setRelationshipCount(int ct) {
-    this.relationshipCount = ct;
-  }
-
-  /*
-   * (non-Javadoc)
-   * 
-   * @see org.ihtsdo.otf.ts.rf2.Concept#getChildCount()
-   */
-  @Override
-  public int getChildCount() {
-    return childCount;
-  }
-
-  /*
-   * (non-Javadoc)
-   * 
-   * @see org.ihtsdo.otf.ts.rf2.Concept#setChildCount(int)
-   */
-  @Override
-  public void setChildCount(int ct) {
-    this.childCount = ct;
   }
 
   /*

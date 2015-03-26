@@ -92,30 +92,6 @@ public class ContentClientRest implements ContentServiceRest {
   }
 
   /*
-   * Commented out as not part of change service (non-Javadoc)
-   * 
-   * @see
-   * org.ihtsdo.otf.ts.rest.ContentServiceRest#getConceptForUser(java.lang.String
-   * , java.lang.String, java.lang.String, java.lang.String)
-   * 
-   * @Override public Concept getConceptForUser(String terminologyId, String
-   * terminology, String version, String authToken) throws Exception { Client
-   * client = Client.create(); WebResource resource =
-   * client.resource(config.getProperty("base.url") + "/content/concept/" +
-   * terminology + "/" + version + "/" + terminologyId + "/foruser");
-   * ClientResponse response = resource.accept(MediaType.APPLICATION_XML)
-   * .header("Authorization", authToken).get(ClientResponse.class);
-   * 
-   * String resultString = response.getEntity(String.class); if
-   * (response.getStatusInfo().getFamily() == Family.SUCCESSFUL) {
-   * Logger.getLogger(getClass()).debug(resultString); } else { throw new
-   * Exception(resultString); }
-   * 
-   * // converting to object ConceptJpa concept = (ConceptJpa)
-   * ConfigUtility.getGraphForString(resultString, ConceptJpa.class); return
-   * concept; }
-   */
-  /*
    * (non-Javadoc)
    * 
    * @see
@@ -264,22 +240,25 @@ public class ContentClientRest implements ContentServiceRest {
     return list;
   }
 
-  /*
-   * (non-Javadoc)
-   * 
-   * @see
-   * org.ihtsdo.otf.ts.rest.ContentServiceRest#getAncestorConcepts(java.lang
-   * .String, java.lang.String, java.lang.String,
-   * org.ihtsdo.otf.ts.helpers.PfsParameterJpa, java.lang.String)
+  /**
+   * Find parent concepts.
+   *
+   * @param terminologyId the terminology id
+   * @param terminology the terminology
+   * @param version the version
+   * @param pfs the pfs
+   * @param authToken the auth token
+   * @return the concept list
+   * @throws Exception the exception
    */
   @Override
-  public ConceptList findAncestorConcepts(String terminologyId,
+  public ConceptList findParentConcepts(String terminologyId,
     String terminology, String version, PfsParameterJpa pfs, String authToken)
     throws Exception {
     Client client = Client.create();
     WebResource resource =
         client.resource(config.getProperty("base.url") + "/content/concepts/"
-            + terminology + "/" + version + "/" + terminologyId + "/ancestors");
+            + terminology + "/" + version + "/" + terminologyId + "/parents");
     String pfsString =
         (pfs != null ? ConfigUtility.getStringForGraph(pfs) : null);
     Logger.getLogger(getClass()).debug(pfsString);
@@ -302,7 +281,7 @@ public class ContentClientRest implements ContentServiceRest {
             ConceptListJpa.class);
     return list;
   }
-  
+
   /*
    * (non-Javadoc)
    * 
@@ -312,13 +291,13 @@ public class ContentClientRest implements ContentServiceRest {
    * org.ihtsdo.otf.ts.helpers.PfsParameterJpa, java.lang.String)
    */
   @Override
-  public ConceptList getParentConcepts(String terminologyId,
+  public ConceptList findAncestorConcepts(String terminologyId,
     String terminology, String version, PfsParameterJpa pfs, String authToken)
     throws Exception {
     Client client = Client.create();
     WebResource resource =
         client.resource(config.getProperty("base.url") + "/content/concepts/"
-            + terminology + "/" + version + "/" + terminologyId + "/parents");
+            + terminology + "/" + version + "/" + terminologyId + "/ancestors");
     String pfsString =
         (pfs != null ? ConfigUtility.getStringForGraph(pfs) : null);
     Logger.getLogger(getClass()).debug(pfsString);
@@ -537,7 +516,7 @@ public class ContentClientRest implements ContentServiceRest {
         resource.accept(MediaType.APPLICATION_XML)
             .header("Authorization", authToken)
             .header("Content-type", MediaType.APPLICATION_XML)
-            .get(ClientResponse.class);
+            .post(ClientResponse.class);
 
     if (response.getStatusInfo().getFamily() == Family.SUCCESSFUL) {
       // do nothing

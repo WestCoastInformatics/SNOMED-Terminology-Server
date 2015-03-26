@@ -5,7 +5,8 @@
 <title>Terminology Server Demonstration Portal</title>
 <style type="text/css" media="all"></style>
 
-
+<!-- Favicon -->
+<link rel="icon" type="image/png" href="images/favicon.png" />
 
 <!-- Bootstrap core CSS  -->
 <link href="ui/components/bootstrap/dist/css/bootstrap.css" rel="stylesheet">
@@ -42,20 +43,25 @@
 
     <!--  header -->
 
-    <nav style="background-color: #FFFFFF"
+    <nav style="background: #00008A url('images/background.jpg');"
       class="navbar navbar-default navbar-fixed-top" role="navigation">
       <div class="container-fluid">
         <!-- Brand and toggle get grouped for better mobile display -->
-        <div class="navbar-header">
-          <img class="pull-left" src="images/logo.jpg">
-          <p class="navbar-brand">&nbsp;Terminology Server Demo and <a href="swagger.html" target="_blank">API Documentation</a></p>
-         
+        <div>
+          <img
+            style="background-color: white; border: 3px solid white; border-radius: 5px; margin-left: 133px; margin-top: 14px;"
+            class="pull-left" src="images/logo.jpg"> <b
+            class="navbar-brand" style="color: white; margin-top: 60px;">
+            &nbsp;Terminology Server Demo and <a href="swagger.html"
+            style="color: white;" target="_blank">API Documentation</a>
+          </b>
+
         </div>
       </div>
     </nav>
 
 
-    <div class="ts-container">
+    <div class="ts-container" style="margin-top: 50px">
 
       <!-- Error Messages -->
       <div id="errorMsg" class="border-error alert-error"
@@ -80,10 +86,27 @@
                 placeholder="Password" ng-model="password" /><br>
               <button style="margin-top: 10px;" id="userLoginButton"
                 type="submit" ng-click="login(userName, password)">Login</button>
-              <p><a
-                href="https://uts.nlm.nih.gov/license.html#emailTemporaryPassword">Forgot
-                Password?</a></p>
-
+              <p>
+                <a
+                  href="https://uts.nlm.nih.gov/license.html#emailTemporaryPassword">Forgot
+                  Password?</a>
+              </p>
+              <p style="margin-top: 50px; max-width: 500px">This
+                demonstration app is loaded with data from two terminologies.
+                </p>
+              <ul>
+                <li>ICD9CM, 2013</li>
+                <li>SNOMEDCT, 20140731 (mini edition)</li>
+              </ul>
+              <p style="max-width: 400px">
+              The mini version of SNOMED contains about 10K concepts. Due to the
+              use of IP restricted content, we require users to authenticate
+              with an NLM UTS account to ensure they have agreed to the UMLS
+              License.
+              </p>
+              <p style="max-width: 400px">
+                To obtain a UTS account, visit <a href="http://uts.nlm.nih.gov">http://uts.nlm.nih.gov</a>
+              </p>
             </form>
           </div>
 
@@ -95,11 +118,14 @@
       <!-- Content displayed after log in -->
       <div ng-show="authToken != null">
 
+        <tabset> <tab heading="Concepts">
+
         <table class="table">
 
           <tr>
             <td>Select terminology</td>
             <td><select ng-model="terminology"
+              ng-change="setTerminology(terminology)"
               ng-options="terminology as terminology.name + ', ' + terminology.version
 					for terminology in terminologies"></select>
             </td>
@@ -111,7 +137,7 @@
                   ng-click="findConcepts(terminology, conceptQuery)">Search</button>
                 <button class="btn btn-small btn-warning" type="cancel"
                   ng-click="conceptQuery = null">Clear</button>
-                  <br><em>Searchable terms include concept names, e.g.
+                <br> <em>Searchable terms include concept names, e.g.
                   ossification, and concept ids, e.g. 728.1 (for ICD9CM),
                   102276005 (for SNOMEDCT)</em></td>
 
@@ -125,9 +151,9 @@
         <div class="container-fluid"">
 
           <div class="row">
-            <div class="col-md-4">
+            <div class="col-md-3">
 
-              <div class="alert alert-success" style="heighth: 15px"
+              <div class="alert alert-success"
                 ng-show="searchResults.length > 0">
                 {{searchResults.length}} Results (Click a row for details)</div>
 
@@ -152,7 +178,7 @@
               </table>
             </div>
 
-            <div class="col-md-1" ng-show="component != null"
+            <div class="col-md-2" ng-show="component != null"
               style="border-left: 1px solid #d9edf7; border-right: 1px solid #d9edf7;">
 
               <div class="dropdown alert alert-info">
@@ -240,7 +266,7 @@
 
 
 
-            <div class="col-md-6" ng-show="component != null">
+            <div class="col-md-7" ng-show="component != null">
               <div class="alert alert-info">Viewing {{componentType}}
                 {{component.terminologyId}}</div>
 
@@ -256,6 +282,50 @@
           </div>
         </div>
 
+
+        </tab> <tab heading="Metadata">
+
+        <table class="table">
+
+          <tr>
+            <td style="width: 15%;">Select terminology</td>
+            <td><select ng-model="terminology"
+              ng-change="setTerminology(terminology)"
+              ng-options="terminology as terminology.name + ', ' + terminology.version
+          for terminology in terminologies"></select>
+            </td>
+          </tr>
+
+        </table>
+        <div class="container-fluid"">
+
+          <div class="row">
+            <div class="col-md-6">
+
+
+
+              <h3>Metadata</h3>
+              <table class="table table-compact"">
+                <thead>
+                  <th style="width: 15%;">Metadata Type</th>
+                  <th>Id, Value</th>
+                </thead>
+                <tbody>
+                  <tr ng-repeat="item in metadata"
+                    ng-show="item.keyValuePair.length > 0">
+                    <td>{{item.name}}</td>
+                    <td><table>
+                        <tr ng-repeat="pair in item.keyValuePair">
+                          <td style="padding-right:15px;">{{pair.key}}</td>
+                          <td>{{pair.value}}</td>
+                        </tr>
+                        </table>
+                </tbody>
+              </table>
+
+            </div>
+          </div>
+        </tab> </tabset>
       </div>
     </div>
   </div>
@@ -266,9 +336,13 @@
       <div class="navbar-header">
         <ul class="nav navbar-nav navbar-left">
           <li><p class="navbar-text">
-              <a class="navbar-link" href="${deploy.footer.link}"> SNOMEDCT
-                Content Copyright @2015 IHTSDO </a>
+              <a class="navbar-link" href="${deploy.footer.link}">Copyright
+                @2015</a>
             </p></li>
+          <li>
+            <button class="btn btn-sm btn-primary btn-structure"
+                    ng-click="logout()" ng-show="authToken != null">Logout</button>
+          </li>
           <li>
             <div style="text-align: center; padding: 5px; margin: 0 0 0 0;"
               class="alert alert-danger" ng-show="glassPane < 0">

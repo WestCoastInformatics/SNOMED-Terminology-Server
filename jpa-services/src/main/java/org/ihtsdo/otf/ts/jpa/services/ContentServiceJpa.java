@@ -130,21 +130,14 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
     }
   }
 
+  /** The concept field names. */
   private static String[] conceptFieldNames = {};
   static {
 
     try {
-      conceptFieldNames = IndexUtility.getIndexedStringFieldNames(ConceptJpa.class).toArray(new String[]{});
-
-      // for testing
-     /* conceptFieldNames = new String[] {
-          "defaultPreferredName", "terminologyId", "descriptions.term"
-      };*/
-
-      for (String conceptFieldName : conceptFieldNames) {
-        System.out.println(conceptFieldName);
-      }
-
+      conceptFieldNames =
+          IndexUtility.getIndexedStringFieldNames(ConceptJpa.class).toArray(
+              new String[] {});
 
     } catch (Exception e) {
       e.printStackTrace();
@@ -457,12 +450,12 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
    * (non-Javadoc)
    * 
    * @see
-   * org.ihtsdo.otf.ts.services.ContentService#getDescendantConcepts(org.ihtsdo
+   * org.ihtsdo.otf.ts.services.ContentService#findDescendantConcepts(org.ihtsdo
    * .otf.ts.rf2.Concept, org.ihtsdo.otf.ts.helpers.PfsParameter)
    */
   @SuppressWarnings("unchecked")
   @Override
-  public ConceptList getDescendantConcepts(Concept concept, PfsParameter pfs)
+  public ConceptList findDescendantConcepts(Concept concept, PfsParameter pfs)
     throws Exception {
 
     if (pfs != null && pfs.getQueryRestriction() != null) {
@@ -491,7 +484,6 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
     ctQuery.setParameter("terminology", concept.getTerminology());
     ctQuery.setParameter("version", concept.getTerminologyVersion());
     ctQuery.setParameter("terminologyId", concept.getTerminologyId());
-    System.out.println("ctQuery: " + ctQuery.getSingleResult());
     list.setTotalCount(((Long) ctQuery.getSingleResult()).intValue());
 
     query.setParameter("terminology", concept.getTerminology());
@@ -503,69 +495,16 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
     return list;
   }
 
-  @Override
-  public ConceptList getParentConcepts(Concept concept, PfsParameter pfs)
-    throws Exception {
-
-    ConceptList ancestorConcepts = getAncestorConcepts(concept, null);
-    ConceptList parentConcepts = new ConceptListJpa();
-
-    for (Concept ancestor : ancestorConcepts.getObjects()) {
-
-      // get children of this concept
-      ConceptList childrenConcepts = getChildConcepts(ancestor, null);
-
-      // cycle over children
-      for (Concept child : childrenConcepts.getObjects()) {
-
-        // if concept is a direct child of this ancestor
-        if (child.getId().equals(concept.getId())) {
-
-          // add this concept if not already contained
-          if (!parentConcepts.contains(ancestor)) {
-            parentConcepts.addObject(ancestor);
-          }
-        }
-      }
-    }
-
-    // set total count
-    parentConcepts.setTotalCount(parentConcepts.getCount());
-
-    // if paging/filtering/sorting required
-    if (pfs != null) {
-
-      // filtering -- not supported
-
-      // sorting
-      Comparator<Concept> comparator = getPfsComparator(Concept.class, pfs);
-      if (comparator != null) {
-        parentConcepts.sortBy(comparator);
-      }
-
-      // paging
-      if (pfs.getStartIndex() != -1 && pfs.getMaxResults() != -1) {
-
-        parentConcepts.setObjects(parentConcepts.getObjects().subList(
-            Math.min(pfs.getStartIndex(), parentConcepts.getTotalCount()),
-            Math.min(pfs.getStartIndex() + pfs.getMaxResults(),
-                parentConcepts.getTotalCount())));
-      }
-    }
-
-    return parentConcepts;
-  }
-
   /*
    * (non-Javadoc)
    * 
    * @see
-   * org.ihtsdo.otf.ts.services.ContentService#getAncestorConcepts(org.ihtsdo
+   * org.ihtsdo.otf.ts.services.ContentService#findAncestorConcepts(org.ihtsdo
    * .otf.ts.rf2.Concept, org.ihtsdo.otf.ts.helpers.PfsParameter)
    */
   @SuppressWarnings("unchecked")
   @Override
-  public ConceptList getAncestorConcepts(Concept concept, PfsParameter pfs)
+  public ConceptList findAncestorConcepts(Concept concept, PfsParameter pfs)
     throws Exception {
 
     if (pfs != null && pfs.getQueryRestriction() != null) {
@@ -607,12 +546,12 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
    * (non-Javadoc)
    * 
    * @see
-   * org.ihtsdo.otf.ts.services.ContentService#getChildConcepts(org.ihtsdo.otf
-   * .ts.rf2.Concept, org.ihtsdo.otf.ts.helpers.PfsParameter)
+   * org.ihtsdo.otf.ts.services.ContentService#findChildConcepts(org.ihtsdo.
+   * otf.ts.rf2.Concept, org.ihtsdo.otf.ts.helpers.PfsParameter)
    */
   @SuppressWarnings("unchecked")
   @Override
-  public ConceptList getChildConcepts(Concept concept, PfsParameter pfs)
+  public ConceptList findChildConcepts(Concept concept, PfsParameter pfs)
     throws Exception {
     ConceptList childrenConcepts = new ConceptListJpa();
 
@@ -651,6 +590,9 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
     if (pfs != null) {
 
       // filtering -- not supported
+      if (pfs.getQueryRestriction() != null) {
+        throw new Exception("Query restriction is not supported on this call.");
+      }
 
       // sorting
       Comparator<Concept> comparator = getPfsComparator(Concept.class, pfs);
@@ -672,6 +614,74 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
 
   }
 
+  /* (non-Javadoc)
+   * @see org.ihtsdo.otf.ts.services.ContentService#findParentConcepts(org.ihtsdo.otf.ts.rf2.Concept, org.ihtsdo.otf.ts.helpers.PfsParameter)
+   */
+  @SuppressWarnings("unchecked")
+  @Override
+  public ConceptList findParentConcepts(Concept concept, PfsParameter pfs)
+    throws Exception {
+    ConceptList parentConcepts = new ConceptListJpa();
+
+    // construct query
+    javax.persistence.Query query =
+        manager.createQuery("select r from RelationshipJpa r, ConceptJpa c"
+            + " where r.sourceConcept = c"
+            + " and c.terminology = :terminology "
+            + " and c.terminologyId = :terminologyId"
+            + " and c.terminologyVersion = :version");
+    query.setParameter("terminologyId", concept.getTerminologyId());
+    query.setParameter("terminology", concept.getTerminology());
+    query.setParameter("version", concept.getTerminologyVersion());
+
+    // execute query
+    List<Relationship> relationships = query.getResultList();
+
+    // cycle over this concepts relationships
+    for (Relationship r : relationships) {
+
+      // if active hierarchical relationship
+      // It's a set so don't worry about stated vs. inferred
+      if (r.isActive() && TerminologyUtility.isHierarchicalIsaRelationship(r)) {
+
+        // add to parent list if not already present (want unique results)
+        if (!parentConcepts.contains(r.getDestinationConcept())) {
+          parentConcepts.addObject(r.getDestinationConcept());
+        }
+      }
+    }
+
+    // set total count
+    parentConcepts.setTotalCount(parentConcepts.getCount());
+
+    // if paging/filtering/sorting required
+    if (pfs != null) {
+
+      // filtering -- not supported
+      if (pfs.getQueryRestriction() != null) {
+        throw new Exception("Query restriction is not supported on this call.");
+      }
+
+      // sorting
+      Comparator<Concept> comparator = getPfsComparator(Concept.class, pfs);
+      if (comparator != null) {
+        parentConcepts.sortBy(comparator);
+      }
+
+      // paging
+      if (pfs.getStartIndex() != -1 && pfs.getMaxResults() != -1) {
+
+        parentConcepts.setObjects(parentConcepts.getObjects().subList(
+            Math.min(pfs.getStartIndex(), parentConcepts.getTotalCount()),
+            Math.min(pfs.getStartIndex() + pfs.getMaxResults(),
+                parentConcepts.getTotalCount())));
+      }
+    }
+
+    return parentConcepts;
+
+  }
+
   /*
    * (non-Javadoc)
    * 
@@ -679,6 +689,7 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
    * org.ihtsdo.otf.mapping.services.ContentService#addConcept(org.ihtsdo.otf
    * .mapping.rf2.Concept)
    */
+  @SuppressWarnings("null")
   @Override
   public Concept addConcept(Concept concept) throws Exception {
     Logger.getLogger(getClass()).debug(
@@ -853,6 +864,7 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
    * org.ihtsdo.otf.mapping.services.ContentService#addDescription(org.ihtsdo
    * .otf.mapping.rf2.Description)
    */
+  @SuppressWarnings("null")
   @Override
   public Description addDescription(Description description) throws Exception {
     Logger.getLogger(getClass()).debug(
@@ -1304,10 +1316,11 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
         "Content Service - get attribute value refset members for concept "
             + terminologyId + "/" + terminology + "/" + version);
     javax.persistence.Query query =
-        manager.createQuery("select a from AbstractAttributeValueRefSetMemberJpa a, "
-            + " ConceptJpa c where c.terminologyId = :terminologyId "
-            + "and c.terminologyVersion = :version "
-            + "and c.terminology = :terminology and a.concept = c");
+        manager
+            .createQuery("select a from AbstractAttributeValueRefSetMemberJpa a, "
+                + " ConceptJpa c where c.terminologyId = :terminologyId "
+                + "and c.terminologyVersion = :version "
+                + "and c.terminology = :terminology and a.concept = c");
 
     try {
       AttributeValueRefSetMemberList list =
@@ -1339,10 +1352,11 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
         "Content Service - get attribute value refset members for concept "
             + terminologyId + "/" + terminology + "/" + version);
     javax.persistence.Query query =
-        manager.createQuery("select a from AbstractAttributeValueRefSetMemberJpa a, "
-            + " DescriptionJpa d where d.terminologyId = :terminologyId "
-            + "and d.terminologyVersion = :version "
-            + "and d.terminology = :terminology and a.description = d");
+        manager
+            .createQuery("select a from AbstractAttributeValueRefSetMemberJpa a, "
+                + " DescriptionJpa d where d.terminologyId = :terminologyId "
+                + "and d.terminologyVersion = :version "
+                + "and d.terminology = :terminology and a.description = d");
 
     try {
       AttributeValueRefSetMemberList list =
@@ -3314,37 +3328,45 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
     return list;
   }
 
-  /* (non-Javadoc)
-   * @see org.ihtsdo.otf.ts.services.ContentService#getAllSimpleMapRefSetMemberTerminologyIds(java.lang.String, java.lang.String)
+  /*
+   * (non-Javadoc)
+   * 
+   * @see org.ihtsdo.otf.ts.services.ContentService#
+   * getAllSimpleMapRefSetMemberTerminologyIds(java.lang.String,
+   * java.lang.String)
    */
   @SuppressWarnings("unchecked")
   @Override
-  public StringList getAllSimpleMapRefSetMemberTerminologyIds(String terminology,
-  	String version) {
-	Logger.getLogger(getClass()).debug(
-	            "Content Service - get all simple map refset member terminology ids "
-	                + terminology + "/" + version);
-	javax.persistence.Query query =
-	    manager
-	        .createQuery(
-	            "select c.terminologyId from SimpleMapRefSetMemberJpa c where terminology = :terminology and terminologyVersion = :version")
-	        .setParameter("terminology", terminology)
-	        .setParameter("version", version);
+  public StringList getAllSimpleMapRefSetMemberTerminologyIds(
+    String terminology, String version) {
+    Logger.getLogger(getClass()).debug(
+        "Content Service - get all simple map refset member terminology ids "
+            + terminology + "/" + version);
+    javax.persistence.Query query =
+        manager
+            .createQuery(
+                "select c.terminologyId from SimpleMapRefSetMemberJpa c where terminology = :terminology and terminologyVersion = :version")
+            .setParameter("terminology", terminology)
+            .setParameter("version", version);
 
-	List<String> terminologyIds = query.getResultList();
-	StringList list = new StringList();
-	list.setObjects(terminologyIds);
-	list.setTotalCount(list.getCount());
-	return list;
+    List<String> terminologyIds = query.getResultList();
+    StringList list = new StringList();
+    list.setObjects(terminologyIds);
+    list.setTotalCount(list.getCount());
+    return list;
   }
-  
-  /* (non-Javadoc)
-   * @see org.ihtsdo.otf.ts.services.ContentService#getAllComplexMapRefSetMemberTerminologyIds(java.lang.String, java.lang.String)
+
+  /*
+   * (non-Javadoc)
+   * 
+   * @see org.ihtsdo.otf.ts.services.ContentService#
+   * getAllComplexMapRefSetMemberTerminologyIds(java.lang.String,
+   * java.lang.String)
    */
   @SuppressWarnings("unchecked")
   @Override
-  public StringList getAllComplexMapRefSetMemberTerminologyIds(String terminology,
-    String version) {
+  public StringList getAllComplexMapRefSetMemberTerminologyIds(
+    String terminology, String version) {
     Logger.getLogger(getClass()).debug(
         "Content Service - get all complex map refset member terminology ids "
             + terminology + "/" + version);
@@ -3361,15 +3383,18 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
     list.setTotalCount(list.getCount());
     return list;
   }
-  
-  
-  /* (non-Javadoc)
-   * @see org.ihtsdo.otf.ts.services.ContentService#getAllDescriptionTypeRefSetMemberTerminologyIds(java.lang.String, java.lang.String)
+
+  /*
+   * (non-Javadoc)
+   * 
+   * @see org.ihtsdo.otf.ts.services.ContentService#
+   * getAllDescriptionTypeRefSetMemberTerminologyIds(java.lang.String,
+   * java.lang.String)
    */
   @SuppressWarnings("unchecked")
   @Override
-  public StringList getAllDescriptionTypeRefSetMemberTerminologyIds(String terminology,
-    String version) {
+  public StringList getAllDescriptionTypeRefSetMemberTerminologyIds(
+    String terminology, String version) {
     Logger.getLogger(getClass()).debug(
         "Content Service - get all description type refset member terminology ids "
             + terminology + "/" + version);
@@ -3386,14 +3411,18 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
     list.setTotalCount(list.getCount());
     return list;
   }
-  
-  /* (non-Javadoc)
-   * @see org.ihtsdo.otf.ts.services.ContentService#getAllRefsetDescriptorRefSetMemberTerminologyIds(java.lang.String, java.lang.String)
+
+  /*
+   * (non-Javadoc)
+   * 
+   * @see org.ihtsdo.otf.ts.services.ContentService#
+   * getAllRefsetDescriptorRefSetMemberTerminologyIds(java.lang.String,
+   * java.lang.String)
    */
   @SuppressWarnings("unchecked")
   @Override
-  public StringList getAllRefsetDescriptorRefSetMemberTerminologyIds(String terminology,
-    String version) {
+  public StringList getAllRefsetDescriptorRefSetMemberTerminologyIds(
+    String terminology, String version) {
     Logger.getLogger(getClass()).debug(
         "Content Service - get all refset descriptor refset member terminology ids "
             + terminology + "/" + version);
@@ -3410,14 +3439,18 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
     list.setTotalCount(list.getCount());
     return list;
   }
-  
-  /* (non-Javadoc)
-   * @see org.ihtsdo.otf.ts.services.ContentService#getAllModuleDependencyRefSetMemberTerminologyIds(java.lang.String, java.lang.String)
+
+  /*
+   * (non-Javadoc)
+   * 
+   * @see org.ihtsdo.otf.ts.services.ContentService#
+   * getAllModuleDependencyRefSetMemberTerminologyIds(java.lang.String,
+   * java.lang.String)
    */
   @SuppressWarnings("unchecked")
   @Override
-  public StringList getAllModuleDependencyRefSetMemberTerminologyIds(String terminology,
-    String version) {
+  public StringList getAllModuleDependencyRefSetMemberTerminologyIds(
+    String terminology, String version) {
     Logger.getLogger(getClass()).debug(
         "Content Service - get all module dependency refset member terminology ids "
             + terminology + "/" + version);
@@ -3434,14 +3467,18 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
     list.setTotalCount(list.getCount());
     return list;
   }
-  
-  /* (non-Javadoc)
-   * @see org.ihtsdo.otf.ts.services.ContentService#getAllAttributeValueRefSetMemberTerminologyIds(java.lang.String, java.lang.String)
+
+  /*
+   * (non-Javadoc)
+   * 
+   * @see org.ihtsdo.otf.ts.services.ContentService#
+   * getAllAttributeValueRefSetMemberTerminologyIds(java.lang.String,
+   * java.lang.String)
    */
   @SuppressWarnings("unchecked")
   @Override
-  public StringList getAllAttributeValueRefSetMemberTerminologyIds(String terminology,
-    String version) {
+  public StringList getAllAttributeValueRefSetMemberTerminologyIds(
+    String terminology, String version) {
     Logger.getLogger(getClass()).debug(
         "Content Service - get all attribute value refset member terminology ids "
             + terminology + "/" + version);
@@ -3455,31 +3492,34 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
     List<String> terminologyIds = query.getResultList();
     StringList list = new StringList();
     list.setObjects(terminologyIds);
-    
-    /*query =
-        manager
-            .createQuery(
-                "select d.terminologyId from AttributeValueDescriptionRefSetMemberJpa d where terminology = :terminology and terminologyVersion = :version")
-            .setParameter("terminology", terminology)
-            .setParameter("version", version);    
-    List<String> descriptionTerminologyIds = query.getResultList();  
-    for (String id : descriptionTerminologyIds) {
-    	list.addObject(id);
-    }*/
+
+    /*
+     * query = manager .createQuery(
+     * "select d.terminologyId from AttributeValueDescriptionRefSetMemberJpa d where terminology = :terminology and terminologyVersion = :version"
+     * ) .setParameter("terminology", terminology) .setParameter("version",
+     * version); List<String> descriptionTerminologyIds = query.getResultList();
+     * for (String id : descriptionTerminologyIds) { list.addObject(id); }
+     */
     list.setTotalCount(list.getCount());
     return list;
   }
-  
-  /* (non-Javadoc)
-   * @see org.ihtsdo.otf.ts.services.ContentService#getAllAssociationReferenceRefSetMemberTerminologyIds(java.lang.String, java.lang.String)
+
+  /*
+   * (non-Javadoc)
+   * 
+   * @see org.ihtsdo.otf.ts.services.ContentService#
+   * getAllAssociationReferenceRefSetMemberTerminologyIds(java.lang.String,
+   * java.lang.String)
    */
   @SuppressWarnings("unchecked")
   @Override
-  public StringList getAllAssociationReferenceRefSetMemberTerminologyIds(String terminology,
-    String version) {
-    Logger.getLogger(getClass()).debug(
-        "Content Service - get all association reference refset member terminology ids "
-            + terminology + "/" + version);
+  public StringList getAllAssociationReferenceRefSetMemberTerminologyIds(
+    String terminology, String version) {
+    Logger
+        .getLogger(getClass())
+        .debug(
+            "Content Service - get all association reference refset member terminology ids "
+                + terminology + "/" + version);
     javax.persistence.Query query =
         manager
             .createQuery(
@@ -3490,22 +3530,19 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
     List<String> terminologyIds = query.getResultList();
     StringList list = new StringList();
     list.setObjects(terminologyIds);
-    
-    /*query =
-        manager
-            .createQuery(
-                "select d.terminologyId from AssociationReferenceDescriptionRefSetMemberJpa d where terminology = :terminology and terminologyVersion = :version")
-            .setParameter("terminology", terminology)
-            .setParameter("version", version);    
-    List<String> descriptionTerminologyIds = query.getResultList();  
-    for (String id : descriptionTerminologyIds) {
-        list.addObject(id);
-    }*/
-        
+
+    /*
+     * query = manager .createQuery(
+     * "select d.terminologyId from AssociationReferenceDescriptionRefSetMemberJpa d where terminology = :terminology and terminologyVersion = :version"
+     * ) .setParameter("terminology", terminology) .setParameter("version",
+     * version); List<String> descriptionTerminologyIds = query.getResultList();
+     * for (String id : descriptionTerminologyIds) { list.addObject(id); }
+     */
+
     list.setTotalCount(list.getCount());
     return list;
   }
-  
+
   /*
    * (non-Javadoc)
    * 
@@ -3617,7 +3654,6 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
     if (pfs != null) {
       // if start index and max results are set, set paging
       if (pfs.getStartIndex() != -1 && pfs.getMaxResults() != -1) {
-        System.out.println("  Applying first/max results");
         fullTextQuery.setFirstResult(pfs.getStartIndex());
         fullTextQuery.setMaxResults(pfs.getMaxResults());
       }
@@ -4059,7 +4095,5 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
   public void setAssignIdentifiersFlag(boolean assignIdentifiersFlag) {
     this.assignIdentifiersFlag = assignIdentifiersFlag;
   }
-
-
 
 }

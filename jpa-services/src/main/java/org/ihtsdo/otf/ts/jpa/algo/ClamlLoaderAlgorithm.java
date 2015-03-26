@@ -143,6 +143,7 @@ public class ClamlLoaderAlgorithm extends ContentServiceJpa implements
    *
    * @throws Exception the exception
    */
+  @SuppressWarnings("null")
   @Override
   public void compute() throws Exception {
     FileInputStream fis = null;

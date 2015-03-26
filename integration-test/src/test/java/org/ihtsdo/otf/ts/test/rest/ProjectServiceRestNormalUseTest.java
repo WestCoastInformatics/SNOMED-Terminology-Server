@@ -94,9 +94,8 @@ public class ProjectServiceRestNormalUseTest extends ProjectServiceRestTest {
     // Remove the project
     projectService.removeProject(project2.getId(), adminAuthToken);
 
-    // TEST: verify that it is removed.
+    // TEST: verify that it is removed (call should fail)
     project3 = projectService.getProject(project2.getId(), adminAuthToken);
-
     Assert.assertNull(project3);
   }
 
@@ -151,7 +150,7 @@ public class ProjectServiceRestNormalUseTest extends ProjectServiceRestTest {
   }
 
   /**
-   * Test Get methods for descriptions.
+   * Test find concepts in scope.
    *
    * @throws Exception the exception
    */

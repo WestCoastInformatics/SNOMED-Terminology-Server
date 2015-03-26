@@ -84,6 +84,20 @@ public interface ContentServiceRest {
     String version, PfsParameterJpa pfs, String authToken) throws Exception;
 
   /**
+   * Find parent concepts.
+   *
+   * @param terminologyId the terminology id
+   * @param terminology the terminology
+   * @param version the version
+   * @param pfs the pfs
+   * @param authToken the auth token
+   * @return the concept list
+   * @throws Exception the exception
+   */
+  public ConceptList findParentConcepts(String terminologyId, String terminology,
+    String version, PfsParameterJpa pfs, String authToken) throws Exception;
+
+  /**
    * Returns the concept descendants.
    *
    * @param terminologyId the terminology id
@@ -97,20 +111,6 @@ public interface ContentServiceRest {
   public ConceptList findDescendantConcepts(String terminologyId,
     String terminology, String version, PfsParameterJpa pfs, String authToken)
     throws Exception;
-
-  /**
-   * Returns the parent concepts.
-   *
-   * @param terminologyId the terminology id
-   * @param terminology the terminology
-   * @param version the version
-   * @param pfs the pfs
-   * @param authToken the auth token
-   * @return the parent concepts
-   * @throws Exception 
-   */
-  public ConceptList getParentConcepts(String terminologyId, String terminology,
-    String version, PfsParameterJpa pfs, String authToken) throws Exception;
 
   /**
    * Returns the ancestor concepts.

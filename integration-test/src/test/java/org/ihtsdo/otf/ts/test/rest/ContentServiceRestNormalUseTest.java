@@ -96,16 +96,14 @@ public class ContentServiceRestNormalUseTest extends ContentServiceRestTest {
         "Lesion of skin of face"));
 
     // check relationships both through count and objects
-    assertTrue(concept.getRelationshipCount() == 7);
+
     assertTrue(concept.getRelationships().size() == 7);
 
     // check descriptions both through count and objects
-    assertTrue(concept.getDescriptionCount() == 2);
     assertTrue(concept.getDescriptions().size() == 2);
 
     // check language ref set members
     for (Description d : concept.getDescriptions()) {
-      assertTrue(d.getLanguageRefSetMemberCount() == 2);
       assertTrue(d.getLanguageRefSetMembers().size() == 2);
     }
 
@@ -137,19 +135,15 @@ public class ContentServiceRestNormalUseTest extends ContentServiceRestTest {
     assertTrue(concept.getDefaultPreferredName().startsWith("MYCOSES"));
 
     // check relationships both through count and objects
-    System.out.println(concept.getRelationshipCount());
-    System.out.println(concept.getDescriptionCount());
-    assertTrue(concept.getRelationshipCount() == 1);
+
     assertTrue(concept.getRelationships().size() == 1);
 
     // check descriptions both through count and objects
-    assertTrue(concept.getDescriptionCount() == 1);
+
     assertTrue(concept.getDescriptions().size() == 1);
 
     // check language ref set members
     for (Description d : concept.getDescriptions()) {
-      System.out.println(d.getLanguageRefSetMemberCount());
-      assertTrue(d.getLanguageRefSetMemberCount() == 0);
       assertTrue(d.getLanguageRefSetMembers().size() == 0);
     }
 

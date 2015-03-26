@@ -74,6 +74,7 @@ public class DemoServiceTest {
    * Test demo.
    * @throws Exception
    */
+  @SuppressWarnings("null")
   @Test
   public void testDemo() throws Exception {
     Logger.getLogger(getClass()).info("Start demo ..." + new Date());

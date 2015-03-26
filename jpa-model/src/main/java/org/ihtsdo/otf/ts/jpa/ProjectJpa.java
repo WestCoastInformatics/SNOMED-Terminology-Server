@@ -17,7 +17,6 @@ import javax.persistence.ManyToMany;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
-import javax.persistence.UniqueConstraint;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlID;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -160,8 +159,9 @@ public class ProjectJpa implements Project {
     scopeExcludesDescendantsFlag = project.getScopeExcludesDescendantsFlag();
   }
 
-
-  /* (non-Javadoc)
+  /*
+   * (non-Javadoc)
+   * 
    * @see org.ihtsdo.otf.ts.Project#getId()
    */
   @Override
@@ -169,15 +169,19 @@ public class ProjectJpa implements Project {
     return this.id;
   }
 
-  /* (non-Javadoc)
+  /*
+   * (non-Javadoc)
+   * 
    * @see org.ihtsdo.otf.ts.Project#setId(java.lang.Long)
    */
   @Override
   public void setId(Long id) {
     this.id = id;
   }
-  
-  /* (non-Javadoc)
+
+  /*
+   * (non-Javadoc)
+   * 
    * @see org.ihtsdo.otf.ts.Project#getObjectId()
    */
   @XmlID
@@ -185,7 +189,6 @@ public class ProjectJpa implements Project {
   public String getObjectId() {
     return (id == null ? "" : id.toString());
   }
-
 
   /**
    * Sets the object id.
@@ -196,7 +199,9 @@ public class ProjectJpa implements Project {
     // do nothing
   }
 
-  /* (non-Javadoc)
+  /*
+   * (non-Javadoc)
+   * 
    * @see org.ihtsdo.otf.ts.Project#getLastModified()
    */
   @Field(index = Index.YES, analyze = Analyze.NO, store = Store.NO)
@@ -205,7 +210,9 @@ public class ProjectJpa implements Project {
     return lastModified;
   }
 
-  /* (non-Javadoc)
+  /*
+   * (non-Javadoc)
+   * 
    * @see org.ihtsdo.otf.ts.Project#setLastModified(java.util.Date)
    */
   @Override
@@ -213,7 +220,9 @@ public class ProjectJpa implements Project {
     this.lastModified = lastModified;
   }
 
-  /* (non-Javadoc)
+  /*
+   * (non-Javadoc)
+   * 
    * @see org.ihtsdo.otf.ts.Project#getLastModifiedBy()
    */
   @Field(index = Index.YES, analyze = Analyze.NO, store = Store.NO)
@@ -222,7 +231,9 @@ public class ProjectJpa implements Project {
     return lastModifiedBy;
   }
 
-  /* (non-Javadoc)
+  /*
+   * (non-Javadoc)
+   * 
    * @see org.ihtsdo.otf.ts.Project#setLastModifiedBy(java.lang.String)
    */
   @Override
@@ -230,7 +241,9 @@ public class ProjectJpa implements Project {
     this.lastModifiedBy = lastModifiedBy;
   }
 
-  /* (non-Javadoc)
+  /*
+   * (non-Javadoc)
+   * 
    * @see org.ihtsdo.otf.ts.Project#getLeads()
    */
   @Override
@@ -239,7 +252,9 @@ public class ProjectJpa implements Project {
     return leads;
   }
 
-  /* (non-Javadoc)
+  /*
+   * (non-Javadoc)
+   * 
    * @see org.ihtsdo.otf.ts.Project#setLeads(java.util.Set)
    */
   @Override
@@ -247,7 +262,9 @@ public class ProjectJpa implements Project {
     this.leads = leads;
   }
 
-  /* (non-Javadoc)
+  /*
+   * (non-Javadoc)
+   * 
    * @see org.ihtsdo.otf.ts.Project#addLead(org.ihtsdo.otf.ts.helpers.User)
    */
   @Override
@@ -255,7 +272,9 @@ public class ProjectJpa implements Project {
     leads.add(lead);
   }
 
-  /* (non-Javadoc)
+  /*
+   * (non-Javadoc)
+   * 
    * @see org.ihtsdo.otf.ts.Project#removeLead(org.ihtsdo.otf.ts.helpers.User)
    */
   @Override
@@ -263,7 +282,9 @@ public class ProjectJpa implements Project {
     leads.remove(lead);
   }
 
-  /* (non-Javadoc)
+  /*
+   * (non-Javadoc)
+   * 
    * @see org.ihtsdo.otf.ts.Project#getAuthors()
    */
   @Override
@@ -272,7 +293,9 @@ public class ProjectJpa implements Project {
     return authors;
   }
 
-  /* (non-Javadoc)
+  /*
+   * (non-Javadoc)
+   * 
    * @see org.ihtsdo.otf.ts.Project#setAuthors(java.util.Set)
    */
   @Override
@@ -280,7 +303,9 @@ public class ProjectJpa implements Project {
     this.authors = authors;
   }
 
-  /* (non-Javadoc)
+  /*
+   * (non-Javadoc)
+   * 
    * @see org.ihtsdo.otf.ts.Project#addAuthor(org.ihtsdo.otf.ts.helpers.User)
    */
   @Override
@@ -288,8 +313,9 @@ public class ProjectJpa implements Project {
     authors.add(author);
   }
 
-
-  /* (non-Javadoc)
+  /*
+   * (non-Javadoc)
+   * 
    * @see org.ihtsdo.otf.ts.Project#removeAuthor(org.ihtsdo.otf.ts.helpers.User)
    */
   @Override
@@ -297,8 +323,9 @@ public class ProjectJpa implements Project {
     authors.remove(author);
   }
 
-
-  /* (non-Javadoc)
+  /*
+   * (non-Javadoc)
+   * 
    * @see org.ihtsdo.otf.ts.Project#getAdministrators()
    */
   @Override
@@ -307,8 +334,9 @@ public class ProjectJpa implements Project {
     return administrators;
   }
 
-
-  /* (non-Javadoc)
+  /*
+   * (non-Javadoc)
+   * 
    * @see org.ihtsdo.otf.ts.Project#setAdministrators(java.util.Set)
    */
   @Override
@@ -316,23 +344,32 @@ public class ProjectJpa implements Project {
     this.administrators = administrators;
   }
 
-  /* (non-Javadoc)
-   * @see org.ihtsdo.otf.ts.Project#addAdministrator(org.ihtsdo.otf.ts.helpers.User)
+  /*
+   * (non-Javadoc)
+   * 
+   * @see
+   * org.ihtsdo.otf.ts.Project#addAdministrator(org.ihtsdo.otf.ts.helpers.User)
    */
   @Override
   public void addAdministrator(User administrator) {
     administrators.add(administrator);
   }
 
-  /* (non-Javadoc)
-   * @see org.ihtsdo.otf.ts.Project#removeAdministrator(org.ihtsdo.otf.ts.helpers.User)
+  /*
+   * (non-Javadoc)
+   * 
+   * @see
+   * org.ihtsdo.otf.ts.Project#removeAdministrator(org.ihtsdo.otf.ts.helpers
+   * .User)
    */
   @Override
   public void removeAdministrator(User administrator) {
     administrators.remove(administrator);
   }
 
-  /* (non-Javadoc)
+  /*
+   * (non-Javadoc)
+   * 
    * @see org.ihtsdo.otf.ts.Project#getTerminology()
    */
   @Override
@@ -341,7 +378,9 @@ public class ProjectJpa implements Project {
     return terminology;
   }
 
-  /* (non-Javadoc)
+  /*
+   * (non-Javadoc)
+   * 
    * @see org.ihtsdo.otf.ts.Project#setTerminology(java.lang.String)
    */
   @Override
@@ -349,7 +388,9 @@ public class ProjectJpa implements Project {
     this.terminology = terminology;
   }
 
-  /* (non-Javadoc)
+  /*
+   * (non-Javadoc)
+   * 
    * @see org.ihtsdo.otf.ts.Project#getTerminologyVersion()
    */
   @Override
@@ -358,7 +399,9 @@ public class ProjectJpa implements Project {
     return terminologyVersion;
   }
 
-  /* (non-Javadoc)
+  /*
+   * (non-Javadoc)
+   * 
    * @see org.ihtsdo.otf.ts.Project#setTerminologyVersion(java.lang.String)
    */
   @Override
@@ -366,7 +409,9 @@ public class ProjectJpa implements Project {
     this.terminologyVersion = terminologyVersion;
   }
 
-  /* (non-Javadoc)
+  /*
+   * (non-Javadoc)
+   * 
    * @see org.ihtsdo.otf.ts.Project#getName()
    */
   @Override
@@ -375,7 +420,9 @@ public class ProjectJpa implements Project {
     return name;
   }
 
-  /* (non-Javadoc)
+  /*
+   * (non-Javadoc)
+   * 
    * @see org.ihtsdo.otf.ts.Project#getDescription()
    */
   @Override
@@ -384,15 +431,19 @@ public class ProjectJpa implements Project {
     return description;
   }
 
-    /* (non-Javadoc)
-     * @see org.ihtsdo.otf.ts.Project#setName(java.lang.String)
-     */
-    @Override
+  /*
+   * (non-Javadoc)
+   * 
+   * @see org.ihtsdo.otf.ts.Project#setName(java.lang.String)
+   */
+  @Override
   public void setName(String name) {
     this.name = name;
   }
 
-  /* (non-Javadoc)
+  /*
+   * (non-Javadoc)
+   * 
    * @see org.ihtsdo.otf.ts.Project#setDescription(java.lang.String)
    */
   @Override
@@ -400,7 +451,9 @@ public class ProjectJpa implements Project {
     this.description = description;
   }
 
-  /* (non-Javadoc)
+  /*
+   * (non-Javadoc)
+   * 
    * @see org.ihtsdo.otf.ts.Project#isPublic()
    */
   @Override
@@ -408,8 +461,9 @@ public class ProjectJpa implements Project {
     return isPublic;
   }
 
-
-  /* (non-Javadoc)
+  /*
+   * (non-Javadoc)
+   * 
    * @see org.ihtsdo.otf.ts.Project#setPublic(boolean)
    */
   @Override
@@ -417,7 +471,9 @@ public class ProjectJpa implements Project {
     this.isPublic = isPublic;
   }
 
-  /* (non-Javadoc)
+  /*
+   * (non-Javadoc)
+   * 
    * @see org.ihtsdo.otf.ts.Project#getModuleId()
    */
   @Override
@@ -426,8 +482,9 @@ public class ProjectJpa implements Project {
     return moduleId;
   }
 
-
-  /* (non-Javadoc)
+  /*
+   * (non-Javadoc)
+   * 
    * @see org.ihtsdo.otf.ts.Project#setModuleId(java.lang.String)
    */
   @Override
@@ -435,8 +492,9 @@ public class ProjectJpa implements Project {
     this.moduleId = moduleId;
   }
 
-
-  /* (non-Javadoc)
+  /*
+   * (non-Javadoc)
+   * 
    * @see org.ihtsdo.otf.ts.Project#getScopeConcepts()
    */
   @Override
@@ -444,7 +502,9 @@ public class ProjectJpa implements Project {
     return scopeConcepts;
   }
 
-  /* (non-Javadoc)
+  /*
+   * (non-Javadoc)
+   * 
    * @see org.ihtsdo.otf.ts.Project#setScopeConcepts(java.util.Set)
    */
   @Override
@@ -452,7 +512,9 @@ public class ProjectJpa implements Project {
     this.scopeConcepts = scopeConcepts;
   }
 
-  /* (non-Javadoc)
+  /*
+   * (non-Javadoc)
+   * 
    * @see org.ihtsdo.otf.ts.Project#addScopeConcept(java.lang.String)
    */
   @Override
@@ -460,7 +522,9 @@ public class ProjectJpa implements Project {
     this.scopeConcepts.add(terminologyId);
   }
 
-  /* (non-Javadoc)
+  /*
+   * (non-Javadoc)
+   * 
    * @see org.ihtsdo.otf.ts.Project#removeScopeConcept(java.lang.String)
    */
   @Override
@@ -468,8 +532,9 @@ public class ProjectJpa implements Project {
     this.scopeConcepts.remove(terminologyId);
   }
 
-
-  /* (non-Javadoc)
+  /*
+   * (non-Javadoc)
+   * 
    * @see org.ihtsdo.otf.ts.Project#getScopeDescendantsFlag()
    */
   @Override
@@ -477,7 +542,9 @@ public class ProjectJpa implements Project {
     return scopeDescendantsFlag;
   }
 
-  /* (non-Javadoc)
+  /*
+   * (non-Javadoc)
+   * 
    * @see org.ihtsdo.otf.ts.Project#setScopeDescendantsFlag(boolean)
    */
   @Override
@@ -485,8 +552,9 @@ public class ProjectJpa implements Project {
     scopeDescendantsFlag = flag;
   }
 
-
-  /* (non-Javadoc)
+  /*
+   * (non-Javadoc)
+   * 
    * @see org.ihtsdo.otf.ts.Project#getScopeExcludesConcepts()
    */
   @Override
@@ -494,7 +562,9 @@ public class ProjectJpa implements Project {
     return scopeExcludesConcepts;
   }
 
-  /* (non-Javadoc)
+  /*
+   * (non-Javadoc)
+   * 
    * @see org.ihtsdo.otf.ts.Project#setScopeExcludesConcepts(java.util.Set)
    */
   @Override
@@ -502,8 +572,9 @@ public class ProjectJpa implements Project {
     this.scopeExcludesConcepts = scopeExcludesConcepts;
   }
 
-  
-  /* (non-Javadoc)
+  /*
+   * (non-Javadoc)
+   * 
    * @see org.ihtsdo.otf.ts.Project#addScopeExcludesConcept(java.lang.String)
    */
   @Override
@@ -511,7 +582,9 @@ public class ProjectJpa implements Project {
     this.scopeExcludesConcepts.add(terminologyId);
   }
 
-  /* (non-Javadoc)
+  /*
+   * (non-Javadoc)
+   * 
    * @see org.ihtsdo.otf.ts.Project#removeScopeExcludesConcept(java.lang.String)
    */
   @Override
@@ -519,7 +592,9 @@ public class ProjectJpa implements Project {
     this.scopeExcludesConcepts.remove(terminologyId);
   }
 
-  /* (non-Javadoc)
+  /*
+   * (non-Javadoc)
+   * 
    * @see org.ihtsdo.otf.ts.Project#getScopeExcludesDescendantsFlag()
    */
   @Override
@@ -527,8 +602,9 @@ public class ProjectJpa implements Project {
     return scopeExcludesDescendantsFlag;
   }
 
-
-  /* (non-Javadoc)
+  /*
+   * (non-Javadoc)
+   * 
    * @see org.ihtsdo.otf.ts.Project#setScopeExcludesDescendantsFlag(boolean)
    */
   @Override
@@ -536,7 +612,9 @@ public class ProjectJpa implements Project {
     scopeExcludesDescendantsFlag = flag;
   }
 
-  /* (non-Javadoc)
+  /*
+   * (non-Javadoc)
+   * 
    * @see org.ihtsdo.otf.ts.Project#getActionWorkflowStatusValues()
    */
   @Override
@@ -544,8 +622,9 @@ public class ProjectJpa implements Project {
     return actionWorkflowStatusValues;
   }
 
- 
-  /* (non-Javadoc)
+  /*
+   * (non-Javadoc)
+   * 
    * @see org.ihtsdo.otf.ts.Project#setActionWorkflowStatusValues(java.util.Set)
    */
   @Override
@@ -554,8 +633,9 @@ public class ProjectJpa implements Project {
     this.actionWorkflowStatusValues = actionWorkflowStatusValues;
   }
 
-
-  /* (non-Javadoc)
+  /*
+   * (non-Javadoc)
+   * 
    * @see java.lang.Object#toString()
    */
   @Override
@@ -563,8 +643,9 @@ public class ProjectJpa implements Project {
     return getName() + " " + getId();
   }
 
-
-  /* (non-Javadoc)
+  /*
+   * (non-Javadoc)
+   * 
    * @see java.lang.Object#hashCode()
    */
   @Override
@@ -592,7 +673,9 @@ public class ProjectJpa implements Project {
     return result;
   }
 
-  /* (non-Javadoc)
+  /*
+   * (non-Javadoc)
+   * 
    * @see java.lang.Object#equals(java.lang.Object)
    */
   @Override

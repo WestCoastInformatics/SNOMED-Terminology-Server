@@ -1,5 +1,6 @@
 package org.ihtsdo.otf.ts.rf2.jpa;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Table;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -18,12 +19,15 @@ public class RefsetDescriptorRefSetMemberJpa extends
     AbstractConceptRefSetMember implements RefsetDescriptorRefSetMember {
 
   /** The attribute description. */
+  @Column(nullable = false)
   private String attributeDescription;
 
   /** The attribute type. */
+  @Column(nullable = false)
   private String attributeType;
 
   /** The attribute order. */
+  @Column(nullable = false)
   private int attributeOrder;
 
   /**

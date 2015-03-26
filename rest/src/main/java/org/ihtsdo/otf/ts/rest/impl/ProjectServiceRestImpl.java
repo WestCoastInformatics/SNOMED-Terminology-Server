@@ -93,6 +93,7 @@ public class ProjectServiceRestImpl extends RootServiceRestImpl implements
       projectService.beginTransaction();
 
       // Add project
+      project.setLastModifiedBy(securityService.getUsernameForToken(authToken));
       Project newProject = projectService.addProject(project);
 
       // Commit, close, and return
@@ -147,6 +148,7 @@ public class ProjectServiceRestImpl extends RootServiceRestImpl implements
       projectService.beginTransaction();
 
       // Add project
+      project.setLastModifiedBy(securityService.getUsernameForToken(authToken));
       projectService.updateProject(project);
 
       // Commit, close, and return
