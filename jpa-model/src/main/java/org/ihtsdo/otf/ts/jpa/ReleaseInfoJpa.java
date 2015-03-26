@@ -76,7 +76,7 @@ public class ReleaseInfoJpa implements ReleaseInfo {
 
   /** The last modified. */
   @Column(nullable = false)
-  private Date lastModified;
+  private Date lastModified = new Date();
 
   /**
    * Instantiates an empty {@link ReleaseInfoJpa}.
