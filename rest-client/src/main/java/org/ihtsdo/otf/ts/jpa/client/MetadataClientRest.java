@@ -32,20 +32,16 @@ public class MetadataClientRest implements MetadataServiceRest {
     this.config = config;
   }
 
-  /*
-   * (non-Javadoc)
-   * 
-   * @see
-   * org.ihtsdo.otf.mapping.rest.MetadataServiceRest#getMetadata(java.lang.String
-   * , java.lang.String, java.lang.String)
+  /* (non-Javadoc)
+   * @see org.ihtsdo.otf.ts.rest.MetadataServiceRest#getAllMetadata(java.lang.String, java.lang.String, java.lang.String)
    */
   @Override
-  public KeyValuePairLists getMetadata(String terminology, String version,
+  public KeyValuePairLists getAllMetadata(String terminology, String version,
     String authToken) throws Exception {
     Client client = Client.create();
     WebResource resource =
         client.resource(config.getProperty("base.url")
-            + "/metadata/terminology/id/" + terminology + "/" + version);
+            + "/metadata/all/terminology/id/" + terminology + "/" + version);
     ClientResponse response =
         resource.accept(MediaType.APPLICATION_XML)
             .header("Authorization", authToken).get(ClientResponse.class);
@@ -77,7 +73,7 @@ public class MetadataClientRest implements MetadataServiceRest {
     Client client = Client.create();
     WebResource resource =
         client.resource(config.getProperty("base.url")
-            + "/metadata/terminology/id/" + terminology + "/latest");
+            + "/metadata/all/terminology/id/" + terminology);
     ClientResponse response =
         resource.accept(MediaType.APPLICATION_XML)
             .header("Authorization", authToken).get(ClientResponse.class);
