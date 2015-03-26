@@ -37,13 +37,8 @@ public class DefaultGraphResolutionHandler implements GraphResolutionHandler {
           description.setId(null);
         }
         resolve(description);
-        // TODO: consider having fields for counts of other data structures so a
-        // user knows whether
-        // to make a callback
-        // e.g. description.setAttributeValueRefsetMemberCount(1);
       }
 
-      int ct = 0;
       for (Relationship relationship : concept.getRelationships()) {
         // if the concept is "new", then the relationship must be too
         if (nullId) {
@@ -51,12 +46,8 @@ public class DefaultGraphResolutionHandler implements GraphResolutionHandler {
         }
         relationship.setSourceConcept(concept);
         relationship.getDestinationConcept().getDefaultPreferredName();
-        if (isaRelTypeIds != null
-            && isaRelTypeIds.contains(relationship.getTypeId())) {
-          ct++;
-        }
+
       }
-      concept.setChildCount(ct);
 
       // TODO: consider having fields for counts of other data structures so a
       // user knows whether
