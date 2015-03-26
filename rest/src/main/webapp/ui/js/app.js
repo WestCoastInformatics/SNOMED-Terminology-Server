@@ -1,6 +1,6 @@
 'use strict'
 
-var baseUrl = '/term-server-rest/';
+var baseUrl = '${base.url}';
 var securityUrl = baseUrl + 'security/';
 var contentUrl = baseUrl + 'content/';
 var metadataUrl = baseUrl + 'metadata/';

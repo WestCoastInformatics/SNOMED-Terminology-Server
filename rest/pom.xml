@@ -217,6 +217,7 @@
               <includes>
                 <include>index.html</include>
                 <include>swagger.html</include>
+                <include>ui/js/app.js</include>
               </includes>
             </resource>
             <resource>
@@ -225,6 +226,7 @@
               <excludes>
                 <exclude>index.html</exclude>
                 <exclude>swagger.html</exclude>
+                <include>ui/js/app.js</include>
               </excludes>
             </resource>
           </webResources>
