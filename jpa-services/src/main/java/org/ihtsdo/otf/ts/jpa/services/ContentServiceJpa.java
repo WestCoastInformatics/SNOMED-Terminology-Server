@@ -484,7 +484,6 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
     ctQuery.setParameter("terminology", concept.getTerminology());
     ctQuery.setParameter("version", concept.getTerminologyVersion());
     ctQuery.setParameter("terminologyId", concept.getTerminologyId());
-    System.out.println("ctQuery: " + ctQuery.getSingleResult());
     list.setTotalCount(((Long) ctQuery.getSingleResult()).intValue());
 
     query.setParameter("terminology", concept.getTerminology());
@@ -3655,7 +3654,6 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
     if (pfs != null) {
       // if start index and max results are set, set paging
       if (pfs.getStartIndex() != -1 && pfs.getMaxResults() != -1) {
-        System.out.println("  Applying first/max results");
         fullTextQuery.setFirstResult(pfs.getStartIndex());
         fullTextQuery.setMaxResults(pfs.getMaxResults());
       }

@@ -5,6 +5,7 @@ var securityUrl = baseUrl + 'security/';
 var contentUrl = baseUrl + 'content/';
 var metadataUrl = baseUrl + 'metadata/';
 var historyUrl = baseUrl + 'history/';
+var glassPane = 0;
 
 var tsApp = angular.module('tsApp', [ 'ui.bootstrap' ]).config(function() {
 
@@ -115,6 +116,7 @@ tsApp
           
           console.debug("Retrieving metadata");
 
+          $scope.glassPane++;
           $http(
             {
               url : metadataUrl + 'terminology/id/' + $scope.terminology.name
@@ -125,15 +127,17 @@ tsApp
               }
             }).success(function(data) {
             $scope.metadata = data.keyValuePairList;
+            $scope.glassPane--;
 
           }).error(function(data, status, headers, config) {
             $scope.handleError(data, status, headers, config);
+            $scope.glassPane--;
           });
         })
 
         $scope.login = function(name, password) {
-
-          console.debug("Login called", name, password);
+        
+          $scope.glassPane++;
 
           if (name == null) {
             alert("You must specify a user name");
@@ -144,6 +148,7 @@ tsApp
           }
 
           // login
+          console.debug("Login called - " + securityUrl + 'authenticate/' + name);
           $http({
             url : securityUrl + 'authenticate/' + name,
             dataType : "text",
@@ -164,21 +169,24 @@ tsApp
             // retrieve available
             // terminologies
             $scope.getTerminologies();
+            $scope.glassPane--;
 
           }).error(function(data, status, headers, config) {
             $scope.handleError(data, status, headers, config);
+            $scope.glassPane--;
           });
         }
 
         $scope.logout = function() {
 
-          if ($scope.authToken != null) {
+          if ($scope.authToken == null) {
             alert("You are not currently logged in");
             return;
           }
+          $scope.glassPane++;
           // logout
           $http({
-            url : securityUrl + 'logout/' + name,
+            url : securityUrl + 'logout/' + authToken,
             method : "POST",
             headers : {
               "Content-Type" : "text/plain"
@@ -192,9 +200,11 @@ tsApp
             // clear http authorization
             // header
             $http.defaults.headers.common.Authorization = null;
+            $scope.glassPane--;
 
           }).error(function(data, status, headers, config) {
             $scope.handleError(data, status, headers, config);
+            $scope.glassPane--;
           });
         }
 
@@ -202,6 +212,7 @@ tsApp
 
           // reset terminologies
           $scope.terminologies = null;
+          $scope.glassPane++;
 
           // login
           $http({
@@ -235,14 +246,17 @@ tsApp
             // select the first
             // terminology
             $scope.setTerminology($scope.terminologies[0]);
+            $scope.glassPane--;
 
           }).error(function(data, status, headers, config) {
             $scope.handleError(data, status, headers, config);
+            $scope.glassPane--;
           });
         }
 
         $scope.getConcept = function(terminology, version, terminologyId) {
           // get single concept
+            $scope.glassPane++;
           $http(
             {
               url : contentUrl + "concept/" + terminology + "/" + version + "/"
@@ -261,9 +275,11 @@ tsApp
             // default button selected is structure, otherwise don't change
             if ($scope.navSelected == null)
               $scope.navSelected = 'Structure';
+            $scope.glassPane--;
 
           }).error(function(data, status, headers, config) {
             $scope.handleError(data, status, headers, config);
+            $scope.glassPane--;
           });
         }
 
@@ -297,14 +313,14 @@ tsApp
                 "Content-Type" : "application/json"
               }
             }).success(function(data) {
-            $scope.glassPane--;
             console.debug("Retrieved concepts:", data);
             $scope.searchResults = data.searchResult;
             console.debug("Retrieved terminologies:", data.keyValuePairList);
+            $scope.glassPane--;
 
           }).error(function(data, status, headers, config) {
-            $scope.glassPane--;
             $scope.handleError(data, status, headers, config);
+            $scope.glassPane--;
           });
         }
 
@@ -341,6 +357,7 @@ tsApp
         }
 
         $scope.getParentAndChildConcepts = function(concept) {
+            $scope.glassPane++;
           // find concepts
           $http(
             {
@@ -356,12 +373,15 @@ tsApp
             }).success(function(data) {
             console.debug("Retrieved parent concepts:", data);
             $scope.parentConcepts = data.concept;
+            $scope.glassPane--;
 
           }).error(function(data, status, headers, config) {
             $scope.error = data;
+            $scope.glassPane--;
           });
 
           // find concepts
+          $scope.glassPane++;
           $http(
             {
               url : contentUrl + "concepts/" + concept.terminology + "/"
@@ -376,9 +396,11 @@ tsApp
             }).success(function(data) {
             console.debug("Retrieved child concepts:", data);
             $scope.childConcepts = data.concept;
+            $scope.glassPane--;
 
           }).error(function(data, status, headers, config) {
             $scope.error = data;
+            $scope.glassPane--;
           });
         }
 

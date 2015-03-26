@@ -340,6 +340,10 @@
                 @2015</a>
             </p></li>
           <li>
+            <button class="btn btn-sm btn-primary btn-structure"
+                    ng-click="logout()" ng-show="authToken != null">Logout</button>
+          </li>
+          <li>
             <div style="text-align: center; padding: 5px; margin: 0 0 0 0;"
               class="alert alert-danger" ng-show="glassPane < 0">
               The Glass Pane activity indicator may not be functioning

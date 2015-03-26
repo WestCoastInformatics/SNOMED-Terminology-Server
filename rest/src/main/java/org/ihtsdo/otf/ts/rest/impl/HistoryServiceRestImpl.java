@@ -871,7 +871,7 @@ public class HistoryServiceRestImpl extends RootServiceRestImpl implements
    * , java.lang.String, java.lang.String, java.lang.String)
    */
   @Override
-  @GET
+  @POST
   @Path("/release/startEditingCycle/{releaseVersion}/{terminology}/{version}")
   @ApiOperation(value = "Start the editing cycle", notes = "Marks the start of the editing cycle for the specified release for the specified terminology/version")
   public void startEditingCycle(

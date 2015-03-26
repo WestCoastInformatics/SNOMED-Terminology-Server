@@ -1557,7 +1557,7 @@ public class ContentServiceRestImpl extends RootServiceRestImpl implements
    * .lang.String, java.lang.String)
    */
   @Override
-  @GET
+  @POST
   @Path("/terminology/closure/compute/{terminology}")
   @ApiOperation(value = "Computes terminology transitive closure", notes = "Computes transitive closure for the latest version of the specified terminology")
   public void computeTransitiveClosure(

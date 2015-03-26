@@ -516,7 +516,7 @@ public class ContentClientRest implements ContentServiceRest {
         resource.accept(MediaType.APPLICATION_XML)
             .header("Authorization", authToken)
             .header("Content-type", MediaType.APPLICATION_XML)
-            .get(ClientResponse.class);
+            .post(ClientResponse.class);
 
     if (response.getStatusInfo().getFamily() == Family.SUCCESSFUL) {
       // do nothing
