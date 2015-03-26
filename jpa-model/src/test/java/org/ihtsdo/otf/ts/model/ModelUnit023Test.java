@@ -99,6 +99,16 @@ public class ModelUnit023Test {
   }
 
   /**
+   * Test not null fields.
+   *
+   * @throws Exception the exception
+   */
+  @Test
+  public void testModelNotNullField023() throws Exception {
+    // n/a
+  }
+  
+    /**
    * Teardown.
    */
   @After

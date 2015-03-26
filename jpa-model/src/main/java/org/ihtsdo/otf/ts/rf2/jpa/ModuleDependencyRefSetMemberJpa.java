@@ -2,6 +2,7 @@ package org.ihtsdo.otf.ts.rf2.jpa;
 
 import java.util.Date;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Table;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -20,9 +21,11 @@ public class ModuleDependencyRefSetMemberJpa extends
     AbstractConceptRefSetMember implements ModuleDependencyRefSetMember {
 
   /** The source effective time. */
+  @Column(nullable = false)
   private Date sourceEffectiveTime;
 
   /** The target effective time. */
+  @Column(nullable = false)
   private Date targetEffectiveTime;
 
   /**

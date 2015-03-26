@@ -36,11 +36,8 @@ import org.ihtsdo.otf.ts.services.handlers.ComputePreferredNameHandler;
 import org.ihtsdo.otf.ts.services.handlers.GraphResolutionHandler;
 import org.ihtsdo.otf.ts.services.handlers.IdentifierAssignmentHandler;
 
-// TODO: Auto-generated Javadoc
 /**
  * Generically represents a service for accessing content.
- *
- * @author ${author}
  */
 public interface ContentService extends RootService {
 
@@ -128,48 +125,36 @@ public interface ContentService extends RootService {
   public void removeConcept(Long id) throws Exception;
 
   /**
-   * Get descendant concepts.
+   * finds descendant concepts.
    *
    * @param concept the concept
    * @param pfsParameter the pfs parameter
    * @return the concept list
    * @throws Exception the exception
    */
-  public ConceptList getDescendantConcepts(Concept concept,
+  public ConceptList findDescendantConcepts(Concept concept,
     PfsParameter pfsParameter) throws Exception;
-  
 
   /**
-   * Returns the parent concepts.
-   *
-   * @param concept the concept
-   * @param pfs the pfs
-   * @return the parent concepts
-   * @throws Exception 
-   */
-  public ConceptList getParentConcepts(Concept concept, PfsParameter pfs) throws Exception;
-
-
-  /**
-   * Get ancestor concepts.
+   * Finds ancestor concepts.
    *
    * @param concept the concept
    * @param pfsParameter the pfs parameter
    * @return the concept list
    * @throws Exception the exception
    */
-  public ConceptList getAncestorConcepts(Concept concept,
+  public ConceptList findAncestorConcepts(Concept concept,
     PfsParameter pfsParameter) throws Exception;
 
   /**
-   * Get child concepts.
+   * Finds child concepts.
    *
    * @param concept the concept
    * @param pfs the pfs
    * @return the concept list
    * @throws Exception the exception
    */
-  public ConceptList getChildConcepts(Concept concept, PfsParameter pfs)
+  public ConceptList findChildConcepts(Concept concept, PfsParameter pfs)
     throws Exception;
 
   /**

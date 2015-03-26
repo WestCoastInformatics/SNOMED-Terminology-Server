@@ -112,20 +112,6 @@ public interface Description extends Component {
     Set<LanguageRefSetMember> languageRefSetMembers);
 
   /**
-   * Returns the language ref set member count.
-   *
-   * @return the language ref set member count
-   */
-  public int getLanguageRefSetMemberCount();
-  
-  /**
-   * Sets the language ref set member count.
-   *
-   * @param ct the language ref set member count
-   */
-  public void setLanguageRefSetMemberCount(int ct);
-
-  /**
    * Adds a LanguageRefSetMember to the set of LanguageRefSetMembers
    * 
    * @param languageRefSetMember the LanguageRefSetMembers to be added
@@ -139,7 +125,6 @@ public interface Description extends Component {
    */
   public void removeLanguageRefSetMember(
     LanguageRefSetMember languageRefSetMember);
-
 
   /**
    * Returns the set of AttributeValueRefSetMembers
@@ -175,7 +160,6 @@ public interface Description extends Component {
   public void removeAttributeValueRefSetMember(
     AttributeValueDescriptionRefSetMember attributeValueRefSetMember);
 
-  
   /**
    * Returns the set of AssociationReferenceRefSetMembers
    * 
@@ -186,16 +170,18 @@ public interface Description extends Component {
   /**
    * Sets the set of AssociationReferenceRefSetMembers
    * 
-   * @param associationReferenceRefSetMembers the set of AssociationReferenceRefSetMembers
+   * @param associationReferenceRefSetMembers the set of
+   *          AssociationReferenceRefSetMembers
    */
   public void setAssociationReferenceRefSetMembers(
     Set<AssociationReferenceDescriptionRefSetMember> associationReferenceRefSetMembers);
 
   /**
-   * Adds a AssociationReferenceRefSetMember to the set of AssociationReferenceRefSetMembers
+   * Adds a AssociationReferenceRefSetMember to the set of
+   * AssociationReferenceRefSetMembers
    * 
-   * @param associationReferenceRefSetMember the AssociationReferenceRefSetMembers to be
-   *          added
+   * @param associationReferenceRefSetMember the
+   *          AssociationReferenceRefSetMembers to be added
    */
   public void addAssociationReferenceRefSetMember(
     AssociationReferenceDescriptionRefSetMember associationReferenceRefSetMember);
@@ -204,10 +190,10 @@ public interface Description extends Component {
    * Removes a AssociationReferenceRefSetMember from the set of
    * AssociationReferenceRefSetMembers
    * 
-   * @param associationReferenceRefSetMember the AssociationReferenceRefSetMember to be
-   *          removed
+   * @param associationReferenceRefSetMember the
+   *          AssociationReferenceRefSetMember to be removed
    */
   public void removeAssociationReferenceRefSetMember(
-    AssociationReferenceDescriptionRefSetMember associationReferenceRefSetMember);  
+    AssociationReferenceDescriptionRefSetMember associationReferenceRefSetMember);
 
 }

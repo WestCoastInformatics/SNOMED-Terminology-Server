@@ -150,8 +150,7 @@ public class Rf2SnapshotLoaderAlgorithm extends HistoryServiceJpa implements
       // Log memory usage
       Runtime runtime = Runtime.getRuntime();
       Logger.getLogger(getClass()).debug("MEMORY USAGE:");
-      Logger.getLogger(getClass())
-          .debug(" Total: " + runtime.totalMemory());
+      Logger.getLogger(getClass()).debug(" Total: " + runtime.totalMemory());
       Logger.getLogger(getClass()).debug(" Free:  " + runtime.freeMemory());
       Logger.getLogger(getClass()).debug(" Max:   " + runtime.maxMemory());
 
@@ -169,7 +168,7 @@ public class Rf2SnapshotLoaderAlgorithm extends HistoryServiceJpa implements
 
       // faster performance.
       beginTransaction();
-      
+
       //
       // Load concepts
       //
@@ -180,7 +179,6 @@ public class Rf2SnapshotLoaderAlgorithm extends HistoryServiceJpa implements
           "    elapsed time = " + getElapsedTime(startTime) + "s"
               + " (Ended at " + ft.format(new Date()) + ")");
 
-      
       //
       // Load descriptions and language refsets
       //
@@ -217,7 +215,7 @@ public class Rf2SnapshotLoaderAlgorithm extends HistoryServiceJpa implements
       commit();
       clear();
       beginTransaction();
-      
+
       //
       // Load Simple RefSets (Content)
       //
@@ -251,8 +249,7 @@ public class Rf2SnapshotLoaderAlgorithm extends HistoryServiceJpa implements
       //
       // Load ExtendedMapRefSets
       //
-      Logger.getLogger(getClass())
-          .info("  Loading ExtendedMap RefSets...");
+      Logger.getLogger(getClass()).info("  Loading ExtendedMap RefSets...");
       startTime = System.nanoTime();
       loadExtendedMapRefSets();
       Logger.getLogger(getClass()).info(
@@ -273,8 +270,7 @@ public class Rf2SnapshotLoaderAlgorithm extends HistoryServiceJpa implements
       //
       // Load AttributeValue RefSets (Content)
       //
-      Logger.getLogger(getClass()).info(
-          "  Loading AttributeValue RefSets...");
+      Logger.getLogger(getClass()).info("  Loading AttributeValue RefSets...");
       startTime = System.nanoTime();
       loadAttributeValueRefSets();
       Logger.getLogger(getClass()).info(
@@ -284,8 +280,8 @@ public class Rf2SnapshotLoaderAlgorithm extends HistoryServiceJpa implements
       //
       // load RefsetDescriptor RefSets (Content)
       //
-      Logger.getLogger(getClass()).info(
-          "  Loading RefsetDescriptor RefSets...");
+      Logger.getLogger(getClass())
+          .info("  Loading RefsetDescriptor RefSets...");
       startTime = System.nanoTime();
       loadRefsetDescriptorRefSets();
       Logger.getLogger(getClass()).info(
@@ -295,8 +291,8 @@ public class Rf2SnapshotLoaderAlgorithm extends HistoryServiceJpa implements
       //
       // load ModuleDependency RefSets (Content)
       //
-      Logger.getLogger(getClass()).info(
-          "  Loading ModuleDependency RefSets...");
+      Logger.getLogger(getClass())
+          .info("  Loading ModuleDependency RefSets...");
       startTime = System.nanoTime();
       loadModuleDependencyRefSets();
       Logger.getLogger(getClass()).info(
@@ -306,20 +302,17 @@ public class Rf2SnapshotLoaderAlgorithm extends HistoryServiceJpa implements
       //
       // load DescriptionType RefSets (Content)
       //
-      Logger.getLogger(getClass()).info(
-          "  Loading DescriptionType RefSets...");
+      Logger.getLogger(getClass()).info("  Loading DescriptionType RefSets...");
       startTime = System.nanoTime();
       loadDescriptionTypeRefSets();
       Logger.getLogger(getClass()).info(
           "    elaped time = " + getElapsedTime(startTime).toString() + "s"
               + " (Ended at " + ft.format(new Date()) + ")");
 
-
       //
       // Create ReleaseInfo for this release if it does not already exist
       //
-      ReleaseInfo info =
-          getReleaseInfo(terminology, releaseVersion);
+      ReleaseInfo info = getReleaseInfo(terminology, releaseVersion);
       if (info == null) {
         info = new ReleaseInfoJpa();
         info.setName(releaseVersion);
@@ -335,7 +328,7 @@ public class Rf2SnapshotLoaderAlgorithm extends HistoryServiceJpa implements
         info.setLastModifiedBy("loader");
         addReleaseInfo(info);
       }
-      
+
       // Clear concept cache
       // clear and commit
       commit();
@@ -455,7 +448,8 @@ public class Rf2SnapshotLoaderAlgorithm extends HistoryServiceJpa implements
    * 
    * @throws Exception the exception
    */
-  
+
+  @SuppressWarnings("resource")
   private void loadConcepts() throws Exception {
 
     String line = "";
@@ -484,7 +478,8 @@ public class Rf2SnapshotLoaderAlgorithm extends HistoryServiceJpa implements
         concept.setTerminology(terminology);
         concept.setTerminologyVersion(terminologyVersion);
         concept.setDefaultPreferredName("null");
-        concept.setLastModified(ConfigUtility.DATE_FORMAT.parse(releaseVersion));
+        concept
+            .setLastModified(ConfigUtility.DATE_FORMAT.parse(releaseVersion));
         concept.setLastModifiedBy("loader");
         concept.setPublished(true);
         concept.setWorkflowStatus("PUBLISHED");
@@ -516,7 +511,8 @@ public class Rf2SnapshotLoaderAlgorithm extends HistoryServiceJpa implements
    * 
    * @throws Exception the exception
    */
-  
+
+  @SuppressWarnings("resource")
   private void loadRelationships() throws Exception {
 
     String line = "";
@@ -553,7 +549,8 @@ public class Rf2SnapshotLoaderAlgorithm extends HistoryServiceJpa implements
         relationship.setTerminology(terminology);
         relationship.setTerminologyVersion(terminologyVersion);
         relationship.setModifierId(fields[9]);
-        relationship.setLastModified(ConfigUtility.DATE_FORMAT.parse(releaseVersion));
+        relationship.setLastModified(ConfigUtility.DATE_FORMAT
+            .parse(releaseVersion));
         relationship.setLastModifiedBy("loader");
         relationship.setPublished(true);
 
@@ -736,9 +733,9 @@ public class Rf2SnapshotLoaderAlgorithm extends HistoryServiceJpa implements
    * @return the next description
    * @throws Exception the exception
    */
-  
-  private Description getNextDescription()
-    throws Exception {
+
+  @SuppressWarnings("resource")
+  private Description getNextDescription() throws Exception {
 
     String line, fields[];
 
@@ -769,7 +766,8 @@ public class Rf2SnapshotLoaderAlgorithm extends HistoryServiceJpa implements
         description.setCaseSignificanceId(fields[8]);
         description.setTerminology(terminology);
         description.setTerminologyVersion(terminologyVersion);
-        description.setLastModified(ConfigUtility.DATE_FORMAT.parse(releaseVersion));
+        description.setLastModified(ConfigUtility.DATE_FORMAT
+            .parse(releaseVersion));
         description.setLastModifiedBy("loader");
         description.setPublished(true);
 
@@ -806,7 +804,8 @@ public class Rf2SnapshotLoaderAlgorithm extends HistoryServiceJpa implements
    * @return a partial language ref set member (lacks full description)
    * @throws Exception the exception
    */
-  
+
+  @SuppressWarnings("resource")
   private LanguageRefSetMember getNextLanguage() throws Exception {
 
     String line, fields[];
@@ -869,7 +868,7 @@ public class Rf2SnapshotLoaderAlgorithm extends HistoryServiceJpa implements
    * @throws Exception the exception
    */
   @SuppressWarnings({
-      "boxing"
+      "boxing", "resource"
   })
   private void loadAttributeValueRefSets() throws Exception {
 
@@ -950,7 +949,7 @@ public class Rf2SnapshotLoaderAlgorithm extends HistoryServiceJpa implements
    * @throws Exception the exception
    */
   @SuppressWarnings({
-      "boxing"
+      "boxing", "resource"
   })
   private void loadAssociationReferenceRefSets() throws Exception {
 
@@ -1032,7 +1031,7 @@ public class Rf2SnapshotLoaderAlgorithm extends HistoryServiceJpa implements
    * @throws Exception the exception
    */
 
-  
+  @SuppressWarnings("resource")
   private void loadSimpleRefSets() throws Exception {
 
     String line = "";
@@ -1103,7 +1102,8 @@ public class Rf2SnapshotLoaderAlgorithm extends HistoryServiceJpa implements
    * 
    * @throws Exception the exception
    */
-  
+
+  @SuppressWarnings("resource")
   private void loadSimpleMapRefSets() throws Exception {
 
     String line = "";
@@ -1175,7 +1175,8 @@ public class Rf2SnapshotLoaderAlgorithm extends HistoryServiceJpa implements
    * 
    * @throws Exception the exception
    */
-  
+
+  @SuppressWarnings("resource")
   private void loadComplexMapRefSets() throws Exception {
 
     String line = "";
@@ -1250,7 +1251,8 @@ public class Rf2SnapshotLoaderAlgorithm extends HistoryServiceJpa implements
    *
    * @throws Exception the exception
    */
-  
+
+  @SuppressWarnings("resource")
   private void loadExtendedMapRefSets() throws Exception {
 
     String line = "";
@@ -1328,7 +1330,8 @@ public class Rf2SnapshotLoaderAlgorithm extends HistoryServiceJpa implements
    *
    * @throws Exception the exception
    */
-  
+
+  @SuppressWarnings("resource")
   private void loadRefsetDescriptorRefSets() throws Exception {
 
     String line = "";
@@ -1404,7 +1407,8 @@ public class Rf2SnapshotLoaderAlgorithm extends HistoryServiceJpa implements
    *
    * @throws Exception the exception
    */
-  
+
+  @SuppressWarnings("resource")
   private void loadModuleDependencyRefSets() throws Exception {
 
     String line = "";
@@ -1481,12 +1485,12 @@ public class Rf2SnapshotLoaderAlgorithm extends HistoryServiceJpa implements
    *
    * @throws Exception the exception
    */
-  
+
+  @SuppressWarnings("resource")
   private void loadDescriptionTypeRefSets() throws Exception {
 
     String line = "";
     objectCt = 0;
-
 
     PushBackReader reader =
         readers.getReader(Rf2Readers.Keys.REFSET_DESCRIPTOR);

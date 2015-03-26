@@ -7,6 +7,7 @@ import org.ihtsdo.otf.ts.helpers.ConfigUtility;
 import org.ihtsdo.otf.ts.helpers.CopyConstructorTester;
 import org.ihtsdo.otf.ts.helpers.EqualsHashcodeTester;
 import org.ihtsdo.otf.ts.helpers.GetterSetterTester;
+import org.ihtsdo.otf.ts.helpers.NullableFieldTester;
 import org.ihtsdo.otf.ts.helpers.XmlSerializationTester;
 import org.ihtsdo.otf.ts.rf2.Concept;
 import org.ihtsdo.otf.ts.rf2.RefsetDescriptorRefSetMember;
@@ -164,6 +165,32 @@ public class ModelUnit019Test {
     assertTrue(xml.contains("<conceptId>"));
     assertTrue(xml.contains("<conceptTerminologyId>"));
     assertTrue(xml.contains("<conceptPreferredName>"));
+  }
+
+  /**
+   * Test not null fields.
+   *
+   * @throws Exception the exception
+   */
+  @Test
+  public void testModelNotNullField019() throws Exception {
+    Logger.getLogger(getClass()).debug("TEST testModelNotNullField019");
+    NullableFieldTester tester = new NullableFieldTester(object);
+    tester.include("lastModified");
+    tester.include("lastModifiedBy");
+    tester.include("active");
+    tester.include("published");
+    tester.include("publishable");
+    tester.include("moduleId");
+    tester.include("terminologyId");
+    tester.include("terminology");
+    tester.include("terminologyVersion");
+
+    tester.include("refSetId");
+    tester.include("attributeDescription");
+    tester.include("attributeType");
+    tester.include("attributeOrder");
+    assertTrue(tester.testNotNullFields());
   }
 
   /**

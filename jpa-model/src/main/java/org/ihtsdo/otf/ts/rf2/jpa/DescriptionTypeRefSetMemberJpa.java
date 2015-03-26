@@ -1,5 +1,6 @@
 package org.ihtsdo.otf.ts.rf2.jpa;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Table;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -18,9 +19,11 @@ public class DescriptionTypeRefSetMemberJpa extends AbstractConceptRefSetMember
     implements DescriptionTypeRefSetMember {
 
   /** The description format. */
+  @Column (nullable = false)
   private String descriptionFormat;
 
   /** The description length. */
+  @Column (nullable = false)
   private int descriptionLength;
 
   /**

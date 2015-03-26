@@ -7,6 +7,7 @@ import org.ihtsdo.otf.ts.helpers.ConfigUtility;
 import org.ihtsdo.otf.ts.helpers.CopyConstructorTester;
 import org.ihtsdo.otf.ts.helpers.EqualsHashcodeTester;
 import org.ihtsdo.otf.ts.helpers.GetterSetterTester;
+import org.ihtsdo.otf.ts.helpers.NullableFieldTester;
 import org.ihtsdo.otf.ts.helpers.XmlSerializationTester;
 import org.ihtsdo.otf.ts.rf2.Concept;
 import org.ihtsdo.otf.ts.rf2.ModuleDependencyRefSetMember;
@@ -165,6 +166,32 @@ public class ModelUnit018Test {
     assertTrue(xml.contains("<conceptPreferredName>"));
   }
 
+  /**
+   * Test not null fields.
+   *
+   * @throws Exception the exception
+   */
+  @Test
+  public void testModelNotNullField018() throws Exception {
+    Logger.getLogger(getClass()).debug("TEST testModelNotNullField018");
+    NullableFieldTester tester = new NullableFieldTester(object);
+    tester.include("lastModified");
+    tester.include("lastModifiedBy");
+    tester.include("active");
+    tester.include("published");
+    tester.include("publishable");
+    tester.include("moduleId");
+    tester.include("terminologyId");
+    tester.include("terminology");
+    tester.include("terminologyVersion");
+
+    tester.include("refSetId");
+    tester.include("sourceEffectiveTime");
+    tester.include("targetEffectiveTime");
+
+    assertTrue(tester.testNotNullFields());
+  }
+  
   /**
    * Teardown.
    */

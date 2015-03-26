@@ -119,6 +119,16 @@ public class ModelUnit004Test {
     tester.proxy(Set.class, 1, s1);
     assertTrue(tester.testXmlSerialization());
   }
+  
+  /**
+   * Test not null fields.
+   *
+   * @throws Exception the exception
+   */
+  @Test
+  public void testModelNotNullField004() throws Exception {
+    // n/a
+  }
 
   /**
    * Teardown.

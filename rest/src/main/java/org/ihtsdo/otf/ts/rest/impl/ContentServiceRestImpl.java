@@ -10,9 +10,11 @@ import java.util.List;
 import java.util.Set;
 
 import javax.ws.rs.Consumes;
+import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.HeaderParam;
 import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
@@ -214,51 +216,6 @@ public class ContentServiceRestImpl extends RootServiceRestImpl implements
       return null;
     }
   }
-  
-  /*
-   * (non-Javadoc)
-   * 
-   * @see
-   * org.ihtsdo.otf.ts.rest.ContentServiceRest#getDescendantConcepts(java.lang
-   * .String, java.lang.String, java.lang.String,
-   * org.ihtsdo.otf.ts.helpers.PfsParameterJpa, java.lang.String)
-   */
-  @Override
-  @POST
-  @Path("/concepts/{terminology}/{version}/{terminologyId}/parents")
-  @ApiOperation(value = "Get descendants", notes = "Gets the descendant concepts for the specified id.", response = ConceptList.class)
-  public ConceptList getParentConcepts(
-    @ApiParam(value = "Concept terminology id, e.g. 102751005", required = true) @PathParam("terminologyId") String terminologyId,
-    @ApiParam(value = "Concept terminology name, e.g. SNOMEDCT", required = true) @PathParam("terminology") String terminology,
-    @ApiParam(value = "Concept terminology version, e.g. latest", required = true) @PathParam("version") String version,
-    @ApiParam(value = "PFS Parameter, e.g. '{ \"startIndex\":\"1\", \"maxResults\":\"5\" }'", required = false) PfsParameterJpa pfs,
-    @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken) {
-
-    Logger.getLogger(getClass()).info(
-        "RESTful call (Content): /concept/" + terminology + "/" + version + "/"
-            + terminologyId + "/parents");
-
-    try {
-      authenticate(securityService, authToken,
-          "retrieve the parent concepts", UserRole.VIEWER);
-
-      ContentService contentService = new ContentServiceJpa();
-      Concept concept =
-          contentService.getSingleConcept(terminologyId, terminology, version);
-      ConceptList list = contentService.getParentConcepts(concept, pfs);
-      for (Concept c : list.getObjects()) {
-        contentService.getGraphResolutionHandler().resolve(
-            c,
-            TerminologyUtility.getHierarchcialIsaRels(c.getTerminology(),
-                c.getTerminologyVersion()));
-      }
-      contentService.close();
-      return list;
-    } catch (Exception e) {
-      handleException(e, "trying to retrieve parent concepts");
-      return null;
-    }
-  }
 
   /*
    * (non-Javadoc)
@@ -272,7 +229,7 @@ public class ContentServiceRestImpl extends RootServiceRestImpl implements
   @POST
   @Path("/concepts/{terminology}/{version}/{terminologyId}/children")
   @ApiOperation(value = "Get children", notes = "Gets the child concepts for the specified id.", response = ConceptList.class)
-  public ConceptList getChildConcepts(
+  public ConceptList findChildConcepts(
     @ApiParam(value = "Concept terminology id, e.g. 102751005", required = true) @PathParam("terminologyId") String terminologyId,
     @ApiParam(value = "Concept terminology name, e.g. SNOMEDCT", required = true) @PathParam("terminology") String terminology,
     @ApiParam(value = "Concept terminology version, e.g. latest", required = true) @PathParam("version") String version,
@@ -290,7 +247,7 @@ public class ContentServiceRestImpl extends RootServiceRestImpl implements
       ContentService contentService = new ContentServiceJpa();
       Concept concept =
           contentService.getSingleConcept(terminologyId, terminology, version);
-      ConceptList list = contentService.getChildConcepts(concept, pfs);
+      ConceptList list = contentService.findChildConcepts(concept, pfs);
       for (Concept c : list.getObjects()) {
         contentService.getGraphResolutionHandler().resolve(
             c,
@@ -317,7 +274,7 @@ public class ContentServiceRestImpl extends RootServiceRestImpl implements
   @POST
   @Path("/concepts/{terminology}/{version}/{terminologyId}/descendants")
   @ApiOperation(value = "Get descendants", notes = "Gets the descendant concepts for the specified id.", response = ConceptList.class)
-  public ConceptList getDescendantConcepts(
+  public ConceptList findDescendantConcepts(
     @ApiParam(value = "Concept terminology id, e.g. 102751005", required = true) @PathParam("terminologyId") String terminologyId,
     @ApiParam(value = "Concept terminology name, e.g. SNOMEDCT", required = true) @PathParam("terminology") String terminology,
     @ApiParam(value = "Concept terminology version, e.g. latest", required = true) @PathParam("version") String version,
@@ -335,7 +292,7 @@ public class ContentServiceRestImpl extends RootServiceRestImpl implements
       ContentService contentService = new ContentServiceJpa();
       Concept concept =
           contentService.getSingleConcept(terminologyId, terminology, version);
-      ConceptList list = contentService.getDescendantConcepts(concept, pfs);
+      ConceptList list = contentService.findDescendantConcepts(concept, pfs);
       for (Concept c : list.getObjects()) {
         contentService.getGraphResolutionHandler().resolve(
             c,
@@ -362,7 +319,7 @@ public class ContentServiceRestImpl extends RootServiceRestImpl implements
   @POST
   @Path("/concepts/{terminology}/{version}/{terminologyId}/ancestors")
   @ApiOperation(value = "Get ancestors", notes = "Gets the ancestor concepts for the specified id.", response = ConceptList.class)
-  public ConceptList getAncestorConcepts(
+  public ConceptList findAncestorConcepts(
     @ApiParam(value = "Concept terminology id, e.g. 102751005", required = true) @PathParam("terminologyId") String terminologyId,
     @ApiParam(value = "Concept terminology name, e.g. SNOMEDCT", required = true) @PathParam("terminology") String terminology,
     @ApiParam(value = "Concept terminology version, e.g. latest", required = true) @PathParam("version") String version,
@@ -380,7 +337,7 @@ public class ContentServiceRestImpl extends RootServiceRestImpl implements
       ContentService contentService = new ContentServiceJpa();
       Concept concept =
           contentService.getSingleConcept(terminologyId, terminology, version);
-      ConceptList list = contentService.getAncestorConcepts(concept, pfs);
+      ConceptList list = contentService.findAncestorConcepts(concept, pfs);
       for (Concept c : list.getObjects()) {
         contentService.getGraphResolutionHandler().resolve(
             c,
@@ -1176,7 +1133,7 @@ public class ContentServiceRestImpl extends RootServiceRestImpl implements
    * .String, java.lang.String, java.lang.String, java.lang.String)
    */
   @Override
-  @POST
+  @PUT
   @Path("/terminology/load/claml/{terminology}/{version}")
   @Consumes({
     MediaType.TEXT_PLAIN
@@ -1235,7 +1192,7 @@ public class ContentServiceRestImpl extends RootServiceRestImpl implements
    * lang.String, java.lang.String, java.lang.String)
    */
   @Override
-  @POST
+  @PUT
   @Path("/terminology/load/rf2/delta/{terminology}")
   @Consumes({
     MediaType.TEXT_PLAIN
@@ -1331,7 +1288,7 @@ public class ContentServiceRestImpl extends RootServiceRestImpl implements
    */
   @SuppressWarnings("resource")
   @Override
-  @POST
+  @PUT
   @Path("/terminology/load/rf2/full/{terminology}/{version}")
   @Consumes({
     MediaType.TEXT_PLAIN
@@ -1472,7 +1429,7 @@ public class ContentServiceRestImpl extends RootServiceRestImpl implements
    * .lang.String, java.lang.String, java.lang.String, java.lang.String)
    */
   @Override
-  @POST
+  @PUT
   @Path("/terminology/load/rf2/snapshot/{terminology}/{version}")
   @Consumes({
     MediaType.TEXT_PLAIN
@@ -1613,7 +1570,7 @@ public class ContentServiceRestImpl extends RootServiceRestImpl implements
    * , java.lang.String, java.lang.String)
    */
   @Override
-  @POST
+  @DELETE
   @Path("/terminology/remove/{terminology}/{version}")
   @ApiOperation(value = "Removes a terminology", notes = "Removes all elements for a specified terminology and version")
   public void removeTerminology(

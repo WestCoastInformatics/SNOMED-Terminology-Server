@@ -10,7 +10,6 @@ import javax.persistence.FetchType;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
-import javax.persistence.Transient;
 import javax.persistence.UniqueConstraint;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -71,10 +70,6 @@ public class DescriptionJpa extends AbstractComponent implements Description {
   /** The language RefSet members */
   @OneToMany(mappedBy = "description", cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true, targetEntity = LanguageRefSetMemberJpa.class)
   private Set<LanguageRefSetMember> languageRefSetMembers = null;
-
-  /** The language ref set member count. */
-  @Transient
-  private int languageRefSetMemberCount = -1;
 
   /** The attributeValue RefSet members. */
   @OneToMany(mappedBy = "description", targetEntity = AttributeValueDescriptionRefSetMemberJpa.class)
@@ -357,26 +352,6 @@ public class DescriptionJpa extends AbstractComponent implements Description {
     return this.languageRefSetMembers;
   }
 
-  /*
-   * (non-Javadoc)
-   * 
-   * @see org.ihtsdo.otf.ts.rf2.Description#getLanguageRefSetMemberCount()
-   */
-  @Override
-  public int getLanguageRefSetMemberCount() {
-    return languageRefSetMemberCount;
-  }
-
-  /*
-   * (non-Javadoc)
-   * 
-   * @see org.ihtsdo.otf.ts.rf2.Description#setLanguageRefSetMemberCount(int)
-   */
-  @Override
-  public void setLanguageRefSetMemberCount(int ct) {
-    this.languageRefSetMemberCount = ct;
-  }
-
   /**
    * Sets the set of LanguageRefSetMembers
    * 
@@ -574,8 +549,10 @@ public class DescriptionJpa extends AbstractComponent implements Description {
             * result
             + ((caseSignificanceId == null) ? 0 : caseSignificanceId.hashCode());
     result =
-        prime * result
-            + ((concept == null || concept.getTerminologyId() == null) ? 0 : concept.getTerminologyId().hashCode());
+        prime
+            * result
+            + ((concept == null || concept.getTerminologyId() == null) ? 0
+                : concept.getTerminologyId().hashCode());
     result =
         prime * result + ((languageCode == null) ? 0 : languageCode.hashCode());
     result = prime * result + ((term == null) ? 0 : term.hashCode());

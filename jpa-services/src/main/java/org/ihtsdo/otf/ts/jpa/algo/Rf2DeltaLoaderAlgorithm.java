@@ -541,6 +541,7 @@ public class Rf2DeltaLoaderAlgorithm extends HistoryServiceJpa implements
    *
    * @throws Exception the exception
    */
+  @SuppressWarnings("resource")
   private void loadConcepts() throws Exception {
 
     // Setup vars
@@ -629,6 +630,7 @@ public class Rf2DeltaLoaderAlgorithm extends HistoryServiceJpa implements
    *
    * @throws Exception the exception
    */
+  @SuppressWarnings("resource")
   private void loadDescriptions() throws Exception {
 
     // Setup vars
@@ -765,6 +767,7 @@ public class Rf2DeltaLoaderAlgorithm extends HistoryServiceJpa implements
    *
    * @throws Exception the exception
    */
+  @SuppressWarnings("resource")
   private void loadLanguageRefSetMembers() throws Exception {
 
     // Setup variables
@@ -903,6 +906,7 @@ public class Rf2DeltaLoaderAlgorithm extends HistoryServiceJpa implements
    *
    * @throws Exception the exception
    */
+  @SuppressWarnings("resource")
   private void loadSimpleRefSetMembers() throws Exception {
 
     // Setup variables
@@ -1008,6 +1012,7 @@ public class Rf2DeltaLoaderAlgorithm extends HistoryServiceJpa implements
    *
    * @throws Exception the exception
    */
+  @SuppressWarnings("resource")
   private void loadSimpleMapRefSetMembers() throws Exception {
 
     // Setup variables
@@ -1116,6 +1121,7 @@ public class Rf2DeltaLoaderAlgorithm extends HistoryServiceJpa implements
    * @throws Exception the exception
    */
 
+  @SuppressWarnings("resource")
   private void loadComplexMapRefSetMembers() throws Exception {
 
     // Setup variables
@@ -1229,6 +1235,7 @@ public class Rf2DeltaLoaderAlgorithm extends HistoryServiceJpa implements
    * @throws Exception the exception
    */
 
+  @SuppressWarnings("resource")
   private void loadExtendedMapRefSetMembers() throws Exception {
 
     // Setup variables
@@ -1343,6 +1350,7 @@ public class Rf2DeltaLoaderAlgorithm extends HistoryServiceJpa implements
    * @throws Exception the exception
    */
 
+  @SuppressWarnings("resource")
   private void loadDescriptionTypeRefSetMembers() throws Exception {
 
     // Setup variables
@@ -1451,6 +1459,7 @@ public class Rf2DeltaLoaderAlgorithm extends HistoryServiceJpa implements
    * @throws Exception the exception
    */
 
+  @SuppressWarnings("resource")
   private void loadRefsetDescriptorRefSetMembers() throws Exception {
 
     // Setup variables
@@ -1564,6 +1573,7 @@ public class Rf2DeltaLoaderAlgorithm extends HistoryServiceJpa implements
    * @throws Exception the exception
    */
 
+  @SuppressWarnings("resource")
   private void loadModuleDependencyRefSetMembers() throws Exception {
 
     // Setup variables
@@ -1678,6 +1688,7 @@ public class Rf2DeltaLoaderAlgorithm extends HistoryServiceJpa implements
    * @throws Exception the exception
    */
 
+  @SuppressWarnings("resource")
   private void loadAttributeValueRefSetMembers() throws Exception {
 
     // Setup variables
@@ -1751,7 +1762,7 @@ public class Rf2DeltaLoaderAlgorithm extends HistoryServiceJpa implements
 
         }
 
-        if (description != null) {
+        else if (description != null) {
           if (member == null) {
             newMember = new AttributeValueDescriptionRefSetMemberJpa();
           } else {
@@ -1761,6 +1772,11 @@ public class Rf2DeltaLoaderAlgorithm extends HistoryServiceJpa implements
           }
           ((AttributeValueDescriptionRefSetMember) newMember)
               .setComponent(description);
+        }
+
+        else {
+          throw new Exception(
+              "Attribute value member connected to nonexistent object");
         }
 
         newMember.setTerminologyId(fields[0]);
@@ -1812,6 +1828,7 @@ public class Rf2DeltaLoaderAlgorithm extends HistoryServiceJpa implements
    * @throws Exception the exception
    */
 
+  @SuppressWarnings("resource")
   private void loadAssociationReferenceRefSetMembers() throws Exception {
 
     // Setup variables
@@ -1887,7 +1904,7 @@ public class Rf2DeltaLoaderAlgorithm extends HistoryServiceJpa implements
 
         }
 
-        if (description != null) {
+        else if (description != null) {
           if (member == null) {
             newMember = new AssociationReferenceDescriptionRefSetMemberJpa();
           } else {
@@ -1899,6 +1916,11 @@ public class Rf2DeltaLoaderAlgorithm extends HistoryServiceJpa implements
               .setComponent(description);
         }
 
+        else {
+          throw new Exception(
+              "Association reference member connected to nonexistent object");
+        }
+        
         newMember.setTerminologyId(fields[0]);
         newMember.setTerminology(terminology);
         newMember.setTerminologyVersion(terminologyVersion);
@@ -1948,6 +1970,7 @@ public class Rf2DeltaLoaderAlgorithm extends HistoryServiceJpa implements
    * @throws Exception the exception
    */
 
+  @SuppressWarnings("resource")
   private void loadRelationships() throws Exception {
 
     // Setup variables

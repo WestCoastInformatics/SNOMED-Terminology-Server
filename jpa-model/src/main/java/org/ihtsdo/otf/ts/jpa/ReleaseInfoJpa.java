@@ -55,21 +55,27 @@ public class ReleaseInfoJpa implements ReleaseInfo {
   private Date releaseFinishDate;
 
   /** The planned flag. */
+  @Column(nullable = false)
   private boolean planned;
 
   /** The published flag. */
+  @Column(nullable = false)
   private boolean published;
 
   /** The terminology. */
+  @Column(nullable = false)
   private String terminology;
 
   /** The terminology version. */
+  @Column(nullable = false)
   private String terminologyVersion;
 
   /** The last modified by. */
+  @Column(nullable = false)
   private String lastModifiedBy;
 
   /** The last modified. */
+  @Column(nullable = false)
   private Date lastModified;
 
   /**

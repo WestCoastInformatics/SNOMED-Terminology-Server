@@ -96,16 +96,14 @@ public class ContentServiceRestNormalUseTest extends ContentServiceRestTest {
         "Lesion of skin of face"));
 
     // check relationships both through count and objects
-    assertTrue(concept.getRelationshipCount() == 7);
+
     assertTrue(concept.getRelationships().size() == 7);
 
     // check descriptions both through count and objects
-    assertTrue(concept.getDescriptionCount() == 2);
     assertTrue(concept.getDescriptions().size() == 2);
 
     // check language ref set members
     for (Description d : concept.getDescriptions()) {
-      assertTrue(d.getLanguageRefSetMemberCount() == 2);
       assertTrue(d.getLanguageRefSetMembers().size() == 2);
     }
 
@@ -137,19 +135,15 @@ public class ContentServiceRestNormalUseTest extends ContentServiceRestTest {
     assertTrue(concept.getDefaultPreferredName().startsWith("MYCOSES"));
 
     // check relationships both through count and objects
-    System.out.println(concept.getRelationshipCount());
-    System.out.println(concept.getDescriptionCount());
-    assertTrue(concept.getRelationshipCount() == 1);
+
     assertTrue(concept.getRelationships().size() == 1);
 
     // check descriptions both through count and objects
-    assertTrue(concept.getDescriptionCount() == 1);
+
     assertTrue(concept.getDescriptions().size() == 1);
 
     // check language ref set members
     for (Description d : concept.getDescriptions()) {
-      System.out.println(d.getLanguageRefSetMemberCount());
-      assertTrue(d.getLanguageRefSetMemberCount() == 0);
       assertTrue(d.getLanguageRefSetMembers().size() == 0);
     }
 
@@ -255,40 +249,40 @@ public class ContentServiceRestNormalUseTest extends ContentServiceRestTest {
 
     // Get children for SNOMEDCT concept // TEST: Expect 80 children
     conceptList =
-        contentService.getChildConcepts(snomedTestId, snomedTerminology,
+        contentService.findChildConcepts(snomedTestId, snomedTerminology,
             snomedVersion, pfs, authToken);
     assertTrue(conceptList.getCount() == 80);
 
     // Get descendants for SNOMEDCT concept // TEST: Expect 94 descendants
     conceptList =
-        contentService.getDescendantConcepts(snomedTestId, snomedTerminology,
+        contentService.findDescendantConcepts(snomedTestId, snomedTerminology,
             snomedVersion, pfs, authToken);
     assertTrue(conceptList.getCount() == 94);
 
     // Get ancestors for SNOMEDCT concept // TEST: Expect 11 ancestors
     conceptList =
-        contentService.getAncestorConcepts(snomedTestId, snomedTerminology,
+        contentService.findAncestorConcepts(snomedTestId, snomedTerminology,
             snomedVersion, pfs, authToken);
     assertTrue(conceptList.getCount() == 11);
 
     // Get children for ICD9CM concept
     // TEST: Expect 8 children
     conceptList =
-        contentService.getChildConcepts(icd9TestId, icd9Terminology,
+        contentService.findChildConcepts(icd9TestId, icd9Terminology,
             icd9Version, pfs, authToken);
     assertTrue(conceptList.getCount() == 8);
 
     // Get descendants for ICD9CM concept
     // TEST: Expect 81 descendants
     conceptList =
-        contentService.getDescendantConcepts(icd9TestId, icd9Terminology,
+        contentService.findDescendantConcepts(icd9TestId, icd9Terminology,
             icd9Version, pfs, authToken);
     assertTrue(conceptList.getCount() == 81);
 
     // Get ancestors for ICD9CM concept
     // TEST: Expect 2 ancestors
     conceptList =
-        contentService.getAncestorConcepts(icd9TestId, icd9Terminology,
+        contentService.findAncestorConcepts(icd9TestId, icd9Terminology,
             icd9Version, pfs, authToken);
     assertTrue(conceptList.getCount() == 2);
 

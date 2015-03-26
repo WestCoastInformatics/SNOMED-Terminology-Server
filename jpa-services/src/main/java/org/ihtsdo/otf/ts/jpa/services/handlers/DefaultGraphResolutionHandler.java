@@ -17,8 +17,12 @@ import org.ihtsdo.otf.ts.services.handlers.GraphResolutionHandler;
  */
 public class DefaultGraphResolutionHandler implements GraphResolutionHandler {
 
-  /* (non-Javadoc)
-   * @see org.ihtsdo.otf.ts.services.handlers.GraphResolutionHandler#resolve(org.ihtsdo.otf.ts.rf2.Concept, java.lang.String)
+  /*
+   * (non-Javadoc)
+   * 
+   * @see
+   * org.ihtsdo.otf.ts.services.handlers.GraphResolutionHandler#resolve(org.
+   * ihtsdo.otf.ts.rf2.Concept, java.lang.String)
    */
   @Override
   public void resolve(Concept concept, Set<String> isaRelTypeIds) {
@@ -26,40 +30,39 @@ public class DefaultGraphResolutionHandler implements GraphResolutionHandler {
       boolean nullId = concept.getId() == null;
       // Make sure to read descriptions and relationships (prevents
       // serialization error)
-      int ct = 0;
       for (Description description : concept.getDescriptions()) {
-        ct++;
         description.setConcept(concept);
         // if the concept is "new", then the description must be too
         if (nullId) {
           description.setId(null);
         }
         resolve(description);
+        // TODO: consider having fields for counts of other data structures so a
+        // user knows whether
+        // to make a callback
+        // e.g. description.setAttributeValueRefsetMemberCount(1);
       }
-      concept.setDescriptionCount(ct);
-      
-      ct = 0;
-      int ct2 = 0;
+
+      int ct = 0;
       for (Relationship relationship : concept.getRelationships()) {
-        ct++;
         // if the concept is "new", then the relationship must be too
         if (nullId) {
           relationship.setId(null);
         }
         relationship.setSourceConcept(concept);
         relationship.getDestinationConcept().getDefaultPreferredName();
-        if (isaRelTypeIds != null && isaRelTypeIds.contains(relationship.getTypeId())) {
-          ct2++;
+        if (isaRelTypeIds != null
+            && isaRelTypeIds.contains(relationship.getTypeId())) {
+          ct++;
         }
       }
-      concept.setRelationshipCount(ct);
-      concept.setChildCount(ct2);
-      
-      // don't resolve these, limit to what uses Cascade.ALL
-      // concept.getAttributeValueRefSetMembers().size();
-      // concept.getComplexMapRefSetMembers().size();
-      // concept.getSimpleMapRefSetMembers();
-      // concept.getSimpleRefSetMembers().size();
+      concept.setChildCount(ct);
+
+      // TODO: consider having fields for counts of other data structures so a
+      // user knows whether
+      // to make a callback
+      // e.g. concept.setSimpleRefSetMemberCount(3);
+
     }
   }
 
@@ -72,17 +75,18 @@ public class DefaultGraphResolutionHandler implements GraphResolutionHandler {
   public void resolve(Description description) {
     if (description != null) {
       boolean nullId = description.getId() == null;
-      int ct = 0;
-      for (LanguageRefSetMember member : description
-          .getLanguageRefSetMembers()) {
-        // if the description is "new", then the language refset member must be too
+      for (LanguageRefSetMember member : description.getLanguageRefSetMembers()) {
+        // if the description is "new", then the language refset member must be
+        // too
         if (nullId) {
           member.setId(null);
         }
-        ct++;
         member.setDescription(description);
       }
-      description.setLanguageRefSetMemberCount(ct);
+      // TODO: consider having fields for counts of other data structures so a
+      // user knows whether
+      // to make a callback
+      // e.g. description.setAttributeValueRefsetMemberCount(1);
     }
   }
 
