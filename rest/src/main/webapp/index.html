@@ -46,13 +46,13 @@
       class="navbar navbar-default navbar-fixed-top" role="navigation">
       <div class="container-fluid">
         <!-- Brand and toggle get grouped for better mobile display -->
-        <div >
+        <div>
           <img
             style="background-color: white; border: 3px solid white; border-radius: 5px; margin-left: 133px; margin-top: 14px;"
-            class="pull-left" src="images/logo.jpg">
-          <b class="navbar-brand" style="color: white; margin-top: 60px ;">
-            &nbsp;Terminology Server Demo and <a href="swagger.html" style="color: white;"
-              target="_blank">API Documentation</a>
+            class="pull-left" src="images/logo.jpg"> <b
+            class="navbar-brand" style="color: white; margin-top: 60px;">
+            &nbsp;Terminology Server Demo and <a href="swagger.html"
+            style="color: white;" target="_blank">API Documentation</a>
           </b>
 
         </div>
@@ -90,7 +90,22 @@
                   href="https://uts.nlm.nih.gov/license.html#emailTemporaryPassword">Forgot
                   Password?</a>
               </p>
-
+              <p style="margin-top: 50px; max-width: 500px">This
+                demonstration app is loaded with data from two terminologies.
+                </p>
+              <ul>
+                <li>ICD9CM, 2013</li>
+                <li>SNOMEDCT, 20140731 (mini edition)</li>
+              </ul>
+              <p style="max-width: 400px">
+              The mini version of SNOMED contains about 10K concepts. Due to the
+              use of IP restricted content, we require users to authenticate
+              with an NLM UTS account to ensure they have agreed to the UMLS
+              License.
+              </p>
+              <p style="max-width: 400px">
+                To obtain a UTS account, visit <a href="http://uts.nlm.nih.gov">http://uts.nlm.nih.gov</a>
+              </p>
             </form>
           </div>
 
@@ -118,8 +133,7 @@
                   ng-click="findConcepts(terminology, conceptQuery)">Search</button>
                 <button class="btn btn-small btn-warning" type="cancel"
                   ng-click="conceptQuery = null">Clear</button>
-                <br>
-                <em>Searchable terms include concept names, e.g.
+                <br> <em>Searchable terms include concept names, e.g.
                   ossification, and concept ids, e.g. 728.1 (for ICD9CM),
                   102276005 (for SNOMEDCT)</em></td>
 
@@ -135,7 +149,7 @@
           <div class="row">
             <div class="col-md-3">
 
-              <div class="alert alert-success" 
+              <div class="alert alert-success"
                 ng-show="searchResults.length > 0">
                 {{searchResults.length}} Results (Click a row for details)</div>
 
@@ -144,7 +158,7 @@
                 ng-show="searchResults.length == 0">Search returned no
                 results.</div>
 
-              <table class="table table-hover" 
+              <table class="table table-hover"
                 ng-show="searchResults.length > 0">
 
                 <tbody>
@@ -163,7 +177,7 @@
             <div class="col-md-2" ng-show="component != null"
               style="border-left: 1px solid #d9edf7; border-right: 1px solid #d9edf7;">
 
-              <div class="dropdown alert alert-info" >
+              <div class="dropdown alert alert-info">
                 <div class="dropdown-toggle">
                   View: {{navSelected}} <span class="caret"></span>
                 </div>
@@ -274,7 +288,8 @@
       <div class="navbar-header">
         <ul class="nav navbar-nav navbar-left">
           <li><p class="navbar-text">
-              <a class="navbar-link" href="${deploy.footer.link}">Copyright @2015</a>
+              <a class="navbar-link" href="${deploy.footer.link}">Copyright
+                @2015</a>
             </p></li>
           <li>
             <div style="text-align: center; padding: 5px; margin: 0 0 0 0;"
