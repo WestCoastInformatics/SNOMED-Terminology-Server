@@ -267,7 +267,6 @@ public class ConceptJpa extends AbstractComponent implements Concept {
     return descriptions;
   }
 
-
   /*
    * (non-Javadoc)
    * 
@@ -326,26 +325,6 @@ public class ConceptJpa extends AbstractComponent implements Concept {
       relationships = new HashSet<>();
     }
     return relationships;
-  }
-
-  /*
-   * (non-Javadoc)
-   * 
-   * @see org.ihtsdo.otf.ts.rf2.Concept#getChildCount()
-   */
-  @Override
-  public int getChildCount() {
-    return childCount;
-  }
-
-  /*
-   * (non-Javadoc)
-   * 
-   * @see org.ihtsdo.otf.ts.rf2.Concept#setChildCount(int)
-   */
-  @Override
-  public void setChildCount(int ct) {
-    this.childCount = ct;
   }
 
   /*
