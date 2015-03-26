@@ -23,10 +23,6 @@ public class IndexUtility {
    */
   public static List<String> getIndexedStringFieldNames(Class<?> clazz) {
 
-    System.out.println("*********************************");
-    System.out.println("Getting indexed fields for class: ");
-    System.out.println("*********************************");
-
     List<String> fieldNames = new ArrayList<>();
 
     // first cycle over all methods
@@ -112,15 +108,6 @@ public class IndexUtility {
       }
 
     }
-
-    System.out.println("Final field list:");
-    for (String fieldName : fieldNames) {
-      System.out.println("  " + fieldName);
-    }
-
-    System.out.println("*********************************");
-    System.out.println("Done with class " + clazz.getSimpleName());
-    System.out.println("*********************************");
 
     return fieldNames;
   }
