@@ -142,9 +142,6 @@ tsApp
 													$scope.handleError(data, status, headers, config);
 												});
 							}
-							
-	             // TODO Remove this, for testing only
-              $scope.login('guest', 'guest');
 
 							$scope.logout = function() {
 
