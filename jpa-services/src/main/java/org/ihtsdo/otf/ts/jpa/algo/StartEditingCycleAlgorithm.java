@@ -38,6 +38,10 @@ public class StartEditingCycleAlgorithm extends ContentServiceJpa implements
 
   /** The request cancel flag. */
   boolean requestCancel = false;
+  
+  /**  The user. */
+  private String user;
+
 
   /**
    * Instantiates an empty {@link StartEditingCycleAlgorithm}.
@@ -64,6 +68,25 @@ public class StartEditingCycleAlgorithm extends ContentServiceJpa implements
   public void reset() throws Exception {
     // do nothing
 
+  }
+  
+
+  /**
+   * Returns the user.
+   *
+   * @return the user
+   */
+  public String getUser() {
+    return user;
+  }
+
+  /**
+   * Sets the user.
+   *
+   * @param user the user
+   */
+  public void setUser(String user) {
+    this.user = user;
   }
 
   /*
@@ -93,6 +116,7 @@ public class StartEditingCycleAlgorithm extends ContentServiceJpa implements
     info.setPublished(false);
     info.setTerminology(terminology);
     info.setTerminologyVersion(terminologyVersion);
+    info.setLastModifiedBy(user);
     service.addReleaseInfo(info);
     service.close();
 

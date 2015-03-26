@@ -888,6 +888,7 @@ public class HistoryServiceRestImpl extends RootServiceRestImpl implements
       // Perform operations
       StartEditingCycleAlgorithm algorithm =
           new StartEditingCycleAlgorithm(releaseVersion, terminology, version);
+      algorithm.setUser(securityService.getUsernameForToken(authToken));
       algorithm.compute();
     } catch (Exception e) {
       handleException(e, "start editing cycle");
