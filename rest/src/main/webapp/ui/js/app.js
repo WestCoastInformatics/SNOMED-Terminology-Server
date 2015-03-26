@@ -1,6 +1,6 @@
 'use strict'
 
-var baseUrl = '${base.url}';
+var baseUrl = '';
 var securityUrl = baseUrl + 'security/';
 var contentUrl = baseUrl + 'content/';
 var metadataUrl = baseUrl + 'metadata/';
@@ -153,6 +153,7 @@ tsApp
               "Content-Type" : "text/plain"
             }
           }).success(function(data) {
+        	  console.log(name + " = " + data);
             $scope.userName = name;
             $scope.authToken = data;
 
