@@ -601,6 +601,9 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
     if (pfs != null) {
 
       // filtering -- not supported
+      if (pfs.getQueryRestriction() != null) {
+        throw new Exception("Query restriction is not supported on this call.");
+      }
 
       // sorting
       Comparator<Concept> comparator = getPfsComparator(Concept.class, pfs);
@@ -619,6 +622,74 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
     }
 
     return childrenConcepts;
+
+  }
+
+  /* (non-Javadoc)
+   * @see org.ihtsdo.otf.ts.services.ContentService#findParentConcepts(org.ihtsdo.otf.ts.rf2.Concept, org.ihtsdo.otf.ts.helpers.PfsParameter)
+   */
+  @SuppressWarnings("unchecked")
+  @Override
+  public ConceptList findParentConcepts(Concept concept, PfsParameter pfs)
+    throws Exception {
+    ConceptList parentConcepts = new ConceptListJpa();
+
+    // construct query
+    javax.persistence.Query query =
+        manager.createQuery("select r from RelationshipJpa r, ConceptJpa c"
+            + " where r.sourceConcept = c"
+            + " and c.terminology = :terminology "
+            + " and c.terminologyId = :terminologyId"
+            + " and c.terminologyVersion = :version");
+    query.setParameter("terminologyId", concept.getTerminologyId());
+    query.setParameter("terminology", concept.getTerminology());
+    query.setParameter("version", concept.getTerminologyVersion());
+
+    // execute query
+    List<Relationship> relationships = query.getResultList();
+
+    // cycle over this concepts relationships
+    for (Relationship r : relationships) {
+
+      // if active hierarchical relationship
+      // It's a set so don't worry about stated vs. inferred
+      if (r.isActive() && TerminologyUtility.isHierarchicalIsaRelationship(r)) {
+
+        // add to parent list if not already present (want unique results)
+        if (!parentConcepts.contains(r.getDestinationConcept())) {
+          parentConcepts.addObject(r.getDestinationConcept());
+        }
+      }
+    }
+
+    // set total count
+    parentConcepts.setTotalCount(parentConcepts.getCount());
+
+    // if paging/filtering/sorting required
+    if (pfs != null) {
+
+      // filtering -- not supported
+      if (pfs.getQueryRestriction() != null) {
+        throw new Exception("Query restriction is not supported on this call.");
+      }
+
+      // sorting
+      Comparator<Concept> comparator = getPfsComparator(Concept.class, pfs);
+      if (comparator != null) {
+        parentConcepts.sortBy(comparator);
+      }
+
+      // paging
+      if (pfs.getStartIndex() != -1 && pfs.getMaxResults() != -1) {
+
+        parentConcepts.setObjects(parentConcepts.getObjects().subList(
+            Math.min(pfs.getStartIndex(), parentConcepts.getTotalCount()),
+            Math.min(pfs.getStartIndex() + pfs.getMaxResults(),
+                parentConcepts.getTotalCount())));
+      }
+    }
+
+    return parentConcepts;
 
   }
 
