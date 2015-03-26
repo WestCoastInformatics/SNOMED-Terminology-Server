@@ -240,6 +240,48 @@ public class ContentClientRest implements ContentServiceRest {
     return list;
   }
 
+  /**
+   * Find parent concepts.
+   *
+   * @param terminologyId the terminology id
+   * @param terminology the terminology
+   * @param version the version
+   * @param pfs the pfs
+   * @param authToken the auth token
+   * @return the concept list
+   * @throws Exception the exception
+   */
+  @Override
+  public ConceptList findParentConcepts(String terminologyId,
+    String terminology, String version, PfsParameterJpa pfs, String authToken)
+    throws Exception {
+    Client client = Client.create();
+    WebResource resource =
+        client.resource(config.getProperty("base.url") + "/content/concepts/"
+            + terminology + "/" + version + "/" + terminologyId + "/parents");
+    String pfsString =
+        (pfs != null ? ConfigUtility.getStringForGraph(pfs) : null);
+    Logger.getLogger(getClass()).debug(pfsString);
+    ClientResponse response =
+        resource.accept(MediaType.APPLICATION_XML)
+            .header("Authorization", authToken)
+            .header("Content-type", MediaType.APPLICATION_XML)
+            .post(ClientResponse.class, pfsString);
+
+    String resultString = response.getEntity(String.class);
+    if (response.getStatusInfo().getFamily() == Family.SUCCESSFUL) {
+      Logger.getLogger(getClass()).debug(resultString);
+    } else {
+      throw new Exception(resultString);
+    }
+
+    // converting to object
+    ConceptListJpa list =
+        (ConceptListJpa) ConfigUtility.getGraphForString(resultString,
+            ConceptListJpa.class);
+    return list;
+  }
+
   /*
    * (non-Javadoc)
    * 
@@ -278,7 +320,7 @@ public class ContentClientRest implements ContentServiceRest {
             ConceptListJpa.class);
     return list;
   }
-  
+
   /*
    * (non-Javadoc)
    * 

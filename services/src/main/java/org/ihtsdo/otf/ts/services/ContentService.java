@@ -155,7 +155,18 @@ public interface ContentService extends RootService {
    * @throws Exception the exception
    */
   public ConceptList findChildConcepts(Concept concept, PfsParameter pfs)
-    throws Exception;
+      throws Exception;
+
+  /**
+   * Find parent concepts.
+   *
+   * @param concept the concept
+   * @param pfs the pfs
+   * @return the concept list
+   * @throws Exception the exception
+   */
+  public ConceptList findParentConcepts(Concept concept, PfsParameter pfs)
+      throws Exception;
 
   /**
    * Returns the description.
