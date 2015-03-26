@@ -139,16 +139,6 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
           IndexUtility.getIndexedStringFieldNames(ConceptJpa.class).toArray(
               new String[] {});
 
-      // for testing
-      /*
-       * conceptFieldNames = new String[] { "defaultPreferredName",
-       * "terminologyId", "descriptions.term" };
-       */
-
-      for (String conceptFieldName : conceptFieldNames) {
-        System.out.println(conceptFieldName);
-      }
-
     } catch (Exception e) {
       e.printStackTrace();
       conceptFieldNames = null;
