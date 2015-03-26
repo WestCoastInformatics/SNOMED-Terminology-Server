@@ -46,13 +46,13 @@
       class="navbar navbar-default navbar-fixed-top" role="navigation">
       <div class="container-fluid">
         <!-- Brand and toggle get grouped for better mobile display -->
-        <div >
+        <div>
           <img
             style="background-color: white; border: 3px solid white; border-radius: 5px; margin-left: 133px; margin-top: 14px;"
-            class="pull-left" src="images/logo.jpg">
-          <b class="navbar-brand" style="color: white; margin-top: 60px ;">
-            &nbsp;Terminology Server Demo and <a href="swagger.html" style="color: white;"
-              target="_blank">API Documentation</a>
+            class="pull-left" src="images/logo.jpg"> <b
+            class="navbar-brand" style="color: white; margin-top: 60px;">
+            &nbsp;Terminology Server Demo and <a href="swagger.html"
+            style="color: white;" target="_blank">API Documentation</a>
           </b>
 
         </div>
@@ -102,11 +102,14 @@
       <!-- Content displayed after log in -->
       <div ng-show="authToken != null">
 
+        <tabset> <tab heading="Concepts">
+
         <table class="table">
 
           <tr>
             <td>Select terminology</td>
             <td><select ng-model="terminology"
+              ng-change="setTerminology(terminology)"
               ng-options="terminology as terminology.name + ', ' + terminology.version
 					for terminology in terminologies"></select>
             </td>
@@ -118,8 +121,7 @@
                   ng-click="findConcepts(terminology, conceptQuery)">Search</button>
                 <button class="btn btn-small btn-warning" type="cancel"
                   ng-click="conceptQuery = null">Clear</button>
-                <br>
-                <em>Searchable terms include concept names, e.g.
+                <br> <em>Searchable terms include concept names, e.g.
                   ossification, and concept ids, e.g. 728.1 (for ICD9CM),
                   102276005 (for SNOMEDCT)</em></td>
 
@@ -135,7 +137,7 @@
           <div class="row">
             <div class="col-md-3">
 
-              <div class="alert alert-success" 
+              <div class="alert alert-success"
                 ng-show="searchResults.length > 0">
                 {{searchResults.length}} Results (Click a row for details)</div>
 
@@ -144,7 +146,7 @@
                 ng-show="searchResults.length == 0">Search returned no
                 results.</div>
 
-              <table class="table table-hover" 
+              <table class="table table-hover"
                 ng-show="searchResults.length > 0">
 
                 <tbody>
@@ -163,7 +165,7 @@
             <div class="col-md-2" ng-show="component != null"
               style="border-left: 1px solid #d9edf7; border-right: 1px solid #d9edf7;">
 
-              <div class="dropdown alert alert-info" >
+              <div class="dropdown alert alert-info">
                 <div class="dropdown-toggle">
                   View: {{navSelected}} <span class="caret"></span>
                 </div>
@@ -264,6 +266,50 @@
           </div>
         </div>
 
+
+        </tab> <tab heading="Metadata">
+
+        <table class="table">
+
+          <tr>
+            <td style="width: 15%;">Select terminology</td>
+            <td><select ng-model="terminology"
+              ng-change="setTerminology(terminology)"
+              ng-options="terminology as terminology.name + ', ' + terminology.version
+          for terminology in terminologies"></select>
+            </td>
+          </tr>
+
+        </table>
+        <div class="container-fluid"">
+
+          <div class="row">
+            <div class="col-md-6">
+
+
+
+              <h3>Metadata</h3>
+              <table class="table table-compact"">
+                <thead>
+                  <th style="width: 15%;">Metadata Type</th>
+                  <th>Id, Value</th>
+                </thead>
+                <tbody>
+                  <tr ng-repeat="item in metadata"
+                    ng-show="item.keyValuePair.length > 0">
+                    <td>{{item.name}}</td>
+                    <td><table>
+                        <tr ng-repeat="pair in item.keyValuePair">
+                          <td style="padding-right:15px;">{{pair.key}}</td>
+                          <td>{{pair.value}}</td>
+                        </tr>
+                        </table>
+                </tbody>
+              </table>
+
+            </div>
+          </div>
+        </tab> </tabset>
       </div>
     </div>
   </div>
@@ -274,7 +320,8 @@
       <div class="navbar-header">
         <ul class="nav navbar-nav navbar-left">
           <li><p class="navbar-text">
-              <a class="navbar-link" href="${deploy.footer.link}">Copyright @2015</a>
+              <a class="navbar-link" href="${deploy.footer.link}">Copyright
+                @2015</a>
             </p></li>
           <li>
             <div style="text-align: center; padding: 5px; margin: 0 0 0 0;"
