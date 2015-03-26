@@ -16,424 +16,388 @@ tsApp.run(function($http) {
 
 tsApp.directive('component', function() {
 
-	return {
-		replace : false,
-		restrict : 'AE',
-		templateUrl : 'ui/partials/component.html',
-		scope : {
-			object : '=', // two-way binding, currently un-used
-			type : '@' // isolate scope, string expected
-		},
-		link : function(scope, element, attrs) {
+  return {
+    replace : false,
+    restrict : 'AE',
+    templateUrl : 'ui/partials/component.html',
+    scope : {
+      object : '=', // two-way binding, currently un-used
+      type : '@' // isolate scope, string expected
+    },
+    link : function(scope, element, attrs) {
 
-			// initially collapsible is expanded
-			scope.componentExpanded = true;
+      // initially collapsible is expanded
+      scope.componentExpanded = true;
 
-			// function to determine if string is boolean "true"/"false" value
-			// used to distinguish between real boolean values and, e.g. "0",
-			// "1"
-			scope.isTrueFalse = function(elem) {
-				if (elem == null)
-					return false;
+      // function to determine if string is boolean "true"/"false" value
+      // used to distinguish between real boolean values and, e.g. "0",
+      // "1"
+      scope.isTrueFalse = function(elem) {
+        if (elem == null)
+          return false;
 
-				return elem.toString() === 'true'
-						|| elem.toString() === 'false';
-			}
+        return elem.toString() === 'true' || elem.toString() === 'false';
+      }
 
-			// function to determine if element is a model component array
-			// tests (1) if Array, (2) if Array elements have id field
-			scope.isComponentArray = function(elem) {
-				if (elem == null || !Array.isArray(elem) || elem[0] == null)
-					return false;
+      // function to determine if element is a model component array
+      // tests (1) if Array, (2) if Array elements have id field
+      scope.isComponentArray = function(elem) {
+        if (elem == null || !Array.isArray(elem) || elem[0] == null)
+          return false;
 
-				return elem[0].hasOwnProperty('terminologyId');
-			}
+        return elem[0].hasOwnProperty('terminologyId');
+      }
 
-			// quick function to convert "string" into "String"
-			scope.getLabelString = function(key, value) {
+      // quick function to convert "string" into "String"
+      scope.getLabelString = function(key, value) {
 
-				var labelString = "";
-				if (value == false) {
-					labelString = "Not " + key;
-				} else {
-					labelString = key.substring(0, 1).toUpperCase()
-							+ key.substring(1);
-				}
+        var labelString = "";
+        if (value == false) {
+          labelString = "Not " + key;
+        } else {
+          labelString = key.substring(0, 1).toUpperCase() + key.substring(1);
+        }
 
-				return labelString;
+        return labelString;
 
-			}
-		}
+      }
+    }
 
-	}
+  }
 });
 
 tsApp
-		.controller(
-				'tsIndexCtrl',
-				[
-						'$scope',
-						'$http',
-						'$q',
-						function($scope, $http, $q) {
+  .controller(
+    'tsIndexCtrl',
+    [
+      '$scope',
+      '$http',
+      '$q',
+      function($scope, $http, $q) {
 
-							$scope.$watch('component', function() {
-								// console.debug("Component changed to ",
-								//		$scope.component);
-							});
+        $scope.$watch('component', function() {
+          // console.debug("Component changed to ",
+          // $scope.component);
+        });
+        
+        // the viewed terminology
+        $scope.terminology = null;
 
-							// the displayed component
-							$scope.component = null;
-							$scope.componentType = null;
+        // the displayed component
+        $scope.component = null;
+        $scope.componentType = null;
 
-							$scope.userName = null;
-							$scope.authToken = null;
-							$scope.error = "";
-							$scope.glassPane = 0;
-							
-							$scope.handleError = function(data, status, headers,
-                            config) {
-							  $scope.error = data.replace(/"/g, '');
-							}
-							
-							$scope.clearError = function() {
-							  $scope.error = null;
-							}
+        $scope.userName = null;
+        $scope.authToken = null;
+        $scope.error = "";
+        $scope.glassPane = 0;
 
+        $scope.handleError = function(data, status, headers, config) {
+          $scope.error = data.replace(/"/g, '');
+        }
 
-							$scope.login = function(name, password) {
+        $scope.clearError = function() {
+          $scope.error = null;
+        }
 
-								console.debug("Login called", name, password);
+        $scope.setTerminology = function(terminology) {
+          $scope.terminology = terminology;
+        }
+        
+        $scope.$watch('terminology', function() {
+          
+          console.debug("terminology changed: ", $scope.terminology);
 
-								if (name == null) {
-									alert("You must specify a user name");
-									return;
-								} else if (password == null) {
-									alert("You must specify a password");
-									return;
-								}
+          if ($scope.terminology == null) {
+            console.debug("Returning")
+            return;
+          }
+          
+          console.debug("Retrieving metadata");
 
-								// login
-								$http({
-									url : securityUrl + 'authenticate/' + name,
-									dataType : "text",
-									data : password,
-									method : "POST",
-									headers : {
-										"Content-Type" : "text/plain"
-									}
-								})
-										.success(
-												function(data) {
-													$scope.userName = name;
-													$scope.authToken = data;
+          $http(
+            {
+              url : metadataUrl + 'terminology/id/' + $scope.terminology.name
+                + '/' + $scope.terminology.version,
+              method : "GET",
+              headers : {
+                "Content-Type" : "application/json"
+              }
+            }).success(function(data) {
+            $scope.metadata = data.keyValuePairList;
 
-													// set request header
-													// authorization
-													$http.defaults.headers.common.Authorization = $scope.authToken;
+          }).error(function(data, status, headers, config) {
+            $scope.handleError(data, status, headers, config);
+          });
+        })
 
-													// retrieve available
-													// terminologies
-													$scope.getTerminologies();
+        $scope.login = function(name, password) {
 
-												}).error(
-												function(data, status, headers,
-														config) {
-													$scope.handleError(data, status, headers, config);
-												});
-							}
+          console.debug("Login called", name, password);
 
-							$scope.logout = function() {
+          if (name == null) {
+            alert("You must specify a user name");
+            return;
+          } else if (password == null) {
+            alert("You must specify a password");
+            return;
+          }
 
-								if ($scope.authToken != null) {
-									alert("You are not currently logged in");
-									return;
-								}
-								// logout
-								$http({
-									url : securityUrl + 'logout/' + name,
-									method : "POST",
-									headers : {
-										"Content-Type" : "text/plain"
-									}
-								})
-										.success(
-												function(data) {
+          // login
+          $http({
+            url : securityUrl + 'authenticate/' + name,
+            dataType : "text",
+            data : password,
+            method : "POST",
+            headers : {
+              "Content-Type" : "text/plain"
+            }
+          }).success(function(data) {
+            $scope.userName = name;
+            $scope.authToken = data;
 
-													// clear scope variables
-													$scope.userName = null;
-													$scope.authToken = null;
+            // set request header
+            // authorization
+            $http.defaults.headers.common.Authorization = $scope.authToken;
 
-													// clear http authorization
-													// header
-													$http.defaults.headers.common.Authorization = null;
+            // retrieve available
+            // terminologies
+            $scope.getTerminologies();
 
-												}).error(
-												function(data, status, headers,
-														config) {
-												  $scope.handleError(data, status, headers, config);
-												});
-							}
+          }).error(function(data, status, headers, config) {
+            $scope.handleError(data, status, headers, config);
+          });
+        }
 
-							$scope.getTerminologies = function() {
+        $scope.logout = function() {
 
-								// reset terminologies
-								$scope.terminologies = null;
+          if ($scope.authToken != null) {
+            alert("You are not currently logged in");
+            return;
+          }
+          // logout
+          $http({
+            url : securityUrl + 'logout/' + name,
+            method : "POST",
+            headers : {
+              "Content-Type" : "text/plain"
+            }
+          }).success(function(data) {
 
-								// login
-								$http(
-										{
-											url : metadataUrl
-													+ 'terminology/terminologies',
-											method : "GET",
-											headers : {
-												"Content-Type" : "text/plain"
-											}
-										})
-										.success(
-												function(data) {
-													$scope.terminologies = new Array();
-													//console
-													//		.debug(
-													//				"Retrieved terminologies:",
-													//				data.keyValuePairList);
+            // clear scope variables
+            $scope.userName = null;
+            $scope.authToken = null;
 
-													// construct objects from
-													// returned data structure
-													for (var i = 0; i < data.keyValuePairList.length; i++) {
-														var pair = data.keyValuePairList[i].keyValuePair[0];
+            // clear http authorization
+            // header
+            $http.defaults.headers.common.Authorization = null;
 
-														var terminologyObj = {
-															name : pair['key'],
-															version : pair['value']
-														};
-														//console
-														//		.debug(terminologyObj);
-														$scope.terminologies
-																.push(terminologyObj);
+          }).error(function(data, status, headers, config) {
+            $scope.handleError(data, status, headers, config);
+          });
+        }
 
-													}
+        $scope.getTerminologies = function() {
 
-													// select the first
-													// terminology
-													$scope.terminology = $scope.terminologies[0];
+          // reset terminologies
+          $scope.terminologies = null;
 
-												}).error(
-												function(data, status, headers,
-														config) {
-												  $scope.handleError(data, status, headers, config);
-												});
-							}
+          // login
+          $http({
+            url : metadataUrl + 'terminology/terminologies',
+            method : "GET",
+            headers : {
+              "Content-Type" : "text/plain"
+            }
+          }).success(function(data) {
+            $scope.terminologies = new Array();
+            // console
+            // .debug(
+            // "Retrieved terminologies:",
+            // data.keyValuePairList);
 
-							$scope.getConcept = function(terminology, version,
-									terminologyId) {
-								// get single concept
-								$http(
-										{
-											url : contentUrl + "concept/"
-													+ terminology + "/"
-													+ version + "/"
-													+ terminologyId,
-											method : "GET",
+            // construct objects from
+            // returned data structure
+            for (var i = 0; i < data.keyValuePairList.length; i++) {
+              var pair = data.keyValuePairList[i].keyValuePair[0];
 
-										})
-										.success(
-												function(data) {
-													$scope.concept = data;
+              var terminologyObj = {
+                name : pair['key'],
+                version : pair['value']
+              };
+              // console
+              // .debug(terminologyObj);
+              $scope.terminologies.push(terminologyObj);
 
-													console
-															.debug(
-																	"Retrieved concept:",
-																	$scope.concept);
+            }
 
-													setActiveRow(terminologyId);
-													$scope.setComponent(
-															$scope.concept,
-															'Concept');
-													$scope
-															.getParentAndChildConcepts($scope.concept);
-													
-													// default button selected is structure, otherwise don't change
-													if ($scope.navSelected == null)
-													  $scope.navSelected = 'Structure';
+            // select the first
+            // terminology
+            $scope.setTerminology($scope.terminologies[0]);
 
-												}).error(
-												function(data, status, headers,
-														config) {
-												  $scope.handleError(data, status, headers, config);
-												});
-							}
+          }).error(function(data, status, headers, config) {
+            $scope.handleError(data, status, headers, config);
+          });
+        }
 
-							$scope.findConcepts = function(terminology,
-									queryStr) {
+        $scope.getConcept = function(terminology, version, terminologyId) {
+          // get single concept
+          $http(
+            {
+              url : contentUrl + "concept/" + terminology + "/" + version + "/"
+                + terminologyId,
+              method : "GET",
 
-								// ensure query string has minimum length
-								if (queryStr == null || queryStr.length < 3) {
-									alert("You must use at least three characters to search");
-									return;
-								}
+            }).success(function(data) {
+            $scope.concept = data;
 
-								$scope.concept = null;
-								
-								var pfs = { startIndex : -1,
-                maxResults : -1,
-                sortField : null,
-                queryRestriction : null } //'terminologyId:' + queryStr }
+            console.debug("Retrieved concept:", $scope.concept);
 
-								// find concepts
-								$scope.glassPane++;
-								$http(
-										{
-											url : contentUrl + "concepts/"
-													+ terminology.name + "/"
-													+ terminology.version
-													+ "/query/" + queryStr,
-											method : "POST",
-											dataType : "json",
-											data : pfs,
-											headers : {
-												"Content-Type" : "application/json"
-											}
-										})
-										.success(
-												function(data) {
-												  $scope.glassPane--;
-													console
-															.debug(
-																	"Retrieved concepts:",
-																	data);
-													$scope.searchResults = data.searchResult;
-													console
-															.debug(
-																	"Retrieved terminologies:",
-																	data.keyValuePairList);
+            setActiveRow(terminologyId);
+            $scope.setComponent($scope.concept, 'Concept');
+            $scope.getParentAndChildConcepts($scope.concept);
 
-												}).error(
-												function(data, status, headers,
-														config) {
-												  $scope.glassPane--;
-												  $scope.handleError(data, status, headers, config);
-												});
-							}
+            // default button selected is structure, otherwise don't change
+            if ($scope.navSelected == null)
+              $scope.navSelected = 'Structure';
 
-							$scope.setComponent = function(component,
-									componentType) {
-								// console.debug("Setting component",
-								//		componentType, component);
-								$scope.component = component;
-								$scope.componentType = componentType;
+          }).error(function(data, status, headers, config) {
+            $scope.handleError(data, status, headers, config);
+          });
+        }
 
-								// clear all viewed component settings
-								$scope.concept.viewed = false;
-								
-								for (var i = 0; i < $scope.concept.description.length; i++) {
-									// console.debug("Settingn description...")
-									$scope.concept.description[i].viewed = false;
-									// console.debug("  Set for ",
-									//		$scope.concept.description[i].id);
-									// console.debug("Languages: " + $scope.concept.description[i].language.length);
-									
-									for (var j = 0; j < $scope.concept.description[i].language.length; j++) {
-										console
-												.debug("Setting for language... ", i, j);
-										$scope.concept.description[i].language[j].viewed = false;
-										console
-												.debug(
-														"  Set for language",
-														$scope.concept.description[i].language[j].id);
-									}
-									// console.debug("Done with description");
-									
-								}
-								for (var i = 0; i < $scope.concept.relationship.length; i++) {
-									$scope.concept.relationship[i].viewed = false;
-								}
-								component.viewed = true;
-							}
+        $scope.findConcepts = function(terminology, queryStr) {
 
-							$scope.getParentAndChildConcepts = function(concept) {
-								// find concepts
-								$http(
-										{
-											url : contentUrl
-													+ "concepts/"
-													+ concept.terminology
-													+ "/"
-													+ concept.terminologyVersion
-													+ "/"
-													+ concept.terminologyId
-													+ "/parents",
-											method : "POST",
-											dataType : "json",
-											data : getPfs(),
-											headers : {
-												"Content-Type" : "application/json"
-											}
-										})
-										.success(
-												function(data) {
-													console
-															.debug(
-																	"Retrieved parent concepts:",
-																	data);
-													$scope.parentConcepts = data.concept;
+          // ensure query string has minimum length
+          if (queryStr == null || queryStr.length < 3) {
+            alert("You must use at least three characters to search");
+            return;
+          }
 
-												}).error(
-												function(data, status, headers,
-														config) {
-													$scope.error = data;
-												});
+          $scope.concept = null;
 
-								// find concepts
-								$http(
-										{
-											url : contentUrl
-													+ "concepts/"
-													+ concept.terminology
-													+ "/"
-													+ concept.terminologyVersion
-													+ "/"
-													+ concept.terminologyId
-													+ "/children",
-											method : "POST",
-											dataType : "json",
-											data : getPfs(),
-											headers : {
-												"Content-Type" : "application/json"
-											}
-										})
-										.success(
-												function(data) {
-													console
-															.debug(
-																	"Retrieved child concepts:",
-																	data);
-													$scope.childConcepts = data.concept;
+          var pfs = {
+            startIndex : -1,
+            maxResults : -1,
+            sortField : null,
+            queryRestriction : null
+          } // 'terminologyId:' + queryStr }
 
-												}).error(
-												function(data, status, headers,
-														config) {
-													$scope.error = data;
-												});
-							}
+          // find concepts
+          $scope.glassPane++;
+          $http(
+            {
+              url : contentUrl + "concepts/" + terminology.name + "/"
+                + terminology.version + "/query/" + queryStr,
+              method : "POST",
+              dataType : "json",
+              data : pfs,
+              headers : {
+                "Content-Type" : "application/json"
+              }
+            }).success(function(data) {
+            $scope.glassPane--;
+            console.debug("Retrieved concepts:", data);
+            $scope.searchResults = data.searchResult;
+            console.debug("Retrieved terminologies:", data.keyValuePairList);
 
-							function setActiveRow(terminologyId) {
-								for (var i = 0; i < $scope.searchResults.length; i++) {
-									if ($scope.searchResults[i].terminologyId === terminologyId) {
-										$scope.searchResults[i].rowClass = "active";
-									} else {
-										$scope.searchResults[i].rowClass = "";
-									}
-								}
-							}
+          }).error(function(data, status, headers, config) {
+            $scope.glassPane--;
+            $scope.handleError(data, status, headers, config);
+          });
+        }
 
-							function getPfs() {
-								return {
-									startIndex : -1,
-									maxResults : -1,
-									sortField : null,
-									queryRestriction : null
-								};
-							}
+        $scope.setComponent = function(component, componentType) {
+          // console.debug("Setting component",
+          // componentType, component);
+          $scope.component = component;
+          $scope.componentType = componentType;
 
-						} ]);
+          // clear all viewed component settings
+          $scope.concept.viewed = false;
+
+          for (var i = 0; i < $scope.concept.description.length; i++) {
+            // console.debug("Settingn description...")
+            $scope.concept.description[i].viewed = false;
+            // console.debug(" Set for ",
+            // $scope.concept.description[i].id);
+            // console.debug("Languages: " +
+            // $scope.concept.description[i].language.length);
+
+            for (var j = 0; j < $scope.concept.description[i].language.length; j++) {
+              console.debug("Setting for language... ", i, j);
+              $scope.concept.description[i].language[j].viewed = false;
+              console.debug("  Set for language",
+                $scope.concept.description[i].language[j].id);
+            }
+            // console.debug("Done with description");
+
+          }
+          for (var i = 0; i < $scope.concept.relationship.length; i++) {
+            $scope.concept.relationship[i].viewed = false;
+          }
+          component.viewed = true;
+        }
+
+        $scope.getParentAndChildConcepts = function(concept) {
+          // find concepts
+          $http(
+            {
+              url : contentUrl + "concepts/" + concept.terminology + "/"
+                + concept.terminologyVersion + "/" + concept.terminologyId
+                + "/parents",
+              method : "POST",
+              dataType : "json",
+              data : getPfs(),
+              headers : {
+                "Content-Type" : "application/json"
+              }
+            }).success(function(data) {
+            console.debug("Retrieved parent concepts:", data);
+            $scope.parentConcepts = data.concept;
+
+          }).error(function(data, status, headers, config) {
+            $scope.error = data;
+          });
+
+          // find concepts
+          $http(
+            {
+              url : contentUrl + "concepts/" + concept.terminology + "/"
+                + concept.terminologyVersion + "/" + concept.terminologyId
+                + "/children",
+              method : "POST",
+              dataType : "json",
+              data : getPfs(),
+              headers : {
+                "Content-Type" : "application/json"
+              }
+            }).success(function(data) {
+            console.debug("Retrieved child concepts:", data);
+            $scope.childConcepts = data.concept;
+
+          }).error(function(data, status, headers, config) {
+            $scope.error = data;
+          });
+        }
+
+        function setActiveRow(terminologyId) {
+          for (var i = 0; i < $scope.searchResults.length; i++) {
+            if ($scope.searchResults[i].terminologyId === terminologyId) {
+              $scope.searchResults[i].rowClass = "active";
+            } else {
+              $scope.searchResults[i].rowClass = "";
+            }
+          }
+        }
+
+        function getPfs() {
+          return {
+            startIndex : -1,
+            maxResults : -1,
+            sortField : null,
+            queryRestriction : null
+          };
+        }
+
+      } ]);

@@ -118,11 +118,14 @@
       <!-- Content displayed after log in -->
       <div ng-show="authToken != null">
 
+        <tabset> <tab heading="Concepts">
+
         <table class="table">
 
           <tr>
             <td>Select terminology</td>
             <td><select ng-model="terminology"
+              ng-change="setTerminology(terminology)"
               ng-options="terminology as terminology.name + ', ' + terminology.version
 					for terminology in terminologies"></select>
             </td>
@@ -279,6 +282,50 @@
           </div>
         </div>
 
+
+        </tab> <tab heading="Metadata">
+
+        <table class="table">
+
+          <tr>
+            <td style="width: 15%;">Select terminology</td>
+            <td><select ng-model="terminology"
+              ng-change="setTerminology(terminology)"
+              ng-options="terminology as terminology.name + ', ' + terminology.version
+          for terminology in terminologies"></select>
+            </td>
+          </tr>
+
+        </table>
+        <div class="container-fluid"">
+
+          <div class="row">
+            <div class="col-md-6">
+
+
+
+              <h3>Metadata</h3>
+              <table class="table table-compact"">
+                <thead>
+                  <th style="width: 15%;">Metadata Type</th>
+                  <th>Id, Value</th>
+                </thead>
+                <tbody>
+                  <tr ng-repeat="item in metadata"
+                    ng-show="item.keyValuePair.length > 0">
+                    <td>{{item.name}}</td>
+                    <td><table>
+                        <tr ng-repeat="pair in item.keyValuePair">
+                          <td style="padding-right:15px;">{{pair.key}}</td>
+                          <td>{{pair.value}}</td>
+                        </tr>
+                        </table>
+                </tbody>
+              </table>
+
+            </div>
+          </div>
+        </tab> </tabset>
       </div>
     </div>
   </div>
