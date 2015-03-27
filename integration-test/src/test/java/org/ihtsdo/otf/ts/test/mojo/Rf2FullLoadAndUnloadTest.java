@@ -107,7 +107,8 @@ public class Rf2FullLoadAndUnloadTest {
     Assert.assertEquals(
         service.getAllConcepts("SNOMEDCT", "latest").getCount(), 0);
     service.close();
-
+    service.closeFactory();
+    
     // Load RF2 full
     request = new DefaultInvocationRequest();
     request.setPomFile(new File("../admin/loader/pom.xml"));
@@ -132,12 +133,14 @@ public class Rf2FullLoadAndUnloadTest {
     Assert.assertEquals(
         service.getAllConcepts("SNOMEDCT", "latest").getCount(), 10293);
     service.close();
+    service.closeFactory();
 
     // Verify release info
     HistoryService historyService = new HistoryServiceJpa();
     Assert.assertNotNull(historyService.getReleaseInfo("SNOMEDCT", "20020131"));
     Assert.assertNotNull(historyService.getReleaseInfo("SNOMEDCT", "20140731"));
     historyService.close();
+    historyService.closeFactory();
 
     // Add a SNOMEDCT project
     request = new DefaultInvocationRequest();
@@ -176,11 +179,13 @@ public class Rf2FullLoadAndUnloadTest {
     }
     Assert.assertTrue(found);
     projectService.close();
+    projectService.closeFactory();
 
     // Verify admin user
     SecurityService securityService = new SecurityServiceJpa();
     Assert.assertNotNull(securityService.getUser("admin"));
     securityService.close();
+    securityService.closeFactory();
 
     // Start SNOMEDCT editing cycle
 
@@ -211,6 +216,7 @@ public class Rf2FullLoadAndUnloadTest {
     Assert.assertTrue(historyService.getReleaseInfo("SNOMEDCT", "20150131")
         .isPlanned());
     historyService.close();
+    historyService.closeFactory();
 
     // Remove terminology
     request = new DefaultInvocationRequest();

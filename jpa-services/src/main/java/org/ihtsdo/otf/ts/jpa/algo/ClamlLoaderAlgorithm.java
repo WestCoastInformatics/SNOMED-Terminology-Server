@@ -24,9 +24,11 @@ import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 
 import org.apache.log4j.Logger;
+import org.ihtsdo.otf.ts.ReleaseInfo;
 import org.ihtsdo.otf.ts.algo.Algorithm;
 import org.ihtsdo.otf.ts.helpers.ConfigUtility;
-import org.ihtsdo.otf.ts.jpa.services.ContentServiceJpa;
+import org.ihtsdo.otf.ts.jpa.ReleaseInfoJpa;
+import org.ihtsdo.otf.ts.jpa.services.HistoryServiceJpa;
 import org.ihtsdo.otf.ts.jpa.services.helper.ClamlMetadataHelper;
 import org.ihtsdo.otf.ts.rf2.Concept;
 import org.ihtsdo.otf.ts.rf2.Description;
@@ -36,7 +38,6 @@ import org.ihtsdo.otf.ts.rf2.jpa.ConceptJpa;
 import org.ihtsdo.otf.ts.rf2.jpa.DescriptionJpa;
 import org.ihtsdo.otf.ts.rf2.jpa.RelationshipJpa;
 import org.ihtsdo.otf.ts.rf2.jpa.SimpleRefSetMemberJpa;
-import org.ihtsdo.otf.ts.services.ContentService;
 import org.ihtsdo.otf.ts.services.helpers.ProgressEvent;
 import org.ihtsdo.otf.ts.services.helpers.ProgressListener;
 import org.xml.sax.Attributes;
@@ -47,7 +48,7 @@ import org.xml.sax.helpers.DefaultHandler;
 /**
  * Implementation of an algorithm to import RF2 snapshot data.
  */
-public class ClamlLoaderAlgorithm extends ContentServiceJpa implements
+public class ClamlLoaderAlgorithm extends HistoryServiceJpa implements
     Algorithm {
 
   /** Listeners. */
@@ -76,9 +77,6 @@ public class ClamlLoaderAlgorithm extends ContentServiceJpa implements
 
   /** The roots. */
   List<String> roots = null;
-
-  /** The content service. */
-  ContentService contentService;
 
   /** child to parent code map NOTE: this assumes a single superclass. */
   Map<String, String> childToParentCodeMap;
@@ -151,10 +149,8 @@ public class ClamlLoaderAlgorithm extends ContentServiceJpa implements
     Reader reader = null;
     try {
 
-      // Configure and create entity manager
-      contentService = new ContentServiceJpa();
-      contentService.setTransactionPerOperation(false);
-      contentService.beginTransaction();
+      setTransactionPerOperation(false);
+      beginTransaction();
 
       // Check the input directory
       if (!new File(inputFile).exists()) {
@@ -168,7 +164,7 @@ public class ClamlLoaderAlgorithm extends ContentServiceJpa implements
       Logger.getLogger(getClass()).info("  Create metadata classes");
       helper =
           new ClamlMetadataHelper(terminology, terminologyVersion,
-              effectiveTime, contentService);
+              effectiveTime, this);
       conceptMap = helper.createMetadata();
 
       childToParentCodeMap = new HashMap<>();
@@ -189,8 +185,25 @@ public class ClamlLoaderAlgorithm extends ContentServiceJpa implements
       is.setEncoding("UTF-8");
       saxParser.parse(is, handler);
 
-      contentService.commit();
-      contentService.close();
+      ReleaseInfo info = getReleaseInfo(terminology, terminologyVersion);
+      if (info == null) {
+        info = new ReleaseInfoJpa();
+        info.setName(effectiveTime);
+        info.setEffectiveTime(ConfigUtility.DATE_FORMAT.parse(effectiveTime));
+        info.setDescription(terminology + " " + terminologyVersion + " release");
+        info.setPlanned(false);
+        info.setPublished(true);
+        info.setReleaseBeginDate(info.getEffectiveTime());
+        info.setReleaseFinishDate(info.getEffectiveTime());
+        info.setTerminology(terminology);
+        info.setTerminologyVersion(terminologyVersion);
+        info.setLastModified(ConfigUtility.DATE_FORMAT.parse(effectiveTime));
+        info.setLastModifiedBy("loader");
+        addReleaseInfo(info);
+      }
+
+      commit();
+      close();
 
       Logger.getLogger(getClass()).info("done ...");
 
@@ -664,7 +677,7 @@ public class ClamlLoaderAlgorithm extends ContentServiceJpa implements
                     + concept.getDefaultPreferredName());
             // Persist now, but commit at the end after all descriptions are
             // added
-            contentService.addConcept(concept);
+            addConcept(concept);
             conceptMap.put(code, concept);
           }
 
@@ -1440,7 +1453,7 @@ public class ClamlLoaderAlgorithm extends ContentServiceJpa implements
             + childConcept.getTerminologyId() + " already in map");
 
       conceptMap.put(childConcept.getTerminologyId(), childConcept);
-      contentService.addConcept(childConcept);
+      addConcept(childConcept);
       // add relationship
       helper.createIsaRelationship(parentConcept, childConcept, ("" + relId),
           terminology, terminologyVersion, effectiveTime);

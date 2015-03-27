@@ -191,7 +191,7 @@ public class SecurityClientRest implements SecurityServiceRest {
         client.resource(config.getProperty("base.url") + "/security/user/add");
 
     String userString =
-        (user != null ? ConfigUtility.getStringForGraph(user) : null);
+        (user != null ? ConfigUtility.getStringForGraph(user) : "");
     Logger.getLogger(getClass()).info(userString);
     ClientResponse response =
         resource.accept(MediaType.APPLICATION_XML)
@@ -251,7 +251,7 @@ public class SecurityClientRest implements SecurityServiceRest {
             + "/security/user/update");
 
     String userString =
-        (user != null ? ConfigUtility.getStringForGraph(user) : null);
+        (user != null ? ConfigUtility.getStringForGraph(user) : "");
     Logger.getLogger(getClass()).info(userString);
     ClientResponse response =
         resource.accept(MediaType.APPLICATION_XML)

@@ -29,7 +29,7 @@ public class CompareRf2FullRf2SnapshotLoadersTest {
   /** The properties. */
   static Properties config;
 
-  /**  The server. */
+  /** The server. */
   static String server = "false";
 
   /**
@@ -72,7 +72,7 @@ public class CompareRf2FullRf2SnapshotLoadersTest {
     request.setGoals(Arrays.asList("clean", "install"));
     Properties p = new Properties();
     p.setProperty("run.config.ts", System.getProperty("run.config.ts"));
-    p.setProperty("server",server);
+    p.setProperty("server", server);
     request.setProperties(p);
     DefaultInvoker invoker = new DefaultInvoker();
     InvocationResult result = invoker.execute(request);
@@ -87,7 +87,7 @@ public class CompareRf2FullRf2SnapshotLoadersTest {
     request.setGoals(Arrays.asList("clean", "install"));
     p = new Properties();
     p.setProperty("run.config.ts", System.getProperty("run.config.ts"));
-    p.setProperty("server",server);
+    p.setProperty("server", server);
     request.setProperties(p);
     invoker = new DefaultInvoker();
     result = invoker.execute(request);
@@ -102,7 +102,7 @@ public class CompareRf2FullRf2SnapshotLoadersTest {
     request.setGoals(Arrays.asList("clean", "install"));
     p = new Properties();
     p.setProperty("run.config.ts", System.getProperty("run.config.ts"));
-    p.setProperty("server",server);
+    p.setProperty("server", server);
     p.setProperty("terminology", "SNOMEDCT");
     p.setProperty("version", "latest");
     p.setProperty("input.dir",
@@ -128,6 +128,31 @@ public class CompareRf2FullRf2SnapshotLoadersTest {
     fullStats.put("language",
         service.getAllLanguageRefSetMemberTerminologyIds("SNOMEDCT", "latest")
             .getCount());
+    fullStats.put("attributeValue", service
+        .getAllAttributeValueRefSetMemberTerminologyIds("SNOMEDCT", "latest")
+        .getCount());
+    fullStats.put(
+        "associationReference",
+        service.getAllAssociationReferenceRefSetMemberTerminologyIds(
+            "SNOMEDCT", "latest").getCount());
+    fullStats.put("complexMap", service
+        .getAllComplexMapRefSetMemberTerminologyIds("SNOMEDCT", "latest")
+        .getCount());
+    fullStats.put("descriptionType", service
+        .getAllDescriptionTypeRefSetMemberTerminologyIds("SNOMEDCT", "latest")
+        .getCount());
+    fullStats.put("moduleDependency", service
+        .getAllModuleDependencyRefSetMemberTerminologyIds("SNOMEDCT", "latest")
+        .getCount());
+    fullStats.put("refsetDescriptor", service
+        .getAllRefsetDescriptorRefSetMemberTerminologyIds("SNOMEDCT", "latest")
+        .getCount());
+    fullStats.put("simple",
+        service.getAllSimpleRefSetMemberTerminologyIds("SNOMEDCT", "latest")
+            .getCount());
+    fullStats.put("simpleMap", service
+        .getAllSimpleMapRefSetMemberTerminologyIds("SNOMEDCT", "latest")
+        .getCount());
     service.close();
     service.closeFactory();
     Logger.getLogger(getClass()).info("Full Stats = " + fullStats);
@@ -139,7 +164,7 @@ public class CompareRf2FullRf2SnapshotLoadersTest {
     request.setGoals(Arrays.asList("clean", "install"));
     p = new Properties();
     p.setProperty("run.config.ts", System.getProperty("run.config.ts"));
-    p.setProperty("server",server);
+    p.setProperty("server", server);
     request.setProperties(p);
     invoker = new DefaultInvoker();
     result = invoker.execute(request);
@@ -154,7 +179,7 @@ public class CompareRf2FullRf2SnapshotLoadersTest {
     request.setGoals(Arrays.asList("clean", "install"));
     p = new Properties();
     p.setProperty("run.config.ts", System.getProperty("run.config.ts"));
-    p.setProperty("server",server);
+    p.setProperty("server", server);
     request.setProperties(p);
     invoker = new DefaultInvoker();
     result = invoker.execute(request);
@@ -169,7 +194,7 @@ public class CompareRf2FullRf2SnapshotLoadersTest {
     request.setGoals(Arrays.asList("clean", "install"));
     p = new Properties();
     p.setProperty("run.config.ts", System.getProperty("run.config.ts"));
-    p.setProperty("server",server);
+    p.setProperty("server", server);
     p.setProperty("terminology", "SNOMEDCT");
     p.setProperty("version", "latest");
     p.setProperty("input.dir",
@@ -195,6 +220,31 @@ public class CompareRf2FullRf2SnapshotLoadersTest {
     snapStats.put("language",
         service.getAllLanguageRefSetMemberTerminologyIds("SNOMEDCT", "latest")
             .getCount());
+    snapStats.put("attributeValue", service
+        .getAllAttributeValueRefSetMemberTerminologyIds("SNOMEDCT", "latest")
+        .getCount());
+    snapStats.put(
+        "associationReference",
+        service.getAllAssociationReferenceRefSetMemberTerminologyIds(
+            "SNOMEDCT", "latest").getCount());
+    snapStats.put("complexMap", service
+        .getAllComplexMapRefSetMemberTerminologyIds("SNOMEDCT", "latest")
+        .getCount());
+    snapStats.put("descriptionType", service
+        .getAllDescriptionTypeRefSetMemberTerminologyIds("SNOMEDCT", "latest")
+        .getCount());
+    snapStats.put("moduleDependency", service
+        .getAllModuleDependencyRefSetMemberTerminologyIds("SNOMEDCT", "latest")
+        .getCount());
+    snapStats.put("refsetDescriptor", service
+        .getAllRefsetDescriptorRefSetMemberTerminologyIds("SNOMEDCT", "latest")
+        .getCount());
+    snapStats.put("simple",
+        service.getAllSimpleRefSetMemberTerminologyIds("SNOMEDCT", "latest")
+            .getCount());
+    snapStats.put("simpleMap", service
+        .getAllSimpleMapRefSetMemberTerminologyIds("SNOMEDCT", "latest")
+        .getCount());
     service.close();
     service.closeFactory();
     Logger.getLogger(getClass()).info("Snap Stats = " + fullStats);
@@ -214,7 +264,7 @@ public class CompareRf2FullRf2SnapshotLoadersTest {
     request.setGoals(Arrays.asList("clean", "install"));
     p = new Properties();
     p.setProperty("run.config.ts", System.getProperty("run.config.ts"));
-    p.setProperty("server",server);
+    p.setProperty("server", server);
     request.setProperties(p);
     invoker = new DefaultInvoker();
     result = invoker.execute(request);

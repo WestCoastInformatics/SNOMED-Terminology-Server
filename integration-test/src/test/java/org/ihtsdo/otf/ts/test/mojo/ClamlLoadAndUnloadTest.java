@@ -107,6 +107,7 @@ public class ClamlLoadAndUnloadTest {
     Assert.assertEquals(
         service.getAllConcepts("ICD9CM", "2013").getCount(), 0);
     service.close();
+    service.closeFactory();
 
     // Load ClaML
     request = new DefaultInvocationRequest();
@@ -131,12 +132,13 @@ public class ClamlLoadAndUnloadTest {
     service = new ContentServiceJpa();
     Assert.assertEquals(
         service.getAllConcepts("ICD9CM", "2013").getCount(), 17770);
-    service.close();
+    service.closeFactory();
 
     // Verify release info
     HistoryService historyService = new HistoryServiceJpa();
     Assert.assertNotNull(historyService.getReleaseInfo("ICD9CM", "2013"));
     historyService.close();
+    historyService.closeFactory();
 
     // Add ICD9CM project
     request = new DefaultInvocationRequest();
@@ -175,11 +177,13 @@ public class ClamlLoadAndUnloadTest {
     }
     Assert.assertTrue(found);
     projectService.close();
+    projectService.closeFactory();
 
     // Verify admin user
     SecurityService securityService = new SecurityServiceJpa();
     Assert.assertNotNull(securityService.getUser("admin"));
     securityService.close();
+    securityService.closeFactory();
 
     // Start ICD9CM editing cycle
     request = new DefaultInvocationRequest();
@@ -206,6 +210,7 @@ public class ClamlLoadAndUnloadTest {
     Assert.assertTrue(historyService.getReleaseInfo("ICD9CM", "20150101")
         .isPlanned());
     historyService.close();
+    historyService.closeFactory();
 
     // Remove terminology
     request = new DefaultInvocationRequest();

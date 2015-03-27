@@ -109,6 +109,7 @@ public class Rf2SnapshotAndDeltaLoadAndUnloadTest {
     Assert.assertEquals(
         service.getAllConcepts("SNOMEDCT", "latest").getCount(), 0);
     service.close();
+    service.closeFactory();
 
     // Load RF2 snapshot
     request = new DefaultInvocationRequest();
@@ -134,11 +135,13 @@ public class Rf2SnapshotAndDeltaLoadAndUnloadTest {
     Assert.assertEquals(
         service.getAllConcepts("SNOMEDCT", "latest").getCount(), 10293);
     service.close();
+    service.closeFactory();
 
     // Verify release info
     HistoryService historyService = new HistoryServiceJpa();
     Assert.assertNotNull(historyService.getReleaseInfo("SNOMEDCT", "20140731"));
     historyService.close();
+    historyService.closeFactory();
 
     // Load RF2 delta
     request = new DefaultInvocationRequest();
@@ -166,6 +169,7 @@ public class Rf2SnapshotAndDeltaLoadAndUnloadTest {
     Assert.assertTrue(service.getSingleConcept("99810001005", "SNOMEDCT",
         "latest").isActive());
     service.close();
+    service.closeFactory();
 
     // Verify release info
     historyService = new HistoryServiceJpa();
@@ -173,6 +177,7 @@ public class Rf2SnapshotAndDeltaLoadAndUnloadTest {
     Assert.assertTrue(historyService.getReleaseInfo("SNOMEDCT", "20150131")
         .isPublished());
     historyService.close();
+    historyService.closeFactory();
 
     // Load RF2 delta
     request = new DefaultInvocationRequest();
@@ -200,12 +205,15 @@ public class Rf2SnapshotAndDeltaLoadAndUnloadTest {
     Assert.assertFalse(service.getSingleConcept("99810001005", "SNOMEDCT",
         "latest").isActive());
     service.close();
+    service.closeFactory();
+
     // Verify release info
     historyService = new HistoryServiceJpa();
     Assert.assertNotNull(historyService.getReleaseInfo("SNOMEDCT", "20150731"));
     Assert.assertTrue(historyService.getReleaseInfo("SNOMEDCT", "20150731")
         .isPublished());
     historyService.close();
+    historyService.closeFactory();
 
     // Add a SNOMEDCT project
     request = new DefaultInvocationRequest();
@@ -244,11 +252,13 @@ public class Rf2SnapshotAndDeltaLoadAndUnloadTest {
     }
     Assert.assertTrue(found);
     projectService.close();
+    projectService.closeFactory();
 
     // Verify admin user
     SecurityService securityService = new SecurityServiceJpa();
     Assert.assertNotNull(securityService.getUser("admin"));
     securityService.close();
+    securityService.closeFactory();
 
     // Start SNOMEDCT editing cycle
 
@@ -279,6 +289,7 @@ public class Rf2SnapshotAndDeltaLoadAndUnloadTest {
     Assert.assertTrue(historyService.getReleaseInfo("SNOMEDCT", "20150131")
         .isPlanned());
     historyService.close();
+    historyService.closeFactory();
 
     // Remove terminology
     request = new DefaultInvocationRequest();

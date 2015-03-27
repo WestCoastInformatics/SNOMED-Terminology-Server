@@ -440,6 +440,7 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
       List<Concept> concepts = query.getResultList();
       ConceptList conceptList = new ConceptListJpa();
       conceptList.setObjects(concepts);
+      conceptList.setTotalCount(concepts.size());
       return conceptList;
     } catch (NoResultException e) {
       return null;
