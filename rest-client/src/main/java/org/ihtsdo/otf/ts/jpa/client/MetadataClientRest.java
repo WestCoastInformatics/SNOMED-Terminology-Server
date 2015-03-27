@@ -63,38 +63,6 @@ public class MetadataClientRest implements MetadataServiceRest {
   /*
    * (non-Javadoc)
    * 
-   * @see
-   * org.ihtsdo.otf.mapping.rest.MetadataServiceRest#getAllMetadata(java.lang
-   * .String, java.lang.String)
-   */
-  @Override
-  public KeyValuePairLists getAllMetadata(String terminology, String authToken)
-    throws Exception {
-    Client client = Client.create();
-    WebResource resource =
-        client.resource(config.getProperty("base.url")
-            + "/metadata/all/terminology/id/" + terminology);
-    ClientResponse response =
-        resource.accept(MediaType.APPLICATION_XML)
-            .header("Authorization", authToken).get(ClientResponse.class);
-
-    String resultString = response.getEntity(String.class);
-    if (response.getStatusInfo().getFamily() == Family.SUCCESSFUL) {
-      Logger.getLogger(getClass()).debug(resultString);
-    } else {
-      throw new Exception(resultString);
-    }
-
-    // converting to object
-    KeyValuePairLists result =
-        (KeyValuePairLists) ConfigUtility.getGraphForString(resultString,
-            KeyValuePairLists.class);
-    return result;
-  }
-
-  /*
-   * (non-Javadoc)
-   * 
    * @see org.ihtsdo.otf.mapping.rest.MetadataServiceRest#
    * getAllTerminologiesLatestVersions(java.lang.String)
    */

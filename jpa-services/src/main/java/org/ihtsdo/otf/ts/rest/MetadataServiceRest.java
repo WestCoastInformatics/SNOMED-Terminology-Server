@@ -21,18 +21,6 @@ public interface MetadataServiceRest {
     String authToken) throws Exception;
 
   /**
-   * Returns all metadata for the latest version of a terminology.
-   * 
-   * @param terminology the terminology
-   * @param authToken
-   * @return the metadata
-   * @throws Exception if anything goes wrong
-   */
-
-  public KeyValuePairLists getAllMetadata(String terminology, String authToken)
-    throws Exception;
-
-  /**
    * Returns all terminologies with only their latest version
    * @param authToken
    * @return the all terminologies latest versions

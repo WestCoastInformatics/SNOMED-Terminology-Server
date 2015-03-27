@@ -448,8 +448,6 @@ public class Rf2SnapshotLoaderAlgorithm extends HistoryServiceJpa implements
    * 
    * @throws Exception the exception
    */
-
-  @SuppressWarnings("resource")
   private void loadConcepts() throws Exception {
 
     String line = "";

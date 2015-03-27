@@ -99,6 +99,7 @@ public class MetadataServiceRestImpl extends RootServiceRestImpl implements
    * @return the metadata helper
    * @throws Exception the exception
    */
+  @SuppressWarnings("static-method")
   private KeyValuePairLists getMetadataHelper(String terminology, String version)
     throws Exception {
     MetadataService metadataService = new MetadataServiceJpa();
@@ -142,50 +143,6 @@ public class MetadataServiceRestImpl extends RootServiceRestImpl implements
       keyValuePairLists.addKeyValuePairList(keyValuePairList);
     }
     return keyValuePairLists;
-  }
-
-  /*
-   * (non-Javadoc)
-   * 
-   * @see
-   * org.ihtsdo.otf.mapping.rest.MetadataServiceRest#getAllMetadata(java.lang
-   * .String, java.lang.String)
-   */
-  @Override
-  @GET
-  @Path("/all/terminology/id/{terminology}")
-  @ApiOperation(value = "Get all metadata for the the latest version of a terminology.", notes = "Returns all metadata for the latest version of a specified terminology.", response = KeyValuePairLists.class)
-  public KeyValuePairLists getAllMetadata(
-    @ApiParam(value = "Terminology name, e.g. SNOMEDCT", required = true) @PathParam("terminology") String terminology,
-    @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken)
-    throws Exception {
-
-    Logger.getLogger(getClass()).info(
-        "RESTful call (Metadata): /all/" + terminology);
-
-    String user = "";
-
-    try {
-      // authorize call
-      user = securityService.getUsernameForToken(authToken);
-      UserRole role = securityService.getApplicationRoleForToken(authToken);
-      if (!role.hasPrivilegesOf(UserRole.VIEWER))
-        throw new WebApplicationException(Response.status(401)
-            .entity("User does not have permissions to retrieve all metadata.")
-            .build());
-
-      MetadataService metadataService = new MetadataServiceJpa();
-      String version = metadataService.getLatestVersion(terminology);
-      metadataService.close();
-      KeyValuePairLists keyValuePairLists =
-          getMetadataHelper(terminology, version);
-
-      metadataService.close();
-      return keyValuePairLists;
-    } catch (Exception e) {
-      handleException(e, "trying to retrieve all metadata", user);
-      return null;
-    }
   }
 
   /*
