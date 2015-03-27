@@ -68,7 +68,7 @@ public class MetadataServiceRestImpl extends RootServiceRestImpl implements
     throws Exception {
 
     Logger.getLogger(getClass()).info(
-        "RESTful call (Metadata): /" + terminology + "/" + version);
+        "RESTful call (Metadata): /all/terminology/id/" + terminology + "/" + version);
 
     String user = "";
     MetadataService metadataService = new MetadataServiceJpa();
