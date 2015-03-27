@@ -187,7 +187,7 @@ public class ProjectJpa implements Project {
   @XmlID
   @Override
   public String getObjectId() {
-    return id.toString();
+    return (id == null ? "" : id.toString());
   }
 
   /**

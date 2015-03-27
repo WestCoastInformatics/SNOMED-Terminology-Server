@@ -71,8 +71,8 @@ public class ProjectServiceRestTest {
     testPassword = properties.getProperty("viewer.password");
 
     // test run.config.ts has admin user
-    testUser = properties.getProperty("admin.user");
-    testPassword = properties.getProperty("admin.password");
+    adminUser = properties.getProperty("admin.user");
+    adminPassword = properties.getProperty("admin.password");
     
     if (testUser == null || testUser.isEmpty()) {
       throw new Exception("Test prerequisite: viewer.user must be specified");
