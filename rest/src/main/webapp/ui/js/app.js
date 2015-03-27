@@ -178,7 +178,7 @@ tsApp
         }
 
         $scope.logout = function() {
-
+          console.log("logout - " + $scope.authToken.replace(/"/g, ""));
           if ($scope.authToken == null) {
             alert("You are not currently logged in");
             return;
@@ -186,8 +186,8 @@ tsApp
           $scope.glassPane++;
           // logout
           $http({
-            url : securityUrl + 'logout/' + $scope.authToken,
-            method : "POST",
+            url : securityUrl + 'logout/' + $scope.authToken.replace(/"/g, ""),
+            method : "GET",
             headers : {
               "Content-Type" : "text/plain"
             }
