@@ -314,12 +314,18 @@ public class ProjectServiceJpa extends RootServiceJpa implements ProjectService 
    */
   @SuppressWarnings("static-method")
   private void handleLazyInitialization(Project project) {
-    project.getActionWorkflowStatusValues().size();
-    project.getAdministrators().size();
-    project.getAuthors().size();
-    project.getLeads().size();
-    project.getScopeExcludesConcepts().size();
-    project.getScopeConcepts().size();
+    if (project.getActionWorkflowStatusValues() != null)
+    	project.getAdministrators().size();
+    if (project.getAdministrators() != null)
+    	project.getAdministrators().size();
+    if (project.getAuthors() != null)
+    	project.getAuthors().size();
+    if (project.getLeads() != null)
+    	project.getLeads().size();
+    if (project.getScopeExcludesConcepts() != null)
+    	project.getScopeExcludesConcepts().size();
+    if (project.getScopeConcepts() != null)
+    	project.getScopeConcepts().size();
   }
 
   /**

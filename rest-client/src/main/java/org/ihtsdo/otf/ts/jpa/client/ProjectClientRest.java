@@ -147,7 +147,7 @@ public class ProjectClientRest implements ProjectServiceRest {
         client.resource(config.getProperty("base.url") + "/project/id/"
             + projectId + "/scope");
     String pfsString =
-        (pfs != null ? ConfigUtility.getStringForGraph(pfs) : null);
+        (pfs != null ? ConfigUtility.getStringForGraph(pfs) : "");
     Logger.getLogger(getClass()).debug(pfsString);
     ClientResponse response =
         resource.accept(MediaType.APPLICATION_XML)

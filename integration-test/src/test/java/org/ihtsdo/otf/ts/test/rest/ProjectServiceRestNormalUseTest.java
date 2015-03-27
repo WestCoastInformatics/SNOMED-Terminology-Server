@@ -3,6 +3,8 @@
  */
 package org.ihtsdo.otf.ts.test.rest;
 
+import static org.junit.Assert.fail;
+
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
@@ -48,6 +50,10 @@ public class ProjectServiceRestNormalUseTest extends ProjectServiceRestTest {
     viewerAuthToken = securityService.authenticate(testUser, testPassword);
     adminAuthToken = securityService.authenticate(adminUser, adminPassword);
 
+    for (Project p : projectService.getProjects(adminAuthToken).getObjects()) {
+        if (!p.getDescription().equals("Sample project."))
+  	    projectService.removeProject(p.getId(), adminAuthToken);
+      }
   }
 
   /**
@@ -94,9 +100,13 @@ public class ProjectServiceRestNormalUseTest extends ProjectServiceRestTest {
     // Remove the project
     projectService.removeProject(project2.getId(), adminAuthToken);
 
-    // TEST: verify that it is removed (call should fail)
-    project3 = projectService.getProject(project2.getId(), adminAuthToken);
-    Assert.assertNull(project3);
+    // TEST: verify that it is removed (call should return null)
+    try {
+      project3 = projectService.getProject(project2.getId(), adminAuthToken);
+      fail("Cannot retrieve a removed project.");
+    } catch (Exception e) {
+      // do nothing
+    }
   }
 
   /**
@@ -122,13 +132,13 @@ public class ProjectServiceRestNormalUseTest extends ProjectServiceRestTest {
 	    project.setName("Sample");
 	    project.setTerminology("SNOMEDCT");
 	    project.setTerminologyVersion("latest");
-	    projectService.addProject(project, adminAuthToken);
+	    ProjectJpa project2 = new ProjectJpa(project);
+	    project = (ProjectJpa)projectService.addProject(project, adminAuthToken);
 	    
 	 // Add a second project
-	    ProjectJpa project2 = new ProjectJpa(project);
 	    project2.setName("Sample 2");
 	    project2.setDescription("Sample 2");
-	    projectService.addProject(project2, adminAuthToken);
+	    project2 = (ProjectJpa)projectService.addProject(project2, adminAuthToken);
 	    
 	 // Get the projects
 	    ProjectList projectList = projectService.getProjects(adminAuthToken);
@@ -142,7 +152,7 @@ public class ProjectServiceRestNormalUseTest extends ProjectServiceRestTest {
 	    Assert.assertTrue(projectList.getCount() == projectCount - 1);
 	    
 	 // remove second project
-	    projectService.removeProject(project.getId(), adminAuthToken);
+	    projectService.removeProject(project2.getId(), adminAuthToken);
 	    projectList = projectService.getProjects(adminAuthToken);
 	    Assert.assertTrue(projectList.getCount() == projectCount - 2); 
 	    
@@ -180,7 +190,7 @@ public class ProjectServiceRestNormalUseTest extends ProjectServiceRestTest {
         Collections.sort(resultList.getObjects(), new Comparator<SearchResult>() {
             @Override
             public int compare(SearchResult o1, SearchResult o2) {
-              return o1.toString().compareTo(o2.toString());
+              return o1.getValue().compareTo(o2.getValue());
             }
           });
   }
@@ -193,7 +203,7 @@ public class ProjectServiceRestNormalUseTest extends ProjectServiceRestTest {
   @Override
   @After
   public void teardown() throws Exception {
-
+    
     // logout
     securityService.logout(viewerAuthToken);
     securityService.logout(adminAuthToken);
