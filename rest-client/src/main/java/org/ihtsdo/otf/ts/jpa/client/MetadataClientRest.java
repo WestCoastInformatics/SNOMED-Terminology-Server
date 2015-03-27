@@ -32,52 +32,16 @@ public class MetadataClientRest implements MetadataServiceRest {
     this.config = config;
   }
 
-  /*
-   * (non-Javadoc)
-   * 
-   * @see
-   * org.ihtsdo.otf.mapping.rest.MetadataServiceRest#getMetadata(java.lang.String
-   * , java.lang.String, java.lang.String)
+  /* (non-Javadoc)
+   * @see org.ihtsdo.otf.ts.rest.MetadataServiceRest#getAllMetadata(java.lang.String, java.lang.String, java.lang.String)
    */
   @Override
-  public KeyValuePairLists getMetadata(String terminology, String version,
+  public KeyValuePairLists getAllMetadata(String terminology, String version,
     String authToken) throws Exception {
     Client client = Client.create();
     WebResource resource =
         client.resource(config.getProperty("base.url")
-            + "/metadata/terminology/id/" + terminology + "/" + version);
-    ClientResponse response =
-        resource.accept(MediaType.APPLICATION_XML)
-            .header("Authorization", authToken).get(ClientResponse.class);
-
-    String resultString = response.getEntity(String.class);
-    if (response.getStatusInfo().getFamily() == Family.SUCCESSFUL) {
-      Logger.getLogger(getClass()).debug(resultString);
-    } else {
-      throw new Exception(resultString);
-    }
-
-    // converting to object
-    KeyValuePairLists result =
-        (KeyValuePairLists) ConfigUtility.getGraphForString(resultString,
-            KeyValuePairLists.class);
-    return result;
-  }
-
-  /*
-   * (non-Javadoc)
-   * 
-   * @see
-   * org.ihtsdo.otf.mapping.rest.MetadataServiceRest#getAllMetadata(java.lang
-   * .String, java.lang.String)
-   */
-  @Override
-  public KeyValuePairLists getAllMetadata(String terminology, String authToken)
-    throws Exception {
-    Client client = Client.create();
-    WebResource resource =
-        client.resource(config.getProperty("base.url")
-            + "/metadata/terminology/id/" + terminology + "/latest");
+            + "/metadata/all/terminology/id/" + terminology + "/" + version);
     ClientResponse response =
         resource.accept(MediaType.APPLICATION_XML)
             .header("Authorization", authToken).get(ClientResponse.class);

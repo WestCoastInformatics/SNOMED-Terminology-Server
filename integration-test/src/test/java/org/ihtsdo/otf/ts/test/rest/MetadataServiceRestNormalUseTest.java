@@ -20,7 +20,7 @@ import org.junit.Test;
  */
 public class MetadataServiceRestNormalUseTest extends MetadataServiceRestTest {
 
-  /**  The auth token. */
+  /** The auth token. */
   private static String authToken;
 
   /**
@@ -126,16 +126,15 @@ public class MetadataServiceRestNormalUseTest extends MetadataServiceRestTest {
   @Test
   public void testNormalUseRestMetadata003() throws Exception {
 
-    Logger.getLogger(getClass()).info(
-        "Running testNormalUseRestMetadata003");
+    Logger.getLogger(getClass()).info("Running testNormalUseRestMetadata003");
 
     // test SNOMED metadata
     assertTrue(testSnomedMetadata(metadataService.getAllMetadata("SNOMEDCT",
-        authToken)));
+        "latest", authToken)));
 
     // test ICD9CM metadata
     assertTrue(testIcd9Metadata(metadataService.getAllMetadata("ICD9CM",
-        authToken)));
+        "2013", authToken)));
   }
 
   /**
@@ -145,17 +144,7 @@ public class MetadataServiceRestNormalUseTest extends MetadataServiceRestTest {
    */
   @Test
   public void testNormalUseRestMetadata004() throws Exception {
-
-    Logger.getLogger(getClass()).info(
-        "Running testNormalUseRestMetadata004");
-
-    // test SNOMED metadata
-    assertTrue(testSnomedMetadata(metadataService.getAllMetadata("SNOMEDCT",
-        authToken)));
-
-    // test ICD9CM metadata
-    assertTrue(testIcd9Metadata(metadataService.getAllMetadata("ICD9CM",
-        authToken)));
+    // n/a - this method was removed
   }
 
   /**
@@ -605,8 +594,8 @@ public class MetadataServiceRestNormalUseTest extends MetadataServiceRestTest {
           break;
         case Hierarchical_Relationship_Types:
           expectedSize = 1;
-          
-       // if all values not in the characteristic type descendant list,
+
+          // if all values not in the characteristic type descendant list,
           // decrement success counter
           pairsNotMatched = new HashSet<>();
           for (KeyValuePair pair : keyValuePairList.getKeyValuePairList()) {

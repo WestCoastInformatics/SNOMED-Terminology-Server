@@ -7,6 +7,7 @@ import org.ihtsdo.otf.ts.User;
 import org.ihtsdo.otf.ts.helpers.CopyConstructorTester;
 import org.ihtsdo.otf.ts.helpers.EqualsHashcodeTester;
 import org.ihtsdo.otf.ts.helpers.GetterSetterTester;
+import org.ihtsdo.otf.ts.helpers.IndexedFieldTester;
 import org.ihtsdo.otf.ts.helpers.NullableFieldTester;
 import org.ihtsdo.otf.ts.helpers.XmlSerializationTester;
 import org.ihtsdo.otf.ts.jpa.UserJpa;
@@ -113,6 +114,29 @@ public class ModelUnit003Test {
     tester.include("email");
     tester.include("applicationRole");
     assertTrue(tester.testNotNullFields());
+  }
+
+  /**
+   * Test field indexing.
+   *
+   * @throws Exception the exception
+   */
+  @Test
+  public void testModelIndexedFields003() throws Exception {
+    Logger.getLogger(getClass()).debug("TEST testModelIndexedFields003");
+
+    // Test analyzed fields
+    IndexedFieldTester tester = new IndexedFieldTester(object);
+    tester.include("name");
+    assertTrue(tester.testAnalyzedIndexedFields());
+
+    // Test non analyzed fields
+    assertTrue(tester.testAnalyzedIndexedFields());
+    tester = new IndexedFieldTester(object);
+    tester.include("userName");
+    tester.include("email");
+    assertTrue(tester.testNotAnalyzedIndexedFields());
+
   }
 
   /**

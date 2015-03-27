@@ -17,20 +17,8 @@ public interface MetadataServiceRest {
    * @return the all metadata
    * @throws Exception if anything goes wrong
    */
-  public KeyValuePairLists getMetadata(String terminology, String version,
+  public KeyValuePairLists getAllMetadata(String terminology, String version,
     String authToken) throws Exception;
-
-  /**
-   * Returns all metadata for the latest version.
-   * 
-   * @param terminology the terminology
-   * @param authToken
-   * @return the metadata
-   * @throws Exception if anything goes wrong
-   */
-
-  public KeyValuePairLists getAllMetadata(String terminology, String authToken)
-    throws Exception;
 
   /**
    * Returns all terminologies with only their latest version

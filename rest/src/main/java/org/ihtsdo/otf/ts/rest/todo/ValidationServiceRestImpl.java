@@ -30,10 +30,10 @@ import com.wordnik.swagger.annotations.ApiParam;
 @Path("/validation")
 @Api(value = "/validation", description = "Operations providing content validation.")
 @Consumes({
-  MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML
+    MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML
 })
 @Produces({
-  MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML
+    MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML
 })
 public class ValidationServiceRestImpl extends RootServiceRestImpl implements
     ValidationServiceRest {
@@ -88,6 +88,8 @@ public class ValidationServiceRestImpl extends RootServiceRestImpl implements
       handleException(e,
           "trying to validate the concept " + concept.getTerminologyId(), user);
       return null;
+    } finally {
+      securityService.close();
     }
 
   }

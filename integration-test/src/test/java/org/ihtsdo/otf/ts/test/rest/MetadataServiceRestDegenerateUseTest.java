@@ -75,7 +75,7 @@ public class MetadataServiceRestDegenerateUseTest extends
     
     // test bad authorization
     try {
-      metadataService.getMetadata("SNOMEDCT", "latest", "InvalidAuthToken");
+      metadataService.getAllMetadata("SNOMEDCT", "latest", "InvalidAuthToken");
       fail("Getting metadata for terminology and version without authorization token did not throw expected exception.");
     } catch (Exception e) {
       // do nothing
@@ -83,7 +83,7 @@ public class MetadataServiceRestDegenerateUseTest extends
     
     // test bad terminology version
     try {
-      metadataService.getMetadata("SNOMEDCT",  "InvalidVersion",  authToken);
+      metadataService.getAllMetadata("SNOMEDCT",  "InvalidVersion",  authToken);
       fail("Getting metadata for existing terminology with invalid version did not throw expected exception");
     } catch (Exception e) {
       // do nothing
@@ -91,7 +91,7 @@ public class MetadataServiceRestDegenerateUseTest extends
     
     // test bad terminology
     try {
-      metadataService.getMetadata("InvalidTerminology",  "InvalidVersion",  authToken);
+      metadataService.getAllMetadata("InvalidTerminology",  "InvalidVersion",  authToken);
       fail("Getting metadata for non-existent terminology with invalid version did not throw expected exception");
     } catch (Exception e) {
       // do nothing
@@ -108,21 +108,7 @@ public class MetadataServiceRestDegenerateUseTest extends
   @Test
   public void testDegenerateUseRestMetadata004() throws Exception {
 
- // test bad authorization
-    try {
-      metadataService.getAllMetadata("SNOMEDCT", "Invalid token");
-      fail("Getting metadata for terminology and version without authorization token did not throw expected exception.");
-    } catch (Exception e) {
-      // do nothing
-    }
-    
-    // test bad terminology
-    try {
-      metadataService.getAllMetadata("InvalidTerminology", authToken);
-      fail("Getting metadata for non-existent terminology with invalid version did not throw expected exception");
-    } catch (Exception e) {
-      // do nothing
-    }
+     // n/a - this method was removed
   }
 
   /**

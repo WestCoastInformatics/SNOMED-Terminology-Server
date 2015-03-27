@@ -6,6 +6,7 @@ import org.apache.log4j.Logger;
 import org.ihtsdo.otf.ts.helpers.CopyConstructorTester;
 import org.ihtsdo.otf.ts.helpers.EqualsHashcodeTester;
 import org.ihtsdo.otf.ts.helpers.GetterSetterTester;
+import org.ihtsdo.otf.ts.helpers.IndexedFieldTester;
 import org.ihtsdo.otf.ts.helpers.NullableFieldTester;
 import org.ihtsdo.otf.ts.helpers.XmlSerializationTester;
 import org.ihtsdo.otf.ts.rf2.AssociationReferenceConceptRefSetMember;
@@ -234,7 +235,38 @@ public class ModelUnit007Test {
 
     assertTrue(tester.testNotNullFields());
   }
-  
+
+  /**
+   * Test field indexing.
+   *
+   * @throws Exception the exception
+   */
+  @Test
+  public void testModelIndexedFields007() throws Exception {
+    Logger.getLogger(getClass()).debug("TEST testModelIndexedFields007");
+
+    // Test analyzed fields
+    IndexedFieldTester tester = new IndexedFieldTester(object);
+    tester.include("label");
+    tester.include("defaultPreferredName");
+    assertTrue(tester.testAnalyzedIndexedFields());
+
+    // Test non analyzed fields
+    assertTrue(tester.testAnalyzedIndexedFields());
+    tester = new IndexedFieldTester(object);
+    tester.include("effectiveTime");
+    tester.include("lastModified");
+    tester.include("lastModifiedBy");
+    tester.include("moduleId");
+    tester.include("terminologyId");
+    tester.include("terminology");
+    tester.include("terminologyVersion");
+    tester.include("labelSort");
+    tester.include("defaultPreferredNameSort");
+    
+    assertTrue(tester.testNotAnalyzedIndexedFields());
+
+  }
   /**
    * Teardown.
    */

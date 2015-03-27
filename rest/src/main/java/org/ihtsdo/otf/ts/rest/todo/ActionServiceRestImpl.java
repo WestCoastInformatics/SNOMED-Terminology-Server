@@ -67,7 +67,7 @@ public class ActionServiceRestImpl extends RootServiceRestImpl implements
   @ApiOperation(value = "Configure service for a session", notes = "Takes configuration information and returns a reusable session token.", response = String.class)
   public String configureActionService(
     @ApiParam(value = "Project, e.g. the result of a content service get project call", required = true) ProjectJpa project,
-    @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken) {
+    @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken) throws Exception {
 
     Logger.getLogger(getClass()).info(
         "RESTful call (Action): /configure");
@@ -90,6 +90,8 @@ public class ActionServiceRestImpl extends RootServiceRestImpl implements
     } catch (Exception e) {
       handleException(e, "trying to configure action service");
       return null;
+    } finally {
+      securityService.close();
     }
   }
 
@@ -99,7 +101,7 @@ public class ActionServiceRestImpl extends RootServiceRestImpl implements
   @ApiOperation(value = "Clear resources for a session", notes = "Clears all resources for the specified session token.")
   public void clear(
     @ApiParam(value = "Session token, e.g. value from /action/configure", required = true) @HeaderParam("sessionToken") String sessionToken,
-    @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken) {
+    @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken) throws Exception {
 
     Logger.getLogger(getClass()).info(
         "RESTful call (Action): /clear/" + sessionToken);
@@ -120,6 +122,8 @@ public class ActionServiceRestImpl extends RootServiceRestImpl implements
       actionService.close();
     } catch (Exception e) {
       handleException(e, "trying to clear resources");
+    } finally {
+      securityService.close();
     }
   }
 
@@ -135,7 +139,7 @@ public class ActionServiceRestImpl extends RootServiceRestImpl implements
   @ApiOperation(value = "Get session progress", notes = "Gets the progress for the current activity for the specified session token.", response = Float.class)
   public float getProgress(
     @ApiParam(value = "Session token, e.g. value from /action/configure", required = true) @HeaderParam("sessionToken") String sessionToken,
-    @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken) {
+    @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken) throws Exception {
 
     Logger.getLogger(getClass()).info(
         "RESTful call (Action): /progress/" + sessionToken);
@@ -155,6 +159,8 @@ public class ActionServiceRestImpl extends RootServiceRestImpl implements
       handleException(e, "trying to get progress for current operation  for "
           + sessionToken);
       return -1;
+    } finally {
+      securityService.close();
     }
   }
 
@@ -170,7 +176,7 @@ public class ActionServiceRestImpl extends RootServiceRestImpl implements
   @ApiOperation(value = "Cancel session operation", notes = "Cancels the current activity for the specified session token.")
   public void cancel(
     @ApiParam(value = "Session token, e.g. value from /action/configure", required = true) @HeaderParam("sessionToken") String sessionToken,
-    @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken) {
+    @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken) throws Exception {
 
     Logger.getLogger(getClass()).info(
         "RESTful call (Action): /cancel/" + sessionToken);
@@ -188,6 +194,8 @@ public class ActionServiceRestImpl extends RootServiceRestImpl implements
     } catch (Exception e) {
       handleException(e, "trying to cancel current operation  for "
           + sessionToken);
+    } finally {
+      securityService.close();
     }
   }
 
@@ -204,7 +212,7 @@ public class ActionServiceRestImpl extends RootServiceRestImpl implements
   @ApiOperation(value = "Prepare classification data", notes = "Prepares classification data for the specified session token.")
   public void prepareToClassify(
     @ApiParam(value = "Session token, e.g. value from /action/configure", required = true) @HeaderParam("sessionToken") String sessionToken,
-    @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken) {
+    @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken) throws Exception {
 
     Logger.getLogger(getClass()).info(
         "RESTful call (Action): /classify/" + sessionToken + "/prepare");
@@ -225,6 +233,8 @@ public class ActionServiceRestImpl extends RootServiceRestImpl implements
       actionService.close();
     } catch (Exception e) {
       handleException(e, "trying to prepare to classify for " + sessionToken);
+    } finally {
+      securityService.close();
     }
   }
 
@@ -240,7 +250,7 @@ public class ActionServiceRestImpl extends RootServiceRestImpl implements
   @ApiOperation(value = "Classification", notes = "Classifies data for the specified session token.")
   public void classify(
     @ApiParam(value = "Session token, e.g. value from /action/configure", required = true) @HeaderParam("sessionToken") String sessionToken,
-    @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken) {
+    @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken) throws Exception {
 
     Logger.getLogger(getClass()).info(
         "RESTful call (Action): /classify/" + sessionToken);
@@ -257,6 +267,8 @@ public class ActionServiceRestImpl extends RootServiceRestImpl implements
       actionService.close();
     } catch (Exception e) {
       handleException(e, "trying to classify for " + sessionToken);
+    } finally {
+      securityService.close();
     }
   }
 
@@ -273,7 +285,7 @@ public class ActionServiceRestImpl extends RootServiceRestImpl implements
   @ApiOperation(value = "Incremental classification", notes = "Incrementally classifies data for the specified session token.")
   public void incrementalClassify(
     @ApiParam(value = "Session token, e.g. value from /action/configure", required = true) @HeaderParam("sessionToken") String sessionToken,
-    @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken) {
+    @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken) throws Exception {
 
     Logger.getLogger(getClass()).info(
         "RESTful call (Action): /classify/" + sessionToken + "/incremental");
@@ -291,6 +303,8 @@ public class ActionServiceRestImpl extends RootServiceRestImpl implements
       actionService.close();
     } catch (Exception e) {
       handleException(e, "trying to incrementally classify for " + sessionToken);
+    } finally {
+      securityService.close();
     }
   }
 
@@ -307,7 +321,7 @@ public class ActionServiceRestImpl extends RootServiceRestImpl implements
   @ApiOperation(value = "Get classification equivalents", notes = "Gets classicifaction equivalencies for the specified session token.", response = KeyValuesMap.class)
   public KeyValuesMap getClassificationEquivalents(
     @ApiParam(value = "Session token, e.g. value from /action/configure", required = true) @HeaderParam("sessionToken") String sessionToken,
-    @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken) {
+    @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken) throws Exception {
 
     Logger.getLogger(getClass()).info(
         "RESTful call (Action): /classify/" + sessionToken + "/equivalents");
@@ -332,6 +346,8 @@ public class ActionServiceRestImpl extends RootServiceRestImpl implements
       handleException(e, "trying to get old inferred relationships for "
           + sessionToken);
       return null;
+    } finally {
+      securityService.close();
     }
   }
 
@@ -348,7 +364,7 @@ public class ActionServiceRestImpl extends RootServiceRestImpl implements
   @ApiOperation(value = "Get inferred relationships no longer active after classification", notes = "Gets inferred relationships no longer active after classification for the specified session token.", response = RelationshipList.class)
   public RelationshipList getOldInferredRelationships(
     @ApiParam(value = "Session token, e.g. value from /action/configure", required = true) @HeaderParam("sessionToken") String sessionToken,
-    @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken) {
+    @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken) throws Exception {
 
     Logger.getLogger(getClass()).info(
         "RESTful call (Action): /classify/" + sessionToken + "/old");
@@ -373,6 +389,8 @@ public class ActionServiceRestImpl extends RootServiceRestImpl implements
       handleException(e, "trying to get old inferred relationship for "
           + sessionToken);
       return null;
+    } finally {
+      securityService.close();
     }
   }
 
@@ -389,7 +407,7 @@ public class ActionServiceRestImpl extends RootServiceRestImpl implements
   @ApiOperation(value = "Get new inferred relationships after classification", notes = "Gets new inferred relationships after classification for the specified session token.", response = RelationshipList.class)
   public RelationshipList getNewInferredRelationships(
     @ApiParam(value = "Session token, e.g. value from /action/configure", required = true) @HeaderParam("sessionToken") String sessionToken,
-    @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken) {
+    @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken) throws Exception {
 
     Logger.getLogger(getClass()).info(
         "RESTful call (Action): /classify/" + sessionToken + "/new");
@@ -414,6 +432,8 @@ public class ActionServiceRestImpl extends RootServiceRestImpl implements
       handleException(e, "trying to get new inferred relationship for "
           + sessionToken);
       return null;
+    } finally {
+      securityService.close();
     }
   }
 
@@ -423,7 +443,7 @@ public class ActionServiceRestImpl extends RootServiceRestImpl implements
   @ApiOperation(value = "Retire inferred relationships no longer active after classification", notes = "Retires inferred relationships no longer active after classification for the specified session token.", response = RelationshipList.class)
   public void retireOldInferredRelationships(
     @ApiParam(value = "Session token, e.g. value from /action/configure", required = true) @HeaderParam("sessionToken") String sessionToken,
-    @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken) {
+    @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken) throws Exception {
 
     Logger.getLogger(getClass()).info(
         "RESTful call (Action): /classify/" + sessionToken + "/old/retire");
@@ -446,7 +466,8 @@ public class ActionServiceRestImpl extends RootServiceRestImpl implements
     } catch (Exception e) {
       handleException(e, "trying to get old inferred relationship for "
           + sessionToken);
-
+    } finally {
+      securityService.close();
     }
   }
 
@@ -463,7 +484,7 @@ public class ActionServiceRestImpl extends RootServiceRestImpl implements
   @ApiOperation(value = "Add new inferred relationships after classification", notes = "Adds new inferred relationships after classification for the specified session token.", response = RelationshipList.class)
   public void addNewInferredRelationships(
     @ApiParam(value = "Session token, e.g. value from /action/configure", required = true) @HeaderParam("sessionToken") String sessionToken,
-    @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken) {
+    @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken) throws Exception {
 
     Logger.getLogger(getClass()).info(
         "RESTful call (Action): /classify/" + sessionToken + "/new");
@@ -485,6 +506,8 @@ public class ActionServiceRestImpl extends RootServiceRestImpl implements
     } catch (Exception e) {
       handleException(e, "trying to get new inferred relationship for "
           + sessionToken);
+    } finally {
+      securityService.close();
     }
   }
 }

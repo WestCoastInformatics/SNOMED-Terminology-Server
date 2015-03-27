@@ -366,7 +366,7 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
   public ConceptList getConcepts(String terminologyId, String terminology,
     String version) throws Exception {
     Logger.getLogger(getClass()).debug(
-        "Content Service - get concept " + terminologyId + "/" + terminology
+        "Content Service - get concepts " + terminologyId + "/" + terminology
             + "/" + version);
     javax.persistence.Query query =
         manager

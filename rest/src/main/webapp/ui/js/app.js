@@ -119,7 +119,7 @@ tsApp
           $scope.glassPane++;
           $http(
             {
-              url : metadataUrl + 'terminology/id/' + $scope.terminology.name
+              url : metadataUrl + 'all/terminology/id/' + $scope.terminology.name
                 + '/' + $scope.terminology.version,
               method : "GET",
               headers : {
@@ -137,7 +137,6 @@ tsApp
 
         $scope.login = function(name, password) {
         
-          $scope.glassPane++;
 
           if (name == null) {
             alert("You must specify a user name");
@@ -148,6 +147,7 @@ tsApp
           }
 
           // login
+          $scope.glassPane++;
           console.debug("Login called - " + securityUrl + 'authenticate/' + name);
           $http({
             url : securityUrl + 'authenticate/' + name,
@@ -178,7 +178,7 @@ tsApp
         }
 
         $scope.logout = function() {
-
+          console.log("logout - " + $scope.authToken.replace(/"/g, ""));
           if ($scope.authToken == null) {
             alert("You are not currently logged in");
             return;
@@ -186,8 +186,8 @@ tsApp
           $scope.glassPane++;
           // logout
           $http({
-            url : securityUrl + 'logout/' + authToken,
-            method : "POST",
+            url : securityUrl + 'logout/' + $scope.authToken.replace(/"/g, ""),
+            method : "GET",
             headers : {
               "Content-Type" : "text/plain"
             }
