@@ -68,7 +68,8 @@ public class MetadataServiceRestImpl extends RootServiceRestImpl implements
     throws Exception {
 
     Logger.getLogger(getClass()).info(
-        "RESTful call (Metadata): /all/terminology/id/" + terminology + "/" + version);
+        "RESTful call (Metadata): /all/terminology/id/" + terminology + "/"
+            + version);
 
     String user = "";
     MetadataService metadataService = new MetadataServiceJpa();
@@ -88,6 +89,8 @@ public class MetadataServiceRestImpl extends RootServiceRestImpl implements
       metadataService.close();
       handleException(e, "trying to retrieve the metadata", user);
       return null;
+    } finally {
+      securityService.close();
     }
   }
 
@@ -191,6 +194,8 @@ public class MetadataServiceRestImpl extends RootServiceRestImpl implements
       handleException(e,
           "trying to retrieve the latest versions of all terminologies", user);
       return null;
+    } finally {
+      securityService.close();
     }
   }
 
@@ -246,6 +251,8 @@ public class MetadataServiceRestImpl extends RootServiceRestImpl implements
       handleException(e,
           "trying to retrieve the versions of all terminologies", user);
       return null;
+    } finally {
+      securityService.close();
     }
   }
 

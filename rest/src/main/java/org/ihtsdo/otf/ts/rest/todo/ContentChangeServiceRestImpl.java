@@ -49,10 +49,10 @@ import com.wordnik.swagger.annotations.ApiParam;
 @Path("/edit")
 @Api(value = "/edit", description = "Operations to edit content for a terminology.")
 @Consumes({
-  MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML
+    MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML
 })
 @Produces({
-  MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML
+    MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML
 })
 public class ContentChangeServiceRestImpl extends RootServiceRestImpl implements
     ContentChangeServiceRest {
@@ -84,7 +84,8 @@ public class ContentChangeServiceRestImpl extends RootServiceRestImpl implements
     @ApiParam(value = "Concept terminology id, e.g. 102751005", required = true) @PathParam("terminologyId") String terminologyId,
     @ApiParam(value = "Concept terminology name, e.g. SNOMEDCT", required = true) @PathParam("terminology") String terminology,
     @ApiParam(value = "Concept terminology version, e.g. latest", required = true) @PathParam("version") String version,
-    @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken) {
+    @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken)
+    throws Exception {
 
     Logger.getLogger(getClass()).info(
         "RESTful call (Content): /concept/" + terminology + "/" + version + "/"
@@ -115,6 +116,8 @@ public class ContentChangeServiceRestImpl extends RootServiceRestImpl implements
     } catch (Exception e) {
       handleException(e, "trying to retrieve a concept");
       return null;
+    } finally {
+      securityService.close();
     }
 
   }
@@ -172,8 +175,9 @@ public class ContentChangeServiceRestImpl extends RootServiceRestImpl implements
     } catch (Exception e) {
       handleException(e, "trying to add a concept");
       return null;
+    } finally {
+      securityService.close();
     }
-
   }
 
   /*
@@ -227,6 +231,8 @@ public class ContentChangeServiceRestImpl extends RootServiceRestImpl implements
 
     } catch (Exception e) {
       handleException(e, "trying to update a concept");
+    } finally {
+      securityService.close();
     }
   }
 
@@ -256,6 +262,8 @@ public class ContentChangeServiceRestImpl extends RootServiceRestImpl implements
       contentService.close();
     } catch (Exception e) {
       handleException(e, "trying to remove a concept");
+    } finally {
+      securityService.close();
     }
   }
 
@@ -324,6 +332,8 @@ public class ContentChangeServiceRestImpl extends RootServiceRestImpl implements
     } catch (Exception e) {
       handleException(e, "trying to add a description");
       return null;
+    } finally {
+      securityService.close();
     }
   }
 
@@ -389,6 +399,8 @@ public class ContentChangeServiceRestImpl extends RootServiceRestImpl implements
 
     } catch (Exception e) {
       handleException(e, "trying to update a description");
+    } finally {
+      securityService.close();
     }
 
   }
@@ -440,6 +452,8 @@ public class ContentChangeServiceRestImpl extends RootServiceRestImpl implements
 
     } catch (Exception e) {
       handleException(e, "trying to remove a description");
+    } finally {
+      securityService.close();
     }
   }
 
@@ -629,6 +643,8 @@ public class ContentChangeServiceRestImpl extends RootServiceRestImpl implements
       handleException(e,
           "trying to add a AssociationReferenceConceptRefSetMember");
       return null;
+    } finally {
+      securityService.close();
     }
   }
 
@@ -678,6 +694,8 @@ public class ContentChangeServiceRestImpl extends RootServiceRestImpl implements
     } catch (Exception e) {
       handleException(e,
           "trying to update a association reference refset member");
+    } finally {
+      securityService.close();
     }
 
   }
@@ -714,6 +732,8 @@ public class ContentChangeServiceRestImpl extends RootServiceRestImpl implements
     } catch (Exception e) {
       handleException(e,
           "trying to remove a AssociationReferenceConceptRefSetMember");
+    } finally {
+      securityService.close();
     }
   }
 
@@ -745,6 +765,8 @@ public class ContentChangeServiceRestImpl extends RootServiceRestImpl implements
       algo.close();
     } catch (Exception e) {
       handleException(e, "trying to clear concepts");
+    } finally {
+      securityService.close();
     }
   }
 
@@ -773,6 +795,8 @@ public class ContentChangeServiceRestImpl extends RootServiceRestImpl implements
       contentService.close();
     } catch (Exception e) {
       handleException(e, "trying to clear concepts");
+    } finally {
+      securityService.close();
     }
   }
 
@@ -801,6 +825,8 @@ public class ContentChangeServiceRestImpl extends RootServiceRestImpl implements
       contentService.close();
     } catch (Exception e) {
       handleException(e, "trying to clear concepts");
+    } finally {
+      securityService.close();
     }
   }
 
@@ -821,8 +847,7 @@ public class ContentChangeServiceRestImpl extends RootServiceRestImpl implements
     throws Exception {
     Logger.getLogger(getClass()).info(
         "RESTful call PUT (ContentChange): /project/add " + project);
-    Logger.getLogger(getClass())
-        .debug("    " + project);
+    Logger.getLogger(getClass()).debug("    " + project);
     try {
       authenticate(securityService, authToken, "add project", UserRole.AUTHOR);
 
@@ -849,6 +874,8 @@ public class ContentChangeServiceRestImpl extends RootServiceRestImpl implements
     } catch (Exception e) {
       handleException(e, "trying to add a project");
       return null;
+    } finally {
+      securityService.close();
     }
 
   }
@@ -871,8 +898,7 @@ public class ContentChangeServiceRestImpl extends RootServiceRestImpl implements
     Logger.getLogger(getClass()).info(
         "RESTful call POST (ContentChange): /project/update " + project);
     if (project != null) {
-      Logger.getLogger(getClass()).debug(
-          "    " + project);
+      Logger.getLogger(getClass()).debug("    " + project);
     }
 
     try {
@@ -892,6 +918,8 @@ public class ContentChangeServiceRestImpl extends RootServiceRestImpl implements
 
     } catch (Exception e) {
       handleException(e, "trying to update a project");
+    } finally {
+      securityService.close();
     }
 
   }
@@ -922,6 +950,8 @@ public class ContentChangeServiceRestImpl extends RootServiceRestImpl implements
       projectService.close();
     } catch (Exception e) {
       handleException(e, "trying to remove a project");
+    } finally {
+      securityService.close();
     }
   }
 
@@ -948,6 +978,8 @@ public class ContentChangeServiceRestImpl extends RootServiceRestImpl implements
       algo.compute();
     } catch (Exception e) {
       handleException(e, "trying to start editing cycle");
+    } finally {
+      securityService.close();
     }
 
   }

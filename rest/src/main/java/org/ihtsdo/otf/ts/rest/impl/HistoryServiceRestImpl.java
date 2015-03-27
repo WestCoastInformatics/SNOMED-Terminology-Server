@@ -88,7 +88,7 @@ public class HistoryServiceRestImpl extends RootServiceRestImpl implements
     @ApiParam(value = "Concept terminology , e.g. SNOMEDCT", required = true) @PathParam("terminology") String terminology,
     @ApiParam(value = "Date in the format YYYYMMDD , e.g. 20140731 or \"null\"", required = true) @PathParam("date") String date,
     @ApiParam(value = "PFS Parameter, e.g. '{ \"startIndex\":\"1\", \"maxResults\":\"5\" }'", required = false) PfsParameterJpa pfs,
-    @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken) {
+    @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken) throws Exception {
 
     Logger.getLogger(getClass()).info(
         "RESTful call (History): /concept/" + terminology + "/" + date);
@@ -119,6 +119,8 @@ public class HistoryServiceRestImpl extends RootServiceRestImpl implements
     } catch (Exception e) {
       handleException(e, "trying to find concepts modified since date");
       return null;
+    } finally {
+      securityService.close();
     }
 
   }
@@ -142,7 +144,7 @@ public class HistoryServiceRestImpl extends RootServiceRestImpl implements
     @ApiParam(value = "Date in the format YYYYMMDD , e.g. 20140731 or \"null\"", required = true) @PathParam("startDate") String startDate,
     @ApiParam(value = "Date in the format YYYYMMDD , e.g. 20140731 or \"null\"", required = true) @PathParam("endDate") String endDate,
     @ApiParam(value = "PFS Parameter, e.g. '{ \"startIndex\":\"1\", \"maxResults\":\"5\" }'", required = false) PfsParameterJpa pfs,
-    @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken) {
+    @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken) throws Exception {
 
     Logger.getLogger(getClass()).info(
         "RESTful call (History): /concept/revisions/" + id + "/" + startDate
@@ -164,6 +166,8 @@ public class HistoryServiceRestImpl extends RootServiceRestImpl implements
     } catch (Exception e) {
       handleException(e, "trying to find the concept revisions");
       return null;
+    } finally {
+      securityService.close();
     }
   }
 
@@ -174,7 +178,7 @@ public class HistoryServiceRestImpl extends RootServiceRestImpl implements
   public Concept findConceptReleaseRevision(
     @ApiParam(value = "Concept id, e.g. 2", required = true) @PathParam("id") String id,
     @ApiParam(value = "Release date in the format YYYYMMDD , e.g. 20140731", required = true) @PathParam("release") String release,
-    @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken) {
+    @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken) throws Exception {
 
     Logger.getLogger(getClass()).info(
         "RESTful call (History): /concept/revisions/" + id + "/" + release);
@@ -194,6 +198,8 @@ public class HistoryServiceRestImpl extends RootServiceRestImpl implements
     } catch (Exception e) {
       handleException(e, "trying to find the concept release revision");
       return null;
+    } finally {
+      securityService.close();
     }
   }
 
@@ -213,7 +219,7 @@ public class HistoryServiceRestImpl extends RootServiceRestImpl implements
     @ApiParam(value = "Description terminology , e.g. SNOMEDCT", required = true) @PathParam("terminology") String terminology,
     @ApiParam(value = "Date in the format YYYYMMDD , e.g. 20140731 or \"null\"", required = true) @PathParam("date") String date,
     @ApiParam(value = "PFS Parameter, e.g. '{ \"startIndex\":\"1\", \"maxResults\":\"5\" }'", required = false) PfsParameterJpa pfs,
-    @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken) {
+    @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken) throws Exception {
 
     Logger.getLogger(getClass()).info(
         "RESTful call (History): /description/" + terminology + "/" + date);
@@ -239,6 +245,8 @@ public class HistoryServiceRestImpl extends RootServiceRestImpl implements
     } catch (Exception e) {
       handleException(e, "trying to find descriptions modified since date");
       return null;
+    } finally {
+      securityService.close();
     }
 
   }
@@ -262,7 +270,7 @@ public class HistoryServiceRestImpl extends RootServiceRestImpl implements
     @ApiParam(value = "Date in the format YYYYMMDD, e.g. 20140731 or \"null\"", required = true) @PathParam("startDate") String startDate,
     @ApiParam(value = "Date in the format YYYYMMDD, e.g. 20140731 or \"null\"", required = true) @PathParam("endDate") String endDate,
     @ApiParam(value = "PFS Parameter, e.g. '{ \"startIndex\":\"1\", \"maxResults\":\"5\" }'", required = false) PfsParameterJpa pfs,
-    @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken) {
+    @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken) throws Exception {
 
     Logger.getLogger(getClass()).info(
         "RESTful call (History): /description/revisions/" + id + "/"
@@ -284,6 +292,8 @@ public class HistoryServiceRestImpl extends RootServiceRestImpl implements
     } catch (Exception e) {
       handleException(e, "trying to find the release revisions");
       return null;
+    } finally {
+      securityService.close();
     }
   }
 
@@ -294,7 +304,7 @@ public class HistoryServiceRestImpl extends RootServiceRestImpl implements
   public Description findDescriptionReleaseRevision(
     @ApiParam(value = "Concept id , e.g. 2", required = true) @PathParam("id") String id,
     @ApiParam(value = "Release date in the format YYYYMMDD , e.g. latest", required = true) @PathParam("release") String release,
-    @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken) {
+    @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken) throws Exception {
 
     Logger.getLogger(getClass()).info(
         "RESTful call (History): /description/revisions/" + id + "/" + release);
@@ -314,6 +324,8 @@ public class HistoryServiceRestImpl extends RootServiceRestImpl implements
     } catch (Exception e) {
       handleException(e, "find the description release revision");
       return null;
+    } finally {
+      securityService.close();
     }
   }
 
@@ -333,7 +345,7 @@ public class HistoryServiceRestImpl extends RootServiceRestImpl implements
     @ApiParam(value = "Relationship terminology , e.g. SNOMEDCT", required = true) @PathParam("terminology") String terminology,
     @ApiParam(value = "Date in the format YYYYMMDD, e.g. 20140731 or \"null\"", required = true) @PathParam("date") String date,
     @ApiParam(value = "PFS Parameter, e.g. '{ \"startIndex\":\"1\", \"maxResults\":\"5\" }'", required = false) PfsParameterJpa pfs,
-    @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken) {
+    @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken) throws Exception {
 
     Logger.getLogger(getClass()).info(
         "RESTful call (History): /relationship/" + terminology + "/" + date);
@@ -359,6 +371,8 @@ public class HistoryServiceRestImpl extends RootServiceRestImpl implements
     } catch (Exception e) {
       handleException(e, "trying to find relationships modified since date");
       return null;
+    } finally {
+      securityService.close();
     }
 
   }
@@ -382,7 +396,7 @@ public class HistoryServiceRestImpl extends RootServiceRestImpl implements
     @ApiParam(value = "Date in the format YYYYMMDD, e.g. 20140731 or \"null\"", required = true) @PathParam("startDate") String startDate,
     @ApiParam(value = "Date in the format YYYYMMDD, e.g. 20140731 or \"null\"", required = true) @PathParam("endDate") String endDate,
     @ApiParam(value = "PFS Parameter, e.g. '{ \"startIndex\":\"1\", \"maxResults\":\"5\" }'", required = false) PfsParameterJpa pfs,
-    @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken) {
+    @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken) throws Exception {
 
     Logger.getLogger(getClass()).info(
         "RESTful call (History): /relationship/revisions/" + id + "/"
@@ -404,6 +418,8 @@ public class HistoryServiceRestImpl extends RootServiceRestImpl implements
     } catch (Exception e) {
       handleException(e, "trying to find relationship revisions");
       return null;
+    } finally {
+      securityService.close();
     }
   }
 
@@ -414,7 +430,7 @@ public class HistoryServiceRestImpl extends RootServiceRestImpl implements
   public Relationship findRelationshipReleaseRevision(
     @ApiParam(value = "Concept id, e.g. 2", required = true) @PathParam("id") String id,
     @ApiParam(value = "Release date in the format YYYYMMDD , e.g. latest", required = true) @PathParam("release") String release,
-    @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken) {
+    @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken) throws Exception {
 
     Logger.getLogger(getClass())
         .info(
@@ -436,6 +452,8 @@ public class HistoryServiceRestImpl extends RootServiceRestImpl implements
     } catch (Exception e) {
       handleException(e, "trying to find relationship release revision");
       return null;
+    } finally {
+      securityService.close();
     }
   }
 
@@ -455,7 +473,7 @@ public class HistoryServiceRestImpl extends RootServiceRestImpl implements
     @ApiParam(value = "LanguageRefSetMember terminology , e.g. SNOMEDCT", required = true) @PathParam("terminology") String terminology,
     @ApiParam(value = "Date in the format YYYYMMDD, e.g. 20140731 or \"null\"", required = true) @PathParam("date") String date,
     @ApiParam(value = "PFS Parameter, e.g. '{ \"startIndex\":\"1\", \"maxResults\":\"5\" }'", required = false) PfsParameterJpa pfs,
-    @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken) {
+    @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken) throws Exception {
 
     Logger.getLogger(getClass()).info(
         "RESTful call (History): /language/" + terminology + "/" + date);
@@ -482,6 +500,8 @@ public class HistoryServiceRestImpl extends RootServiceRestImpl implements
       handleException(e,
           "trying to find language refset members modified since date");
       return null;
+    } finally {
+      securityService.close();
     }
 
   }
@@ -505,7 +525,7 @@ public class HistoryServiceRestImpl extends RootServiceRestImpl implements
     @ApiParam(value = "Date in the format YYYYMMDD, e.g. 20140731 or \"null\"", required = true) @PathParam("startDate") String startDate,
     @ApiParam(value = "Date in the format YYYYMMDD, e.g. 20140731 or \"null\"", required = true) @PathParam("endDate") String endDate,
     @ApiParam(value = "PFS Parameter, e.g. '{ \"startIndex\":\"1\", \"maxResults\":\"5\" }'", required = false) PfsParameterJpa pfs,
-    @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken) {
+    @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken) throws Exception {
 
     Logger.getLogger(getClass()).info(
         "RESTful call (History): /language/revisions/" + id + "/" + startDate
@@ -527,6 +547,8 @@ public class HistoryServiceRestImpl extends RootServiceRestImpl implements
     } catch (Exception e) {
       handleException(e, "find language refset member revisions");
       return null;
+    } finally {
+      securityService.close();
     }
   }
 
@@ -545,7 +567,7 @@ public class HistoryServiceRestImpl extends RootServiceRestImpl implements
   public LanguageRefSetMember findLanguageRefSetMemberReleaseRevision(
     @ApiParam(value = "Concept id, e.g. 2", required = true) @PathParam("id") String id,
     @ApiParam(value = "Release date in the format YYYYMMDD , e.g. latest", required = true) @PathParam("release") String release,
-    @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken) {
+    @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken) throws Exception {
 
     Logger.getLogger(getClass()).info(
         "RESTful call (History): /language/revisions/" + id + "/" + release);
@@ -565,6 +587,8 @@ public class HistoryServiceRestImpl extends RootServiceRestImpl implements
     } catch (Exception e) {
       handleException(e, "find language refset member release revision");
       return null;
+    } finally {
+      securityService.close();
     }
   }
 
@@ -606,6 +630,8 @@ public class HistoryServiceRestImpl extends RootServiceRestImpl implements
     } catch (Exception e) {
       handleException(e, "trying to find concepts deep modified since date");
       return null;
+    } finally {
+      securityService.close();
     }
   }
 
@@ -639,6 +665,8 @@ public class HistoryServiceRestImpl extends RootServiceRestImpl implements
     } catch (Exception e) {
       handleException(e, "trying to get release history");
       return null;
+    } finally {
+      securityService.close();
     }
   }
 
@@ -672,6 +700,8 @@ public class HistoryServiceRestImpl extends RootServiceRestImpl implements
     } catch (Exception e) {
       handleException(e, "trying to get current release info");
       return null;
+    } finally {
+      securityService.close();
     }
   }
 
@@ -705,6 +735,8 @@ public class HistoryServiceRestImpl extends RootServiceRestImpl implements
     } catch (Exception e) {
       handleException(e, "trying to get previous release info");
       return null;
+    } finally {
+      securityService.close();
     }
   }
 
@@ -731,6 +763,8 @@ public class HistoryServiceRestImpl extends RootServiceRestImpl implements
     } catch (Exception e) {
       handleException(e, "trying to get planned release info");
       return null;
+    } finally {
+      securityService.close();
     }
   }
 
@@ -765,6 +799,8 @@ public class HistoryServiceRestImpl extends RootServiceRestImpl implements
     } catch (Exception e) {
       handleException(e, "trying to get release info for " + name);
       return null;
+    } finally {
+      securityService.close();
     }
   }
 
@@ -791,7 +827,8 @@ public class HistoryServiceRestImpl extends RootServiceRestImpl implements
           UserRole.ADMINISTRATOR);
 
       HistoryService historyService = new HistoryServiceJpa();
-      releaseInfo.setLastModifiedBy(securityService.getUsernameForToken(authToken));
+      releaseInfo.setLastModifiedBy(securityService
+          .getUsernameForToken(authToken));
       ReleaseInfo result = historyService.addReleaseInfo(releaseInfo);
       historyService.close();
       return result;
@@ -799,6 +836,8 @@ public class HistoryServiceRestImpl extends RootServiceRestImpl implements
     } catch (Exception e) {
       handleException(e, "trying to add release info");
       return null;
+    } finally {
+      securityService.close();
     }
   }
 
@@ -825,11 +864,14 @@ public class HistoryServiceRestImpl extends RootServiceRestImpl implements
           UserRole.ADMINISTRATOR);
 
       HistoryService historyService = new HistoryServiceJpa();
-      releaseInfo.setLastModifiedBy(securityService.getUsernameForToken(authToken));
+      releaseInfo.setLastModifiedBy(securityService
+          .getUsernameForToken(authToken));
       historyService.updateReleaseInfo(releaseInfo);
       historyService.close();
     } catch (Exception e) {
       handleException(e, "trying to update release info");
+    } finally {
+      securityService.close();
     }
   }
 
@@ -860,6 +902,8 @@ public class HistoryServiceRestImpl extends RootServiceRestImpl implements
       historyService.close();
     } catch (Exception e) {
       handleException(e, "trying to remove release info");
+    } finally {
+      securityService.close();
     }
   }
 
@@ -878,7 +922,7 @@ public class HistoryServiceRestImpl extends RootServiceRestImpl implements
     @ApiParam(value = "Release version, e.g. 20150131", required = true) @PathParam("releaseVersion") String releaseVersion,
     @ApiParam(value = "Terminology, e.g. SNOMEDCT", required = true) @PathParam("terminology") String terminology,
     @ApiParam(value = "Terminology version, e.g. latest", required = true) @PathParam("version") String version,
-    @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken) {
+    @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken) throws Exception {
     Logger.getLogger(getClass()).info(
         "RESTful call (History): /release/startEditingCycle/" + releaseVersion
             + "/" + terminology + "/" + version);
@@ -892,6 +936,8 @@ public class HistoryServiceRestImpl extends RootServiceRestImpl implements
       algorithm.compute();
     } catch (Exception e) {
       handleException(e, "start editing cycle");
+    } finally {
+      securityService.close();
     }
   }
 
@@ -952,6 +998,8 @@ public class HistoryServiceRestImpl extends RootServiceRestImpl implements
 
     } catch (Exception e) {
       handleException(e, "start editing cycle");
+    } finally {
+      securityService.close();
     }
   }
 
@@ -989,6 +1037,8 @@ public class HistoryServiceRestImpl extends RootServiceRestImpl implements
 
     } catch (Exception e) {
       handleException(e, "start editing cycle");
+    } finally {
+      securityService.close();
     }
   }
 
@@ -1022,6 +1072,8 @@ public class HistoryServiceRestImpl extends RootServiceRestImpl implements
 
     } catch (Exception e) {
       handleException(e, "start editing cycle");
+    } finally {
+      securityService.close();
     }
   }
 }

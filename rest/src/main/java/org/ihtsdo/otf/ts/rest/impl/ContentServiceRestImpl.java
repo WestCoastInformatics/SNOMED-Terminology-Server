@@ -102,7 +102,8 @@ public class ContentServiceRestImpl extends RootServiceRestImpl implements
     @ApiParam(value = "Concept terminology id, e.g. 102751005", required = true) @PathParam("terminologyId") String terminologyId,
     @ApiParam(value = "Concept terminology name, e.g. SNOMEDCT", required = true) @PathParam("terminology") String terminology,
     @ApiParam(value = "Concept terminology version, e.g. latest", required = true) @PathParam("version") String version,
-    @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken) {
+    @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken)
+    throws Exception {
 
     Logger.getLogger(getClass()).info(
         "RESTful call (Content): /concept/" + terminology + "/" + version + "/"
@@ -130,6 +131,8 @@ public class ContentServiceRestImpl extends RootServiceRestImpl implements
     } catch (Exception e) {
       handleException(e, "trying to retrieve a concept");
       return null;
+    } finally {
+      securityService.close();
     }
 
   }
@@ -149,7 +152,8 @@ public class ContentServiceRestImpl extends RootServiceRestImpl implements
     @ApiParam(value = "Concept terminology id, e.g. 102751005", required = true) @PathParam("terminologyId") String terminologyId,
     @ApiParam(value = "Concept terminology name, e.g. SNOMEDCT", required = true) @PathParam("terminology") String terminology,
     @ApiParam(value = "Concept terminology version, e.g. latest", required = true) @PathParam("version") String version,
-    @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken) {
+    @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken)
+    throws Exception {
 
     Logger.getLogger(getClass()).info(
         "RESTful call (Content): /concept/" + terminology + "/" + version + "/"
@@ -175,6 +179,8 @@ public class ContentServiceRestImpl extends RootServiceRestImpl implements
     } catch (Exception e) {
       handleException(e, "trying to retrieve a concept");
       return null;
+    } finally {
+      securityService.close();
     }
 
   }
@@ -195,7 +201,8 @@ public class ContentServiceRestImpl extends RootServiceRestImpl implements
     @ApiParam(value = "Terminology version, e.g. latest", required = true) @PathParam("version") String version,
     @ApiParam(value = "Query, e.g. 'sulfur'", required = true) @PathParam("query") String query,
     @ApiParam(value = "PFS Parameter, e.g. '{ \"startIndex\":\"1\", \"maxResults\":\"5\" }'", required = false) PfsParameterJpa pfs,
-    @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken) {
+    @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken)
+    throws Exception {
 
     Logger.getLogger(getClass()).info(
         "RESTful call (Content): /concept/" + terminology + "/" + version
@@ -214,6 +221,8 @@ public class ContentServiceRestImpl extends RootServiceRestImpl implements
     } catch (Exception e) {
       handleException(e, "trying to find the concepts by query");
       return null;
+    } finally {
+      securityService.close();
     }
   }
 
@@ -234,7 +243,8 @@ public class ContentServiceRestImpl extends RootServiceRestImpl implements
     @ApiParam(value = "Concept terminology name, e.g. SNOMEDCT", required = true) @PathParam("terminology") String terminology,
     @ApiParam(value = "Concept terminology version, e.g. latest", required = true) @PathParam("version") String version,
     @ApiParam(value = "PFS Parameter, e.g. '{ \"startIndex\":\"1\", \"maxResults\":\"5\" }'", required = false) PfsParameterJpa pfs,
-    @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken) {
+    @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken)
+    throws Exception {
 
     Logger.getLogger(getClass()).info(
         "RESTful call (Content): /concept/" + terminology + "/" + version + "/"
@@ -259,11 +269,18 @@ public class ContentServiceRestImpl extends RootServiceRestImpl implements
     } catch (Exception e) {
       handleException(e, "trying to retrieve child concepts");
       return null;
+    } finally {
+      securityService.close();
     }
   }
 
-  /* (non-Javadoc)
-   * @see org.ihtsdo.otf.ts.rest.ContentServiceRest#findParentConcepts(java.lang.String, java.lang.String, java.lang.String, org.ihtsdo.otf.ts.helpers.PfsParameterJpa, java.lang.String)
+  /*
+   * (non-Javadoc)
+   * 
+   * @see
+   * org.ihtsdo.otf.ts.rest.ContentServiceRest#findParentConcepts(java.lang.
+   * String, java.lang.String, java.lang.String,
+   * org.ihtsdo.otf.ts.helpers.PfsParameterJpa, java.lang.String)
    */
   @Override
   @POST
@@ -274,7 +291,8 @@ public class ContentServiceRestImpl extends RootServiceRestImpl implements
     @ApiParam(value = "Concept terminology name, e.g. SNOMEDCT", required = true) @PathParam("terminology") String terminology,
     @ApiParam(value = "Concept terminology version, e.g. latest", required = true) @PathParam("version") String version,
     @ApiParam(value = "PFS Parameter, e.g. '{ \"startIndex\":\"1\", \"maxResults\":\"5\" }'", required = false) PfsParameterJpa pfs,
-    @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken) {
+    @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken)
+    throws Exception {
 
     Logger.getLogger(getClass()).info(
         "RESTful call (Content): /concept/" + terminology + "/" + version + "/"
@@ -319,7 +337,8 @@ public class ContentServiceRestImpl extends RootServiceRestImpl implements
     @ApiParam(value = "Concept terminology name, e.g. SNOMEDCT", required = true) @PathParam("terminology") String terminology,
     @ApiParam(value = "Concept terminology version, e.g. latest", required = true) @PathParam("version") String version,
     @ApiParam(value = "PFS Parameter, e.g. '{ \"startIndex\":\"1\", \"maxResults\":\"5\" }'", required = false) PfsParameterJpa pfs,
-    @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken) {
+    @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken)
+    throws Exception {
 
     Logger.getLogger(getClass()).info(
         "RESTful call (Content): /concept/" + terminology + "/" + version + "/"
@@ -344,6 +363,8 @@ public class ContentServiceRestImpl extends RootServiceRestImpl implements
     } catch (Exception e) {
       handleException(e, "trying to retrieve descendant concepts");
       return null;
+    } finally {
+      securityService.close();
     }
   }
 
@@ -364,7 +385,8 @@ public class ContentServiceRestImpl extends RootServiceRestImpl implements
     @ApiParam(value = "Concept terminology name, e.g. SNOMEDCT", required = true) @PathParam("terminology") String terminology,
     @ApiParam(value = "Concept terminology version, e.g. latest", required = true) @PathParam("version") String version,
     @ApiParam(value = "PFS Parameter, e.g. '{ \"startIndex\":\"1\", \"maxResults\":\"5\" }'", required = false) PfsParameterJpa pfs,
-    @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken) {
+    @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken)
+    throws Exception {
 
     Logger.getLogger(getClass()).info(
         "RESTful call (Content): /concept/" + terminology + "/" + version + "/"
@@ -389,9 +411,10 @@ public class ContentServiceRestImpl extends RootServiceRestImpl implements
     } catch (Exception e) {
       handleException(e, "trying to retrieve ancestor concepts");
       return null;
+    } finally {
+      securityService.close();
     }
   }
-
 
   /*
    * (non-Javadoc)
@@ -408,7 +431,8 @@ public class ContentServiceRestImpl extends RootServiceRestImpl implements
     @ApiParam(value = "Description terminology id, e.g. 100114019", required = true) @PathParam("terminologyId") String terminologyId,
     @ApiParam(value = "Description terminology name, e.g. SNOMEDCT", required = true) @PathParam("terminology") String terminology,
     @ApiParam(value = "Description terminology version, e.g. latest", required = true) @PathParam("version") String version,
-    @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken) {
+    @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken)
+    throws Exception {
 
     Logger.getLogger(getClass()).info(
         "RESTful call (Content): /description/" + terminology + "/" + version
@@ -431,6 +455,8 @@ public class ContentServiceRestImpl extends RootServiceRestImpl implements
     } catch (Exception e) {
       handleException(e, "trying to retrieve a description");
       return null;
+    } finally {
+      securityService.close();
     }
 
   }
@@ -452,7 +478,8 @@ public class ContentServiceRestImpl extends RootServiceRestImpl implements
     @ApiParam(value = "Terminology name, e.g. SNOMEDCT", required = true) @PathParam("terminology") String terminology,
     @ApiParam(value = "Terminology version, e.g. latest", required = true) @PathParam("version") String version,
     @ApiParam(value = "PFS Parameter, e.g. '{ \"startIndex\":\"1\", \"maxResults\":\"5\" }'", required = false) PfsParameterJpa pfs,
-    @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken) {
+    @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken)
+    throws Exception {
 
     Logger.getLogger(getClass()).info(
         "RESTful call (Content): /associationReferenceMember/refSet/"
@@ -472,7 +499,10 @@ public class ContentServiceRestImpl extends RootServiceRestImpl implements
       handleException(e,
           "trying to retrieve association reference refset members");
       return null;
+    } finally {
+      securityService.close();
     }
+
   }
 
   /*
@@ -492,7 +522,8 @@ public class ContentServiceRestImpl extends RootServiceRestImpl implements
     @ApiParam(value = "Terminology name, e.g. SNOMEDCT", required = true) @PathParam("terminology") String terminology,
     @ApiParam(value = "Terminology version, e.g. latest", required = true) @PathParam("version") String version,
     @ApiParam(value = "PFS Parameter, e.g. '{ \"startIndex\":\"1\", \"maxResults\":\"5\" }'", required = false) PfsParameterJpa pfs,
-    @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken) {
+    @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken)
+    throws Exception {
 
     Logger.getLogger(getClass()).info(
         "RESTful call (Content): /attributeValueMember/refSet/" + terminology
@@ -511,7 +542,10 @@ public class ContentServiceRestImpl extends RootServiceRestImpl implements
     } catch (Exception e) {
       handleException(e, "trying to retrieve attribute value refset members");
       return null;
+    } finally {
+      securityService.close();
     }
+
   }
 
   /*
@@ -531,7 +565,8 @@ public class ContentServiceRestImpl extends RootServiceRestImpl implements
     @ApiParam(value = "Terminology name, e.g. SNOMEDCT", required = true) @PathParam("terminology") String terminology,
     @ApiParam(value = "Terminology version, e.g. latest", required = true) @PathParam("version") String version,
     @ApiParam(value = "PFS Parameter, e.g. '{ \"startIndex\":\"1\", \"maxResults\":\"5\" }'", required = false) PfsParameterJpa pfs,
-    @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken) {
+    @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken)
+    throws Exception {
 
     Logger.getLogger(getClass()).info(
         "RESTful call (Content): /complexMapMember/refSet/" + terminology + "/"
@@ -550,6 +585,8 @@ public class ContentServiceRestImpl extends RootServiceRestImpl implements
     } catch (Exception e) {
       handleException(e, "trying to retrieve complex map refset members");
       return null;
+    } finally {
+      securityService.close();
     }
   }
 
@@ -570,7 +607,8 @@ public class ContentServiceRestImpl extends RootServiceRestImpl implements
     @ApiParam(value = "Terminology name, e.g. SNOMEDCT", required = true) @PathParam("terminology") String terminology,
     @ApiParam(value = "Terminology version, e.g. latest", required = true) @PathParam("version") String version,
     @ApiParam(value = "PFS Parameter, e.g. '{ \"startIndex\":\"1\", \"maxResults\":\"5\" }'", required = false) PfsParameterJpa pfs,
-    @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken) {
+    @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken)
+    throws Exception {
 
     Logger.getLogger(getClass()).info(
         "RESTful call (Content): /descriptionTypeMember/refSet/" + terminology
@@ -589,6 +627,8 @@ public class ContentServiceRestImpl extends RootServiceRestImpl implements
     } catch (Exception e) {
       handleException(e, "trying to retrieve description type refset members");
       return null;
+    } finally {
+      securityService.close();
     }
   }
 
@@ -609,7 +649,8 @@ public class ContentServiceRestImpl extends RootServiceRestImpl implements
     @ApiParam(value = "Terminology name, e.g. SNOMEDCT", required = true) @PathParam("terminology") String terminology,
     @ApiParam(value = "Terminology version, e.g. latest", required = true) @PathParam("version") String version,
     @ApiParam(value = "PFS Parameter, e.g. '{ \"startIndex\":\"1\", \"maxResults\":\"5\" }'", required = false) PfsParameterJpa pfs,
-    @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken) {
+    @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken)
+    throws Exception {
 
     Logger.getLogger(getClass()).info(
         "RESTful call (Content): /languageMember/refSet/" + terminology + "/"
@@ -628,6 +669,8 @@ public class ContentServiceRestImpl extends RootServiceRestImpl implements
     } catch (Exception e) {
       handleException(e, "trying to retrieve language refset members");
       return null;
+    } finally {
+      securityService.close();
     }
   }
 
@@ -646,7 +689,8 @@ public class ContentServiceRestImpl extends RootServiceRestImpl implements
     @ApiParam(value = "Refset terminology id, e.g. 100114019", required = true) @PathParam("moduleId") String moduleId,
     @ApiParam(value = "Terminology name, e.g. SNOMEDCT", required = true) @PathParam("terminology") String terminology,
     @ApiParam(value = "Terminology version, e.g. latest", required = true) @PathParam("version") String version,
-    @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken) {
+    @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken)
+    throws Exception {
 
     Logger.getLogger(getClass()).info(
         "RESTful call (Content): /moduleDependencyMember/module/" + terminology
@@ -665,6 +709,8 @@ public class ContentServiceRestImpl extends RootServiceRestImpl implements
     } catch (Exception e) {
       handleException(e, "trying to retrieve module dependency refset members");
       return null;
+    } finally {
+      securityService.close();
     }
   }
 
@@ -676,7 +722,8 @@ public class ContentServiceRestImpl extends RootServiceRestImpl implements
     @ApiParam(value = "Refset terminology id, e.g. 100114019", required = true) @PathParam("refSetId") String refSetId,
     @ApiParam(value = "Terminology name, e.g. SNOMEDCT", required = true) @PathParam("terminology") String terminology,
     @ApiParam(value = "Terminology version, e.g. latest", required = true) @PathParam("version") String version,
-    @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken) {
+    @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken)
+    throws Exception {
 
     Logger.getLogger(getClass()).info(
         "RESTful call (Content): /refsetDescriptorMember/refSet/" + terminology
@@ -695,6 +742,8 @@ public class ContentServiceRestImpl extends RootServiceRestImpl implements
     } catch (Exception e) {
       handleException(e, "trying to retrieve refset descriptor refset members");
       return null;
+    } finally {
+      securityService.close();
     }
   }
 
@@ -715,7 +764,8 @@ public class ContentServiceRestImpl extends RootServiceRestImpl implements
     @ApiParam(value = "Terminology name, e.g. SNOMEDCT", required = true) @PathParam("terminology") String terminology,
     @ApiParam(value = "Terminology version, e.g. latest", required = true) @PathParam("version") String version,
     @ApiParam(value = "PFS Parameter, e.g. '{ \"startIndex\":\"1\", \"maxResults\":\"5\" }'", required = false) PfsParameterJpa pfs,
-    @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken) {
+    @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken)
+    throws Exception {
 
     Logger.getLogger(getClass()).info(
         "RESTful call (Content): /simpleMapMember/refSet/" + terminology + "/"
@@ -734,6 +784,8 @@ public class ContentServiceRestImpl extends RootServiceRestImpl implements
     } catch (Exception e) {
       handleException(e, "trying to retrieve simple map refset members");
       return null;
+    } finally {
+      securityService.close();
     }
   }
 
@@ -754,7 +806,8 @@ public class ContentServiceRestImpl extends RootServiceRestImpl implements
     @ApiParam(value = "Terminology name, e.g. SNOMEDCT", required = true) @PathParam("terminology") String terminology,
     @ApiParam(value = "Terminology version, e.g. latest", required = true) @PathParam("version") String version,
     @ApiParam(value = "PFS Parameter, e.g. '{ \"startIndex\":\"1\", \"maxResults\":\"5\" }'", required = false) PfsParameterJpa pfs,
-    @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken) {
+    @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken)
+    throws Exception {
 
     Logger.getLogger(getClass()).info(
         "RESTful call (Content): /simpleMember/refSet/" + terminology + "/"
@@ -773,6 +826,8 @@ public class ContentServiceRestImpl extends RootServiceRestImpl implements
     } catch (Exception e) {
       handleException(e, "trying to retrieve simple refset members");
       return null;
+    } finally {
+      securityService.close();
     }
   }
 
@@ -791,7 +846,8 @@ public class ContentServiceRestImpl extends RootServiceRestImpl implements
     @ApiParam(value = "Concept id, e.g. 100114019", required = true) @PathParam("terminologyId") String terminologyId,
     @ApiParam(value = "Terminology name, e.g. SNOMEDCT", required = true) @PathParam("terminology") String terminology,
     @ApiParam(value = "Terminology version, e.g. latest", required = true) @PathParam("version") String version,
-    @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken) {
+    @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken)
+    throws Exception {
 
     Logger.getLogger(getClass()).info(
         "RESTful call (Content): /associationReferenceMember/CONCEPT/"
@@ -812,6 +868,8 @@ public class ContentServiceRestImpl extends RootServiceRestImpl implements
       handleException(e,
           "trying to retrieve association reference concept refset members");
       return null;
+    } finally {
+      securityService.close();
     }
   }
 
@@ -830,7 +888,8 @@ public class ContentServiceRestImpl extends RootServiceRestImpl implements
     @ApiParam(value = "Description id, e.g. 100114029", required = true) @PathParam("terminologyId") String terminologyId,
     @ApiParam(value = "Terminology name, e.g. SNOMEDCT", required = true) @PathParam("terminology") String terminology,
     @ApiParam(value = "Terminology version, e.g. latest", required = true) @PathParam("version") String version,
-    @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken) {
+    @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken)
+    throws Exception {
 
     Logger.getLogger(getClass()).info(
         "RESTful call (Content): /associationReferenceMember/description"
@@ -851,6 +910,8 @@ public class ContentServiceRestImpl extends RootServiceRestImpl implements
       handleException(e,
           "trying to retrieve association reference description refset members");
       return null;
+    } finally {
+      securityService.close();
     }
   }
 
@@ -869,7 +930,8 @@ public class ContentServiceRestImpl extends RootServiceRestImpl implements
     @ApiParam(value = "Concept id, e.g. 100114019", required = true) @PathParam("terminologyId") String terminologyId,
     @ApiParam(value = "Terminology name, e.g. SNOMEDCT", required = true) @PathParam("terminology") String terminology,
     @ApiParam(value = "Terminology version, e.g. latest", required = true) @PathParam("version") String version,
-    @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken) {
+    @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken)
+    throws Exception {
 
     Logger.getLogger(getClass()).info(
         "RESTful call (Content): /attributeValueMember/concept/" + terminology
@@ -889,6 +951,8 @@ public class ContentServiceRestImpl extends RootServiceRestImpl implements
       handleException(e,
           "trying to retrieve attribute value concept refset members");
       return null;
+    } finally {
+      securityService.close();
     }
   }
 
@@ -907,7 +971,8 @@ public class ContentServiceRestImpl extends RootServiceRestImpl implements
     @ApiParam(value = "Description id, e.g. 100114029", required = true) @PathParam("terminologyId") String terminologyId,
     @ApiParam(value = "Terminology name, e.g. SNOMEDCT", required = true) @PathParam("terminology") String terminology,
     @ApiParam(value = "Terminology version, e.g. latest", required = true) @PathParam("version") String version,
-    @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken) {
+    @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken)
+    throws Exception {
 
     Logger.getLogger(getClass()).info(
         "RESTful call (Content): /attributeValueMember/description/"
@@ -928,6 +993,8 @@ public class ContentServiceRestImpl extends RootServiceRestImpl implements
       handleException(e,
           "trying to retrieve attribute value description refset members");
       return null;
+    } finally {
+      securityService.close();
     }
   }
 
@@ -946,7 +1013,8 @@ public class ContentServiceRestImpl extends RootServiceRestImpl implements
     @ApiParam(value = "Concept id, e.g. 100114019", required = true) @PathParam("terminologyId") String terminologyId,
     @ApiParam(value = "Terminology name, e.g. SNOMEDCT", required = true) @PathParam("terminology") String terminology,
     @ApiParam(value = "Terminology version, e.g. latest", required = true) @PathParam("version") String version,
-    @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken) {
+    @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken)
+    throws Exception {
 
     Logger.getLogger(getClass()).info(
         "RESTful call (Content): /complexMapMember/concept/" + terminology
@@ -965,6 +1033,8 @@ public class ContentServiceRestImpl extends RootServiceRestImpl implements
     } catch (Exception e) {
       handleException(e, "trying to retrieve complex map refset members");
       return null;
+    } finally {
+      securityService.close();
     }
   }
 
@@ -983,7 +1053,8 @@ public class ContentServiceRestImpl extends RootServiceRestImpl implements
     @ApiParam(value = "Description id, e.g. 100114029", required = true) @PathParam("terminologyId") String terminologyId,
     @ApiParam(value = "Terminology name, e.g. SNOMEDCT", required = true) @PathParam("terminology") String terminology,
     @ApiParam(value = "Terminology version, e.g. latest", required = true) @PathParam("version") String version,
-    @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken) {
+    @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken)
+    throws Exception {
 
     Logger.getLogger(getClass()).info(
         "RESTful call (Content): /languageMember/description/" + terminology
@@ -1002,6 +1073,8 @@ public class ContentServiceRestImpl extends RootServiceRestImpl implements
     } catch (Exception e) {
       handleException(e, "trying to retrieve language refset members");
       return null;
+    } finally {
+      securityService.close();
     }
   }
 
@@ -1020,7 +1093,8 @@ public class ContentServiceRestImpl extends RootServiceRestImpl implements
     @ApiParam(value = "Concept id, e.g. 100114019", required = true) @PathParam("terminologyId") String terminologyId,
     @ApiParam(value = "Terminology name, e.g. SNOMEDCT", required = true) @PathParam("terminology") String terminology,
     @ApiParam(value = "Terminology version, e.g. latest", required = true) @PathParam("version") String version,
-    @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken) {
+    @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken)
+    throws Exception {
 
     Logger.getLogger(getClass()).info(
         "RESTful call (Content): /simpleMapMember/concept/" + terminology + "/"
@@ -1039,6 +1113,8 @@ public class ContentServiceRestImpl extends RootServiceRestImpl implements
     } catch (Exception e) {
       handleException(e, "trying to retrieve simple map refset members");
       return null;
+    } finally {
+      securityService.close();
     }
   }
 
@@ -1057,7 +1133,8 @@ public class ContentServiceRestImpl extends RootServiceRestImpl implements
     @ApiParam(value = "Concept id, e.g. 100114019", required = true) @PathParam("terminologyId") String terminologyId,
     @ApiParam(value = "Terminology name, e.g. SNOMEDCT", required = true) @PathParam("terminology") String terminology,
     @ApiParam(value = "Terminology version, e.g. latest", required = true) @PathParam("version") String version,
-    @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken) {
+    @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken)
+    throws Exception {
 
     Logger.getLogger(getClass()).info(
         "RESTful call (Content): /simpleMember/concept/" + terminology + "/"
@@ -1076,6 +1153,8 @@ public class ContentServiceRestImpl extends RootServiceRestImpl implements
     } catch (Exception e) {
       handleException(e, "trying to retrieve simple refset members");
       return null;
+    } finally {
+      securityService.close();
     }
   }
 
@@ -1094,7 +1173,8 @@ public class ContentServiceRestImpl extends RootServiceRestImpl implements
     @ApiParam(value = "Concept id, e.g. 100114019", required = true) @PathParam("terminologyId") String terminologyId,
     @ApiParam(value = "Terminology name, e.g. SNOMEDCT", required = true) @PathParam("terminology") String terminology,
     @ApiParam(value = "Terminology version, e.g. latest", required = true) @PathParam("version") String version,
-    @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken) {
+    @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken)
+    throws Exception {
 
     Logger.getLogger(getClass()).info(
         "RESTful call (Content): /relationship/inverse/" + terminology + "/"
@@ -1113,6 +1193,8 @@ public class ContentServiceRestImpl extends RootServiceRestImpl implements
     } catch (Exception e) {
       handleException(e, "trying to retrieve inverse relationships");
       return null;
+    } finally {
+      securityService.close();
     }
   }
 
@@ -1161,6 +1243,8 @@ public class ContentServiceRestImpl extends RootServiceRestImpl implements
       Logger.getLogger(getClass()).info("ERROR:");
       e.printStackTrace();
       // handleException(e, "trying to reindex");
+    } finally {
+      securityService.close();
     }
 
   }
@@ -1221,6 +1305,8 @@ public class ContentServiceRestImpl extends RootServiceRestImpl implements
 
     } catch (Exception e) {
       handleException(e, "trying to load terminology from ClaML file");
+    } finally {
+      securityService.close();
     }
   }
 
@@ -1316,6 +1402,8 @@ public class ContentServiceRestImpl extends RootServiceRestImpl implements
 
     } catch (Exception e) {
       handleException(e, "trying to load terminology delta from RF2 directory");
+    } finally {
+      securityService.close();
     }
   }
 
@@ -1458,6 +1546,8 @@ public class ContentServiceRestImpl extends RootServiceRestImpl implements
 
     } catch (Exception e) {
       handleException(e, "trying to load full terminology from RF2 directory");
+    } finally {
+      securityService.close();
     }
   }
 
@@ -1546,6 +1636,8 @@ public class ContentServiceRestImpl extends RootServiceRestImpl implements
     } catch (Exception e) {
       handleException(e,
           "trying to load terminology snapshot from RF2 directory");
+    } finally {
+      securityService.close();
     }
   }
 
@@ -1599,6 +1691,8 @@ public class ContentServiceRestImpl extends RootServiceRestImpl implements
 
     } catch (Exception e) {
       handleException(e, "trying to compute transitive closure");
+    } finally {
+      securityService.close();
     }
   }
 
@@ -1641,6 +1735,8 @@ public class ContentServiceRestImpl extends RootServiceRestImpl implements
 
     } catch (Exception e) {
       handleException(e, "trying to load terminology from ClaML file");
+    } finally {
+      securityService.close();
     }
   }
 
