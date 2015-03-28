@@ -67,7 +67,8 @@ public class HistoryClientRest implements HistoryServiceRest {
         client.resource(config.getProperty("base.url") + "/history/concept/"
             + terminology + "/" + date);
     String pfsString =
-        (pfs != null ? ConfigUtility.getStringForGraph(pfs) : null);
+        ConfigUtility.getStringForGraph(pfs == null
+        ? new PfsParameterJpa() : pfs);
     Logger.getLogger(this.getClass()).debug(pfsString);
     ClientResponse response =
         resource.accept(MediaType.APPLICATION_XML)
@@ -76,11 +77,12 @@ public class HistoryClientRest implements HistoryServiceRest {
             .post(ClientResponse.class, pfsString);
 
     String resultString = response.getEntity(String.class);
-   
+
     if (response.getStatusInfo().getFamily() == Family.SUCCESSFUL) {
-      Logger.getLogger(this.getClass()).debug(resultString.substring(0,Math.min(resultString.length(),3999)));
+      Logger.getLogger(this.getClass()).debug(
+          resultString.substring(0, Math.min(resultString.length(), 3999)));
     } else {
-      throw new Exception(resultString);
+      throw new Exception(response.toString());
     }
 
     // converting to object
@@ -109,7 +111,8 @@ public class HistoryClientRest implements HistoryServiceRest {
             + endDate + "/all");
 
     String pfsString =
-        (pfs != null ? ConfigUtility.getStringForGraph(pfs) : null);
+        ConfigUtility.getStringForGraph(pfs == null
+        ? new PfsParameterJpa() : pfs);
     Logger.getLogger(this.getClass()).debug(pfsString);
     ClientResponse response =
         resource.accept(MediaType.APPLICATION_XML)
@@ -119,9 +122,10 @@ public class HistoryClientRest implements HistoryServiceRest {
 
     String resultString = response.getEntity(String.class);
     if (response.getStatusInfo().getFamily() == Family.SUCCESSFUL) {
-      Logger.getLogger(this.getClass()).debug(resultString.substring(0,Math.min(resultString.length(),3999)));
+      Logger.getLogger(this.getClass()).debug(
+          resultString.substring(0, Math.min(resultString.length(), 3999)));
     } else {
-      throw new Exception(resultString);
+      throw new Exception(response.toString());
     }
 
     // converting to object
@@ -153,9 +157,10 @@ public class HistoryClientRest implements HistoryServiceRest {
 
     String resultString = response.getEntity(String.class);
     if (response.getStatusInfo().getFamily() == Family.SUCCESSFUL) {
-      Logger.getLogger(this.getClass()).debug(resultString.substring(0,Math.min(resultString.length(),3999)));
+      Logger.getLogger(this.getClass()).debug(
+          resultString.substring(0, Math.min(resultString.length(), 3999)));
     } else {
-      throw new Exception(resultString);
+      throw new Exception(response.toString());
     }
 
     // converting to object
@@ -182,7 +187,8 @@ public class HistoryClientRest implements HistoryServiceRest {
         client.resource(config.getProperty("base.url")
             + "/history/description/" + terminology + "/" + date);
     String pfsString =
-        (pfs != null ? ConfigUtility.getStringForGraph(pfs) : null);
+        ConfigUtility.getStringForGraph(pfs == null
+        ? new PfsParameterJpa() : pfs);
     Logger.getLogger(this.getClass()).debug(pfsString);
     ClientResponse response =
         resource.accept(MediaType.APPLICATION_XML)
@@ -192,9 +198,10 @@ public class HistoryClientRest implements HistoryServiceRest {
 
     String resultString = response.getEntity(String.class);
     if (response.getStatusInfo().getFamily() == Family.SUCCESSFUL) {
-      Logger.getLogger(this.getClass()).debug(resultString.substring(0,Math.min(resultString.length(),3999)));
+      Logger.getLogger(this.getClass()).debug(
+          resultString.substring(0, Math.min(resultString.length(), 3999)));
     } else {
-      throw new Exception(resultString);
+      throw new Exception(response.toString());
     }
 
     // converting to object
@@ -223,7 +230,8 @@ public class HistoryClientRest implements HistoryServiceRest {
             + endDate + "/all");
 
     String pfsString =
-        (pfs != null ? ConfigUtility.getStringForGraph(pfs) : null);
+        ConfigUtility.getStringForGraph(pfs == null
+        ? new PfsParameterJpa() : pfs);
     Logger.getLogger(this.getClass()).debug(pfsString);
     ClientResponse response =
         resource.accept(MediaType.APPLICATION_XML)
@@ -233,9 +241,10 @@ public class HistoryClientRest implements HistoryServiceRest {
 
     String resultString = response.getEntity(String.class);
     if (response.getStatusInfo().getFamily() == Family.SUCCESSFUL) {
-      Logger.getLogger(this.getClass()).debug(resultString.substring(0,Math.min(resultString.length(),3999)));
+      Logger.getLogger(this.getClass()).debug(
+          resultString.substring(0, Math.min(resultString.length(), 3999)));
     } else {
-      throw new Exception(resultString);
+      throw new Exception(response.toString());
     }
 
     // converting to object
@@ -267,9 +276,10 @@ public class HistoryClientRest implements HistoryServiceRest {
 
     String resultString = response.getEntity(String.class);
     if (response.getStatusInfo().getFamily() == Family.SUCCESSFUL) {
-      Logger.getLogger(this.getClass()).debug(resultString.substring(0,Math.min(resultString.length(),3999)));
+      Logger.getLogger(this.getClass()).debug(
+          resultString.substring(0, Math.min(resultString.length(), 3999)));
     } else {
-      throw new Exception(resultString);
+      throw new Exception(response.toString());
     }
 
     // converting to object
@@ -297,7 +307,8 @@ public class HistoryClientRest implements HistoryServiceRest {
         client.resource(config.getProperty("base.url")
             + "/history/relationship/" + terminology + "/" + date);
     String pfsString =
-        (pfs != null ? ConfigUtility.getStringForGraph(pfs) : null);
+        ConfigUtility.getStringForGraph(pfs == null
+        ? new PfsParameterJpa() : pfs);
     Logger.getLogger(this.getClass()).debug(pfsString);
     ClientResponse response =
         resource.accept(MediaType.APPLICATION_XML)
@@ -307,9 +318,10 @@ public class HistoryClientRest implements HistoryServiceRest {
 
     String resultString = response.getEntity(String.class);
     if (response.getStatusInfo().getFamily() == Family.SUCCESSFUL) {
-      Logger.getLogger(this.getClass()).debug(resultString.substring(0,Math.min(resultString.length(),3999)));
+      Logger.getLogger(this.getClass()).debug(
+          resultString.substring(0, Math.min(resultString.length(), 3999)));
     } else {
-      throw new Exception(resultString);
+      throw new Exception(response.toString());
     }
 
     // converting to object
@@ -339,7 +351,8 @@ public class HistoryClientRest implements HistoryServiceRest {
             + endDate + "/all");
 
     String pfsString =
-        (pfs != null ? ConfigUtility.getStringForGraph(pfs) : null);
+        ConfigUtility.getStringForGraph(pfs == null
+        ? new PfsParameterJpa() : pfs);
     Logger.getLogger(this.getClass()).debug(pfsString);
     ClientResponse response =
         resource.accept(MediaType.APPLICATION_XML)
@@ -349,9 +362,10 @@ public class HistoryClientRest implements HistoryServiceRest {
 
     String resultString = response.getEntity(String.class);
     if (response.getStatusInfo().getFamily() == Family.SUCCESSFUL) {
-      Logger.getLogger(this.getClass()).debug(resultString.substring(0,Math.min(resultString.length(),3999)));
+      Logger.getLogger(this.getClass()).debug(
+          resultString.substring(0, Math.min(resultString.length(), 3999)));
     } else {
-      throw new Exception(resultString);
+      throw new Exception(response.toString());
     }
 
     // converting to object
@@ -383,9 +397,10 @@ public class HistoryClientRest implements HistoryServiceRest {
 
     String resultString = response.getEntity(String.class);
     if (response.getStatusInfo().getFamily() == Family.SUCCESSFUL) {
-      Logger.getLogger(this.getClass()).debug(resultString.substring(0,Math.min(resultString.length(),3999)));
+      Logger.getLogger(this.getClass()).debug(
+          resultString.substring(0, Math.min(resultString.length(), 3999)));
     } else {
-      throw new Exception(resultString);
+      throw new Exception(response.toString());
     }
 
     // converting to object
@@ -413,7 +428,8 @@ public class HistoryClientRest implements HistoryServiceRest {
         client.resource(config.getProperty("base.url") + "/history/language/"
             + terminology + "/" + date);
     String pfsString =
-        (pfs != null ? ConfigUtility.getStringForGraph(pfs) : null);
+        ConfigUtility.getStringForGraph(pfs == null
+        ? new PfsParameterJpa() : pfs);
     Logger.getLogger(this.getClass()).debug(pfsString);
     ClientResponse response =
         resource.accept(MediaType.APPLICATION_XML)
@@ -423,9 +439,10 @@ public class HistoryClientRest implements HistoryServiceRest {
 
     String resultString = response.getEntity(String.class);
     if (response.getStatusInfo().getFamily() == Family.SUCCESSFUL) {
-      Logger.getLogger(this.getClass()).debug(resultString.substring(0,Math.min(resultString.length(),3999)));
+      Logger.getLogger(this.getClass()).debug(
+          resultString.substring(0, Math.min(resultString.length(), 3999)));
     } else {
-      throw new Exception(resultString);
+      throw new Exception(response.toString());
     }
 
     // converting to object
@@ -455,7 +472,8 @@ public class HistoryClientRest implements HistoryServiceRest {
             + endDate + "/all");
 
     String pfsString =
-        (pfs != null ? ConfigUtility.getStringForGraph(pfs) : null);
+        ConfigUtility.getStringForGraph(pfs == null
+        ? new PfsParameterJpa() : pfs);
     Logger.getLogger(this.getClass()).debug(pfsString);
     ClientResponse response =
         resource.accept(MediaType.APPLICATION_XML)
@@ -465,9 +483,10 @@ public class HistoryClientRest implements HistoryServiceRest {
 
     String resultString = response.getEntity(String.class);
     if (response.getStatusInfo().getFamily() == Family.SUCCESSFUL) {
-      Logger.getLogger(this.getClass()).debug(resultString.substring(0,Math.min(resultString.length(),3999)));
+      Logger.getLogger(this.getClass()).debug(
+          resultString.substring(0, Math.min(resultString.length(), 3999)));
     } else {
-      throw new Exception(resultString);
+      throw new Exception(response.toString());
     }
 
     // converting to object
@@ -499,9 +518,10 @@ public class HistoryClientRest implements HistoryServiceRest {
 
     String resultString = response.getEntity(String.class);
     if (response.getStatusInfo().getFamily() == Family.SUCCESSFUL) {
-      Logger.getLogger(this.getClass()).debug(resultString.substring(0,Math.min(resultString.length(),3999)));
+      Logger.getLogger(this.getClass()).debug(
+          resultString.substring(0, Math.min(resultString.length(), 3999)));
     } else {
-      throw new Exception(resultString);
+      throw new Exception(response.toString());
     }
 
     // converting to object
@@ -528,7 +548,8 @@ public class HistoryClientRest implements HistoryServiceRest {
         client.resource(config.getProperty("base.url") + "/history/concept/"
             + terminology + "/" + date + "/deep");
     String pfsString =
-        (pfs != null ? ConfigUtility.getStringForGraph(pfs) : null);
+        ConfigUtility.getStringForGraph(pfs == null
+        ? new PfsParameterJpa() : pfs);
     Logger.getLogger(this.getClass()).debug(pfsString);
     ClientResponse response =
         resource.accept(MediaType.APPLICATION_XML)
@@ -538,9 +559,10 @@ public class HistoryClientRest implements HistoryServiceRest {
 
     String resultString = response.getEntity(String.class);
     if (response.getStatusInfo().getFamily() == Family.SUCCESSFUL) {
-      Logger.getLogger(this.getClass()).debug(resultString.substring(0,Math.min(resultString.length(),3999)));
+      Logger.getLogger(this.getClass()).debug(
+          resultString.substring(0, Math.min(resultString.length(), 3999)));
     } else {
-      throw new Exception(resultString);
+      throw new Exception(response.toString());
     }
 
     // converting to object
@@ -573,13 +595,14 @@ public class HistoryClientRest implements HistoryServiceRest {
     }
     String resultString = response.getEntity(String.class);
     if (response.getStatusInfo().getFamily() == Family.SUCCESSFUL) {
-      Logger.getLogger(this.getClass()).debug(resultString.substring(0,Math.min(resultString.length(),3999)));
+      Logger.getLogger(this.getClass()).debug(
+          resultString.substring(0, Math.min(resultString.length(), 3999)));
     }
     // handle null response
     else if (response.getStatus() == 204) {
       return null;
     } else {
-      throw new Exception(resultString);
+      throw new Exception(response.toString());
     }
 
     // converting to object
@@ -611,13 +634,14 @@ public class HistoryClientRest implements HistoryServiceRest {
     }
     String resultString = response.getEntity(String.class);
     if (response.getStatusInfo().getFamily() == Family.SUCCESSFUL) {
-      Logger.getLogger(this.getClass()).debug(resultString.substring(0,Math.min(resultString.length(),3999)));
+      Logger.getLogger(this.getClass()).debug(
+          resultString.substring(0, Math.min(resultString.length(), 3999)));
     }
     // handle null response
     else if (response.getStatus() == 204) {
       return null;
     } else {
-      throw new Exception(resultString);
+      throw new Exception(response.toString());
     }
 
     // converting to object
@@ -649,13 +673,14 @@ public class HistoryClientRest implements HistoryServiceRest {
     }
     String resultString = response.getEntity(String.class);
     if (response.getStatusInfo().getFamily() == Family.SUCCESSFUL) {
-      Logger.getLogger(this.getClass()).debug(resultString.substring(0,Math.min(resultString.length(),3999)));
+      Logger.getLogger(this.getClass()).debug(
+          resultString.substring(0, Math.min(resultString.length(), 3999)));
     }
     // handle null response
     else if (response.getStatus() == 204) {
       return null;
     } else {
-      throw new Exception(resultString);
+      throw new Exception(response.toString());
     }
 
     // converting to object
@@ -687,13 +712,14 @@ public class HistoryClientRest implements HistoryServiceRest {
     }
     String resultString = response.getEntity(String.class);
     if (response.getStatusInfo().getFamily() == Family.SUCCESSFUL) {
-      Logger.getLogger(this.getClass()).debug(resultString.substring(0,Math.min(resultString.length(),3999)));
+      Logger.getLogger(this.getClass()).debug(
+          resultString.substring(0, Math.min(resultString.length(), 3999)));
     }
     // handle null response
     else if (response.getStatus() == 204) {
       return null;
     } else {
-      throw new Exception(resultString);
+      throw new Exception(response.toString());
     }
 
     // converting to object
@@ -725,9 +751,10 @@ public class HistoryClientRest implements HistoryServiceRest {
     }
     String resultString = response.getEntity(String.class);
     if (response.getStatusInfo().getFamily() == Family.SUCCESSFUL) {
-      Logger.getLogger(this.getClass()).debug(resultString.substring(0,Math.min(resultString.length(),3999)));
+      Logger.getLogger(this.getClass()).debug(
+          resultString.substring(0, Math.min(resultString.length(), 3999)));
     } else {
-      throw new Exception(resultString);
+      throw new Exception(response.toString());
     }
 
     // converting to object
@@ -752,8 +779,8 @@ public class HistoryClientRest implements HistoryServiceRest {
         client
             .resource(config.getProperty("base.url") + "/history/release/add");
     String riString =
-        (releaseInfo != null ? ConfigUtility.getStringForGraph(releaseInfo)
-            : null);
+        ConfigUtility.getStringForGraph(releaseInfo == null
+            ? new ReleaseInfoJpa() : releaseInfo);
     Logger.getLogger(this.getClass()).debug(riString);
     ClientResponse response =
         resource.accept(MediaType.APPLICATION_XML)
@@ -763,9 +790,10 @@ public class HistoryClientRest implements HistoryServiceRest {
 
     String resultString = response.getEntity(String.class);
     if (response.getStatusInfo().getFamily() == Family.SUCCESSFUL) {
-      Logger.getLogger(this.getClass()).debug(resultString.substring(0,Math.min(resultString.length(),3999)));
+      Logger.getLogger(this.getClass()).debug(
+          resultString.substring(0, Math.min(resultString.length(), 3999)));
     } else {
-      throw new Exception(resultString);
+      throw new Exception(response.toString());
     }
 
     // converting to object
@@ -791,8 +819,8 @@ public class HistoryClientRest implements HistoryServiceRest {
         client.resource(config.getProperty("base.url")
             + "/history/release/update");
     String riString =
-        (releaseInfo != null ? ConfigUtility.getStringForGraph(releaseInfo)
-            : null);
+        ConfigUtility.getStringForGraph(releaseInfo == null
+        ? new ReleaseInfoJpa() : releaseInfo);
     Logger.getLogger(this.getClass()).debug(riString);
     ClientResponse response =
         resource.accept(MediaType.APPLICATION_XML)
@@ -834,8 +862,12 @@ public class HistoryClientRest implements HistoryServiceRest {
 
   }
 
-  /* (non-Javadoc)
-   * @see org.ihtsdo.otf.ts.rest.HistoryServiceRest#startEditingCycle(java.lang.String, java.lang.String, java.lang.String, java.lang.String)
+  /*
+   * (non-Javadoc)
+   * 
+   * @see
+   * org.ihtsdo.otf.ts.rest.HistoryServiceRest#startEditingCycle(java.lang.String
+   * , java.lang.String, java.lang.String, java.lang.String)
    */
   @Override
   public void startEditingCycle(String releaseVersion, String terminology,
@@ -861,21 +893,21 @@ public class HistoryClientRest implements HistoryServiceRest {
     boolean validate, String workflowStatusValues, boolean saveIdentifiers,
     String authToken) throws Exception {
     // TODO Auto-generated method stub
-    
+
   }
 
   @Override
   public void processRf2Release(String releaseVersion, String terminology,
     String outputDir, String moduleId, String authToken) throws Exception {
     // TODO Auto-generated method stub
-    
+
   }
 
   @Override
   public void finishRf2Release(String releaseVersion, String terminology,
     String authToken) throws Exception {
     // TODO Auto-generated method stub
-    
+
   }
 
 }

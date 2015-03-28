@@ -50,7 +50,7 @@ public class MetadataClientRest implements MetadataServiceRest {
     if (response.getStatusInfo().getFamily() == Family.SUCCESSFUL) {
       Logger.getLogger(getClass()).debug(resultString);
     } else {
-      throw new Exception(resultString);
+      throw new Exception(response.toString());
     }
 
     // converting to object
@@ -81,7 +81,7 @@ public class MetadataClientRest implements MetadataServiceRest {
     if (response.getStatusInfo().getFamily() == Family.SUCCESSFUL) {
       Logger.getLogger(getClass()).debug(resultString);
     } else {
-      throw new Exception(resultString);
+      throw new Exception(response.toString());
     }
 
     // converting to object
@@ -113,7 +113,7 @@ public class MetadataClientRest implements MetadataServiceRest {
     if (response.getStatusInfo().getFamily() == Family.SUCCESSFUL) {
       Logger.getLogger(getClass()).debug(resultString);
     } else {
-      throw new Exception(resultString);
+      throw new Exception(response.toString());
     }
 
     // converting to object

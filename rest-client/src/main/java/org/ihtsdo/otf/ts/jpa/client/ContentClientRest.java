@@ -81,7 +81,7 @@ public class ContentClientRest implements ContentServiceRest {
     if (response.getStatusInfo().getFamily() == Family.SUCCESSFUL) {
       Logger.getLogger(getClass()).debug(resultString);
     } else {
-      throw new Exception(resultString);
+      throw new Exception(response.toString());
     }
 
     // converting to object
@@ -113,7 +113,7 @@ public class ContentClientRest implements ContentServiceRest {
     if (response.getStatusInfo().getFamily() == Family.SUCCESSFUL) {
       Logger.getLogger(getClass()).debug(resultString);
     } else {
-      throw new Exception(resultString);
+      throw new Exception(response.toString());
     }
 
     // converting to object
@@ -139,7 +139,8 @@ public class ContentClientRest implements ContentServiceRest {
         client.resource(config.getProperty("base.url") + "/content/concepts/"
             + terminology + "/" + version + "/query/" + searchString);
     String pfsString =
-        (pfs != null ? ConfigUtility.getStringForGraph(pfs) : null);
+        ConfigUtility.getStringForGraph(pfs == null ? new PfsParameterJpa()
+        : pfs);
     Logger.getLogger(getClass()).debug(pfsString);
     ClientResponse response =
         resource.accept(MediaType.APPLICATION_XML)
@@ -151,7 +152,7 @@ public class ContentClientRest implements ContentServiceRest {
     if (response.getStatusInfo().getFamily() == Family.SUCCESSFUL) {
       Logger.getLogger(getClass()).debug(resultString);
     } else {
-      throw new Exception(resultString);
+      throw new Exception(response.toString());
     }
 
     // converting to object
@@ -179,7 +180,8 @@ public class ContentClientRest implements ContentServiceRest {
             + terminology + "/" + version + "/" + terminologyId
             + "/descendants");
     String pfsString =
-        (pfs != null ? ConfigUtility.getStringForGraph(pfs) : null);
+        ConfigUtility.getStringForGraph(pfs == null ? new PfsParameterJpa()
+        : pfs);
     Logger.getLogger(getClass()).debug(pfsString);
     ClientResponse response =
         resource.accept(MediaType.APPLICATION_XML)
@@ -191,7 +193,7 @@ public class ContentClientRest implements ContentServiceRest {
     if (response.getStatusInfo().getFamily() == Family.SUCCESSFUL) {
       Logger.getLogger(getClass()).debug(resultString);
     } else {
-      throw new Exception(resultString);
+      throw new Exception(response.toString());
     }
 
     // converting to object
@@ -218,7 +220,8 @@ public class ContentClientRest implements ContentServiceRest {
         client.resource(config.getProperty("base.url") + "/content/concepts/"
             + terminology + "/" + version + "/" + terminologyId + "/children");
     String pfsString =
-        (pfs != null ? ConfigUtility.getStringForGraph(pfs) : null);
+        ConfigUtility.getStringForGraph(pfs == null ? new PfsParameterJpa()
+        : pfs);
     Logger.getLogger(getClass()).debug(pfsString);
     ClientResponse response =
         resource.accept(MediaType.APPLICATION_XML)
@@ -230,7 +233,7 @@ public class ContentClientRest implements ContentServiceRest {
     if (response.getStatusInfo().getFamily() == Family.SUCCESSFUL) {
       Logger.getLogger(getClass()).debug(resultString);
     } else {
-      throw new Exception(resultString);
+      throw new Exception(response.toString());
     }
 
     // converting to object
@@ -260,7 +263,8 @@ public class ContentClientRest implements ContentServiceRest {
         client.resource(config.getProperty("base.url") + "/content/concepts/"
             + terminology + "/" + version + "/" + terminologyId + "/parents");
     String pfsString =
-        (pfs != null ? ConfigUtility.getStringForGraph(pfs) : null);
+        ConfigUtility.getStringForGraph(pfs == null ? new PfsParameterJpa()
+        : pfs);
     Logger.getLogger(getClass()).debug(pfsString);
     ClientResponse response =
         resource.accept(MediaType.APPLICATION_XML)
@@ -272,7 +276,7 @@ public class ContentClientRest implements ContentServiceRest {
     if (response.getStatusInfo().getFamily() == Family.SUCCESSFUL) {
       Logger.getLogger(getClass()).debug(resultString);
     } else {
-      throw new Exception(resultString);
+      throw new Exception(response.toString());
     }
 
     // converting to object
@@ -299,7 +303,8 @@ public class ContentClientRest implements ContentServiceRest {
         client.resource(config.getProperty("base.url") + "/content/concepts/"
             + terminology + "/" + version + "/" + terminologyId + "/ancestors");
     String pfsString =
-        (pfs != null ? ConfigUtility.getStringForGraph(pfs) : null);
+        ConfigUtility.getStringForGraph(pfs == null ? new PfsParameterJpa()
+        : pfs);
     Logger.getLogger(getClass()).debug(pfsString);
     ClientResponse response =
         resource.accept(MediaType.APPLICATION_XML)
@@ -311,7 +316,7 @@ public class ContentClientRest implements ContentServiceRest {
     if (response.getStatusInfo().getFamily() == Family.SUCCESSFUL) {
       Logger.getLogger(getClass()).debug(resultString);
     } else {
-      throw new Exception(resultString);
+      throw new Exception(response.toString());
     }
 
     // converting to object
@@ -344,7 +349,7 @@ public class ContentClientRest implements ContentServiceRest {
     if (response.getStatusInfo().getFamily() == Family.SUCCESSFUL) {
       Logger.getLogger(getClass()).debug(resultString);
     } else {
-      throw new Exception(resultString);
+      throw new Exception(response.toString());
     }
 
     // converting to object
@@ -572,7 +577,8 @@ public class ContentClientRest implements ContentServiceRest {
             + "/content/associationReferenceMember/refSet/" + terminology + "/"
             + version + "/" + refSetId);
     String pfsString =
-        (pfs != null ? ConfigUtility.getStringForGraph(pfs) : null);
+        ConfigUtility.getStringForGraph(pfs == null ? new PfsParameterJpa()
+            : pfs);
     Logger.getLogger(getClass()).debug(pfsString);
     ClientResponse response =
         resource.accept(MediaType.APPLICATION_XML)
@@ -584,7 +590,7 @@ public class ContentClientRest implements ContentServiceRest {
     if (response.getStatusInfo().getFamily() == Family.SUCCESSFUL) {
       Logger.getLogger(getClass()).debug(resultString);
     } else {
-      throw new Exception(resultString);
+      throw new Exception(response.toString());
     }
 
     // converting to object
@@ -613,7 +619,8 @@ public class ContentClientRest implements ContentServiceRest {
             + "/content/attributeValueMember/refSet/" + terminology + "/"
             + version + "/" + refSetId);
     String pfsString =
-        (pfs != null ? ConfigUtility.getStringForGraph(pfs) : null);
+        ConfigUtility.getStringForGraph(pfs == null ? new PfsParameterJpa()
+            : pfs);
     Logger.getLogger(getClass()).debug(pfsString);
     ClientResponse response =
         resource.accept(MediaType.APPLICATION_XML)
@@ -625,7 +632,7 @@ public class ContentClientRest implements ContentServiceRest {
     if (response.getStatusInfo().getFamily() == Family.SUCCESSFUL) {
       Logger.getLogger(getClass()).debug(resultString);
     } else {
-      throw new Exception(resultString);
+      throw new Exception(response.toString());
     }
 
     // converting to object
@@ -653,7 +660,8 @@ public class ContentClientRest implements ContentServiceRest {
             + "/content/complexMapMember/refSet/" + terminology + "/" + version
             + "/" + refSetId);
     String pfsString =
-        (pfs != null ? ConfigUtility.getStringForGraph(pfs) : null);
+        ConfigUtility.getStringForGraph(pfs == null ? new PfsParameterJpa()
+            : pfs);
     Logger.getLogger(getClass()).debug(pfsString);
     ClientResponse response =
         resource.accept(MediaType.APPLICATION_XML)
@@ -665,7 +673,7 @@ public class ContentClientRest implements ContentServiceRest {
     if (response.getStatusInfo().getFamily() == Family.SUCCESSFUL) {
       Logger.getLogger(getClass()).debug(resultString);
     } else {
-      throw new Exception(resultString);
+      throw new Exception(response.toString());
     }
 
     // converting to object
@@ -693,7 +701,8 @@ public class ContentClientRest implements ContentServiceRest {
             + "/content/descriptionTypeMember/refSet/" + terminology + "/"
             + version + "/" + refSetId);
     String pfsString =
-        (pfs != null ? ConfigUtility.getStringForGraph(pfs) : null);
+        ConfigUtility.getStringForGraph(pfs == null ? new PfsParameterJpa()
+        : pfs);
     Logger.getLogger(getClass()).debug(pfsString);
     ClientResponse response =
         resource.accept(MediaType.APPLICATION_XML)
@@ -705,7 +714,7 @@ public class ContentClientRest implements ContentServiceRest {
     if (response.getStatusInfo().getFamily() == Family.SUCCESSFUL) {
       Logger.getLogger(getClass()).debug(resultString);
     } else {
-      throw new Exception(resultString);
+      throw new Exception(response.toString());
     }
 
     // converting to object
@@ -733,7 +742,8 @@ public class ContentClientRest implements ContentServiceRest {
             + "/content/languageMember/refSet/" + terminology + "/" + version
             + "/" + refSetId);
     String pfsString =
-        (pfs != null ? ConfigUtility.getStringForGraph(pfs) : null);
+        ConfigUtility.getStringForGraph(pfs == null ? new PfsParameterJpa()
+        : pfs);
     Logger.getLogger(getClass()).debug(pfsString);
     ClientResponse response =
         resource.accept(MediaType.APPLICATION_XML)
@@ -745,7 +755,7 @@ public class ContentClientRest implements ContentServiceRest {
     if (response.getStatusInfo().getFamily() == Family.SUCCESSFUL) {
       Logger.getLogger(getClass()).debug(resultString);
     } else {
-      throw new Exception(resultString);
+      throw new Exception(response.toString());
     }
 
     // converting to object
@@ -779,7 +789,7 @@ public class ContentClientRest implements ContentServiceRest {
     if (response.getStatusInfo().getFamily() == Family.SUCCESSFUL) {
       Logger.getLogger(getClass()).debug(resultString);
     } else {
-      throw new Exception(resultString);
+      throw new Exception(response.toString());
     }
 
     // converting to object
@@ -813,7 +823,7 @@ public class ContentClientRest implements ContentServiceRest {
     if (response.getStatusInfo().getFamily() == Family.SUCCESSFUL) {
       Logger.getLogger(getClass()).debug(resultString);
     } else {
-      throw new Exception(resultString);
+      throw new Exception(response.toString());
     }
 
     // converting to object
@@ -841,7 +851,8 @@ public class ContentClientRest implements ContentServiceRest {
             + "/content/simpleMapMember/refSet/" + terminology + "/" + version
             + "/" + refSetId);
     String pfsString =
-        (pfs != null ? ConfigUtility.getStringForGraph(pfs) : null);
+        ConfigUtility.getStringForGraph(pfs == null ? new PfsParameterJpa()
+        : pfs);
     Logger.getLogger(getClass()).debug(pfsString);
     ClientResponse response =
         resource.accept(MediaType.APPLICATION_XML)
@@ -853,7 +864,7 @@ public class ContentClientRest implements ContentServiceRest {
     if (response.getStatusInfo().getFamily() == Family.SUCCESSFUL) {
       Logger.getLogger(getClass()).debug(resultString);
     } else {
-      throw new Exception(resultString);
+      throw new Exception(response.toString());
     }
 
     // converting to object
@@ -881,7 +892,8 @@ public class ContentClientRest implements ContentServiceRest {
             + "/content/simpleMember/refSet/" + terminology + "/" + version
             + "/" + refSetId);
     String pfsString =
-        (pfs != null ? ConfigUtility.getStringForGraph(pfs) : null);
+        ConfigUtility.getStringForGraph(pfs == null ? new PfsParameterJpa()
+        : pfs);
     Logger.getLogger(getClass()).debug(pfsString);
     ClientResponse response =
         resource.accept(MediaType.APPLICATION_XML)
@@ -893,7 +905,7 @@ public class ContentClientRest implements ContentServiceRest {
     if (response.getStatusInfo().getFamily() == Family.SUCCESSFUL) {
       Logger.getLogger(getClass()).debug(resultString);
     } else {
-      throw new Exception(resultString);
+      throw new Exception(response.toString());
     }
 
     // converting to object
@@ -927,7 +939,7 @@ public class ContentClientRest implements ContentServiceRest {
     if (response.getStatusInfo().getFamily() == Family.SUCCESSFUL) {
       Logger.getLogger(getClass()).debug(resultString);
     } else {
-      throw new Exception(resultString);
+      throw new Exception(response.toString());
     }
 
     // converting to object
@@ -962,7 +974,7 @@ public class ContentClientRest implements ContentServiceRest {
     if (response.getStatusInfo().getFamily() == Family.SUCCESSFUL) {
       Logger.getLogger(getClass()).debug(resultString);
     } else {
-      throw new Exception(resultString);
+      throw new Exception(response.toString());
     }
 
     // converting to object
@@ -997,7 +1009,7 @@ public class ContentClientRest implements ContentServiceRest {
     if (response.getStatusInfo().getFamily() == Family.SUCCESSFUL) {
       Logger.getLogger(getClass()).debug(resultString);
     } else {
-      throw new Exception(resultString);
+      throw new Exception(response.toString());
     }
 
     // converting to object
@@ -1031,7 +1043,7 @@ public class ContentClientRest implements ContentServiceRest {
     if (response.getStatusInfo().getFamily() == Family.SUCCESSFUL) {
       Logger.getLogger(getClass()).debug(resultString);
     } else {
-      throw new Exception(resultString);
+      throw new Exception(response.toString());
     }
 
     // converting to object
@@ -1065,7 +1077,7 @@ public class ContentClientRest implements ContentServiceRest {
     if (response.getStatusInfo().getFamily() == Family.SUCCESSFUL) {
       Logger.getLogger(getClass()).debug(resultString);
     } else {
-      throw new Exception(resultString);
+      throw new Exception(response.toString());
     }
 
     // converting to object
@@ -1099,7 +1111,7 @@ public class ContentClientRest implements ContentServiceRest {
     if (response.getStatusInfo().getFamily() == Family.SUCCESSFUL) {
       Logger.getLogger(getClass()).debug(resultString);
     } else {
-      throw new Exception(resultString);
+      throw new Exception(response.toString());
     }
 
     // converting to object
@@ -1133,7 +1145,7 @@ public class ContentClientRest implements ContentServiceRest {
     if (response.getStatusInfo().getFamily() == Family.SUCCESSFUL) {
       Logger.getLogger(getClass()).debug(resultString);
     } else {
-      throw new Exception(resultString);
+      throw new Exception(response.toString());
     }
 
     // converting to object
@@ -1167,7 +1179,7 @@ public class ContentClientRest implements ContentServiceRest {
     if (response.getStatusInfo().getFamily() == Family.SUCCESSFUL) {
       Logger.getLogger(getClass()).debug(resultString);
     } else {
-      throw new Exception(resultString);
+      throw new Exception(response.toString());
     }
 
     // converting to object
@@ -1201,7 +1213,7 @@ public class ContentClientRest implements ContentServiceRest {
     if (response.getStatusInfo().getFamily() == Family.SUCCESSFUL) {
       Logger.getLogger(getClass()).debug(resultString);
     } else {
-      throw new Exception(resultString);
+      throw new Exception(response.toString());
     }
 
     // converting to object

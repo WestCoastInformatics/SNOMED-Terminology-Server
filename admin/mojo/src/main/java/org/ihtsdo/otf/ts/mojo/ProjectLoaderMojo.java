@@ -168,8 +168,7 @@ public class ProjectLoaderMojo extends AbstractMojo {
       project.setScopeConcepts(new HashSet<String>(Arrays.asList(scopeConcepts
           .split(","))));
       project.setScopeDescendantsFlag(scopeDescendantsFlag);
-      project.setScopeExcludesConcepts(new HashSet<String>(Arrays
-          .asList(scopeExcludesConcepts.split(","))));
+      // no scope excludes concepts
       project.setScopeExcludesDescendantsFlag(scopeExcludesDescendantsFlag);
       project.setTerminology(terminology);
       project.setTerminologyVersion(version);

@@ -136,7 +136,7 @@ public class ClamlLoadAndUnloadTest {
 
     // Verify release info
     HistoryService historyService = new HistoryServiceJpa();
-    Assert.assertNotNull(historyService.getReleaseInfo("ICD9CM", "2013"));
+    Assert.assertNotNull(historyService.getReleaseInfo("ICD9CM", "20130101"));
     historyService.close();
     historyService.closeFactory();
 

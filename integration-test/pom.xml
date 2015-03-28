@@ -74,7 +74,7 @@
             <artifactId>maven-surefire-plugin</artifactId>
             <configuration>
               <includes>
-                <include>**/org/ihtsdo/otf/ts/test/rest/*Test.java</include>
+                <include>**/org/ihtsdo/otf/ts/test/rest/Security*Test.java</include>
               </includes>
               <additionalClasspathElements>
                 <additionalClasspathElement>src/main/resources</additionalClasspathElement>

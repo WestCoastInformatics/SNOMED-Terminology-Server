@@ -4,9 +4,9 @@
 package org.ihtsdo.otf.ts.rest;
 
 import org.ihtsdo.otf.ts.Project;
+import org.ihtsdo.otf.ts.helpers.ConceptList;
 import org.ihtsdo.otf.ts.helpers.PfsParameterJpa;
 import org.ihtsdo.otf.ts.helpers.ProjectList;
-import org.ihtsdo.otf.ts.helpers.SearchResultList;
 import org.ihtsdo.otf.ts.jpa.ProjectJpa;
 
 /**
@@ -53,7 +53,7 @@ public interface ProjectServiceRest {
    * @return the concepts in scope
    * @throws Exception the exception
    */
-  public SearchResultList findConceptsInScope(Long projectId,
+  public ConceptList findConceptsInScope(Long projectId,
     PfsParameterJpa pfs, String authToken) throws Exception;
 
   /**

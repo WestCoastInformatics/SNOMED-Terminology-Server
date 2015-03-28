@@ -15,13 +15,15 @@ import org.apache.log4j.Logger;
 import org.ihtsdo.otf.ts.Project;
 import org.ihtsdo.otf.ts.UserRole;
 import org.ihtsdo.otf.ts.helpers.ConceptList;
+import org.ihtsdo.otf.ts.helpers.ConceptListJpa;
 import org.ihtsdo.otf.ts.helpers.PfsParameterJpa;
 import org.ihtsdo.otf.ts.helpers.ProjectList;
-import org.ihtsdo.otf.ts.helpers.SearchResultList;
 import org.ihtsdo.otf.ts.jpa.ProjectJpa;
 import org.ihtsdo.otf.ts.jpa.services.ProjectServiceJpa;
 import org.ihtsdo.otf.ts.jpa.services.SecurityServiceJpa;
 import org.ihtsdo.otf.ts.rest.ProjectServiceRest;
+import org.ihtsdo.otf.ts.rf2.Concept;
+import org.ihtsdo.otf.ts.rf2.jpa.ConceptJpa;
 import org.ihtsdo.otf.ts.services.ProjectService;
 import org.ihtsdo.otf.ts.services.SecurityService;
 
@@ -89,15 +91,9 @@ public class ProjectServiceRestImpl extends RootServiceRestImpl implements
         }
       }
 
-      projectService.setTransactionPerOperation(false);
-      projectService.beginTransaction();
-
       // Add project
       project.setLastModifiedBy(securityService.getUsernameForToken(authToken));
       Project newProject = projectService.addProject(project);
-
-      // Commit, close, and return
-      projectService.commit();
       projectService.close();
       return newProject;
     } catch (Exception e) {
@@ -144,15 +140,9 @@ public class ProjectServiceRestImpl extends RootServiceRestImpl implements
         throw new Exception("Project " + project.getId() + " does not exist.");
       }
 
-      projectService.setTransactionPerOperation(false);
-      projectService.beginTransaction();
-
-      // Add project
+      // Update project
       project.setLastModifiedBy(securityService.getUsernameForToken(authToken));
       projectService.updateProject(project);
-
-      // Commit, close, and return
-      projectService.commit();
       projectService.close();
 
     } catch (Exception e) {
@@ -194,26 +184,31 @@ public class ProjectServiceRestImpl extends RootServiceRestImpl implements
    */
   @Override
   @POST
-  @Path("/id/{id}/scope")
+  @Path("/scope/id/{id}")
   @ApiOperation(value = "Find project scope for the project id", notes = "Gets all concpets in scope for this project.", response = ConceptList.class)
-  public SearchResultList findConceptsInScope(
+  public ConceptList findConceptsInScope(
     @ApiParam(value = "Project internal id, e.g. 2", required = true) @PathParam("id") Long id,
     @ApiParam(value = "PFS Parameter, e.g. '{ \"startIndex\":\"1\", \"maxResults\":\"5\" }'", required = false) PfsParameterJpa pfs,
     @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken) {
 
-    Logger.getLogger(getClass()).info(
-        "RESTful call (Content): /" + id + "/scope");
+    Logger.getLogger(getClass()).info("RESTful call (Content): scope/id/" + id);
 
     try {
       authenticate(securityService, authToken, "get project scope",
           UserRole.VIEWER);
 
       ProjectService projectService = new ProjectServiceJpa();
-      SearchResultList list =
+      ConceptList list =
           projectService
               .findConceptsInScope(projectService.getProject(id), pfs);
+      // Need to detach the concepts.
+      ConceptList list2 = new ConceptListJpa();
+      for (Concept c : list.getObjects()) {
+        list2.addObject(new ConceptJpa(c, false, false));
+      }
+      list2.setTotalCount(list.getTotalCount());
       projectService.close();
-      return list;
+      return list2;
     } catch (Exception e) {
       handleException(e, "trying to retrieve scope concepts for project " + id);
       return null;

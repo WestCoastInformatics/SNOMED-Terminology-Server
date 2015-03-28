@@ -5,22 +5,12 @@ package org.ihtsdo.otf.ts.test.rest;
 
 import static org.junit.Assert.fail;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashSet;
-import java.util.Set;
-
 import org.ihtsdo.otf.ts.Project;
-import org.ihtsdo.otf.ts.User;
-import org.ihtsdo.otf.ts.classifier.model.Relationship;
-import org.ihtsdo.otf.ts.helpers.PfsParameter;
+import org.ihtsdo.otf.ts.helpers.ConceptList;
 import org.ihtsdo.otf.ts.helpers.PfsParameterJpa;
 import org.ihtsdo.otf.ts.helpers.ProjectList;
-import org.ihtsdo.otf.ts.helpers.SearchResult;
 import org.ihtsdo.otf.ts.helpers.SearchResultList;
 import org.ihtsdo.otf.ts.jpa.ProjectJpa;
-import org.ihtsdo.otf.ts.rf2.Concept;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -169,7 +159,7 @@ public class ProjectServiceRestDegenerateUseTest extends ProjectServiceRestTest 
 
 		// Call findConceptsInScope() project id is null
 		try {
-	        SearchResultList resultList = projectService.findConceptsInScope(
+	        ConceptList resultList = projectService.findConceptsInScope(
 	    		null, new PfsParameterJpa(), viewerAuthToken);
 		} catch (Exception e) {
 			// do nothing
@@ -182,7 +172,7 @@ public class ProjectServiceRestDegenerateUseTest extends ProjectServiceRestTest 
 		PfsParameterJpa pfs = new PfsParameterJpa();
 		pfs.setQueryRestriction("testQueryRestriction");
 		try {
-			SearchResultList resultList = projectService.findConceptsInScope(
+			ConceptList resultList = projectService.findConceptsInScope(
 		    		project.getId(), pfs, viewerAuthToken);
 			fail("");
 		} catch (Exception e) {
@@ -195,7 +185,7 @@ public class ProjectServiceRestDegenerateUseTest extends ProjectServiceRestTest 
 	        TEST: exception because project with this id does not exist.*/
 		project.setId(-1L);
 		try {
-			SearchResultList resultList = projectService.findConceptsInScope(
+			ConceptList resultList = projectService.findConceptsInScope(
 		    		project.getId(), null, viewerAuthToken);
 		} catch (Exception e) {
 			// do nothing

@@ -6,10 +6,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response.Status.Family;
 
 import org.apache.log4j.Logger;
-import org.ihtsdo.otf.ts.Project;
 import org.ihtsdo.otf.ts.helpers.ConfigUtility;
-import org.ihtsdo.otf.ts.jpa.ProjectJpa;
-import org.ihtsdo.otf.ts.jpa.algo.StartEditingCycleAlgorithm;
 import org.ihtsdo.otf.ts.rest.ContentChangeServiceRest;
 import org.ihtsdo.otf.ts.rf2.AssociationReferenceConceptRefSetMember;
 import org.ihtsdo.otf.ts.rf2.Concept;
@@ -44,8 +41,12 @@ public class ContentChangeClientRest implements ContentChangeServiceRest {
     this.config = config;
   }
 
-  /* (non-Javadoc)
-   * @see org.ihtsdo.otf.ts.rest.ContentChangeServiceRest#getConceptForUser(java.lang.String, java.lang.String, java.lang.String, java.lang.String)
+  /*
+   * (non-Javadoc)
+   * 
+   * @see
+   * org.ihtsdo.otf.ts.rest.ContentChangeServiceRest#getConceptForUser(java.
+   * lang.String, java.lang.String, java.lang.String, java.lang.String)
    */
   @Override
   public Concept getConceptForUser(String terminologyId, String terminology,
@@ -62,7 +63,7 @@ public class ContentChangeClientRest implements ContentChangeServiceRest {
     if (response.getStatusInfo().getFamily() == Family.SUCCESSFUL) {
       Logger.getLogger(getClass()).debug(resultString);
     } else {
-      throw new Exception(resultString);
+      throw new Exception(response.toString());
     }
 
     // converting to object
@@ -71,7 +72,7 @@ public class ContentChangeClientRest implements ContentChangeServiceRest {
             ConceptJpa.class);
     return c;
   }
-  
+
   /*
    * (non-Javadoc)
    * 
@@ -87,7 +88,8 @@ public class ContentChangeClientRest implements ContentChangeServiceRest {
         client.resource(config.getProperty("base.url") + "/edit/concept/add");
 
     String conceptString =
-        (concept != null ? ConfigUtility.getStringForGraph(concept) : null);
+        ConfigUtility.getStringForGraph(concept == null ? new ConceptJpa()
+            : concept);
     Logger.getLogger(getClass()).debug(conceptString);
     ClientResponse response =
         resource.accept(MediaType.APPLICATION_XML)
@@ -99,7 +101,7 @@ public class ContentChangeClientRest implements ContentChangeServiceRest {
     if (response.getStatusInfo().getFamily() == Family.SUCCESSFUL) {
       Logger.getLogger(getClass()).debug(resultString);
     } else {
-      throw new Exception(resultString);
+      throw new Exception(response.toString());
     }
 
     // converting to object
@@ -126,7 +128,8 @@ public class ContentChangeClientRest implements ContentChangeServiceRest {
             .resource(config.getProperty("base.url") + "/edit/concept/update");
 
     String conceptString =
-        (concept != null ? ConfigUtility.getStringForGraph(concept) : null);
+        ConfigUtility.getStringForGraph(concept == null ? new ConceptJpa()
+            : concept);
     Logger.getLogger(getClass()).debug(conceptString);
     ClientResponse response =
         resource.accept(MediaType.APPLICATION_XML)
@@ -183,8 +186,8 @@ public class ContentChangeClientRest implements ContentChangeServiceRest {
             + "/edit/description/add");
 
     String descriptionString =
-        (description != null ? ConfigUtility.getStringForGraph(description)
-            : null);
+        ConfigUtility.getStringForGraph(description == null
+            ? new DescriptionJpa() : description);
     Logger.getLogger(getClass()).debug(descriptionString);
     ClientResponse response =
         resource.accept(MediaType.APPLICATION_XML)
@@ -196,7 +199,7 @@ public class ContentChangeClientRest implements ContentChangeServiceRest {
     if (response.getStatusInfo().getFamily() == Family.SUCCESSFUL) {
       Logger.getLogger(getClass()).debug(resultString);
     } else {
-      throw new Exception(resultString);
+      throw new Exception(response.toString());
     }
 
     // converting to object
@@ -223,8 +226,8 @@ public class ContentChangeClientRest implements ContentChangeServiceRest {
             + "/edit/description/update");
 
     String descriptionString =
-        (description != null ? ConfigUtility.getStringForGraph(description)
-            : null);
+        ConfigUtility.getStringForGraph(description == null
+            ? new DescriptionJpa() : description);
     Logger.getLogger(getClass()).debug(descriptionString);
     ClientResponse response =
         resource.accept(MediaType.APPLICATION_XML)
@@ -281,8 +284,8 @@ public class ContentChangeClientRest implements ContentChangeServiceRest {
             + "/edit/relationship/add");
 
     String relationshipString =
-        (relationship != null ? ConfigUtility.getStringForGraph(relationship)
-            : null);
+        ConfigUtility.getStringForGraph(relationship == null
+            ? new RelationshipJpa() : relationship);
     Logger.getLogger(getClass()).debug(relationshipString);
     ClientResponse response =
         resource.accept(MediaType.APPLICATION_XML)
@@ -294,7 +297,7 @@ public class ContentChangeClientRest implements ContentChangeServiceRest {
     if (response.getStatusInfo().getFamily() == Family.SUCCESSFUL) {
       Logger.getLogger(getClass()).debug(resultString);
     } else {
-      throw new Exception(resultString);
+      throw new Exception(response.toString());
     }
 
     // converting to object
@@ -321,8 +324,9 @@ public class ContentChangeClientRest implements ContentChangeServiceRest {
             + "/edit/relationship/update");
 
     String relationshipString =
-        (relationship != null ? ConfigUtility.getStringForGraph(relationship)
-            : null);
+        ConfigUtility.getStringForGraph(relationship == null
+            ? new RelationshipJpa() : relationship);
+
     Logger.getLogger(getClass()).debug(relationshipString);
     ClientResponse response =
         resource.accept(MediaType.APPLICATION_XML)
@@ -378,7 +382,8 @@ public class ContentChangeClientRest implements ContentChangeServiceRest {
         client.resource(config.getProperty("base.url") + "/edit/language/add");
 
     String memberString =
-        (member != null ? ConfigUtility.getStringForGraph(member) : null);
+        ConfigUtility.getStringForGraph(member == null
+            ? new LanguageRefSetMemberJpa() : member);
     Logger.getLogger(getClass()).debug(memberString);
     ClientResponse response =
         resource.accept(MediaType.APPLICATION_XML)
@@ -390,7 +395,7 @@ public class ContentChangeClientRest implements ContentChangeServiceRest {
     if (response.getStatusInfo().getFamily() == Family.SUCCESSFUL) {
       Logger.getLogger(getClass()).debug(resultString);
     } else {
-      throw new Exception(resultString);
+      throw new Exception(response.toString());
     }
 
     // converting to object
@@ -417,7 +422,8 @@ public class ContentChangeClientRest implements ContentChangeServiceRest {
             + "/edit/language/update");
 
     String memberString =
-        (member != null ? ConfigUtility.getStringForGraph(member) : null);
+        ConfigUtility.getStringForGraph(member == null
+            ? new LanguageRefSetMemberJpa() : member);
     Logger.getLogger(getClass()).debug(memberString);
     ClientResponse response =
         resource.accept(MediaType.APPLICATION_XML)
@@ -476,7 +482,8 @@ public class ContentChangeClientRest implements ContentChangeServiceRest {
             + "/edit/associationReference/add");
 
     String memberString =
-        (member != null ? ConfigUtility.getStringForGraph(member) : null);
+        ConfigUtility.getStringForGraph(member == null
+        ? new AssociationReferenceConceptRefSetMemberJpa() : member);
     Logger.getLogger(getClass()).debug(memberString);
     ClientResponse response =
         resource.accept(MediaType.APPLICATION_XML)
@@ -488,7 +495,7 @@ public class ContentChangeClientRest implements ContentChangeServiceRest {
     if (response.getStatusInfo().getFamily() == Family.SUCCESSFUL) {
       Logger.getLogger(getClass()).debug(resultString);
     } else {
-      throw new Exception(resultString);
+      throw new Exception(response.toString());
     }
 
     // converting to object
@@ -517,7 +524,8 @@ public class ContentChangeClientRest implements ContentChangeServiceRest {
             + "/edit/associationReference/update");
 
     String memberString =
-        (member != null ? ConfigUtility.getStringForGraph(member) : null);
+        ConfigUtility.getStringForGraph(member == null
+            ? new AssociationReferenceConceptRefSetMemberJpa() : member);
     Logger.getLogger(getClass()).debug(memberString);
     ClientResponse response =
         resource.accept(MediaType.APPLICATION_XML)
@@ -558,224 +566,4 @@ public class ContentChangeClientRest implements ContentChangeServiceRest {
     }
 
   }
-
-  /*
-   * (non-Javadoc)
-   * 
-   * @see
-   * org.ihtsdo.otf.ts.rest.ContentChangeServiceRest#computeTransitiveClosure
-   * (java.lang.String, java.lang.String, java.lang.String, java.lang.String)
-   */
-  @Override
-  public void computeTransitiveClosure(String terminologyId,
-    String terminology, String version, String authToken) throws Exception {
-    Client client = Client.create();
-    WebResource resource =
-        client.resource(config.getProperty("base.url") + "/transitive/compute/"
-            + terminology + "/" + version + "/" + terminologyId);
-    ClientResponse response =
-        resource.accept(MediaType.APPLICATION_XML)
-            .header("Authorization", authToken).post(ClientResponse.class);
-
-    if (response.getStatusInfo().getFamily() == Family.SUCCESSFUL) {
-      // do nothing
-    } else {
-      throw new Exception("Unexpected status " + response.getStatus());
-    }
-  }
-
-  /*
-   * (non-Javadoc)
-   * 
-   * @see
-   * org.ihtsdo.otf.ts.rest.ContentChangeServiceRest#clearTransitiveClosure(
-   * java.lang.String, java.lang.String, java.lang.String, java.lang.String)
-   */
-  @Override
-  public void clearTransitiveClosure(String terminology, String version,
-    String authToken) throws Exception {
-    Client client = Client.create();
-    WebResource resource =
-        client.resource(config.getProperty("base.url") + "/transitive/clear/"
-            + terminology + "/" + version);
-    ClientResponse response =
-        resource.accept(MediaType.APPLICATION_XML)
-            .header("Authorization", authToken).post(ClientResponse.class);
-
-    if (response.getStatusInfo().getFamily() == Family.SUCCESSFUL) {
-      // do nothing
-    } else {
-      throw new Exception("Unexpected status " + response.getStatus());
-    }
-  }
-
-  /*
-   * (non-Javadoc)
-   * 
-   * @see
-   * org.ihtsdo.otf.ts.rest.ContentChangeServiceRest#clearConcepts(java.lang
-   * .String, java.lang.String, java.lang.String)
-   */
-  @Override
-  public void clearConcepts(String terminology, String version, String authToken)
-    throws Exception {
-    Client client = Client.create();
-    WebResource resource =
-        client.resource(config.getProperty("base.url") + "/concept/clear/"
-            + terminology + "/" + version);
-    ClientResponse response =
-        resource.accept(MediaType.APPLICATION_XML)
-            .header("Authorization", authToken).post(ClientResponse.class);
-
-    if (response.getStatusInfo().getFamily() == Family.SUCCESSFUL) {
-      // do nothing
-    } else {
-      throw new Exception("Unexpected status " + response.getStatus());
-    }
-  }
-
-  /*
-   * (non-Javadoc)
-   * 
-   * @see
-   * org.ihtsdo.otf.ts.rest.ContentChangeServiceRest#addProject(org.ihtsdo.otf
-   * .ts.jpa.ProjectJpa, java.lang.String)
-   */
-  @Override
-  public Project addProject(ProjectJpa project, String authToken)
-    throws Exception {
-    Client client = Client.create();
-    WebResource resource =
-        client.resource(config.getProperty("base.url") + "/edit/project/add");
-
-    String projectString =
-        (project != null ? ConfigUtility.getStringForGraph(project) : null);
-    Logger.getLogger(getClass()).debug(projectString);
-    ClientResponse response =
-        resource.accept(MediaType.APPLICATION_XML)
-            .header("Authorization", authToken)
-            .header("Content-type", MediaType.APPLICATION_XML)
-            .put(ClientResponse.class, projectString);
-
-    String resultString = response.getEntity(String.class);
-    if (response.getStatusInfo().getFamily() == Family.SUCCESSFUL) {
-      Logger.getLogger(getClass()).debug(resultString);
-    } else {
-      throw new Exception(resultString);
-    }
-
-    // converting to object
-    ProjectJpa result =
-        (ProjectJpa) ConfigUtility.getGraphForString(resultString,
-            ProjectJpa.class);
-
-    return result;
-  }
-
-  /*
-   * (non-Javadoc)
-   * 
-   * @see
-   * org.ihtsdo.otf.ts.rest.ContentChangeServiceRest#updateProject(org.ihtsdo
-   * .otf.ts.jpa.ProjectJpa, java.lang.String)
-   */
-  @Override
-  public void updateProject(ProjectJpa project, String authToken)
-    throws Exception {
-    Client client = Client.create();
-    WebResource resource =
-        client
-            .resource(config.getProperty("base.url") + "/edit/project/update");
-
-    String projectString =
-        (project != null ? ConfigUtility.getStringForGraph(project) : null);
-    Logger.getLogger(getClass()).debug(projectString);
-    ClientResponse response =
-        resource.accept(MediaType.APPLICATION_XML)
-            .header("Authorization", authToken)
-            .header("Content-type", MediaType.APPLICATION_XML)
-            .post(ClientResponse.class, projectString);
-
-    if (response.getStatusInfo().getFamily() == Family.SUCCESSFUL) {
-      // do nothing
-    } else {
-      throw new Exception("Unexpected status " + response.getStatus());
-    }
-  }
-
-  /*
-   * (non-Javadoc)
-   * 
-   * @see
-   * org.ihtsdo.otf.ts.rest.ContentChangeServiceRest#removeProject(java.lang
-   * .Long, java.lang.String)
-   */
-  @Override
-  public void removeProject(Long id, String authToken) throws Exception {
-    Client client = Client.create();
-    WebResource resource =
-        client.resource(config.getProperty("base.url")
-            + "/edit/project/remove/" + id);
-    ClientResponse response =
-        resource.accept(MediaType.APPLICATION_XML)
-            .header("Authorization", authToken).delete(ClientResponse.class);
-
-    if (response.getStatusInfo().getFamily() == Family.SUCCESSFUL) {
-      // do nothing
-    } else {
-      throw new Exception("Unexpected status " + response.getStatus());
-    }
-
-  }
-
-  @Override
-  public void startEditingCycle(String terminology, String version,
-    String releaseVersion, String authToken) throws Exception {
-
-    Client client = Client.create();
-    WebResource resource =
-        client.resource(config.getProperty("base.url") + "/edit/begin/"
-            + terminology + "/" + version + "/" + releaseVersion);
-    ClientResponse response =
-        resource.accept(MediaType.APPLICATION_XML)
-            .header("Authorization", authToken).delete(ClientResponse.class);
-
-    if (response.getStatusInfo().getFamily() == Family.SUCCESSFUL) {
-
-      StartEditingCycleAlgorithm algorithm =
-          new StartEditingCycleAlgorithm(releaseVersion, terminology, version);
-      algorithm.compute();
-    }
-
-  }
-
-  @Override
-  public void removeReleaseInfos(String terminology, String releaseInfoNames) {
-    // TODO Auto-generated method stub
-
-  }
-
-  @Override
-  public void releaseBegin(String releaseVersion, String terminology,
-    String workflowStatusValues, boolean validate, boolean saveIdentifiers)
-    throws Exception {
-    // TODO Auto-generated method stub
-
-  }
-
-  @Override
-  public void releaseProcess(String refSetId, String outputDirName,
-    String effectiveTime, String moduleId) throws Exception {
-    // TODO Auto-generated method stub
-
-  }
-
-  @Override
-  public void releaseFinish(String releaseVersion, String terminology,
-    String workflowStatusValues, boolean validate, boolean saveIdentifiers)
-    throws Exception {
-    // TODO Auto-generated method stub
-
-  }
-
 }

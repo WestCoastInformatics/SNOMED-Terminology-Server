@@ -15,13 +15,11 @@ import org.apache.log4j.Logger;
 import org.ihtsdo.otf.ts.Project;
 import org.ihtsdo.otf.ts.User;
 import org.ihtsdo.otf.ts.UserRole;
+import org.ihtsdo.otf.ts.helpers.ConceptList;
+import org.ihtsdo.otf.ts.helpers.ConceptListJpa;
 import org.ihtsdo.otf.ts.helpers.PfsParameter;
 import org.ihtsdo.otf.ts.helpers.ProjectList;
 import org.ihtsdo.otf.ts.helpers.ProjectListJpa;
-import org.ihtsdo.otf.ts.helpers.SearchResult;
-import org.ihtsdo.otf.ts.helpers.SearchResultJpa;
-import org.ihtsdo.otf.ts.helpers.SearchResultList;
-import org.ihtsdo.otf.ts.helpers.SearchResultListJpa;
 import org.ihtsdo.otf.ts.jpa.ProjectJpa;
 import org.ihtsdo.otf.ts.rf2.Concept;
 import org.ihtsdo.otf.ts.services.ContentService;
@@ -49,7 +47,7 @@ public class ProjectServiceJpa extends RootServiceJpa implements ProjectService 
    * .otf.ts.Project)
    */
   @Override
-  public SearchResultList findConceptsInScope(Project project, PfsParameter pfs)
+  public ConceptList findConceptsInScope(Project project, PfsParameter pfs)
     throws Exception {
     Logger.getLogger(getClass()).info(
         "Project Service - get project scope - " + project);
@@ -70,8 +68,8 @@ public class ProjectServiceJpa extends RootServiceJpa implements ProjectService 
       include.add(concept);
       // get descendants
       if (project.getScopeDescendantsFlag()) {
-        for (Concept desc : contentService.findDescendantConcepts(concept, null)
-            .getObjects()) {
+        for (Concept desc : contentService
+            .findDescendantConcepts(concept, null).getObjects()) {
           include.add(desc);
         }
       }
@@ -87,8 +85,8 @@ public class ProjectServiceJpa extends RootServiceJpa implements ProjectService 
       exclude.add(concept);
       // get descendants
       if (project.getScopeExcludesDescendantsFlag()) {
-        for (Concept desc : contentService.findDescendantConcepts(concept, null)
-            .getObjects()) {
+        for (Concept desc : contentService
+            .findDescendantConcepts(concept, null).getObjects()) {
           exclude.add(desc);
         }
       }
@@ -104,17 +102,17 @@ public class ProjectServiceJpa extends RootServiceJpa implements ProjectService 
       Collections.sort(includeList, comp);
     }
 
+    int startIndex =
+        (pfs == null || pfs.getStartIndex() == -1) ? 0 : pfs.getStartIndex();
+    int maxResults =
+        (pfs == null || pfs.getStartIndex() == -1) ? include.size() : pfs
+            .getMaxResults();
     Logger.getLogger(getClass()).info("  count = " + include.size());
-    SearchResultList list = new SearchResultListJpa();
-    for (Concept c : includeList) {
-      final SearchResult sr = new SearchResultJpa();
-      sr.setId(c.getId());
-      sr.setTerminology(c.getTerminology());
-      sr.setTerminologyId(c.getTerminologyId());
-      sr.setTerminologyVersion(c.getTerminologyVersion());
-      sr.setValue(c.getDefaultPreferredName());
+    ConceptList list = new ConceptListJpa();
+    for (Concept c : includeList.subList(startIndex, maxResults)) {
+      list.addObject(c);
     }
-
+    list.setTotalCount(include.size());
     contentService.close();
     return list;
   }
@@ -314,18 +312,27 @@ public class ProjectServiceJpa extends RootServiceJpa implements ProjectService 
    */
   @SuppressWarnings("static-method")
   private void handleLazyInitialization(Project project) {
-    if (project.getActionWorkflowStatusValues() != null)
-    	project.getAdministrators().size();
-    if (project.getAdministrators() != null)
-    	project.getAdministrators().size();
-    if (project.getAuthors() != null)
-    	project.getAuthors().size();
-    if (project.getLeads() != null)
-    	project.getLeads().size();
-    if (project.getScopeExcludesConcepts() != null)
-    	project.getScopeExcludesConcepts().size();
-    if (project.getScopeConcepts() != null)
-    	project.getScopeConcepts().size();
+    if (project == null) {
+      return;
+    }
+    if (project.getActionWorkflowStatusValues() != null) {
+      project.getActionWorkflowStatusValues().size();
+    }
+    if (project.getAdministrators() != null) {
+      project.getAdministrators().size();
+    }
+    if (project.getAuthors() != null) {
+      project.getAuthors().size();
+    }
+    if (project.getLeads() != null) {
+      project.getLeads().size();
+    }
+    if (project.getScopeExcludesConcepts() != null) {
+      project.getScopeExcludesConcepts().size();
+    }
+    if (project.getScopeConcepts() != null) {
+      project.getScopeConcepts().size();
+    }
   }
 
   /**

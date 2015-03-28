@@ -102,7 +102,6 @@ public class TerminologyRemoverMojo extends AbstractMojo {
       String authToken =
           service.authenticate(properties.getProperty("admin.user"),
               properties.getProperty("admin.password"));
-      service.close();
 
       if (!serverRunning) {
         getLog().info("Running directly");
@@ -110,17 +109,18 @@ public class TerminologyRemoverMojo extends AbstractMojo {
         getLog().info("  Remove concepts");
         ContentServiceRest contentService = new ContentServiceRestImpl();
         contentService.removeTerminology(terminology, version, authToken);
-
+        
         getLog().info("  Remove release info");
         HistoryServiceRest historyService = new HistoryServiceRestImpl();
         for (ReleaseInfo info : historyService.getReleaseHistory(terminology, authToken)
             .getObjects()) {
+          // Need to open a second one to reopen security service
+          HistoryServiceRest historyService2 = new HistoryServiceRestImpl();
           if (info.getTerminology().equals(terminology)
               && info.getTerminologyVersion().equals(version)) {
-            historyService.removeReleaseInfo(info.getId(), authToken);
+            historyService2.removeReleaseInfo(info.getId(), authToken);
           }
         }
-  
 
       } else {
         getLog().info("Running against server");
@@ -139,7 +139,8 @@ public class TerminologyRemoverMojo extends AbstractMojo {
           }
         }      
       }
-      
+      service.close();
+
       getLog().info("done ...");
     } catch (Exception e) {
       e.printStackTrace();

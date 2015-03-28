@@ -7,12 +7,12 @@ import javax.ws.rs.core.Response.Status.Family;
 
 import org.apache.log4j.Logger;
 import org.ihtsdo.otf.ts.Project;
+import org.ihtsdo.otf.ts.helpers.ConceptList;
+import org.ihtsdo.otf.ts.helpers.ConceptListJpa;
 import org.ihtsdo.otf.ts.helpers.ConfigUtility;
 import org.ihtsdo.otf.ts.helpers.PfsParameterJpa;
 import org.ihtsdo.otf.ts.helpers.ProjectList;
 import org.ihtsdo.otf.ts.helpers.ProjectListJpa;
-import org.ihtsdo.otf.ts.helpers.SearchResultList;
-import org.ihtsdo.otf.ts.helpers.SearchResultListJpa;
 import org.ihtsdo.otf.ts.jpa.ProjectJpa;
 import org.ihtsdo.otf.ts.rest.ProjectServiceRest;
 
@@ -52,7 +52,8 @@ public class ProjectClientRest implements ProjectServiceRest {
         client.resource(config.getProperty("base.url") + "/project/add");
 
     String projectString =
-        (project != null ? ConfigUtility.getStringForGraph(project) : null);
+        ConfigUtility.getStringForGraph(project == null ? new ProjectJpa()
+            : project);
     Logger.getLogger(getClass()).debug(projectString);
     ClientResponse response =
         resource.accept(MediaType.APPLICATION_XML)
@@ -90,7 +91,8 @@ public class ProjectClientRest implements ProjectServiceRest {
         client.resource(config.getProperty("base.url") + "/project/update");
 
     String projectString =
-        (project != null ? ConfigUtility.getStringForGraph(project) : null);
+        ConfigUtility.getStringForGraph(project == null ? new ProjectJpa()
+            : project);
     Logger.getLogger(getClass()).debug(projectString);
     ClientResponse response =
         resource.accept(MediaType.APPLICATION_XML)
@@ -140,14 +142,15 @@ public class ProjectClientRest implements ProjectServiceRest {
    * Long, java.lang.String)
    */
   @Override
-  public SearchResultList findConceptsInScope(Long projectId,
-    PfsParameterJpa pfs, String authToken) throws Exception {
+  public ConceptList findConceptsInScope(Long projectId, PfsParameterJpa pfs,
+    String authToken) throws Exception {
     Client client = Client.create();
     WebResource resource =
-        client.resource(config.getProperty("base.url") + "/project/id/"
-            + projectId + "/scope");
+        client.resource(config.getProperty("base.url") + "/project/scope/id/"
+            + projectId);
     String pfsString =
-        (pfs != null ? ConfigUtility.getStringForGraph(pfs) : "");
+        ConfigUtility.getStringForGraph(pfs == null ? new PfsParameterJpa()
+            : pfs);
     Logger.getLogger(getClass()).debug(pfsString);
     ClientResponse response =
         resource.accept(MediaType.APPLICATION_XML)
@@ -159,13 +162,13 @@ public class ProjectClientRest implements ProjectServiceRest {
     if (response.getStatusInfo().getFamily() == Family.SUCCESSFUL) {
       Logger.getLogger(getClass()).debug(resultString);
     } else {
-      throw new Exception(resultString);
+      throw new Exception(response.toString());
     }
 
     // converting to object
-    SearchResultListJpa list =
-        (SearchResultListJpa) ConfigUtility.getGraphForString(resultString,
-            SearchResultListJpa.class);
+    ConceptListJpa list =
+        (ConceptListJpa) ConfigUtility.getGraphForString(resultString,
+            ConceptListJpa.class);
     return list;
   }
 
@@ -188,7 +191,7 @@ public class ProjectClientRest implements ProjectServiceRest {
     if (response.getStatusInfo().getFamily() == Family.SUCCESSFUL) {
       Logger.getLogger(getClass()).debug(resultString);
     } else {
-      throw new Exception(resultString);
+      throw new Exception(response.toString());
     }
 
     // converting to object

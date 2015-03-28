@@ -8,7 +8,6 @@ import javax.ws.rs.core.Response.Status.Family;
 import org.apache.log4j.Logger;
 import org.ihtsdo.otf.ts.User;
 import org.ihtsdo.otf.ts.helpers.ConfigUtility;
-import org.ihtsdo.otf.ts.helpers.LocalException;
 import org.ihtsdo.otf.ts.helpers.UserList;
 import org.ihtsdo.otf.ts.helpers.UserListJpa;
 import org.ihtsdo.otf.ts.jpa.UserJpa;
@@ -54,7 +53,7 @@ public class SecurityClientRest implements SecurityServiceRest {
     if (response.getStatusInfo().getFamily() == Family.SUCCESSFUL) {
       Logger.getLogger(getClass()).info(resultString);
     } else {
-      throw new LocalException(resultString);
+      throw new Exception(response.toString());
     }
     // return auth token
     return resultString.replaceAll("\"", "");
@@ -78,7 +77,7 @@ public class SecurityClientRest implements SecurityServiceRest {
     if (response.getStatusInfo().getFamily() == Family.SUCCESSFUL) {
       Logger.getLogger(getClass()).info(resultString);
     } else {
-      throw new Exception(resultString);
+      throw new Exception(response.toString());
     }
     return resultString.toLowerCase().equals("true");
 
@@ -99,7 +98,7 @@ public class SecurityClientRest implements SecurityServiceRest {
     ClientResponse response =
         resource.accept(MediaType.APPLICATION_XML)
             .header("Authorization", authToken).get(ClientResponse.class);
-    
+
     if (response.getStatus() == 204)
       return null;
 
@@ -107,7 +106,7 @@ public class SecurityClientRest implements SecurityServiceRest {
     if (response.getStatusInfo().getFamily() == Family.SUCCESSFUL) {
       Logger.getLogger(getClass()).debug(resultString);
     } else {
-      throw new Exception(resultString);
+      throw new Exception(response.toString());
     }
 
     // converting to object
@@ -134,12 +133,12 @@ public class SecurityClientRest implements SecurityServiceRest {
 
     if (response.getStatus() == 204)
       return null;
-    
+
     String resultString = response.getEntity(String.class);
     if (response.getStatusInfo().getFamily() == Family.SUCCESSFUL) {
       Logger.getLogger(getClass()).debug(resultString);
     } else {
-      throw new Exception(resultString);
+      throw new Exception(response.toString());
     }
 
     // converting to object
@@ -167,7 +166,7 @@ public class SecurityClientRest implements SecurityServiceRest {
     if (response.getStatusInfo().getFamily() == Family.SUCCESSFUL) {
       Logger.getLogger(getClass()).debug(resultString);
     } else {
-      throw new Exception(resultString);
+      throw new Exception(response.toString());
     }
 
     // converting to object
@@ -203,7 +202,7 @@ public class SecurityClientRest implements SecurityServiceRest {
     if (response.getStatusInfo().getFamily() == Family.SUCCESSFUL) {
       Logger.getLogger(getClass()).debug(resultString);
     } else {
-      throw new Exception(resultString);
+      throw new Exception(response.toString());
     }
 
     // converting to object
@@ -232,7 +231,7 @@ public class SecurityClientRest implements SecurityServiceRest {
     if (response.getStatusInfo().getFamily() == Family.SUCCESSFUL) {
       // do nothing
     } else {
-      throw new Exception("Unexpected status " + response.getStatus());
+      throw new Exception(response.toString());
     }
   }
 
@@ -262,7 +261,7 @@ public class SecurityClientRest implements SecurityServiceRest {
     if (response.getStatusInfo().getFamily() == Family.SUCCESSFUL) {
       // do nothing
     } else {
-      throw new Exception("Unexpected status " + response.getStatus());
+      throw new Exception(response.toString());
     }
   }
 
