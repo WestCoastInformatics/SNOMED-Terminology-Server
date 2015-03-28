@@ -104,8 +104,8 @@ public class ClamlLoadAndUnloadTest {
 
     // Verify no contents
     ContentService service = new ContentServiceJpa();
-    Assert.assertEquals(
-        service.getAllConcepts("ICD9CM", "2013").getCount(), 0);
+    Assert.assertEquals(0,
+        service.getAllConcepts("ICD9CM", "2013").getCount());
     service.close();
     service.closeFactory();
 
@@ -130,8 +130,8 @@ public class ClamlLoadAndUnloadTest {
 
     // Verify expected contents
     service = new ContentServiceJpa();
-    Assert.assertEquals(
-        service.getAllConcepts("ICD9CM", "2013").getCount(), 17770);
+    Assert.assertEquals(17770,
+        service.getAllConcepts("ICD9CM", "2013").getCount());
     service.closeFactory();
 
     // Verify release info
@@ -231,7 +231,7 @@ public class ClamlLoadAndUnloadTest {
 
     // Verify no contents
     service = new ContentServiceJpa();
-    Assert.assertEquals(service.getAllConcepts("ICD9CM", "2013"), 0);
+    Assert.assertEquals(0, service.getAllConcepts("ICD9CM", "2013").getObjects().size());
 
     // Finish by clearing the DB again
     request = new DefaultInvocationRequest();
