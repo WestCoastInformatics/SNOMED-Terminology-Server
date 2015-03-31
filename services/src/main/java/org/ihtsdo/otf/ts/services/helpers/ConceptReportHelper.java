@@ -24,22 +24,23 @@ public class ConceptReportHelper {
    * @return the concept report
    */
   public static String getConceptReport(Concept c) {
+
     final String nl = System.getProperty("line.separator");
     final StringBuilder builder = new StringBuilder();
     builder.append(nl);
-    builder.append("CONCEPT " + c).append(nl);
+     builder.append("Concept = " + c).append(nl);
     for (Description d : c.getDescriptions()) {
-      builder.append("  DESC = " + d).append(nl);
+      builder.append("  Description = " + d).append(nl);
       for (LanguageRefSetMember member : d.getLanguageRefSetMembers()) {
-        builder.append("    LANG = " + member).append(nl);
+        builder.append("    Language = " + member).append(nl);
       }
     }
     for (Relationship r : c.getRelationships()) {
-      builder.append("  REL = " + r).append(nl);
+      builder.append("  Relationship = " + r).append(nl);
     }
 
     for (AttributeValueConceptRefSetMember member : c.getAttributeValueRefSetMembers()) {
-      builder.append("  ATT_VALUE = " + member).append(nl);
+      builder.append("  AttributeValue = " + member).append(nl);
     }
 
     for (AssociationReferenceConceptRefSetMember member : c
@@ -58,7 +59,7 @@ public class ConceptReportHelper {
       builder.append("  SimpleMap = " + member).append(nl);
     }
     for (SimpleRefSetMember member : c.getSimpleRefSetMembers()) {
-      builder.append("  SimpleMap = " + member).append(nl);
+      builder.append("  Simple = " + member).append(nl);
     }
     return builder.toString();
   }
@@ -73,9 +74,9 @@ public class ConceptReportHelper {
     final String nl = System.getProperty("line.separator");
     final StringBuilder builder = new StringBuilder();
     builder.append(nl);
-    builder.append("DESC " + description).append(nl);
+    builder.append("Description = " + description).append(nl);
     for (LanguageRefSetMember member : description.getLanguageRefSetMembers()) {
-      builder.append("    LANG = " + member).append(nl);
+      builder.append("    Langauge = " + member).append(nl);
     }
     for (AssociationReferenceDescriptionRefSetMember member : description
         .getAssociationReferenceRefSetMembers()) {

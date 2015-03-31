@@ -104,8 +104,8 @@ public class Rf2FullLoadAndUnloadTest {
 
     // Verify no contents
     ContentService service = new ContentServiceJpa();
-    Assert.assertEquals(
-        service.getAllConcepts("SNOMEDCT", "latest").getCount(), 0);
+    Assert.assertEquals(0, 
+        service.getAllConcepts("SNOMEDCT", "latest").getCount());
     service.close();
     service.closeFactory();
     
@@ -130,8 +130,8 @@ public class Rf2FullLoadAndUnloadTest {
 
     // Verify expected contents
     service = new ContentServiceJpa();
-    Assert.assertEquals(
-        service.getAllConcepts("SNOMEDCT", "latest").getCount(), 10293);
+    Assert.assertEquals(10293,
+        service.getAllConcepts("SNOMEDCT", "latest").getCount());
     service.close();
     service.closeFactory();
 
@@ -211,9 +211,9 @@ public class Rf2FullLoadAndUnloadTest {
     // Verify release info
     historyService = new HistoryServiceJpa();
     Assert.assertNotNull(historyService.getReleaseInfo("SNOMEDCT", "20160131"));
-    Assert.assertFalse(historyService.getReleaseInfo("SNOMEDCT", "20150131")
+    Assert.assertFalse(historyService.getReleaseInfo("SNOMEDCT", "20160131")
         .isPublished());
-    Assert.assertTrue(historyService.getReleaseInfo("SNOMEDCT", "20150131")
+    Assert.assertTrue(historyService.getReleaseInfo("SNOMEDCT", "20160131")
         .isPlanned());
     historyService.close();
     historyService.closeFactory();
@@ -237,7 +237,7 @@ public class Rf2FullLoadAndUnloadTest {
 
     // Verify no contents
     service = new ContentServiceJpa();
-    Assert.assertEquals(service.getAllConcepts("SNOMEDCT", "latest"), 0);
+    Assert.assertEquals(0, service.getAllConcepts("SNOMEDCT", "latest").getCount());
 
     // Finish by clearing the DB again
     request = new DefaultInvocationRequest();

@@ -97,7 +97,7 @@
             <artifactId>maven-surefire-plugin</artifactId>
             <configuration>
               <includes>
-                <include>**/org/ihtsdo/otf/ts/test/mojo/*Test.java</include>
+                <include>**/org/ihtsdo/otf/ts/test/mojo/Rf2Full*Test.java</include>
               </includes>
               <additionalClasspathElements>
                 <additionalClasspathElement>src/main/resources</additionalClasspathElement>

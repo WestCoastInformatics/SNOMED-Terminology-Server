@@ -14,6 +14,7 @@ import java.util.Properties;
 import java.util.Set;
 
 import javax.persistence.NoResultException;
+import javax.persistence.metamodel.EntityType;
 
 import org.apache.log4j.Logger;
 import org.apache.lucene.queryparser.classic.MultiFieldQueryParser;
@@ -78,6 +79,7 @@ import org.ihtsdo.otf.ts.rf2.SimpleRefSetMember;
 import org.ihtsdo.otf.ts.rf2.TransitiveRelationship;
 import org.ihtsdo.otf.ts.rf2.jpa.AbstractAssociationReferenceRefSetMemberJpa;
 import org.ihtsdo.otf.ts.rf2.jpa.AbstractAttributeValueRefSetMemberJpa;
+import org.ihtsdo.otf.ts.rf2.jpa.AbstractComponent;
 import org.ihtsdo.otf.ts.rf2.jpa.ComplexMapRefSetMemberJpa;
 import org.ihtsdo.otf.ts.rf2.jpa.ConceptJpa;
 import org.ihtsdo.otf.ts.rf2.jpa.DescriptionJpa;
@@ -615,8 +617,12 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
 
   }
 
-  /* (non-Javadoc)
-   * @see org.ihtsdo.otf.ts.services.ContentService#findParentConcepts(org.ihtsdo.otf.ts.rf2.Concept, org.ihtsdo.otf.ts.helpers.PfsParameter)
+  /*
+   * (non-Javadoc)
+   * 
+   * @see
+   * org.ihtsdo.otf.ts.services.ContentService#findParentConcepts(org.ihtsdo
+   * .otf.ts.rf2.Concept, org.ihtsdo.otf.ts.helpers.PfsParameter)
    */
   @SuppressWarnings("unchecked")
   @Override
@@ -3139,7 +3145,7 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
             + searchString);
 
     if (pfs != null) {
-      Logger.getLogger(getClass()).info("  pfs = " + pfs.toString());
+      Logger.getLogger(getClass()).debug("  pfs = " + pfs.toString());
     }
 
     // Prepare results
@@ -4095,6 +4101,50 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
   @Override
   public void setAssignIdentifiersFlag(boolean assignIdentifiersFlag) {
     this.assignIdentifiersFlag = assignIdentifiersFlag;
+  }
+
+  /*
+   * (non-Javadoc)
+   * 
+   * @see
+   * org.ihtsdo.otf.ts.services.ContentService#getContentStats(java.lang.String,
+   * java.lang.String)
+   */
+  @Override
+  public Map<String, Integer> getComponentStats(String terminology,
+    String version) throws Exception {
+    Map<String, Integer> stats = new HashMap<>();
+    for (EntityType<?> type : manager.getMetamodel().getEntities()) {
+      String jpaTable = type.getName();
+      // Skip audit trail tables
+      if (jpaTable.endsWith("_AUD")) {
+        continue;
+      }
+      if (!AbstractComponent.class.isAssignableFrom(type.getBindableJavaType())) {
+        continue;
+      }
+      javax.persistence.Query query =
+          manager
+              .createQuery("select count(*) from "
+                  + jpaTable
+                  + " where terminology = :terminology and terminologyVersion = :version");
+      query.setParameter("terminology", terminology);
+      query.setParameter("version", version);
+      int ct = ((Long) query.getSingleResult()).intValue();
+      stats.put("Total " + jpaTable, ct);
+      query =
+          manager
+              .createQuery("select count(*) from "
+                  + jpaTable
+                  + " where active = 1"
+                  + " and terminology = :terminology and terminologyVersion = :version");
+      query.setParameter("terminology", terminology);
+      query.setParameter("version", version);
+      ct = ((Long) query.getSingleResult()).intValue();
+      stats.put("Active " + jpaTable, ct);
+    }
+    System.out.println(stats);
+    return stats;
   }
 
 }

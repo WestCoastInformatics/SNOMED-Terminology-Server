@@ -4,8 +4,10 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.log4j.Logger;
 import org.ihtsdo.otf.ts.ReleaseInfo;
@@ -48,6 +50,7 @@ import org.ihtsdo.otf.ts.services.helpers.ProgressEvent;
 import org.ihtsdo.otf.ts.services.helpers.ProgressListener;
 import org.ihtsdo.otf.ts.services.helpers.PushBackReader;
 
+// TODO: Auto-generated Javadoc
 /**
  * Implementation of an algorithm to import RF2 snapshot data.
  */
@@ -57,7 +60,7 @@ public class Rf2SnapshotLoaderAlgorithm extends HistoryServiceJpa implements
   /** Listeners. */
   private List<ProgressListener> listeners = new ArrayList<>();
 
-  /** The logging object ct threshold */
+  /** The logging object ct threshold. */
   private final static int logCt = 2000;
 
   /** The terminology. */
@@ -200,6 +203,11 @@ public class Rf2SnapshotLoaderAlgorithm extends HistoryServiceJpa implements
       Logger.getLogger(getClass()).info(
           "    elapsed time = " + getElapsedTime(startTime).toString() + "s");
 
+      // Commit here, then try relationships
+      commit();
+      clear();
+      beginTransaction();
+
       //
       // Load relationships
       //
@@ -209,12 +217,6 @@ public class Rf2SnapshotLoaderAlgorithm extends HistoryServiceJpa implements
       Logger.getLogger(getClass()).info(
           "    elapsed time = " + getElapsedTime(startTime) + "s"
               + " (Ended at " + ft.format(new Date()) + ")");
-
-      // At this point, cascade data structures are handled
-      // and we can commit.
-      commit();
-      clear();
-      beginTransaction();
 
       //
       // Load Simple RefSets (Content)
@@ -514,6 +516,10 @@ public class Rf2SnapshotLoaderAlgorithm extends HistoryServiceJpa implements
 
     String line = "";
     objectCt = 0;
+    
+    // given commit strategy, we have to track which concepts
+    // need to be updated here.
+    Set<Concept> touchedByRel = new HashSet<>();
 
     PushBackReader reader = readers.getReader(Rf2Readers.Keys.RELATIONSHIP);
     // Iterate over relationships
@@ -551,12 +557,16 @@ public class Rf2SnapshotLoaderAlgorithm extends HistoryServiceJpa implements
         relationship.setLastModifiedBy("loader");
         relationship.setPublished(true);
 
+        // reload source concept
         final Concept sourceConcept = conceptCache.get(fields[4]);
         final Concept destinationConcept = conceptCache.get(fields[5]);
         if (sourceConcept != null && destinationConcept != null) {
           relationship.setSourceConcept(sourceConcept);
           sourceConcept.addRelationship(relationship);
           relationship.setDestinationConcept(destinationConcept);
+          // Needed if we commit before here
+          // addRelationship(relationship); -- not needed due to cascade.
+          touchedByRel.add(sourceConcept);
 
         } else {
           if (sourceConcept == null) {
@@ -578,6 +588,14 @@ public class Rf2SnapshotLoaderAlgorithm extends HistoryServiceJpa implements
         }
 
       }
+    }
+    
+    // Mark all concepts for update, but only once relationships
+    // have been fully processed, no need to "add relationship"
+    // because they will be added automatically due to cascade
+    for (Concept concept : touchedByRel) {
+      updateConcept(concept);
+
     }
 
     // print memory information
@@ -839,6 +857,8 @@ public class Rf2SnapshotLoaderAlgorithm extends HistoryServiceJpa implements
         final Description description = new DescriptionJpa();
         description.setTerminologyId(fields[5]);
         member.setDescription(description);
+        // no need for this as we are in a commit and description is being added
+        // updateDescription(description);
         return member;
 
       }
@@ -886,12 +906,12 @@ public class Rf2SnapshotLoaderAlgorithm extends HistoryServiceJpa implements
           member = new AttributeValueConceptRefSetMemberJpa();
           // Retrieve concept -- firstToken is referencedComponentId
           final Concept concept = conceptCache.get(fields[5]);
-          ((AttributeValueConceptRefSetMember) member).setComponent(concept);
+          ((AttributeValueConceptRefSetMember) member).setConcept(concept);
         } else if (descriptionCache.containsKey(fields[5])) {
           member = new AttributeValueDescriptionRefSetMemberJpa();
           final Description description = descriptionCache.get(fields[5]);
           ((AttributeValueDescriptionRefSetMember) member)
-              .setComponent(description);
+              .setDescription(description);
         } else {
           throw new Exception(
               "Attribute value member connected to nonexistent object");
@@ -916,6 +936,17 @@ public class Rf2SnapshotLoaderAlgorithm extends HistoryServiceJpa implements
         member.setTerminologyVersion(terminologyVersion);
 
         addAttributeValueRefSetMember(member);
+//        if (conceptCache.containsKey(fields[5])) {
+//          final Concept concept = conceptCache.get(fields[5]);
+//          concept
+//              .addAttributeValueRefSetMember((AttributeValueConceptRefSetMember) member);
+//          updateConcept(concept);
+//        } else if (descriptionCache.containsKey(fields[5])) {
+//          final Description description = descriptionCache.get(fields[5]);
+//          description
+//              .addAttributeValueRefSetMember((AttributeValueDescriptionRefSetMember) member);
+//          updateDescription(description);
+//        }
 
         // regularly commit at intervals
         if (++objectCt % logCt == 0) {
@@ -965,12 +996,12 @@ public class Rf2SnapshotLoaderAlgorithm extends HistoryServiceJpa implements
           // Retrieve concept -- firstToken is referencedComponentId
           final Concept concept = conceptCache.get(fields[5]);
           ((AssociationReferenceConceptRefSetMember) member)
-              .setComponent(concept);
+              .setConcept(concept);
         } else if (descriptionCache.containsKey(fields[5])) {
           member = new AssociationReferenceDescriptionRefSetMemberJpa();
           final Description description = descriptionCache.get(fields[5]);
           ((AssociationReferenceDescriptionRefSetMember) member)
-              .setComponent(description);
+              .setDescription(description);
         } else {
           throw new Exception(
               "Association reference member connected to nonexistent object");
@@ -984,7 +1015,7 @@ public class Rf2SnapshotLoaderAlgorithm extends HistoryServiceJpa implements
         member.setModuleId(fields[3]);
         member.setRefSetId(fields[4]);
 
-        // AttributeValueRefSetMember unique attributes
+        // AssociationReferenceRefSetMember unique attributes
         member.setTargetComponentId(fields[6]);
 
         // Terminology attributes
@@ -995,6 +1026,17 @@ public class Rf2SnapshotLoaderAlgorithm extends HistoryServiceJpa implements
         member.setPublished(true);
 
         addAssociationReferenceRefSetMember(member);
+//        if (conceptCache.containsKey(fields[5])) {
+//          final Concept concept = conceptCache.get(fields[5]);
+//          concept
+//              .addAssociationReferenceRefSetMember((AssociationReferenceConceptRefSetMember) member);
+//          updateConcept(concept);
+//        } else if (descriptionCache.containsKey(fields[5])) {
+//          final Description description = descriptionCache.get(fields[5]);
+//          description
+//              .addAssociationReferenceRefSetMember((AssociationReferenceDescriptionRefSetMember) member);
+//          updateDescription(description);
+//        }
 
         // regularly commit at intervals
         if (++objectCt % logCt == 0) {
@@ -1061,6 +1103,8 @@ public class Rf2SnapshotLoaderAlgorithm extends HistoryServiceJpa implements
         if (concept != null) {
           member.setConcept(concept);
           addSimpleRefSetMember(member);
+          //concept.addSimpleRefSetMember(member);
+          //updateConcept(concept);
 
           // regularly commit at intervals
           if (++objectCt % logCt == 0) {
@@ -1131,6 +1175,8 @@ public class Rf2SnapshotLoaderAlgorithm extends HistoryServiceJpa implements
         if (concept != null) {
           member.setConcept(concept);
           addSimpleMapRefSetMember(member);
+          //concept.addSimpleMapRefSetMember(member);
+          //updateConcept(concept);
 
           // regularly commit at intervals
           if (++objectCt % logCt == 0) {
@@ -1205,6 +1251,8 @@ public class Rf2SnapshotLoaderAlgorithm extends HistoryServiceJpa implements
         if (concept != null) {
           member.setConcept(concept);
           addComplexMapRefSetMember(member);
+//          concept.addComplexMapRefSetMember(member);
+//          updateConcept(concept);
 
           // regularly commit at intervals
           if (++objectCt % logCt == 0) {
@@ -1281,6 +1329,8 @@ public class Rf2SnapshotLoaderAlgorithm extends HistoryServiceJpa implements
         if (concept != null) {
           member.setConcept(concept);
           addComplexMapRefSetMember(member);
+//          concept.addComplexMapRefSetMember(member);
+//          updateConcept(concept);
 
           // regularly commit at intervals
           if (++objectCt % logCt == 0) {
@@ -1380,7 +1430,7 @@ public class Rf2SnapshotLoaderAlgorithm extends HistoryServiceJpa implements
   }
 
   /**
-   * Load module dependency refset members
+   * Load module dependency refset members.
    *
    * @throws Exception the exception
    */
@@ -1456,7 +1506,7 @@ public class Rf2SnapshotLoaderAlgorithm extends HistoryServiceJpa implements
   }
 
   /**
-   * Load description type refset members
+   * Load description type refset members.
    *
    * @throws Exception the exception
    */
@@ -1527,5 +1577,19 @@ public class Rf2SnapshotLoaderAlgorithm extends HistoryServiceJpa implements
     Logger.getLogger(getClass()).debug(" Total: " + runtime.totalMemory());
     Logger.getLogger(getClass()).debug(" Free:  " + runtime.freeMemory());
     Logger.getLogger(getClass()).debug(" Max:   " + runtime.maxMemory());
+  }
+
+  /*
+   * (non-Javadoc)
+   * 
+   * @see org.ihtsdo.otf.ts.jpa.services.RootServiceJpa#close()
+   */
+  @Override
+  public void close() throws Exception {
+    super.close();
+    readers = null;
+    conceptCache = null;
+    descriptionCache = null;
+    defaultPreferredNames = null;
   }
 }
