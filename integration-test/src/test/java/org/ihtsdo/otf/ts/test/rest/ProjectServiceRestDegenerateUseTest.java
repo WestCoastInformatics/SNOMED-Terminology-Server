@@ -5,11 +5,9 @@ package org.ihtsdo.otf.ts.test.rest;
 
 import static org.junit.Assert.fail;
 
-import org.ihtsdo.otf.ts.Project;
-import org.ihtsdo.otf.ts.helpers.ConceptList;
+
 import org.ihtsdo.otf.ts.helpers.PfsParameterJpa;
 import org.ihtsdo.otf.ts.helpers.ProjectList;
-import org.ihtsdo.otf.ts.helpers.SearchResultList;
 import org.ihtsdo.otf.ts.jpa.ProjectJpa;
 import org.junit.After;
 import org.junit.Assert;
@@ -17,7 +15,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 /**
- * Implementation of the "Project Service REST Normal Use" Test Cases.
+ * Implementation of the "Project Service REST Degenerate Use" Test Cases.
  */
 public class ProjectServiceRestDegenerateUseTest extends ProjectServiceRestTest {
 
@@ -41,11 +39,6 @@ public class ProjectServiceRestDegenerateUseTest extends ProjectServiceRestTest 
 		viewerAuthToken = securityService.authenticate(testUser, testPassword);
 		adminAuthToken = securityService.authenticate(adminUser, adminPassword);
 
-		for (Project p : projectService.getProjects(adminAuthToken)
-				.getObjects()) {
-			if (!p.getDescription().equals("Sample project."))
-				projectService.removeProject(p.getId(), adminAuthToken);
-		}
 	}
 
 	/**
@@ -58,43 +51,48 @@ public class ProjectServiceRestDegenerateUseTest extends ProjectServiceRestTest 
 	@Test
 	public void testDegenerateUseRestProject001() throws Exception {
 
-		/*
-		 * Authenticate "admin.user" with "admin.password" Get all projects and
-		 * choose the first one. Call "add project" using this project
-		 * (attempting to add a duplicate) TEST: exception occurs because you
-		 * cannot add something that already has an ID. Call "add project" using
-		 * a null project TEST: exception Get all projects and choose the first
-		 * one. Change the id to -1. Update the project TEST: exception because
-		 * there is no project with that id (e.g. "update" cannot be used to add
-		 * a project) Call "update project" using a null project. TEST:
-		 * exception Call "remove project" with -1 as the project id. TEST:
-		 * returns null Call "remove project" with null TEST: exception
-		 */
-
 		// Get all projects and choose the first one.
 		ProjectList projectList = projectService.getProjects(adminAuthToken);
 		Assert.assertTrue(projectList.getCount() > 0);
 		ProjectJpa project = (ProjectJpa) projectList.getObjects().get(0);
 
 		// Call "add project" using this project (attempting to add a duplicate)
-		ProjectJpa testProject;
 		try {
-			testProject = (ProjectJpa) projectService.addProject(project,
-					adminAuthToken);
-			fail("Cannot add a duplicate project.");
+			projectService.addProject(project, adminAuthToken);
+			fail("Expected exception while adding a duplicate project.");
 		} catch (Exception e) {
 			// do nothing
 		}
 
 		// Call "add project" using a null project
 		try {
-			testProject = (ProjectJpa) projectService.addProject(null,
-					adminAuthToken);
-			fail("Cannot add a null project.");
+			projectService.addProject(null, adminAuthToken);
+			fail("Expected exception while adding a null project.");
+		} catch (Exception e) {
+			// do nothing
+		}
+		
+		// Change the name but keep id.  This will also fail.
+		String name = project.getName();
+		project.setName(name + "2");
+		try {
+			projectService.addProject(project, adminAuthToken);
+			fail("Expected exception while adding a duplicate project with new name.");
+		} catch (Exception e) {
+			// do nothing
+		}
+		
+		// Change the project id to null and add the project.
+		project.setName(name);
+		project.setId(null);
+		try {
+			projectService.addProject(project, adminAuthToken);
+			fail("Expected exception while adding a duplicate project with null id.");
 		} catch (Exception e) {
 			// do nothing
 		}
 
+		
 		/*
 		 * Get all projects and choose the first one. Change the id to -1.
 		 * Update the project
@@ -106,6 +104,8 @@ public class ProjectServiceRestDegenerateUseTest extends ProjectServiceRestTest 
 		} catch (Exception e) {
 			// do nothing
 		}
+		
+
 
 		// Call "update project" using a null project.
 		try {
@@ -117,18 +117,16 @@ public class ProjectServiceRestDegenerateUseTest extends ProjectServiceRestTest 
 
 		// Call "remove project" with -1 as the project id.
 		try {
-			projectService.removeProject(-1L, adminAuthToken);
-			fail("Cannot remove a project with id = -1.");
+			projectService.removeProject(-1L, adminAuthToken);			
 		} catch (Exception e) {
-			// do nothing
+			fail("Exception should not be thrown when removing a project with id = -1.");
 		}
 
 		// Call "remove project" using a null project id.
 		try {
 			projectService.removeProject(null, adminAuthToken);
-			fail("Cannot remove a project with a null id.");
 		} catch (Exception e) {
-			// do nothing
+			fail("Exception should not be thrown when removing a project with a null id.");
 		}
 	}
 
@@ -141,8 +139,7 @@ public class ProjectServiceRestDegenerateUseTest extends ProjectServiceRestTest 
 	@Test
 	public void testDegenerateUseRestProject002() throws Exception {
 		try {
-			Project nullProject = projectService.getProject(null,
-					adminAuthToken);
+			projectService.getProject(null, adminAuthToken);
 		} catch (Exception e) {
 			// do nothing
 		}
@@ -159,7 +156,7 @@ public class ProjectServiceRestDegenerateUseTest extends ProjectServiceRestTest 
 
 		// Call findConceptsInScope() project id is null
 		try {
-	        ConceptList resultList = projectService.findConceptsInScope(
+	        projectService.findConceptsInScope(
 	    		null, new PfsParameterJpa(), viewerAuthToken);
 		} catch (Exception e) {
 			// do nothing
@@ -172,7 +169,7 @@ public class ProjectServiceRestDegenerateUseTest extends ProjectServiceRestTest 
 		PfsParameterJpa pfs = new PfsParameterJpa();
 		pfs.setQueryRestriction("testQueryRestriction");
 		try {
-			ConceptList resultList = projectService.findConceptsInScope(
+			projectService.findConceptsInScope(
 		    		project.getId(), pfs, viewerAuthToken);
 			fail("");
 		} catch (Exception e) {
@@ -185,7 +182,7 @@ public class ProjectServiceRestDegenerateUseTest extends ProjectServiceRestTest 
 	        TEST: exception because project with this id does not exist.*/
 		project.setId(-1L);
 		try {
-			ConceptList resultList = projectService.findConceptsInScope(
+			projectService.findConceptsInScope(
 		    		project.getId(), null, viewerAuthToken);
 		} catch (Exception e) {
 			// do nothing
@@ -201,11 +198,6 @@ public class ProjectServiceRestDegenerateUseTest extends ProjectServiceRestTest 
 	@Override
 	@After
 	public void teardown() throws Exception {
-
-	    for (Project p : projectService.getProjects(adminAuthToken).getObjects()) {
-	        if (!p.getDescription().equals("Sample project."))
-	  	    projectService.removeProject(p.getId(), adminAuthToken);
-	    }
 	    
 		// logout
 		securityService.logout(viewerAuthToken);
