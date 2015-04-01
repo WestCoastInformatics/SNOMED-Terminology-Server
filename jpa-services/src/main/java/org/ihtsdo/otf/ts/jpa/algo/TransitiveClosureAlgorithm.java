@@ -128,7 +128,7 @@ public class TransitiveClosureAlgorithm extends ContentServiceJpa implements
     
     String isaRel =
         TerminologyUtility
-            .getHierarchcialIsaRels(terminology, version).iterator()
+            .getHierarchicalIsaRels(terminology, version).iterator()
             .next();
     Logger.getLogger(getClass()).info("    isaRel = " + isaRel);
 

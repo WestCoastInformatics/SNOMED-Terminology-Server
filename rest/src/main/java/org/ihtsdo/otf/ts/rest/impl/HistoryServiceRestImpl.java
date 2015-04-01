@@ -109,7 +109,7 @@ public class HistoryServiceRestImpl extends RootServiceRestImpl implements
         if (concept != null) {
           historyService.getGraphResolutionHandler().resolve(
               concept,
-              TerminologyUtility.getHierarchcialIsaRels(
+              TerminologyUtility.getHierarchicalIsaRels(
                   concept.getTerminology(), concept.getTerminologyVersion()));
         }
       }

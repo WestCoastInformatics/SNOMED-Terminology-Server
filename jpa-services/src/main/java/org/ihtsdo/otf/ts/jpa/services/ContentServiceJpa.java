@@ -3889,7 +3889,7 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
   @Override
   public String getComputedPreferredName(Concept concept) throws Exception {
     try {
-      graphResolver.resolve(concept, TerminologyUtility.getHierarchcialIsaRels(
+      graphResolver.resolve(concept, TerminologyUtility.getHierarchicalIsaRels(
           concept.getTerminology(), concept.getTerminologyVersion()));
       ComputePreferredNameHandler handler =
           pnHandlerMap.get(concept.getTerminology());

@@ -344,7 +344,6 @@ public class ClamlMetadataServiceJpaHelper extends ContentServiceJpa implements
   public Map<String, String> getInferredCharacteristicTypes(String terminology,
     String version) throws NumberFormatException, Exception {
     Map<String, String> map = new HashMap<>();
-
     SearchResultList results =
         findConceptsForQuery(terminology, version,
             "Default characteristic type", new PfsParameterJpa());
@@ -352,7 +351,6 @@ public class ClamlMetadataServiceJpaHelper extends ContentServiceJpa implements
       if (result.getTerminology().equals(terminology)
           && result.getTerminologyVersion().equals(version)
           && result.getValue().equals("Default characteristic type")) {
-
         map.put(result.getTerminologyId(), result.getValue());
         break;
       }

@@ -77,7 +77,7 @@ public class ValidationServiceRestImpl extends RootServiceRestImpl implements
       // Run graph resolution handler
       new ContentServiceJpa().getGraphResolutionHandler().resolve(
           concept,
-          TerminologyUtility.getHierarchcialIsaRels(concept.getTerminology(),
+          TerminologyUtility.getHierarchicalIsaRels(concept.getTerminology(),
               concept.getTerminologyVersion()));
       // Validate concept
       ValidationService service = new ValidationServiceJpa();

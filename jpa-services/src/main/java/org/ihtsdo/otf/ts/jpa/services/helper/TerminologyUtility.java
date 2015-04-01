@@ -27,11 +27,11 @@ public class TerminologyUtility {
   /** The isa rels map. */
   public static Map<String, Set<String>> isaRelsMap = new HashMap<>();
 
-  /**  The stated characteristic type value. */
-  public static String statedType;
+  /** The stated characteristic type values. */
+  public static Map<String, String> statedTypes;
 
-  /**  The stated inferred type value. */
-  public static String inferredType;
+  /** The stated inferred type values. */
+  public static Map<String, String> inferredTypes;
 
   /**
    * Returns the hierarchical isa rels.
@@ -41,8 +41,14 @@ public class TerminologyUtility {
    * @return the hierarchical isa rels
    * @throws Exception the exception
    */
-  public static Set<String> getHierarchcialIsaRels(String terminology,
+  public static Set<String> getHierarchicalIsaRels(String terminology,
     String version) throws Exception {
+    if (terminology == null) {
+      throw new Exception("Unexpected null terminology passed to getHierarchicalIsaRels.");
+    }
+    if (version == null) {
+      throw new Exception("Unexpected null version passed to getHierarchicalIsaRels.");
+    }
     cacheIsaRels(terminology, version);
     return isaRelsMap.get(terminology + version);
   }
@@ -69,10 +75,15 @@ public class TerminologyUtility {
    * @return <code>true</code> if so, <code>false</code> otherwise
    * @throws Exception the exception
    */
-  public static boolean isStatedRelationship(Relationship relationship) throws Exception {
+  public static boolean isStatedRelationship(Relationship relationship)
+    throws Exception {
     cacheCharacteristicTypes(relationship.getTerminology(),
         relationship.getTerminologyVersion());
-    return relationship != null && statedType.equals(relationship.getCharacteristicTypeId());
+    return relationship != null
+        && statedTypes.get(
+            relationship.getTerminology()
+                + relationship.getTerminologyVersion()).equals(
+            relationship.getCharacteristicTypeId());
   }
 
   /**
@@ -82,10 +93,15 @@ public class TerminologyUtility {
    * @return <code>true</code> if so, <code>false</code> otherwise
    * @throws Exception the exception
    */
-  public static boolean isInferredRelationship(Relationship relationship) throws Exception {
+  public static boolean isInferredRelationship(Relationship relationship)
+    throws Exception {
     cacheCharacteristicTypes(relationship.getTerminology(),
         relationship.getTerminologyVersion());
-    return relationship != null && inferredType.equals(relationship.getCharacteristicTypeId());
+    return relationship != null
+        && inferredTypes.get(
+            relationship.getTerminology()
+                + relationship.getTerminologyVersion()).equals(
+            relationship.getCharacteristicTypeId());
   }
 
   /**
@@ -116,14 +132,17 @@ public class TerminologyUtility {
    */
   private static void cacheCharacteristicTypes(String terminology,
     String version) throws Exception {
-    if (statedType == null) {
+    if (statedTypes == null || !statedTypes.containsKey(terminology + version)) {
+      statedTypes = new HashMap<>();
+      inferredTypes = new HashMap<>();
       MetadataService metadataService = new MetadataServiceJpa();
-      Map<String, String> map = metadataService.getInferredCharacteristicTypes(terminology, version);
+      Map<String, String> map =
+          metadataService.getInferredCharacteristicTypes(terminology, version);
       // assume map has at least one entry
-      inferredType = map.keySet().iterator().next();
+      inferredTypes.put(terminology + version, map.keySet().iterator().next());
       map = metadataService.getStatedCharacteristicTypes(terminology, version);
       // assume map has at least one entry
-      statedType = map.keySet().iterator().next();
+      statedTypes.put(terminology + version, map.keySet().iterator().next());
     }
   }
 
@@ -138,7 +157,7 @@ public class TerminologyUtility {
   public static String getStatedType(String terminology, String version)
     throws Exception {
     cacheCharacteristicTypes(terminology, version);
-    return statedType;
+    return statedTypes.get(terminology + version);
   }
 
   /**
@@ -152,7 +171,7 @@ public class TerminologyUtility {
   public static String getInferredType(String terminology, String version)
     throws Exception {
     cacheCharacteristicTypes(terminology, version);
-    return inferredType;
+    return inferredTypes.get(terminology + version);
   }
 
   /**
@@ -164,6 +183,10 @@ public class TerminologyUtility {
    */
   public static List<Concept> getActiveParentConcepts(Concept concept)
     throws Exception {
+    if (concept == null) {
+      throw new Exception(
+          "Unexpected null concept passed to getActiveParentConcepts.");
+    }
     final List<Concept> results = new ArrayList<>();
     final Set<String> isaRels =
         cacheIsaRels(concept.getTerminology(), concept.getTerminologyVersion());
@@ -184,10 +207,14 @@ public class TerminologyUtility {
    */
   public static Set<Relationship> getActiveStatedRelationships(Concept concept)
     throws Exception {
+    if (concept == null) {
+      throw new Exception(
+          "Unexpected null concept passed to getActiveStatedRelationships.");
+    }
     Set<Relationship> rels = new HashSet<>();
     for (Relationship rel : concept.getRelationships()) {
       if (rel.isActive()
-          && rel.getTypeId().equals(
+          && rel.getCharacteristicTypeId().equals(
               getStatedType(concept.getTerminology(),
                   concept.getTerminologyVersion()))) {
         rels.add(rel);
@@ -205,10 +232,14 @@ public class TerminologyUtility {
    */
   public static Set<Relationship> getActiveInferredRelationships(Concept concept)
     throws Exception {
+    if (concept == null) {
+      throw new Exception(
+          "Unexpected null concept passed to getActiveInferredRelationships.");
+    }
     Set<Relationship> rels = new HashSet<>();
     for (Relationship rel : concept.getRelationships()) {
       if (rel.isActive()
-          && rel.getTypeId().equals(
+          && rel.getCharacteristicTypeId().equals(
               getInferredType(concept.getTerminology(),
                   concept.getTerminologyVersion()))) {
         rels.add(rel);
@@ -232,7 +263,9 @@ public class TerminologyUtility {
 
     String namespace = "00000000-0000-0000-0000-000000000000";
     String encoding = "UTF-8";
-
+    if (value == null) {
+      return UUID.fromString(namespace);
+    }
     UUID namespaceUUID = UUID.fromString(namespace);
 
     // Generate the digest.
