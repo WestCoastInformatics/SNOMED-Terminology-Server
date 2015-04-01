@@ -121,7 +121,7 @@ public class ContentServiceRestImpl extends RootServiceRestImpl implements
         if (concept != null) {
           contentService.getGraphResolutionHandler().resolve(
               concept,
-              TerminologyUtility.getHierarchcialIsaRels(
+              TerminologyUtility.getHierarchicalIsaRels(
                   concept.getTerminology(), concept.getTerminologyVersion()));
 
         }
@@ -170,7 +170,7 @@ public class ContentServiceRestImpl extends RootServiceRestImpl implements
       if (concept != null) {
         contentService.getGraphResolutionHandler().resolve(
             concept,
-            TerminologyUtility.getHierarchcialIsaRels(concept.getTerminology(),
+            TerminologyUtility.getHierarchicalIsaRels(concept.getTerminology(),
                 concept.getTerminologyVersion()));
       }
 
@@ -261,7 +261,7 @@ public class ContentServiceRestImpl extends RootServiceRestImpl implements
       for (Concept c : list.getObjects()) {
         contentService.getGraphResolutionHandler().resolve(
             c,
-            TerminologyUtility.getHierarchcialIsaRels(c.getTerminology(),
+            TerminologyUtility.getHierarchicalIsaRels(c.getTerminology(),
                 c.getTerminologyVersion()));
       }
       contentService.close();
@@ -309,7 +309,7 @@ public class ContentServiceRestImpl extends RootServiceRestImpl implements
       for (Concept c : list.getObjects()) {
         contentService.getGraphResolutionHandler().resolve(
             c,
-            TerminologyUtility.getHierarchcialIsaRels(c.getTerminology(),
+            TerminologyUtility.getHierarchicalIsaRels(c.getTerminology(),
                 c.getTerminologyVersion()));
       }
       contentService.close();
@@ -355,7 +355,7 @@ public class ContentServiceRestImpl extends RootServiceRestImpl implements
       for (Concept c : list.getObjects()) {
         contentService.getGraphResolutionHandler().resolve(
             c,
-            TerminologyUtility.getHierarchcialIsaRels(c.getTerminology(),
+            TerminologyUtility.getHierarchicalIsaRels(c.getTerminology(),
                 c.getTerminologyVersion()));
       }
       contentService.close();
@@ -403,7 +403,7 @@ public class ContentServiceRestImpl extends RootServiceRestImpl implements
       for (Concept c : list.getObjects()) {
         contentService.getGraphResolutionHandler().resolve(
             c,
-            TerminologyUtility.getHierarchcialIsaRels(c.getTerminology(),
+            TerminologyUtility.getHierarchicalIsaRels(c.getTerminology(),
                 c.getTerminologyVersion()));
       }
       contentService.close();

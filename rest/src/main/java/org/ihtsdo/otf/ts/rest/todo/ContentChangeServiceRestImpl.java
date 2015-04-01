@@ -98,7 +98,7 @@ public class ContentChangeServiceRestImpl extends RootServiceRestImpl implements
         if (concept != null && concept.getLastModified().equals(username)) {
           contentService.getGraphResolutionHandler().resolve(
               concept,
-              TerminologyUtility.getHierarchcialIsaRels(
+              TerminologyUtility.getHierarchicalIsaRels(
                   concept.getTerminology(), concept.getTerminologyVersion()));
 
           contentService.close();
@@ -151,7 +151,7 @@ public class ContentChangeServiceRestImpl extends RootServiceRestImpl implements
             .getUsernameForToken(authToken));
         contentService.getGraphResolutionHandler().resolve(
             concept,
-            TerminologyUtility.getHierarchcialIsaRels(concept.getTerminology(),
+            TerminologyUtility.getHierarchicalIsaRels(concept.getTerminology(),
                 concept.getTerminologyVersion()));
       } else {
         throw new Exception("Unexpected null concept");
@@ -207,7 +207,7 @@ public class ContentChangeServiceRestImpl extends RootServiceRestImpl implements
       if (concept != null) {
         contentService.getGraphResolutionHandler().resolve(
             concept,
-            TerminologyUtility.getHierarchcialIsaRels(concept.getTerminology(),
+            TerminologyUtility.getHierarchicalIsaRels(concept.getTerminology(),
                 concept.getTerminologyVersion()));
       } else {
         throw new Exception("Unexpected null concept");
@@ -309,7 +309,7 @@ public class ContentChangeServiceRestImpl extends RootServiceRestImpl implements
           contentService.getConcept(description.getConcept().getId());
       contentService.getGraphResolutionHandler().resolve(
           concept,
-          TerminologyUtility.getHierarchcialIsaRels(concept.getTerminology(),
+          TerminologyUtility.getHierarchicalIsaRels(concept.getTerminology(),
               concept.getTerminologyVersion()));
       concept.setDefaultPreferredName(contentService
           .getComputedPreferredName(concept));
@@ -379,7 +379,7 @@ public class ContentChangeServiceRestImpl extends RootServiceRestImpl implements
           contentService.getConcept(description.getConcept().getId());
       contentService.getGraphResolutionHandler().resolve(
           concept,
-          TerminologyUtility.getHierarchcialIsaRels(concept.getTerminology(),
+          TerminologyUtility.getHierarchicalIsaRels(concept.getTerminology(),
               concept.getTerminologyVersion()));
       concept.setDefaultPreferredName(contentService
           .getComputedPreferredName(concept));
@@ -432,7 +432,7 @@ public class ContentChangeServiceRestImpl extends RootServiceRestImpl implements
       Concept concept = description.getConcept();
       contentService.getGraphResolutionHandler().resolve(
           concept,
-          TerminologyUtility.getHierarchcialIsaRels(concept.getTerminology(),
+          TerminologyUtility.getHierarchicalIsaRels(concept.getTerminology(),
               concept.getTerminologyVersion()));
       concept.setDefaultPreferredName(contentService
           .getComputedPreferredName(concept));

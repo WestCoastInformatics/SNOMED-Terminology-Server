@@ -128,7 +128,7 @@ public class TransitiveClosureAlgorithm extends ContentServiceJpa implements
     
     String isaRel =
         TerminologyUtility
-            .getHierarchcialIsaRels(terminology, version).iterator()
+            .getHierarchicalIsaRels(terminology, version).iterator()
             .next();
     Logger.getLogger(getClass()).info("    isaRel = " + isaRel);
 
@@ -138,7 +138,7 @@ public class TransitiveClosureAlgorithm extends ContentServiceJpa implements
     javax.persistence.Query query =
         manager
             .createQuery(
-                "select r from RelationshipJpa r where active=1 "
+                "select r from RelationshipJpa r where active = 1 "
                     + "and terminology = :terminology "
                     + "and terminologyVersion = :version "
                     + "and typeId = :typeId and characteristicTypeId = :characteristicTypeId")
@@ -197,19 +197,17 @@ public class TransitiveClosureAlgorithm extends ContentServiceJpa implements
         throw new CancelException("Transitive closure computation cancelled.");
       }
 
+      // Scale the progress monitor from 8%-100%
       ct++;
       int ctProgress = (int) ((((ct * 100) / progressMax) * .92) + 8);
       if (ctProgress > progress) {
-        // Logger.getLogger(getClass()).info("ct = " + ct);
-        // Logger.getLogger(getClass()).info("progressMax = " +
-        // progressMax);
-        // Logger.getLogger(getClass()).info("progress = " + progress);
-        // Logger.getLogger(getClass()).info("ctProgress = " + ctProgress);
         progress = ctProgress;
         fireProgressEvent((int) ((progress * .92) + 8),
             "Creating transitive closure relationships");
       }
-      final Set<Long> descs = getDescendants(code, parChd);
+      List<Long> ancPath = new ArrayList<>();
+      ancPath.add(code);
+      final Set<Long> descs = getDescendants(code, parChd, ancPath);
       for (final Long desc : descs) {
         final TransitiveRelationship tr = new TransitiveRelationshipJpa();
         tr.setSuperTypeConcept(conceptMap.get(code));
@@ -248,12 +246,13 @@ public class TransitiveClosureAlgorithm extends ContentServiceJpa implements
    *
    * @param par the par
    * @param parChd the par chd
+   * @param ancPath the anc path
    * @return the descendants
    * @throws Exception the exception
    */
-  private Set<Long> getDescendants(Long par, Map<Long, Set<Long>> parChd)
+  private Set<Long> getDescendants(Long par, Map<Long, Set<Long>> parChd, List<Long> ancPath)
     throws Exception {
-    Logger.getLogger(getClass()).debug("  Get descendants for " + par);
+    Logger.getLogger(getClass()).debug("  Get descendants for " + par + ", " + ancPath);
 
     if (requestCancel) {
       rollback();
@@ -277,8 +276,13 @@ public class TransitiveClosureAlgorithm extends ContentServiceJpa implements
       }
       // Iterate through children, mark as descendant and recursively call
       for (Long chd : children) {
+        if (ancPath.contains(chd)) {
+          throw new Exception("Cycle detected: " + chd + ", " + ancPath);
+        }
         descendants.add(chd);
-        descendants.addAll(getDescendants(chd, parChd));
+        ancPath.add(chd);
+        descendants.addAll(getDescendants(chd, parChd, ancPath));
+        ancPath.remove(chd);
       }
       Logger.getLogger(getClass()).debug(
           "    descCt = " + descendants.size());

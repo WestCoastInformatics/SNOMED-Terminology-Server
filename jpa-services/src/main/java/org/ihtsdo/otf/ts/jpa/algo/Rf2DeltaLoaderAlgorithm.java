@@ -2157,4 +2157,27 @@ public class Rf2DeltaLoaderAlgorithm extends HistoryServiceJpa implements
     languageRefSetMemberCache.put(l.getTerminologyId(), l);
   }
 
+  /* (non-Javadoc)
+   * @see org.ihtsdo.otf.ts.jpa.services.RootServiceJpa#close()
+   */
+  @Override
+  public void close() throws Exception {
+    super.close();
+    readers = null;
+    languageRefSetMemberCache = null;
+    existingConceptCache = null;
+    existingDescriptionIds = null;
+    existingRelationshipIds = null;
+    existingLanguageRefSetMemberIds = null;
+    existingSimpleRefSetMemberIds = null;
+    existingSimpleMapRefSetMemberIds = null;
+    existingComplexMapRefSetMemberIds = null;
+    existingDescriptionTypeRefSetMemberIds = null;
+    existingRefsetDescriptorRefSetMemberIds = null;
+    existingModuleDependencyRefSetMemberIds = null;
+    existingAttributeValueRefSetMemberIds = null;
+    existingAssociationReferenceRefSetMemberIds = null;
+
+  }
+  
 }

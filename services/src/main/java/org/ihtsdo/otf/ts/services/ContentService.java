@@ -3,6 +3,8 @@
  */
 package org.ihtsdo.otf.ts.services;
 
+import java.util.Map;
+
 import org.ihtsdo.otf.ts.helpers.AssociationReferenceRefSetMemberList;
 import org.ihtsdo.otf.ts.helpers.AttributeValueRefSetMemberList;
 import org.ihtsdo.otf.ts.helpers.ComplexMapRefSetMemberList;
@@ -1186,4 +1188,13 @@ public interface ContentService extends RootService {
    */
   public void setAssignIdentifiersFlag(boolean assignIdentifiersFlag);
 
+  /**
+   * Returns the content statistics.
+   *
+   * @param terminology the terminology
+   * @param version the version
+   * @return the content stats
+   * @throws Exception the exception
+   */
+  public Map<String, Integer> getComponentStats(String terminology, String version) throws Exception;
 }

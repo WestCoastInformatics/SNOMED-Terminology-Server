@@ -2,7 +2,6 @@ package org.ihtsdo.otf.ts.test.mojo;
 
 import java.io.File;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 
@@ -116,43 +115,7 @@ public class CompareRf2FullRf2SnapshotLoadersTest {
 
     // count data
     ContentService service = new ContentServiceJpa();
-    Map<String, Integer> fullStats = new HashMap<>();
-    fullStats.put("concept", service.getAllConcepts("SNOMEDCT", "latest")
-        .getCount());
-    fullStats.put("descrpition",
-        service.getAllDescriptionTerminologyIds("SNOMEDCT", "latest")
-            .getCount());
-    fullStats.put("relationship",
-        service.getAllRelationshipTerminologyIds("SNOMEDCT", "latest")
-            .getCount());
-    fullStats.put("language",
-        service.getAllLanguageRefSetMemberTerminologyIds("SNOMEDCT", "latest")
-            .getCount());
-    fullStats.put("attributeValue", service
-        .getAllAttributeValueRefSetMemberTerminologyIds("SNOMEDCT", "latest")
-        .getCount());
-    fullStats.put(
-        "associationReference",
-        service.getAllAssociationReferenceRefSetMemberTerminologyIds(
-            "SNOMEDCT", "latest").getCount());
-    fullStats.put("complexMap", service
-        .getAllComplexMapRefSetMemberTerminologyIds("SNOMEDCT", "latest")
-        .getCount());
-    fullStats.put("descriptionType", service
-        .getAllDescriptionTypeRefSetMemberTerminologyIds("SNOMEDCT", "latest")
-        .getCount());
-    fullStats.put("moduleDependency", service
-        .getAllModuleDependencyRefSetMemberTerminologyIds("SNOMEDCT", "latest")
-        .getCount());
-    fullStats.put("refsetDescriptor", service
-        .getAllRefsetDescriptorRefSetMemberTerminologyIds("SNOMEDCT", "latest")
-        .getCount());
-    fullStats.put("simple",
-        service.getAllSimpleRefSetMemberTerminologyIds("SNOMEDCT", "latest")
-            .getCount());
-    fullStats.put("simpleMap", service
-        .getAllSimpleMapRefSetMemberTerminologyIds("SNOMEDCT", "latest")
-        .getCount());
+    Map<String, Integer> fullStats = service.getComponentStats("SNOMEDCT", "latest");
     service.close();
     service.closeFactory();
     Logger.getLogger(getClass()).info("Full Stats = " + fullStats);
@@ -208,54 +171,13 @@ public class CompareRf2FullRf2SnapshotLoadersTest {
 
     // count data
     service = new ContentServiceJpa();
-    Map<String, Integer> snapStats = new HashMap<>();
-    snapStats.put("concept", service.getAllConcepts("SNOMEDCT", "latest")
-        .getCount());
-    snapStats.put("descrpition",
-        service.getAllDescriptionTerminologyIds("SNOMEDCT", "latest")
-            .getCount());
-    snapStats.put("relationship",
-        service.getAllRelationshipTerminologyIds("SNOMEDCT", "latest")
-            .getCount());
-    snapStats.put("language",
-        service.getAllLanguageRefSetMemberTerminologyIds("SNOMEDCT", "latest")
-            .getCount());
-    snapStats.put("attributeValue", service
-        .getAllAttributeValueRefSetMemberTerminologyIds("SNOMEDCT", "latest")
-        .getCount());
-    snapStats.put(
-        "associationReference",
-        service.getAllAssociationReferenceRefSetMemberTerminologyIds(
-            "SNOMEDCT", "latest").getCount());
-    snapStats.put("complexMap", service
-        .getAllComplexMapRefSetMemberTerminologyIds("SNOMEDCT", "latest")
-        .getCount());
-    snapStats.put("descriptionType", service
-        .getAllDescriptionTypeRefSetMemberTerminologyIds("SNOMEDCT", "latest")
-        .getCount());
-    snapStats.put("moduleDependency", service
-        .getAllModuleDependencyRefSetMemberTerminologyIds("SNOMEDCT", "latest")
-        .getCount());
-    snapStats.put("refsetDescriptor", service
-        .getAllRefsetDescriptorRefSetMemberTerminologyIds("SNOMEDCT", "latest")
-        .getCount());
-    snapStats.put("simple",
-        service.getAllSimpleRefSetMemberTerminologyIds("SNOMEDCT", "latest")
-            .getCount());
-    snapStats.put("simpleMap", service
-        .getAllSimpleMapRefSetMemberTerminologyIds("SNOMEDCT", "latest")
-        .getCount());
+    Map<String, Integer> snapStats = service.getComponentStats("SNOMEDCT", "latest");
     service.close();
     service.closeFactory();
     Logger.getLogger(getClass()).info("Snap Stats = " + fullStats);
 
     // Assert equivalence of counts
-    Assert.assertEquals(fullStats.get("concept"), snapStats.get("concept"));
-    Assert.assertEquals(fullStats.get("description"),
-        snapStats.get("description"));
-    Assert.assertEquals(fullStats.get("relationship"),
-        snapStats.get("relationship"));
-    Assert.assertEquals(fullStats.get("language"), snapStats.get("language"));
+    Assert.assertEquals(fullStats, snapStats);
 
     // Finish by clearing the DB again
     request = new DefaultInvocationRequest();
