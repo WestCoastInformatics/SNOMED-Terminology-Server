@@ -20,7 +20,7 @@
     <!-- Specify the config artifact parameters -->
     <config.groupId>org.ihtsdo.otf.term-server</config.groupId>
     <config.artifactId>term-server-config-dev-windows</config.artifactId>
-    <config.version>${releaseVersion}</config.version>
+    <config.version>${project.version}</config.version>
 
   </properties>
 

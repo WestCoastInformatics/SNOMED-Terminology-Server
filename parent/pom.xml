@@ -61,33 +61,33 @@
       <dependency>
         <groupId>org.ihtsdo.otf.term-server</groupId>
         <artifactId>term-server-model</artifactId>
-        <version>${releaseVersion}</version>
+        <version>${project.version}</version>
       </dependency>
       <dependency>
         <groupId>org.ihtsdo.otf.term-server</groupId>
         <artifactId>term-server-jpa-model</artifactId>
-        <version>${releaseVersion}</version>
+        <version>${project.version}</version>
       </dependency>
       <dependency>
         <groupId>org.ihtsdo.otf.term-server</groupId>
         <artifactId>term-server-services</artifactId>
-        <version>${releaseVersion}</version>
+        <version>${project.version}</version>
       </dependency>
       <dependency>
         <groupId>org.ihtsdo.otf.term-server</groupId>
         <artifactId>term-server-jpa-services</artifactId>
-        <version>${releaseVersion}</version>
+        <version>${project.version}</version>
       </dependency>
       <dependency>
         <groupId>org.ihtsdo.otf.term-server</groupId>
         <artifactId>term-server-rest</artifactId>
-        <version>${releaseVersion}</version>
+        <version>${project.version}</version>
         <classifier>classes</classifier>
       </dependency>
       <dependency>
         <groupId>org.ihtsdo.otf.term-server</groupId>
         <artifactId>term-server-rest-client</artifactId>
-        <version>${releaseVersion}</version>
+        <version>${project.version}</version>
       </dependency>
 
       <!-- JPA dependencies -->

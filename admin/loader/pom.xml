@@ -49,7 +49,7 @@
           <plugin>
             <groupId>org.ihtsdo.otf.term-server</groupId>
             <artifactId>term-server-admin-mojo</artifactId>
-            <version>${releaseVersion}</version>
+            <version>${project.version}</version>
             <executions>
               <execution>
                 <id>load-rf2-full</id>
@@ -78,7 +78,7 @@
           <plugin>
             <groupId>org.ihtsdo.otf.term-server</groupId>
             <artifactId>term-server-admin-mojo</artifactId>
-            <version>${releaseVersion}</version>
+            <version>${project.version}</version>
             <executions>
               <execution>
                 <id>load-rf2-snapshot</id>
@@ -107,7 +107,7 @@
           <plugin>
             <groupId>org.ihtsdo.otf.term-server</groupId>
             <artifactId>term-server-admin-mojo</artifactId>
-            <version>${releaseVersion}</version>
+            <version>${project.version}</version>
             <executions>
               <execution>
                 <id>load-rf2-delta</id>
@@ -135,7 +135,7 @@
           <plugin>
             <groupId>org.ihtsdo.otf.term-server</groupId>
             <artifactId>term-server-admin-mojo</artifactId>
-            <version>${releaseVersion}</version>
+            <version>${project.version}</version>
             <executions>
               <execution>
                 <id>load-claml</id>
@@ -164,7 +164,7 @@
           <plugin>
             <groupId>org.ihtsdo.otf.term-server</groupId>
             <artifactId>term-server-admin-mojo</artifactId>
-            <version>${releaseVersion}</version>
+            <version>${project.version}</version>
             <executions>
               <execution>
                 <id>compute-transitive-closure</id>
@@ -191,7 +191,7 @@
           <plugin>
             <groupId>org.ihtsdo.otf.term-server</groupId>
             <artifactId>term-server-admin-mojo</artifactId>
-            <version>${releaseVersion}</version>
+            <version>${project.version}</version>
             <executions>
               <execution>
                 <id>add-project</id>
