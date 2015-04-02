@@ -120,6 +120,9 @@ public class ProjectClientRest implements ProjectServiceRest {
     WebResource resource =
         client.resource(config.getProperty("base.url") + "/project/remove/id/"
             + id);
+    
+    if (id == null)
+    	return;
 
     ClientResponse response =
         resource.accept(MediaType.APPLICATION_XML)

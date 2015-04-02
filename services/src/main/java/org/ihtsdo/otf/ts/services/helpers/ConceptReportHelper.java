@@ -32,9 +32,10 @@ public class ConceptReportHelper {
     for (Description d : c.getDescriptions()) {
       builder.append("  Description = " + d).append(nl);
       for (LanguageRefSetMember member : d.getLanguageRefSetMembers()) {
-        builder.append("    Language = " + member).append(nl);
+        builder.append("  Language = " + member).append(nl);
       }
     }
+    
     for (Relationship r : c.getRelationships()) {
       builder.append("  Relationship = " + r).append(nl);
     }
@@ -47,17 +48,15 @@ public class ConceptReportHelper {
         .getAssociationReferenceRefSetMembers()) {
       builder.append("  AssociationReference = " + member).append(nl);
     }
-    for (AttributeValueConceptRefSetMember member : c
-        .getAttributeValueRefSetMembers()) {
-      builder.append("  AttributeValue = " + member).append(nl);
-
-    }
+    
     for (ComplexMapRefSetMember member : c.getComplexMapRefSetMembers()) {
       builder.append("  ComplexMap = " + member).append(nl);
     }
+    
     for (SimpleMapRefSetMember member : c.getSimpleMapRefSetMembers()) {
       builder.append("  SimpleMap = " + member).append(nl);
     }
+    
     for (SimpleRefSetMember member : c.getSimpleRefSetMembers()) {
       builder.append("  Simple = " + member).append(nl);
     }
@@ -76,7 +75,7 @@ public class ConceptReportHelper {
     builder.append(nl);
     builder.append("Description = " + description).append(nl);
     for (LanguageRefSetMember member : description.getLanguageRefSetMembers()) {
-      builder.append("    Langauge = " + member).append(nl);
+      builder.append("  Language = " + member).append(nl);
     }
     for (AssociationReferenceDescriptionRefSetMember member : description
         .getAssociationReferenceRefSetMembers()) {

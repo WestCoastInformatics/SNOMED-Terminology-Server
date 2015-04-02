@@ -3,24 +3,19 @@
  */
 package org.ihtsdo.otf.ts.test.rest;
 
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
-
+import java.util.HashSet;
 import java.util.Set;
 
-import org.ihtsdo.otf.ts.helpers.ConceptList;
-import org.ihtsdo.otf.ts.helpers.ConceptListJpa;
-import org.ihtsdo.otf.ts.helpers.PfsParameterJpa;
-import org.ihtsdo.otf.ts.helpers.SearchResultList;
-import org.ihtsdo.otf.ts.rf2.Concept;
-import org.ihtsdo.otf.ts.rf2.Description;
-import org.ihtsdo.otf.ts.test.helpers.PfsParameterForConceptTest;
+import org.ihtsdo.otf.ts.User;
+import org.ihtsdo.otf.ts.helpers.ProjectList;
+import org.ihtsdo.otf.ts.jpa.ProjectJpa;
 import org.junit.After;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
 /**
- * Implementation of the "Project Service REST Normal Use" Test Cases.
+ * Implementation of the "Project Service REST Edge Cases" Test Cases.
  */
 public class ProjectServiceRestEdgeCasesTest extends ProjectServiceRestTest {
 
@@ -48,34 +43,57 @@ public class ProjectServiceRestEdgeCasesTest extends ProjectServiceRestTest {
   }
 
   /**
-   * Test Get and Find methods for concepts.
+   * Test edge cases for adding and removing projects.
    *
    * @throws Exception the exception
    */
   @Test
   public void testEdgeCasesRestProject001() throws Exception {
+	    
+	  
+		// Get all projects and choose the first one.
+		ProjectList projectList = projectService.getProjects(adminAuthToken);
+		Assert.assertTrue(projectList.getCount() > 0);
+		ProjectJpa project = (ProjectJpa) projectList.getObjects().get(0);
+		
 
+	    /*Call "update" without any changes
+	        TEST: get that project back from the server and it should be equals*/
+		projectService.updateProject(project, adminAuthToken);
+		ProjectJpa returnedProject = (ProjectJpa)projectService.getProject(project.getId(), adminAuthToken);
+		Assert.assertEquals(returnedProject, project);
+		
+		// Here, add new project from scratch
+	    ProjectJpa project2 = new ProjectJpa();
+	    Set<String> values = new HashSet<>();
+	    values.add("PUBLISHED");
+	    project2.setActionWorkflowStatusValues(values);
+	    User user = securityService.getUser(adminUser, adminAuthToken);
+	    project2.addAdministrator(user);
+	    project2.addAuthor(user);
+	    project2.addLead(user);
+	    project2.addScopeConcept("12345");
+	    project2.addScopeExcludesConcept("12345");
+	    project2.setDescription("Sample");
+	    project2.setModuleId("12345");
+	    project2.setName("Sample");
+	    project2.setTerminology("SNOMEDCT");
+	    project2.setTerminologyVersion("latest");
+
+	    project2 =
+	        (ProjectJpa) projectService.addProject(project2, adminAuthToken);
+		
+		
+		// Call remove project with the id of the new project.
+		projectService.removeProject(project2.getId(), adminAuthToken);
+		
+		// Call remove project again with the same id
+		//   TEST: no exception, simply doesn't do anything.
+		projectService.removeProject(project2.getId(), adminAuthToken);
+		
   }
 
-  /**
-   * Test transitive closure methods (ancestors, descendants, children).
-   *
-   * @throws Exception the exception
-   */
-  @Test
-  public void testEdgeCasesRestProject002() throws Exception {
 
-  }
-
-  /**
-   * Test Get methods for descriptions.
-   *
-   * @throws Exception the exception
-   */
-  @Test
-  public void testEdgeCasesRestProject003() throws Exception {
-
-  }
 
 
   /**
