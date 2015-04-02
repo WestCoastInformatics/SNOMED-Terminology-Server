@@ -163,7 +163,7 @@
         <plugins>
           <plugin>
             <groupId>org.ihtsdo.otf.term-server</groupId>
-            <artifactId>terproject.versionm-server-admin-mojo</artifactId>
+            <artifactId>term-server-admin-mojo</artifactId>
             <version>${project.version}</version>
             <executions>
               <execution>
