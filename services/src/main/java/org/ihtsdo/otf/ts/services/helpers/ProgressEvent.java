@@ -41,7 +41,7 @@ public class ProgressEvent {
 
   /**
    * Returns the scaled percentage. It maps a 0 to 100 range to the specified
-   * range. E.g. If getPercent() returns 50, getScaledPercent(50,100) eturns 75.
+   * range. E.g. If getPercent() returns 50, getScaledPercent(50,100) returns 75.
    * @param low the low end of the scale
    * @param high the high end of the scale
    * @return the scaled percentage completed
