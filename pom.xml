@@ -8,7 +8,7 @@
     <version>1.0.0-SNAPSHOT</version> <relativePath/> </parent> -->
 
   <groupId>org.ihtsdo.otf.term-server</groupId>
-  <artifactId>ihtsdo-term-server-service</artifactId>
+  <artifactId>term-server-service</artifactId>
   <version>1.0.0-SNAPSHOT</version>
   <packaging>pom</packaging>
   <name>IHTSDO RF2 Data Model</name>
