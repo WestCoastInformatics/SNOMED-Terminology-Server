@@ -18,7 +18,6 @@
     <!-- Set default maven settings -->
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-    <releaseVersion>${project.version}</releaseVersion>
 
     <!-- Set maven plugin versions -->
     <maven.compiler.plugin.version>3.2</maven.compiler.plugin.version>
@@ -61,33 +60,33 @@
       <dependency>
         <groupId>org.ihtsdo.otf.term-server</groupId>
         <artifactId>term-server-model</artifactId>
-        <version>${releaseVersion}</version>
+        <version>${project.version}</version>
       </dependency>
       <dependency>
         <groupId>org.ihtsdo.otf.term-server</groupId>
         <artifactId>term-server-jpa-model</artifactId>
-        <version>${releaseVersion}</version>
+        <version>${project.version}</version>
       </dependency>
       <dependency>
         <groupId>org.ihtsdo.otf.term-server</groupId>
         <artifactId>term-server-services</artifactId>
-        <version>${releaseVersion}</version>
+        <version>${project.version}</version>
       </dependency>
       <dependency>
         <groupId>org.ihtsdo.otf.term-server</groupId>
         <artifactId>term-server-jpa-services</artifactId>
-        <version>${releaseVersion}</version>
+        <version>${project.version}</version>
       </dependency>
       <dependency>
         <groupId>org.ihtsdo.otf.term-server</groupId>
         <artifactId>term-server-rest</artifactId>
-        <version>${releaseVersion}</version>
+        <version>${project.version}</version>
         <classifier>classes</classifier>
       </dependency>
       <dependency>
         <groupId>org.ihtsdo.otf.term-server</groupId>
         <artifactId>term-server-rest-client</artifactId>
-        <version>${releaseVersion}</version>
+        <version>${project.version}</version>
       </dependency>
 
       <!-- JPA dependencies -->

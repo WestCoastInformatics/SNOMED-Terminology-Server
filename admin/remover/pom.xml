@@ -37,7 +37,7 @@
           <plugin>
             <groupId>org.ihtsdo.otf.term-server</groupId>
             <artifactId>term-server-admin-mojo</artifactId>
-            <version>${releaseVersion}</version>
+            <version>${project.version}</version>
             <executions>
               <execution>
                 <id>remove-terminology</id>
@@ -65,7 +65,7 @@
           <plugin>
             <groupId>org.ihtsdo.otf.term-server</groupId>
             <artifactId>term-server-admin-mojo</artifactId>
-            <version>${releaseVersion}</version>
+            <version>${project.version}</version>
             <executions>
               <execution>
                 <id>remove-release-info</id>
@@ -95,7 +95,7 @@
           <plugin>
             <groupId>org.ihtsdo.otf.term-server</groupId>
             <artifactId>term-server-admin-mojo</artifactId>
-            <version>${releaseVersion}</version>
+            <version>${project.version}</version>
             <executions>
               <execution>
                 <id>remove-demo</id>
