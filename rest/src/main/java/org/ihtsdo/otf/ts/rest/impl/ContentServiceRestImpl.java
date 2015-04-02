@@ -1503,7 +1503,8 @@ public class ContentServiceRestImpl extends RootServiceRestImpl implements
       algorithm.setReaders(readers);
       algorithm.compute();
       algorithm.close();
-
+      algorithm = null;
+      
       // Load deltas
       for (String release : releases) {
         if (release.equals(releases.get(0))) {
@@ -1517,6 +1518,7 @@ public class ContentServiceRestImpl extends RootServiceRestImpl implements
         algorithm2.setReaders(readers);
         algorithm2.compute();
         algorithm2.close();
+        algorithm2 = null;
 
       }
 
@@ -1613,6 +1615,7 @@ public class ContentServiceRestImpl extends RootServiceRestImpl implements
       algorithm.setReaders(readers);
       algorithm.compute();
       algorithm.close();
+      algorithm = null;
 
       // Compute transitive closure
       Logger.getLogger(getClass()).info(

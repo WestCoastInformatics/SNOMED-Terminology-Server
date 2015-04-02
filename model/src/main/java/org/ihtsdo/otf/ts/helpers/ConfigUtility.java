@@ -5,7 +5,6 @@ import java.io.BufferedWriter;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -237,12 +236,17 @@ public class ConfigUtility {
    * @param file the file
    * @param graphClass the graph class
    * @return the graph for file
-   * @throws FileNotFoundException the file not found exception
-   * @throws JAXBException the JAXB exception
+   * @throws Exception the exception
    */
   @SuppressWarnings("resource")
   public static Object getGraphForFile(File file, Class<?> graphClass)
-    throws FileNotFoundException, JAXBException {
+    throws Exception {
+    if (file == null) {
+      return null;
+    }
+    if (graphClass == null) {
+      throw new Exception("Graph class unexpectedly null");
+    }
     return getGraphForString(new Scanner(file, "UTF-8").useDelimiter("\\A")
         .next(), graphClass);
   }
@@ -253,12 +257,17 @@ public class ConfigUtility {
    * @param in the in
    * @param graphClass the graph class
    * @return the graph for stream
-   * @throws FileNotFoundException the file not found exception
-   * @throws JAXBException the JAXB exception
+   * @throws Exception the exception
    */
   @SuppressWarnings("resource")
   public static Object getGraphForStream(InputStream in, Class<?> graphClass)
-    throws FileNotFoundException, JAXBException {
+    throws Exception {
+    if (in == null) {
+      return null;
+    }
+    if (graphClass == null) {
+      throw new Exception("Graph class unexpectedly null");
+    }
     return getGraphForString(new Scanner(in, "UTF-8").useDelimiter("\\A")
         .next(), graphClass);
   }
@@ -271,6 +280,9 @@ public class ConfigUtility {
    * @throws JAXBException the JAXB exception
    */
   public static String getStringForGraph(Object object) throws JAXBException {
+    if (object == null) {
+      return null;
+    }
     StringWriter writer = new StringWriter();
     JAXBContext jaxbContext = null;
     jaxbContext = JAXBContext.newInstance(object.getClass());
@@ -290,7 +302,9 @@ public class ConfigUtility {
    */
   public static Node getNodeForString(String xml)
     throws ParserConfigurationException, SAXException, IOException {
-
+    if (xml == null) {
+      return null;
+    }
     InputStream in =
         new ByteArrayInputStream(xml.getBytes(StandardCharsets.UTF_8));
     // Parse XML file.
@@ -312,6 +326,9 @@ public class ConfigUtility {
    */
   public static Node getNodeForFile(File file)
     throws ParserConfigurationException, SAXException, IOException {
+    if (file == null) {
+      return null;
+    }
     InputStream in = new FileInputStream(file);
     // Parse XML file.
     DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
@@ -332,6 +349,9 @@ public class ConfigUtility {
    */
   public static String getStringForNode(Node root) throws TransformerException,
     ParserConfigurationException {
+    if (root == null) {
+      return null;
+    }
     DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
     DocumentBuilder builder = factory.newDocumentBuilder();
     Document document = builder.newDocument();
@@ -383,6 +403,12 @@ public class ConfigUtility {
    */
   public static String prettyFormat(String input, int indent) {
     try {
+      if (input == null) {
+        return null;
+      }
+      if (indent < 0) {
+        throw new Exception("Indent unexpectedly negative");
+      }
       Source xmlInput = new StreamSource(new StringReader(input));
       StringWriter stringWriter = new StringWriter();
       StreamResult xmlOutput = new StreamResult(stringWriter);
@@ -412,6 +438,21 @@ public class ConfigUtility {
   @SuppressWarnings("null")
   public static File mergeSortedFiles(File files1, File files2,
     Comparator<String> comp, File dir, String headerLine) throws IOException {
+    if (files1 == null) {
+      throw new IOException("First file unexpectedly null");
+    }
+    if (files2 == null) {
+      throw new IOException("Second file unexpectedly null");
+    }
+    if (comp == null) {
+      throw new IOException("Comparator class unexpectedly null");
+    }
+    if (dir == null) {
+      throw new IOException("Directory unexpectedly null");
+    }
+    if (headerLine == null) {
+      throw new IOException("Header line unexpectedly null");
+    }
 
     final BufferedReader in1 = new BufferedReader(new FileReader(files1));
     final BufferedReader in2 = new BufferedReader(new FileReader(files2));
@@ -457,8 +498,12 @@ public class ConfigUtility {
    *
    * @param path the path
    * @return true, if successful
+   * @throws Exception the exception
    */
-  static public boolean deleteDirectory(File path) {
+  static public boolean deleteDirectory(File path) throws Exception {
+    if (path == null) {
+      throw new Exception("Path unexpectedly null.");
+    }
     if (path.exists()) {
       File[] files = path.listFiles();
       for (int i = 0; i < files.length; i++) {
@@ -485,6 +530,16 @@ public class ConfigUtility {
    */
   public static void sendEmail(String subject, String from, String recipients,
     String body, Properties details, boolean authFlag) throws Exception {
+    if (from == null) {
+      throw new Exception("From unexpectedly null.");
+    }
+    if (recipients == null) {
+      throw new Exception("Recipients unexpectedly null.");
+    }
+    if (details == null) {
+      throw new Exception("Details unexpectedly null.");
+    }
+
     // avoid sending mail if disabled
     if ("false".equals(details.getProperty("mail.enabled"))) {
       // do nothing
@@ -542,5 +597,5 @@ public class ConfigUtility {
       }
     }
   }
-  
+
 }

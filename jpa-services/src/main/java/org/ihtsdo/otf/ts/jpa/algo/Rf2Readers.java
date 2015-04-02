@@ -84,7 +84,7 @@ public class Rf2Readers {
 
     readers.put(Keys.CONCEPT, getReader("conceptsByConcept.sort"));
     readers.put(Keys.DESCRIPTION,
-        getReader("descriptionsAllByDescription.sort"));
+        getReader("descriptionsAllByConcept.sort"));
     readers.put(Keys.RELATIONSHIP,
         getReader("relationshipsAllBySourceConcept.sort"));
     readers.put(Keys.ASSOCIATION_REFERENCE,

@@ -4143,7 +4143,6 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
       ct = ((Long) query.getSingleResult()).intValue();
       stats.put("Active " + jpaTable, ct);
     }
-    System.out.println(stats);
     return stats;
   }
 

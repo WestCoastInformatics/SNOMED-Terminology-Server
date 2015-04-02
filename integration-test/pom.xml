@@ -76,6 +76,11 @@
               <includes>
                 <include>**/org/ihtsdo/otf/ts/test/rest/*Test.java</include>
               </includes>
+              <excludes>
+              <!-- Still working on these -->
+                <exclude>**/org/ihtsdo/otf/ts/test/rest/Content*Test.java</exclude>
+                <exclude>**/org/ihtsdo/otf/ts/test/rest/History*Test.java</exclude>
+              </excludes>
               <additionalClasspathElements>
                 <additionalClasspathElement>src/main/resources</additionalClasspathElement>
               </additionalClasspathElements>
@@ -97,7 +102,7 @@
             <artifactId>maven-surefire-plugin</artifactId>
             <configuration>
               <includes>
-                <include>**/org/ihtsdo/otf/ts/test/mojo/Rf2Full*Test.java</include>
+                <include>**/org/ihtsdo/otf/ts/test/mojo/Compare*Test.java</include>
               </includes>
               <additionalClasspathElements>
                 <additionalClasspathElement>src/main/resources</additionalClasspathElement>

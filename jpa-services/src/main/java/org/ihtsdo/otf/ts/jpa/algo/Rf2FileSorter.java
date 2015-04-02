@@ -106,8 +106,10 @@ public class Rf2FileSorter {
     sortByMap.put("sct2_Concept_", 0);
     sortByMap.put("sct2_Relationship_", 4);
     sortByMap.put("sct2_StatedRelationship_", 4);
-    sortByMap.put("sct2_Description_", 0);
-    sortByMap.put("sct2_TextDefinition_", 0);
+    sortByMap.put("merge_Relationship", 4);
+    sortByMap.put("sct2_Description_", 4);
+    sortByMap.put("sct2_TextDefinition_", 4);
+    sortByMap.put("merge_Description", 4);
     sortByMap.put("Refset_Simple", 5);
     sortByMap.put("AttributeValue", 5);
     sortByMap.put("AssociationReference", 5);
@@ -124,8 +126,8 @@ public class Rf2FileSorter {
     fileMap.put("sct2_Relationship_", "relationshipsBySourceConcept.sort");
     fileMap.put("sct2_StatedRelationship_",
         "statedRelationshipsBySourceConcept.sort");
-    fileMap.put("sct2_Description_", "descriptionsByDescription.sort");
-    fileMap.put("sct2_TextDefinition_", "descriptionsTextByDescription.sort");
+    fileMap.put("sct2_Description_", "descriptionsByConcept.sort");
+    fileMap.put("sct2_TextDefinition_", "descriptionsTextByConcept.sort");
     fileMap.put("Refset_Simple", "simpleRefsetsByConcept.sort");
     fileMap.put("AttributeValue", "attributeValueRefsetsByRefCompId.sort");
     fileMap.put("AssociationReference",
@@ -184,11 +186,22 @@ public class Rf2FileSorter {
         new File(outputDir + "/" + fileMap.get("sct2_Description_"));
     File textDefinitionsFile =
         new File(outputDir + "/" + fileMap.get("sct2_TextDefinition_"));
+    // Determine fields to sort by
+    if (sortByEffectiveTime) {
+      fields = new int[] {
+          1, sortByMap.get("merge_Description")
+      };
+    } else {
+      fields = new int[] {
+        sortByMap.get("merge_Description")
+      };
+    }
     File mergedDesc =
         ConfigUtility.mergeSortedFiles(descriptionsFile, textDefinitionsFile,
             getComparator(fields), outputDir, "");
+
     Files.move(mergedDesc, new File(outputDir + "/"
-        + "descriptionsAllByDescription.sort"));
+        + "descriptionsAllByConcept.sort"));
 
     // Merge relationship files
     Logger.getLogger(getClass()).info("  Merging relationship files...");
@@ -196,6 +209,16 @@ public class Rf2FileSorter {
         new File(outputDir + "/" + fileMap.get("sct2_Relationship_"));
     File statedRelationshipsFile =
         new File(outputDir + "/" + fileMap.get("sct2_StatedRelationship_"));
+    // Determine fields to sort by
+    if (sortByEffectiveTime) {
+      fields = new int[] {
+          1, sortByMap.get("merge_Relationship")
+      };
+    } else {
+      fields = new int[] {
+        sortByMap.get("merge_Relationship")
+      };
+    }
 
     File mergedRel =
         ConfigUtility.mergeSortedFiles(relationshipsFile,

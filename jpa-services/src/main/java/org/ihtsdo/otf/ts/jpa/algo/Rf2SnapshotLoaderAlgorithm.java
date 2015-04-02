@@ -50,7 +50,6 @@ import org.ihtsdo.otf.ts.services.helpers.ProgressEvent;
 import org.ihtsdo.otf.ts.services.helpers.ProgressListener;
 import org.ihtsdo.otf.ts.services.helpers.PushBackReader;
 
-// TODO: Auto-generated Javadoc
 /**
  * Implementation of an algorithm to import RF2 snapshot data.
  */
@@ -63,6 +62,9 @@ public class Rf2SnapshotLoaderAlgorithm extends HistoryServiceJpa implements
   /** The logging object ct threshold. */
   private final static int logCt = 2000;
 
+  /** The commit count. */
+  private final static int commitCt = 5000;
+
   /** The terminology. */
   private String terminology;
 
@@ -71,6 +73,9 @@ public class Rf2SnapshotLoaderAlgorithm extends HistoryServiceJpa implements
 
   /** The release version. */
   private String releaseVersion;
+
+  /** The release version date. */
+  private Date releaseVersionDate;
 
   /** The readers. */
   private Rf2Readers readers;
@@ -83,10 +88,26 @@ public class Rf2SnapshotLoaderAlgorithm extends HistoryServiceJpa implements
                                                                        // to
 
   /** hash set for storing default preferred names. */
-  Map<Long, String> defaultPreferredNames = new HashMap<>();
+  Map<String, String> defaultPreferredNames = new HashMap<>();
+
+  /** The language ref set members. */
+  Map<String, Set<LanguageRefSetMember>> languageRefSetMembers =
+      new HashMap<>();
 
   /** counter for objects created, reset in each load section. */
   int objectCt; //
+
+  /** The init pref name. */
+  final String initPrefName = "No default preferred name found";
+
+  /** The loader. */
+  final String loader = "loader";
+
+  /** The id. */
+  final String id = "id";
+
+  /** The published. */
+  final String published = "PUBLISHED";
 
   /**
    * Instantiates an empty {@link Rf2SnapshotLoaderAlgorithm}.
@@ -149,6 +170,7 @@ public class Rf2SnapshotLoaderAlgorithm extends HistoryServiceJpa implements
       Logger.getLogger(getClass()).info("  terminology = " + terminology);
       Logger.getLogger(getClass()).info("  version = " + terminologyVersion);
       Logger.getLogger(getClass()).info("  releaseVersion = " + releaseVersion);
+      releaseVersionDate = ConfigUtility.DATE_FORMAT.parse(releaseVersion);
 
       // Log memory usage
       Runtime runtime = Runtime.getRuntime();
@@ -182,26 +204,27 @@ public class Rf2SnapshotLoaderAlgorithm extends HistoryServiceJpa implements
           "    elapsed time = " + getElapsedTime(startTime) + "s"
               + " (Ended at " + ft.format(new Date()) + ")");
 
+      // Commit here, then try relationships
+      commit();
+      clear();
+      beginTransaction();
+
       //
       // Load descriptions and language refsets
       //
-      Logger.getLogger(getClass()).info(
-          "  Loading Descriptions and LanguageRefSets...");
+      Logger.getLogger(getClass()).info("  Loading LanguageRefSets...");
       startTime = System.nanoTime();
-      loadDescriptionsAndLanguageRefSets();
+      loadLanguageRefSetMembers();
       Logger.getLogger(getClass()).info(
           "    elapsed time = " + getElapsedTime(startTime) + "s"
               + " (Ended at " + ft.format(new Date()) + ")");
 
-      //
-      // Set default preferred names
-      //
-      Logger.getLogger(getClass()).info(
-          "  Setting default preferred names for all concepts...");
+      Logger.getLogger(getClass()).info("  Loading Descriptions...");
       startTime = System.nanoTime();
-      setDefaultPreferredNames();
+      loadDescriptions();
       Logger.getLogger(getClass()).info(
-          "    elapsed time = " + getElapsedTime(startTime).toString() + "s");
+          "    elapsed time = " + getElapsedTime(startTime) + "s"
+              + " (Ended at " + ft.format(new Date()) + ")");
 
       // Commit here, then try relationships
       commit();
@@ -217,6 +240,35 @@ public class Rf2SnapshotLoaderAlgorithm extends HistoryServiceJpa implements
       Logger.getLogger(getClass()).info(
           "    elapsed time = " + getElapsedTime(startTime) + "s"
               + " (Ended at " + ft.format(new Date()) + ")");
+
+      //
+      // load AssocationReference RefSets (Content)
+      //
+      Logger.getLogger(getClass()).info(
+          "  Loading AssociationReference RefSets...");
+      startTime = System.nanoTime();
+      loadAssociationReferenceRefSets();
+      Logger.getLogger(getClass()).info(
+          "    elaped time = " + getElapsedTime(startTime).toString() + "s"
+              + " (Ended at " + ft.format(new Date()) + ")");
+
+      commit();
+      clear();
+      beginTransaction();
+
+      //
+      // Load AttributeValue RefSets (Content)
+      //
+      Logger.getLogger(getClass()).info("  Loading AttributeValue RefSets...");
+      startTime = System.nanoTime();
+      loadAttributeValueRefSets();
+      Logger.getLogger(getClass()).info(
+          "    elaped time = " + getElapsedTime(startTime).toString() + "s"
+              + " (Ended at " + ft.format(new Date()) + ")");
+
+      commit();
+      clear();
+      beginTransaction();
 
       //
       // Load Simple RefSets (Content)
@@ -238,6 +290,10 @@ public class Rf2SnapshotLoaderAlgorithm extends HistoryServiceJpa implements
           "    elapsed time = " + getElapsedTime(startTime) + "s"
               + " (Ended at " + ft.format(new Date()) + ")");
 
+      commit();
+      clear();
+      beginTransaction();
+
       //
       // Load ComplexMapRefSets
       //
@@ -258,26 +314,9 @@ public class Rf2SnapshotLoaderAlgorithm extends HistoryServiceJpa implements
           "    elapsed time = " + getElapsedTime(startTime) + "s"
               + " (Ended at " + ft.format(new Date()) + ")");
 
-      //
-      // load AssocationReference RefSets (Content)
-      //
-      Logger.getLogger(getClass()).info(
-          "  Loading AssociationReference RefSets...");
-      startTime = System.nanoTime();
-      loadAssociationReferenceRefSets();
-      Logger.getLogger(getClass()).info(
-          "    elaped time = " + getElapsedTime(startTime).toString() + "s"
-              + " (Ended at " + ft.format(new Date()) + ")");
-
-      //
-      // Load AttributeValue RefSets (Content)
-      //
-      Logger.getLogger(getClass()).info("  Loading AttributeValue RefSets...");
-      startTime = System.nanoTime();
-      loadAttributeValueRefSets();
-      Logger.getLogger(getClass()).info(
-          "    elaped time = " + getElapsedTime(startTime).toString() + "s"
-              + " (Ended at " + ft.format(new Date()) + ")");
+      commit();
+      clear();
+      beginTransaction();
 
       //
       // load RefsetDescriptor RefSets (Content)
@@ -318,7 +357,7 @@ public class Rf2SnapshotLoaderAlgorithm extends HistoryServiceJpa implements
       if (info == null) {
         info = new ReleaseInfoJpa();
         info.setName(releaseVersion);
-        info.setEffectiveTime(ConfigUtility.DATE_FORMAT.parse(releaseVersion));
+        info.setEffectiveTime(releaseVersionDate);
         info.setDescription(terminology + " " + releaseVersion + " release");
         info.setPlanned(false);
         info.setPublished(true);
@@ -326,8 +365,8 @@ public class Rf2SnapshotLoaderAlgorithm extends HistoryServiceJpa implements
         info.setReleaseFinishDate(info.getEffectiveTime());
         info.setTerminology(terminology);
         info.setTerminologyVersion(terminologyVersion);
-        info.setLastModified(ConfigUtility.DATE_FORMAT.parse(releaseVersion));
-        info.setLastModifiedBy("loader");
+        info.setLastModified(releaseVersionDate);
+        info.setLastModifiedBy(loader);
         addReleaseInfo(info);
       }
 
@@ -336,6 +375,9 @@ public class Rf2SnapshotLoaderAlgorithm extends HistoryServiceJpa implements
       commit();
       clear();
       conceptCache.clear();
+
+      Logger.getLogger(getClass()).info(
+          getComponentStats(terminology, terminologyVersion));
 
       // Final logging messages
       Logger.getLogger(getClass()).info(
@@ -461,7 +503,7 @@ public class Rf2SnapshotLoaderAlgorithm extends HistoryServiceJpa implements
       final String fields[] = line.split("\t");
       final Concept concept = new ConceptJpa();
 
-      if (!fields[0].equals("id")) { // header
+      if (!fields[0].equals(id)) { // header
 
         // Stop if the effective time is past the release version
         if (fields[1].compareTo(releaseVersion) > 0) {
@@ -473,21 +515,20 @@ public class Rf2SnapshotLoaderAlgorithm extends HistoryServiceJpa implements
         concept.setEffectiveTime(ConfigUtility.DATE_FORMAT.parse(fields[1]));
         concept.setLastModified(ConfigUtility.DATE_FORMAT.parse(fields[1]));
         concept.setActive(fields[2].equals("1"));
-        concept.setModuleId(fields[3]);
+        concept.setModuleId(fields[3].intern());
         concept.setDefinitionStatusId(fields[4]);
         concept.setTerminology(terminology);
         concept.setTerminologyVersion(terminologyVersion);
-        concept.setDefaultPreferredName("null");
-        concept
-            .setLastModified(ConfigUtility.DATE_FORMAT.parse(releaseVersion));
-        concept.setLastModifiedBy("loader");
+        concept.setDefaultPreferredName(initPrefName);
+        concept.setLastModified(releaseVersionDate);
+        concept.setLastModifiedBy(loader);
         concept.setPublished(true);
-        concept.setWorkflowStatus("PUBLISHED");
+        concept.setWorkflowStatus(published);
 
         // copy concept to shed any hibernate stuff
+        addConcept(concept);
         conceptCache.put(fields[0], concept);
 
-        addConcept(concept);
         if (++objectCt % logCt == 0) {
           Logger.getLogger(getClass()).info("    count = " + objectCt);
         }
@@ -511,15 +552,13 @@ public class Rf2SnapshotLoaderAlgorithm extends HistoryServiceJpa implements
    * 
    * @throws Exception the exception
    */
-
+  @SuppressWarnings("null")
   private void loadRelationships() throws Exception {
 
     String line = "";
     objectCt = 0;
-    
-    // given commit strategy, we have to track which concepts
-    // need to be updated here.
-    Set<Concept> touchedByRel = new HashSet<>();
+    int conceptCt = 1;
+    Concept prevConcept = null;
 
     PushBackReader reader = readers.getReader(Rf2Readers.Keys.RELATIONSHIP);
     // Iterate over relationships
@@ -528,7 +567,7 @@ public class Rf2SnapshotLoaderAlgorithm extends HistoryServiceJpa implements
       // Split line
       final String fields[] = line.split("\t");
       // Skip header
-      if (!fields[0].equals("id")) {
+      if (!fields[0].equals(id)) {
 
         // Stop if the effective time is past the release version
         if (fields[1].compareTo(releaseVersion) > 0) {
@@ -544,29 +583,31 @@ public class Rf2SnapshotLoaderAlgorithm extends HistoryServiceJpa implements
         relationship
             .setLastModified(ConfigUtility.DATE_FORMAT.parse(fields[1]));
         relationship.setActive(fields[2].equals("1")); // active
-        relationship.setModuleId(fields[3]); // moduleId
+        relationship.setModuleId(fields[3].intern()); // moduleId
 
         relationship.setRelationshipGroup(Integer.valueOf(fields[6])); // relationshipGroup
         relationship.setTypeId(fields[7]); // typeId
-        relationship.setCharacteristicTypeId(fields[8]); // characteristicTypeId
+        relationship.setCharacteristicTypeId(fields[8].intern()); // characteristicTypeId
         relationship.setTerminology(terminology);
         relationship.setTerminologyVersion(terminologyVersion);
-        relationship.setModifierId(fields[9]);
+        relationship.setModifierId(fields[9].intern());
         relationship.setLastModified(ConfigUtility.DATE_FORMAT
             .parse(releaseVersion));
-        relationship.setLastModifiedBy("loader");
+        relationship.setLastModifiedBy(loader);
         relationship.setPublished(true);
 
-        // reload source concept
+        // get concepts from cache, they just need to have ids
         final Concept sourceConcept = conceptCache.get(fields[4]);
         final Concept destinationConcept = conceptCache.get(fields[5]);
         if (sourceConcept != null && destinationConcept != null) {
           relationship.setSourceConcept(sourceConcept);
-          sourceConcept.addRelationship(relationship);
           relationship.setDestinationConcept(destinationConcept);
-          // Needed if we commit before here
-          // addRelationship(relationship); -- not needed due to cascade.
-          touchedByRel.add(sourceConcept);
+          // unnecessary
+          // sourceConcept.addRelationship(relationship);
+          addRelationship(relationship);
+          if (prevConcept == null) {
+            prevConcept = sourceConcept;
+          }
 
         } else {
           if (sourceConcept == null) {
@@ -583,20 +624,34 @@ public class Rf2SnapshotLoaderAlgorithm extends HistoryServiceJpa implements
 
         }
 
+        // Identify when concept has changed, increment concept count, update
+        if (!relationship.getSourceConcept().getTerminologyId()
+            .equals(prevConcept.getTerminologyId())) {
+          conceptCt++;
+        }
+
+        // Log every so often
         if (++objectCt % logCt == 0) {
           Logger.getLogger(getClass()).info("    count = " + objectCt);
         }
 
+        // Commit every so often
+        if (conceptCt % commitCt == 0) {
+          commit();
+          clear();
+          beginTransaction();
+        }
+
+        // always set prev concept
+        prevConcept = relationship.getSourceConcept();
+
       }
     }
-    
-    // Mark all concepts for update, but only once relationships
-    // have been fully processed, no need to "add relationship"
-    // because they will be added automatically due to cascade
-    for (Concept concept : touchedByRel) {
-      updateConcept(concept);
 
-    }
+    // Final commit
+    commit();
+    clear();
+    beginTransaction();
 
     // print memory information
     Runtime runtime = Runtime.getRuntime();
@@ -611,97 +666,174 @@ public class Rf2SnapshotLoaderAlgorithm extends HistoryServiceJpa implements
    * 
    * @throws Exception the exception
    */
-  private void loadDescriptionsAndLanguageRefSets() throws Exception {
+  @SuppressWarnings("null")
+  private void loadDescriptions() throws Exception {
 
-    int descCt = 0; // counter for descriptions
-    int langCt = 0; // counter for language ref set members
-    int skipCt = 0; // counter for number of language ref set members skipped
-
-    // Begin transaction
+    // PN handler
     ComputePreferredNameHandler pnHandler =
         getComputePreferredNameHandler(terminology);
+    Concept prevConcept = null;
 
-    // Load and persist first description
-    Description description = getNextDescription();
+    Set<Long> conceptsTouched = new HashSet<>();
 
-    // Load first language ref set member
-    LanguageRefSetMember language = getNextLanguage();
+    String line = "";
+    objectCt = 0;
+    int langCt = 0;
+    // counter for concepts
+    int conceptCt = 1;
 
-    // Loop while there are descriptions
-    while (description != null) {
+    PushBackReader reader = readers.getReader(Rf2Readers.Keys.DESCRIPTION);
+    while ((line = reader.readLine()) != null) {
 
-      if (language == null) {
-        throw new Exception("Description without langauge: "
-            + description.getTerminologyId());
-      }
+      final String fields[] = line.split("\t");
+      if (!fields[0].equals(id)) { 
+        
+        // Stop if the effective time is past the release version
+        if (fields[1].compareTo(releaseVersion) > 0) {
+          reader.push(line);
+          break;
+        }
+        
+        final Description description = new DescriptionJpa();
+        description.setTerminologyId(fields[0]);
+        description
+            .setEffectiveTime(ConfigUtility.DATE_FORMAT.parse(fields[1]));
+        description.setLastModified(ConfigUtility.DATE_FORMAT.parse(fields[1]));
+        description.setActive(fields[2].equals("1"));
+        description.setModuleId(fields[3].intern());
 
-      // if current language ref set references a lexicographically "lower"
-      // String terminologyId, SKIP: description is not in data set
-      while (language != null
-          && language.getDescription().getTerminologyId()
-              .compareTo(description.getTerminologyId()) < 0) {
+        description.setLanguageCode(fields[5].intern());
+        description.setTypeId(fields[6].intern());
+        description.setTerm(fields[7]);
+        description.setCaseSignificanceId(fields[8].intern());
+        description.setTerminology(terminology);
+        description.setTerminologyVersion(terminologyVersion);
+        description.setLastModified(ConfigUtility.DATE_FORMAT
+            .parse(releaseVersion));
+        description.setLastModifiedBy(loader);
+        description.setPublished(true);
 
-        Logger.getLogger(getClass()).info(
-            "     " + "Language Ref Set " + language.getTerminologyId()
-                + " references non-existent description "
-                + language.getDescription().getTerminologyId());
-        language = getNextLanguage();
-        skipCt++;
-      }
-
-      // Iterate over language ref sets until new description id found or end of
-      // language ref sets found
-      while (language != null
-          && language.getDescription().getTerminologyId()
-              .equals(description.getTerminologyId())) {
-
-        // Set the description
-        language.setDescription(description);
-        description.addLanguageRefSetMember(language);
-        langCt++;
-
-        // Check if this language refset and description form the
-        // defaultPreferredName
-        if (pnHandler.isPreferredName(description, language)) {
-
-          // retrieve the concept for this description
-          final Concept concept = description.getConcept();
-          if (defaultPreferredNames.get(concept.getId()) != null) {
-            Logger.getLogger(getClass()).info(
-                "Multiple default preferred names for concept "
-                    + concept.getTerminologyId());
-            Logger.getLogger(getClass()).info(
-                "  " + "Existing: "
-                    + defaultPreferredNames.get(concept.getId()));
-            Logger.getLogger(getClass()).info(
-                "  " + "Replaced: " + description.getTerm());
-          }
-          defaultPreferredNames.put(concept.getId(), description.getTerm());
-
+        // set concept from cache and set initial prev concept
+        Concept concept = conceptCache.get(fields[4]);
+        if (prevConcept == null) {
+          prevConcept = concept;
         }
 
-        // Get the next language ref set member
-        language = getNextLanguage();
+        // Attach language refset members (if there are any)
+        if (languageRefSetMembers.containsKey(description.getTerminologyId())) {
+          for (LanguageRefSetMember member : languageRefSetMembers
+              .get(description.getTerminologyId())) {
+            langCt++;
+            member.setDescription(description);
+            description.addLanguageRefSetMember(member);
+
+            // Check if this language refset and description form the
+            // defaultPreferredName
+            if (pnHandler.isPreferredName(description, member)) {
+              // check for already assigned
+              if (defaultPreferredNames.get(concept.getTerminologyId()) != null) {
+                Logger.getLogger(getClass()).info(
+                    "Multiple default preferred names for concept "
+                        + concept.getTerminologyId());
+                Logger.getLogger(getClass())
+                    .info(
+                        "  "
+                            + "Existing: "
+                            + defaultPreferredNames.get(concept
+                                .getTerminologyId()));
+                Logger.getLogger(getClass()).info(
+                    "  " + "Replaced: " + description.getTerm());
+              }
+              // Save preferred name for later
+              defaultPreferredNames.put(concept.getTerminologyId(),
+                  description.getTerm());
+
+            }
+          }
+          // Remove used ones so we can keep track
+          languageRefSetMembers.remove(description.getTerminologyId());
+        } else {
+          // Early SNOMED release have no languages
+          Logger.getLogger(getClass()).debug(
+              "  Description has no languages: "
+                  + description.getTerminologyId());
+        }
+
+        if (concept != null) {
+          description.setConcept(concept);
+          // unnecessary
+          // concept.addDescription(description);
+
+          // this also adds language refset entries
+          addDescription(description);
+          // Cache description for connecting refsets later
+          descriptionCache.put(description.getTerminologyId(), description);
+        } else {
+          Logger.getLogger(getClass()).info(
+              "Description " + description.getTerminologyId()
+                  + " references non-existent concept " + fields[4]);
+        }
+
+        // Identify when concept has changed, increment concept count,
+        // set preferred name, and update concept
+        if (!description.getConcept().getTerminologyId()
+            .equals(prevConcept.getTerminologyId())) {
+          conceptCt++;
+          conceptsTouched.add(prevConcept.getId());
+        }
+
+        // Log and commit
+        if (++objectCt % logCt == 0) {
+          Logger.getLogger(getClass()).info("    count = " + objectCt);
+        }
+        if (conceptCt % commitCt == 0) {
+          commit();
+          clear();
+          beginTransaction();
+        }
+
+        // Set prev concept id
+        prevConcept = description.getConcept();
       }
-
-      // Pet the next description
-      description = getNextDescription();
-
-      // increment description count
-      descCt++;
-
-      if (descCt % logCt == 0) {
-        Logger.getLogger(getClass()).info("    count = " + descCt);
-      }
-
     }
 
+    conceptsTouched.add(prevConcept.getId());
+    commit();
+    clear();
+    beginTransaction();
+
     Logger.getLogger(getClass()).info(
-        "      " + descCt + " descriptions loaded");
+        "      " + objectCt + " descriptions loaded for " + (conceptCt - 1)
+            + " concepts");
     Logger.getLogger(getClass()).info(
         "      " + langCt + " language ref sets loaded");
-    Logger.getLogger(getClass()).info(
-        "      " + skipCt + " language ref sets skipped (no description)");
+
+    // Set concept preferred names
+    objectCt = 0;
+    conceptCt = 0;
+    Logger.getLogger(getClass()).info("  Set concept preferred names");
+    for (Long id : conceptsTouched) {
+      Concept concept = getConcept(id);
+      if (defaultPreferredNames.get(concept.getTerminologyId()) != null) {
+        concept.setDefaultPreferredName(defaultPreferredNames.get(concept
+            .getTerminologyId()));
+      } else {
+        concept.setDefaultPreferredName("No default preferred name found");
+      }
+      updateConcept(concept);
+      if (++objectCt % logCt == 0) {
+        Logger.getLogger(getClass()).info("    count = " + objectCt);
+      }
+      if (++conceptCt % commitCt == 0) {
+        commit();
+        clear();
+        beginTransaction();
+      }
+    }
+
+    commit();
+    clear();
+    beginTransaction();
 
     // print memory information
     Runtime runtime = Runtime.getRuntime();
@@ -709,129 +841,32 @@ public class Rf2SnapshotLoaderAlgorithm extends HistoryServiceJpa implements
     Logger.getLogger(getClass()).debug(" Total: " + runtime.totalMemory());
     Logger.getLogger(getClass()).debug(" Free:  " + runtime.freeMemory());
     Logger.getLogger(getClass()).debug(" Max:   " + runtime.maxMemory());
-  }
 
-  /**
-   * Sets the default preferred names.
-   * 
-   * @throws Exception the exception
-   */
-  private void setDefaultPreferredNames() throws Exception {
-
-    objectCt = 0;
-    for (final Concept concept : conceptCache.values()) {
-      concept.getDescriptions();
-      concept.getRelationships();
-      if (defaultPreferredNames.get(concept.getId()) != null) {
-        concept.setDefaultPreferredName(defaultPreferredNames.get(concept
-            .getId()));
-      } else {
-        concept.setDefaultPreferredName("No default preferred name found");
-      }
-      if (++objectCt % logCt == 0) {
-        Logger.getLogger(getClass()).info("    count = " + objectCt);
-      }
+    if (languageRefSetMembers.size() > 0) {
+      throw new Exception("There are unattached language refset members: "
+          + languageRefSetMembers);
     }
-
-    // Log memory information
-    Runtime runtime = Runtime.getRuntime();
-    Logger.getLogger(getClass()).debug("MEMORY USAGE:");
-    Logger.getLogger(getClass()).debug(" Total: " + runtime.totalMemory());
-    Logger.getLogger(getClass()).debug(" Free:  " + runtime.freeMemory());
-    Logger.getLogger(getClass()).debug(" Max:   " + runtime.maxMemory());
-
+    languageRefSetMembers = null;
   }
 
   /**
-   * Returns the next description.
-   *
-   * @return the next description
+   * Load and cache all language refset members.
    * @throws Exception the exception
    */
-  private Description getNextDescription() throws Exception {
+  private void loadLanguageRefSetMembers() throws Exception {
 
-    String line, fields[];
-
-    PushBackReader reader = readers.getReader(Rf2Readers.Keys.DESCRIPTION);
-    if ((line = reader.readLine()) != null) {
-
-      line = line.replace("\r", "");
-      fields = line.split("\t");
-
-      if (!fields[0].equals("id")) { // header
-
-        // Stop if the effective time is past the release version
-        if (fields[1].compareTo(releaseVersion) > 0) {
-          reader.push(line);
-          return null;
-        }
-        final Description description = new DescriptionJpa();
-        description.setTerminologyId(fields[0]);
-        description
-            .setEffectiveTime(ConfigUtility.DATE_FORMAT.parse(fields[1]));
-        description.setLastModified(ConfigUtility.DATE_FORMAT.parse(fields[1]));
-        description.setActive(fields[2].equals("1"));
-        description.setModuleId(fields[3]);
-
-        description.setLanguageCode(fields[5]);
-        description.setTypeId(fields[6]);
-        description.setTerm(fields[7]);
-        description.setCaseSignificanceId(fields[8]);
-        description.setTerminology(terminology);
-        description.setTerminologyVersion(terminologyVersion);
-        description.setLastModified(ConfigUtility.DATE_FORMAT
-            .parse(releaseVersion));
-        description.setLastModifiedBy("loader");
-        description.setPublished(true);
-
-        // set concept from cache
-        Concept concept = conceptCache.get(fields[4]);
-
-        if (concept != null) {
-          description.setConcept(concept);
-          concept.addDescription(description);
-        } else {
-          Logger.getLogger(getClass()).info(
-              "Description " + description.getTerminologyId()
-                  + " references non-existent concept " + fields[4]);
-        }
-
-        // cache description
-        descriptionCache.put(fields[0], description);
-
-        return description;
-      }
-
-      // otherwise get next line
-      else {
-        return getNextDescription();
-      }
-    }
-    return null;
-  }
-
-  /**
-   * Utility function to return the next line of language ref set files in
-   * object form.
-   * 
-   * @return a partial language ref set member (lacks full description)
-   * @throws Exception the exception
-   */
-  private LanguageRefSetMember getNextLanguage() throws Exception {
-
-    String line, fields[];
-    // if non-null
     PushBackReader reader = readers.getReader(Rf2Readers.Keys.LANGUAGE);
-    if ((line = reader.readLine()) != null) {
-      line = line.replace("\r", "");
-      fields = line.split("\t");
+    String line;
+    while ((line = reader.readLine()) != null) {
 
-      if (!fields[0].equals("id")) { // header line
+      final String fields[] = line.split("\t");
+
+      if (!fields[0].equals(id)) { // header
 
         // Stop if the effective time is past the release version
         if (fields[1].compareTo(releaseVersion) > 0) {
           reader.push(line);
-          return null;
+          return;
         }
         final LanguageRefSetMember member = new LanguageRefSetMemberJpa();
 
@@ -840,39 +875,25 @@ public class Rf2SnapshotLoaderAlgorithm extends HistoryServiceJpa implements
         member.setEffectiveTime(ConfigUtility.DATE_FORMAT.parse(fields[1]));
         member.setLastModified(ConfigUtility.DATE_FORMAT.parse(fields[1]));
         member.setActive(fields[2].equals("1"));
-        member.setModuleId(fields[3]);
-        member.setRefSetId(fields[4]);
-
-        // Language unique attributes
-        member.setAcceptabilityId(fields[6]);
-
-        // Terminology attributes
+        member.setModuleId(fields[3].intern());
+        member.setRefSetId(fields[4].intern());
         member.setTerminology(terminology);
         member.setTerminologyVersion(terminologyVersion);
-        member.setLastModified(ConfigUtility.DATE_FORMAT.parse(releaseVersion));
-        member.setLastModifiedBy("loader");
+        member.setLastModified(releaseVersionDate);
+        member.setLastModifiedBy(loader);
         member.setPublished(true);
 
-        // Set a dummy description with terminology id only
-        final Description description = new DescriptionJpa();
-        description.setTerminologyId(fields[5]);
-        member.setDescription(description);
-        // no need for this as we are in a commit and description is being added
-        // updateDescription(description);
-        return member;
+        // Language unique attributes
+        member.setAcceptabilityId(fields[6].intern());
 
+        // Cache language refset members
+        if (!languageRefSetMembers.containsKey(fields[5])) {
+          languageRefSetMembers.put(fields[5],
+              new HashSet<LanguageRefSetMember>());
+        }
+        languageRefSetMembers.get(fields[5]).add(member);
       }
-      // if header line, get next record
-      else {
-        return getNextLanguage();
-      }
-
-      // if null, set a dummy description value to avoid null-pointer exceptions
-      // in main loop
-    } else {
-      return null;
     }
-
   }
 
   /**
@@ -892,7 +913,7 @@ public class Rf2SnapshotLoaderAlgorithm extends HistoryServiceJpa implements
       line = line.replace("\r", "");
       final String fields[] = line.split("\t");
 
-      if (!fields[0].equals("id")) { // header
+      if (!fields[0].equals(id)) { // header
 
         // Stop if the effective time is past the release version
         if (fields[1].compareTo(releaseVersion) > 0) {
@@ -922,10 +943,10 @@ public class Rf2SnapshotLoaderAlgorithm extends HistoryServiceJpa implements
         member.setEffectiveTime(ConfigUtility.DATE_FORMAT.parse(fields[1]));
         member.setLastModified(ConfigUtility.DATE_FORMAT.parse(fields[1]));
         member.setActive(fields[2].equals("1"));
-        member.setLastModified(ConfigUtility.DATE_FORMAT.parse(releaseVersion));
-        member.setLastModifiedBy("loader");
+        member.setLastModified(releaseVersionDate);
+        member.setLastModifiedBy(loader);
         member.setPublished(true);
-        member.setModuleId(fields[3]);
+        member.setModuleId(fields[3].intern());
         member.setRefSetId(fields[4]);
 
         // AttributeValueRefSetMember unique attributes
@@ -936,17 +957,6 @@ public class Rf2SnapshotLoaderAlgorithm extends HistoryServiceJpa implements
         member.setTerminologyVersion(terminologyVersion);
 
         addAttributeValueRefSetMember(member);
-//        if (conceptCache.containsKey(fields[5])) {
-//          final Concept concept = conceptCache.get(fields[5]);
-//          concept
-//              .addAttributeValueRefSetMember((AttributeValueConceptRefSetMember) member);
-//          updateConcept(concept);
-//        } else if (descriptionCache.containsKey(fields[5])) {
-//          final Description description = descriptionCache.get(fields[5]);
-//          description
-//              .addAttributeValueRefSetMember((AttributeValueDescriptionRefSetMember) member);
-//          updateDescription(description);
-//        }
 
         // regularly commit at intervals
         if (++objectCt % logCt == 0) {
@@ -981,7 +991,7 @@ public class Rf2SnapshotLoaderAlgorithm extends HistoryServiceJpa implements
       line = line.replace("\r", "");
       final String fields[] = line.split("\t");
 
-      if (!fields[0].equals("id")) { // header
+      if (!fields[0].equals(id)) { // header
 
         // Stop if the effective time is past the release version
         if (fields[1].compareTo(releaseVersion) > 0) {
@@ -1002,6 +1012,10 @@ public class Rf2SnapshotLoaderAlgorithm extends HistoryServiceJpa implements
           final Description description = descriptionCache.get(fields[5]);
           ((AssociationReferenceDescriptionRefSetMember) member)
               .setDescription(description);
+          if (description.getId() == null) {
+            Logger.getLogger(getClass()).error(
+                "UNSAVED description = " + description.getTerminologyId());
+          }
         } else {
           throw new Exception(
               "Association reference member connected to nonexistent object");
@@ -1012,7 +1026,7 @@ public class Rf2SnapshotLoaderAlgorithm extends HistoryServiceJpa implements
         member.setEffectiveTime(ConfigUtility.DATE_FORMAT.parse(fields[1]));
         member.setLastModified(ConfigUtility.DATE_FORMAT.parse(fields[1]));
         member.setActive(fields[2].equals("1"));
-        member.setModuleId(fields[3]);
+        member.setModuleId(fields[3].intern());
         member.setRefSetId(fields[4]);
 
         // AssociationReferenceRefSetMember unique attributes
@@ -1021,22 +1035,11 @@ public class Rf2SnapshotLoaderAlgorithm extends HistoryServiceJpa implements
         // Terminology attributes
         member.setTerminology(terminology);
         member.setTerminologyVersion(terminologyVersion);
-        member.setLastModified(ConfigUtility.DATE_FORMAT.parse(releaseVersion));
-        member.setLastModifiedBy("loader");
+        member.setLastModified(releaseVersionDate);
+        member.setLastModifiedBy(loader);
         member.setPublished(true);
 
         addAssociationReferenceRefSetMember(member);
-//        if (conceptCache.containsKey(fields[5])) {
-//          final Concept concept = conceptCache.get(fields[5]);
-//          concept
-//              .addAssociationReferenceRefSetMember((AssociationReferenceConceptRefSetMember) member);
-//          updateConcept(concept);
-//        } else if (descriptionCache.containsKey(fields[5])) {
-//          final Description description = descriptionCache.get(fields[5]);
-//          description
-//              .addAssociationReferenceRefSetMember((AssociationReferenceDescriptionRefSetMember) member);
-//          updateDescription(description);
-//        }
 
         // regularly commit at intervals
         if (++objectCt % logCt == 0) {
@@ -1070,7 +1073,7 @@ public class Rf2SnapshotLoaderAlgorithm extends HistoryServiceJpa implements
       line = line.replace("\r", "");
       final String fields[] = line.split("\t");
 
-      if (!fields[0].equals("id")) { // header
+      if (!fields[0].equals(id)) { // header
 
         // Stop if the effective time is past the release version
         if (fields[1].compareTo(releaseVersion) > 0) {
@@ -1084,7 +1087,7 @@ public class Rf2SnapshotLoaderAlgorithm extends HistoryServiceJpa implements
         member.setEffectiveTime(ConfigUtility.DATE_FORMAT.parse(fields[1]));
         member.setLastModified(ConfigUtility.DATE_FORMAT.parse(fields[1]));
         member.setActive(fields[2].equals("1"));
-        member.setModuleId(fields[3]);
+        member.setModuleId(fields[3].intern());
         member.setRefSetId(fields[4]);
 
         // SimpleRefSetMember unique attributes
@@ -1093,8 +1096,8 @@ public class Rf2SnapshotLoaderAlgorithm extends HistoryServiceJpa implements
         // Terminology attributes
         member.setTerminology(terminology);
         member.setTerminologyVersion(terminologyVersion);
-        member.setLastModified(ConfigUtility.DATE_FORMAT.parse(releaseVersion));
-        member.setLastModifiedBy("loader");
+        member.setLastModified(releaseVersionDate);
+        member.setLastModifiedBy(loader);
         member.setPublished(true);
 
         // Retrieve Concept -- firstToken is referencedComonentId
@@ -1103,8 +1106,6 @@ public class Rf2SnapshotLoaderAlgorithm extends HistoryServiceJpa implements
         if (concept != null) {
           member.setConcept(concept);
           addSimpleRefSetMember(member);
-          //concept.addSimpleRefSetMember(member);
-          //updateConcept(concept);
 
           // regularly commit at intervals
           if (++objectCt % logCt == 0) {
@@ -1142,7 +1143,7 @@ public class Rf2SnapshotLoaderAlgorithm extends HistoryServiceJpa implements
       line = line.replace("\r", "");
       final String fields[] = line.split("\t");
 
-      if (!fields[0].equals("id")) { // header
+      if (!fields[0].equals(id)) { // header
         // Stop if the effective time is past the release version
         if (fields[1].compareTo(releaseVersion) > 0) {
           reader.push(line);
@@ -1156,7 +1157,7 @@ public class Rf2SnapshotLoaderAlgorithm extends HistoryServiceJpa implements
         member.setEffectiveTime(ConfigUtility.DATE_FORMAT.parse(fields[1]));
         member.setLastModified(ConfigUtility.DATE_FORMAT.parse(fields[1]));
         member.setActive(fields[2].equals("1"));
-        member.setModuleId(fields[3]);
+        member.setModuleId(fields[3].intern());
         member.setRefSetId(fields[4]);
 
         // SimpleMap unique attributes
@@ -1165,8 +1166,8 @@ public class Rf2SnapshotLoaderAlgorithm extends HistoryServiceJpa implements
         // Terminology attributes
         member.setTerminology(terminology);
         member.setTerminologyVersion(terminologyVersion);
-        member.setLastModified(ConfigUtility.DATE_FORMAT.parse(releaseVersion));
-        member.setLastModifiedBy("loader");
+        member.setLastModified(releaseVersionDate);
+        member.setLastModifiedBy(loader);
         member.setPublished(true);
 
         // Retrieve concept -- firstToken is referencedComponentId
@@ -1175,8 +1176,6 @@ public class Rf2SnapshotLoaderAlgorithm extends HistoryServiceJpa implements
         if (concept != null) {
           member.setConcept(concept);
           addSimpleMapRefSetMember(member);
-          //concept.addSimpleMapRefSetMember(member);
-          //updateConcept(concept);
 
           // regularly commit at intervals
           if (++objectCt % logCt == 0) {
@@ -1215,7 +1214,7 @@ public class Rf2SnapshotLoaderAlgorithm extends HistoryServiceJpa implements
       line = line.replace("\r", "");
       final String fields[] = line.split("\t");
 
-      if (!fields[0].equals("id")) { // header
+      if (!fields[0].equals(id)) { // header
         // Stop if the effective time is past the release version
         if (fields[1].compareTo(releaseVersion) > 0) {
           reader.push(line);
@@ -1226,7 +1225,7 @@ public class Rf2SnapshotLoaderAlgorithm extends HistoryServiceJpa implements
         member.setEffectiveTime(ConfigUtility.DATE_FORMAT.parse(fields[1]));
         member.setLastModified(ConfigUtility.DATE_FORMAT.parse(fields[1]));
         member.setActive(fields[2].equals("1"));
-        member.setModuleId(fields[3]);
+        member.setModuleId(fields[3].intern());
         member.setRefSetId(fields[4]);
         // conceptId
 
@@ -1241,8 +1240,8 @@ public class Rf2SnapshotLoaderAlgorithm extends HistoryServiceJpa implements
         // Terminology attributes
         member.setTerminology(terminology);
         member.setTerminologyVersion(terminologyVersion);
-        member.setLastModified(ConfigUtility.DATE_FORMAT.parse(releaseVersion));
-        member.setLastModifiedBy("loader");
+        member.setLastModified(releaseVersionDate);
+        member.setLastModifiedBy(loader);
         member.setPublished(true);
 
         // set Concept
@@ -1251,8 +1250,6 @@ public class Rf2SnapshotLoaderAlgorithm extends HistoryServiceJpa implements
         if (concept != null) {
           member.setConcept(concept);
           addComplexMapRefSetMember(member);
-//          concept.addComplexMapRefSetMember(member);
-//          updateConcept(concept);
 
           // regularly commit at intervals
           if (++objectCt % logCt == 0) {
@@ -1291,7 +1288,7 @@ public class Rf2SnapshotLoaderAlgorithm extends HistoryServiceJpa implements
       line = line.replace("\r", "");
       final String fields[] = line.split("\t");
 
-      if (!fields[0].equals("id")) {
+      if (!fields[0].equals(id)) {
 
         // Stop if the effective time is past the release version
         if (fields[1].compareTo(releaseVersion) > 0) {
@@ -1304,7 +1301,7 @@ public class Rf2SnapshotLoaderAlgorithm extends HistoryServiceJpa implements
         member.setEffectiveTime(ConfigUtility.DATE_FORMAT.parse(fields[1]));
         member.setLastModified(ConfigUtility.DATE_FORMAT.parse(fields[1]));
         member.setActive(fields[2].equals("1"));
-        member.setModuleId(fields[3]);
+        member.setModuleId(fields[3].intern());
         member.setRefSetId(fields[4]);
         // conceptId
 
@@ -1319,8 +1316,8 @@ public class Rf2SnapshotLoaderAlgorithm extends HistoryServiceJpa implements
         // Terminology attributes
         member.setTerminology(terminology);
         member.setTerminologyVersion(terminologyVersion);
-        member.setLastModified(ConfigUtility.DATE_FORMAT.parse(releaseVersion));
-        member.setLastModifiedBy("loader");
+        member.setLastModified(releaseVersionDate);
+        member.setLastModifiedBy(loader);
         member.setPublished(true);
 
         // set Concept
@@ -1329,8 +1326,6 @@ public class Rf2SnapshotLoaderAlgorithm extends HistoryServiceJpa implements
         if (concept != null) {
           member.setConcept(concept);
           addComplexMapRefSetMember(member);
-//          concept.addComplexMapRefSetMember(member);
-//          updateConcept(concept);
 
           // regularly commit at intervals
           if (++objectCt % logCt == 0) {
@@ -1371,7 +1366,7 @@ public class Rf2SnapshotLoaderAlgorithm extends HistoryServiceJpa implements
       line = line.replace("\r", "");
       final String fields[] = line.split("\t");
 
-      if (!fields[0].equals("id")) {
+      if (!fields[0].equals(id)) {
 
         // Stop if the effective time is past the release version
         if (fields[1].compareTo(releaseVersion) > 0) {
@@ -1385,7 +1380,7 @@ public class Rf2SnapshotLoaderAlgorithm extends HistoryServiceJpa implements
         member.setEffectiveTime(ConfigUtility.DATE_FORMAT.parse(fields[1]));
         member.setLastModified(ConfigUtility.DATE_FORMAT.parse(fields[1]));
         member.setActive(fields[2].equals("1"));
-        member.setModuleId(fields[3]);
+        member.setModuleId(fields[3].intern());
         member.setRefSetId(fields[4]);
         // conceptId
 
@@ -1397,8 +1392,8 @@ public class Rf2SnapshotLoaderAlgorithm extends HistoryServiceJpa implements
         // Terminology attributes
         member.setTerminology(terminology);
         member.setTerminologyVersion(terminologyVersion);
-        member.setLastModified(ConfigUtility.DATE_FORMAT.parse(releaseVersion));
-        member.setLastModifiedBy("loader");
+        member.setLastModified(releaseVersionDate);
+        member.setLastModifiedBy(loader);
         member.setPublished(true);
 
         // set Concept
@@ -1440,13 +1435,13 @@ public class Rf2SnapshotLoaderAlgorithm extends HistoryServiceJpa implements
     objectCt = 0;
 
     PushBackReader reader =
-        readers.getReader(Rf2Readers.Keys.REFSET_DESCRIPTOR);
+        readers.getReader(Rf2Readers.Keys.MODULE_DEPENDENCY);
     while ((line = reader.readLine()) != null) {
 
       line = line.replace("\r", "");
       final String fields[] = line.split("\t");
 
-      if (!fields[0].equals("id")) {
+      if (!fields[0].equals(id)) {
 
         // Stop if the effective time is past the release version
         if (fields[1].compareTo(releaseVersion) > 0) {
@@ -1460,7 +1455,7 @@ public class Rf2SnapshotLoaderAlgorithm extends HistoryServiceJpa implements
         member.setEffectiveTime(ConfigUtility.DATE_FORMAT.parse(fields[1]));
         member.setLastModified(ConfigUtility.DATE_FORMAT.parse(fields[1]));
         member.setActive(fields[2].equals("1"));
-        member.setModuleId(fields[3]);
+        member.setModuleId(fields[3].intern());
         member.setRefSetId(fields[4]);
         // conceptId
 
@@ -1473,8 +1468,8 @@ public class Rf2SnapshotLoaderAlgorithm extends HistoryServiceJpa implements
         // Terminology attributes
         member.setTerminology(terminology);
         member.setTerminologyVersion(terminologyVersion);
-        member.setLastModified(ConfigUtility.DATE_FORMAT.parse(releaseVersion));
-        member.setLastModifiedBy("loader");
+        member.setLastModified(releaseVersionDate);
+        member.setLastModifiedBy(loader);
         member.setPublished(true);
 
         // set Concept
@@ -1515,14 +1510,13 @@ public class Rf2SnapshotLoaderAlgorithm extends HistoryServiceJpa implements
     String line = "";
     objectCt = 0;
 
-    PushBackReader reader =
-        readers.getReader(Rf2Readers.Keys.REFSET_DESCRIPTOR);
+    PushBackReader reader = readers.getReader(Rf2Readers.Keys.DESCRIPTION_TYPE);
     while ((line = reader.readLine()) != null) {
 
       line = line.replace("\r", "");
       final String fields[] = line.split("\t");
 
-      if (!fields[0].equals("id")) {
+      if (!fields[0].equals(id)) {
 
         // Stop if the effective time is past the release version
         if (fields[1].compareTo(releaseVersion) > 0) {
@@ -1536,7 +1530,7 @@ public class Rf2SnapshotLoaderAlgorithm extends HistoryServiceJpa implements
         member.setEffectiveTime(ConfigUtility.DATE_FORMAT.parse(fields[1]));
         member.setLastModified(ConfigUtility.DATE_FORMAT.parse(fields[1]));
         member.setActive(fields[2].equals("1"));
-        member.setModuleId(fields[3]);
+        member.setModuleId(fields[3].intern());
         member.setRefSetId(fields[4]);
         // conceptId
 
@@ -1547,8 +1541,8 @@ public class Rf2SnapshotLoaderAlgorithm extends HistoryServiceJpa implements
         // Terminology attributes
         member.setTerminology(terminology);
         member.setTerminologyVersion(terminologyVersion);
-        member.setLastModified(ConfigUtility.DATE_FORMAT.parse(releaseVersion));
-        member.setLastModifiedBy("loader");
+        member.setLastModified(releaseVersionDate);
+        member.setLastModifiedBy(loader);
         member.setPublished(true);
 
         // set Concept

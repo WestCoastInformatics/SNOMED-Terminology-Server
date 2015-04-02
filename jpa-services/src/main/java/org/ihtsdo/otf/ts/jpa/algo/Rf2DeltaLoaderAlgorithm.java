@@ -69,12 +69,15 @@ public class Rf2DeltaLoaderAlgorithm extends HistoryServiceJpa implements
   /** The release version. */
   private String releaseVersion;
 
+  /**  The release version date. */
+  private Date releaseVersionDate;
+  
   /** The readers. */
   private Rf2Readers readers;
 
   /** The delta loader start date. */
   @SuppressWarnings("unused")
-  private Date deltaLoaderStartDate = new Date();
+  private Date deltaLaderStartDate = new Date();
 
   /** counter for objects created, reset in each load section. */
   int objectCt; //
@@ -132,6 +135,15 @@ public class Rf2DeltaLoaderAlgorithm extends HistoryServiceJpa implements
   private Set<String> existingAssociationReferenceRefSetMemberIds =
       new HashSet<>();
 
+  /**  The loader. */
+  final String loader = "loader";
+  
+  /**  The init pref name. */
+  final String initPrefName = "null";
+  
+  /**  The published. */
+  final String published = "PUBLISHED";
+  
   /**
    * Instantiates an empty {@link Rf2DeltaLoaderAlgorithm}.
    * @throws Exception if anything goes wrong
@@ -195,6 +207,9 @@ public class Rf2DeltaLoaderAlgorithm extends HistoryServiceJpa implements
       Logger.getLogger(getClass()).info("  version = " + terminologyVersion);
       Logger.getLogger(getClass()).info("  releaseVersion = " + releaseVersion);
 
+      releaseVersionDate = ConfigUtility.DATE_FORMAT
+          .parse(releaseVersion);
+      
       // Log memory usage
       Runtime runtime = Runtime.getRuntime();
       Logger.getLogger(getClass()).debug("MEMORY USAGE:");
@@ -425,7 +440,7 @@ public class Rf2DeltaLoaderAlgorithm extends HistoryServiceJpa implements
       if (info == null) {
         info = new ReleaseInfoJpa();
         info.setName(releaseVersion);
-        info.setEffectiveTime(ConfigUtility.DATE_FORMAT.parse(releaseVersion));
+        info.setEffectiveTime(releaseVersionDate);
         info.setDescription(terminology + " " + releaseVersion + " release");
         info.setPlanned(false);
         info.setPublished(true);
@@ -433,8 +448,8 @@ public class Rf2DeltaLoaderAlgorithm extends HistoryServiceJpa implements
         info.setReleaseFinishDate(info.getEffectiveTime());
         info.setTerminology(terminology);
         info.setTerminologyVersion(terminologyVersion);
-        info.setLastModified(ConfigUtility.DATE_FORMAT.parse(releaseVersion));
-        info.setLastModifiedBy("loader");
+        info.setLastModified(releaseVersionDate);
+        info.setLastModifiedBy(loader);
         addReleaseInfo(info);
       }
 
@@ -442,6 +457,9 @@ public class Rf2DeltaLoaderAlgorithm extends HistoryServiceJpa implements
       commit();
       clear();
 
+      Logger.getLogger(getClass()).info(
+          getComponentStats(terminology, terminologyVersion));
+      
       Logger.getLogger(getClass()).info(
           "      elapsed time = " + getTotalElapsedTimeStr(startTimeOrig));
 
@@ -585,15 +603,15 @@ public class Rf2DeltaLoaderAlgorithm extends HistoryServiceJpa implements
         newConcept.setTerminologyId(fields[0]);
         newConcept.setEffectiveTime(ConfigUtility.DATE_FORMAT.parse(fields[1]));
         newConcept.setActive(fields[2].equals("1"));
-        newConcept.setModuleId(fields[3]);
-        newConcept.setDefinitionStatusId(fields[4]);
+        newConcept.setModuleId(fields[3].intern());
+        newConcept.setDefinitionStatusId(fields[4].intern());
         newConcept.setTerminology(terminology);
         newConcept.setTerminologyVersion(terminologyVersion);
-        newConcept.setDefaultPreferredName("TBD");
-        newConcept.setLastModifiedBy("loader");
-        newConcept.setLastModified(ConfigUtility.DATE_FORMAT
-            .parse(releaseVersion));
+        newConcept.setDefaultPreferredName(initPrefName);
+        newConcept.setLastModifiedBy(loader);
+        newConcept.setLastModified(releaseVersionDate);
         newConcept.setPublished(true);
+        newConcept.setWorkflowStatus(published);
 
         // If concept is new, add it
         if (concept == null) {
@@ -716,10 +734,10 @@ public class Rf2DeltaLoaderAlgorithm extends HistoryServiceJpa implements
           newDescription.setCaseSignificanceId(fields[8]);
           newDescription.setTerminology(terminology);
           newDescription.setTerminologyVersion(terminologyVersion);
-          newDescription.setLastModifiedBy("loader");
-          newDescription.setLastModified(ConfigUtility.DATE_FORMAT
-              .parse(releaseVersion));
+          newDescription.setLastModifiedBy(loader);
+          newDescription.setLastModified(releaseVersionDate);
           newDescription.setPublished(true);
+          newDescription.setWorkflowStatus(published);
 
           // If description is new, add it
           if (description == null) {
@@ -860,9 +878,8 @@ public class Rf2DeltaLoaderAlgorithm extends HistoryServiceJpa implements
         newMember.setAcceptabilityId(fields[6]);
         newMember.setTerminology(terminology);
         newMember.setTerminologyVersion(terminologyVersion);
-        newMember.setLastModifiedBy("loader");
-        newMember.setLastModified(ConfigUtility.DATE_FORMAT
-            .parse(releaseVersion));
+        newMember.setLastModifiedBy(loader);
+        newMember.setLastModified(releaseVersionDate);
         newMember.setPublished(true);
 
         // If language refset entry is new, add it
@@ -971,9 +988,8 @@ public class Rf2DeltaLoaderAlgorithm extends HistoryServiceJpa implements
         newMember.setModuleId(fields[3]);
         newMember.setRefSetId(fields[4]);
         newMember.setConcept(concept);
-        newMember.setLastModifiedBy("loader");
-        newMember.setLastModified(ConfigUtility.DATE_FORMAT
-            .parse(releaseVersion));
+        newMember.setLastModifiedBy(loader);
+        newMember.setLastModified(releaseVersionDate);
         newMember.setPublished(true);
 
         // If simple refset entry is new, add it
@@ -1078,9 +1094,8 @@ public class Rf2DeltaLoaderAlgorithm extends HistoryServiceJpa implements
         newMember.setRefSetId(fields[4]);
         newMember.setConcept(concept);
         newMember.setMapTarget(fields[6]);
-        newMember.setLastModifiedBy("loader");
-        newMember.setLastModified(ConfigUtility.DATE_FORMAT
-            .parse(releaseVersion));
+        newMember.setLastModifiedBy(loader);
+        newMember.setLastModified(releaseVersionDate);
         newMember.setPublished(true);
 
         // If simple map refset entry is new, add it
@@ -1191,9 +1206,8 @@ public class Rf2DeltaLoaderAlgorithm extends HistoryServiceJpa implements
         newMember.setMapAdvice(fields[9]);
         newMember.setMapTarget(fields[10]);
         newMember.setMapRelationId(fields[11]);
-        newMember.setLastModifiedBy("loader");
-        newMember.setLastModified(ConfigUtility.DATE_FORMAT
-            .parse(releaseVersion));
+        newMember.setLastModifiedBy(loader);
+        newMember.setLastModified(releaseVersionDate);
         newMember.setPublished(true);
 
         // If complex map refset entry is new, add it
@@ -1305,9 +1319,8 @@ public class Rf2DeltaLoaderAlgorithm extends HistoryServiceJpa implements
         newMember.setMapTarget(fields[10]);
         // field 11 is correlationId and is a fixed value based on terminology
         newMember.setMapRelationId(fields[12]);
-        newMember.setLastModifiedBy("loader");
-        newMember.setLastModified(ConfigUtility.DATE_FORMAT
-            .parse(releaseVersion));
+        newMember.setLastModifiedBy(loader);
+        newMember.setLastModified(releaseVersionDate);
         newMember.setPublished(true);
 
         // If complex map refset entry is new, add it
@@ -1414,9 +1427,8 @@ public class Rf2DeltaLoaderAlgorithm extends HistoryServiceJpa implements
         newMember.setConcept(concept);
         newMember.setDescriptionFormat(fields[6]);
         newMember.setDescriptionLength(Integer.parseInt(fields[7]));
-        newMember.setLastModifiedBy("loader");
-        newMember.setLastModified(ConfigUtility.DATE_FORMAT
-            .parse(releaseVersion));
+        newMember.setLastModifiedBy(loader);
+        newMember.setLastModified(releaseVersionDate);
         newMember.setPublished(true);
 
         // If description type refset entry is new, add it
@@ -1527,9 +1539,8 @@ public class Rf2DeltaLoaderAlgorithm extends HistoryServiceJpa implements
         newMember.setAttributeType(fields[7]);
         newMember.setAttributeOrder(Integer.valueOf(fields[8]));
 
-        newMember.setLastModifiedBy("loader");
-        newMember.setLastModified(ConfigUtility.DATE_FORMAT
-            .parse(releaseVersion));
+        newMember.setLastModifiedBy(loader);
+        newMember.setLastModified(releaseVersionDate);
         newMember.setPublished(true);
 
         // If refset descriptor refset entry is new, add it
@@ -1641,9 +1652,8 @@ public class Rf2DeltaLoaderAlgorithm extends HistoryServiceJpa implements
         newMember.setTargetEffectiveTime(ConfigUtility.DATE_FORMAT
             .parse(fields[7]));
 
-        newMember.setLastModifiedBy("loader");
-        newMember.setLastModified(ConfigUtility.DATE_FORMAT
-            .parse(releaseVersion));
+        newMember.setLastModifiedBy(loader);
+        newMember.setLastModified(releaseVersionDate);
         newMember.setPublished(true);
 
         // If module dependency refset entry is new, add it
@@ -1779,9 +1789,8 @@ public class Rf2DeltaLoaderAlgorithm extends HistoryServiceJpa implements
         // Attribute value unique attributes
         newMember.setValueId(fields[6]);
 
-        newMember.setLastModifiedBy("loader");
-        newMember.setLastModified(ConfigUtility.DATE_FORMAT
-            .parse(releaseVersion));
+        newMember.setLastModifiedBy(loader);
+        newMember.setLastModified(releaseVersionDate);
         newMember.setPublished(true);
 
         // If attribute value refset entry is new, add it
@@ -1920,9 +1929,8 @@ public class Rf2DeltaLoaderAlgorithm extends HistoryServiceJpa implements
         // Attribute value unique attributes
         newMember.setTargetComponentId(fields[6]);
 
-        newMember.setLastModifiedBy("loader");
-        newMember.setLastModified(ConfigUtility.DATE_FORMAT
-            .parse(releaseVersion));
+        newMember.setLastModifiedBy(loader);
+        newMember.setLastModified(releaseVersionDate);
         newMember.setPublished(true);
 
         // If attribute value refset entry is new, add it
@@ -2059,10 +2067,10 @@ public class Rf2DeltaLoaderAlgorithm extends HistoryServiceJpa implements
         newRelationship.setModifierId(fields[9]);
         newRelationship.setSourceConcept(sourceConcept);
         newRelationship.setDestinationConcept(destinationConcept);
-        newRelationship.setLastModifiedBy("loader");
-        newRelationship.setLastModified(ConfigUtility.DATE_FORMAT
-            .parse(releaseVersion));
+        newRelationship.setLastModifiedBy(loader);
+        newRelationship.setLastModified(releaseVersionDate);
         newRelationship.setPublished(true);
+        newRelationship.setWorkflowStatus(published);
 
         // If relationship is new, add it
         if (!existingRelationshipIds.contains(fields[0])) {
