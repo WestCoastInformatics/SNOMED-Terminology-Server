@@ -238,7 +238,9 @@ public class Rf2FullLoadAndUnloadTest {
     // Verify no contents
     service = new ContentServiceJpa();
     Assert.assertEquals(0, service.getAllConcepts("SNOMEDCT", "latest").getCount());
-
+    service.close();
+    service.closeFactory();
+    
     // Finish by clearing the DB again
     request = new DefaultInvocationRequest();
     request.setPomFile(new File("../admin/db/pom.xml"));

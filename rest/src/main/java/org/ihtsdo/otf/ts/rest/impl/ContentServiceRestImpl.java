@@ -1446,7 +1446,7 @@ public class ContentServiceRestImpl extends RootServiceRestImpl implements
         throw new Exception("Specified input directory does not exist");
       }
 
-      // Get the release versions
+      // Get the release versions (need to look in complex map too for October releases)
       Logger.getLogger(getClass()).info("  Get release versions");
       Rf2FileSorter sorter = new Rf2FileSorter();
       File conceptsFile =
@@ -1465,6 +1465,23 @@ public class ContentServiceRestImpl extends RootServiceRestImpl implements
           releaseSet.add(fields[1]);
         }
       }
+      reader.close();
+      File complexMapFile =
+          sorter.findFile(new File(inputDir, "Terminology"), "der2_iissscRefset_ComplexMap");
+      reader = new BufferedReader(new FileReader(complexMapFile));
+      while ((line = reader.readLine()) != null) {
+        final String fields[] = line.split("\t");
+        if (!fields[1].equals("effectiveTime")) {
+          try {
+            ConfigUtility.DATE_FORMAT.parse(fields[1]);
+          } catch (Exception e) {
+            throw new Exception("Improperly formatted date found: " + fields[1]);
+          }
+          releaseSet.add(fields[1]);
+        }
+      }
+
+      
       reader.close();
       List<String> releases = new ArrayList<>(releaseSet);
       Collections.sort(releases);

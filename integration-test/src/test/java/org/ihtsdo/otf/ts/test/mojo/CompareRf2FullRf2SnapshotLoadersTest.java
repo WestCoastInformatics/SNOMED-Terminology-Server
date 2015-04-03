@@ -177,7 +177,11 @@ public class CompareRf2FullRf2SnapshotLoadersTest {
     Logger.getLogger(getClass()).info("Snap Stats = " + fullStats);
 
     // Assert equivalence of counts
-    Assert.assertEquals(fullStats, snapStats);
+    for (String prop : fullStats.keySet()) {
+      Logger.getLogger(getClass()).info("  Check " + prop);
+      Assert.assertEquals(fullStats.get(prop), snapStats.get(prop));
+    }
+  
 
     // Finish by clearing the DB again
     request = new DefaultInvocationRequest();
