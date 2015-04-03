@@ -47,6 +47,7 @@ import org.ihtsdo.otf.ts.rf2.jpa.RefsetDescriptorRefSetMemberJpa;
 import org.ihtsdo.otf.ts.rf2.jpa.RelationshipJpa;
 import org.ihtsdo.otf.ts.rf2.jpa.SimpleMapRefSetMemberJpa;
 import org.ihtsdo.otf.ts.rf2.jpa.SimpleRefSetMemberJpa;
+import org.ihtsdo.otf.ts.services.helpers.ConceptReportHelper;
 import org.ihtsdo.otf.ts.services.helpers.ProgressEvent;
 import org.ihtsdo.otf.ts.services.helpers.ProgressListener;
 import org.ihtsdo.otf.ts.services.helpers.PushBackReader;
@@ -425,6 +426,7 @@ public class Rf2DeltaLoaderAlgorithm extends HistoryServiceJpa implements
         }
         // Mark all cached concepts for update
         if (existingConceptCache.containsKey(terminologyId)) {
+          Logger.getLogger(getClass()).debug(ConceptReportHelper.getConceptReport(concept));
           updateConcept(concept);
         }
       }
@@ -686,11 +688,10 @@ public class Rf2DeltaLoaderAlgorithm extends HistoryServiceJpa implements
           concept =
               getSingleConcept(fields[4], terminology, terminologyVersion);
         }
+        cacheConcept(concept);
 
         // if the concept is not null
         if (concept != null) {
-
-          cacheConcept(concept);
 
           // Load description from cache or db
           Description description = null;
@@ -701,16 +702,6 @@ public class Rf2DeltaLoaderAlgorithm extends HistoryServiceJpa implements
             // from the cache concept call
             throw new Exception("Description unexpectedly not in cache: "
                 + fields[0] + ", " + fields[4]);
-          }
-
-          // Throw exception if it cant be found
-          if (description == null && existingDescriptionIds.contains(fields[0])) {
-            throw new Exception(
-                "** Description "
-                    + fields[0]
-                    + " is in existing id cache, but was not precached via concept "
-                    + concept.getTerminologyId());
-
           }
 
           // Setup delta description (either new or based on existing one)
@@ -754,8 +745,8 @@ public class Rf2DeltaLoaderAlgorithm extends HistoryServiceJpa implements
 
             // do not actually update the description, the concept is cached
             // and will be updated later, simply update the data structure
-            newDescription.getConcept().removeDescription(description);
-            newDescription.getConcept().addDescription(newDescription);
+            concept.removeDescription(description);
+            concept.addDescription(newDescription);
             objectsUpdated++;
           }
 
@@ -763,12 +754,7 @@ public class Rf2DeltaLoaderAlgorithm extends HistoryServiceJpa implements
           else {
             newDescription.setEffectiveTime(description.getEffectiveTime());
           }
-          // only cache the description if it is not there
-          // so we avoid a changed description being different
-          // in the cache than in the concept
-          if (!descriptionCache.containsKey(newDescription.getTerminologyId())) {
-            cacheDescription(newDescription);
-          }
+          cacheConcept(newDescription.getConcept());
 
         }
 
@@ -806,7 +792,6 @@ public class Rf2DeltaLoaderAlgorithm extends HistoryServiceJpa implements
 
       // if not header
       if (!fields[0].equals("id")) {
-        System.out.println(line);
         // Skip if the effective time is before the release version
         if (fields[1].compareTo(releaseVersion) < 0) {
           continue;
@@ -821,55 +806,35 @@ public class Rf2DeltaLoaderAlgorithm extends HistoryServiceJpa implements
         // Get the description
         Description description = null;
         if (descriptionCache.containsKey(fields[5])) {
-          System.out.println("  description in cache");
           description = descriptionCache.get(fields[5]);
         } else {
-          System.out.println("  load description from db");
           // the description may not yet be in the cache because
           // the language refset entry could be the first element for
           // the concept that is changed. After the cache concept call
           // below, the description will be in the cache next time
           description =
               getDescription(fields[5], terminology, terminologyVersion);
+          cacheConcept(description.getConcept());
         }
-
-        // get the concept
-        Concept concept = description.getConcept();
-        // description should have concept
-        if (concept == null) {
-          throw new Exception("Description" + fields[0]
-              + " does not have concept");
-
-        }
-
-        System.out.println("  cache concept " + concept.getTerminologyId());
-        if (existingConceptCache.containsKey(concept.getTerminologyId())) {
-          System.out.println("    concept in existing cache");
-        }
-        cacheConcept(concept);
 
         // Ensure effective time is set on all appropriate objects
         LanguageRefSetMember member = null;
         if (languageRefSetMemberCache.containsKey(fields[0])) {
-          System.out.println("  language in cache");
           member = languageRefSetMemberCache.get(fields[0]);
           // to investigate if there will be an update
         } else if (existingLanguageRefSetMemberIds.contains(fields[0])) {
           // If the language exists, it should be in the cache
           // from the cache concept call
           throw new Exception("Language member unexpectedly not in cache: "
-              + fields[0] + ", " + fields[5] + ", "
-              + concept.getTerminologyId());
+              + fields[0] + ", " + fields[5]);
         }
 
         // Setup delta language entry (either new or based on existing
         // one)
         LanguageRefSetMember newMember = null;
         if (member == null) {
-          System.out.println("  prepare to add language");
           newMember = new LanguageRefSetMemberJpa();
         } else {
-          System.out.println("  prepare to update language");
           newMember = new LanguageRefSetMemberJpa(member);
         }
         newMember.setDescription(description);
@@ -890,8 +855,7 @@ public class Rf2DeltaLoaderAlgorithm extends HistoryServiceJpa implements
         // If language refset entry is new, add it
         if (member == null) {
           newMember = addLanguageRefSetMember(newMember);
-          System.out.println("  add language - " + newMember);
-          newMember.getDescription().addLanguageRefSetMember(newMember);
+          description.addLanguageRefSetMember(newMember);
           objectsAdded++;
         }
 
@@ -899,9 +863,6 @@ public class Rf2DeltaLoaderAlgorithm extends HistoryServiceJpa implements
         else if (!newMember.equals(member)) {
           Logger.getLogger(getClass())
               .debug("  update language - " + newMember);
-          System.out.println("  update language - " + newMember);
-          System.out.println("    old = " + member);
-          System.out.println("    new = " + newMember);
 
           // do not actually update the language, the description's concept is
           // cached
