@@ -688,10 +688,11 @@ public class Rf2DeltaLoaderAlgorithm extends HistoryServiceJpa implements
           concept =
               getSingleConcept(fields[4], terminology, terminologyVersion);
         }
-        cacheConcept(concept);
 
         // if the concept is not null
         if (concept != null) {
+
+          cacheConcept(concept);
 
           // Load description from cache or db
           Description description = null;
@@ -702,6 +703,16 @@ public class Rf2DeltaLoaderAlgorithm extends HistoryServiceJpa implements
             // from the cache concept call
             throw new Exception("Description unexpectedly not in cache: "
                 + fields[0] + ", " + fields[4]);
+          }
+
+          // Throw exception if it cant be found
+          if (description == null && existingDescriptionIds.contains(fields[0])) {
+            throw new Exception(
+                "** Description "
+                    + fields[0]
+                    + " is in existing id cache, but was not precached via concept "
+                    + concept.getTerminologyId());
+
           }
 
           // Setup delta description (either new or based on existing one)
@@ -754,7 +765,8 @@ public class Rf2DeltaLoaderAlgorithm extends HistoryServiceJpa implements
           else {
             newDescription.setEffectiveTime(description.getEffectiveTime());
           }
-          cacheConcept(newDescription.getConcept());
+          cacheDescription(newDescription);
+          cacheConcept(concept);
 
         }
 
