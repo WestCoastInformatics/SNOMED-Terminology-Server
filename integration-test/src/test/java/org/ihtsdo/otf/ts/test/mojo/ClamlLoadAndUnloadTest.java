@@ -132,6 +132,7 @@ public class ClamlLoadAndUnloadTest {
     service = new ContentServiceJpa();
     Assert.assertEquals(17770,
         service.getAllConcepts("ICD9CM", "2013").getCount());
+    service.close();
     service.closeFactory();
 
     // Verify release info
@@ -232,7 +233,9 @@ public class ClamlLoadAndUnloadTest {
     // Verify no contents
     service = new ContentServiceJpa();
     Assert.assertEquals(0, service.getAllConcepts("ICD9CM", "2013").getObjects().size());
-
+    service.close();
+    service.closeFactory();
+    
     // Finish by clearing the DB again
     request = new DefaultInvocationRequest();
     request.setPomFile(new File("../admin/db/pom.xml"));
