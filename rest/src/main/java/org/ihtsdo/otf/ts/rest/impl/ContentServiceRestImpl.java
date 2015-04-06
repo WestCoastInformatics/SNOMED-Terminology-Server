@@ -1661,26 +1661,23 @@ public class ContentServiceRestImpl extends RootServiceRestImpl implements
     }
   }
 
-  /*
-   * (non-Javadoc)
-   * 
-   * @see
-   * org.ihtsdo.otf.ts.rest.ContentServiceRest#computeTransitiveClosure(java
-   * .lang.String, java.lang.String)
+  /* (non-Javadoc)
+   * @see org.ihtsdo.otf.ts.rest.ContentServiceRest#computeTransitiveClosure(java.lang.String, java.lang.String, java.lang.String)
    */
   @Override
   @POST
-  @Path("/terminology/closure/compute/{terminology}")
+  @Path("/terminology/closure/compute/{terminology}/{version}")
   @ApiOperation(value = "Computes terminology transitive closure", notes = "Computes transitive closure for the latest version of the specified terminology")
   public void computeTransitiveClosure(
     @ApiParam(value = "Terminology, e.g. SNOMEDCT", required = true) @PathParam("terminology") String terminology,
+    @ApiParam(value = "Terminology, e.g. SNOMEDCT", required = true) @PathParam("version") String version,
     @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken)
 
   throws Exception {
 
     Logger.getLogger(getClass()).info(
         "RESTful POST call (ContentChange): /terminology/closure/compute/"
-            + terminology);
+            + terminology + "/" + version);
 
     // Track system level information
     long startTimeOrig = System.nanoTime();
@@ -1688,11 +1685,6 @@ public class ContentServiceRestImpl extends RootServiceRestImpl implements
     try {
       authenticate(securityService, authToken, "compute transitive closure",
           UserRole.ADMINISTRATOR);
-
-      // Compute transitive closure
-      MetadataService metadataService = new MetadataServiceJpa();
-      String version = metadataService.getLatestVersion(terminology);
-      metadataService.close();
 
       // Compute transitive closure
       Logger.getLogger(getClass()).info(

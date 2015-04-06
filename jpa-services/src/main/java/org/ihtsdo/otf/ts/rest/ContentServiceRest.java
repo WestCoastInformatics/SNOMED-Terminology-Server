@@ -80,8 +80,9 @@ public interface ContentServiceRest {
    * @return the concept children
    * @throws Exception the exception
    */
-  public ConceptList findChildConcepts(String terminologyId, String terminology,
-    String version, PfsParameterJpa pfs, String authToken) throws Exception;
+  public ConceptList findChildConcepts(String terminologyId,
+    String terminology, String version, PfsParameterJpa pfs, String authToken)
+    throws Exception;
 
   /**
    * Find parent concepts.
@@ -94,8 +95,9 @@ public interface ContentServiceRest {
    * @return the concept list
    * @throws Exception the exception
    */
-  public ConceptList findParentConcepts(String terminologyId, String terminology,
-    String version, PfsParameterJpa pfs, String authToken) throws Exception;
+  public ConceptList findParentConcepts(String terminologyId,
+    String terminology, String version, PfsParameterJpa pfs, String authToken)
+    throws Exception;
 
   /**
    * Returns the concept descendants.
@@ -414,11 +416,12 @@ public interface ContentServiceRest {
    * Compute transitive closure for latest version of a terminology.
    *
    * @param terminology the terminology
+   * @param version the version
    * @param authToken the auth token
    * @throws Exception the exception
    */
-  public void computeTransitiveClosure(String terminology, String authToken)
-    throws Exception;
+  public void computeTransitiveClosure(String terminology, String version,
+    String authToken) throws Exception;
 
   /**
    * Load terminology snapshot from RF2 directory.
@@ -477,6 +480,5 @@ public interface ContentServiceRest {
    */
   public void removeTerminology(String terminology, String version,
     String authToken) throws Exception;
-
 
 }
