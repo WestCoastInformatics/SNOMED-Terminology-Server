@@ -178,8 +178,6 @@ public class CompareRf2FullRf2SnapshotLoadersTest {
 
     // Assert equivalence of counts
     for (String prop : fullStats.keySet()) {
-      Logger.getLogger(getClass()).info("  Check " + prop);
-      if (prop.indexOf("ComplexMap")!=-1) continue;
       Assert.assertEquals(fullStats.get(prop), snapStats.get(prop));
     }
   
