@@ -1467,8 +1467,22 @@ public class ContentServiceRestImpl extends RootServiceRestImpl implements
       }
       reader.close();
       File complexMapFile =
-          sorter.findFile(new File(inputDir, "Terminology"), "der2_iissscRefset_ComplexMap");
+          sorter.findFile(new File(inputDir, "Refset/Map"), "der2_iissscRefset_ComplexMap");
       reader = new BufferedReader(new FileReader(complexMapFile));
+      while ((line = reader.readLine()) != null) {
+        final String fields[] = line.split("\t");
+        if (!fields[1].equals("effectiveTime")) {
+          try {
+            ConfigUtility.DATE_FORMAT.parse(fields[1]);
+          } catch (Exception e) {
+            throw new Exception("Improperly formatted date found: " + fields[1]);
+          }
+          releaseSet.add(fields[1]);
+        }
+      }
+      File extendedMapFile =
+          sorter.findFile(new File(inputDir, "Refset/Map"), "der2_iisssccRefset_ExtendedMap");
+      reader = new BufferedReader(new FileReader(extendedMapFile));
       while ((line = reader.readLine()) != null) {
         final String fields[] = line.split("\t");
         if (!fields[1].equals("effectiveTime")) {

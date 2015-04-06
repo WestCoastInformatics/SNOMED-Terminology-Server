@@ -552,7 +552,6 @@ public class Rf2SnapshotLoaderAlgorithm extends HistoryServiceJpa implements
    * 
    * @throws Exception the exception
    */
-  @SuppressWarnings("null")
   private void loadRelationships() throws Exception {
 
     String line = "";
@@ -666,7 +665,6 @@ public class Rf2SnapshotLoaderAlgorithm extends HistoryServiceJpa implements
    * 
    * @throws Exception the exception
    */
-  @SuppressWarnings("null")
   private void loadDescriptions() throws Exception {
 
     // PN handler

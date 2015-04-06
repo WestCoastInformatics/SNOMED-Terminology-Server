@@ -426,7 +426,8 @@ public class Rf2DeltaLoaderAlgorithm extends HistoryServiceJpa implements
         }
         // Mark all cached concepts for update
         if (existingConceptCache.containsKey(terminologyId)) {
-          Logger.getLogger(getClass()).debug(ConceptReportHelper.getConceptReport(concept));
+          Logger.getLogger(getClass()).debug(
+              ConceptReportHelper.getConceptReport(concept));
           updateConcept(concept);
         }
       }
@@ -619,7 +620,6 @@ public class Rf2DeltaLoaderAlgorithm extends HistoryServiceJpa implements
         // If concept is new, add it
         if (concept == null) {
           newConcept = addConcept(newConcept);
-          cacheConcept(newConcept);
           objectsAdded++;
         }
 
@@ -628,7 +628,6 @@ public class Rf2DeltaLoaderAlgorithm extends HistoryServiceJpa implements
           // Do not actually update the concept here, wait for any other
           // changes,
           // then do it at the end (to support cascade)
-          cacheConcept(newConcept);
           objectsUpdated++;
         }
 
@@ -636,6 +635,10 @@ public class Rf2DeltaLoaderAlgorithm extends HistoryServiceJpa implements
         else {
           newConcept.setEffectiveTime(concept.getEffectiveTime());
         }
+
+        // Cache the concept
+        cacheConcept(newConcept);
+
       }
 
     }
@@ -683,16 +686,19 @@ public class Rf2DeltaLoaderAlgorithm extends HistoryServiceJpa implements
           concept = conceptCache.get(fields[4]);
         } else if (existingConceptCache.containsKey(fields[4])) {
           concept = existingConceptCache.get(fields[4]);
+          // it's not yet in the cache, put it there
+          cacheConcept(concept);
         } else {
-          // retrieve concept
-          concept =
-              getSingleConcept(fields[4], terminology, terminologyVersion);
+          // if the concept is new, it will have been added
+          // if the concept is existing it will either have been udpated
+          // or will be in the existing concept cache
+          throw new Exception(
+              "Concept of description should either be in cache or existing cache: "
+                  + fields[4]);
         }
 
         // if the concept is not null
         if (concept != null) {
-
-          cacheConcept(concept);
 
           // Load description from cache or db
           Description description = null;
@@ -765,7 +771,9 @@ public class Rf2DeltaLoaderAlgorithm extends HistoryServiceJpa implements
           else {
             newDescription.setEffectiveTime(description.getEffectiveTime());
           }
-          cacheDescription(newDescription);
+
+          // forcably recache the concept in case the description is new.
+          conceptCache.remove(concept.getTerminologyId());
           cacheConcept(concept);
 
         }
@@ -819,6 +827,7 @@ public class Rf2DeltaLoaderAlgorithm extends HistoryServiceJpa implements
         Description description = null;
         if (descriptionCache.containsKey(fields[5])) {
           description = descriptionCache.get(fields[5]);
+          // if here, the concept has already been cached.
         } else {
           // the description may not yet be in the cache because
           // the language refset entry could be the first element for
@@ -836,7 +845,8 @@ public class Rf2DeltaLoaderAlgorithm extends HistoryServiceJpa implements
           // to investigate if there will be an update
         } else if (existingLanguageRefSetMemberIds.contains(fields[0])) {
           // If the language exists, it should be in the cache
-          // from the cache concept call
+          // from the cache concept call (either above or earlier for the
+          // attached object)
           throw new Exception("Language member unexpectedly not in cache: "
               + fields[0] + ", " + fields[5]);
         }
@@ -889,7 +899,11 @@ public class Rf2DeltaLoaderAlgorithm extends HistoryServiceJpa implements
         else {
           newMember.setEffectiveTime(member.getEffectiveTime());
         }
-        cacheLanguageRefSetMember(newMember);
+
+        // forcably recache the concept
+        conceptCache.remove(description.getConcept().getTerminologyId());
+        cacheConcept(description.getConcept());
+
       }
     }
 
@@ -943,8 +957,6 @@ public class Rf2DeltaLoaderAlgorithm extends HistoryServiceJpa implements
           concept =
               getSingleConcept(fields[5], terminology, terminologyVersion);
         }
-
-        cacheConcept(concept);
 
         // Get the member from the DB, if null, create a new one
         // No cache necessary because we will not encounter the
@@ -1047,8 +1059,6 @@ public class Rf2DeltaLoaderAlgorithm extends HistoryServiceJpa implements
           concept =
               getSingleConcept(fields[5], terminology, terminologyVersion);
         }
-
-        cacheConcept(concept);
 
         // Get the member from the DB, if null, create a new one
         // No cache necessary because we will not encounter the
@@ -1154,7 +1164,10 @@ public class Rf2DeltaLoaderAlgorithm extends HistoryServiceJpa implements
               getSingleConcept(fields[5], terminology, terminologyVersion);
         }
 
-        cacheConcept(concept);
+        if (concept == null) {
+          throw new Exception("Complex map connected to nonexistent concept: "
+              + fields[5]);
+        }
 
         // Get the member from the DB, if null, create a new one
         // No cache necessary because we will not encounter the
@@ -1265,8 +1278,6 @@ public class Rf2DeltaLoaderAlgorithm extends HistoryServiceJpa implements
           concept =
               getSingleConcept(fields[5], terminology, terminologyVersion);
         }
-
-        cacheConcept(concept);
 
         // Get the member from the DB, if null, create a new one
         // No cache necessary because we will not encounter the
@@ -1379,8 +1390,6 @@ public class Rf2DeltaLoaderAlgorithm extends HistoryServiceJpa implements
               getSingleConcept(fields[5], terminology, terminologyVersion);
         }
 
-        cacheConcept(concept);
-
         // Get the member from the DB, if null, create a new one
         // No cache necessary because we will not encounter the
         // same object more than once per delta and nothing else
@@ -1487,8 +1496,6 @@ public class Rf2DeltaLoaderAlgorithm extends HistoryServiceJpa implements
           concept =
               getSingleConcept(fields[5], terminology, terminologyVersion);
         }
-
-        cacheConcept(concept);
 
         // Get the member from the DB, if null, create a new one
         // No cache necessary because we will not encounter the
@@ -1599,8 +1606,6 @@ public class Rf2DeltaLoaderAlgorithm extends HistoryServiceJpa implements
           concept =
               getSingleConcept(fields[5], terminology, terminologyVersion);
         }
-
-        cacheConcept(concept);
 
         // Get the member from the DB, if null, create a new one
         // No cache necessary because we will not encounter the
@@ -1993,7 +1998,6 @@ public class Rf2DeltaLoaderAlgorithm extends HistoryServiceJpa implements
           throw new Exception("Relationship " + fields[0] + " source concept "
               + fields[4] + " cannot be found");
         }
-
         cacheConcept(sourceConcept);
 
         // Retrieve destination concept
@@ -2017,14 +2021,6 @@ public class Rf2DeltaLoaderAlgorithm extends HistoryServiceJpa implements
         } else if (existingRelationshipIds.contains(fields[0])) {
           throw new Exception("Relationship unexpectedly not in cache: "
               + fields[0] + ", " + sourceConcept.getTerminologyId());
-        }
-
-        // Verify cache
-        if (relationship == null && existingRelationshipIds.contains(fields[0])) {
-          throw new Exception("** Relationship " + fields[0]
-              + " is in existing id cache, but was not precached via concepts "
-              + sourceConcept.getTerminologyId() + " or "
-              + destinationConcept.getTerminologyId());
         }
 
         // Setup delta relationship (either new or based on existing one)
@@ -2078,8 +2074,11 @@ public class Rf2DeltaLoaderAlgorithm extends HistoryServiceJpa implements
             newRelationship.setEffectiveTime(relationship.getEffectiveTime());
           }
         }
-        cacheRelationship(newRelationship);
 
+        // forcably recache the concept
+        conceptCache.remove(newRelationship.getSourceConcept()
+            .getTerminologyId());
+        cacheConcept(newRelationship.getSourceConcept());
       }
     }
 
@@ -2110,40 +2109,6 @@ public class Rf2DeltaLoaderAlgorithm extends HistoryServiceJpa implements
       }
       conceptCache.put(c.getTerminologyId(), c);
     }
-  }
-
-  /**
-   * Cache description.
-   *
-   * @param d the d
-   */
-  private void cacheDescription(Description d) {
-
-    if (!descriptionCache.containsKey(d.getTerminologyId())) {
-      for (LanguageRefSetMember l : d.getLanguageRefSetMembers()) {
-        languageRefSetMemberCache.put(l.getTerminologyId(), l);
-      }
-      descriptionCache.put(d.getTerminologyId(), d);
-    }
-  }
-
-  /**
-   * Cache relationship.
-   *
-   * @param r the r
-   */
-  private void cacheRelationship(Relationship r) {
-    relationshipCache.put(r.getTerminologyId(), r);
-  }
-
-  // helper function to cache and update a language ref set member
-  /**
-   * Cache language ref set member.
-   *
-   * @param l the l
-   */
-  private void cacheLanguageRefSetMember(LanguageRefSetMember l) {
-    languageRefSetMemberCache.put(l.getTerminologyId(), l);
   }
 
   /*
