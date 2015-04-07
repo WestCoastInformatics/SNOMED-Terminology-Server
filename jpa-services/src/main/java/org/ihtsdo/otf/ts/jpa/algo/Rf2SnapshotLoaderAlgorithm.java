@@ -172,13 +172,6 @@ public class Rf2SnapshotLoaderAlgorithm extends HistoryServiceJpa implements
       Logger.getLogger(getClass()).info("  releaseVersion = " + releaseVersion);
       releaseVersionDate = ConfigUtility.DATE_FORMAT.parse(releaseVersion);
 
-      // Log memory usage
-      Runtime runtime = Runtime.getRuntime();
-      Logger.getLogger(getClass()).debug("MEMORY USAGE:");
-      Logger.getLogger(getClass()).debug(" Total: " + runtime.totalMemory());
-      Logger.getLogger(getClass()).debug(" Free:  " + runtime.freeMemory());
-      Logger.getLogger(getClass()).debug(" Max:   " + runtime.maxMemory());
-
       SimpleDateFormat ft = new SimpleDateFormat("hh:mm:ss a"); // format for
 
       // Track system level information
@@ -212,7 +205,7 @@ public class Rf2SnapshotLoaderAlgorithm extends HistoryServiceJpa implements
       //
       // Load descriptions and language refsets
       //
-      Logger.getLogger(getClass()).info("  Loading LanguageRefSets...");
+      Logger.getLogger(getClass()).info("  Loading Language Ref Sets...");
       startTime = System.nanoTime();
       loadLanguageRefSetMembers();
       Logger.getLogger(getClass()).info(
@@ -245,7 +238,7 @@ public class Rf2SnapshotLoaderAlgorithm extends HistoryServiceJpa implements
       // load AssocationReference RefSets (Content)
       //
       Logger.getLogger(getClass()).info(
-          "  Loading AssociationReference RefSets...");
+          "  Loading Association Reference Ref Sets...");
       startTime = System.nanoTime();
       loadAssociationReferenceRefSets();
       Logger.getLogger(getClass()).info(
@@ -259,7 +252,7 @@ public class Rf2SnapshotLoaderAlgorithm extends HistoryServiceJpa implements
       //
       // Load AttributeValue RefSets (Content)
       //
-      Logger.getLogger(getClass()).info("  Loading AttributeValue RefSets...");
+      Logger.getLogger(getClass()).info("  Loading Attribute Value Ref Sets...");
       startTime = System.nanoTime();
       loadAttributeValueRefSets();
       Logger.getLogger(getClass()).info(
@@ -273,7 +266,7 @@ public class Rf2SnapshotLoaderAlgorithm extends HistoryServiceJpa implements
       //
       // Load Simple RefSets (Content)
       //
-      Logger.getLogger(getClass()).info("  Loading Simple RefSets...");
+      Logger.getLogger(getClass()).info("  Loading Simple Ref Sets...");
       startTime = System.nanoTime();
       loadSimpleRefSets();
       Logger.getLogger(getClass()).info(
@@ -283,7 +276,7 @@ public class Rf2SnapshotLoaderAlgorithm extends HistoryServiceJpa implements
       //
       // Load SimpleMapRefSets
       //
-      Logger.getLogger(getClass()).info("  Loading SimpleMap RefSets...");
+      Logger.getLogger(getClass()).info("  Loading Simple Map Ref Sets...");
       startTime = System.nanoTime();
       loadSimpleMapRefSets();
       Logger.getLogger(getClass()).info(
@@ -297,7 +290,7 @@ public class Rf2SnapshotLoaderAlgorithm extends HistoryServiceJpa implements
       //
       // Load ComplexMapRefSets
       //
-      Logger.getLogger(getClass()).info("  Loading ComplexMap RefSets...");
+      Logger.getLogger(getClass()).info("  Loading Complex Map Ref Sets...");
       startTime = System.nanoTime();
       loadComplexMapRefSets();
       Logger.getLogger(getClass()).info(
@@ -307,7 +300,7 @@ public class Rf2SnapshotLoaderAlgorithm extends HistoryServiceJpa implements
       //
       // Load ExtendedMapRefSets
       //
-      Logger.getLogger(getClass()).info("  Loading ExtendedMap RefSets...");
+      Logger.getLogger(getClass()).info("  Loading Extended Map Ref Sets...");
       startTime = System.nanoTime();
       loadExtendedMapRefSets();
       Logger.getLogger(getClass()).info(
@@ -322,7 +315,7 @@ public class Rf2SnapshotLoaderAlgorithm extends HistoryServiceJpa implements
       // load RefsetDescriptor RefSets (Content)
       //
       Logger.getLogger(getClass())
-          .info("  Loading RefsetDescriptor RefSets...");
+          .info("  Loading Refset Descriptor Ref Sets...");
       startTime = System.nanoTime();
       loadRefsetDescriptorRefSets();
       Logger.getLogger(getClass()).info(
@@ -333,7 +326,7 @@ public class Rf2SnapshotLoaderAlgorithm extends HistoryServiceJpa implements
       // load ModuleDependency RefSets (Content)
       //
       Logger.getLogger(getClass())
-          .info("  Loading ModuleDependency RefSets...");
+          .info("  Loading Module Dependency Ref Sets...");
       startTime = System.nanoTime();
       loadModuleDependencyRefSets();
       Logger.getLogger(getClass()).info(
@@ -343,7 +336,7 @@ public class Rf2SnapshotLoaderAlgorithm extends HistoryServiceJpa implements
       //
       // load DescriptionType RefSets (Content)
       //
-      Logger.getLogger(getClass()).info("  Loading DescriptionType RefSets...");
+      Logger.getLogger(getClass()).info("  Loading Description Type Ref Sets...");
       startTime = System.nanoTime();
       loadDescriptionTypeRefSets();
       Logger.getLogger(getClass()).info(
@@ -538,13 +531,6 @@ public class Rf2SnapshotLoaderAlgorithm extends HistoryServiceJpa implements
 
     defaultPreferredNames.clear();
 
-    // print memory information
-    Runtime runtime = Runtime.getRuntime();
-    Logger.getLogger(getClass()).debug("MEMORY USAGE:");
-    Logger.getLogger(getClass()).debug(" Total: " + runtime.totalMemory());
-    Logger.getLogger(getClass()).debug(" Free:  " + runtime.freeMemory());
-    Logger.getLogger(getClass()).debug(" Max:   " + runtime.maxMemory());
-
   }
 
   /**
@@ -612,7 +598,7 @@ public class Rf2SnapshotLoaderAlgorithm extends HistoryServiceJpa implements
           if (sourceConcept == null) {
             Logger.getLogger(getClass()).info(
                 "Relationship " + relationship.getTerminologyId()
-                    + " references non-existent source concept " + fields[4]);
+                    + " -existent source concept " + fields[4]);
           }
           if (destinationConcept == null) {
             Logger.getLogger(getClass()).info(
@@ -652,12 +638,6 @@ public class Rf2SnapshotLoaderAlgorithm extends HistoryServiceJpa implements
     clear();
     beginTransaction();
 
-    // print memory information
-    Runtime runtime = Runtime.getRuntime();
-    Logger.getLogger(getClass()).debug("MEMORY USAGE:");
-    Logger.getLogger(getClass()).debug(" Total: " + runtime.totalMemory());
-    Logger.getLogger(getClass()).debug(" Free:  " + runtime.freeMemory());
-    Logger.getLogger(getClass()).debug(" Max:   " + runtime.maxMemory());
   }
 
   /**
@@ -684,14 +664,14 @@ public class Rf2SnapshotLoaderAlgorithm extends HistoryServiceJpa implements
     while ((line = reader.readLine()) != null) {
 
       final String fields[] = line.split("\t");
-      if (!fields[0].equals(id)) { 
-        
+      if (!fields[0].equals(id)) {
+
         // Stop if the effective time is past the release version
         if (fields[1].compareTo(releaseVersion) > 0) {
           reader.push(line);
           break;
         }
-        
+
         final Description description = new DescriptionJpa();
         description.setTerminologyId(fields[0]);
         description
@@ -833,13 +813,6 @@ public class Rf2SnapshotLoaderAlgorithm extends HistoryServiceJpa implements
     clear();
     beginTransaction();
 
-    // print memory information
-    Runtime runtime = Runtime.getRuntime();
-    Logger.getLogger(getClass()).debug("MEMORY USAGE:");
-    Logger.getLogger(getClass()).debug(" Total: " + runtime.totalMemory());
-    Logger.getLogger(getClass()).debug(" Free:  " + runtime.freeMemory());
-    Logger.getLogger(getClass()).debug(" Max:   " + runtime.maxMemory());
-
     if (languageRefSetMembers.size() > 0) {
       throw new Exception("There are unattached language refset members: "
           + languageRefSetMembers);
@@ -964,12 +937,6 @@ public class Rf2SnapshotLoaderAlgorithm extends HistoryServiceJpa implements
       }
     }
 
-    // print memory information
-    Runtime runtime = Runtime.getRuntime();
-    Logger.getLogger(getClass()).debug("MEMORY USAGE:");
-    Logger.getLogger(getClass()).debug(" Total: " + runtime.totalMemory());
-    Logger.getLogger(getClass()).debug(" Free:  " + runtime.freeMemory());
-    Logger.getLogger(getClass()).debug(" Max:   " + runtime.maxMemory());
   }
 
   /**
@@ -1047,12 +1014,6 @@ public class Rf2SnapshotLoaderAlgorithm extends HistoryServiceJpa implements
       }
     }
 
-    // print memory information
-    Runtime runtime = Runtime.getRuntime();
-    Logger.getLogger(getClass()).debug("MEMORY USAGE:");
-    Logger.getLogger(getClass()).debug(" Total: " + runtime.totalMemory());
-    Logger.getLogger(getClass()).debug(" Free:  " + runtime.freeMemory());
-    Logger.getLogger(getClass()).debug(" Max:   " + runtime.maxMemory());
   }
 
   /**
@@ -1117,12 +1078,6 @@ public class Rf2SnapshotLoaderAlgorithm extends HistoryServiceJpa implements
       }
     }
 
-    // print memory information
-    Runtime runtime = Runtime.getRuntime();
-    Logger.getLogger(getClass()).debug("MEMORY USAGE:");
-    Logger.getLogger(getClass()).debug(" Total: " + runtime.totalMemory());
-    Logger.getLogger(getClass()).debug(" Free:  " + runtime.freeMemory());
-    Logger.getLogger(getClass()).debug(" Max:   " + runtime.maxMemory());
   }
 
   /**
@@ -1188,12 +1143,6 @@ public class Rf2SnapshotLoaderAlgorithm extends HistoryServiceJpa implements
       }
     }
 
-    // print memory information
-    Runtime runtime = Runtime.getRuntime();
-    Logger.getLogger(getClass()).debug("MEMORY USAGE:");
-    Logger.getLogger(getClass()).debug(" Total: " + runtime.totalMemory());
-    Logger.getLogger(getClass()).debug(" Free:  " + runtime.freeMemory());
-    Logger.getLogger(getClass()).debug(" Max:   " + runtime.maxMemory());
   }
 
   /**
@@ -1255,19 +1204,13 @@ public class Rf2SnapshotLoaderAlgorithm extends HistoryServiceJpa implements
           }
         } else {
           Logger.getLogger(getClass()).info(
-              "complexMapRefSetMember " + member.getTerminologyId()
-                  + " references non-existent concept " + fields[5]);
+              "Complex map connected to nonexistent concept: " + fields[5]);
         }
 
       }
     }
 
-    // print memory information
-    Runtime runtime = Runtime.getRuntime();
-    Logger.getLogger(getClass()).debug("MEMORY USAGE:");
-    Logger.getLogger(getClass()).debug(" Total: " + runtime.totalMemory());
-    Logger.getLogger(getClass()).debug(" Free:  " + runtime.freeMemory());
-    Logger.getLogger(getClass()).debug(" Max:   " + runtime.maxMemory());
+
   }
 
   /**
@@ -1339,12 +1282,6 @@ public class Rf2SnapshotLoaderAlgorithm extends HistoryServiceJpa implements
       }
     }
 
-    // print memory information
-    Runtime runtime = Runtime.getRuntime();
-    Logger.getLogger(getClass()).debug("MEMORY USAGE:");
-    Logger.getLogger(getClass()).debug(" Total: " + runtime.totalMemory());
-    Logger.getLogger(getClass()).debug(" Free:  " + runtime.freeMemory());
-    Logger.getLogger(getClass()).debug(" Max:   " + runtime.maxMemory());
   }
 
   /**
@@ -1414,12 +1351,6 @@ public class Rf2SnapshotLoaderAlgorithm extends HistoryServiceJpa implements
       }
     }
 
-    // print memory information
-    Runtime runtime = Runtime.getRuntime();
-    Logger.getLogger(getClass()).debug("MEMORY USAGE:");
-    Logger.getLogger(getClass()).debug(" Total: " + runtime.totalMemory());
-    Logger.getLogger(getClass()).debug(" Free:  " + runtime.freeMemory());
-    Logger.getLogger(getClass()).debug(" Max:   " + runtime.maxMemory());
   }
 
   /**
@@ -1490,12 +1421,6 @@ public class Rf2SnapshotLoaderAlgorithm extends HistoryServiceJpa implements
       }
     }
 
-    // print memory information
-    Runtime runtime = Runtime.getRuntime();
-    Logger.getLogger(getClass()).debug("MEMORY USAGE:");
-    Logger.getLogger(getClass()).debug(" Total: " + runtime.totalMemory());
-    Logger.getLogger(getClass()).debug(" Free:  " + runtime.freeMemory());
-    Logger.getLogger(getClass()).debug(" Max:   " + runtime.maxMemory());
   }
 
   /**
@@ -1563,12 +1488,6 @@ public class Rf2SnapshotLoaderAlgorithm extends HistoryServiceJpa implements
       }
     }
 
-    // print memory information
-    Runtime runtime = Runtime.getRuntime();
-    Logger.getLogger(getClass()).debug("MEMORY USAGE:");
-    Logger.getLogger(getClass()).debug(" Total: " + runtime.totalMemory());
-    Logger.getLogger(getClass()).debug(" Free:  " + runtime.freeMemory());
-    Logger.getLogger(getClass()).debug(" Max:   " + runtime.maxMemory());
   }
 
   /*
