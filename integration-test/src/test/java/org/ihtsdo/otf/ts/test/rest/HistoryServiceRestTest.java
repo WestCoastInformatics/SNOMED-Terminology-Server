@@ -17,11 +17,8 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Ignore;
 
-// TODO: Auto-generated Javadoc
 /**
  * Implementation of the "History Service REST Normal Use" Test Cases.
- *
- * @author ${author}
  */
 @Ignore
 public class HistoryServiceRestTest {

@@ -252,7 +252,8 @@ public class Rf2SnapshotLoaderAlgorithm extends HistoryServiceJpa implements
       //
       // Load AttributeValue RefSets (Content)
       //
-      Logger.getLogger(getClass()).info("  Loading Attribute Value Ref Sets...");
+      Logger.getLogger(getClass())
+          .info("  Loading Attribute Value Ref Sets...");
       startTime = System.nanoTime();
       loadAttributeValueRefSets();
       Logger.getLogger(getClass()).info(
@@ -314,8 +315,8 @@ public class Rf2SnapshotLoaderAlgorithm extends HistoryServiceJpa implements
       //
       // load RefsetDescriptor RefSets (Content)
       //
-      Logger.getLogger(getClass())
-          .info("  Loading Refset Descriptor Ref Sets...");
+      Logger.getLogger(getClass()).info(
+          "  Loading Refset Descriptor Ref Sets...");
       startTime = System.nanoTime();
       loadRefsetDescriptorRefSets();
       Logger.getLogger(getClass()).info(
@@ -325,8 +326,8 @@ public class Rf2SnapshotLoaderAlgorithm extends HistoryServiceJpa implements
       //
       // load ModuleDependency RefSets (Content)
       //
-      Logger.getLogger(getClass())
-          .info("  Loading Module Dependency Ref Sets...");
+      Logger.getLogger(getClass()).info(
+          "  Loading Module Dependency Ref Sets...");
       startTime = System.nanoTime();
       loadModuleDependencyRefSets();
       Logger.getLogger(getClass()).info(
@@ -336,7 +337,8 @@ public class Rf2SnapshotLoaderAlgorithm extends HistoryServiceJpa implements
       //
       // load DescriptionType RefSets (Content)
       //
-      Logger.getLogger(getClass()).info("  Loading Description Type Ref Sets...");
+      Logger.getLogger(getClass()).info(
+          "  Loading Description Type Ref Sets...");
       startTime = System.nanoTime();
       loadDescriptionTypeRefSets();
       Logger.getLogger(getClass()).info(
@@ -595,15 +597,18 @@ public class Rf2SnapshotLoaderAlgorithm extends HistoryServiceJpa implements
           }
 
         } else {
+          // TODO: these may need to continue to not be exceptions
+          // to support loads of full SNOMED
           if (sourceConcept == null) {
             Logger.getLogger(getClass()).info(
                 "Relationship " + relationship.getTerminologyId()
                     + " -existent source concept " + fields[4]);
           }
           if (destinationConcept == null) {
-            throw new Exception("Relationship "
-                + relationship.getTerminologyId()
-                + " references non-existent destination concept " + fields[5]);
+            Logger.getLogger(getClass()).info(
+                "Relationship" + relationship.getTerminologyId()
+                    + " references non-existent destination concept "
+                    + fields[5]);
           }
 
         }
@@ -1212,7 +1217,6 @@ public class Rf2SnapshotLoaderAlgorithm extends HistoryServiceJpa implements
 
       }
     }
-
 
   }
 
