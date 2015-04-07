@@ -601,12 +601,15 @@ public class Rf2SnapshotLoaderAlgorithm extends HistoryServiceJpa implements
                     + " -existent source concept " + fields[4]);
           }
           if (destinationConcept == null) {
-            Logger.getLogger(getClass()).info(
-                "Relationship " + relationship.getTerminologyId()
-                    + " references non-existent destination concept "
-                    + fields[5]);
+            throw new Exception("Relationship "
+                + relationship.getTerminologyId()
+                + " references non-existent destination concept " + fields[5]);
           }
 
+        }
+
+        if (prevConcept == null) {
+          prevConcept = sourceConcept;
         }
 
         // Identify when concept has changed, increment concept count, update
@@ -747,9 +750,8 @@ public class Rf2SnapshotLoaderAlgorithm extends HistoryServiceJpa implements
           // Cache description for connecting refsets later
           descriptionCache.put(description.getTerminologyId(), description);
         } else {
-          Logger.getLogger(getClass()).info(
-              "Description " + description.getTerminologyId()
-                  + " references non-existent concept " + fields[4]);
+          throw new Exception("Description " + description.getTerminologyId()
+              + " references non-existent concept " + fields[4]);
         }
 
         // Identify when concept has changed, increment concept count,
@@ -774,8 +776,9 @@ public class Rf2SnapshotLoaderAlgorithm extends HistoryServiceJpa implements
         prevConcept = description.getConcept();
       }
     }
-
-    conceptsTouched.add(prevConcept.getId());
+    if (prevConcept != null) {
+      conceptsTouched.add(prevConcept.getId());
+    }
     commit();
     clear();
     beginTransaction();
