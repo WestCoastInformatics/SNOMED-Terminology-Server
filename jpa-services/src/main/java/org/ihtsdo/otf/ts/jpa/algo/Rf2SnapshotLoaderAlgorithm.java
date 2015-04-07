@@ -600,12 +600,12 @@ public class Rf2SnapshotLoaderAlgorithm extends HistoryServiceJpa implements
           // TODO: these may need to continue to not be exceptions
           // to support loads of full SNOMED
           if (sourceConcept == null) {
-            Logger.getLogger(getClass()).info(
+            throw new Exception(
                 "Relationship " + relationship.getTerminologyId()
                     + " -existent source concept " + fields[4]);
           }
           if (destinationConcept == null) {
-            Logger.getLogger(getClass()).info(
+            throw new Exception(
                 "Relationship" + relationship.getTerminologyId()
                     + " references non-existent destination concept "
                     + fields[5]);
