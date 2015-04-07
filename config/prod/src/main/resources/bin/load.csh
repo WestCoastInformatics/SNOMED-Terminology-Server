@@ -6,7 +6,7 @@
 set SERVER_CODE=~/code
 set SERVER_CONFIG=~/config/config.properties
 set SERVER_DATA=~/data
-set SERVER=flase
+set SERVER=false
 echo "------------------------------------------------"
 echo "Starting ...`/bin/date`"
 echo "------------------------------------------------"
