@@ -86,7 +86,7 @@
                 placeholder="Password" ng-model="password" /><br>
               <button style="margin-top: 10px;" id="userLoginButton"
                 type="submit" ng-click="login(userName, password)">Login</button>
-              <p style="margin-top:5px">
+              <p style="margin-top: 5px">
                 <a
                   href="https://uts.nlm.nih.gov/license.html#emailTemporaryPassword">Forgot
                   Password?</a>
@@ -106,8 +106,13 @@
                 To obtain a UTS account, visit <a href="http://uts.nlm.nih.gov">http://uts.nlm.nih.gov</a>
               </p>
               <p style="max-width: 400px">
-                Disclaimer: this is not an official <a href="http://www.ihtsdo.org">IHTSDO</a> site.
+                Disclaimer: this is not an official <a
+                  href="http://www.ihtsdo.org">IHTSDO</a> site.
               </p>
+              <p>
+                For complete documentation, see the <a
+                  href="http://wiki.terminology.tools/confluence/display/TS/TermServer+Home">SNOMED/RF2
+                  Terminology Server wiki</a>.
             </form>
           </div>
 
@@ -345,6 +350,7 @@
               style="margin-top: 10px" ng-click="logout()"
               ng-show="authToken != null">Logout</button>
           </li>
+          <li>${project.version}</li>
           <li>
             <div style="text-align: center; padding: 5px; margin: 0 0 0 0;"
               class="alert alert-danger" ng-show="glassPane < 0">
@@ -358,8 +364,10 @@
       <div class="collapse navbar-collapse">
         <ul class="nav navbar-nav navbar-right">
           <li>
-            <p class="navbar-text">Presented for demonstration purposes by
-              <a href="http://www.westcoastinformatics.com">West Coast Informatics, LLC</a></p>
+            <p class="navbar-text">
+              Presented by <a href="http://www.westcoastinformatics.com">West
+                Coast Informatics, LLC</a>
+            </p>
           </li>
         </ul>
       </div>
