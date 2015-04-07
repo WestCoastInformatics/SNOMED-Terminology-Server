@@ -210,13 +210,6 @@ public class Rf2DeltaLoaderAlgorithm extends HistoryServiceJpa implements
 
       releaseVersionDate = ConfigUtility.DATE_FORMAT.parse(releaseVersion);
 
-      // Log memory usage
-      Runtime runtime = Runtime.getRuntime();
-      Logger.getLogger(getClass()).debug("MEMORY USAGE:");
-      Logger.getLogger(getClass()).debug(" Total: " + runtime.totalMemory());
-      Logger.getLogger(getClass()).debug(" Free:  " + runtime.freeMemory());
-      Logger.getLogger(getClass()).debug(" Max:   " + runtime.maxMemory());
-
       // Track system level information
       long startTimeOrig = System.nanoTime();
 
@@ -242,9 +235,6 @@ public class Rf2DeltaLoaderAlgorithm extends HistoryServiceJpa implements
           .info("    count = " + conceptList.getCount());
 
       // Precache the description, langauge refset, and relationship id lists
-      // THIS IS FOR DEBUG/QUALITY ASSURANCE
-      Logger.getLogger(getClass()).info(
-          "  Construct terminology id sets for quality assurance");
       Logger.getLogger(getClass()).info("  Cache description ids");
       existingDescriptionIds =
           new HashSet<>(getAllDescriptionTerminologyIds(terminology,
@@ -352,6 +342,29 @@ public class Rf2DeltaLoaderAlgorithm extends HistoryServiceJpa implements
       Logger.getLogger(getClass()).info("    Loading Language Ref Sets...");
       loadLanguageRefSetMembers();
 
+      // Compute preferred names
+      Logger.getLogger(getClass()).info(
+          "  Compute preferred names for modified concepts");
+      int ct = 0;
+      for (String terminologyId : conceptCache.keySet()) {
+        Concept concept = conceptCache.get(terminologyId);
+        String pn = getComputedPreferredName(concept);
+        if (!pn.equals(concept.getDefaultPreferredName())) {
+          ct++;
+          concept.setDefaultPreferredName(pn);
+        }
+        // Mark all cached concepts for update
+        if (existingConceptCache.containsKey(terminologyId)) {
+          Logger.getLogger(getClass()).debug(
+              ConceptReportHelper.getConceptReport(concept));
+          updateConcept(concept);
+        }
+      }
+      
+      commit();
+      clear();
+      beginTransaction();
+      
       //
       // Load simple refset members
       //
@@ -397,12 +410,20 @@ public class Rf2DeltaLoaderAlgorithm extends HistoryServiceJpa implements
           "    Loading Module Dependency Ref Sets...");
       loadModuleDependencyRefSetMembers();
 
+      commit();
+      clear();
+      beginTransaction();
+
       //
       // Load module dependency refset members
       //
       Logger.getLogger(getClass()).info(
           "    Loading Attribute Value Ref Sets...");
       loadAttributeValueRefSetMembers();
+
+      commit();
+      clear();
+      beginTransaction();
 
       //
       // Load association reference refset members
@@ -411,26 +432,9 @@ public class Rf2DeltaLoaderAlgorithm extends HistoryServiceJpa implements
           "    Loading Association Reference Ref Sets...");
       loadAssociationReferenceRefSetMembers();
 
-      // Update descriptions
-
-      // Compute preferred names
-      Logger.getLogger(getClass()).info(
-          "  Compute preferred names for modified concepts");
-      int ct = 0;
-      for (String terminologyId : conceptCache.keySet()) {
-        Concept concept = conceptCache.get(terminologyId);
-        String pn = getComputedPreferredName(concept);
-        if (!pn.equals(concept.getDefaultPreferredName())) {
-          ct++;
-          concept.setDefaultPreferredName(pn);
-        }
-        // Mark all cached concepts for update
-        if (existingConceptCache.containsKey(terminologyId)) {
-          Logger.getLogger(getClass()).debug(
-              ConceptReportHelper.getConceptReport(concept));
-          updateConcept(concept);
-        }
-      }
+      commit();
+      clear();
+      beginTransaction();
 
       Logger.getLogger(getClass()).info("    changed = " + ct);
 
@@ -1164,9 +1168,12 @@ public class Rf2DeltaLoaderAlgorithm extends HistoryServiceJpa implements
               getSingleConcept(fields[5], terminology, terminologyVersion);
         }
 
+        // Ideally this would be an exception, but the full SNOMED release
+        // contains early examples of complex map refsets without valid concepts.
         if (concept == null) {
-          throw new Exception("Complex map connected to nonexistent concept: "
+          Logger.getLogger(getClass()).error("Complex map connected to nonexistent concept: "
               + fields[5]);
+          continue;
         }
 
         // Get the member from the DB, if null, create a new one
