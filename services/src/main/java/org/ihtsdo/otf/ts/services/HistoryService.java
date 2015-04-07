@@ -30,11 +30,8 @@ import org.ihtsdo.otf.ts.rf2.Relationship;
 import org.ihtsdo.otf.ts.rf2.SimpleMapRefSetMember;
 import org.ihtsdo.otf.ts.rf2.SimpleRefSetMember;
 
-// TODO: Auto-generated Javadoc
 /**
  * Generically represents a service for asking questions about content history.
- *
- * @author ${author}
  */
 public interface HistoryService extends ContentService {
 
@@ -273,7 +270,7 @@ public interface HistoryService extends ContentService {
    * @return the association reference ref set member list
    * @throws Exception the exception
    */
-  public AssociationReferenceRefSetMemberList findAbstractAssociationReferenceRefSetMembersModifiedSinceDate(
+  public AssociationReferenceRefSetMemberList findAssociationReferenceRefSetMembersModifiedSinceDate(
     String terminology, Date date, PfsParameter pfs) throws Exception;
 
   /**
@@ -285,7 +282,7 @@ public interface HistoryService extends ContentService {
    * @param pfs the pfs
    * @return the association reference ref set member list
    */
-  public AssociationReferenceRefSetMemberList findAbstractAssociationReferenceRefSetMemberRevisions(
+  public AssociationReferenceRefSetMemberList findAssociationReferenceRefSetMemberRevisions(
     Long id, Date startDate, Date endDate, PfsParameter pfs);
 
   /**
@@ -296,7 +293,7 @@ public interface HistoryService extends ContentService {
    * @return the association reference ref set member
    * @throws Exception the exception
    */
-  public AssociationReferenceRefSetMember<?> findAbstractAssociationReferenceRefSetMemberReleaseRevision(
+  public AssociationReferenceRefSetMember<?> findAssociationReferenceRefSetMemberReleaseRevision(
     Long id, Date release) throws Exception;
   
   /**
