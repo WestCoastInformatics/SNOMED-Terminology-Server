@@ -57,7 +57,7 @@ del /Q mvn.log
 
 echo     Add SNOMED project ...%date% %time%
 cd %SERVER_CODE%/admin/loader
-call mvn install -PAddProject -Drun.config.ts=%SERVER_CONFIG% -Dserver=%SERVER% -Dname="Sample Project" -Ddescription="Sample project." -Dterminology=SNOMEDCT -Dversion=latest -Dscope.concepts=138875005 -Dscope.descendants.flag=true -Dadmin.user=admin 1> mvn.log
+call mvn install -PProject -Drun.config.ts=%SERVER_CONFIG% -Dserver=%SERVER% -Dname="Sample Project" -Ddescription="Sample project." -Dterminology=SNOMEDCT -Dversion=latest -Dscope.concepts=138875005 -Dscope.descendants.flag=true -Dadmin.user=admin 1> mvn.log
 IF %ERRORLEVEL% NEQ 0 (set error=1
 goto trailer)
 del /Q mvn.log
