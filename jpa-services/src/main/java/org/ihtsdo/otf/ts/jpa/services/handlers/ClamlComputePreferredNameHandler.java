@@ -95,7 +95,7 @@ public class ClamlComputePreferredNameHandler implements
   @Override
   public boolean isPreferredName(Description description,
     LanguageRefSetMember member) throws Exception {
-    return description.getTypeId().equals(dpnType) && description.isActive();
+    return isPreferredName(description);
   }
 
 }

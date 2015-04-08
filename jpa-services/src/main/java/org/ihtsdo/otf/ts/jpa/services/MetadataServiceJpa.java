@@ -685,7 +685,7 @@ public class MetadataServiceJpa extends RootServiceJpa implements
     javax.persistence.TypedQuery<Object[]> query =
         manager
             .createQuery(
-                "SELECT c.terminology, max(c.version) from ConceptJpa c group by c.terminology",
+                "SELECT c.terminology, max(c.terminologyVersion) from ConceptJpa c group by c.terminology",
                 Object[].class);
 
     List<Object[]> resultList = query.getResultList();

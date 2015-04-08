@@ -26,7 +26,7 @@ Project Structure
 
 Documentation
 -------------
-See http://wiki.terminology.tools/confluence/display/TS/TermServer+Home
+Find comprehensive documentation here: http://wiki.terminology.tools/confluence/display/TS/TermServer+Home
 
 License
 -------

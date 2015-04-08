@@ -6,7 +6,7 @@
 set SERVER_CODE=~/code
 set SERVER_CONFIG=~/config/config.properties
 set SERVER_DATA=~/data
-set SERVER=flase
+set SERVER=false
 echo "------------------------------------------------"
 echo "Starting ...`/bin/date`"
 echo "------------------------------------------------"
@@ -53,7 +53,7 @@ endif
 
 echo "    Add SNOMEDCT project ...`/bin/date`"
 cd $SERVER_HOME/admin/loader
-mvn install -PAddProject -Drun.config.ts=$SERVER_CONFIG -Dserver=$SERVER \
+mvn install -PProject -Drun.config.ts=$SERVER_CONFIG -Dserver=$SERVER \
   -Dname="Sample Project" -Ddescription="Sample project." \
   -Dterminology=SNOMEDCT -Dversion=latest \
   -Dscope.concepts=138875005 -Dscope.descendants.flag=true \
