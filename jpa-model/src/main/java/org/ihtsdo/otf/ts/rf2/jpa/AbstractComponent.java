@@ -46,7 +46,7 @@ public abstract class AbstractComponent implements Component {
 
   /** The active. */
   @Column(nullable = false)
-  private boolean active;
+  private boolean active = true;
 
   /** The published flag. */
   @Column(nullable = false)
@@ -54,7 +54,7 @@ public abstract class AbstractComponent implements Component {
 
   /** The publishable flag. */
   @Column(nullable = false)
-  private boolean publishable = false;
+  private boolean publishable = true;
 
   /** The module id. */
   @Column(nullable = false)

@@ -58,6 +58,9 @@ import org.ihtsdo.otf.ts.services.helpers.PushBackReader;
 public class Rf2DeltaLoaderAlgorithm extends HistoryServiceJpa implements
     Algorithm {
 
+  /** The commit count. */
+  private final static int commitCt = 5000;
+  
   /** Listeners. */
   private List<ProgressListener> listeners = new ArrayList<>();
 
@@ -151,7 +154,6 @@ public class Rf2DeltaLoaderAlgorithm extends HistoryServiceJpa implements
    */
   public Rf2DeltaLoaderAlgorithm() throws Exception {
     super();
-
   }
 
   /**
@@ -210,6 +212,8 @@ public class Rf2DeltaLoaderAlgorithm extends HistoryServiceJpa implements
 
       releaseVersionDate = ConfigUtility.DATE_FORMAT.parse(releaseVersion);
 
+      // Clear the query cache
+      
       // Track system level information
       long startTimeOrig = System.nanoTime();
 
@@ -325,12 +329,6 @@ public class Rf2DeltaLoaderAlgorithm extends HistoryServiceJpa implements
       loadConcepts();
 
       //
-      // Load relationships - stated and inferred
-      //
-      Logger.getLogger(getClass()).info("    Loading Relationships ...");
-      loadRelationships();
-
-      //
       // Load descriptions and definitions
       //
       Logger.getLogger(getClass()).info("    Loading Descriptions ...");
@@ -360,11 +358,21 @@ public class Rf2DeltaLoaderAlgorithm extends HistoryServiceJpa implements
           updateConcept(concept);
         }
       }
-      
+
       commit();
       clear();
       beginTransaction();
-      
+
+      //
+      // Load relationships - stated and inferred
+      //
+      Logger.getLogger(getClass()).info("    Loading Relationships ...");
+      loadRelationships();
+
+      commit();
+      clear();
+      beginTransaction();
+
       //
       // Load simple refset members
       //
@@ -1169,10 +1177,11 @@ public class Rf2DeltaLoaderAlgorithm extends HistoryServiceJpa implements
         }
 
         // Ideally this would be an exception, but the full SNOMED release
-        // contains early examples of complex map refsets without valid concepts.
+        // contains early examples of complex map refsets without valid
+        // concepts.
         if (concept == null) {
-          Logger.getLogger(getClass()).error("Complex map connected to nonexistent concept: "
-              + fields[5]);
+          Logger.getLogger(getClass()).error(
+              "Complex map connected to nonexistent concept: " + fields[5]);
           continue;
         }
 
@@ -1997,6 +2006,10 @@ public class Rf2DeltaLoaderAlgorithm extends HistoryServiceJpa implements
           sourceConcept = conceptCache.get(fields[4]);
         } else if (existingConceptCache.containsKey(fields[4])) {
           sourceConcept = existingConceptCache.get(fields[4]);
+          // concept not connected, so re-read from db
+          sourceConcept =
+              getSingleConcept(fields[4], terminology, terminologyVersion);
+
         } else {
           sourceConcept =
               getSingleConcept(fields[4], terminology, terminologyVersion);
@@ -2012,6 +2025,7 @@ public class Rf2DeltaLoaderAlgorithm extends HistoryServiceJpa implements
           destinationConcept = conceptCache.get(fields[5]);
         } else if (existingConceptCache.containsKey(fields[5])) {
           destinationConcept = existingConceptCache.get(fields[5]);
+          // no need to reread because we are not caching this concept
         } else {
           destinationConcept =
               getSingleConcept(fields[5], terminology, terminologyVersion);
@@ -2066,12 +2080,11 @@ public class Rf2DeltaLoaderAlgorithm extends HistoryServiceJpa implements
 
         // If relationship is changed, update it
         else if (relationship != null && !newRelationship.equals(relationship)) {
-          Logger.getLogger(getClass()).debug(
-              "  update relationship - " + newRelationship);
+          updateRelationship(newRelationship);
           // do not actually update the relationship, the concept is cached
           // and will be updated later, simply update the data structure
-          sourceConcept.removeRelationship(relationship);
-          sourceConcept.addRelationship(newRelationship);
+          // sourceConcept.removeRelationship(relationship);
+          // sourceConcept.addRelationship(newRelationship);
           objectsUpdated++;
         }
 
@@ -2086,6 +2099,13 @@ public class Rf2DeltaLoaderAlgorithm extends HistoryServiceJpa implements
         conceptCache.remove(newRelationship.getSourceConcept()
             .getTerminologyId());
         cacheConcept(newRelationship.getSourceConcept());
+        
+        // Commit every so often
+        if ((objectsAdded+objectsUpdated) % commitCt == 0) {
+          commit();
+          clear();
+          beginTransaction();
+        }
       }
     }
 
