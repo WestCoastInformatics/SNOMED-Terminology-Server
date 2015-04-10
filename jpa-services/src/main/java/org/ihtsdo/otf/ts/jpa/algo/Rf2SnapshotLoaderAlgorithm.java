@@ -582,6 +582,7 @@ public class Rf2SnapshotLoaderAlgorithm extends HistoryServiceJpa implements
             .parse(releaseVersion));
         relationship.setLastModifiedBy(loader);
         relationship.setPublished(true);
+        relationship.setWorkflowStatus(published);
 
         // get concepts from cache, they just need to have ids
         final Concept sourceConcept = conceptCache.get(fields[4]);
@@ -698,6 +699,7 @@ public class Rf2SnapshotLoaderAlgorithm extends HistoryServiceJpa implements
             .parse(releaseVersion));
         description.setLastModifiedBy(loader);
         description.setPublished(true);
+        description.setWorkflowStatus(published);
 
         // set concept from cache and set initial prev concept
         Concept concept = conceptCache.get(fields[4]);
