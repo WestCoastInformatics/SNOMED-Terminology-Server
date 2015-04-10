@@ -33,6 +33,8 @@ import org.ihtsdo.otf.ts.rf2.RefsetDescriptorRefSetMember;
 import org.ihtsdo.otf.ts.rf2.Relationship;
 import org.ihtsdo.otf.ts.rf2.SimpleMapRefSetMember;
 import org.ihtsdo.otf.ts.rf2.SimpleRefSetMember;
+import org.ihtsdo.otf.ts.rf2.jpa.AbstractAssociationReferenceRefSetMemberJpa;
+import org.ihtsdo.otf.ts.rf2.jpa.AbstractAttributeValueRefSetMemberJpa;
 import org.ihtsdo.otf.ts.rf2.jpa.AssociationReferenceConceptRefSetMemberJpa;
 import org.ihtsdo.otf.ts.rf2.jpa.AssociationReferenceDescriptionRefSetMemberJpa;
 import org.ihtsdo.otf.ts.rf2.jpa.AttributeValueConceptRefSetMemberJpa;
@@ -59,8 +61,8 @@ public class Rf2DeltaLoaderAlgorithm extends HistoryServiceJpa implements
     Algorithm {
 
   /** The commit count. */
-  private final static int commitCt = 5000;
-  
+  private final static int commitCt = 2000;
+
   /** Listeners. */
   private List<ProgressListener> listeners = new ArrayList<>();
 
@@ -111,18 +113,6 @@ public class Rf2DeltaLoaderAlgorithm extends HistoryServiceJpa implements
   /** The existing language ref set member ids. */
   private Set<String> existingLanguageRefSetMemberIds = new HashSet<>();
 
-  /** The existing simple ref set member ids. */
-  private Set<String> existingSimpleRefSetMemberIds = new HashSet<>();
-
-  /** The existing simple map ref set member ids. */
-  private Set<String> existingSimpleMapRefSetMemberIds = new HashSet<>();
-
-  /**
-   * The existing complex map ref set member ids. This also includes extended
-   * map ref set member ids.
-   */
-  private Set<String> existingComplexMapRefSetMemberIds = new HashSet<>();
-
   /** The existing description type ref set member ids. */
   private Set<String> existingDescriptionTypeRefSetMemberIds = new HashSet<>();
 
@@ -131,13 +121,6 @@ public class Rf2DeltaLoaderAlgorithm extends HistoryServiceJpa implements
 
   /** The existing module dependency ref set member ids. */
   private Set<String> existingModuleDependencyRefSetMemberIds = new HashSet<>();
-
-  /** The existing attribute value ref set member ids. */
-  private Set<String> existingAttributeValueRefSetMemberIds = new HashSet<>();
-
-  /** The existing association reference ref set member ids. */
-  private Set<String> existingAssociationReferenceRefSetMemberIds =
-      new HashSet<>();
 
   /** The loader. */
   final String loader = "loader";
@@ -213,7 +196,7 @@ public class Rf2DeltaLoaderAlgorithm extends HistoryServiceJpa implements
       releaseVersionDate = ConfigUtility.DATE_FORMAT.parse(releaseVersion);
 
       // Clear the query cache
-      
+
       // Track system level information
       long startTimeOrig = System.nanoTime();
 
@@ -260,28 +243,6 @@ public class Rf2DeltaLoaderAlgorithm extends HistoryServiceJpa implements
       Logger.getLogger(getClass()).info(
           "    count = " + existingRelationshipIds.size());
 
-      Logger.getLogger(getClass()).info("  Cache simple refset member ids");
-      existingSimpleRefSetMemberIds =
-          new HashSet<>(getAllSimpleRefSetMemberTerminologyIds(terminology,
-              terminologyVersion).getObjects());
-      Logger.getLogger(getClass()).info(
-          "    count = " + existingSimpleRefSetMemberIds.size());
-
-      Logger.getLogger(getClass()).info("  Cache simple map refset member ids");
-      existingSimpleMapRefSetMemberIds =
-          new HashSet<>(getAllSimpleMapRefSetMemberTerminologyIds(terminology,
-              terminologyVersion).getObjects());
-      Logger.getLogger(getClass()).info(
-          "    count = " + existingSimpleMapRefSetMemberIds.size());
-
-      Logger.getLogger(getClass())
-          .info("  Cache complex map refset member ids");
-      existingComplexMapRefSetMemberIds =
-          new HashSet<>(getAllComplexMapRefSetMemberTerminologyIds(terminology,
-              terminologyVersion).getObjects());
-      Logger.getLogger(getClass()).info(
-          "    count = " + existingComplexMapRefSetMemberIds.size());
-
       Logger.getLogger(getClass()).info(
           "  Cache description type refset member ids");
       existingDescriptionTypeRefSetMemberIds =
@@ -306,22 +267,6 @@ public class Rf2DeltaLoaderAlgorithm extends HistoryServiceJpa implements
       Logger.getLogger(getClass()).info(
           "    count = " + existingModuleDependencyRefSetMemberIds.size());
 
-      Logger.getLogger(getClass()).info(
-          "  Cache attribute value refset member ids");
-      existingAttributeValueRefSetMemberIds =
-          new HashSet<>(getAllAttributeValueRefSetMemberTerminologyIds(
-              terminology, terminologyVersion).getObjects());
-      Logger.getLogger(getClass()).info(
-          "    count = " + existingAttributeValueRefSetMemberIds.size());
-
-      Logger.getLogger(getClass()).info(
-          "  Cache association reference refset member ids");
-      existingAssociationReferenceRefSetMemberIds =
-          new HashSet<>(getAllAssociationReferenceRefSetMemberTerminologyIds(
-              terminology, terminologyVersion).getObjects());
-      Logger.getLogger(getClass()).info(
-          "    count = " + existingAssociationReferenceRefSetMemberIds.size());
-
       //
       // Load concepts
       //
@@ -339,7 +284,8 @@ public class Rf2DeltaLoaderAlgorithm extends HistoryServiceJpa implements
       //
       Logger.getLogger(getClass()).info("    Loading Language Ref Sets...");
       loadLanguageRefSetMembers();
-
+      existingLanguageRefSetMemberIds = null;
+      
       // Compute preferred names
       Logger.getLogger(getClass()).info(
           "  Compute preferred names for modified concepts");
@@ -363,12 +309,30 @@ public class Rf2DeltaLoaderAlgorithm extends HistoryServiceJpa implements
       clear();
       beginTransaction();
 
+      // cache existing concepts again (after relationships)
+      // Cascade objects are finished, these just need a concept with an id.
+      conceptCache.clear();
+      // Save descriptions cache for attributeValue/AssocationRef processing
+      // descriptionCache.clear();
+      languageRefSetMemberCache.clear();
+      Logger.getLogger(getClass()).info("  Cache concepts");
+      conceptList = getAllConcepts(terminology, terminologyVersion);
+      for (Concept c : conceptList.getObjects()) {
+        existingConceptCache.put(c.getTerminologyId(), c);
+      }
+      Logger.getLogger(getClass())
+          .info("    count = " + conceptList.getCount());
+
       //
       // Load relationships - stated and inferred
       //
       Logger.getLogger(getClass()).info("    Loading Relationships ...");
       loadRelationships();
 
+      // Clear relationships cache
+      relationshipCache = null;
+      existingRelationshipIds = null;
+      
       commit();
       clear();
       beginTransaction();
@@ -379,11 +343,19 @@ public class Rf2DeltaLoaderAlgorithm extends HistoryServiceJpa implements
       Logger.getLogger(getClass()).info("    Loading Simple Ref Sets...");
       loadSimpleRefSetMembers();
 
+      commit();
+      clear();
+      beginTransaction();
+
       //
       // Load simple map refset members
       //
       Logger.getLogger(getClass()).info("    Loading Simple Map Ref Sets...");
       loadSimpleMapRefSetMembers();
+
+      commit();
+      clear();
+      beginTransaction();
 
       //
       // Load complex map refset members
@@ -723,16 +695,6 @@ public class Rf2DeltaLoaderAlgorithm extends HistoryServiceJpa implements
                 + fields[0] + ", " + fields[4]);
           }
 
-          // Throw exception if it cant be found
-          if (description == null && existingDescriptionIds.contains(fields[0])) {
-            throw new Exception(
-                "** Description "
-                    + fields[0]
-                    + " is in existing id cache, but was not precached via concept "
-                    + concept.getTerminologyId());
-
-          }
-
           // Setup delta description (either new or based on existing one)
           Description newDescription = null;
           if (description == null) {
@@ -929,7 +891,19 @@ public class Rf2DeltaLoaderAlgorithm extends HistoryServiceJpa implements
    *
    * @throws Exception the exception
    */
+  @SuppressWarnings("unchecked")
   private void loadSimpleRefSetMembers() throws Exception {
+    Map<String, SimpleRefSetMember> cache = new HashMap<>();
+    javax.persistence.Query query =
+        manager
+            .createQuery("select c from SimpleRefSetMemberJpa c where terminologyVersion = :version and terminology = :terminology");
+    query.setParameter("terminology", terminology);
+    query.setParameter("version", terminologyVersion);
+    List<SimpleRefSetMemberJpa> members = query.getResultList();
+    for (SimpleRefSetMemberJpa member : members) {
+      cache.put(member.getTerminologyId(), member);
+    }
+
 
     // Setup variables
     String line = "";
@@ -960,9 +934,7 @@ public class Rf2DeltaLoaderAlgorithm extends HistoryServiceJpa implements
 
         // Get concept from cache or from db
         Concept concept = null;
-        if (conceptCache.containsKey(fields[5])) {
-          concept = conceptCache.get(fields[5]);
-        } else if (existingConceptCache.containsKey(fields[5])) {
+        if (existingConceptCache.containsKey(fields[5])) {
           concept = existingConceptCache.get(fields[5]);
         } else {
           // retrieve concept
@@ -975,9 +947,8 @@ public class Rf2DeltaLoaderAlgorithm extends HistoryServiceJpa implements
         // same object more than once per delta and nothing else
         // is connected to it.
         SimpleRefSetMember member = null;
-        if (existingSimpleRefSetMemberIds.contains(fields[0])) {
-          member =
-              getSimpleRefSetMember(fields[0], terminology, terminologyVersion);
+        if (cache.containsKey(fields[0])) {
+          member = cache.get(fields[0]);
         }
 
         SimpleRefSetMember newMember = null;
@@ -1033,6 +1004,18 @@ public class Rf2DeltaLoaderAlgorithm extends HistoryServiceJpa implements
    */
   private void loadSimpleMapRefSetMembers() throws Exception {
 
+    Map<String, SimpleMapRefSetMember> cache = new HashMap<>();
+    javax.persistence.Query query =
+        manager
+            .createQuery("select c from SimpleMapRefSetMemberJpa c where terminologyVersion = :version and terminology = :terminology");
+    query.setParameter("terminology", terminology);
+    query.setParameter("version", terminologyVersion);
+    @SuppressWarnings("unchecked")
+    List<SimpleMapRefSetMemberJpa> members = query.getResultList();
+    for (SimpleMapRefSetMemberJpa member : members) {
+      cache.put(member.getTerminologyId(), member);
+    }
+
     // Setup variables
     String line = "";
     objectCt = 0;
@@ -1062,9 +1045,7 @@ public class Rf2DeltaLoaderAlgorithm extends HistoryServiceJpa implements
 
         // Get concept from cache or from db
         Concept concept = null;
-        if (conceptCache.containsKey(fields[5])) {
-          concept = conceptCache.get(fields[5]);
-        } else if (existingConceptCache.containsKey(fields[5])) {
+        if (existingConceptCache.containsKey(fields[5])) {
           concept = existingConceptCache.get(fields[5]);
         } else {
           // retrieve concept
@@ -1077,10 +1058,8 @@ public class Rf2DeltaLoaderAlgorithm extends HistoryServiceJpa implements
         // same object more than once per delta and nothing else
         // is connected to it.
         SimpleMapRefSetMember member = null;
-        if (existingSimpleMapRefSetMemberIds.contains(fields[0])) {
-          member =
-              getSimpleMapRefSetMember(fields[0], terminology,
-                  terminologyVersion);
+        if (cache.containsKey(fields[0])) {
+          member = cache.get(fields[0]);
         }
 
         SimpleMapRefSetMember newMember = null;
@@ -1138,6 +1117,18 @@ public class Rf2DeltaLoaderAlgorithm extends HistoryServiceJpa implements
 
   private void loadComplexMapRefSetMembers() throws Exception {
 
+    Map<String, ComplexMapRefSetMember> cache = new HashMap<>();
+    javax.persistence.Query query =
+        manager
+            .createQuery("select c from ComplexMapRefSetMemberJpa c where terminologyVersion = :version and terminology = :terminology");
+    query.setParameter("terminology", terminology);
+    query.setParameter("version", terminologyVersion);
+    @SuppressWarnings("unchecked")
+    List<ComplexMapRefSetMemberJpa> members = query.getResultList();
+    for (ComplexMapRefSetMemberJpa member : members) {
+      cache.put(member.getTerminologyId(), member);
+    }
+
     // Setup variables
     String line = "";
     objectCt = 0;
@@ -1166,9 +1157,7 @@ public class Rf2DeltaLoaderAlgorithm extends HistoryServiceJpa implements
 
         // Get concept from cache or from db
         Concept concept = null;
-        if (conceptCache.containsKey(fields[5])) {
-          concept = conceptCache.get(fields[5]);
-        } else if (existingConceptCache.containsKey(fields[5])) {
+        if (existingConceptCache.containsKey(fields[5])) {
           concept = existingConceptCache.get(fields[5]);
         } else {
           // retrieve concept
@@ -1190,10 +1179,8 @@ public class Rf2DeltaLoaderAlgorithm extends HistoryServiceJpa implements
         // same object more than once per delta and nothing else
         // is connected to it.
         ComplexMapRefSetMember member = null;
-        if (existingComplexMapRefSetMemberIds.contains(fields[0])) {
-          member =
-              getComplexMapRefSetMember(fields[0], terminology,
-                  terminologyVersion);
+        if (cache.containsKey(fields[0])) {
+          member = cache.get(fields[0]);
         }
 
         ComplexMapRefSetMember newMember = null;
@@ -1240,6 +1227,15 @@ public class Rf2DeltaLoaderAlgorithm extends HistoryServiceJpa implements
         else {
           newMember.setEffectiveTime(member.getEffectiveTime());
         }
+
+        // Commit every so often
+        if ((objectsAdded + objectsUpdated) % commitCt == 0) {
+          Logger.getLogger(getClass()).info(
+              "    commit - " + (objectsAdded + objectsUpdated));
+          commit();
+          clear();
+          beginTransaction();
+        }
       }
     }
 
@@ -1255,7 +1251,17 @@ public class Rf2DeltaLoaderAlgorithm extends HistoryServiceJpa implements
    */
 
   private void loadExtendedMapRefSetMembers() throws Exception {
-
+    Map<String, ComplexMapRefSetMember> cache = new HashMap<>();
+    javax.persistence.Query query =
+        manager
+            .createQuery("select c from ComplexMapRefSetMemberJpa c where terminologyVersion = :version and terminology = :terminology");
+    query.setParameter("terminology", terminology);
+    query.setParameter("version", terminologyVersion);
+    @SuppressWarnings("unchecked")
+    List<ComplexMapRefSetMemberJpa> members = query.getResultList();
+    for (ComplexMapRefSetMemberJpa member : members) {
+      cache.put(member.getTerminologyId(), member);
+    }
     // Setup variables
     String line = "";
     objectCt = 0;
@@ -1285,9 +1291,7 @@ public class Rf2DeltaLoaderAlgorithm extends HistoryServiceJpa implements
 
         // Get concept from cache or from db
         Concept concept = null;
-        if (conceptCache.containsKey(fields[5])) {
-          concept = conceptCache.get(fields[5]);
-        } else if (existingConceptCache.containsKey(fields[5])) {
+        if (existingConceptCache.containsKey(fields[5])) {
           concept = existingConceptCache.get(fields[5]);
         } else {
           // retrieve concept
@@ -1300,10 +1304,8 @@ public class Rf2DeltaLoaderAlgorithm extends HistoryServiceJpa implements
         // same object more than once per delta and nothing else
         // is connected to it.
         ComplexMapRefSetMember member = null;
-        if (existingComplexMapRefSetMemberIds.contains(fields[0])) {
-          member =
-              getComplexMapRefSetMember(fields[0], terminology,
-                  terminologyVersion);
+        if (cache.containsKey(fields[0])) {
+          member = cache.get(fields[0]);
         }
 
         ComplexMapRefSetMember newMember = null;
@@ -1351,6 +1353,16 @@ public class Rf2DeltaLoaderAlgorithm extends HistoryServiceJpa implements
         else {
           newMember.setEffectiveTime(member.getEffectiveTime());
         }
+
+        // Commit every so often
+        if ((objectsAdded + objectsUpdated) % commitCt == 0) {
+          Logger.getLogger(getClass()).info(
+              "    commit - " + (objectsAdded + objectsUpdated));
+          commit();
+          clear();
+          beginTransaction();
+        }
+
       }
     }
 
@@ -1396,9 +1408,7 @@ public class Rf2DeltaLoaderAlgorithm extends HistoryServiceJpa implements
 
         // Get concept from cache or from db
         Concept concept = null;
-        if (conceptCache.containsKey(fields[5])) {
-          concept = conceptCache.get(fields[5]);
-        } else if (existingConceptCache.containsKey(fields[5])) {
+        if (existingConceptCache.containsKey(fields[5])) {
           concept = existingConceptCache.get(fields[5]);
         } else {
           // retrieve concept
@@ -1503,9 +1513,7 @@ public class Rf2DeltaLoaderAlgorithm extends HistoryServiceJpa implements
 
         // Get concept from cache or from db
         Concept concept = null;
-        if (conceptCache.containsKey(fields[5])) {
-          concept = conceptCache.get(fields[5]);
-        } else if (existingConceptCache.containsKey(fields[5])) {
+        if (existingConceptCache.containsKey(fields[5])) {
           concept = existingConceptCache.get(fields[5]);
         } else {
           // retrieve concept
@@ -1613,9 +1621,7 @@ public class Rf2DeltaLoaderAlgorithm extends HistoryServiceJpa implements
 
         // Get concept from cache or from db
         Concept concept = null;
-        if (conceptCache.containsKey(fields[5])) {
-          concept = conceptCache.get(fields[5]);
-        } else if (existingConceptCache.containsKey(fields[5])) {
+        if (existingConceptCache.containsKey(fields[5])) {
           concept = existingConceptCache.get(fields[5]);
         } else {
           // retrieve concept
@@ -1693,6 +1699,17 @@ public class Rf2DeltaLoaderAlgorithm extends HistoryServiceJpa implements
    */
 
   private void loadAttributeValueRefSetMembers() throws Exception {
+    Map<String, AttributeValueRefSetMember<?>> cache = new HashMap<>();
+    javax.persistence.Query query =
+        manager
+            .createQuery("select c from AbstractAttributeValueRefSetMemberJpa c where terminologyVersion = :version and terminology = :terminology");
+    query.setParameter("terminology", terminology);
+    query.setParameter("version", terminologyVersion);
+    @SuppressWarnings("unchecked")
+    List<AbstractAttributeValueRefSetMemberJpa<?>> members = query.getResultList();
+    for (AbstractAttributeValueRefSetMemberJpa<?> member : members) {
+      cache.put(member.getTerminologyId(), member);
+    }
 
     // Setup variables
     String line = "";
@@ -1726,9 +1743,7 @@ public class Rf2DeltaLoaderAlgorithm extends HistoryServiceJpa implements
         // Get concept from cache or from db
         Concept concept = null;
         Description description = null;
-        if (conceptCache.containsKey(fields[5])) {
-          concept = conceptCache.get(fields[5]);
-        } else if (existingConceptCache.containsKey(fields[5])) {
+        if (existingConceptCache.containsKey(fields[5])) {
           concept = existingConceptCache.get(fields[5]);
         }
         if (descriptionCache.containsKey(fields[5])) {
@@ -1746,10 +1761,8 @@ public class Rf2DeltaLoaderAlgorithm extends HistoryServiceJpa implements
         // No cache necessary because we will not encounter the
         // same object more than once per delta and nothing else
         // is connected to it.
-        if (existingAttributeValueRefSetMemberIds.contains(fields[0])) {
-          member =
-              getAttributeValueRefSetMember(fields[0], terminology,
-                  terminologyVersion);
+        if (cache.containsKey(fields[0])) {
+          member = cache.get(fields[0]);
         }
 
         AttributeValueRefSetMember<?> newMember = null;
@@ -1816,6 +1829,15 @@ public class Rf2DeltaLoaderAlgorithm extends HistoryServiceJpa implements
           newMember.setEffectiveTime(member.getEffectiveTime());
         }
 
+        // Commit every so often
+        if ((objectsAdded + objectsUpdated) % commitCt == 0) {
+          Logger.getLogger(getClass()).info(
+              "    commit - " + (objectsAdded + objectsUpdated));
+          commit();
+          clear();
+          beginTransaction();
+        }
+
       }
     }
 
@@ -1831,7 +1853,17 @@ public class Rf2DeltaLoaderAlgorithm extends HistoryServiceJpa implements
    */
 
   private void loadAssociationReferenceRefSetMembers() throws Exception {
-
+    Map<String, AssociationReferenceRefSetMember<?>> cache = new HashMap<>();
+    javax.persistence.Query query =
+        manager
+            .createQuery("select c from AbstractAssociationReferenceRefSetMemberJpa c where terminologyVersion = :version and terminology = :terminology");
+    query.setParameter("terminology", terminology);
+    query.setParameter("version", terminologyVersion);
+    @SuppressWarnings("unchecked")
+    List<AbstractAssociationReferenceRefSetMemberJpa<?>> members = query.getResultList();
+    for (AbstractAssociationReferenceRefSetMemberJpa<?> member : members) {
+      cache.put(member.getTerminologyId(), member);
+    }
     // Setup variables
     String line = "";
     objectCt = 0;
@@ -1865,9 +1897,7 @@ public class Rf2DeltaLoaderAlgorithm extends HistoryServiceJpa implements
         // Get concept from cache or from db
         Concept concept = null;
         Description description = null;
-        if (conceptCache.containsKey(fields[5])) {
-          concept = conceptCache.get(fields[5]);
-        } else if (existingConceptCache.containsKey(fields[5])) {
+        if (existingConceptCache.containsKey(fields[5])) {
           concept = existingConceptCache.get(fields[5]);
         }
         if (descriptionCache.containsKey(fields[5])) {
@@ -1885,10 +1915,8 @@ public class Rf2DeltaLoaderAlgorithm extends HistoryServiceJpa implements
         // No cache necessary because we will not encounter the
         // same object more than once per delta and nothing else
         // is connected to it.
-        if (existingAssociationReferenceRefSetMemberIds.contains(fields[0])) {
-          member =
-              getAssociationReferenceRefSetMember(fields[0], terminology,
-                  terminologyVersion);
+        if (cache.containsKey(fields[0])) {
+          member = cache.get(fields[0]);
         }
 
         AssociationReferenceRefSetMember<?> newMember = null;
@@ -1955,6 +1983,14 @@ public class Rf2DeltaLoaderAlgorithm extends HistoryServiceJpa implements
         else {
           newMember.setEffectiveTime(member.getEffectiveTime());
         }
+        // Commit every so often
+        if ((objectsAdded + objectsUpdated) % commitCt == 0) {
+          Logger.getLogger(getClass()).info(
+              "    commit - " + (objectsAdded + objectsUpdated));
+          commit();
+          clear();
+          beginTransaction();
+        }
 
       }
     }
@@ -2002,46 +2038,31 @@ public class Rf2DeltaLoaderAlgorithm extends HistoryServiceJpa implements
         // Retrieve source concept
         Concept sourceConcept = null;
         Concept destinationConcept = null;
-        if (conceptCache.containsKey(fields[4])) {
-          sourceConcept = conceptCache.get(fields[4]);
-        } else if (existingConceptCache.containsKey(fields[4])) {
+        if (existingConceptCache.containsKey(fields[4])) {
           sourceConcept = existingConceptCache.get(fields[4]);
-          // concept not connected, so re-read from db
-          sourceConcept =
-              getSingleConcept(fields[4], terminology, terminologyVersion);
-
-        } else {
-          sourceConcept =
-              getSingleConcept(fields[4], terminology, terminologyVersion);
         }
         if (sourceConcept == null) {
           throw new Exception("Relationship " + fields[0] + " source concept "
               + fields[4] + " cannot be found");
         }
-        cacheConcept(sourceConcept);
 
         // Retrieve destination concept
-        if (conceptCache.containsKey(fields[5])) {
-          destinationConcept = conceptCache.get(fields[5]);
-        } else if (existingConceptCache.containsKey(fields[5])) {
+        if (existingConceptCache.containsKey(fields[5])) {
           destinationConcept = existingConceptCache.get(fields[5]);
           // no need to reread because we are not caching this concept
-        } else {
-          destinationConcept =
-              getSingleConcept(fields[5], terminology, terminologyVersion);
         }
         if (destinationConcept == null) {
           throw new Exception("Relationship " + fields[0]
               + " destination concept " + fields[5] + " cannot be found");
         }
 
-        // Retrieve relationship
+        // Retrieve relationship if it exists
         Relationship relationship = null;
         if (relationshipCache.containsKey(fields[0])) {
           relationship = relationshipCache.get(fields[0]);
         } else if (existingRelationshipIds.contains(fields[0])) {
-          throw new Exception("Relationship unexpectedly not in cache: "
-              + fields[0] + ", " + sourceConcept.getTerminologyId());
+          relationship =
+              getRelationship(fields[0], terminology, terminologyVersion);
         }
 
         // Setup delta relationship (either new or based on existing one)
@@ -2074,17 +2095,12 @@ public class Rf2DeltaLoaderAlgorithm extends HistoryServiceJpa implements
         // If relationship is new, add it
         if (!existingRelationshipIds.contains(fields[0])) {
           newRelationship = addRelationship(newRelationship);
-          sourceConcept.addRelationship(newRelationship);
           objectsAdded++;
         }
 
         // If relationship is changed, update it
         else if (relationship != null && !newRelationship.equals(relationship)) {
           updateRelationship(newRelationship);
-          // do not actually update the relationship, the concept is cached
-          // and will be updated later, simply update the data structure
-          // sourceConcept.removeRelationship(relationship);
-          // sourceConcept.addRelationship(newRelationship);
           objectsUpdated++;
         }
 
@@ -2095,17 +2111,15 @@ public class Rf2DeltaLoaderAlgorithm extends HistoryServiceJpa implements
           }
         }
 
-        // forcably recache the concept
-        conceptCache.remove(newRelationship.getSourceConcept()
-            .getTerminologyId());
-        cacheConcept(newRelationship.getSourceConcept());
-        
         // Commit every so often
-        if ((objectsAdded+objectsUpdated) % commitCt == 0) {
+        if ((objectsAdded + objectsUpdated) % commitCt == 0) {
+          Logger.getLogger(getClass()).info(
+              "    commit - " + (objectsAdded + objectsUpdated));
           commit();
           clear();
           beginTransaction();
         }
+
       }
     }
 
@@ -2152,15 +2166,9 @@ public class Rf2DeltaLoaderAlgorithm extends HistoryServiceJpa implements
     existingDescriptionIds = null;
     existingRelationshipIds = null;
     existingLanguageRefSetMemberIds = null;
-    existingSimpleRefSetMemberIds = null;
-    existingSimpleMapRefSetMemberIds = null;
-    existingComplexMapRefSetMemberIds = null;
     existingDescriptionTypeRefSetMemberIds = null;
     existingRefsetDescriptorRefSetMemberIds = null;
     existingModuleDependencyRefSetMemberIds = null;
-    existingAttributeValueRefSetMemberIds = null;
-    existingAssociationReferenceRefSetMemberIds = null;
-
   }
 
 }

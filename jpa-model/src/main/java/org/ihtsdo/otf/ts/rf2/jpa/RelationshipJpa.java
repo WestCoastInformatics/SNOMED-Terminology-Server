@@ -33,7 +33,6 @@ public class RelationshipJpa extends AbstractComponent implements Relationship {
 
   /** The source concept. */
   @ManyToOne(targetEntity = ConceptJpa.class, optional = false)
-  @ContainedIn
   private Concept sourceConcept;
 
   /** The destination concept. */
