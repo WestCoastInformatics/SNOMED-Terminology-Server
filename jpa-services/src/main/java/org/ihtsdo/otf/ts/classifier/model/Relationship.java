@@ -1,3 +1,6 @@
+/*
+ * Copyright 2015 West Coast Informatics, LLC
+ */
 /**
  * Copyright (c) 2009 International Health Terminology Standards Development
  * Organisation

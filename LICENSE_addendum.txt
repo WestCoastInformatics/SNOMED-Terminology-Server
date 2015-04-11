@@ -1,0 +1,14 @@
+License Addendum
+
+The LICENSE.txt file applies to all files with the copyright header
+and all files containing code that is not otherwise licensed, including
+(but not limited to) .java, .js, .sql, .[c]sh, and .bat files.
+
+The project comes with sample data drived from third party data 
+sources.  To ensure compliance when using this project, you must
+sign up for a UMLS license here:
+
+http://www.nlm.nih.gov/databases/umls.html#license_request
+
+This ensures you have agreed to all terms and conditions related to
+the use of this sample data.
