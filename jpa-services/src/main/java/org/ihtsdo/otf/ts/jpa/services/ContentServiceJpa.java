@@ -714,7 +714,7 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
       String id = idHandler.getTerminologyId(concept);
       concept.setTerminologyId(id);
     }
-    if (idHandler == null) {
+    if (assignIdentifiersFlag && idHandler == null) {
       throw new Exception("Unable to find id handler for "
           + concept.getTerminology());
     }
@@ -895,7 +895,7 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
       }
       description.setTerminologyId(idHandler.getTerminologyId(description));
     }
-    if (idHandler == null) {
+    if (assignIdentifiersFlag && idHandler == null) {
       throw new Exception("Unable to find id handler for "
           + description.getTerminology());
     }
