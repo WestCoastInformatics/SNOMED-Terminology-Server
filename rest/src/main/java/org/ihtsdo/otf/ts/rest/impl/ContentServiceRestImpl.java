@@ -1,3 +1,6 @@
+/*
+ * Copyright 2015 West Coast Informatics, LLC
+ */
 package org.ihtsdo.otf.ts.rest.impl;
 
 import java.io.BufferedReader;
@@ -1331,7 +1334,7 @@ public class ContentServiceRestImpl extends RootServiceRestImpl implements
     throws Exception {
 
     Logger.getLogger(getClass()).info(
-        "RESTful POST call (ContentChange): /terminology/load/rf2/delta"
+        "RESTful POST call (ContentChange): /terminology/load/rf2/delta/"
             + terminology + " from input directory " + inputDir);
 
     // Track system level information
@@ -1533,6 +1536,8 @@ public class ContentServiceRestImpl extends RootServiceRestImpl implements
       algorithm.setReleaseVersion(releases.get(0));
       algorithm.setReaders(readers);
       algorithm.compute();
+      // cache this now while factory still open for cached services
+      TerminologyUtility.getInferredType(terminology, version);
       algorithm.close();
       algorithm = null;
       
@@ -1549,6 +1554,7 @@ public class ContentServiceRestImpl extends RootServiceRestImpl implements
         algorithm2.setReaders(readers);
         algorithm2.compute();
         algorithm2.close();
+        algorithm2.closeFactory();
         algorithm2 = null;
 
       }
@@ -1607,7 +1613,7 @@ public class ContentServiceRestImpl extends RootServiceRestImpl implements
 
     Logger.getLogger(getClass())
         .info(
-            "RESTful POST call (ContentChange): /terminology/load/rf2/snapshot"
+            "RESTful POST call (ContentChange): /terminology/load/rf2/snapshot/"
                 + terminology + "/" + version + " from input directory "
                 + inputDir);
 

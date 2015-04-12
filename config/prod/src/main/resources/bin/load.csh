@@ -1,12 +1,14 @@
 #!/bin/csh -f
+# Copyright 2015 West Coast Informatics, LLC
+#  This script is used to load terminology server data for the development
+# environment.  This data can be found in the config/data folder of the
+# distribution.
 
-#
-# Configure
-# 
+# Configure 
 set SERVER_CODE=~/code
 set SERVER_CONFIG=~/config/config.properties
 set SERVER_DATA=~/data
-set SERVER=flase
+set SERVER=false
 echo "------------------------------------------------"
 echo "Starting ...`/bin/date`"
 echo "------------------------------------------------"

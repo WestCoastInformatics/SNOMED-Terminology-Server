@@ -1,3 +1,6 @@
+/*
+ * Copyright 2015 West Coast Informatics, LLC
+ */
 package org.ihtsdo.otf.ts.jpa.algo;
 
 import java.util.ArrayList;
@@ -227,12 +230,14 @@ public class TransitiveClosureAlgorithm extends ContentServiceJpa implements
         Logger.getLogger(getClass()).info(
             "      " + ct + " codes processed ..." + new Date());
         commit();
+        clear();
         beginTransaction();
       }
     }
     // release memory
     descendantsMap = new HashMap<>();
     commit();
+    clear();
 
     Logger.getLogger(getClass()).info(
         "Finished computing transitive closure ... " + new Date());
