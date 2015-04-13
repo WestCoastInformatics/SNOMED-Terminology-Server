@@ -52,6 +52,7 @@ import org.ihtsdo.otf.ts.jpa.services.helper.TerminologyUtility;
 import org.ihtsdo.otf.ts.rest.ContentServiceRest;
 import org.ihtsdo.otf.ts.rf2.Concept;
 import org.ihtsdo.otf.ts.rf2.Description;
+import org.ihtsdo.otf.ts.rf2.Relationship;
 import org.ihtsdo.otf.ts.services.ContentService;
 import org.ihtsdo.otf.ts.services.HistoryService;
 import org.ihtsdo.otf.ts.services.MetadataService;
@@ -460,6 +461,51 @@ public class ContentServiceRestImpl extends RootServiceRestImpl implements
     }
 
   }
+  
+  /*
+   * (non-Javadoc)
+   * 
+   * @see
+   * org.ihtsdo.otf.ts.rest.ContentServiceRest#getRelationship(java.lang.String,
+   * java.lang.String, java.lang.String, java.lang.String)
+   */
+  @Override
+  @GET
+  @Path("/relationship/{terminology}/{version}/{terminologyId}")
+  @ApiOperation(value = "Get relationship by id, terminology, and version", notes = "Gets the relationship for the specified parameters. It assumes there is only one which may not be the case during dual independent review.", response = Relationship.class)
+  public Relationship getRelationship(
+    @ApiParam(value = "Relationship terminology id, e.g. 100114019", required = true) @PathParam("terminologyId") String terminologyId,
+    @ApiParam(value = "Relationship terminology name, e.g. SNOMEDCT", required = true) @PathParam("terminology") String terminology,
+    @ApiParam(value = "Relationship terminology version, e.g. latest", required = true) @PathParam("version") String version,
+    @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken)
+    throws Exception {
+
+    Logger.getLogger(getClass()).info(
+        "RESTful call (Content): /relationship/" + terminology + "/" + version
+            + "/" + terminologyId);
+
+    try {
+      authenticate(securityService, authToken, "retrieve the relationship",
+          UserRole.VIEWER);
+
+      ContentService contentService = new ContentServiceJpa();
+      Relationship relationship =
+          contentService.getRelationship(terminologyId, terminology, version);
+
+      if (relationship != null) {
+        contentService.getGraphResolutionHandler().resolve(relationship);
+      }
+
+      contentService.close();
+      return relationship;
+    } catch (Exception e) {
+      handleException(e, "trying to retrieve a relationship");
+      return null;
+    } finally {
+      securityService.close();
+    }
+
+  }
 
   /*
    * (non-Javadoc)
@@ -763,7 +809,7 @@ public class ContentServiceRestImpl extends RootServiceRestImpl implements
     @ApiParam(value = "Refset terminology id, e.g. 100114019", required = true) @PathParam("refSetId") String refSetId,
     @ApiParam(value = "Terminology name, e.g. SNOMEDCT", required = true) @PathParam("terminology") String terminology,
     @ApiParam(value = "Terminology version, e.g. latest", required = true) @PathParam("version") String version,
-    @ApiParam(value = "PFS Parameter, e.g. '{ \"startIndex\":\"1\", \"maxResults\":\"5\" }'", required = false) PfsParameterJpa pfs,
+    @ApiParam(value = "PFS Parameter, e.g. '{  \"startIndex\":\"1\", \"maxResults\":\"5\" }'", required = false) PfsParameterJpa pfs,
     @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken)
     throws Exception {
 
@@ -1037,6 +1083,40 @@ public class ContentServiceRestImpl extends RootServiceRestImpl implements
       securityService.close();
     }
   }
+  
+  @Override
+  @GET
+  @Path("/descriptionTypeMember/concept/{terminology}/{version}/{terminologyId}")
+  @ApiOperation(value = "Get description type refset members for a concept id.", notes = "Finds all attribute value refset members for the specified parameters.", response = DescriptionTypeRefSetMemberList.class)
+  public DescriptionTypeRefSetMemberList getDescriptionTypeRefSetMembersForConcept(
+    @ApiParam(value = "Concept id, e.g. 100114019", required = true) @PathParam("terminologyId") String terminologyId,
+    @ApiParam(value = "Terminology name, e.g. SNOMEDCT", required = true) @PathParam("terminology") String terminology,
+    @ApiParam(value = "Terminology version, e.g. latest", required = true) @PathParam("version") String version,
+    @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken)
+    throws Exception {
+
+    Logger.getLogger(getClass()).info(
+        "RESTful call (Content): /descriptionTypeMember/concept/" + terminology
+            + "/" + version + "/" + terminologyId);
+
+    try {
+      authenticate(securityService, authToken,
+          "retrieve description type refset members", UserRole.VIEWER);
+
+      ContentService contentService = new ContentServiceJpa();
+      DescriptionTypeRefSetMemberList result =
+          contentService.getDescriptionTypeRefSetMembersForConcept(terminologyId,
+              terminology, version);
+      contentService.close();
+      return result;
+    } catch (Exception e) {
+      handleException(e, "trying to retrieve description type refset members");
+      return null;
+    } finally {
+      securityService.close();
+    }
+  }
+
 
   /*
    * (non-Javadoc)

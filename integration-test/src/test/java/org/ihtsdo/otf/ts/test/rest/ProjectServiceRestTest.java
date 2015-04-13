@@ -2,15 +2,9 @@ package org.ihtsdo.otf.ts.test.rest;
 
 import java.util.Properties;
 
-import org.ihtsdo.otf.ts.helpers.ConceptList;
 import org.ihtsdo.otf.ts.helpers.ConfigUtility;
-import org.ihtsdo.otf.ts.helpers.PfsParameter;
-import org.ihtsdo.otf.ts.helpers.PfsParameterJpa;
-import org.ihtsdo.otf.ts.jpa.client.ContentClientRest;
 import org.ihtsdo.otf.ts.jpa.client.ProjectClientRest;
 import org.ihtsdo.otf.ts.jpa.client.SecurityClientRest;
-import org.ihtsdo.otf.ts.jpa.services.ContentServiceJpa;
-import org.ihtsdo.otf.ts.services.ContentService;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;

@@ -2663,7 +2663,7 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
             + terminologyId + "/" + terminology + "/" + version);
     javax.persistence.Query query =
         manager
-            .createQuery("select c from RefsetDescriptorRefSetMemberJpa c where referencedComponentId = :terminologyId and terminologyVersion = :version and terminology = :terminology order by attributeOrder");
+            .createQuery("select c from RefsetDescriptorRefSetMemberJpa c where refSetId = :terminologyId and terminologyVersion = :version and terminology = :terminology order by attributeOrder");
 
     try {
       query.setParameter("terminologyId", terminologyId);
@@ -2815,6 +2815,41 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
       DescriptionTypeRefSetMember c =
           (DescriptionTypeRefSetMember) query.getSingleResult();
       return c;
+    } catch (NoResultException e) {
+      return null;
+    }
+  }
+  
+
+  /*
+   * (non-Javadoc)
+   * 
+   * @see org.ihtsdo.otf.ts.services.ContentService#
+   * getDescriptionTypeRefSetMembersForDescription(java.lang.String, java.lang.String,
+   * java.lang.String)
+   */
+  @SuppressWarnings("unchecked")
+  @Override
+  public DescriptionTypeRefSetMemberList getDescriptionTypeRefSetMembersForConcept(
+    String terminologyId, String terminology, String version) throws Exception {
+    Logger.getLogger(getClass()).debug(
+        "Content Service - get descriptionType refset members for concept "
+            + terminologyId + "/" + terminology + "/" + version);
+    javax.persistence.Query query =
+        manager.createQuery("select a from DescriptionTypeRefSetMemberJpa a, "
+            + " DescriptionJpa d where d.terminologyId = :terminologyId "
+            + "and d.terminologyVersion = :version "
+            + "and d.terminology = :terminology and a.description = d");
+
+    try {
+      DescriptionTypeRefSetMemberList list = new DescriptionTypeRefSetMemberListJpa();
+
+      query.setParameter("terminologyId", terminologyId);
+      query.setParameter("terminology", terminology);
+      query.setParameter("version", version);
+      list.setObjects(query.getResultList());
+      list.setTotalCount(list.getObjects().size());
+      return list;
     } catch (NoResultException e) {
       return null;
     }
@@ -3184,7 +3219,7 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
     results.setTotalCount(fullTextQuery.getResultSize());
 
     // Apply paging and sorting parameters
-    // applyPfsToLuceneQuery(ConceptJpa.class, fullTextQuery, pfs);
+    applyPfsToLuceneQuery(ConceptJpa.class, fullTextQuery, pfs);
 
     // execute the query
     @SuppressWarnings("unchecked")

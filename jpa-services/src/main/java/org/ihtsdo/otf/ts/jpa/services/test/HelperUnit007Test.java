@@ -80,15 +80,15 @@ public class HelperUnit007Test {
 		c.setTerminologyId("1");
 		c.setDefaultPreferredName("1");
 
-		Logger.getLogger(getClass()).info(object.getConceptReport(c));
-		assertTrue(object.getConceptReport(c).contains("Concept = 1"));
-		assertFalse(object.getConceptReport(c).contains("Description"));
-		assertFalse(object.getConceptReport(c).contains("Relationship"));
-		assertFalse(object.getConceptReport(c).contains("AttributeValue"));
-		assertFalse(object.getConceptReport(c).contains("AssociationReference"));
-		assertFalse(object.getConceptReport(c).contains("ComplexMap"));
-		assertFalse(object.getConceptReport(c).contains("SimpleMap"));
-		assertFalse(object.getConceptReport(c).contains("Simple"));
+		Logger.getLogger(getClass()).info(ConceptReportHelper.getConceptReport(c));
+		assertTrue(ConceptReportHelper.getConceptReport(c).contains("Concept = 1"));
+		assertFalse(ConceptReportHelper.getConceptReport(c).contains("Description"));
+		assertFalse(ConceptReportHelper.getConceptReport(c).contains("Relationship"));
+		assertFalse(ConceptReportHelper.getConceptReport(c).contains("AttributeValue"));
+		assertFalse(ConceptReportHelper.getConceptReport(c).contains("AssociationReference"));
+		assertFalse(ConceptReportHelper.getConceptReport(c).contains("ComplexMap"));
+		assertFalse(ConceptReportHelper.getConceptReport(c).contains("SimpleMap"));
+		assertFalse(ConceptReportHelper.getConceptReport(c).contains("Simple"));
 
 		Description d = new DescriptionJpa();
 		d.setId(1L);
@@ -98,15 +98,15 @@ public class HelperUnit007Test {
 		d.setConcept(c);
 		c.addDescription(d);
 
-		Logger.getLogger(getClass()).info(object.getConceptReport(c));
-		assertTrue(object.getConceptReport(c).contains("Concept = 1"));
-		assertTrue(object.getConceptReport(c).contains("Description = 1"));
-		assertFalse(object.getConceptReport(c).contains("Relationship"));
-		assertFalse(object.getConceptReport(c).contains("AttributeValue"));
-		assertFalse(object.getConceptReport(c).contains("AssociationReference"));
-		assertFalse(object.getConceptReport(c).contains("ComplexMap"));
-		assertFalse(object.getConceptReport(c).contains("SimpleMap"));
-		assertFalse(object.getConceptReport(c).contains("Simple"));
+		Logger.getLogger(getClass()).info(ConceptReportHelper.getConceptReport(c));
+		assertTrue(ConceptReportHelper.getConceptReport(c).contains("Concept = 1"));
+		assertTrue(ConceptReportHelper.getConceptReport(c).contains("Description = 1"));
+		assertFalse(ConceptReportHelper.getConceptReport(c).contains("Relationship"));
+		assertFalse(ConceptReportHelper.getConceptReport(c).contains("AttributeValue"));
+		assertFalse(ConceptReportHelper.getConceptReport(c).contains("AssociationReference"));
+		assertFalse(ConceptReportHelper.getConceptReport(c).contains("ComplexMap"));
+		assertFalse(ConceptReportHelper.getConceptReport(c).contains("SimpleMap"));
+		assertFalse(ConceptReportHelper.getConceptReport(c).contains("Simple"));
 
 		Relationship r = new RelationshipJpa();
 		r.setId(1L);
@@ -115,112 +115,112 @@ public class HelperUnit007Test {
 		r.setSourceConcept(c);
 		r.setDestinationConcept(c);
 		c.addRelationship(r);
-		Logger.getLogger(getClass()).info(object.getConceptReport(c));
-		assertTrue(object.getConceptReport(c).contains("Concept = 1"));
-		assertTrue(object.getConceptReport(c).contains("Description = 1"));
-		assertTrue(object.getConceptReport(c).contains("Relationship = 1"));
-		assertFalse(object.getConceptReport(c).contains("AttributeValue"));
-		assertFalse(object.getConceptReport(c).contains("AssociationReference"));
-		assertFalse(object.getConceptReport(c).contains("ComplexMap"));
-		assertFalse(object.getConceptReport(c).contains("SimpleMap"));
-		assertFalse(object.getConceptReport(c).contains("Simple"));
+		Logger.getLogger(getClass()).info(ConceptReportHelper.getConceptReport(c));
+		assertTrue(ConceptReportHelper.getConceptReport(c).contains("Concept = 1"));
+		assertTrue(ConceptReportHelper.getConceptReport(c).contains("Description = 1"));
+		assertTrue(ConceptReportHelper.getConceptReport(c).contains("Relationship = 1"));
+		assertFalse(ConceptReportHelper.getConceptReport(c).contains("AttributeValue"));
+		assertFalse(ConceptReportHelper.getConceptReport(c).contains("AssociationReference"));
+		assertFalse(ConceptReportHelper.getConceptReport(c).contains("ComplexMap"));
+		assertFalse(ConceptReportHelper.getConceptReport(c).contains("SimpleMap"));
+		assertFalse(ConceptReportHelper.getConceptReport(c).contains("Simple"));
 
 		AttributeValueConceptRefSetMember avmember = new AttributeValueConceptRefSetMemberJpa();
 		avmember.setId(1L);
 		avmember.setTerminologyId("1");
 		avmember.setConcept(c);
 		c.addAttributeValueRefSetMember(avmember);
-		Logger.getLogger(getClass()).info(object.getConceptReport(c));
-		assertTrue(object.getConceptReport(c).contains("Concept = 1"));
-		assertTrue(object.getConceptReport(c).contains("Description = 1"));
-		assertTrue(object.getConceptReport(c).contains("Relationship = 1"));
-		assertTrue(object.getConceptReport(c).contains("AttributeValue = 1"));
-		assertFalse(object.getConceptReport(c).contains("AssociationReference"));
-		assertFalse(object.getConceptReport(c).contains("ComplexMap"));
-		assertFalse(object.getConceptReport(c).contains("SimpleMap"));
-		assertFalse(object.getConceptReport(c).contains("Simple"));
+		Logger.getLogger(getClass()).info(ConceptReportHelper.getConceptReport(c));
+		assertTrue(ConceptReportHelper.getConceptReport(c).contains("Concept = 1"));
+		assertTrue(ConceptReportHelper.getConceptReport(c).contains("Description = 1"));
+		assertTrue(ConceptReportHelper.getConceptReport(c).contains("Relationship = 1"));
+		assertTrue(ConceptReportHelper.getConceptReport(c).contains("AttributeValue = 1"));
+		assertFalse(ConceptReportHelper.getConceptReport(c).contains("AssociationReference"));
+		assertFalse(ConceptReportHelper.getConceptReport(c).contains("ComplexMap"));
+		assertFalse(ConceptReportHelper.getConceptReport(c).contains("SimpleMap"));
+		assertFalse(ConceptReportHelper.getConceptReport(c).contains("Simple"));
 
 		AssociationReferenceConceptRefSetMember asmember = new AssociationReferenceConceptRefSetMemberJpa();
 		asmember.setId(1L);
 		asmember.setTerminologyId("1");
 		asmember.setConcept(c);
 		c.addAssociationReferenceRefSetMember(asmember);
-		Logger.getLogger(getClass()).info(object.getConceptReport(c));
-		assertTrue(object.getConceptReport(c).contains("Concept = 1"));
-		assertTrue(object.getConceptReport(c).contains("Description = 1"));
-		assertTrue(object.getConceptReport(c).contains("Relationship = 1"));
-		assertTrue(object.getConceptReport(c).contains("AttributeValue = 1"));
-		assertTrue(object.getConceptReport(c).contains(
+		Logger.getLogger(getClass()).info(ConceptReportHelper.getConceptReport(c));
+		assertTrue(ConceptReportHelper.getConceptReport(c).contains("Concept = 1"));
+		assertTrue(ConceptReportHelper.getConceptReport(c).contains("Description = 1"));
+		assertTrue(ConceptReportHelper.getConceptReport(c).contains("Relationship = 1"));
+		assertTrue(ConceptReportHelper.getConceptReport(c).contains("AttributeValue = 1"));
+		assertTrue(ConceptReportHelper.getConceptReport(c).contains(
 				"AssociationReference = 1"));
-		assertFalse(object.getConceptReport(c).contains("ComplexMap"));
-		assertFalse(object.getConceptReport(c).contains("SimpleMap"));
-		assertFalse(object.getConceptReport(c).contains("Simple"));
+		assertFalse(ConceptReportHelper.getConceptReport(c).contains("ComplexMap"));
+		assertFalse(ConceptReportHelper.getConceptReport(c).contains("SimpleMap"));
+		assertFalse(ConceptReportHelper.getConceptReport(c).contains("Simple"));
 
 		ComplexMapRefSetMember cmmember = new ComplexMapRefSetMemberJpa();
 		cmmember.setId(1L);
 		cmmember.setTerminologyId("1");
 		cmmember.setConcept(c);
 		c.addComplexMapRefSetMember(cmmember);
-		Logger.getLogger(getClass()).info(object.getConceptReport(c));
-		assertTrue(object.getConceptReport(c).contains("Concept = 1"));
-		assertTrue(object.getConceptReport(c).contains("Description = 1"));
-		assertTrue(object.getConceptReport(c).contains("Relationship = 1"));
-		assertTrue(object.getConceptReport(c).contains("AttributeValue = 1"));
-		assertTrue(object.getConceptReport(c).contains(
+		Logger.getLogger(getClass()).info(ConceptReportHelper.getConceptReport(c));
+		assertTrue(ConceptReportHelper.getConceptReport(c).contains("Concept = 1"));
+		assertTrue(ConceptReportHelper.getConceptReport(c).contains("Description = 1"));
+		assertTrue(ConceptReportHelper.getConceptReport(c).contains("Relationship = 1"));
+		assertTrue(ConceptReportHelper.getConceptReport(c).contains("AttributeValue = 1"));
+		assertTrue(ConceptReportHelper.getConceptReport(c).contains(
 				"AssociationReference = 1"));
-		assertTrue(object.getConceptReport(c).contains("ComplexMap = 1"));
-		assertFalse(object.getConceptReport(c).contains("SimpleMap"));
-		assertFalse(object.getConceptReport(c).contains("Simple"));
+		assertTrue(ConceptReportHelper.getConceptReport(c).contains("ComplexMap = 1"));
+		assertFalse(ConceptReportHelper.getConceptReport(c).contains("SimpleMap"));
+		assertFalse(ConceptReportHelper.getConceptReport(c).contains("Simple"));
 
 		SimpleRefSetMember smember = new SimpleRefSetMemberJpa();
 		smember.setId(1L);
 		smember.setTerminologyId("1");
 		smember.setConcept(c);
 		c.addSimpleRefSetMember(smember);
-		Logger.getLogger(getClass()).info(object.getConceptReport(c));
-		assertTrue(object.getConceptReport(c).contains("Concept = 1"));
-		assertTrue(object.getConceptReport(c).contains("Description = 1"));
-		assertTrue(object.getConceptReport(c).contains("Relationship = 1"));
-		assertTrue(object.getConceptReport(c).contains("AttributeValue = 1"));
-		assertTrue(object.getConceptReport(c).contains(
+		Logger.getLogger(getClass()).info(ConceptReportHelper.getConceptReport(c));
+		assertTrue(ConceptReportHelper.getConceptReport(c).contains("Concept = 1"));
+		assertTrue(ConceptReportHelper.getConceptReport(c).contains("Description = 1"));
+		assertTrue(ConceptReportHelper.getConceptReport(c).contains("Relationship = 1"));
+		assertTrue(ConceptReportHelper.getConceptReport(c).contains("AttributeValue = 1"));
+		assertTrue(ConceptReportHelper.getConceptReport(c).contains(
 				"AssociationReference = 1"));
-		assertTrue(object.getConceptReport(c).contains("ComplexMap = 1"));
-		assertTrue(object.getConceptReport(c).contains("Simple = 1"));
-		assertFalse(object.getConceptReport(c).contains("SimpleMap"));
+		assertTrue(ConceptReportHelper.getConceptReport(c).contains("ComplexMap = 1"));
+		assertTrue(ConceptReportHelper.getConceptReport(c).contains("Simple = 1"));
+		assertFalse(ConceptReportHelper.getConceptReport(c).contains("SimpleMap"));
 
 		SimpleMapRefSetMember smmember = new SimpleMapRefSetMemberJpa();
 		smmember.setId(1L);
 		smmember.setTerminologyId("1");
 		smmember.setConcept(c);
 		c.addSimpleMapRefSetMember(smmember);
-		Logger.getLogger(getClass()).info(object.getConceptReport(c));
-		assertTrue(object.getConceptReport(c).contains("Concept = 1"));
-		assertTrue(object.getConceptReport(c).contains("Description = 1"));
-		assertTrue(object.getConceptReport(c).contains("Relationship = 1"));
-		assertTrue(object.getConceptReport(c).contains("AttributeValue = 1"));
-		assertTrue(object.getConceptReport(c).contains(
+		Logger.getLogger(getClass()).info(ConceptReportHelper.getConceptReport(c));
+		assertTrue(ConceptReportHelper.getConceptReport(c).contains("Concept = 1"));
+		assertTrue(ConceptReportHelper.getConceptReport(c).contains("Description = 1"));
+		assertTrue(ConceptReportHelper.getConceptReport(c).contains("Relationship = 1"));
+		assertTrue(ConceptReportHelper.getConceptReport(c).contains("AttributeValue = 1"));
+		assertTrue(ConceptReportHelper.getConceptReport(c).contains(
 				"AssociationReference = 1"));
-		assertTrue(object.getConceptReport(c).contains("ComplexMap = 1"));
-		assertTrue(object.getConceptReport(c).contains("SimpleMap = 1"));
-		assertTrue(object.getConceptReport(c).contains("Simple = 1"));
+		assertTrue(ConceptReportHelper.getConceptReport(c).contains("ComplexMap = 1"));
+		assertTrue(ConceptReportHelper.getConceptReport(c).contains("SimpleMap = 1"));
+		assertTrue(ConceptReportHelper.getConceptReport(c).contains("Simple = 1"));
 
 		// modify description and see if description report has correct elements
-		Logger.getLogger(getClass()).info(object.getDescriptionReport(d));
-		assertTrue(object.getDescriptionReport(d).contains("Description = 1"));
-		assertFalse(object.getDescriptionReport(d).contains("Language"));
-		assertFalse(object.getDescriptionReport(d).contains("AttributeValue"));
-		assertFalse(object.getDescriptionReport(d).contains(
+		Logger.getLogger(getClass()).info(ConceptReportHelper.getDescriptionReport(d));
+		assertTrue(ConceptReportHelper.getDescriptionReport(d).contains("Description = 1"));
+		assertFalse(ConceptReportHelper.getDescriptionReport(d).contains("Language"));
+		assertFalse(ConceptReportHelper.getDescriptionReport(d).contains("AttributeValue"));
+		assertFalse(ConceptReportHelper.getDescriptionReport(d).contains(
 				"AssociationReference"));
 
 		LanguageRefSetMember lrmember = new LanguageRefSetMemberJpa();
 		lrmember.setId(1L);
 		lrmember.setTerminologyId("1");
 		d.addLanguageRefSetMember(lrmember);
-		Logger.getLogger(getClass()).info(object.getDescriptionReport(d));
-		assertTrue(object.getDescriptionReport(d).contains("Description = 1"));
-		assertTrue(object.getDescriptionReport(d).contains("Language = 1"));
-		assertFalse(object.getDescriptionReport(d).contains("AttributeValue"));
-		assertFalse(object.getDescriptionReport(d).contains(
+		Logger.getLogger(getClass()).info(ConceptReportHelper.getDescriptionReport(d));
+		assertTrue(ConceptReportHelper.getDescriptionReport(d).contains("Description = 1"));
+		assertTrue(ConceptReportHelper.getDescriptionReport(d).contains("Language = 1"));
+		assertFalse(ConceptReportHelper.getDescriptionReport(d).contains("AttributeValue"));
+		assertFalse(ConceptReportHelper.getDescriptionReport(d).contains(
 				"AssociationReference"));
 
 		AttributeValueDescriptionRefSetMember avdmember = new AttributeValueDescriptionRefSetMemberJpa();
@@ -228,12 +228,12 @@ public class HelperUnit007Test {
 		avdmember.setTerminologyId("1");
 		avdmember.setDescription(d);
 		d.addAttributeValueRefSetMember(avdmember);
-		Logger.getLogger(getClass()).info(object.getDescriptionReport(d));
-		assertTrue(object.getDescriptionReport(d).contains("Description = 1"));
-		assertTrue(object.getDescriptionReport(d).contains("Language = 1"));
-		assertTrue(object.getDescriptionReport(d)
+		Logger.getLogger(getClass()).info(ConceptReportHelper.getDescriptionReport(d));
+		assertTrue(ConceptReportHelper.getDescriptionReport(d).contains("Description = 1"));
+		assertTrue(ConceptReportHelper.getDescriptionReport(d).contains("Language = 1"));
+		assertTrue(ConceptReportHelper.getDescriptionReport(d)
 				.contains("AttributeValue = 1"));
-		assertFalse(object.getDescriptionReport(d).contains(
+		assertFalse(ConceptReportHelper.getDescriptionReport(d).contains(
 				"AssociationReference"));
 		
 		AssociationReferenceDescriptionRefSetMember asdmember = new AssociationReferenceDescriptionRefSetMemberJpa();
@@ -241,12 +241,12 @@ public class HelperUnit007Test {
 		asdmember.setTerminologyId("1");
 		asdmember.setDescription(d);
 		d.addAssociationReferenceRefSetMember(asdmember);
-		Logger.getLogger(getClass()).info(object.getDescriptionReport(d));
-		assertTrue(object.getDescriptionReport(d).contains("Description = 1"));
-		assertTrue(object.getDescriptionReport(d).contains("Language = 1"));
-		assertTrue(object.getDescriptionReport(d)
+		Logger.getLogger(getClass()).info(ConceptReportHelper.getDescriptionReport(d));
+		assertTrue(ConceptReportHelper.getDescriptionReport(d).contains("Description = 1"));
+		assertTrue(ConceptReportHelper.getDescriptionReport(d).contains("Language = 1"));
+		assertTrue(ConceptReportHelper.getDescriptionReport(d)
 				.contains("AttributeValue = 1"));
-		assertTrue(object.getDescriptionReport(d).contains(
+		assertTrue(ConceptReportHelper.getDescriptionReport(d).contains(
 				"AssociationReference = 1"));
 	}
 	
@@ -258,14 +258,14 @@ public class HelperUnit007Test {
   public void testHelperDegenerateUse007() throws Exception {
     // provide a null concept
 	  try {
-		  object.getConceptReport(null);
+		  ConceptReportHelper.getConceptReport(null);
 		  fail("Attempt to getConceptReport() on null concept should throw an error.");
 	  } catch (Exception e) {
 		 // do nothing 
 	  }
 	  
 	  try {
-		  object.getDescriptionReport(null);
+		  ConceptReportHelper.getDescriptionReport(null);
 		  fail("Attempt to getDescriptionReport() on null description should throw an error.");
 	  } catch (Exception e) {
 		 // do nothing 

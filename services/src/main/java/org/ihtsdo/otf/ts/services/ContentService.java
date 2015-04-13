@@ -859,6 +859,19 @@ public interface ContentService extends RootService {
    */
   public DescriptionTypeRefSetMember getDescriptionTypeRefSetMember(
     String terminologyId, String terminology, String version) throws Exception;
+  
+  /**
+   * Returns the description type ref set members for concept.
+   *
+   * @param terminologyId the terminology id
+   * @param terminology the terminology
+   * @param version the version
+   * @return the description type ref set members for description
+   * @throws Exception the exception
+   */
+  public DescriptionTypeRefSetMemberList getDescriptionTypeRefSetMembersForConcept(
+    String terminologyId, String terminology, String version) throws Exception;
+ 
 
   /**
    * Returns the description type ref set members for the specified parameters.
@@ -1197,4 +1210,5 @@ public interface ContentService extends RootService {
    * @throws Exception the exception
    */
   public Map<String, Integer> getComponentStats(String terminology, String version) throws Exception;
+
 }

@@ -35,8 +35,8 @@ import org.ihtsdo.otf.ts.helpers.SimpleRefSetMemberListJpa;
 import org.ihtsdo.otf.ts.rest.ContentServiceRest;
 import org.ihtsdo.otf.ts.rf2.Concept;
 import org.ihtsdo.otf.ts.rf2.Description;
+import org.ihtsdo.otf.ts.rf2.Relationship;
 import org.ihtsdo.otf.ts.rf2.jpa.ConceptJpa;
-import org.ihtsdo.otf.ts.rf2.jpa.DescriptionJpa;
 
 import com.sun.jersey.api.client.Client;
 import com.sun.jersey.api.client.ClientResponse;
@@ -324,39 +324,6 @@ public class ContentClientRest implements ContentServiceRest {
         (ConceptListJpa) ConfigUtility.getGraphForString(resultString,
             ConceptListJpa.class);
     return list;
-  }
-
-  /*
-   * (non-Javadoc)
-   * 
-   * @see
-   * org.ihtsdo.otf.ts.rest.ContentServiceRest#getDescription(java.lang.String,
-   * java.lang.String, java.lang.String, java.lang.String)
-   */
-  @Override
-  public Description getDescription(String terminologyId, String terminology,
-    String version, String authToken) throws Exception {
-    Client client = Client.create();
-    WebResource resource =
-        client.resource(config.getProperty("base.url")
-            + "/content/description/" + terminology + "/" + version + "/"
-            + terminologyId);
-    ClientResponse response =
-        resource.accept(MediaType.APPLICATION_XML)
-            .header("Authorization", authToken).get(ClientResponse.class);
-
-    String resultString = response.getEntity(String.class);
-    if (response.getStatusInfo().getFamily() == Family.SUCCESSFUL) {
-      Logger.getLogger(getClass()).debug(resultString);
-    } else {
-      throw new Exception(response.toString());
-    }
-
-    // converting to object
-    DescriptionJpa description =
-        (DescriptionJpa) ConfigUtility.getGraphForString(resultString,
-            DescriptionJpa.class);
-    return description;
   }
 
   /*
@@ -1052,6 +1019,7 @@ public class ContentClientRest implements ContentServiceRest {
             resultString, AttributeValueRefSetMemberListJpa.class);
     return list;
   }
+  
 
   /*
    * (non-Javadoc)
@@ -1087,6 +1055,41 @@ public class ContentClientRest implements ContentServiceRest {
     return list;
   }
 
+
+  /*
+   * (non-Javadoc)
+   * 
+   * @see org.ihtsdo.otf.ts.rest.ContentServiceRest#
+   * getDescriptionTypeRefSetMembersForConcept(java.lang.String, java.lang.String,
+   * java.lang.String, java.lang.String)
+   */
+  @Override
+  public DescriptionTypeRefSetMemberList getDescriptionTypeRefSetMembersForConcept(
+    String terminologyId, String terminology, String version, String authToken)
+    throws Exception {
+    Client client = Client.create();
+    WebResource resource =
+        client.resource(config.getProperty("base.url")
+            + "/content/descriptionTypeMember/concept/" + terminology + "/"
+            + version + "/" + terminologyId);
+    ClientResponse response =
+        resource.accept(MediaType.APPLICATION_XML)
+            .header("Authorization", authToken).get(ClientResponse.class);
+
+    String resultString = response.getEntity(String.class);
+    if (response.getStatusInfo().getFamily() == Family.SUCCESSFUL) {
+      Logger.getLogger(getClass()).debug(resultString);
+    } else {
+      throw new Exception(response.toString());
+    }
+
+    // converting to object
+    DescriptionTypeRefSetMemberListJpa list =
+        (DescriptionTypeRefSetMemberListJpa) ConfigUtility.getGraphForString(
+            resultString, DescriptionTypeRefSetMemberListJpa.class);
+    return list;
+  }
+  
   /*
    * (non-Javadoc)
    * 
@@ -1222,5 +1225,20 @@ public class ContentClientRest implements ContentServiceRest {
             RelationshipListJpa.class);
     return list;
   }
+
+  @Override
+  public Description getDescription(String terminologyId, String terminology,
+    String version, String authToken) throws Exception {
+    // TODO Auto-generated method stub
+    return null;
+  }
+
+  @Override
+  public Relationship getRelationship(String terminologyId, String terminology,
+    String version, String authToken) throws Exception {
+    // TODO Auto-generated method stub
+    return null;
+  }
+
 
 }

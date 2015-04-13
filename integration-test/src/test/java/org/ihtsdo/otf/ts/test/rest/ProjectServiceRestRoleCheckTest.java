@@ -3,21 +3,13 @@
  */
 package org.ihtsdo.otf.ts.test.rest;
 
-import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import java.util.HashSet;
 import java.util.Set;
 
 import org.ihtsdo.otf.ts.User;
-import org.ihtsdo.otf.ts.helpers.ConceptList;
-import org.ihtsdo.otf.ts.helpers.ConceptListJpa;
-import org.ihtsdo.otf.ts.helpers.PfsParameterJpa;
-import org.ihtsdo.otf.ts.helpers.SearchResultList;
 import org.ihtsdo.otf.ts.jpa.ProjectJpa;
-import org.ihtsdo.otf.ts.rf2.Concept;
-import org.ihtsdo.otf.ts.rf2.Description;
-import org.ihtsdo.otf.ts.test.helpers.PfsParameterForConceptTest;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;

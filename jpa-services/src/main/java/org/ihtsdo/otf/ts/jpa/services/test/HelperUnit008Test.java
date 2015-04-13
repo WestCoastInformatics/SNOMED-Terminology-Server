@@ -44,7 +44,7 @@ public class HelperUnit008Test {
 
 
 
-  /**	/**
+  /**
 	 * Test normal use of the helper object.
 	 *
 	 * @throws Exception
@@ -67,7 +67,8 @@ public class HelperUnit008Test {
 		assertEquals(object.getScaledPercent(80, 100), 90);
 	}
 	
-  /* Test degenerate use of the helper object.
+  /**
+   * Test degenerate use of the object.
    *
    * @throws Exception the exception
    */
