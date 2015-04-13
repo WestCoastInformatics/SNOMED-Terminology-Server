@@ -1461,7 +1461,8 @@ public class HistoryServiceJpa extends ContentServiceJpa implements
   }
 
   /**
-   * Find release revision.
+   * Find release revision. This is the last revision in which an effective time
+   * value matches the parameter.
    *
    * @param <T> the generic type
    * @param id the id
@@ -1470,10 +1471,6 @@ public class HistoryServiceJpa extends ContentServiceJpa implements
    * @return the t
    * @throws ParseException the parse exception
    */
-  // TODO Do we want this to find the most recent version, or only this specific
-  // date?
-  // Should this trigger on effectiveTime, lastModified, or Version?
-  // Unsure what we're going for here, clarify
   private <T> T findReleaseRevision(Long id, Date release, Class<T> clazz)
     throws ParseException {
 
@@ -1483,6 +1480,8 @@ public class HistoryServiceJpa extends ContentServiceJpa implements
     // all revisions, returned as objects, not finding deleted entries
         .forRevisionsOfEntity(clazz, true, false)
 
+        .addProjection(AuditEntity.revisionNumber().max())
+
         // search by id
         .add(AuditEntity.id().eq(id))
 
@@ -1491,9 +1490,9 @@ public class HistoryServiceJpa extends ContentServiceJpa implements
 
     // execute query
     @SuppressWarnings("unchecked")
-    List<T> revisions = query.getResultList();
+    List<Long> revisions = query.getResultList();
     if (revisions.size() > 0) {
-      return revisions.get(0);
+      return reader.find(clazz, id, revisions.get(0));
     } else {
       return null;
     }
