@@ -1,3 +1,6 @@
+/*
+ * Copyright 2015 West Coast Informatics, LLC
+ */
 package org.ihtsdo.otf.ts.test.mojo;
 
 import java.io.File;
@@ -218,7 +221,7 @@ public class Rf2SnapshotAndDeltaLoadAndUnloadTest {
     // Add a SNOMEDCT project
     request = new DefaultInvocationRequest();
     request.setPomFile(new File("../admin/loader/pom.xml"));
-    request.setProfiles(Arrays.asList("AddProject"));
+    request.setProfiles(Arrays.asList("Project"));
     request.setGoals(Arrays.asList("clean", "install"));
     p = new Properties();
     p.setProperty("run.config.ts", System.getProperty("run.config.ts"));
@@ -312,7 +315,9 @@ public class Rf2SnapshotAndDeltaLoadAndUnloadTest {
     service = new ContentServiceJpa();
     Assert.assertEquals(0, service.getAllConcepts("SNOMEDCT", "latest")
         .getCount());
-
+    service.close();
+    service.closeFactory();
+    
     // Finish by clearing the DB again
     request = new DefaultInvocationRequest();
     request.setPomFile(new File("../admin/db/pom.xml"));

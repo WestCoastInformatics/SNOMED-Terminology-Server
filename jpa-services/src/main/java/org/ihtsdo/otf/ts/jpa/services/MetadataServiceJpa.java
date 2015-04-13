@@ -1,3 +1,6 @@
+/*
+ * Copyright 2015 West Coast Informatics, LLC
+ */
 package org.ihtsdo.otf.ts.jpa.services;
 
 import java.util.HashMap;
@@ -66,13 +69,13 @@ public class MetadataServiceJpa extends RootServiceJpa implements
       idNameMapList.put(MetadataKeys.Modules.toString(), modulesIdNameMap);
     }
 
-    Map<String, String> atNameMap =
-        getAttributeTypes(terminology, version);
+    Map<String, String> atNameMap = getAttributeTypes(terminology, version);
     if (atNameMap != null) {
       idNameMapList.put(MetadataKeys.Attribute_Types.toString(), atNameMap);
     }
 
-    Map<String, String> adNameMap = getAttributeDescriptions(terminology, version);
+    Map<String, String> adNameMap =
+        getAttributeDescriptions(terminology, version);
     if (adNameMap != null) {
       idNameMapList.put(MetadataKeys.Attribute_Descriptions.toString(),
           adNameMap);
@@ -122,26 +125,23 @@ public class MetadataServiceJpa extends RootServiceJpa implements
     Map<String, String> rctIdNameMap =
         getCharacteristicTypes(terminology, version);
     if (rctIdNameMap != null) {
-      idNameMapList.put(
-          MetadataKeys.Characteristic_Types.toString(),
+      idNameMapList.put(MetadataKeys.Characteristic_Types.toString(),
           rctIdNameMap);
     }
     Map<String, String> sctIdNameMap =
         getStatedCharacteristicTypes(terminology, version);
     if (rctIdNameMap != null) {
-      idNameMapList.put(
-          MetadataKeys.Stated_Characteristic_Types.toString(),
+      idNameMapList.put(MetadataKeys.Stated_Characteristic_Types.toString(),
           sctIdNameMap);
     }
-    
+
     Map<String, String> ictIdNameMap =
         getInferredCharacteristicTypes(terminology, version);
     if (rctIdNameMap != null) {
-      idNameMapList.put(
-          MetadataKeys.Inferred_Characteristic_Types.toString(),
+      idNameMapList.put(MetadataKeys.Inferred_Characteristic_Types.toString(),
           ictIdNameMap);
     }
-    
+
     Map<String, String> rmIdNameMap =
         getRelationshipModifiers(terminology, version);
     if (rmIdNameMap != null) {
@@ -541,12 +541,16 @@ public class MetadataServiceJpa extends RootServiceJpa implements
     }
   }
 
-  /* (non-Javadoc)
-   * @see org.ihtsdo.otf.ts.services.MetadataService#getInferredRelationshipTypes(java.lang.String, java.lang.String)
+  /*
+   * (non-Javadoc)
+   * 
+   * @see
+   * org.ihtsdo.otf.ts.services.MetadataService#getInferredRelationshipTypes
+   * (java.lang.String, java.lang.String)
    */
   @Override
-  public Map<String, String> getInferredCharacteristicTypes(
-    String terminology, String version) throws Exception {
+  public Map<String, String> getInferredCharacteristicTypes(String terminology,
+    String version) throws Exception {
     if (helperMap.containsKey(terminology)) {
       return helperMap.get(terminology).getInferredCharacteristicTypes(
           terminology, version);
@@ -556,12 +560,16 @@ public class MetadataServiceJpa extends RootServiceJpa implements
     }
   }
 
-  /* (non-Javadoc)
-   * @see org.ihtsdo.otf.ts.services.MetadataService#getStatedRelationshipTypes(java.lang.String, java.lang.String)
+  /*
+   * (non-Javadoc)
+   * 
+   * @see
+   * org.ihtsdo.otf.ts.services.MetadataService#getStatedRelationshipTypes(java
+   * .lang.String, java.lang.String)
    */
   @Override
-  public Map<String, String> getStatedCharacteristicTypes(
-    String terminology, String version) throws Exception {
+  public Map<String, String> getStatedCharacteristicTypes(String terminology,
+    String version) throws Exception {
     if (helperMap.containsKey(terminology)) {
       return helperMap.get(terminology).getStatedCharacteristicTypes(
           terminology, version);
@@ -578,11 +586,11 @@ public class MetadataServiceJpa extends RootServiceJpa implements
    * getCharacteristicTypes(java.lang.String, java.lang.String)
    */
   @Override
-  public Map<String, String> getCharacteristicTypes(
-    String terminology, String version) throws Exception {
+  public Map<String, String> getCharacteristicTypes(String terminology,
+    String version) throws Exception {
     if (helperMap.containsKey(terminology)) {
-      return helperMap.get(terminology).getCharacteristicTypes(
-          terminology, version);
+      return helperMap.get(terminology).getCharacteristicTypes(terminology,
+          version);
     } else {
       // return an empty map
       return new HashMap<>();
@@ -680,7 +688,7 @@ public class MetadataServiceJpa extends RootServiceJpa implements
     javax.persistence.TypedQuery<Object[]> query =
         manager
             .createQuery(
-                "SELECT c.terminology, max(c.version) from ConceptJpa c group by c.terminology",
+                "SELECT c.terminology, max(c.terminologyVersion) from ConceptJpa c group by c.terminology",
                 Object[].class);
 
     List<Object[]> resultList = query.getResultList();

@@ -1,3 +1,6 @@
+/*
+ * Copyright 2015 West Coast Informatics, LLC
+ */
 package org.ihtsdo.otf.ts.rest.impl;
 
 import java.io.BufferedReader;
@@ -1411,7 +1414,7 @@ public class ContentServiceRestImpl extends RootServiceRestImpl implements
     throws Exception {
 
     Logger.getLogger(getClass()).info(
-        "RESTful POST call (ContentChange): /terminology/load/rf2/delta"
+        "RESTful POST call (ContentChange): /terminology/load/rf2/delta/"
             + terminology + " from input directory " + inputDir);
 
     // Track system level information
@@ -1526,7 +1529,7 @@ public class ContentServiceRestImpl extends RootServiceRestImpl implements
         throw new Exception("Specified input directory does not exist");
       }
 
-      // Get the release versions
+      // Get the release versions (need to look in complex map too for October releases)
       Logger.getLogger(getClass()).info("  Get release versions");
       Rf2FileSorter sorter = new Rf2FileSorter();
       File conceptsFile =
@@ -1545,6 +1548,37 @@ public class ContentServiceRestImpl extends RootServiceRestImpl implements
           releaseSet.add(fields[1]);
         }
       }
+      reader.close();
+      File complexMapFile =
+          sorter.findFile(new File(inputDir, "Refset/Map"), "der2_iissscRefset_ComplexMap");
+      reader = new BufferedReader(new FileReader(complexMapFile));
+      while ((line = reader.readLine()) != null) {
+        final String fields[] = line.split("\t");
+        if (!fields[1].equals("effectiveTime")) {
+          try {
+            ConfigUtility.DATE_FORMAT.parse(fields[1]);
+          } catch (Exception e) {
+            throw new Exception("Improperly formatted date found: " + fields[1]);
+          }
+          releaseSet.add(fields[1]);
+        }
+      }
+      File extendedMapFile =
+          sorter.findFile(new File(inputDir, "Refset/Map"), "der2_iisssccRefset_ExtendedMap");
+      reader = new BufferedReader(new FileReader(extendedMapFile));
+      while ((line = reader.readLine()) != null) {
+        final String fields[] = line.split("\t");
+        if (!fields[1].equals("effectiveTime")) {
+          try {
+            ConfigUtility.DATE_FORMAT.parse(fields[1]);
+          } catch (Exception e) {
+            throw new Exception("Improperly formatted date found: " + fields[1]);
+          }
+          releaseSet.add(fields[1]);
+        }
+      }
+
+      
       reader.close();
       List<String> releases = new ArrayList<>(releaseSet);
       Collections.sort(releases);
@@ -1582,6 +1616,8 @@ public class ContentServiceRestImpl extends RootServiceRestImpl implements
       algorithm.setReleaseVersion(releases.get(0));
       algorithm.setReaders(readers);
       algorithm.compute();
+      // cache this now while factory still open for cached services
+      TerminologyUtility.getInferredType(terminology, version);
       algorithm.close();
       algorithm = null;
       
@@ -1598,6 +1634,7 @@ public class ContentServiceRestImpl extends RootServiceRestImpl implements
         algorithm2.setReaders(readers);
         algorithm2.compute();
         algorithm2.close();
+        algorithm2.closeFactory();
         algorithm2 = null;
 
       }
@@ -1656,7 +1693,7 @@ public class ContentServiceRestImpl extends RootServiceRestImpl implements
 
     Logger.getLogger(getClass())
         .info(
-            "RESTful POST call (ContentChange): /terminology/load/rf2/snapshot"
+            "RESTful POST call (ContentChange): /terminology/load/rf2/snapshot/"
                 + terminology + "/" + version + " from input directory "
                 + inputDir);
 
@@ -1724,26 +1761,23 @@ public class ContentServiceRestImpl extends RootServiceRestImpl implements
     }
   }
 
-  /*
-   * (non-Javadoc)
-   * 
-   * @see
-   * org.ihtsdo.otf.ts.rest.ContentServiceRest#computeTransitiveClosure(java
-   * .lang.String, java.lang.String)
+  /* (non-Javadoc)
+   * @see org.ihtsdo.otf.ts.rest.ContentServiceRest#computeTransitiveClosure(java.lang.String, java.lang.String, java.lang.String)
    */
   @Override
   @POST
-  @Path("/terminology/closure/compute/{terminology}")
+  @Path("/terminology/closure/compute/{terminology}/{version}")
   @ApiOperation(value = "Computes terminology transitive closure", notes = "Computes transitive closure for the latest version of the specified terminology")
   public void computeTransitiveClosure(
     @ApiParam(value = "Terminology, e.g. SNOMEDCT", required = true) @PathParam("terminology") String terminology,
+    @ApiParam(value = "Terminology, e.g. SNOMEDCT", required = true) @PathParam("version") String version,
     @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken)
 
   throws Exception {
 
     Logger.getLogger(getClass()).info(
         "RESTful POST call (ContentChange): /terminology/closure/compute/"
-            + terminology);
+            + terminology + "/" + version);
 
     // Track system level information
     long startTimeOrig = System.nanoTime();
@@ -1751,11 +1785,6 @@ public class ContentServiceRestImpl extends RootServiceRestImpl implements
     try {
       authenticate(securityService, authToken, "compute transitive closure",
           UserRole.ADMINISTRATOR);
-
-      // Compute transitive closure
-      MetadataService metadataService = new MetadataServiceJpa();
-      String version = metadataService.getLatestVersion(terminology);
-      metadataService.close();
 
       // Compute transitive closure
       Logger.getLogger(getClass()).info(

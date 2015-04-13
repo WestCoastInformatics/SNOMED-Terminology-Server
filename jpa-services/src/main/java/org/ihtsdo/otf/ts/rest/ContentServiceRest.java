@@ -1,4 +1,7 @@
 /*
+ * Copyright 2015 West Coast Informatics, LLC
+ */
+/*
  * 
  */
 package org.ihtsdo.otf.ts.rest;
@@ -18,12 +21,9 @@ import org.ihtsdo.otf.ts.helpers.SimpleMapRefSetMemberList;
 import org.ihtsdo.otf.ts.helpers.SimpleRefSetMemberList;
 import org.ihtsdo.otf.ts.rf2.Concept;
 import org.ihtsdo.otf.ts.rf2.Description;
-import org.ihtsdo.otf.ts.rf2.Relationship;
 
 /**
- * Represents content available via a REST service.
- *
- * @author ${author}
+ * Represents a content available via a REST service.
  */
 public interface ContentServiceRest {
 
@@ -131,6 +131,19 @@ public interface ContentServiceRest {
   public ConceptList findAncestorConcepts(String terminologyId,
     String terminology, String version, PfsParameterJpa pfs, String authToken)
     throws Exception;
+
+  /**
+   * Returns the description for the specified parameters.
+   *
+   * @param terminologyId the terminology id
+   * @param terminology the terminology
+   * @param version the version
+   * @param authToken the auth token
+   * @return the description
+   * @throws Exception the exception
+   */
+  public Description getDescription(String terminologyId, String terminology,
+    String version, String authToken) throws Exception;
 
   /**
    * Find association reference ref set members.
@@ -406,11 +419,12 @@ public interface ContentServiceRest {
    * Compute transitive closure for latest version of a terminology.
    *
    * @param terminology the terminology
+   * @param version the version
    * @param authToken the auth token
    * @throws Exception the exception
    */
-  public void computeTransitiveClosure(String terminology, String authToken)
-    throws Exception;
+  public void computeTransitiveClosure(String terminology, String version,
+    String authToken) throws Exception;
 
   /**
    * Load terminology snapshot from RF2 directory.
@@ -469,46 +483,5 @@ public interface ContentServiceRest {
    */
   public void removeTerminology(String terminology, String version,
     String authToken) throws Exception;
-
-
-  /**
-   * Returns the description type ref set members for concept.
-   *
-   * @param terminologyId the terminology id
-   * @param terminology the terminology
-   * @param version the version
-   * @param authToken the auth token
-   * @return the description type ref set members for concept
-   * @throws Exception the exception
-   */
-  public DescriptionTypeRefSetMemberList getDescriptionTypeRefSetMembersForConcept(
-    String terminologyId, String terminology, String version, String authToken)
-    throws Exception;
-
-  /**
-   * Returns the description.
-   *
-   * @param terminologyId the terminology id
-   * @param terminology the terminology
-   * @param version the version
-   * @param authToken the auth token
-   * @return the description
-   * @throws Exception the exception
-   */
-  public Description getDescription(String terminologyId, String terminology,
-    String version, String authToken) throws Exception;
-
-  /**
-   * Returns the relationship.
-   *
-   * @param terminologyId the terminology id
-   * @param terminology the terminology
-   * @param version the version
-   * @param authToken the auth token
-   * @return the relationship
-   * @throws Exception the exception
-   */
-  Relationship getRelationship(String terminologyId, String terminology,
-    String version, String authToken) throws Exception;
 
 }

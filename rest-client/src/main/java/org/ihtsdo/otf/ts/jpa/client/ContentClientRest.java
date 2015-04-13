@@ -1,3 +1,6 @@
+/*
+ * Copyright 2015 West Coast Informatics, LLC
+ */
 package org.ihtsdo.otf.ts.jpa.client;
 
 import java.util.Properties;
@@ -140,7 +143,7 @@ public class ContentClientRest implements ContentServiceRest {
             + terminology + "/" + version + "/query/" + searchString);
     String pfsString =
         ConfigUtility.getStringForGraph(pfs == null ? new PfsParameterJpa()
-        : pfs);
+            : pfs);
     Logger.getLogger(getClass()).debug(pfsString);
     ClientResponse response =
         resource.accept(MediaType.APPLICATION_XML)
@@ -181,7 +184,7 @@ public class ContentClientRest implements ContentServiceRest {
             + "/descendants");
     String pfsString =
         ConfigUtility.getStringForGraph(pfs == null ? new PfsParameterJpa()
-        : pfs);
+            : pfs);
     Logger.getLogger(getClass()).debug(pfsString);
     ClientResponse response =
         resource.accept(MediaType.APPLICATION_XML)
@@ -221,7 +224,7 @@ public class ContentClientRest implements ContentServiceRest {
             + terminology + "/" + version + "/" + terminologyId + "/children");
     String pfsString =
         ConfigUtility.getStringForGraph(pfs == null ? new PfsParameterJpa()
-        : pfs);
+            : pfs);
     Logger.getLogger(getClass()).debug(pfsString);
     ClientResponse response =
         resource.accept(MediaType.APPLICATION_XML)
@@ -264,7 +267,7 @@ public class ContentClientRest implements ContentServiceRest {
             + terminology + "/" + version + "/" + terminologyId + "/parents");
     String pfsString =
         ConfigUtility.getStringForGraph(pfs == null ? new PfsParameterJpa()
-        : pfs);
+            : pfs);
     Logger.getLogger(getClass()).debug(pfsString);
     ClientResponse response =
         resource.accept(MediaType.APPLICATION_XML)
@@ -304,7 +307,7 @@ public class ContentClientRest implements ContentServiceRest {
             + terminology + "/" + version + "/" + terminologyId + "/ancestors");
     String pfsString =
         ConfigUtility.getStringForGraph(pfs == null ? new PfsParameterJpa()
-        : pfs);
+            : pfs);
     Logger.getLogger(getClass()).debug(pfsString);
     ClientResponse response =
         resource.accept(MediaType.APPLICATION_XML)
@@ -475,15 +478,16 @@ public class ContentClientRest implements ContentServiceRest {
    * 
    * @see
    * org.ihtsdo.otf.ts.rest.ContentServiceRest#computeTransitiveClosure(java
-   * .lang.String, java.lang.String)
+   * .lang.String, java.lang.String, java.lang.String)
    */
   @Override
-  public void computeTransitiveClosure(String terminology, String authToken)
-    throws Exception {
+  public void computeTransitiveClosure(String terminology, String version,
+    String authToken) throws Exception {
     Client client = Client.create();
     WebResource resource =
         client.resource(config.getProperty("base.url")
-            + "/content/terminology/closure/compute/" + terminology);
+            + "/content/terminology/closure/compute/" + terminology + "/"
+            + version);
     ClientResponse response =
         resource.accept(MediaType.APPLICATION_XML)
             .header("Authorization", authToken)
@@ -669,7 +673,7 @@ public class ContentClientRest implements ContentServiceRest {
             + version + "/" + refSetId);
     String pfsString =
         ConfigUtility.getStringForGraph(pfs == null ? new PfsParameterJpa()
-        : pfs);
+            : pfs);
     Logger.getLogger(getClass()).debug(pfsString);
     ClientResponse response =
         resource.accept(MediaType.APPLICATION_XML)
@@ -710,7 +714,7 @@ public class ContentClientRest implements ContentServiceRest {
             + "/" + refSetId);
     String pfsString =
         ConfigUtility.getStringForGraph(pfs == null ? new PfsParameterJpa()
-        : pfs);
+            : pfs);
     Logger.getLogger(getClass()).debug(pfsString);
     ClientResponse response =
         resource.accept(MediaType.APPLICATION_XML)
@@ -819,7 +823,7 @@ public class ContentClientRest implements ContentServiceRest {
             + "/" + refSetId);
     String pfsString =
         ConfigUtility.getStringForGraph(pfs == null ? new PfsParameterJpa()
-        : pfs);
+            : pfs);
     Logger.getLogger(getClass()).debug(pfsString);
     ClientResponse response =
         resource.accept(MediaType.APPLICATION_XML)
@@ -860,7 +864,7 @@ public class ContentClientRest implements ContentServiceRest {
             + "/" + refSetId);
     String pfsString =
         ConfigUtility.getStringForGraph(pfs == null ? new PfsParameterJpa()
-        : pfs);
+            : pfs);
     Logger.getLogger(getClass()).debug(pfsString);
     ClientResponse response =
         resource.accept(MediaType.APPLICATION_XML)

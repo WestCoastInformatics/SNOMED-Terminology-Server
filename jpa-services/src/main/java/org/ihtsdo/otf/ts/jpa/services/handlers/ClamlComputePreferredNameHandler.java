@@ -1,3 +1,6 @@
+/*
+ * Copyright 2015 West Coast Informatics, LLC
+ */
 package org.ihtsdo.otf.ts.jpa.services.handlers;
 
 import java.util.Properties;
@@ -95,7 +98,7 @@ public class ClamlComputePreferredNameHandler implements
   @Override
   public boolean isPreferredName(Description description,
     LanguageRefSetMember member) throws Exception {
-    return description.getTypeId().equals(dpnType) && description.isActive();
+    return isPreferredName(description);
   }
 
 }

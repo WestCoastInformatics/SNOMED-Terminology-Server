@@ -1,3 +1,6 @@
+/*
+ * Copyright 2015 West Coast Informatics, LLC
+ */
 package org.ihtsdo.otf.ts.test.helpers;
 
 import java.lang.reflect.InvocationTargetException;
@@ -12,18 +15,13 @@ import org.ihtsdo.otf.ts.helpers.PfsParameter;
 import org.ihtsdo.otf.ts.helpers.PfsParameterJpa;
 import org.ihtsdo.otf.ts.helpers.ResultList;
 
-// TODO: Auto-generated Javadoc
 /**
- * The Class DegenerateUseMethodTestHelper.
- *
- * @author ${author}
+ * Testing class for degenerate use test helper.
  */
 public class DegenerateUseMethodTestHelper {
 
   /**
    * The Enum ExpectedFailure.
-   *
-   * @author ${author}
    */
   public enum ExpectedFailure {
 

@@ -1,3 +1,6 @@
+/*
+ * Copyright 2015 West Coast Informatics, LLC
+ */
 package org.ihtsdo.otf.ts.jpa.services;
 
 import java.text.ParseException;
@@ -51,7 +54,11 @@ import org.ihtsdo.otf.ts.helpers.SimpleMapRefSetMemberListJpa;
 import org.ihtsdo.otf.ts.helpers.SimpleRefSetMemberList;
 import org.ihtsdo.otf.ts.helpers.SimpleRefSetMemberListJpa;
 import org.ihtsdo.otf.ts.jpa.ReleaseInfoJpa;
+import org.ihtsdo.otf.ts.rf2.AssociationReferenceConceptRefSetMember;
+import org.ihtsdo.otf.ts.rf2.AssociationReferenceDescriptionRefSetMember;
 import org.ihtsdo.otf.ts.rf2.AssociationReferenceRefSetMember;
+import org.ihtsdo.otf.ts.rf2.AttributeValueConceptRefSetMember;
+import org.ihtsdo.otf.ts.rf2.AttributeValueDescriptionRefSetMember;
 import org.ihtsdo.otf.ts.rf2.AttributeValueRefSetMember;
 import org.ihtsdo.otf.ts.rf2.ComplexMapRefSetMember;
 import org.ihtsdo.otf.ts.rf2.Component;
@@ -367,25 +374,30 @@ public class HistoryServiceJpa extends ContentServiceJpa implements
         findReleaseRevision(id, release, LanguageRefSetMemberJpa.class);
     return revision;
   }
-  
+
   /*
    * (non-Javadoc)
    * 
    * @see org.ihtsdo.otf.mapping.services.ContentService#
-   * getAbstractAssociationReferenceRefSetMembersModifiedSinceDate(java.lang.String, java.util.Date)
+   * getAbstractAssociationReferenceRefSetMembersModifiedSinceDate
+   * (java.lang.String, java.util.Date)
    */
   @SuppressWarnings("rawtypes")
   @Override
-  public AssociationReferenceRefSetMemberList findAbstractAssociationReferenceRefSetMembersModifiedSinceDate(
+  public AssociationReferenceRefSetMemberList findAssociationReferenceRefSetMembersModifiedSinceDate(
     String terminology, Date date, PfsParameter pfs) throws Exception {
-    Logger.getLogger(getClass()).debug(
-        "History Service - find abstractAssociationReferenceRefSetMembers modified since date "
-            + terminology + ", " + date);
+    Logger
+        .getLogger(getClass())
+        .debug(
+            "History Service - find abstractAssociationReferenceRefSetMembers modified since date "
+                + terminology + ", " + date);
     int[] totalCt = new int[1];
     List<AbstractAssociationReferenceRefSetMemberJpa> results =
-        findModifiedSinceDateFromQuery(AbstractAssociationReferenceRefSetMemberJpa.class, terminology,
+        findModifiedSinceDateFromQuery(
+            AbstractAssociationReferenceRefSetMemberJpa.class, terminology,
             date, pfs, totalCt);
-    AssociationReferenceRefSetMemberList resultList = new AssociationReferenceRefSetMemberListJpa();
+    AssociationReferenceRefSetMemberList resultList =
+        new AssociationReferenceRefSetMemberListJpa();
     resultList.setTotalCount(totalCt[0]);
     for (AssociationReferenceRefSetMember<?> abstractAssociationReferenceRefSetMember : results) {
       resultList.addObject(abstractAssociationReferenceRefSetMember);
@@ -396,25 +408,27 @@ public class HistoryServiceJpa extends ContentServiceJpa implements
   /*
    * (non-Javadoc)
    * 
-   * @see
-   * org.ihtsdo.otf.ts.services.HistoryService#findAbstractAssociationReferenceRefSetMemberRevisions(java
-   * .lang.Long, java.util.Date, java.util.Date, boolean,
+   * @see org.ihtsdo.otf.ts.services.HistoryService#
+   * findAbstractAssociationReferenceRefSetMemberRevisions(java .lang.Long,
+   * java.util.Date, java.util.Date, boolean,
    * org.ihtsdo.otf.ts.helpers.PfsParameter)
    */
   @SuppressWarnings({
       "rawtypes", "unchecked"
   })
   @Override
-  public AssociationReferenceRefSetMemberList findAbstractAssociationReferenceRefSetMemberRevisions(Long id, Date startDate,
-    Date endDate, PfsParameter pfs) {
+  public AssociationReferenceRefSetMemberList findAssociationReferenceRefSetMemberRevisions(
+    Long id, Date startDate, Date endDate, PfsParameter pfs) {
     Logger.getLogger(getClass()).debug(
-        "History Service - find abstractAssociationReferenceRefSetMember revisions " + id + "," + startDate
-            + ", " + endDate);
+        "History Service - find abstractAssociationReferenceRefSetMember revisions "
+            + id + "," + startDate + ", " + endDate);
     List<AbstractAssociationReferenceRefSetMemberJpa> revisions =
-        findRevisions(id, AbstractAssociationReferenceRefSetMemberJpa.class, startDate, endDate, pfs);
-   
+        findRevisions(id, AbstractAssociationReferenceRefSetMemberJpa.class,
+            startDate, endDate, pfs);
+
     // Repackage as AbstractAssociationReferenceRefSetMemberList
-    AssociationReferenceRefSetMemberList results = new AssociationReferenceRefSetMemberListJpa();
+    AssociationReferenceRefSetMemberList results =
+        new AssociationReferenceRefSetMemberListJpa();
     results.setTotalCount(revisions.size());
     for (AssociationReferenceRefSetMember<? extends Component> associationReferenceRefSetMember : revisions) {
       results.addObject(associationReferenceRefSetMember);
@@ -425,31 +439,35 @@ public class HistoryServiceJpa extends ContentServiceJpa implements
   /*
    * (non-Javadoc)
    * 
-   * @see
-   * org.ihtsdo.otf.ts.services.HistoryService#findAbstractAssociationReferenceRefSetMemberReleaseRevision
+   * @see org.ihtsdo.otf.ts.services.HistoryService#
+   * findAbstractAssociationReferenceRefSetMemberReleaseRevision
    * (java.lang.Long, java.lang.String)
    */
   @SuppressWarnings("unchecked")
   @Override
-  public AssociationReferenceRefSetMember<?> findAbstractAssociationReferenceRefSetMemberReleaseRevision(Long id, Date release)
-    throws Exception {
-    Logger.getLogger(getClass()).debug(
-        "History Service - find abstractAssociationReferenceRefSetMember release revision " + id + ","
-            + release);
+  public AssociationReferenceRefSetMember<?> findAssociationReferenceRefSetMemberReleaseRevision(
+    Long id, Date release) throws Exception {
+    Logger
+        .getLogger(getClass())
+        .debug(
+            "History Service - find abstractAssociationReferenceRefSetMember release revision "
+                + id + "," + release);
 
     AbstractAssociationReferenceRefSetMemberJpa<? extends Component> revision =
-        findReleaseRevision(id, release, AbstractAssociationReferenceRefSetMemberJpa.class);
+        findReleaseRevision(id, release,
+            AbstractAssociationReferenceRefSetMemberJpa.class);
     return revision;
   }
-  
+
   /*
    * (non-Javadoc)
    * 
    * @see org.ihtsdo.otf.mapping.services.ContentService#
-   * getAttributeValueRefSetMembersModifiedSinceDate(java.lang.String, java.util.Date)
+   * getAttributeValueRefSetMembersModifiedSinceDate(java.lang.String,
+   * java.util.Date)
    */
   @SuppressWarnings({
-      "rawtypes"
+    "rawtypes"
   })
   @Override
   public AttributeValueRefSetMemberList findAttributeValueRefSetMembersModifiedSinceDate(
@@ -459,9 +477,11 @@ public class HistoryServiceJpa extends ContentServiceJpa implements
             + terminology + ", " + date);
     int[] totalCt = new int[1];
     List<AbstractAttributeValueRefSetMemberJpa> results =
-        findModifiedSinceDateFromQuery(AbstractAttributeValueRefSetMemberJpa.class, terminology,
-            date, pfs, totalCt);
-    AttributeValueRefSetMemberList resultList = new AttributeValueRefSetMemberListJpa();
+        findModifiedSinceDateFromQuery(
+            AbstractAttributeValueRefSetMemberJpa.class, terminology, date,
+            pfs, totalCt);
+    AttributeValueRefSetMemberList resultList =
+        new AttributeValueRefSetMemberListJpa();
     resultList.setTotalCount(totalCt[0]);
     for (AttributeValueRefSetMember<?> attributeValueRefSetMember : results) {
       resultList.addObject(attributeValueRefSetMember);
@@ -472,24 +492,25 @@ public class HistoryServiceJpa extends ContentServiceJpa implements
   /*
    * (non-Javadoc)
    * 
-   * @see
-   * org.ihtsdo.otf.ts.services.HistoryService#findAttributeValueRefSetMemberRevisions(java
-   * .lang.Long, java.util.Date, java.util.Date, boolean,
-   * org.ihtsdo.otf.ts.helpers.PfsParameter)
+   * @see org.ihtsdo.otf.ts.services.HistoryService#
+   * findAttributeValueRefSetMemberRevisions(java .lang.Long, java.util.Date,
+   * java.util.Date, boolean, org.ihtsdo.otf.ts.helpers.PfsParameter)
    */
   @SuppressWarnings({
-      "rawtypes"
+    "rawtypes"
   })
   @Override
-  public AttributeValueRefSetMemberList findAttributeValueRefSetMemberRevisions(Long id, Date startDate,
-    Date endDate, PfsParameter pfs) {
+  public AttributeValueRefSetMemberList findAttributeValueRefSetMemberRevisions(
+    Long id, Date startDate, Date endDate, PfsParameter pfs) {
     Logger.getLogger(getClass()).debug(
-        "History Service - find attributeValueRefSetMember revisions " + id + "," + startDate
-            + ", " + endDate);
+        "History Service - find attributeValueRefSetMember revisions " + id
+            + "," + startDate + ", " + endDate);
     List<AbstractAttributeValueRefSetMemberJpa> revisions =
-        findRevisions(id, AbstractAttributeValueRefSetMemberJpa.class, startDate, endDate, pfs);
+        findRevisions(id, AbstractAttributeValueRefSetMemberJpa.class,
+            startDate, endDate, pfs);
     // Repackage as AttributeValueRefSetMemberList
-    AttributeValueRefSetMemberList results = new AttributeValueRefSetMemberListJpa();
+    AttributeValueRefSetMemberList results =
+        new AttributeValueRefSetMemberListJpa();
     results.setTotalCount(revisions.size());
     for (AttributeValueRefSetMember<?> AttributeValueRefSetMember : revisions) {
       results.addObject(AttributeValueRefSetMember);
@@ -500,28 +521,29 @@ public class HistoryServiceJpa extends ContentServiceJpa implements
   /*
    * (non-Javadoc)
    * 
-   * @see
-   * org.ihtsdo.otf.ts.services.HistoryService#findAttributeValueRefSetMemberReleaseRevision
-   * (java.lang.Long, java.lang.String)
+   * @see org.ihtsdo.otf.ts.services.HistoryService#
+   * findAttributeValueRefSetMemberReleaseRevision (java.lang.Long,
+   * java.lang.String)
    */
   @Override
-  public AttributeValueRefSetMember<?> findAttributeValueRefSetMemberReleaseRevision(Long id, Date release)
-    throws Exception {
+  public AttributeValueRefSetMember<?> findAttributeValueRefSetMemberReleaseRevision(
+    Long id, Date release) throws Exception {
     Logger.getLogger(getClass()).debug(
-        "History Service - find attributeValueRefSetMember release revision " + id + ","
-            + release);
+        "History Service - find attributeValueRefSetMember release revision "
+            + id + "," + release);
 
     AbstractAttributeValueRefSetMemberJpa<?> revision =
-        findReleaseRevision(id, release, AbstractAttributeValueRefSetMemberJpa.class);
+        findReleaseRevision(id, release,
+            AbstractAttributeValueRefSetMemberJpa.class);
     return revision;
   }
-  
 
   /*
    * (non-Javadoc)
    * 
    * @see org.ihtsdo.otf.mapping.services.ContentService#
-   * getComplexMapRefSetMembersModifiedSinceDate(java.lang.String, java.util.Date)
+   * getComplexMapRefSetMembersModifiedSinceDate(java.lang.String,
+   * java.util.Date)
    */
   @Override
   public ComplexMapRefSetMemberList findComplexMapRefSetMembersModifiedSinceDate(
@@ -531,8 +553,8 @@ public class HistoryServiceJpa extends ContentServiceJpa implements
             + terminology + ", " + date);
     int[] totalCt = new int[1];
     List<ComplexMapRefSetMemberJpa> results =
-        findModifiedSinceDateFromQuery(ComplexMapRefSetMemberJpa.class, terminology,
-            date, pfs, totalCt);
+        findModifiedSinceDateFromQuery(ComplexMapRefSetMemberJpa.class,
+            terminology, date, pfs, totalCt);
     ComplexMapRefSetMemberList resultList = new ComplexMapRefSetMemberListJpa();
     resultList.setTotalCount(totalCt[0]);
     for (ComplexMapRefSetMemberJpa complexMapRefSetMember : results) {
@@ -545,18 +567,19 @@ public class HistoryServiceJpa extends ContentServiceJpa implements
    * (non-Javadoc)
    * 
    * @see
-   * org.ihtsdo.otf.ts.services.HistoryService#findComplexMapRefSetMemberRevisions(java
-   * .lang.Long, java.util.Date, java.util.Date, boolean,
+   * org.ihtsdo.otf.ts.services.HistoryService#findComplexMapRefSetMemberRevisions
+   * (java .lang.Long, java.util.Date, java.util.Date, boolean,
    * org.ihtsdo.otf.ts.helpers.PfsParameter)
    */
   @Override
-  public ComplexMapRefSetMemberList findComplexMapRefSetMemberRevisions(Long id, Date startDate,
-    Date endDate, PfsParameter pfs) {
+  public ComplexMapRefSetMemberList findComplexMapRefSetMemberRevisions(
+    Long id, Date startDate, Date endDate, PfsParameter pfs) {
     Logger.getLogger(getClass()).debug(
-        "History Service - find complexMapRefSetMember revisions " + id + "," + startDate
-            + ", " + endDate);
+        "History Service - find complexMapRefSetMember revisions " + id + ","
+            + startDate + ", " + endDate);
     List<ComplexMapRefSetMemberJpa> revisions =
-        findRevisions(id, ComplexMapRefSetMemberJpa.class, startDate, endDate, pfs);
+        findRevisions(id, ComplexMapRefSetMemberJpa.class, startDate, endDate,
+            pfs);
     // Repackage as ComplexMapRefSetMemberList
     ComplexMapRefSetMemberList results = new ComplexMapRefSetMemberListJpa();
     results.setTotalCount(revisions.size());
@@ -569,28 +592,28 @@ public class HistoryServiceJpa extends ContentServiceJpa implements
   /*
    * (non-Javadoc)
    * 
-   * @see
-   * org.ihtsdo.otf.ts.services.HistoryService#findComplexMapRefSetMemberReleaseRevision
-   * (java.lang.Long, java.lang.String)
+   * @see org.ihtsdo.otf.ts.services.HistoryService#
+   * findComplexMapRefSetMemberReleaseRevision (java.lang.Long,
+   * java.lang.String)
    */
   @Override
-  public ComplexMapRefSetMember findComplexMapRefSetMemberReleaseRevision(Long id, Date release)
-    throws Exception {
+  public ComplexMapRefSetMember findComplexMapRefSetMemberReleaseRevision(
+    Long id, Date release) throws Exception {
     Logger.getLogger(getClass()).debug(
-        "History Service - find complexMapRefSetMember release revision " + id + ","
-            + release);
+        "History Service - find complexMapRefSetMember release revision " + id
+            + "," + release);
 
     ComplexMapRefSetMemberJpa revision =
         findReleaseRevision(id, release, ComplexMapRefSetMemberJpa.class);
     return revision;
   }
-  
 
   /*
    * (non-Javadoc)
    * 
    * @see org.ihtsdo.otf.mapping.services.ContentService#
-   * getDescriptionTypeRefSetMembersModifiedSinceDate(java.lang.String, java.util.Date)
+   * getDescriptionTypeRefSetMembersModifiedSinceDate(java.lang.String,
+   * java.util.Date)
    */
   @Override
   public DescriptionTypeRefSetMemberList findDescriptionTypeRefSetMembersModifiedSinceDate(
@@ -600,9 +623,10 @@ public class HistoryServiceJpa extends ContentServiceJpa implements
             + terminology + ", " + date);
     int[] totalCt = new int[1];
     List<DescriptionTypeRefSetMemberJpa> results =
-        findModifiedSinceDateFromQuery(DescriptionTypeRefSetMemberJpa.class, terminology,
-            date, pfs, totalCt);
-    DescriptionTypeRefSetMemberList resultList = new DescriptionTypeRefSetMemberListJpa();
+        findModifiedSinceDateFromQuery(DescriptionTypeRefSetMemberJpa.class,
+            terminology, date, pfs, totalCt);
+    DescriptionTypeRefSetMemberList resultList =
+        new DescriptionTypeRefSetMemberListJpa();
     resultList.setTotalCount(totalCt[0]);
     for (DescriptionTypeRefSetMemberJpa descriptionTypeRefSetMember : results) {
       resultList.addObject(descriptionTypeRefSetMember);
@@ -613,21 +637,22 @@ public class HistoryServiceJpa extends ContentServiceJpa implements
   /*
    * (non-Javadoc)
    * 
-   * @see
-   * org.ihtsdo.otf.ts.services.HistoryService#findDescriptionTypeRefSetMemberRevisions(java
-   * .lang.Long, java.util.Date, java.util.Date, boolean,
-   * org.ihtsdo.otf.ts.helpers.PfsParameter)
+   * @see org.ihtsdo.otf.ts.services.HistoryService#
+   * findDescriptionTypeRefSetMemberRevisions(java .lang.Long, java.util.Date,
+   * java.util.Date, boolean, org.ihtsdo.otf.ts.helpers.PfsParameter)
    */
   @Override
-  public DescriptionTypeRefSetMemberList findDescriptionTypeRefSetMemberRevisions(Long id, Date startDate,
-    Date endDate, PfsParameter pfs) {
+  public DescriptionTypeRefSetMemberList findDescriptionTypeRefSetMemberRevisions(
+    Long id, Date startDate, Date endDate, PfsParameter pfs) {
     Logger.getLogger(getClass()).debug(
-        "History Service - find descriptionTypeRefSetMember revisions " + id + "," + startDate
-            + ", " + endDate);
+        "History Service - find descriptionTypeRefSetMember revisions " + id
+            + "," + startDate + ", " + endDate);
     List<DescriptionTypeRefSetMemberJpa> revisions =
-        findRevisions(id, DescriptionTypeRefSetMemberJpa.class, startDate, endDate, pfs);
+        findRevisions(id, DescriptionTypeRefSetMemberJpa.class, startDate,
+            endDate, pfs);
     // Repackage as DescriptionTypeRefSetMemberList
-    DescriptionTypeRefSetMemberList results = new DescriptionTypeRefSetMemberListJpa();
+    DescriptionTypeRefSetMemberList results =
+        new DescriptionTypeRefSetMemberListJpa();
     results.setTotalCount(revisions.size());
     for (DescriptionTypeRefSetMemberJpa DescriptionTypeRefSetMember : revisions) {
       results.addObject(DescriptionTypeRefSetMember);
@@ -638,29 +663,28 @@ public class HistoryServiceJpa extends ContentServiceJpa implements
   /*
    * (non-Javadoc)
    * 
-   * @see
-   * org.ihtsdo.otf.ts.services.HistoryService#findDescriptionTypeRefSetMemberReleaseRevision
-   * (java.lang.Long, java.lang.String)
+   * @see org.ihtsdo.otf.ts.services.HistoryService#
+   * findDescriptionTypeRefSetMemberReleaseRevision (java.lang.Long,
+   * java.lang.String)
    */
   @Override
-  public DescriptionTypeRefSetMember findDescriptionTypeRefSetMemberReleaseRevision(Long id, Date release)
-    throws Exception {
+  public DescriptionTypeRefSetMember findDescriptionTypeRefSetMemberReleaseRevision(
+    Long id, Date release) throws Exception {
     Logger.getLogger(getClass()).debug(
-        "History Service - find descriptionTypeRefSetMember release revision " + id + ","
-            + release);
+        "History Service - find descriptionTypeRefSetMember release revision "
+            + id + "," + release);
 
     DescriptionTypeRefSetMemberJpa revision =
         findReleaseRevision(id, release, DescriptionTypeRefSetMemberJpa.class);
     return revision;
   }
 
-  
-
   /*
    * (non-Javadoc)
    * 
    * @see org.ihtsdo.otf.mapping.services.ContentService#
-   * getModuleDependencyRefSetMembersModifiedSinceDate(java.lang.String, java.util.Date)
+   * getModuleDependencyRefSetMembersModifiedSinceDate(java.lang.String,
+   * java.util.Date)
    */
   @Override
   public ModuleDependencyRefSetMemberList findModuleDependencyRefSetMembersModifiedSinceDate(
@@ -670,9 +694,10 @@ public class HistoryServiceJpa extends ContentServiceJpa implements
             + terminology + ", " + date);
     int[] totalCt = new int[1];
     List<ModuleDependencyRefSetMemberJpa> results =
-        findModifiedSinceDateFromQuery(ModuleDependencyRefSetMemberJpa.class, terminology,
-            date, pfs, totalCt);
-    ModuleDependencyRefSetMemberList resultList = new ModuleDependencyRefSetMemberListJpa();
+        findModifiedSinceDateFromQuery(ModuleDependencyRefSetMemberJpa.class,
+            terminology, date, pfs, totalCt);
+    ModuleDependencyRefSetMemberList resultList =
+        new ModuleDependencyRefSetMemberListJpa();
     resultList.setTotalCount(totalCt[0]);
     for (ModuleDependencyRefSetMemberJpa moduleDependencyRefSetMember : results) {
       resultList.addObject(moduleDependencyRefSetMember);
@@ -683,21 +708,22 @@ public class HistoryServiceJpa extends ContentServiceJpa implements
   /*
    * (non-Javadoc)
    * 
-   * @see
-   * org.ihtsdo.otf.ts.services.HistoryService#findModuleDependencyRefSetMemberRevisions(java
-   * .lang.Long, java.util.Date, java.util.Date, boolean,
-   * org.ihtsdo.otf.ts.helpers.PfsParameter)
+   * @see org.ihtsdo.otf.ts.services.HistoryService#
+   * findModuleDependencyRefSetMemberRevisions(java .lang.Long, java.util.Date,
+   * java.util.Date, boolean, org.ihtsdo.otf.ts.helpers.PfsParameter)
    */
   @Override
-  public ModuleDependencyRefSetMemberList findModuleDependencyRefSetMemberRevisions(Long id, Date startDate,
-    Date endDate, PfsParameter pfs) {
+  public ModuleDependencyRefSetMemberList findModuleDependencyRefSetMemberRevisions(
+    Long id, Date startDate, Date endDate, PfsParameter pfs) {
     Logger.getLogger(getClass()).debug(
-        "History Service - find moduleDependencyRefSetMember revisions " + id + "," + startDate
-            + ", " + endDate);
+        "History Service - find moduleDependencyRefSetMember revisions " + id
+            + "," + startDate + ", " + endDate);
     List<ModuleDependencyRefSetMemberJpa> revisions =
-        findRevisions(id, ModuleDependencyRefSetMemberJpa.class, startDate, endDate, pfs);
+        findRevisions(id, ModuleDependencyRefSetMemberJpa.class, startDate,
+            endDate, pfs);
     // Repackage as ModuleDependencyRefSetMemberList
-    ModuleDependencyRefSetMemberList results = new ModuleDependencyRefSetMemberListJpa();
+    ModuleDependencyRefSetMemberList results =
+        new ModuleDependencyRefSetMemberListJpa();
     results.setTotalCount(revisions.size());
     for (ModuleDependencyRefSetMemberJpa ModuleDependencyRefSetMember : revisions) {
       results.addObject(ModuleDependencyRefSetMember);
@@ -708,28 +734,28 @@ public class HistoryServiceJpa extends ContentServiceJpa implements
   /*
    * (non-Javadoc)
    * 
-   * @see
-   * org.ihtsdo.otf.ts.services.HistoryService#findModuleDependencyRefSetMemberReleaseRevision
-   * (java.lang.Long, java.lang.String)
+   * @see org.ihtsdo.otf.ts.services.HistoryService#
+   * findModuleDependencyRefSetMemberReleaseRevision (java.lang.Long,
+   * java.lang.String)
    */
   @Override
-  public ModuleDependencyRefSetMember findModuleDependencyRefSetMemberReleaseRevision(Long id, Date release)
-    throws Exception {
+  public ModuleDependencyRefSetMember findModuleDependencyRefSetMemberReleaseRevision(
+    Long id, Date release) throws Exception {
     Logger.getLogger(getClass()).debug(
-        "History Service - find moduleDependencyRefSetMember release revision " + id + ","
-            + release);
+        "History Service - find moduleDependencyRefSetMember release revision "
+            + id + "," + release);
 
     ModuleDependencyRefSetMemberJpa revision =
         findReleaseRevision(id, release, ModuleDependencyRefSetMemberJpa.class);
     return revision;
   }
-  
 
   /*
    * (non-Javadoc)
    * 
    * @see org.ihtsdo.otf.mapping.services.ContentService#
-   * getRefsetDescriptorRefSetMembersModifiedSinceDate(java.lang.String, java.util.Date)
+   * getRefsetDescriptorRefSetMembersModifiedSinceDate(java.lang.String,
+   * java.util.Date)
    */
   @Override
   public RefsetDescriptorRefSetMemberList findRefsetDescriptorRefSetMembersModifiedSinceDate(
@@ -739,9 +765,10 @@ public class HistoryServiceJpa extends ContentServiceJpa implements
             + terminology + ", " + date);
     int[] totalCt = new int[1];
     List<RefsetDescriptorRefSetMemberJpa> results =
-        findModifiedSinceDateFromQuery(RefsetDescriptorRefSetMemberJpa.class, terminology,
-            date, pfs, totalCt);
-    RefsetDescriptorRefSetMemberList resultList = new RefsetDescriptorRefSetMemberListJpa();
+        findModifiedSinceDateFromQuery(RefsetDescriptorRefSetMemberJpa.class,
+            terminology, date, pfs, totalCt);
+    RefsetDescriptorRefSetMemberList resultList =
+        new RefsetDescriptorRefSetMemberListJpa();
     resultList.setTotalCount(totalCt[0]);
     for (RefsetDescriptorRefSetMemberJpa refsetDescriptorRefSetMember : results) {
       resultList.addObject(refsetDescriptorRefSetMember);
@@ -752,21 +779,22 @@ public class HistoryServiceJpa extends ContentServiceJpa implements
   /*
    * (non-Javadoc)
    * 
-   * @see
-   * org.ihtsdo.otf.ts.services.HistoryService#findRefsetDescriptorRefSetMemberRevisions(java
-   * .lang.Long, java.util.Date, java.util.Date, boolean,
-   * org.ihtsdo.otf.ts.helpers.PfsParameter)
+   * @see org.ihtsdo.otf.ts.services.HistoryService#
+   * findRefsetDescriptorRefSetMemberRevisions(java .lang.Long, java.util.Date,
+   * java.util.Date, boolean, org.ihtsdo.otf.ts.helpers.PfsParameter)
    */
   @Override
-  public RefsetDescriptorRefSetMemberList findRefsetDescriptorRefSetMemberRevisions(Long id, Date startDate,
-    Date endDate, PfsParameter pfs) {
+  public RefsetDescriptorRefSetMemberList findRefsetDescriptorRefSetMemberRevisions(
+    Long id, Date startDate, Date endDate, PfsParameter pfs) {
     Logger.getLogger(getClass()).debug(
-        "History Service - find refsetDescriptorRefSetMember revisions " + id + "," + startDate
-            + ", " + endDate);
+        "History Service - find refsetDescriptorRefSetMember revisions " + id
+            + "," + startDate + ", " + endDate);
     List<RefsetDescriptorRefSetMemberJpa> revisions =
-        findRevisions(id, RefsetDescriptorRefSetMemberJpa.class, startDate, endDate, pfs);
+        findRevisions(id, RefsetDescriptorRefSetMemberJpa.class, startDate,
+            endDate, pfs);
     // Repackage as RefsetDescriptorRefSetMemberList
-    RefsetDescriptorRefSetMemberList results = new RefsetDescriptorRefSetMemberListJpa();
+    RefsetDescriptorRefSetMemberList results =
+        new RefsetDescriptorRefSetMemberListJpa();
     results.setTotalCount(revisions.size());
     for (RefsetDescriptorRefSetMemberJpa RefsetDescriptorRefSetMember : revisions) {
       results.addObject(RefsetDescriptorRefSetMember);
@@ -777,28 +805,28 @@ public class HistoryServiceJpa extends ContentServiceJpa implements
   /*
    * (non-Javadoc)
    * 
-   * @see
-   * org.ihtsdo.otf.ts.services.HistoryService#findRefsetDescriptorRefSetMemberReleaseRevision
-   * (java.lang.Long, java.lang.String)
+   * @see org.ihtsdo.otf.ts.services.HistoryService#
+   * findRefsetDescriptorRefSetMemberReleaseRevision (java.lang.Long,
+   * java.lang.String)
    */
   @Override
-  public RefsetDescriptorRefSetMember findRefsetDescriptorRefSetMemberReleaseRevision(Long id, Date release)
-    throws Exception {
+  public RefsetDescriptorRefSetMember findRefsetDescriptorRefSetMemberReleaseRevision(
+    Long id, Date release) throws Exception {
     Logger.getLogger(getClass()).debug(
-        "History Service - find refsetDescriptorRefSetMember release revision " + id + ","
-            + release);
+        "History Service - find refsetDescriptorRefSetMember release revision "
+            + id + "," + release);
 
     RefsetDescriptorRefSetMemberJpa revision =
         findReleaseRevision(id, release, RefsetDescriptorRefSetMemberJpa.class);
     return revision;
   }
-  
 
   /*
    * (non-Javadoc)
    * 
    * @see org.ihtsdo.otf.mapping.services.ContentService#
-   * getSimpleMapRefSetMembersModifiedSinceDate(java.lang.String, java.util.Date)
+   * getSimpleMapRefSetMembersModifiedSinceDate(java.lang.String,
+   * java.util.Date)
    */
   @Override
   public SimpleMapRefSetMemberList findSimpleMapRefSetMembersModifiedSinceDate(
@@ -808,8 +836,8 @@ public class HistoryServiceJpa extends ContentServiceJpa implements
             + terminology + ", " + date);
     int[] totalCt = new int[1];
     List<SimpleMapRefSetMemberJpa> results =
-        findModifiedSinceDateFromQuery(SimpleMapRefSetMemberJpa.class, terminology,
-            date, pfs, totalCt);
+        findModifiedSinceDateFromQuery(SimpleMapRefSetMemberJpa.class,
+            terminology, date, pfs, totalCt);
     SimpleMapRefSetMemberList resultList = new SimpleMapRefSetMemberListJpa();
     resultList.setTotalCount(totalCt[0]);
     for (SimpleMapRefSetMemberJpa simpleMapRefSetMember : results) {
@@ -822,18 +850,19 @@ public class HistoryServiceJpa extends ContentServiceJpa implements
    * (non-Javadoc)
    * 
    * @see
-   * org.ihtsdo.otf.ts.services.HistoryService#findSimpleMapRefSetMemberRevisions(java
-   * .lang.Long, java.util.Date, java.util.Date, boolean,
+   * org.ihtsdo.otf.ts.services.HistoryService#findSimpleMapRefSetMemberRevisions
+   * (java .lang.Long, java.util.Date, java.util.Date, boolean,
    * org.ihtsdo.otf.ts.helpers.PfsParameter)
    */
   @Override
-  public SimpleMapRefSetMemberList findSimpleMapRefSetMemberRevisions(Long id, Date startDate,
-    Date endDate, PfsParameter pfs) {
+  public SimpleMapRefSetMemberList findSimpleMapRefSetMemberRevisions(Long id,
+    Date startDate, Date endDate, PfsParameter pfs) {
     Logger.getLogger(getClass()).debug(
-        "History Service - find simpleMapRefSetMember revisions " + id + "," + startDate
-            + ", " + endDate);
+        "History Service - find simpleMapRefSetMember revisions " + id + ","
+            + startDate + ", " + endDate);
     List<SimpleMapRefSetMemberJpa> revisions =
-        findRevisions(id, SimpleMapRefSetMemberJpa.class, startDate, endDate, pfs);
+        findRevisions(id, SimpleMapRefSetMemberJpa.class, startDate, endDate,
+            pfs);
     // Repackage as SimpleMapRefSetMemberList
     SimpleMapRefSetMemberList results = new SimpleMapRefSetMemberListJpa();
     results.setTotalCount(revisions.size());
@@ -846,22 +875,20 @@ public class HistoryServiceJpa extends ContentServiceJpa implements
   /*
    * (non-Javadoc)
    * 
-   * @see
-   * org.ihtsdo.otf.ts.services.HistoryService#findSimpleMapRefSetMemberReleaseRevision
-   * (java.lang.Long, java.lang.String)
+   * @see org.ihtsdo.otf.ts.services.HistoryService#
+   * findSimpleMapRefSetMemberReleaseRevision (java.lang.Long, java.lang.String)
    */
   @Override
-  public SimpleMapRefSetMember findSimpleMapRefSetMemberReleaseRevision(Long id, Date release)
-    throws Exception {
+  public SimpleMapRefSetMember findSimpleMapRefSetMemberReleaseRevision(
+    Long id, Date release) throws Exception {
     Logger.getLogger(getClass()).debug(
-        "History Service - find simpleMapRefSetMember release revision " + id + ","
-            + release);
+        "History Service - find simpleMapRefSetMember release revision " + id
+            + "," + release);
 
     SimpleMapRefSetMemberJpa revision =
         findReleaseRevision(id, release, SimpleMapRefSetMemberJpa.class);
     return revision;
   }
-  
 
   /*
    * (non-Javadoc)
@@ -877,8 +904,8 @@ public class HistoryServiceJpa extends ContentServiceJpa implements
             + terminology + ", " + date);
     int[] totalCt = new int[1];
     List<SimpleRefSetMemberJpa> results =
-        findModifiedSinceDateFromQuery(SimpleRefSetMemberJpa.class, terminology,
-            date, pfs, totalCt);
+        findModifiedSinceDateFromQuery(SimpleRefSetMemberJpa.class,
+            terminology, date, pfs, totalCt);
     SimpleRefSetMemberList resultList = new SimpleRefSetMemberListJpa();
     resultList.setTotalCount(totalCt[0]);
     for (SimpleRefSetMemberJpa simpleRefSetMember : results) {
@@ -891,16 +918,16 @@ public class HistoryServiceJpa extends ContentServiceJpa implements
    * (non-Javadoc)
    * 
    * @see
-   * org.ihtsdo.otf.ts.services.HistoryService#findSimpleRefSetMemberRevisions(java
-   * .lang.Long, java.util.Date, java.util.Date, boolean,
+   * org.ihtsdo.otf.ts.services.HistoryService#findSimpleRefSetMemberRevisions
+   * (java .lang.Long, java.util.Date, java.util.Date, boolean,
    * org.ihtsdo.otf.ts.helpers.PfsParameter)
    */
   @Override
-  public SimpleRefSetMemberList findSimpleRefSetMemberRevisions(Long id, Date startDate,
-    Date endDate, PfsParameter pfs) {
+  public SimpleRefSetMemberList findSimpleRefSetMemberRevisions(Long id,
+    Date startDate, Date endDate, PfsParameter pfs) {
     Logger.getLogger(getClass()).debug(
-        "History Service - find simpleRefSetMember revisions " + id + "," + startDate
-            + ", " + endDate);
+        "History Service - find simpleRefSetMember revisions " + id + ","
+            + startDate + ", " + endDate);
     List<SimpleRefSetMemberJpa> revisions =
         findRevisions(id, SimpleRefSetMemberJpa.class, startDate, endDate, pfs);
     // Repackage as SimpleRefSetMemberList
@@ -920,17 +947,16 @@ public class HistoryServiceJpa extends ContentServiceJpa implements
    * (java.lang.Long, java.lang.String)
    */
   @Override
-  public SimpleRefSetMember findSimpleRefSetMemberReleaseRevision(Long id, Date release)
-    throws Exception {
+  public SimpleRefSetMember findSimpleRefSetMemberReleaseRevision(Long id,
+    Date release) throws Exception {
     Logger.getLogger(getClass()).debug(
-        "History Service - find simpleRefSetMember release revision " + id + ","
-            + release);
+        "History Service - find simpleRefSetMember release revision " + id
+            + "," + release);
 
     SimpleRefSetMemberJpa revision =
         findReleaseRevision(id, release, SimpleRefSetMemberJpa.class);
     return revision;
   }
-
 
   /*
    * (non-Javadoc)
@@ -1099,8 +1125,50 @@ public class HistoryServiceJpa extends ContentServiceJpa implements
       results.add(member.getDescription().getConcept());
     }
 
-    // TODO: add other types
-    
+    SimpleRefSetMemberList members2 =
+        findSimpleRefSetMembersModifiedSinceDate(terminology, date, pfs);
+    for (SimpleRefSetMember member : members2.getObjects()) {
+      results.add(member.getConcept());
+    }
+
+    SimpleMapRefSetMemberList members3 =
+        findSimpleMapRefSetMembersModifiedSinceDate(terminology, date, pfs);
+    for (SimpleMapRefSetMember member : members3.getObjects()) {
+      results.add(member.getConcept());
+    }
+
+    ComplexMapRefSetMemberList members4 =
+        findComplexMapRefSetMembersModifiedSinceDate(terminology, date, pfs);
+    for (ComplexMapRefSetMember member : members4.getObjects()) {
+      results.add(member.getConcept());
+    }
+
+    AssociationReferenceRefSetMemberList members5 =
+        this.findAssociationReferenceRefSetMembersModifiedSinceDate(
+            terminology, date, pfs);
+    for (AssociationReferenceRefSetMember<?> member : members5.getObjects()) {
+      if (member instanceof AssociationReferenceConceptRefSetMember) {
+        results.add(((AssociationReferenceConceptRefSetMember) member)
+            .getConcept());
+      }
+      if (member instanceof AssociationReferenceDescriptionRefSetMember) {
+        results.add(((AssociationReferenceDescriptionRefSetMember) member)
+            .getDescription().getConcept());
+      }
+    }
+
+    AttributeValueRefSetMemberList members6 =
+        this.findAttributeValueRefSetMembersModifiedSinceDate(terminology,
+            date, pfs);
+    for (AttributeValueRefSetMember<?> member : members6.getObjects()) {
+      if (member instanceof AttributeValueConceptRefSetMember) {
+        results.add(((AttributeValueConceptRefSetMember) member).getConcept());
+      }
+      if (member instanceof AttributeValueDescriptionRefSetMember) {
+        results.add(((AttributeValueDescriptionRefSetMember) member)
+            .getDescription().getConcept());
+      }
+    }
     return null;
   }
 

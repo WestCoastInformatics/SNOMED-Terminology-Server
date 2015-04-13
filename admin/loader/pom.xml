@@ -6,7 +6,7 @@
   <parent>
     <groupId>org.ihtsdo.otf.term-server</groupId>
     <artifactId>term-server-parent</artifactId>
-    <version>1.0.0-SNAPSHOT</version>
+    <version>1.1.0-SNAPSHOT</version>
     <relativePath>../../parent</relativePath>
   </parent>
 
@@ -174,6 +174,7 @@
                 </goals>
                 <configuration>
                   <terminology>${terminology}</terminology>
+                  <version>${version}</version>
                   <server>${server}</server>
                 </configuration>
               </execution>
@@ -185,7 +186,7 @@
 
     <!-- Add a project, specify -Drun.config=... -Dterminology=... -->
     <profile>
-      <id>AddProject</id>
+      <id>Project</id>
       <build>
         <plugins>
           <plugin>

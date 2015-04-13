@@ -1,3 +1,6 @@
+/*
+ * Copyright 2015 West Coast Informatics, LLC
+ */
 package org.ihtsdo.otf.ts.test.mojo;
 
 import java.io.File;
@@ -54,7 +57,7 @@ public class CompareRf2FullRf2SnapshotLoadersTest {
    * Count all data structures (though API) and save data
    * Run Updatedb mojo in "create" mode to clear the database
    * Run Reindex mojo to clear the indexes
-   * Run the RF2-apshot mojo against the sample config/src/main/rresources/data/snomedct-20140731-mini" data.
+   * Run the RF2-apshot mojo against the sample config/src/main/resources/data/snomedct-20140731-mini" data.
    * Count all data structures (though API) and save data
    *   TEST: compare the full and shapshot model object counts, they should all be equals.
    *   TEST: verify each content table exists with the expected number of entries.
@@ -115,7 +118,8 @@ public class CompareRf2FullRf2SnapshotLoadersTest {
 
     // count data
     ContentService service = new ContentServiceJpa();
-    Map<String, Integer> fullStats = service.getComponentStats("SNOMEDCT", "latest");
+    Map<String, Integer> fullStats =
+        service.getComponentStats("SNOMEDCT", "latest");
     service.close();
     service.closeFactory();
     Logger.getLogger(getClass()).info("Full Stats = " + fullStats);
@@ -171,13 +175,21 @@ public class CompareRf2FullRf2SnapshotLoadersTest {
 
     // count data
     service = new ContentServiceJpa();
-    Map<String, Integer> snapStats = service.getComponentStats("SNOMEDCT", "latest");
+    Map<String, Integer> snapStats =
+        service.getComponentStats("SNOMEDCT", "latest");
     service.close();
     service.closeFactory();
     Logger.getLogger(getClass()).info("Snap Stats = " + fullStats);
 
     // Assert equivalence of counts
-    Assert.assertEquals(fullStats, snapStats);
+    for (String prop : fullStats.keySet()) {
+      Logger.getLogger(getClass()).info(
+          "  STAT " + prop + " = " + fullStats.get(prop) + ", "
+              + snapStats.get(prop));
+    }
+    for (String prop : fullStats.keySet()) {
+      Assert.assertEquals(fullStats.get(prop), snapStats.get(prop));
+    }
 
     // Finish by clearing the DB again
     request = new DefaultInvocationRequest();

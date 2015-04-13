@@ -1,3 +1,6 @@
+/*
+ * Copyright 2015 West Coast Informatics, LLC
+ */
 package org.ihtsdo.otf.ts.test.rest;
 
 import java.lang.reflect.Method;
@@ -17,11 +20,8 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Ignore;
 
-// TODO: Auto-generated Javadoc
 /**
  * Implementation of the "History Service REST Normal Use" Test Cases.
- *
- * @author ${author}
  */
 @Ignore
 public class HistoryServiceRestTest {

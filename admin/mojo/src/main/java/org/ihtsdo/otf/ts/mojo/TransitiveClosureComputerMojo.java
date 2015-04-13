@@ -1,3 +1,6 @@
+/*
+ * Copyright 2015 West Coast Informatics, LLC
+ */
 package org.ihtsdo.otf.ts.mojo;
 
 import java.util.Properties;
@@ -23,11 +26,18 @@ import org.ihtsdo.otf.ts.services.SecurityService;
 public class TransitiveClosureComputerMojo extends AbstractMojo {
 
   /**
-   * Name of terminology to be loaded.
+   * Name of terminology to compute transitive closure for.
    * @parameter
    * @required
    */
   private String terminology;
+
+  /**
+   * Version of terminology to compute transitive closure for..
+   * @parameter
+   * @required
+   */
+  private String version;
 
   /**
    * Whether to run this mojo against an active server
@@ -53,6 +63,7 @@ public class TransitiveClosureComputerMojo extends AbstractMojo {
   public void execute() throws MojoFailureException {
     getLog().info("Starting computation of transitive closure");
     getLog().info("  terminology = " + terminology);
+    getLog().info("  version = " + version);
 
     try {
 
@@ -84,13 +95,14 @@ public class TransitiveClosureComputerMojo extends AbstractMojo {
         getLog().info("Running directly");
 
         ContentServiceRestImpl contentService = new ContentServiceRestImpl();
-        contentService.computeTransitiveClosure(terminology, authToken);
+        contentService
+            .computeTransitiveClosure(terminology, version, authToken);
       } else {
         getLog().info("Running against server");
 
         // invoke the client
         ContentClientRest client = new ContentClientRest(properties);
-        client.computeTransitiveClosure(terminology, authToken);
+        client.computeTransitiveClosure(terminology, version, authToken);
       }
 
       // Clean-up
