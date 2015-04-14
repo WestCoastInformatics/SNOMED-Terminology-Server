@@ -189,6 +189,14 @@ public class SecurityServiceJpa extends RootServiceJpa implements
     }
     String parsedToken = authToken.replace("\"", "");
     String username = getUsernameForToken(parsedToken);
+    // check for null username
+    if (username == null) {
+      throw new LocalException("Unable to find user for the authoriztaion token");
+    }
+    User user = getUser(username.toLowerCase());
+    if (user == null) {
+      throw new LocalException("Unable to obtain user information for username = " + username);
+    }
     return getUser(username.toLowerCase()).getApplicationRole();
   }
 
