@@ -2854,9 +2854,9 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
             + terminologyId + "/" + terminology + "/" + version);
     javax.persistence.Query query =
         manager.createQuery("select a from DescriptionTypeRefSetMemberJpa a, "
-            + " DescriptionJpa d where d.terminologyId = :terminologyId "
-            + "and d.terminologyVersion = :version "
-            + "and d.terminology = :terminology and a.description = d");
+            + " ConceptJpa c where c.terminologyId = :terminologyId "
+            + "and c.terminologyVersion = :version "
+            + "and c.terminology = :terminology and a.concept = c");
 
     try {
       DescriptionTypeRefSetMemberList list = new DescriptionTypeRefSetMemberListJpa();

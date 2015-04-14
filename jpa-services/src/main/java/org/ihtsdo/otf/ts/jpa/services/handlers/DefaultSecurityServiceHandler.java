@@ -139,9 +139,6 @@ public class DefaultSecurityServiceHandler implements SecurityServiceHandler {
 
     HashSet<String> userSet = new HashSet<>();
     String userList = properties.getProperty("users.admin");
-    
-    Logger
-    .getLogger(getClass()).info(properties.keySet());
 
     if (userList == null) {
       Logger

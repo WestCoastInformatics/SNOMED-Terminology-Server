@@ -21,14 +21,22 @@ import org.apache.log4j.Logger;
 import org.ihtsdo.otf.ts.ReleaseInfo;
 import org.ihtsdo.otf.ts.UserRole;
 import org.ihtsdo.otf.ts.ValidationResult;
+import org.ihtsdo.otf.ts.helpers.AssociationReferenceRefSetMemberList;
+import org.ihtsdo.otf.ts.helpers.AttributeValueRefSetMemberList;
+import org.ihtsdo.otf.ts.helpers.ComplexMapRefSetMemberList;
 import org.ihtsdo.otf.ts.helpers.ConceptList;
 import org.ihtsdo.otf.ts.helpers.ConfigUtility;
 import org.ihtsdo.otf.ts.helpers.DescriptionList;
+import org.ihtsdo.otf.ts.helpers.DescriptionTypeRefSetMemberList;
 import org.ihtsdo.otf.ts.helpers.LanguageRefSetMemberList;
 import org.ihtsdo.otf.ts.helpers.LocalException;
+import org.ihtsdo.otf.ts.helpers.ModuleDependencyRefSetMemberList;
 import org.ihtsdo.otf.ts.helpers.PfsParameterJpa;
+import org.ihtsdo.otf.ts.helpers.RefsetDescriptorRefSetMemberList;
 import org.ihtsdo.otf.ts.helpers.RelationshipList;
 import org.ihtsdo.otf.ts.helpers.ReleaseInfoList;
+import org.ihtsdo.otf.ts.helpers.SimpleMapRefSetMemberList;
+import org.ihtsdo.otf.ts.helpers.SimpleRefSetMemberList;
 import org.ihtsdo.otf.ts.jpa.ReleaseInfoJpa;
 import org.ihtsdo.otf.ts.jpa.algo.ReleaseRf2BeginAlgorithm;
 import org.ihtsdo.otf.ts.jpa.algo.ReleaseRf2FinishAlgorithm;
@@ -38,10 +46,18 @@ import org.ihtsdo.otf.ts.jpa.services.HistoryServiceJpa;
 import org.ihtsdo.otf.ts.jpa.services.SecurityServiceJpa;
 import org.ihtsdo.otf.ts.jpa.services.helper.TerminologyUtility;
 import org.ihtsdo.otf.ts.rest.HistoryServiceRest;
+import org.ihtsdo.otf.ts.rf2.AssociationReferenceRefSetMember;
+import org.ihtsdo.otf.ts.rf2.AttributeValueRefSetMember;
+import org.ihtsdo.otf.ts.rf2.ComplexMapRefSetMember;
 import org.ihtsdo.otf.ts.rf2.Concept;
 import org.ihtsdo.otf.ts.rf2.Description;
+import org.ihtsdo.otf.ts.rf2.DescriptionTypeRefSetMember;
 import org.ihtsdo.otf.ts.rf2.LanguageRefSetMember;
+import org.ihtsdo.otf.ts.rf2.ModuleDependencyRefSetMember;
+import org.ihtsdo.otf.ts.rf2.RefsetDescriptorRefSetMember;
 import org.ihtsdo.otf.ts.rf2.Relationship;
+import org.ihtsdo.otf.ts.rf2.SimpleMapRefSetMember;
+import org.ihtsdo.otf.ts.rf2.SimpleRefSetMember;
 import org.ihtsdo.otf.ts.services.HistoryService;
 import org.ihtsdo.otf.ts.services.SecurityService;
 
@@ -175,7 +191,7 @@ public class HistoryServiceRestImpl extends RootServiceRestImpl implements
   }
 
   @Override
-  @POST
+  @GET
   @Path("/concept/revisions/{id}/{release: [0-9][0-9][0-9][0-9][0-1][0-9][0-3][0-9]}/release")
   @ApiOperation(value = "Get concepts release revision", notes = "Gets concept release revision.", response = Concept.class)
   public Concept findConceptReleaseRevision(
@@ -301,7 +317,7 @@ public class HistoryServiceRestImpl extends RootServiceRestImpl implements
   }
 
   @Override
-  @POST
+  @GET
   @Path("/description/revisions/{id}/{release: [0-9][0-9][0-9][0-9][0-1][0-9][0-3][0-9]}/release")
   @ApiOperation(value = "Get descriptions release revision", notes = "Gets description release revision", response = Description.class)
   public Description findDescriptionReleaseRevision(
@@ -427,7 +443,7 @@ public class HistoryServiceRestImpl extends RootServiceRestImpl implements
   }
 
   @Override
-  @POST
+  @GET
   @Path("/relationship/revisions/{id}/{release: [0-9][0-9][0-9][0-9][0-1][0-9][0-3][0-9]}/release")
   @ApiOperation(value = "Get relationships release revision", notes = "Gets relationship release revision", response = Relationship.class)
   public Relationship findRelationshipReleaseRevision(
@@ -564,7 +580,7 @@ public class HistoryServiceRestImpl extends RootServiceRestImpl implements
    * org.ihtsdo.otf.ts.helpers.PfsParameterJpa, java.lang.String)
    */
   @Override
-  @POST
+  @GET
   @Path("/language/revisions/{id}/{release: [0-9][0-9][0-9][0-9][0-1][0-9][0-3][0-9]}/release")
   @ApiOperation(value = "Get language refset members release revision", notes = "Gets language refset members release revision", response = LanguageRefSetMember.class)
   public LanguageRefSetMember findLanguageRefSetMemberReleaseRevision(
@@ -594,7 +610,1045 @@ public class HistoryServiceRestImpl extends RootServiceRestImpl implements
       securityService.close();
     }
   }
+  
+  /*
+   * (non-Javadoc)
+   * 
+   * @see org.ihtsdo.otf.ts.rest.HistoryServiceRest#
+   * findAssociationReferenceRefSetMembersModifiedSinceDate(java.lang.String,
+   * java.lang.String, org.ihtsdo.otf.ts.helpers.PfsParameterJpa,
+   * java.lang.String)
+   */
+  @Override
+  @POST
+  @Path("/associationReference/{terminology}/{date:([0-9][0-9][0-9][0-9][0-1][0-9][0-3][0-9]|null)}")
+  @ApiOperation(value = "Get association reference refset members modified since a date", notes = "Gets association reference refset members changed since a date.", response = AssociationReferenceRefSetMemberList.class)
+  public AssociationReferenceRefSetMemberList findAssociationReferenceRefSetMembersModifiedSinceDate(
+    @ApiParam(value = "AssociationReferenceRefSetMember terminology , e.g. SNOMEDCT", required = true) @PathParam("terminology") String terminology,
+    @ApiParam(value = "Date in the format YYYYMMDD, e.g. 20140731 or \"null\"", required = true) @PathParam("date") String date,
+    @ApiParam(value = "PFS Parameter, e.g. '{ \"startIndex\":\"1\", \"maxResults\":\"5\" }'", required = false) PfsParameterJpa pfs,
+    @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken) throws Exception {
 
+    Logger.getLogger(getClass()).info(
+        "RESTful call (History): /association reference/" + terminology + "/" + date);
+
+    try {
+      authenticate(securityService, authToken,
+          "find association reference refset members modified since date", UserRole.VIEWER);
+
+      HistoryService historyService = new HistoryServiceJpa();
+      AssociationReferenceRefSetMemberList cl =
+          historyService.findAssociationReferenceRefSetMembersModifiedSinceDate(
+              terminology, ConfigUtility.DATE_FORMAT.parse(date), pfs);
+
+      historyService.close();
+      return cl;
+    } catch (Exception e) {
+      handleException(e,
+          "trying to find association reference refset members modified since date");
+      return null;
+    } finally {
+      securityService.close();
+    }
+
+  }
+
+  /**
+   * Find association referenceRefSetMember revisions.
+   *
+   * @param id the id
+   * @param startDate the start date
+   * @param endDate the end date
+   * @param pfs the pfs
+   * @param authToken the auth token
+   * @return the association referenceRefSetMember list
+   */
+  @Override
+  @POST
+  @Path("/associationReference/revisions/{id}/{startDate:([0-9][0-9][0-9][0-9][0-1][0-9][0-3][0-9]|null)}/{endDate:([0-9][0-9][0-9][0-9][0-1][0-9][0-3][0-9]|null)}/all")
+  @ApiOperation(value = "Get association reference refset members revisions in a date range", notes = "Gets all association reference refset members revisions in a date range. Use a null date to leave it open ended", response = AssociationReferenceRefSetMemberList.class)
+  public AssociationReferenceRefSetMemberList findAssociationReferenceRefSetMemberRevisions(
+    @ApiParam(value = "Concept terminology , e.g. SNOMEDCT", required = true) @PathParam("id") String id,
+    @ApiParam(value = "Date in the format YYYYMMDD, e.g. 20140731 or \"null\"", required = true) @PathParam("startDate") String startDate,
+    @ApiParam(value = "Date in the format YYYYMMDD, e.g. 20140731 or \"null\"", required = true) @PathParam("endDate") String endDate,
+    @ApiParam(value = "PFS Parameter, e.g. '{ \"startIndex\":\"1\", \"maxResults\":\"5\" }'", required = false) PfsParameterJpa pfs,
+    @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken) throws Exception {
+
+    Logger.getLogger(getClass()).info(
+        "RESTful call (History): /association reference/revisions/" + id + "/" + startDate
+            + "/" + endDate + "/all");
+
+    try {
+      authenticate(securityService, authToken,
+          "find association reference refset member revisions", UserRole.VIEWER);
+
+      HistoryService historyService = new HistoryServiceJpa();
+      AssociationReferenceRefSetMemberList cl =
+          historyService.findAssociationReferenceRefSetMemberRevisions(Long.valueOf(id),
+              ConfigUtility.DATE_FORMAT.parse(startDate),
+              ConfigUtility.DATE_FORMAT.parse(endDate), pfs);
+
+      // explicitly do not want to use graph resolution handler.
+      historyService.close();
+      return cl;
+    } catch (Exception e) {
+      handleException(e, "find association reference refset member revisions");
+      return null;
+    } finally {
+      securityService.close();
+    }
+  }
+
+  /*
+   * (non-Javadoc)
+   * 
+   * @see org.ihtsdo.otf.ts.rest.HistoryServiceRest#
+   * findAssociationReferenceRefSetMemberReleaseRevisions(java.lang.String,
+   * java.lang.String, java.lang.String,
+   * org.ihtsdo.otf.ts.helpers.PfsParameterJpa, java.lang.String)
+   */
+  @Override
+  @GET
+  @Path("/associationReference/revisions/{id}/{release: [0-9][0-9][0-9][0-9][0-1][0-9][0-3][0-9]}/release")
+  @ApiOperation(value = "Get association reference refset members release revision", notes = "Gets association reference refset members release revision", response = AssociationReferenceRefSetMember.class)
+  public AssociationReferenceRefSetMember<?> findAssociationReferenceRefSetMemberReleaseRevision(
+    @ApiParam(value = "Concept id, e.g. 2", required = true) @PathParam("id") String id,
+    @ApiParam(value = "Release date in the format YYYYMMDD , e.g. latest", required = true) @PathParam("release") String release,
+    @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken) throws Exception {
+
+    Logger.getLogger(getClass()).info(
+        "RESTful call (History): /association reference/revisions/" + id + "/" + release);
+
+    try {
+      authenticate(securityService, authToken,
+          "find association reference refset member release revision", UserRole.VIEWER);
+
+      HistoryService historyService = new HistoryServiceJpa();
+      AssociationReferenceRefSetMember<?> member =
+          historyService.findAssociationReferenceRefSetMemberReleaseRevision(
+              Long.valueOf(id), ConfigUtility.DATE_FORMAT.parse(release));
+
+      // explicitly do not want to use graph resolution handler.
+      historyService.close();
+      return member;
+    } catch (Exception e) {
+      handleException(e, "find association reference refset member release revision");
+      return null;
+    } finally {
+      securityService.close();
+    }
+  }
+  
+
+  /*
+   * (non-Javadoc)
+   * 
+   * @see org.ihtsdo.otf.ts.rest.HistoryServiceRest#
+   * findAttributeValueRefSetMembersModifiedSinceDate(java.lang.String,
+   * java.lang.String, org.ihtsdo.otf.ts.helpers.PfsParameterJpa,
+   * java.lang.String)
+   */
+  @Override
+  @POST
+  @Path("/attributeValue/{terminology}/{date:([0-9][0-9][0-9][0-9][0-1][0-9][0-3][0-9]|null)}")
+  @ApiOperation(value = "Get attribute value refset members modified since a date", notes = "Gets attribute value refset members changed since a date.", response = AttributeValueRefSetMemberList.class)
+  public AttributeValueRefSetMemberList findAttributeValueRefSetMembersModifiedSinceDate(
+    @ApiParam(value = "AttributeValueRefSetMember terminology , e.g. SNOMEDCT", required = true) @PathParam("terminology") String terminology,
+    @ApiParam(value = "Date in the format YYYYMMDD, e.g. 20140731 or \"null\"", required = true) @PathParam("date") String date,
+    @ApiParam(value = "PFS Parameter, e.g. '{ \"startIndex\":\"1\", \"maxResults\":\"5\" }'", required = false) PfsParameterJpa pfs,
+    @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken) throws Exception {
+
+    Logger.getLogger(getClass()).info(
+        "RESTful call (History): /attribute value/" + terminology + "/" + date);
+
+    try {
+      authenticate(securityService, authToken,
+          "find attribute value refset members modified since date", UserRole.VIEWER);
+
+      HistoryService historyService = new HistoryServiceJpa();
+      AttributeValueRefSetMemberList cl =
+          historyService.findAttributeValueRefSetMembersModifiedSinceDate(
+              terminology, ConfigUtility.DATE_FORMAT.parse(date), pfs);
+
+      historyService.close();
+      return cl;
+    } catch (Exception e) {
+      handleException(e,
+          "trying to find attribute value refset members modified since date");
+      return null;
+    } finally {
+      securityService.close();
+    }
+
+  }
+
+  /**
+   * Find attribute valueRefSetMember revisions.
+   *
+   * @param id the id
+   * @param startDate the start date
+   * @param endDate the end date
+   * @param pfs the pfs
+   * @param authToken the auth token
+   * @return the attribute valueRefSetMember list
+   */
+  @Override
+  @POST
+  @Path("/attributeValue/revisions/{id}/{startDate:([0-9][0-9][0-9][0-9][0-1][0-9][0-3][0-9]|null)}/{endDate:([0-9][0-9][0-9][0-9][0-1][0-9][0-3][0-9]|null)}/all")
+  @ApiOperation(value = "Get attribute value refset members revisions in a date range", notes = "Gets all attribute value refset members revisions in a date range. Use a null date to leave it open ended", response = AttributeValueRefSetMemberList.class)
+  public AttributeValueRefSetMemberList findAttributeValueRefSetMemberRevisions(
+    @ApiParam(value = "Concept terminology , e.g. SNOMEDCT", required = true) @PathParam("id") String id,
+    @ApiParam(value = "Date in the format YYYYMMDD, e.g. 20140731 or \"null\"", required = true) @PathParam("startDate") String startDate,
+    @ApiParam(value = "Date in the format YYYYMMDD, e.g. 20140731 or \"null\"", required = true) @PathParam("endDate") String endDate,
+    @ApiParam(value = "PFS Parameter, e.g. '{ \"startIndex\":\"1\", \"maxResults\":\"5\" }'", required = false) PfsParameterJpa pfs,
+    @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken) throws Exception {
+
+    Logger.getLogger(getClass()).info(
+        "RESTful call (History): /attribute value/revisions/" + id + "/" + startDate
+            + "/" + endDate + "/all");
+
+    try {
+      authenticate(securityService, authToken,
+          "find attribute value refset member revisions", UserRole.VIEWER);
+
+      HistoryService historyService = new HistoryServiceJpa();
+      AttributeValueRefSetMemberList cl =
+          historyService.findAttributeValueRefSetMemberRevisions(Long.valueOf(id),
+              ConfigUtility.DATE_FORMAT.parse(startDate),
+              ConfigUtility.DATE_FORMAT.parse(endDate), pfs);
+
+      // explicitly do not want to use graph resolution handler.
+      historyService.close();
+      return cl;
+    } catch (Exception e) {
+      handleException(e, "find attribute value refset member revisions");
+      return null;
+    } finally {
+      securityService.close();
+    }
+  }
+
+  /*
+   * (non-Javadoc)
+   * 
+   * @see org.ihtsdo.otf.ts.rest.HistoryServiceRest#
+   * findAttributeValueRefSetMemberReleaseRevisions(java.lang.String,
+   * java.lang.String, java.lang.String,
+   * org.ihtsdo.otf.ts.helpers.PfsParameterJpa, java.lang.String)
+   */
+  @Override
+  @GET
+  @Path("/attributeValue/revisions/{id}/{release: [0-9][0-9][0-9][0-9][0-1][0-9][0-3][0-9]}/release")
+  @ApiOperation(value = "Get attribute value refset members release revision", notes = "Gets attribute value refset members release revision", response = AttributeValueRefSetMember.class)
+  public AttributeValueRefSetMember<?> findAttributeValueRefSetMemberReleaseRevision(
+    @ApiParam(value = "Concept id, e.g. 2", required = true) @PathParam("id") String id,
+    @ApiParam(value = "Release date in the format YYYYMMDD , e.g. latest", required = true) @PathParam("release") String release,
+    @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken) throws Exception {
+
+    Logger.getLogger(getClass()).info(
+        "RESTful call (History): /attribute value/revisions/" + id + "/" + release);
+
+    try {
+      authenticate(securityService, authToken,
+          "find attribute value refset member release revision", UserRole.VIEWER);
+
+      HistoryService historyService = new HistoryServiceJpa();
+      AttributeValueRefSetMember<?> member =
+          historyService.findAttributeValueRefSetMemberReleaseRevision(
+              Long.valueOf(id), ConfigUtility.DATE_FORMAT.parse(release));
+
+      // explicitly do not want to use graph resolution handler.
+      historyService.close();
+      return member;
+    } catch (Exception e) {
+      handleException(e, "find attribute value refset member release revision");
+      return null;
+    } finally {
+      securityService.close();
+    }
+  }
+  
+
+  /*
+   * (non-Javadoc)
+   * 
+   * @see org.ihtsdo.otf.ts.rest.HistoryServiceRest#
+   * findComplexMapRefSetMembersModifiedSinceDate(java.lang.String,
+   * java.lang.String, org.ihtsdo.otf.ts.helpers.PfsParameterJpa,
+   * java.lang.String)
+   */
+  @Override
+  @POST
+  @Path("/complexMap/{terminology}/{date:([0-9][0-9][0-9][0-9][0-1][0-9][0-3][0-9]|null)}")
+  @ApiOperation(value = "Get complex map refset members modified since a date", notes = "Gets complex map refset members changed since a date.", response = ComplexMapRefSetMemberList.class)
+  public ComplexMapRefSetMemberList findComplexMapRefSetMembersModifiedSinceDate(
+    @ApiParam(value = "ComplexMapRefSetMember terminology , e.g. SNOMEDCT", required = true) @PathParam("terminology") String terminology,
+    @ApiParam(value = "Date in the format YYYYMMDD, e.g. 20140731 or \"null\"", required = true) @PathParam("date") String date,
+    @ApiParam(value = "PFS Parameter, e.g. '{ \"startIndex\":\"1\", \"maxResults\":\"5\" }'", required = false) PfsParameterJpa pfs,
+    @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken) throws Exception {
+
+    Logger.getLogger(getClass()).info(
+        "RESTful call (History): /complex map/" + terminology + "/" + date);
+
+    try {
+      authenticate(securityService, authToken,
+          "find complex map refset members modified since date", UserRole.VIEWER);
+
+      HistoryService historyService = new HistoryServiceJpa();
+      ComplexMapRefSetMemberList cl =
+          historyService.findComplexMapRefSetMembersModifiedSinceDate(
+              terminology, ConfigUtility.DATE_FORMAT.parse(date), pfs);
+
+      historyService.close();
+      return cl;
+    } catch (Exception e) {
+      handleException(e,
+          "trying to find complex map refset members modified since date");
+      return null;
+    } finally {
+      securityService.close();
+    }
+
+  }
+
+  /**
+   * Find complex mapRefSetMember revisions.
+   *
+   * @param id the id
+   * @param startDate the start date
+   * @param endDate the end date
+   * @param pfs the pfs
+   * @param authToken the auth token
+   * @return the complex mapRefSetMember list
+   */
+  @Override
+  @POST
+  @Path("/complexMap/revisions/{id}/{startDate:([0-9][0-9][0-9][0-9][0-1][0-9][0-3][0-9]|null)}/{endDate:([0-9][0-9][0-9][0-9][0-1][0-9][0-3][0-9]|null)}/all")
+  @ApiOperation(value = "Get complex map refset members revisions in a date range", notes = "Gets all complex map refset members revisions in a date range. Use a null date to leave it open ended", response = ComplexMapRefSetMemberList.class)
+  public ComplexMapRefSetMemberList findComplexMapRefSetMemberRevisions(
+    @ApiParam(value = "Concept terminology , e.g. SNOMEDCT", required = true) @PathParam("id") String id,
+    @ApiParam(value = "Date in the format YYYYMMDD, e.g. 20140731 or \"null\"", required = true) @PathParam("startDate") String startDate,
+    @ApiParam(value = "Date in the format YYYYMMDD, e.g. 20140731 or \"null\"", required = true) @PathParam("endDate") String endDate,
+    @ApiParam(value = "PFS Parameter, e.g. '{ \"startIndex\":\"1\", \"maxResults\":\"5\" }'", required = false) PfsParameterJpa pfs,
+    @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken) throws Exception {
+
+    Logger.getLogger(getClass()).info(
+        "RESTful call (History): /complex map/revisions/" + id + "/" + startDate
+            + "/" + endDate + "/all");
+
+    try {
+      authenticate(securityService, authToken,
+          "find complex map refset member revisions", UserRole.VIEWER);
+
+      HistoryService historyService = new HistoryServiceJpa();
+      ComplexMapRefSetMemberList cl =
+          historyService.findComplexMapRefSetMemberRevisions(Long.valueOf(id),
+              ConfigUtility.DATE_FORMAT.parse(startDate),
+              ConfigUtility.DATE_FORMAT.parse(endDate), pfs);
+
+      // explicitly do not want to use graph resolution handler.
+      historyService.close();
+      return cl;
+    } catch (Exception e) {
+      handleException(e, "find complex map refset member revisions");
+      return null;
+    } finally {
+      securityService.close();
+    }
+  }
+
+  /*
+   * (non-Javadoc)
+   * 
+   * @see org.ihtsdo.otf.ts.rest.HistoryServiceRest#
+   * findComplexMapRefSetMemberReleaseRevisions(java.lang.String,
+   * java.lang.String, java.lang.String,
+   * org.ihtsdo.otf.ts.helpers.PfsParameterJpa, java.lang.String)
+   */
+  @Override
+  @GET
+  @Path("/complexMap/revisions/{id}/{release: [0-9][0-9][0-9][0-9][0-1][0-9][0-3][0-9]}/release")
+  @ApiOperation(value = "Get complex map refset members release revision", notes = "Gets complex map refset members release revision", response = ComplexMapRefSetMember.class)
+  public ComplexMapRefSetMember findComplexMapRefSetMemberReleaseRevision(
+    @ApiParam(value = "Concept id, e.g. 2", required = true) @PathParam("id") String id,
+    @ApiParam(value = "Release date in the format YYYYMMDD , e.g. latest", required = true) @PathParam("release") String release,
+    @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken) throws Exception {
+
+    Logger.getLogger(getClass()).info(
+        "RESTful call (History): /complex map/revisions/" + id + "/" + release);
+
+    try {
+      authenticate(securityService, authToken,
+          "find complex map refset member release revision", UserRole.VIEWER);
+
+      HistoryService historyService = new HistoryServiceJpa();
+      ComplexMapRefSetMember member =
+          historyService.findComplexMapRefSetMemberReleaseRevision(
+              Long.valueOf(id), ConfigUtility.DATE_FORMAT.parse(release));
+
+      // explicitly do not want to use graph resolution handler.
+      historyService.close();
+      return member;
+    } catch (Exception e) {
+      handleException(e, "find complex map refset member release revision");
+      return null;
+    } finally {
+      securityService.close();
+    }
+  }
+  
+
+
+  /*
+   * (non-Javadoc)
+   * 
+   * @see org.ihtsdo.otf.ts.rest.HistoryServiceRest#
+   * findDescriptionTypeRefSetMembersModifiedSinceDate(java.lang.String,
+   * java.lang.String, org.ihtsdo.otf.ts.helpers.PfsParameterJpa,
+   * java.lang.String)
+   */
+  @Override
+  @POST
+  @Path("/descriptionType/{terminology}/{date:([0-9][0-9][0-9][0-9][0-1][0-9][0-3][0-9]|null)}")
+  @ApiOperation(value = "Get description type refset members modified since a date", notes = "Gets description type refset members changed since a date.", response = DescriptionTypeRefSetMemberList.class)
+  public DescriptionTypeRefSetMemberList findDescriptionTypeRefSetMembersModifiedSinceDate(
+    @ApiParam(value = "DescriptionTypeRefSetMember terminology , e.g. SNOMEDCT", required = true) @PathParam("terminology") String terminology,
+    @ApiParam(value = "Date in the format YYYYMMDD, e.g. 20140731 or \"null\"", required = true) @PathParam("date") String date,
+    @ApiParam(value = "PFS Parameter, e.g. '{ \"startIndex\":\"1\", \"maxResults\":\"5\" }'", required = false) PfsParameterJpa pfs,
+    @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken) throws Exception {
+
+    Logger.getLogger(getClass()).info(
+        "RESTful call (History): /description type/" + terminology + "/" + date);
+
+    try {
+      authenticate(securityService, authToken,
+          "find description type refset members modified since date", UserRole.VIEWER);
+
+      HistoryService historyService = new HistoryServiceJpa();
+      DescriptionTypeRefSetMemberList cl =
+          historyService.findDescriptionTypeRefSetMembersModifiedSinceDate(
+              terminology, ConfigUtility.DATE_FORMAT.parse(date), pfs);
+
+      historyService.close();
+      return cl;
+    } catch (Exception e) {
+      handleException(e,
+          "trying to find description type refset members modified since date");
+      return null;
+    } finally {
+      securityService.close();
+    }
+
+  }
+
+  /**
+   * Find description typeRefSetMember revisions.
+   *
+   * @param id the id
+   * @param startDate the start date
+   * @param endDate the end date
+   * @param pfs the pfs
+   * @param authToken the auth token
+   * @return the description typeRefSetMember list
+   */
+  @Override
+  @POST
+  @Path("/descriptionType/revisions/{id}/{startDate:([0-9][0-9][0-9][0-9][0-1][0-9][0-3][0-9]|null)}/{endDate:([0-9][0-9][0-9][0-9][0-1][0-9][0-3][0-9]|null)}/all")
+  @ApiOperation(value = "Get description type refset members revisions in a date range", notes = "Gets all description type refset members revisions in a date range. Use a null date to leave it open ended", response = DescriptionTypeRefSetMemberList.class)
+  public DescriptionTypeRefSetMemberList findDescriptionTypeRefSetMemberRevisions(
+    @ApiParam(value = "Concept terminology , e.g. SNOMEDCT", required = true) @PathParam("id") String id,
+    @ApiParam(value = "Date in the format YYYYMMDD, e.g. 20140731 or \"null\"", required = true) @PathParam("startDate") String startDate,
+    @ApiParam(value = "Date in the format YYYYMMDD, e.g. 20140731 or \"null\"", required = true) @PathParam("endDate") String endDate,
+    @ApiParam(value = "PFS Parameter, e.g. '{ \"startIndex\":\"1\", \"maxResults\":\"5\" }'", required = false) PfsParameterJpa pfs,
+    @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken) throws Exception {
+
+    Logger.getLogger(getClass()).info(
+        "RESTful call (History): /description type/revisions/" + id + "/" + startDate
+            + "/" + endDate + "/all");
+
+    try {
+      authenticate(securityService, authToken,
+          "find description type refset member revisions", UserRole.VIEWER);
+
+      HistoryService historyService = new HistoryServiceJpa();
+      DescriptionTypeRefSetMemberList cl =
+          historyService.findDescriptionTypeRefSetMemberRevisions(Long.valueOf(id),
+              ConfigUtility.DATE_FORMAT.parse(startDate),
+              ConfigUtility.DATE_FORMAT.parse(endDate), pfs);
+
+      // explicitly do not want to use graph resolution handler.
+      historyService.close();
+      return cl;
+    } catch (Exception e) {
+      handleException(e, "find description type refset member revisions");
+      return null;
+    } finally {
+      securityService.close();
+    }
+  }
+
+  /*
+   * (non-Javadoc)
+   * 
+   * @see org.ihtsdo.otf.ts.rest.HistoryServiceRest#
+   * findDescriptionTypeRefSetMemberReleaseRevisions(java.lang.String,
+   * java.lang.String, java.lang.String,
+   * org.ihtsdo.otf.ts.helpers.PfsParameterJpa, java.lang.String)
+   */
+  @Override
+  @GET
+  @Path("/descriptionType/revisions/{id}/{release: [0-9][0-9][0-9][0-9][0-1][0-9][0-3][0-9]}/release")
+  @ApiOperation(value = "Get description type refset members release revision", notes = "Gets description type refset members release revision", response = DescriptionTypeRefSetMember.class)
+  public DescriptionTypeRefSetMember findDescriptionTypeRefSetMemberReleaseRevision(
+    @ApiParam(value = "Concept id, e.g. 2", required = true) @PathParam("id") String id,
+    @ApiParam(value = "Release date in the format YYYYMMDD , e.g. latest", required = true) @PathParam("release") String release,
+    @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken) throws Exception {
+
+    Logger.getLogger(getClass()).info(
+        "RESTful call (History): /description type/revisions/" + id + "/" + release);
+
+    try {
+      authenticate(securityService, authToken,
+          "find description type refset member release revision", UserRole.VIEWER);
+
+      HistoryService historyService = new HistoryServiceJpa();
+      DescriptionTypeRefSetMember member =
+          historyService.findDescriptionTypeRefSetMemberReleaseRevision(
+              Long.valueOf(id), ConfigUtility.DATE_FORMAT.parse(release));
+
+      // explicitly do not want to use graph resolution handler.
+      historyService.close();
+      return member;
+    } catch (Exception e) {
+      handleException(e, "find description type refset member release revision");
+      return null;
+    } finally {
+      securityService.close();
+    }
+  }
+  
+
+
+  /*
+   * (non-Javadoc)
+   * 
+   * @see org.ihtsdo.otf.ts.rest.HistoryServiceRest#
+   * findModuleDependencyRefSetMembersModifiedSinceDate(java.lang.String,
+   * java.lang.String, org.ihtsdo.otf.ts.helpers.PfsParameterJpa,
+   * java.lang.String)
+   */
+  @Override
+  @POST
+  @Path("/moduleDependency/{terminology}/{date:([0-9][0-9][0-9][0-9][0-1][0-9][0-3][0-9]|null)}")
+  @ApiOperation(value = "Get module dependency refset members modified since a date", notes = "Gets module dependency refset members changed since a date.", response = ModuleDependencyRefSetMemberList.class)
+  public ModuleDependencyRefSetMemberList findModuleDependencyRefSetMembersModifiedSinceDate(
+    @ApiParam(value = "ModuleDependencyRefSetMember terminology , e.g. SNOMEDCT", required = true) @PathParam("terminology") String terminology,
+    @ApiParam(value = "Date in the format YYYYMMDD, e.g. 20140731 or \"null\"", required = true) @PathParam("date") String date,
+    @ApiParam(value = "PFS Parameter, e.g. '{ \"startIndex\":\"1\", \"maxResults\":\"5\" }'", required = false) PfsParameterJpa pfs,
+    @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken) throws Exception {
+
+    Logger.getLogger(getClass()).info(
+        "RESTful call (History): /module dependency/" + terminology + "/" + date);
+
+    try {
+      authenticate(securityService, authToken,
+          "find module dependency refset members modified since date", UserRole.VIEWER);
+
+      HistoryService historyService = new HistoryServiceJpa();
+      ModuleDependencyRefSetMemberList cl =
+          historyService.findModuleDependencyRefSetMembersModifiedSinceDate(
+              terminology, ConfigUtility.DATE_FORMAT.parse(date), pfs);
+
+      historyService.close();
+      return cl;
+    } catch (Exception e) {
+      handleException(e,
+          "trying to find module dependency refset members modified since date");
+      return null;
+    } finally {
+      securityService.close();
+    }
+
+  }
+
+  /**
+   * Find module dependencyRefSetMember revisions.
+   *
+   * @param id the id
+   * @param startDate the start date
+   * @param endDate the end date
+   * @param pfs the pfs
+   * @param authToken the auth token
+   * @return the module dependencyRefSetMember list
+   */
+  @Override
+  @POST
+  @Path("/moduleDependency/revisions/{id}/{startDate:([0-9][0-9][0-9][0-9][0-1][0-9][0-3][0-9]|null)}/{endDate:([0-9][0-9][0-9][0-9][0-1][0-9][0-3][0-9]|null)}/all")
+  @ApiOperation(value = "Get module dependency refset members revisions in a date range", notes = "Gets all module dependency refset members revisions in a date range. Use a null date to leave it open ended", response = ModuleDependencyRefSetMemberList.class)
+  public ModuleDependencyRefSetMemberList findModuleDependencyRefSetMemberRevisions(
+    @ApiParam(value = "Concept terminology , e.g. SNOMEDCT", required = true) @PathParam("id") String id,
+    @ApiParam(value = "Date in the format YYYYMMDD, e.g. 20140731 or \"null\"", required = true) @PathParam("startDate") String startDate,
+    @ApiParam(value = "Date in the format YYYYMMDD, e.g. 20140731 or \"null\"", required = true) @PathParam("endDate") String endDate,
+    @ApiParam(value = "PFS Parameter, e.g. '{ \"startIndex\":\"1\", \"maxResults\":\"5\" }'", required = false) PfsParameterJpa pfs,
+    @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken) throws Exception {
+
+    Logger.getLogger(getClass()).info(
+        "RESTful call (History): /module dependency/revisions/" + id + "/" + startDate
+            + "/" + endDate + "/all");
+
+    try {
+      authenticate(securityService, authToken,
+          "find module dependency refset member revisions", UserRole.VIEWER);
+
+      HistoryService historyService = new HistoryServiceJpa();
+      ModuleDependencyRefSetMemberList cl =
+          historyService.findModuleDependencyRefSetMemberRevisions(Long.valueOf(id),
+              ConfigUtility.DATE_FORMAT.parse(startDate),
+              ConfigUtility.DATE_FORMAT.parse(endDate), pfs);
+
+      // explicitly do not want to use graph resolution handler.
+      historyService.close();
+      return cl;
+    } catch (Exception e) {
+      handleException(e, "find module dependency refset member revisions");
+      return null;
+    } finally {
+      securityService.close();
+    }
+  }
+
+  /*
+   * (non-Javadoc)
+   * 
+   * @see org.ihtsdo.otf.ts.rest.HistoryServiceRest#
+   * findModuleDependencyRefSetMemberReleaseRevisions(java.lang.String,
+   * java.lang.String, java.lang.String,
+   * org.ihtsdo.otf.ts.helpers.PfsParameterJpa, java.lang.String)
+   */
+  @Override
+  @GET
+  @Path("/moduleDependency/revisions/{id}/{release: [0-9][0-9][0-9][0-9][0-1][0-9][0-3][0-9]}/release")
+  @ApiOperation(value = "Get module dependency refset members release revision", notes = "Gets module dependency refset members release revision", response = ModuleDependencyRefSetMember.class)
+  public ModuleDependencyRefSetMember findModuleDependencyRefSetMemberReleaseRevision(
+    @ApiParam(value = "Concept id, e.g. 2", required = true) @PathParam("id") String id,
+    @ApiParam(value = "Release date in the format YYYYMMDD , e.g. latest", required = true) @PathParam("release") String release,
+    @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken) throws Exception {
+
+    Logger.getLogger(getClass()).info(
+        "RESTful call (History): /module dependency/revisions/" + id + "/" + release);
+
+    try {
+      authenticate(securityService, authToken,
+          "find module dependency refset member release revision", UserRole.VIEWER);
+
+      HistoryService historyService = new HistoryServiceJpa();
+      ModuleDependencyRefSetMember member =
+          historyService.findModuleDependencyRefSetMemberReleaseRevision(
+              Long.valueOf(id), ConfigUtility.DATE_FORMAT.parse(release));
+
+      // explicitly do not want to use graph resolution handler.
+      historyService.close();
+      return member;
+    } catch (Exception e) {
+      handleException(e, "find module dependency refset member release revision");
+      return null;
+    } finally {
+      securityService.close();
+    }
+  }
+  
+
+
+  /*
+   * (non-Javadoc)
+   * 
+   * @see org.ihtsdo.otf.ts.rest.HistoryServiceRest#
+   * findRefsetDescriptorRefSetMembersModifiedSinceDate(java.lang.String,
+   * java.lang.String, org.ihtsdo.otf.ts.helpers.PfsParameterJpa,
+   * java.lang.String)
+   */
+  @Override
+  @POST
+  @Path("/refsetDescriptor/{terminology}/{date:([0-9][0-9][0-9][0-9][0-1][0-9][0-3][0-9]|null)}")
+  @ApiOperation(value = "Get refset descriptor refset members modified since a date", notes = "Gets refset descriptor refset members changed since a date.", response = RefsetDescriptorRefSetMemberList.class)
+  public RefsetDescriptorRefSetMemberList findRefsetDescriptorRefSetMembersModifiedSinceDate(
+    @ApiParam(value = "RefsetDescriptorRefSetMember terminology , e.g. SNOMEDCT", required = true) @PathParam("terminology") String terminology,
+    @ApiParam(value = "Date in the format YYYYMMDD, e.g. 20140731 or \"null\"", required = true) @PathParam("date") String date,
+    @ApiParam(value = "PFS Parameter, e.g. '{ \"startIndex\":\"1\", \"maxResults\":\"5\" }'", required = false) PfsParameterJpa pfs,
+    @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken) throws Exception {
+
+    Logger.getLogger(getClass()).info(
+        "RESTful call (History): /refset descriptor/" + terminology + "/" + date);
+
+    try {
+      authenticate(securityService, authToken,
+          "find refset descriptor refset members modified since date", UserRole.VIEWER);
+
+      HistoryService historyService = new HistoryServiceJpa();
+      RefsetDescriptorRefSetMemberList cl =
+          historyService.findRefsetDescriptorRefSetMembersModifiedSinceDate(
+              terminology, ConfigUtility.DATE_FORMAT.parse(date), pfs);
+
+      historyService.close();
+      return cl;
+    } catch (Exception e) {
+      handleException(e,
+          "trying to find refset descriptor refset members modified since date");
+      return null;
+    } finally {
+      securityService.close();
+    }
+
+  }
+
+  /**
+   * Find refset descriptorRefSetMember revisions.
+   *
+   * @param id the id
+   * @param startDate the start date
+   * @param endDate the end date
+   * @param pfs the pfs
+   * @param authToken the auth token
+   * @return the refset descriptorRefSetMember list
+   */
+  @Override
+  @POST
+  @Path("/refsetDescriptor/revisions/{id}/{startDate:([0-9][0-9][0-9][0-9][0-1][0-9][0-3][0-9]|null)}/{endDate:([0-9][0-9][0-9][0-9][0-1][0-9][0-3][0-9]|null)}/all")
+  @ApiOperation(value = "Get refset descriptor refset members revisions in a date range", notes = "Gets all refset descriptor refset members revisions in a date range. Use a null date to leave it open ended", response = RefsetDescriptorRefSetMemberList.class)
+  public RefsetDescriptorRefSetMemberList findRefsetDescriptorRefSetMemberRevisions(
+    @ApiParam(value = "Concept terminology , e.g. SNOMEDCT", required = true) @PathParam("id") String id,
+    @ApiParam(value = "Date in the format YYYYMMDD, e.g. 20140731 or \"null\"", required = true) @PathParam("startDate") String startDate,
+    @ApiParam(value = "Date in the format YYYYMMDD, e.g. 20140731 or \"null\"", required = true) @PathParam("endDate") String endDate,
+    @ApiParam(value = "PFS Parameter, e.g. '{ \"startIndex\":\"1\", \"maxResults\":\"5\" }'", required = false) PfsParameterJpa pfs,
+    @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken) throws Exception {
+
+    Logger.getLogger(getClass()).info(
+        "RESTful call (History): /refset descriptor/revisions/" + id + "/" + startDate
+            + "/" + endDate + "/all");
+
+    try {
+      authenticate(securityService, authToken,
+          "find refset descriptor refset member revisions", UserRole.VIEWER);
+
+      HistoryService historyService = new HistoryServiceJpa();
+      RefsetDescriptorRefSetMemberList cl =
+          historyService.findRefsetDescriptorRefSetMemberRevisions(Long.valueOf(id),
+              ConfigUtility.DATE_FORMAT.parse(startDate),
+              ConfigUtility.DATE_FORMAT.parse(endDate), pfs);
+
+      // explicitly do not want to use graph resolution handler.
+      historyService.close();
+      return cl;
+    } catch (Exception e) {
+      handleException(e, "find refset descriptor refset member revisions");
+      return null;
+    } finally {
+      securityService.close();
+    }
+  }
+
+  /*
+   * (non-Javadoc)
+   * 
+   * @see org.ihtsdo.otf.ts.rest.HistoryServiceRest#
+   * findRefsetDescriptorRefSetMemberReleaseRevisions(java.lang.String,
+   * java.lang.String, java.lang.String,
+   * org.ihtsdo.otf.ts.helpers.PfsParameterJpa, java.lang.String)
+   */
+  @Override
+  @GET
+  @Path("/refsetDescriptor/revisions/{id}/{release: [0-9][0-9][0-9][0-9][0-1][0-9][0-3][0-9]}/release")
+  @ApiOperation(value = "Get refset descriptor refset members release revision", notes = "Gets refset descriptor refset members release revision", response = RefsetDescriptorRefSetMember.class)
+  public RefsetDescriptorRefSetMember findRefsetDescriptorRefSetMemberReleaseRevision(
+    @ApiParam(value = "Concept id, e.g. 2", required = true) @PathParam("id") String id,
+    @ApiParam(value = "Release date in the format YYYYMMDD , e.g. latest", required = true) @PathParam("release") String release,
+    @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken) throws Exception {
+
+    Logger.getLogger(getClass()).info(
+        "RESTful call (History): /refset descriptor/revisions/" + id + "/" + release);
+
+    try {
+      authenticate(securityService, authToken,
+          "find refset descriptor refset member release revision", UserRole.VIEWER);
+
+      HistoryService historyService = new HistoryServiceJpa();
+      RefsetDescriptorRefSetMember member =
+          historyService.findRefsetDescriptorRefSetMemberReleaseRevision(
+              Long.valueOf(id), ConfigUtility.DATE_FORMAT.parse(release));
+
+      // explicitly do not want to use graph resolution handler.
+      historyService.close();
+      return member;
+    } catch (Exception e) {
+      handleException(e, "find refset descriptor refset member release revision");
+      return null;
+    } finally {
+      securityService.close();
+    }
+  }
+    
+  
+  
+
+
+  /*
+   * (non-Javadoc)
+   * 
+   * @see org.ihtsdo.otf.ts.rest.HistoryServiceRest#
+   * findSimpleMapRefSetMembersModifiedSinceDate(java.lang.String,
+   * java.lang.String, org.ihtsdo.otf.ts.helpers.PfsParameterJpa,
+   * java.lang.String)
+   */
+  @Override
+  @POST
+  @Path("/simpleMap/{terminology}/{date:([0-9][0-9][0-9][0-9][0-1][0-9][0-3][0-9]|null)}")
+  @ApiOperation(value = "Get simple map refset members modified since a date", notes = "Gets simple map refset members changed since a date.", response = SimpleMapRefSetMemberList.class)
+  public SimpleMapRefSetMemberList findSimpleMapRefSetMembersModifiedSinceDate(
+    @ApiParam(value = "SimpleMapRefSetMember terminology , e.g. SNOMEDCT", required = true) @PathParam("terminology") String terminology,
+    @ApiParam(value = "Date in the format YYYYMMDD, e.g. 20140731 or \"null\"", required = true) @PathParam("date") String date,
+    @ApiParam(value = "PFS Parameter, e.g. '{ \"startIndex\":\"1\", \"maxResults\":\"5\" }'", required = false) PfsParameterJpa pfs,
+    @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken) throws Exception {
+
+    Logger.getLogger(getClass()).info(
+        "RESTful call (History): /simple map/" + terminology + "/" + date);
+
+    try {
+      authenticate(securityService, authToken,
+          "find simple map refset members modified since date", UserRole.VIEWER);
+
+      HistoryService historyService = new HistoryServiceJpa();
+      SimpleMapRefSetMemberList cl =
+          historyService.findSimpleMapRefSetMembersModifiedSinceDate(
+              terminology, ConfigUtility.DATE_FORMAT.parse(date), pfs);
+
+      historyService.close();
+      return cl;
+    } catch (Exception e) {
+      handleException(e,
+          "trying to find simple map refset members modified since date");
+      return null;
+    } finally {
+      securityService.close();
+    }
+
+  }
+
+  /**
+   * Find simple mapRefSetMember revisions.
+   *
+   * @param id the id
+   * @param startDate the start date
+   * @param endDate the end date
+   * @param pfs the pfs
+   * @param authToken the auth token
+   * @return the simple mapRefSetMember list
+   */
+  @Override
+  @POST
+  @Path("/simpleMap/revisions/{id}/{startDate:([0-9][0-9][0-9][0-9][0-1][0-9][0-3][0-9]|null)}/{endDate:([0-9][0-9][0-9][0-9][0-1][0-9][0-3][0-9]|null)}/all")
+  @ApiOperation(value = "Get simple map refset members revisions in a date range", notes = "Gets all simple map refset members revisions in a date range. Use a null date to leave it open ended", response = SimpleMapRefSetMemberList.class)
+  public SimpleMapRefSetMemberList findSimpleMapRefSetMemberRevisions(
+    @ApiParam(value = "Concept terminology , e.g. SNOMEDCT", required = true) @PathParam("id") String id,
+    @ApiParam(value = "Date in the format YYYYMMDD, e.g. 20140731 or \"null\"", required = true) @PathParam("startDate") String startDate,
+    @ApiParam(value = "Date in the format YYYYMMDD, e.g. 20140731 or \"null\"", required = true) @PathParam("endDate") String endDate,
+    @ApiParam(value = "PFS Parameter, e.g. '{ \"startIndex\":\"1\", \"maxResults\":\"5\" }'", required = false) PfsParameterJpa pfs,
+    @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken) throws Exception {
+
+    Logger.getLogger(getClass()).info(
+        "RESTful call (History): /simple map/revisions/" + id + "/" + startDate
+            + "/" + endDate + "/all");
+
+    try {
+      authenticate(securityService, authToken,
+          "find simple map refset member revisions", UserRole.VIEWER);
+
+      HistoryService historyService = new HistoryServiceJpa();
+      SimpleMapRefSetMemberList cl =
+          historyService.findSimpleMapRefSetMemberRevisions(Long.valueOf(id),
+              ConfigUtility.DATE_FORMAT.parse(startDate),
+              ConfigUtility.DATE_FORMAT.parse(endDate), pfs);
+
+      // explicitly do not want to use graph resolution handler.
+      historyService.close();
+      return cl;
+    } catch (Exception e) {
+      handleException(e, "find simple map refset member revisions");
+      return null;
+    } finally {
+      securityService.close();
+    }
+  }
+
+  /*
+   * (non-Javadoc)
+   * 
+   * @see org.ihtsdo.otf.ts.rest.HistoryServiceRest#
+   * findSimpleMapRefSetMemberReleaseRevisions(java.lang.String,
+   * java.lang.String, java.lang.String,
+   * org.ihtsdo.otf.ts.helpers.PfsParameterJpa, java.lang.String)
+   */
+  @Override
+  @GET
+  @Path("/simpleMap/revisions/{id}/{release: [0-9][0-9][0-9][0-9][0-1][0-9][0-3][0-9]}/release")
+  @ApiOperation(value = "Get simple map refset members release revision", notes = "Gets simple map refset members release revision", response = SimpleMapRefSetMember.class)
+  public SimpleMapRefSetMember findSimpleMapRefSetMemberReleaseRevision(
+    @ApiParam(value = "Concept id, e.g. 2", required = true) @PathParam("id") String id,
+    @ApiParam(value = "Release date in the format YYYYMMDD , e.g. latest", required = true) @PathParam("release") String release,
+    @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken) throws Exception {
+
+    Logger.getLogger(getClass()).info(
+        "RESTful call (History): /simple map/revisions/" + id + "/" + release);
+
+    try {
+      authenticate(securityService, authToken,
+          "find simple map refset member release revision", UserRole.VIEWER);
+
+      HistoryService historyService = new HistoryServiceJpa();
+      SimpleMapRefSetMember member =
+          historyService.findSimpleMapRefSetMemberReleaseRevision(
+              Long.valueOf(id), ConfigUtility.DATE_FORMAT.parse(release));
+
+      // explicitly do not want to use graph resolution handler.
+      historyService.close();
+      return member;
+    } catch (Exception e) {
+      handleException(e, "find simple map refset member release revision");
+      return null;
+    } finally {
+      securityService.close();
+    }
+  }
+  
+
+
+  /*
+   * (non-Javadoc)
+   * 
+   * @see org.ihtsdo.otf.ts.rest.HistoryServiceRest#
+   * findSimpleRefSetMembersModifiedSinceDate(java.lang.String,
+   * java.lang.String, org.ihtsdo.otf.ts.helpers.PfsParameterJpa,
+   * java.lang.String)
+   */
+  @Override
+  @POST
+  @Path("/simple/{terminology}/{date:([0-9][0-9][0-9][0-9][0-1][0-9][0-3][0-9]|null)}")
+  @ApiOperation(value = "Get simple refset members modified since a date", notes = "Gets simple refset members changed since a date.", response = SimpleRefSetMemberList.class)
+  public SimpleRefSetMemberList findSimpleRefSetMembersModifiedSinceDate(
+    @ApiParam(value = "SimpleRefSetMember terminology , e.g. SNOMEDCT", required = true) @PathParam("terminology") String terminology,
+    @ApiParam(value = "Date in the format YYYYMMDD, e.g. 20140731 or \"null\"", required = true) @PathParam("date") String date,
+    @ApiParam(value = "PFS Parameter, e.g. '{ \"startIndex\":\"1\", \"maxResults\":\"5\" }'", required = false) PfsParameterJpa pfs,
+    @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken) throws Exception {
+
+    Logger.getLogger(getClass()).info(
+        "RESTful call (History): /simple/" + terminology + "/" + date);
+
+    try {
+      authenticate(securityService, authToken,
+          "find simple refset members modified since date", UserRole.VIEWER);
+
+      HistoryService historyService = new HistoryServiceJpa();
+      SimpleRefSetMemberList cl =
+          historyService.findSimpleRefSetMembersModifiedSinceDate(
+              terminology, ConfigUtility.DATE_FORMAT.parse(date), pfs);
+
+      historyService.close();
+      return cl;
+    } catch (Exception e) {
+      handleException(e,
+          "trying to find simple refset members modified since date");
+      return null;
+    } finally {
+      securityService.close();
+    }
+
+  }
+
+  /**
+   * Find simpleRefSetMember revisions.
+   *
+   * @param id the id
+   * @param startDate the start date
+   * @param endDate the end date
+   * @param pfs the pfs
+   * @param authToken the auth token
+   * @return the simpleRefSetMember list
+   */
+  @Override
+  @POST
+  @Path("/simple/revisions/{id}/{startDate:([0-9][0-9][0-9][0-9][0-1][0-9][0-3][0-9]|null)}/{endDate:([0-9][0-9][0-9][0-9][0-1][0-9][0-3][0-9]|null)}/all")
+  @ApiOperation(value = "Get simple refset members revisions in a date range", notes = "Gets all simple refset members revisions in a date range. Use a null date to leave it open ended", response = SimpleRefSetMemberList.class)
+  public SimpleRefSetMemberList findSimpleRefSetMemberRevisions(
+    @ApiParam(value = "Concept terminology , e.g. SNOMEDCT", required = true) @PathParam("id") String id,
+    @ApiParam(value = "Date in the format YYYYMMDD, e.g. 20140731 or \"null\"", required = true) @PathParam("startDate") String startDate,
+    @ApiParam(value = "Date in the format YYYYMMDD, e.g. 20140731 or \"null\"", required = true) @PathParam("endDate") String endDate,
+    @ApiParam(value = "PFS Parameter, e.g. '{ \"startIndex\":\"1\", \"maxResults\":\"5\" }'", required = false) PfsParameterJpa pfs,
+    @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken) throws Exception {
+
+    Logger.getLogger(getClass()).info(
+        "RESTful call (History): /simple/revisions/" + id + "/" + startDate
+            + "/" + endDate + "/all");
+
+    try {
+      authenticate(securityService, authToken,
+          "find simple refset member revisions", UserRole.VIEWER);
+
+      HistoryService historyService = new HistoryServiceJpa();
+      SimpleRefSetMemberList cl =
+          historyService.findSimpleRefSetMemberRevisions(Long.valueOf(id),
+              ConfigUtility.DATE_FORMAT.parse(startDate),
+              ConfigUtility.DATE_FORMAT.parse(endDate), pfs);
+
+      // explicitly do not want to use graph resolution handler.
+      historyService.close();
+      return cl;
+    } catch (Exception e) {
+      handleException(e, "find simple refset member revisions");
+      return null;
+    } finally {
+      securityService.close();
+    }
+  }
+
+  /*
+   * (non-Javadoc)
+   * 
+   * @see org.ihtsdo.otf.ts.rest.HistoryServiceRest#
+   * findSimpleRefSetMemberReleaseRevisions(java.lang.String,
+   * java.lang.String, java.lang.String,
+   * org.ihtsdo.otf.ts.helpers.PfsParameterJpa, java.lang.String)
+   */
+  @Override
+  @GET
+  @Path("/simple/revisions/{id}/{release: [0-9][0-9][0-9][0-9][0-1][0-9][0-3][0-9]}/release")
+  @ApiOperation(value = "Get simple refset members release revision", notes = "Gets simple refset members release revision", response = SimpleRefSetMember.class)
+  public SimpleRefSetMember findSimpleRefSetMemberReleaseRevision(
+    @ApiParam(value = "Concept id, e.g. 2", required = true) @PathParam("id") String id,
+    @ApiParam(value = "Release date in the format YYYYMMDD , e.g. latest", required = true) @PathParam("release") String release,
+    @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken) throws Exception {
+
+    Logger.getLogger(getClass()).info(
+        "RESTful call (History): /simple/revisions/" + id + "/" + release);
+
+    try {
+      authenticate(securityService, authToken,
+          "find simple refset member release revision", UserRole.VIEWER);
+
+      HistoryService historyService = new HistoryServiceJpa();
+      SimpleRefSetMember member =
+          historyService.findSimpleRefSetMemberReleaseRevision(
+              Long.valueOf(id), ConfigUtility.DATE_FORMAT.parse(release));
+
+      // explicitly do not want to use graph resolution handler.
+      historyService.close();
+      return member;
+    } catch (Exception e) {
+      handleException(e, "find simple refset member release revision");
+      return null;
+    } finally {
+      securityService.close();
+    }
+  }
+ 
   /*
    * (non-Javadoc)
    * 

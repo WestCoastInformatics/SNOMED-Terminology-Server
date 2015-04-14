@@ -12,24 +12,19 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.util.Date;
 
-import org.apache.log4j.Logger;
 import org.ihtsdo.otf.ts.ReleaseInfo;
-import org.ihtsdo.otf.ts.helpers.PfsParameter;
+import org.ihtsdo.otf.ts.helpers.ConceptList;
 import org.ihtsdo.otf.ts.helpers.PfsParameterJpa;
 import org.ihtsdo.otf.ts.helpers.ReleaseInfoList;
-import org.ihtsdo.otf.ts.helpers.ResultList;
 import org.ihtsdo.otf.ts.jpa.ReleaseInfoJpa;
-import org.ihtsdo.otf.ts.rf2.Component;
+import org.ihtsdo.otf.ts.rf2.Concept;
 import org.ihtsdo.otf.ts.rf2.DescriptionTypeRefSetMember;
+import org.ihtsdo.otf.ts.rf2.Relationship;
 import org.ihtsdo.otf.ts.rf2.jpa.AbstractAssociationReferenceRefSetMemberJpa;
 import org.ihtsdo.otf.ts.rf2.jpa.AbstractAttributeValueRefSetMemberJpa;
 import org.ihtsdo.otf.ts.rf2.jpa.ComplexMapRefSetMemberJpa;
-import org.ihtsdo.otf.ts.rf2.jpa.ConceptJpa;
-import org.ihtsdo.otf.ts.rf2.jpa.DescriptionJpa;
 import org.ihtsdo.otf.ts.rf2.jpa.LanguageRefSetMemberJpa;
 import org.ihtsdo.otf.ts.rf2.jpa.ModuleDependencyRefSetMemberJpa;
 import org.ihtsdo.otf.ts.rf2.jpa.RefsetDescriptorRefSetMemberJpa;
@@ -44,11 +39,19 @@ import org.junit.Test;
  * Implementation of the "History Service REST Normal Use" Test Cases.
  */
 public class HistoryServiceRestNormalUseTest extends HistoryServiceRestTest {
-  
+
+  /**
+   * Variables are re-used, but set to top-level for convenience of repeated
+   * calls without declarations in each test method.
+   */
+
   /** Set true to run tests, set false to get result numbers */
   private static boolean testFlag = false;
 
-  /** The date for which to test revisions, in YYYYMMDD format */
+  /**
+   * The date for which to test revisions, in YYYYMMDD format For tests to
+   * function properly, object must have revision at this date.
+   */
   private static String testDate;
 
   /** The expected total count of all revisions for an object class */
@@ -66,6 +69,11 @@ public class HistoryServiceRestNormalUseTest extends HistoryServiceRestTest {
   /** The terminology id for which to retrieve a test object */
   private static String testId;
 
+  /** The test date/name for the release info routines */
+  private static String currentDate;
+  
+  /** The minimum pfs parameter object */
+  private static PfsParameterJpa pfs;
 
   /**
    * Create test fixtures per test.
@@ -80,8 +88,16 @@ public class HistoryServiceRestNormalUseTest extends HistoryServiceRestTest {
     terminology = "SNOMEDCT";
     version = "latest";
 
+    // release info testing (and teardown removal) information
+    currentDate = dtFormat.format(new Date());
+
     // authentication -- use admin for this test
     authToken = securityService.authenticate(adminUser, adminPassword);
+    
+    // default paging
+    pfs = new PfsParameterJpa();
+    pfs.setStartIndex(0);
+    pfs.setMaxResults(10);
   }
 
   /**
@@ -95,43 +111,52 @@ public class HistoryServiceRestNormalUseTest extends HistoryServiceRestTest {
     ReleaseInfo releaseInfo2 = null;
     ReleaseInfoList releaseInfoList = null;
 
-    // getReleaseHistory(String, String)
+    // test SNOMEDCT -- override global terminology
+    // String terminology = "SNOMEDCT";
 
+    // getReleaseHistory(String, String)
+    // should be 36 release infos for SNOMEDCT
     try {
       releaseInfoList =
           historyService.getReleaseHistory(terminology, authToken);
       assertNotNull(releaseInfoList);
+      assertTrue(releaseInfoList.getCount() == 36);
     } catch (Exception e) {
       fail("getReleaseHistory for " + terminology + ", " + authToken
           + " failed");
     }
 
     // getCurrentReleaseInfo(String, String)
+    // should return the 20140731 release
     try {
       releaseInfo =
           historyService.getCurrentReleaseInfo(terminology, authToken);
       assertNotNull(releaseInfo);
+      assertTrue(releaseInfo.getName().equals("20140731"));
     } catch (Exception e) {
       fail("getCurrentReleaseInfo for " + terminology + ", " + authToken
           + " failed)");
     }
 
     // getPlannedReleaseInfo(String, String)
+    // should return the 20150131 release
     try {
       releaseInfo =
           historyService.getPlannedReleaseInfo(terminology, authToken);
       assertNotNull(releaseInfo);
+      assertTrue(releaseInfo.getName().equals("20150131"));
     } catch (Exception e) {
       fail("getPlannedReleaseInfo for " + terminology + ", " + authToken
           + " failed)");
     }
 
     // getPreviousReleaseInfo(String, String)
-    // this invocation should return null
+    // this invocation should return the 20140131 release
     try {
       releaseInfo =
           historyService.getPreviousReleaseInfo(terminology, authToken);
-      assertNull(releaseInfo);
+      assertNotNull(releaseInfo);
+      assertTrue(releaseInfo.getName().equals("20140131"));
     } catch (Exception e) {
       fail("getPreviousReleaseInfo for " + terminology + ", " + authToken
           + " failed)");
@@ -141,7 +166,7 @@ public class HistoryServiceRestNormalUseTest extends HistoryServiceRestTest {
     releaseInfo = new ReleaseInfoJpa();
     releaseInfo.setDescription("test description");
     releaseInfo.setEffectiveTime(new Date());
-    releaseInfo.setName("testName");
+    releaseInfo.setName(currentDate);
     releaseInfo.setPlanned(false);
     releaseInfo.setPublished(true);
     releaseInfo.setTerminology(terminology);
@@ -158,11 +183,13 @@ public class HistoryServiceRestNormalUseTest extends HistoryServiceRestTest {
     }
 
     // getReleaseInfo(String, String, String)
+    releaseInfo2 = null;
     try {
       releaseInfo2 =
-          historyService.getReleaseInfo(terminology, "testName", authToken);
+          historyService
+              .getReleaseInfo(terminology, currentDate, authToken);
       assertNotNull(releaseInfo2);
-      assertTrue(releaseInfo2.getName().equals("testName"));
+      assertTrue(releaseInfo2.getName().equals(currentDate));
     } catch (Exception e) {
       e.printStackTrace();
       fail("getReleaseInfo failed");
@@ -227,6 +254,10 @@ public class HistoryServiceRestNormalUseTest extends HistoryServiceRestTest {
     } catch (Exception e) {
       fail("Unexpected exception trying to start the editing cycle");
     }
+
+    /**
+     * finishReleaseCycle not currently used, untested
+     */
   }
 
   /**
@@ -236,18 +267,40 @@ public class HistoryServiceRestNormalUseTest extends HistoryServiceRestTest {
   @Test
   public void testNormalUseRestHistory003() throws Exception {
 
-    /** The object to test */
-    Class<?> testClass = ConceptJpa.class;
-
     /** Expected values */
     objectsCt = 10293;
     objectsAfterTestDateCt = 0;
-    testDate = "20130731";  // revision for object must exist
-    testId = "10200004";
-    testObjectRevisionsCt = 9;
+    testDate = "20130731"; // revision for object must exist
+    testId = "321087001";
+    testObjectRevisionsCt = 5;
+    
+    ConceptList results;
 
-    testComponent(testClass);
 
+    // get the component
+    Concept c =
+        contentService
+            .getSingleConcept(testId, terminology, version, authToken);
+  /*  
+    Relationship r = contentService.getRelationship(c.getRelationships().iterator().next().getTerminologyId().toString(), terminology, version, authToken);
+    historyService.findRelationshipRevisions(r.Id().toString(), "19700101", currentDate, pfs, authToken);
+    
+    historyService.findRelationshipsModifiedSinceDate(terminology,  "19700101", pfs, authToken);
+ */   // test modified since date method
+    results = historyService.findConceptsModifiedSinceDate(terminology, "19700101", pfs, authToken);
+    assertTrue(results.getTotalCount() == 10293);
+    
+    // test modified since date method
+    //results = historyService.findConceptsModifiedSinceDate(terminology, "20080131", pfs, authToken);
+    //assertTrue(results.getTotalCount() == 2549);
+    
+    Concept c2 = historyService.findConceptReleaseRevision(c.getId().toString(), "20020131", authToken);
+    
+    // test revisions method
+    results = historyService.findConceptRevisions(c.getId().toString(), "19700101", currentDate, pfs, authToken);
+    assertTrue(results.getTotalCount() == 10293);
+   
+    
   }
 
   /**
@@ -256,8 +309,6 @@ public class HistoryServiceRestNormalUseTest extends HistoryServiceRestTest {
    */
   @Test
   public void testNormalUseRestHistory004() throws Exception {
-    /** The object to test */
-    Class<?> testClass = DescriptionJpa.class;
 
     /** Expected values */
     testDate = "20130731";
@@ -266,8 +317,8 @@ public class HistoryServiceRestNormalUseTest extends HistoryServiceRestTest {
     objectsAfterTestDateCt = 0;
     testObjectRevisionsCt = 0;
 
-    // testComponent(testClass);
-
+    
+   
   }
 
   /**
@@ -307,7 +358,7 @@ public class HistoryServiceRestNormalUseTest extends HistoryServiceRestTest {
 
     // testComponent(testClass);
   }
-  
+
   /**
    * Test association reference ref set methods
    * @throws Exception
@@ -326,7 +377,7 @@ public class HistoryServiceRestNormalUseTest extends HistoryServiceRestTest {
 
     // testComponent(testClass);
   }
-  
+
   /**
    * Test attribute value ref set methods
    * @throws Exception
@@ -345,7 +396,7 @@ public class HistoryServiceRestNormalUseTest extends HistoryServiceRestTest {
 
     // testComponent(testClass);
   }
-  
+
   /**
    * Test complex map ref set methods
    * @throws Exception
@@ -364,7 +415,7 @@ public class HistoryServiceRestNormalUseTest extends HistoryServiceRestTest {
 
     // testComponent(testClass);
   }
-  
+
   /**
    * Test description type ref set methods
    * @throws Exception
@@ -383,7 +434,7 @@ public class HistoryServiceRestNormalUseTest extends HistoryServiceRestTest {
 
     // testComponent(testClass);
   }
-  
+
   /**
    * Test module dependency ref set methods
    * @throws Exception
@@ -402,7 +453,7 @@ public class HistoryServiceRestNormalUseTest extends HistoryServiceRestTest {
 
     // testComponent(testClass);
   }
-  
+
   /**
    * Test refset descriptor ref set methods
    * @throws Exception
@@ -421,7 +472,7 @@ public class HistoryServiceRestNormalUseTest extends HistoryServiceRestTest {
 
     // testComponent(testClass);
   }
-  
+
   /**
    * Test simple map ref set member methods
    * @throws Exception
@@ -440,7 +491,7 @@ public class HistoryServiceRestNormalUseTest extends HistoryServiceRestTest {
 
     // testComponent(testClass);
   }
-  
+
   /**
    * Test simple ref set member methods
    * @throws Exception
@@ -469,321 +520,24 @@ public class HistoryServiceRestNormalUseTest extends HistoryServiceRestTest {
   @After
   public void teardown() throws Exception {
 
-    ReleaseInfo releaseInfo;
+    ReleaseInfo releaseInfo = null;
 
     // test for release info created in test 001
     releaseInfo =
-        historyService.getReleaseInfo(terminology, "newTestName", authToken);
+        historyService.getReleaseInfo(terminology, currentDate, authToken);
     if (releaseInfo != null) {
       historyService.removeReleaseInfo(releaseInfo.getId(), authToken);
     }
-
-    // test for release info created in test 002
-    String releaseVersion = dtFormat.format(new Date());
-    releaseInfo =
-        historyService.getReleaseInfo(terminology, releaseVersion, authToken);
-    if (releaseInfo != null)
-      historyService.removeReleaseInfo(releaseInfo.getId(), authToken);
+    /*
+     * // test for release info created in test 002 String releaseVersion =
+     * dtFormat.format(new Date()); releaseInfo =
+     * historyService.getReleaseInfo(terminology, releaseVersion, authToken); if
+     * (releaseInfo != null) {
+     * historyService.removeReleaseInfo(releaseInfo.getId(), authToken); }
+     */
 
     // logout
     securityService.logout(authToken);
-  }
-
-  /**
-   * Test modified since date method for normal use
-   *
-   * @param clazz the clazz
-   * @return
-   * @throws Exception the exception
-   */
-  private ResultList<?> testNormalUseModifiedSinceDateMethod(Class<?> clazz,
-    String textDate) throws Exception {
-
-    Method method =
-        historyService.getClass().getMethod(
-            "find" + getClassShortName(clazz) + "sModifiedSinceDate",
-            new Class<?>[] {
-                String.class, String.class, PfsParameterJpa.class, String.class
-            });
-
-    PfsParameter pfs = new PfsParameterJpa();
-    /*
-     * pfs.setMaxResults(10); pfs.setStartIndex(0);
-     */
-    pfs.setSortField("lastModified");
-    pfs.setAscending(false);
-
-    // test since 1970 (i.e. all concepts)
-    parameters = new Object[] {
-        new String(terminology), textDate, pfs, authToken
-    };
-    try {
-      results = (ResultList<?>) method.invoke(historyService, parameters);
-    } catch (InvocationTargetException e) {
-      e.printStackTrace();
-    }
-
-    for (int i = 0; i < Math.min(results.getCount(), 10); i++) {
-      System.out.println(results.getObjects().get(i).toString());
-    }
-
-    return results;
-  }
-
-  /**
-   * Test revisions method for normal use.
-   *
-   * @param clazz the clazz of the component being tested
-   * @param textDate
-   * @param c the object used for testing
-   * @throws Exception
-   */
-  private ResultList<?> testNormalUseRevisionsMethod(Class<?> clazz,
-    String textDate, Component c) throws Exception {
-
-    Method method =
-        historyService.getClass().getMethod(
-            "find" + getClassShortName(clazz) + "Revisions",
-            new Class<?>[] {
-                String.class, String.class, String.class,
-                PfsParameterJpa.class, String.class
-            });
-
-    PfsParameter pfs = new PfsParameterJpa();
-    pfs.setMaxResults(10);
-    pfs.setStartIndex(0);
-    pfs.setSortField("effectiveTime");
-    pfs.setAscending(true);
-
-    // test between 1970 (i.e. all concepts) and current date/time
-    parameters =
-        new Object[] {
-            c.getId().toString(), new String("19700101"),
-            dtFormat.format(new Date()), pfs, authToken
-        };
-
-    try {
-      results = (ResultList<?>) method.invoke(historyService, parameters);
-    } catch (InvocationTargetException e) {
-      e.printStackTrace();
-    }
-
-    return results;
-
-  }
-
-  /**
-   * Test release revision method for normal use.
-   *
-   * @param clazz the clazz
-   * @return
-   * @throws Exception
-   */
-  private Component testNormalUseReleaseRevisionMethod(Class<?> clazz,
-    Component c) throws Exception {
-
-    Component revisionComponent = null;
-
-    Method method =
-        historyService.getClass().getMethod(
-            "find" + getClassShortName(clazz) + "ReleaseRevision",
-            new Class<?>[] {
-                String.class, String.class, String.class
-            });
-
-    // test for retrieved release dates between first component's effective time
-    // and today's date
-    parameters = new Object[] {
-        c.getId().toString(), dtFormat.format(c.getEffectiveTime()), authToken
-    };
-
-    try {
-      revisionComponent = (Component) method.invoke(historyService, parameters);
-    } catch (InvocationTargetException e) {
-      e.printStackTrace();
-    }
-
-    return revisionComponent;
-
-  }
-
-  /**
-   * Test deep copy modified since date method for normal use.
-   *
-   * @param clazz the clazz
-   * @throws Exception
-   */
-  private void testNormalUseDeepCopyModifiedSinceDateMethod(Class<?> clazz,
-    Component c) throws Exception {
-
-    Method method =
-        historyService.getClass().getMethod(
-            "find" + getClassShortName(clazz) + "sDeepModifiedSinceDate",
-            new Class<?>[] {
-                String.class, String.class, String.class,
-                PfsParameterJpa.class, String.class
-            });
-
-    PfsParameter pfs = new PfsParameterJpa();
-    pfs.setMaxResults(10);
-    pfs.setStartIndex(0);
-    pfs.setSortField("effectiveTime");
-    pfs.setAscending(false);
-
-    // test for retrieved release dates between first component's effective time
-    // and today's date
-    parameters =
-        new Object[] {
-            c.getId().toString(), dtFormat.format(c.getEffectiveTime()),
-            dtFormat.format(new Date()), pfs, authToken
-        };
-
-    try {
-      results = (ResultList<?>) method.invoke(historyService, parameters);
-    } catch (InvocationTargetException e) {
-      e.printStackTrace();
-    }
-  }
-
-  /**
-   * Test component class. Assumes global parameters correctly set.
-   *
-   * @param testClass the test class
-   * @throws Exception the exception
-   */
-  private void testComponent(Class<?> testClass) throws Exception {
-
-    /** Get the component for testing */
-    Component component = getComponent(testClass, testId);
-
-    /**
-     * findObjectsModifiedSinceDate method
-     */
-
-    // retrieve all objects since 1970 (beginning of time)
-    try {
-      results =
-          (ResultList<?>) testNormalUseModifiedSinceDateMethod(testClass,
-              "19700101");
-
-      if (testFlag == true) {
-        assertTrue(results.getCount() == objectsCt);
-      } else {
-        Logger.getLogger(HistoryServiceRestNormalUseTest.class).info(
-            "All Object Ct = " + results.getCount());
-      }
-    } catch (Exception e) {
-      fail("Failed to get all objects for " + testClass.getSimpleName());
-    }
-
-    // retrieve all objects modified since test date
-    try {
-      results =
-          (ResultList<?>) testNormalUseModifiedSinceDateMethod(testClass,
-              testDate);
-
-      if (testFlag == true) {
-        assertTrue(results.getCount() == objectsAfterTestDateCt);
-      } else {
-        Logger.getLogger(HistoryServiceRestNormalUseTest.class).info(
-            "All Objects Since Date Ct = " + results.getCount());
-      }
-    } catch (Exception e) {
-      fail("Failed to get all objects since date for "
-          + testClass.getSimpleName());
-    }
-
-    /**
-     * findObjectRevisions method
-     */
-
-    // get all revisions for test object
-    try {
-      results =
-          (ResultList<?>) testNormalUseRevisionsMethod(testClass, "19700101",
-              component);
-
-      if (testFlag == true) {
-        assertTrue(results.getCount() == testObjectRevisionsCt);
-      } else {
-        Logger.getLogger(HistoryServiceRestNormalUseTest.class).info(
-            "All Test Object Revisions Ct = " + results.getCount());
-      }
-    } catch (Exception e) {
-      fail("Failed to get all revisions for test object for "
-          + testClass.getSimpleName());
-    }
-
-    // retrieve all objects modified since test date
-    try {
-      results =
-          (ResultList<?>) testNormalUseRevisionsMethod(testClass, testDate,
-              component);
-
-      if (testFlag == true) {
-        assertTrue(results.getCount() == objectsCt);
-      } else {
-        Logger.getLogger(HistoryServiceRestNormalUseTest.class).info(
-            "All Test Object Revisions Since Date Ct = " + results.getCount());
-      }
-    } catch (Exception e) {
-      fail("Failed to get revisions for test object on or after test date for "
-          + testClass.getSimpleName());
-    }
-
-    /** findObjectRevisions method */
-
-    // get the revision for specific date
-    try {
-      Component c =
-          this.testNormalUseReleaseRevisionMethod(testClass, component);
-
-      // test total revisions
-      if (testFlag == true) {
-        assertNotNull(c);
-        assertTrue(c.getId().equals(component.getId()));
-        assertTrue(c.getLastModified().equals(testDate));
-      } else {
-        Logger.getLogger(HistoryServiceRestNormalUseTest.class).info(
-            "Successfully retrieved revision for object");
-      }
-    } catch (Exception e) {
-      fail("Failed to retrieve release revision for "
-          + testClass.getSimpleName());
-    }
-
-    /** Remove the object from the set of objects to be tested */
-
-    if (objectNames != null)
-      objectNames.remove(getClassShortName(testClass));
-  }
-
-  /**
-   * Helper function to get the test component by terminologyId
-   * @param clazz
-   * @param terminologyId
-   * @return
-   * @throws NoSuchMethodException
-   * @throws SecurityException
-   * @throws IllegalAccessException
-   * @throws IllegalArgumentException
-   * @throws InvocationTargetException
-   */
-  private Component getComponent(Class<?> clazz, String terminologyId)
-    throws NoSuchMethodException, SecurityException, IllegalAccessException,
-    IllegalArgumentException, InvocationTargetException {
-
-    Method method =
-        historyService.getClass().getMethod("get" + getClassShortName(clazz),
-            new Class<?>[] {
-                String.class, String.class, String.class, String.class
-            });
-
-    parameters = new Object[] {
-        terminologyId, terminology, version, authToken
-    };
-
-    return (Component) method.invoke(historyService, parameters);
   }
 
 }

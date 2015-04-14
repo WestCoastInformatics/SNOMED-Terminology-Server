@@ -982,6 +982,7 @@ public class HistoryServiceJpa extends ContentServiceJpa implements
       List<ReleaseInfo> releaseInfos = query.getResultList();
       ReleaseInfoList releaseInfoList = new ReleaseInfoListJpa();
       releaseInfoList.setObjects(releaseInfos);
+      releaseInfoList.setTotalCount(releaseInfos.size());
       return releaseInfoList;
     } catch (NoResultException e) {
       return null;
@@ -1432,6 +1433,7 @@ public class HistoryServiceJpa extends ContentServiceJpa implements
 
         // search by id
         .add(AuditEntity.id().eq(id));
+    
     if (startDate != null) {
       // search by lower bound on last modified
       query.add(AuditEntity.property("lastModified").ge(startDate));
@@ -1454,8 +1456,11 @@ public class HistoryServiceJpa extends ContentServiceJpa implements
           query.setFirstResult(pfs.getStartIndex()).setMaxResults(
               pfs.getMaxResults());
     }
+
+    // TODO -- Remove, added to check class casting exception
+    query.getResultList();
+
     // execute query
-    @SuppressWarnings("unchecked")
     List<T> revisions = query.getResultList();
     return revisions;
   }
@@ -1479,21 +1484,29 @@ public class HistoryServiceJpa extends ContentServiceJpa implements
 
     AuditReader reader = AuditReaderFactory.get(manager);
     AuditQuery query = reader.createQuery()
-
+        
     // all revisions, returned as objects, not finding deleted entries
-        .forRevisionsOfEntity(clazz, true, false)
+        .forRevisionsOfEntity(clazz, false, false)
+        
+        //.addProjection(AuditEntity.revisionNumber().max())
 
         // search by id
         .add(AuditEntity.id().eq(id))
 
         // search by lower bound on last modified
         .add(AuditEntity.property("effectiveTime").eq(release));
+    
+    
 
     // execute query
-    @SuppressWarnings("unchecked")
-    List<T> revisions = query.getResultList();
-    if (revisions.size() > 0) {
-      return revisions.get(0);
+    query.getResultList();
+    
+    List<Long> results = query.getResultList();
+    System.out.println(results);
+    
+    
+    if (results.size() > 0) {
+      return null;
     } else {
       return null;
     }

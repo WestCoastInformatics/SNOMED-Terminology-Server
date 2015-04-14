@@ -21,9 +21,13 @@ import org.ihtsdo.otf.ts.helpers.SimpleMapRefSetMemberList;
 import org.ihtsdo.otf.ts.helpers.SimpleRefSetMemberList;
 import org.ihtsdo.otf.ts.rf2.Concept;
 import org.ihtsdo.otf.ts.rf2.Description;
+import org.ihtsdo.otf.ts.rf2.Relationship;
 
+// TODO: Auto-generated Javadoc
 /**
  * Represents a content available via a REST service.
+ *
+ * @author ${author}
  */
 public interface ContentServiceRest {
 
@@ -144,6 +148,21 @@ public interface ContentServiceRest {
    */
   public Description getDescription(String terminologyId, String terminology,
     String version, String authToken) throws Exception;
+  
+
+  /**
+   * Returns the relationship.
+   *
+   * @param terminologyId the terminology id
+   * @param terminology the terminology
+   * @param version the version
+   * @param authToken the auth token
+   * @return the relationship
+   * @throws Exception the exception
+   */
+  public Relationship getRelationship(String terminologyId, String terminology,
+    String version, String authToken) throws Exception;
+
 
   /**
    * Find association reference ref set members.
@@ -348,6 +367,22 @@ public interface ContentServiceRest {
     String terminologyId, String terminology, String version, String authToken)
     throws Exception;
 
+
+  /**
+   * Returns the description type ref set members for concept.
+   *
+   * @param terminologyId the terminology id
+   * @param terminology the terminology
+   * @param version the version
+   * @param authToken the auth token
+   * @return the description type ref set members for concept
+   * @throws Exception the exception
+   */
+  public DescriptionTypeRefSetMemberList getDescriptionTypeRefSetMembersForConcept(
+    String terminologyId, String terminology, String version, String authToken)
+    throws Exception;
+
+  
   /**
    * Returns the language ref set members for description.
    *

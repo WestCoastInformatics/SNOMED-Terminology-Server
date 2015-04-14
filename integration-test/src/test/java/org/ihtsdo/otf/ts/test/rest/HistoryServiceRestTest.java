@@ -12,6 +12,7 @@ import java.util.Set;
 import org.apache.log4j.Logger;
 import org.ihtsdo.otf.ts.helpers.ConfigUtility;
 import org.ihtsdo.otf.ts.helpers.ResultList;
+import org.ihtsdo.otf.ts.jpa.client.ContentClientRest;
 import org.ihtsdo.otf.ts.jpa.client.HistoryClientRest;
 import org.ihtsdo.otf.ts.jpa.client.SecurityClientRest;
 import org.junit.After;
@@ -28,6 +29,9 @@ public class HistoryServiceRestTest {
 
   /** The service. */
   protected static HistoryClientRest historyService;
+  
+  /** The content service -- for retrieval of objects */
+  protected static ContentClientRest contentService;
 
   /** The security service. */
   protected static SecurityClientRest securityService;
@@ -76,6 +80,7 @@ public class HistoryServiceRestTest {
   public static void setupClass() throws Exception {
     properties = ConfigUtility.getConfigProperties();
     securityService = new SecurityClientRest(properties);
+    contentService = new ContentClientRest(properties);
     historyService = new HistoryClientRest(properties);
 
     viewerUser = properties.getProperty("viewer.user");
@@ -94,7 +99,7 @@ public class HistoryServiceRestTest {
       }
     }
     Logger.getLogger(HistoryServiceRestTest.class).info(
-        "Find methods will be tested for:");
+        "findReleaseRevisions, findModifiedSinceDate, findRevisions methods will be tested for:");
     for (String objectName : objectNames) {
       Logger.getLogger(HistoryServiceRestTest.class).info("  " + objectName);
     }

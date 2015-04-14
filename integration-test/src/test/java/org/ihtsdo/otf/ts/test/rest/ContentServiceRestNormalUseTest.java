@@ -20,7 +20,6 @@ import org.ihtsdo.otf.ts.helpers.ConceptList;
 import org.ihtsdo.otf.ts.helpers.DescriptionTypeRefSetMemberList;
 import org.ihtsdo.otf.ts.helpers.LanguageRefSetMemberList;
 import org.ihtsdo.otf.ts.helpers.ModuleDependencyRefSetMemberList;
-import org.ihtsdo.otf.ts.helpers.PfsParameter;
 import org.ihtsdo.otf.ts.helpers.PfsParameterJpa;
 import org.ihtsdo.otf.ts.helpers.RefsetDescriptorRefSetMemberList;
 import org.ihtsdo.otf.ts.helpers.SearchResultList;
@@ -339,7 +338,7 @@ public class ContentServiceRestNormalUseTest extends ContentServiceRestTest {
 
     // check terminology id of contents
     Set<String> tids = new HashSet<String>();
-    tids.add("900000000000550004");
+    tids.add("807f775b-1d66-5069-b58e-a37ace985dcf");
     for (DescriptionTypeRefSetMember result : results.getObjects()) {
       if (!tids.contains(result.getTerminologyId())) {
         fail("Erroneous result retrieved");

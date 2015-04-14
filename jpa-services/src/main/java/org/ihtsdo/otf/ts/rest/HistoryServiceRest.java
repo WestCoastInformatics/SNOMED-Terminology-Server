@@ -4,20 +4,38 @@
 package org.ihtsdo.otf.ts.rest;
 
 import org.ihtsdo.otf.ts.ReleaseInfo;
+import org.ihtsdo.otf.ts.helpers.AssociationReferenceRefSetMemberList;
+import org.ihtsdo.otf.ts.helpers.AttributeValueRefSetMemberList;
+import org.ihtsdo.otf.ts.helpers.ComplexMapRefSetMemberList;
 import org.ihtsdo.otf.ts.helpers.ConceptList;
 import org.ihtsdo.otf.ts.helpers.DescriptionList;
+import org.ihtsdo.otf.ts.helpers.DescriptionTypeRefSetMemberList;
 import org.ihtsdo.otf.ts.helpers.LanguageRefSetMemberList;
+import org.ihtsdo.otf.ts.helpers.ModuleDependencyRefSetMemberList;
 import org.ihtsdo.otf.ts.helpers.PfsParameterJpa;
+import org.ihtsdo.otf.ts.helpers.RefsetDescriptorRefSetMemberList;
 import org.ihtsdo.otf.ts.helpers.RelationshipList;
 import org.ihtsdo.otf.ts.helpers.ReleaseInfoList;
+import org.ihtsdo.otf.ts.helpers.SimpleMapRefSetMemberList;
+import org.ihtsdo.otf.ts.helpers.SimpleRefSetMemberList;
 import org.ihtsdo.otf.ts.jpa.ReleaseInfoJpa;
+import org.ihtsdo.otf.ts.rf2.AssociationReferenceRefSetMember;
+import org.ihtsdo.otf.ts.rf2.AttributeValueRefSetMember;
+import org.ihtsdo.otf.ts.rf2.ComplexMapRefSetMember;
 import org.ihtsdo.otf.ts.rf2.Concept;
 import org.ihtsdo.otf.ts.rf2.Description;
+import org.ihtsdo.otf.ts.rf2.DescriptionTypeRefSetMember;
 import org.ihtsdo.otf.ts.rf2.LanguageRefSetMember;
+import org.ihtsdo.otf.ts.rf2.ModuleDependencyRefSetMember;
+import org.ihtsdo.otf.ts.rf2.RefsetDescriptorRefSetMember;
 import org.ihtsdo.otf.ts.rf2.Relationship;
+import org.ihtsdo.otf.ts.rf2.SimpleMapRefSetMember;
+import org.ihtsdo.otf.ts.rf2.SimpleRefSetMember;
 
 /**
  * Represents a history services available via a REST service.
+ *
+ * @author ${author}
  */
 public interface HistoryServiceRest {
 
@@ -341,5 +359,333 @@ public interface HistoryServiceRest {
    */
   public void finishRf2Release(String releaseVersion, String terminology,
     String authToken) throws Exception;
+
+  /**
+   * Find association reference ref set member release revision.
+   *
+   * @param id the id
+   * @param release the release
+   * @param authToken the auth token
+   * @return the association reference ref set member
+   * @throws Exception the exception
+   */
+  public AssociationReferenceRefSetMember<?> findAssociationReferenceRefSetMemberReleaseRevision(
+    String id, String release, String authToken) throws Exception;
+
+  /**
+   * Find association reference ref set members modified since date.
+   *
+   * @param terminology the terminology
+   * @param date the date
+   * @param pfs the pfs
+   * @param authToken the auth token
+   * @return the association reference ref set member list
+   * @throws Exception the exception
+   */
+  public AssociationReferenceRefSetMemberList findAssociationReferenceRefSetMembersModifiedSinceDate(
+    String terminology, String date, PfsParameterJpa pfs, String authToken)
+    throws Exception;
+
+  /**
+   * Find association reference ref set member revisions.
+   *
+   * @param id the id
+   * @param startDate the start date
+   * @param endDate the end date
+   * @param pfs the pfs
+   * @param authToken the auth token
+   * @return the association reference ref set member list
+   * @throws Exception the exception
+   */
+  public AssociationReferenceRefSetMemberList findAssociationReferenceRefSetMemberRevisions(
+    String id, String startDate, String endDate, PfsParameterJpa pfs,
+    String authToken) throws Exception;
+
+  /**
+   * Find attribute value ref set members modified since date.
+   *
+   * @param terminology the terminology
+   * @param date the date
+   * @param pfs the pfs
+   * @param authToken the auth token
+   * @return the attribute value ref set member list
+   * @throws Exception the exception
+   */
+  public AttributeValueRefSetMemberList findAttributeValueRefSetMembersModifiedSinceDate(
+    String terminology, String date, PfsParameterJpa pfs, String authToken)
+    throws Exception;
+
+  /**
+   * Find attribute value ref set member revisions.
+   *
+   * @param id the id
+   * @param startDate the start date
+   * @param endDate the end date
+   * @param pfs the pfs
+   * @param authToken the auth token
+   * @return the attribute value ref set member list
+   * @throws Exception the exception
+   */
+  public AttributeValueRefSetMemberList findAttributeValueRefSetMemberRevisions(
+    String id, String startDate, String endDate, PfsParameterJpa pfs,
+    String authToken) throws Exception;
+
+  /**
+   * Find attribute value ref set member release revision.
+   *
+   * @param id the id
+   * @param release the release
+   * @param authToken the auth token
+   * @return the attribute value ref set member
+   * @throws Exception the exception
+   */
+  public AttributeValueRefSetMember<?> findAttributeValueRefSetMemberReleaseRevision(
+    String id, String release, String authToken) throws Exception;
+
+  /**
+   * Find complex map ref set members modified since date.
+   *
+   * @param terminology the terminology
+   * @param date the date
+   * @param pfs the pfs
+   * @param authToken the auth token
+   * @return the complex map ref set member list
+   * @throws Exception the exception
+   */
+  public ComplexMapRefSetMemberList findComplexMapRefSetMembersModifiedSinceDate(
+    String terminology, String date, PfsParameterJpa pfs, String authToken)
+    throws Exception;
+
+  /**
+   * Find complex map ref set member revisions.
+   *
+   * @param id the id
+   * @param startDate the start date
+   * @param endDate the end date
+   * @param pfs the pfs
+   * @param authToken the auth token
+   * @return the complex map ref set member list
+   * @throws Exception the exception
+   */
+  public ComplexMapRefSetMemberList findComplexMapRefSetMemberRevisions(
+    String id, String startDate, String endDate, PfsParameterJpa pfs,
+    String authToken) throws Exception;
+
+  /**
+   * Find complex map ref set member release revision.
+   *
+   * @param id the id
+   * @param release the release
+   * @param authToken the auth token
+   * @return the complex map ref set member
+   * @throws Exception the exception
+   */
+  public ComplexMapRefSetMember findComplexMapRefSetMemberReleaseRevision(
+    String id, String release, String authToken) throws Exception;
+
+  /**
+   * Find description type ref set members modified since date.
+   *
+   * @param terminology the terminology
+   * @param date the date
+   * @param pfs the pfs
+   * @param authToken the auth token
+   * @return the description type ref set member list
+   * @throws Exception the exception
+   */
+  public DescriptionTypeRefSetMemberList findDescriptionTypeRefSetMembersModifiedSinceDate(
+    String terminology, String date, PfsParameterJpa pfs, String authToken)
+    throws Exception;
+
+  /**
+   * Find description type ref set member revisions.
+   *
+   * @param id the id
+   * @param startDate the start date
+   * @param endDate the end date
+   * @param pfs the pfs
+   * @param authToken the auth token
+   * @return the description type ref set member list
+   * @throws Exception the exception
+   */
+  public DescriptionTypeRefSetMemberList findDescriptionTypeRefSetMemberRevisions(
+    String id, String startDate, String endDate, PfsParameterJpa pfs,
+    String authToken) throws Exception;
+
+  /**
+   * Find description type ref set member release revision.
+   *
+   * @param id the id
+   * @param release the release
+   * @param authToken the auth token
+   * @return the description type ref set member
+   * @throws Exception the exception
+   */
+  public DescriptionTypeRefSetMember findDescriptionTypeRefSetMemberReleaseRevision(
+    String id, String release, String authToken) throws Exception;
+
+  /**
+   * Find module dependency ref set members modified since date.
+   *
+   * @param terminology the terminology
+   * @param date the date
+   * @param pfs the pfs
+   * @param authToken the auth token
+   * @return the module dependency ref set member list
+   * @throws Exception the exception
+   */
+  public ModuleDependencyRefSetMemberList findModuleDependencyRefSetMembersModifiedSinceDate(
+    String terminology, String date, PfsParameterJpa pfs, String authToken)
+    throws Exception;
+
+  /**
+   * Find module dependency ref set member revisions.
+   *
+   * @param id the id
+   * @param startDate the start date
+   * @param endDate the end date
+   * @param pfs the pfs
+   * @param authToken the auth token
+   * @return the module dependency ref set member list
+   * @throws Exception the exception
+   */
+  public ModuleDependencyRefSetMemberList findModuleDependencyRefSetMemberRevisions(
+    String id, String startDate, String endDate, PfsParameterJpa pfs,
+    String authToken) throws Exception;
+
+  /**
+   * Find module dependency ref set member release revision.
+   *
+   * @param id the id
+   * @param release the release
+   * @param authToken the auth token
+   * @return the module dependency ref set member
+   * @throws Exception the exception
+   */
+  public ModuleDependencyRefSetMember findModuleDependencyRefSetMemberReleaseRevision(
+    String id, String release, String authToken) throws Exception;
+
+  /**
+   * Find refset descriptor ref set members modified since date.
+   *
+   * @param terminology the terminology
+   * @param date the date
+   * @param pfs the pfs
+   * @param authToken the auth token
+   * @return the refset descriptor ref set member list
+   * @throws Exception the exception
+   */
+  public RefsetDescriptorRefSetMemberList findRefsetDescriptorRefSetMembersModifiedSinceDate(
+    String terminology, String date, PfsParameterJpa pfs, String authToken)
+    throws Exception;
+
+  /**
+   * Find refset descriptor ref set member revisions.
+   *
+   * @param id the id
+   * @param startDate the start date
+   * @param endDate the end date
+   * @param pfs the pfs
+   * @param authToken the auth token
+   * @return the refset descriptor ref set member list
+   * @throws Exception the exception
+   */
+  public RefsetDescriptorRefSetMemberList findRefsetDescriptorRefSetMemberRevisions(
+    String id, String startDate, String endDate, PfsParameterJpa pfs,
+    String authToken) throws Exception;
+
+  /**
+   * Find refset descriptor ref set member release revision.
+   *
+   * @param id the id
+   * @param release the release
+   * @param authToken the auth token
+   * @return the refset descriptor ref set member
+   * @throws Exception the exception
+   */
+  public RefsetDescriptorRefSetMember findRefsetDescriptorRefSetMemberReleaseRevision(
+    String id, String release, String authToken) throws Exception;
+
+  /**
+   * Find simple map ref set members modified since date.
+   *
+   * @param terminology the terminology
+   * @param date the date
+   * @param pfs the pfs
+   * @param authToken the auth token
+   * @return the simple map ref set member list
+   * @throws Exception the exception
+   */
+  public SimpleMapRefSetMemberList findSimpleMapRefSetMembersModifiedSinceDate(
+    String terminology, String date, PfsParameterJpa pfs, String authToken)
+    throws Exception;
+
+  /**
+   * Find simple map ref set member revisions.
+   *
+   * @param id the id
+   * @param startDate the start date
+   * @param endDate the end date
+   * @param pfs the pfs
+   * @param authToken the auth token
+   * @return the simple map ref set member list
+   * @throws Exception the exception
+   */
+  public SimpleMapRefSetMemberList findSimpleMapRefSetMemberRevisions(
+    String id, String startDate, String endDate, PfsParameterJpa pfs,
+    String authToken) throws Exception;
+
+  /**
+   * Find simple map ref set member release revision.
+   *
+   * @param id the id
+   * @param release the release
+   * @param authToken the auth token
+   * @return the simple map ref set member
+   * @throws Exception the exception
+   */
+  public SimpleMapRefSetMember findSimpleMapRefSetMemberReleaseRevision(
+    String id, String release, String authToken) throws Exception;
+
+  /**
+   * Find simple ref set members modified since date.
+   *
+   * @param terminology the terminology
+   * @param date the date
+   * @param pfs the pfs
+   * @param authToken the auth token
+   * @return the simple ref set member list
+   * @throws Exception the exception
+   */
+  public SimpleRefSetMemberList findSimpleRefSetMembersModifiedSinceDate(
+    String terminology, String date, PfsParameterJpa pfs, String authToken)
+    throws Exception;
+
+  /**
+   * Find simple ref set member revisions.
+   *
+   * @param id the id
+   * @param startDate the start date
+   * @param endDate the end date
+   * @param pfs the pfs
+   * @param authToken the auth token
+   * @return the simple ref set member list
+   * @throws Exception the exception
+   */
+  public SimpleRefSetMemberList findSimpleRefSetMemberRevisions(String id,
+    String startDate, String endDate, PfsParameterJpa pfs, String authToken)
+    throws Exception;
+
+  /**
+   * Find simple ref set member release revision.
+   *
+   * @param id the id
+   * @param release the release
+   * @param authToken the auth token
+   * @return the simple ref set member
+   * @throws Exception the exception
+   */
+  public SimpleRefSetMember findSimpleRefSetMemberReleaseRevision(String id,
+    String release, String authToken) throws Exception;
 
 }
