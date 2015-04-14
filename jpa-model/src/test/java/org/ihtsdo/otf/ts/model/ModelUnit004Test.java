@@ -79,6 +79,7 @@ public class ModelUnit004Test {
     EqualsHashcodeTester tester = new EqualsHashcodeTester(object);
     tester.include("errors");
     tester.include("warnings");
+    tester.include("comments");
 
     // Set up objects
     tester.proxy(Set.class, 1, s1);
