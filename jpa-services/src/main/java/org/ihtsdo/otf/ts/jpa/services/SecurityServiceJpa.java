@@ -98,6 +98,7 @@ public class SecurityServiceJpa extends RootServiceJpa implements
 
     // if user was found, update to match settings
     if (userFound != null) {
+      Logger.getLogger(getClass()).info("Update user = " + authUser.getUserName());
       userFound.setEmail(authUser.getEmail());
       userFound.setName(authUser.getName());
       userFound.setUserName(authUser.getUserName());
@@ -106,12 +107,14 @@ public class SecurityServiceJpa extends RootServiceJpa implements
     }
     // if User not found, create one for our use
     else {
+      Logger.getLogger(getClass()).info("Add user = " + authUser.getUserName());
       User newUser = new UserJpa();
       newUser.setEmail(authUser.getEmail());
       newUser.setName(authUser.getName());
       newUser.setUserName(authUser.getUserName());
       newUser.setApplicationRole(UserRole.VIEWER);
       addUser(newUser);
+      clear();
     }
 
     // Generate application-managed token
@@ -195,9 +198,10 @@ public class SecurityServiceJpa extends RootServiceJpa implements
     }
     User user = getUser(username.toLowerCase());
     if (user == null) {
-      throw new LocalException("Unable to obtain user information for username = " + username);
+      return UserRole.VIEWER;
+      //throw new LocalException("Unable to obtain user information for username = " + username);
     }
-    return getUser(username.toLowerCase()).getApplicationRole();
+    return user.getApplicationRole();
   }
 
   /* (non-Javadoc)
