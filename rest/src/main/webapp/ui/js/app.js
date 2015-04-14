@@ -161,7 +161,8 @@ tsApp
         	  console.log(name + " = " + data);
             $scope.userName = name;
             $scope.authToken = data;
-
+            $scope.password = "";
+            
             // set request header
             // authorization
             $http.defaults.headers.common.Authorization = $scope.authToken;
