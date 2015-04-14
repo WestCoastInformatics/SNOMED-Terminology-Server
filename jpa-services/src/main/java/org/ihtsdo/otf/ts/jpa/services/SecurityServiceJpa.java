@@ -112,6 +112,7 @@ public class SecurityServiceJpa extends RootServiceJpa implements
       newUser.setUserName(authUser.getUserName());
       newUser.setApplicationRole(UserRole.VIEWER);
       addUser(newUser);
+      clear();
     }
 
     // Generate application-managed token
@@ -197,7 +198,7 @@ public class SecurityServiceJpa extends RootServiceJpa implements
     if (user == null) {
       throw new LocalException("Unable to obtain user information for username = " + username);
     }
-    return getUser(username.toLowerCase()).getApplicationRole();
+    return user.getApplicationRole();
   }
 
   /* (non-Javadoc)
