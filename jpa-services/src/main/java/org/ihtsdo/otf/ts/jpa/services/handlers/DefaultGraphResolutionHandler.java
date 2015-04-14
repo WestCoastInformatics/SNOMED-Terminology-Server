@@ -25,7 +25,7 @@ public class DefaultGraphResolutionHandler implements GraphResolutionHandler {
    * ihtsdo.otf.ts.rf2.Concept, java.lang.String)
    */
   @Override
-  public void resolve(Concept concept, Set<String> isaRelTypeIds) {
+  public void resolve(Concept concept, Set<String> isaRelTypeIds) throws Exception {
     if (concept != null) {
       boolean nullId = concept.getId() == null;
       // Make sure to read descriptions and relationships (prevents
@@ -54,6 +54,8 @@ public class DefaultGraphResolutionHandler implements GraphResolutionHandler {
       // to make a callback
       // e.g. concept.setSimpleRefSetMemberCount(3);
 
+    } else if (concept == null){
+    	throw new Exception("Cannot resolve a null concept.");
     }
   }
 
@@ -63,7 +65,7 @@ public class DefaultGraphResolutionHandler implements GraphResolutionHandler {
    * @param description the description
    */
   @Override
-  public void resolve(Description description) {
+  public void resolve(Description description) throws Exception {
     if (description != null) {
       boolean nullId = description.getId() == null;
       for (LanguageRefSetMember member : description.getLanguageRefSetMembers()) {
@@ -78,6 +80,8 @@ public class DefaultGraphResolutionHandler implements GraphResolutionHandler {
       // user knows whether
       // to make a callback
       // e.g. description.setAttributeValueRefsetMemberCount(1);
+    } else if (description == null){
+    	throw new Exception("Cannot resolve a null description.");
     }
   }
 
@@ -87,10 +91,12 @@ public class DefaultGraphResolutionHandler implements GraphResolutionHandler {
    * @param relationship the relationship
    */
   @Override
-  public void resolve(Relationship relationship) {
-    if (relationship != null) {
+  public void resolve(Relationship relationship) throws Exception {
+    if (relationship != null && relationship.getSourceConcept() != null && relationship.getDestinationConcept() != null) {
       relationship.getSourceConcept().getDefaultPreferredName();
       relationship.getDestinationConcept().getDefaultPreferredName();
+    } else if (relationship == null) {
+    	throw new Exception("Cannot resolve a null relationship.");
     }
   }
 
@@ -100,9 +106,11 @@ public class DefaultGraphResolutionHandler implements GraphResolutionHandler {
    * @param member the member
    */
   @Override
-  public void resolve(DescriptionRefSetMember member) {
-    if (member != null) {
+  public void resolve(DescriptionRefSetMember member) throws Exception {
+    if (member != null && member.getDescription() != null) {
       member.getDescription().getTypeId();
+    } else if (member == null){
+    	throw new Exception("Cannot resolve a null description refset member.");
     }
   }
 
@@ -112,9 +120,11 @@ public class DefaultGraphResolutionHandler implements GraphResolutionHandler {
    * @param member the member
    */
   @Override
-  public void resolve(ConceptRefSetMember member) {
-    if (member != null) {
+  public void resolve(ConceptRefSetMember member) throws Exception {
+    if (member != null && member.getConcept() != null) {
       member.getConcept().getDefaultPreferredName();
+    } else if (member == null){
+    	throw new Exception("Cannot resolve a null concept refset member.");
     }
   }
 
