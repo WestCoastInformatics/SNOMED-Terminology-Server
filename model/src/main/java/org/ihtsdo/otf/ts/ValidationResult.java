@@ -39,6 +39,13 @@ public interface ValidationResult {
   public Set<String> getWarnings();
 
   /**
+   * Returns the comments.
+   *
+   * @return the comments
+   */
+  public Set<String> getComments();
+
+  /**
    * Sets the warnings.
    * 
    * @param warnings the new warnings
@@ -46,11 +53,25 @@ public interface ValidationResult {
   public void setWarnings(Set<String> warnings);
 
   /**
+   * Sets the comments.
+   *
+   * @param comments the comments
+   */
+  public void setComments(Set<String> comments);
+
+  /**
    * Removewarning.
    * 
    * @param warning the warning
    */
   public void removeWarning(String warning);
+  
+  /**
+   * Removes the comment.
+   *
+   * @param comment the comment
+   */
+  public void removeComment(String comment);
 
   /**
    * Addwarning.
@@ -58,6 +79,13 @@ public interface ValidationResult {
    * @param warning the warning
    */
   public void addWarning(String warning);
+  
+  /**
+   * Adds the comment.
+   *
+   * @param comment the comment
+   */
+  public void addComment(String comment);
 
   /**
    * Removes the error.
@@ -79,6 +107,13 @@ public interface ValidationResult {
    * @param warnings the warnings
    */
   public void addWarnings(Set<String> warnings);
+  
+  /**
+   * Adds the comment.
+   *
+   * @param comment the comment
+   */
+  public void addComment(Set<String> comment);
 
   /**
    * Adds the errors.
