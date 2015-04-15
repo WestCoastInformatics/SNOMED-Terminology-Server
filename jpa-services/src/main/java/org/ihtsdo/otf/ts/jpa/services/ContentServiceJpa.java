@@ -2679,8 +2679,10 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
         "Content Service - get refset descriptor refset member for refset "
             + terminologyId + "/" + terminology + "/" + version);
     javax.persistence.Query query =
-        manager
-            .createQuery("select c from RefsetDescriptorRefSetMemberJpa c where referencedComponentId = :terminologyId and terminologyVersion = :version and terminology = :terminology order by attributeOrder");
+        manager.createQuery("select a from RefsetDescriptorRefSetMemberJpa a, "
+            + " ConceptJpa c where c.terminologyId = :terminologyId "
+            + "and c.terminologyVersion = :version "
+            + "and c.terminology = :terminology and a.concept = c");
 
     try {
       query.setParameter("terminologyId", terminologyId);
