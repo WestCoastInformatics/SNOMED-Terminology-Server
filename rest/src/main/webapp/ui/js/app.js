@@ -240,12 +240,15 @@ tsApp
               // console
               // .debug(terminologyObj);
               $scope.terminologies.push(terminologyObj);
+              if (terminologyObj.name === 'SNOMEDCT') {
+                  console.debug('SNOMEDCT found');
+                  $scope.setTerminology(terminologyObj);
+              }
 
             }
 
             // select the first
             // terminology
-            $scope.setTerminology($scope.terminologies[0]);
             $scope.glassPane--;
 
           }).error(function(data, status, headers, config) {
