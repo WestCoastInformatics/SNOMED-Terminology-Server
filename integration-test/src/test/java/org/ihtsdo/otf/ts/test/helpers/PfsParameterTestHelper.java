@@ -1,20 +1,20 @@
 package org.ihtsdo.otf.ts.test.helpers;
 
 import java.lang.reflect.Method;
+import java.util.ArrayList;
 import java.util.List;
 
-import org.ihtsdo.otf.ts.helpers.IndexUtility;
 import org.ihtsdo.otf.ts.helpers.PfsParameter;
 import org.ihtsdo.otf.ts.helpers.PfsParameterJpa;
 import org.ihtsdo.otf.ts.helpers.ResultList;
 import org.ihtsdo.otf.ts.helpers.SearchResult;
+import org.ihtsdo.otf.ts.helpers.SearchResultJpa;
 import org.ihtsdo.otf.ts.helpers.SearchResultList;
+import org.ihtsdo.otf.ts.rf2.Component;
 
 /**
  * Helper class to automatically test paging and sorting based on a provided
- * query
- * @author Patrick
- *
+ * query.
  */
 public class PfsParameterTestHelper {
 
@@ -24,13 +24,13 @@ public class PfsParameterTestHelper {
    * @param service the service containig the method
    * @param method the method returning a ResultList
    * @param parameters the parameters used by the method
+   * @param fullResults the full results
    * @return true, if successful
    * @throws Exception the exception
    */
   @SuppressWarnings("unchecked")
   public static boolean testPagingAndSorting(Object service, Method method,
-    Object[] parameters, Class clazz, SearchResultList fullResults)
-    throws Exception {
+    Object[] parameters, ResultList<?> fullResults) throws Exception {
 
     // CHECK: Method has a PfsParameter argument
     boolean hasPfsParameter = false;
@@ -82,8 +82,8 @@ public class PfsParameterTestHelper {
       localPfs.setStartIndex(startIndex);
       localParameters[pfsPosition] = localPfs;
 
-      SearchResultList resultsPaged =
-          (SearchResultList) method.invoke(service, localParameters);
+      ResultList<?> resultsPaged =
+          (ResultList<?>) method.invoke(service, localParameters);
 
       // check total count is correct
       if (resultsPaged.getTotalCount() != fullResults.getTotalCount()) {
@@ -105,13 +105,23 @@ public class PfsParameterTestHelper {
     localPfs.setSortField("terminologyId");
     localPfs.setStartIndex(-1);
     localPfs.setMaxResults(-1);
+    localParameters[pfsPosition] = localPfs;
 
-    SearchResultList results =
-        (SearchResultList) method.invoke(service, localParameters);
+    ResultList<?> results =
+        (ResultList<?>) method.invoke(service, localParameters);
 
-    for (int i = 1; i < results.getObjects().size(); i++) {
-      if (results.getObjects().get(i).getTerminologyId()
-          .compareTo(results.getObjects().get(i - 1).getTerminologyId()) < 0) {
+    // extract terminology id (needed since SearchResultList does not extend
+    // component
+    List<String> terminologyIds = new ArrayList<>();
+    for (Object result : results.getObjects()) {
+      if (result instanceof SearchResult)
+        terminologyIds.add(((SearchResult) result).getTerminologyId());
+      else if (result instanceof Component)
+        terminologyIds.add(((Component) result).getTerminologyId());
+    }
+
+    for (int i = 1; i < terminologyIds.size(); i++) {
+      if (terminologyIds.get(i).compareTo(terminologyIds.get(i - 1)) < 0) {
         throw new Exception("Ascending sort failed");
       }
     }
@@ -121,19 +131,27 @@ public class PfsParameterTestHelper {
     localPfs.setSortField("terminologyId");
     localPfs.setStartIndex(-1);
     localPfs.setMaxResults(-1);
+    localParameters[pfsPosition] = localPfs;
+    
+    results = (ResultList<?>) method.invoke(service, localParameters);
 
-    results = (SearchResultList) method.invoke(service, localParameters);
+    // extract terminology id (needed since SearchResultList does not extend
+    // component)
+    terminologyIds = new ArrayList<>();
+    for (Object result : results.getObjects()) {
+      if (result instanceof SearchResult)
+        terminologyIds.add(((SearchResult) result).getTerminologyId());
+      else if (result instanceof Component)
+        terminologyIds.add(((Component) result).getTerminologyId());
+    }
 
-    for (int i = 1; i < results.getObjects().size(); i++) {
-      if (results.getObjects().get(i).getTerminologyId()
-          .compareTo(results.getObjects().get(i - 1).getTerminologyId()) > 0) {
+    for (int i = 1; i < terminologyIds.size(); i++) {
+      if (terminologyIds.get(i).compareTo(terminologyIds.get(i - 1)) > 0) {
         throw new Exception("Descending sort failed");
       }
     }
 
-    // TODO Decide whether we want to actually test sorting on all indexed
-    // fields by retrieving objects
-
     return true;
   }
+
 }

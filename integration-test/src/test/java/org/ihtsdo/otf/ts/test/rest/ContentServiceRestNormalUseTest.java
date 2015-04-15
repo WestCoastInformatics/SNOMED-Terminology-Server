@@ -22,6 +22,7 @@ import org.ihtsdo.otf.ts.helpers.LanguageRefSetMemberList;
 import org.ihtsdo.otf.ts.helpers.ModuleDependencyRefSetMemberList;
 import org.ihtsdo.otf.ts.helpers.PfsParameterJpa;
 import org.ihtsdo.otf.ts.helpers.RefsetDescriptorRefSetMemberList;
+import org.ihtsdo.otf.ts.helpers.ResultList;
 import org.ihtsdo.otf.ts.helpers.SearchResultList;
 import org.ihtsdo.otf.ts.helpers.SimpleMapRefSetMemberList;
 import org.ihtsdo.otf.ts.helpers.SimpleRefSetMemberList;
@@ -30,12 +31,13 @@ import org.ihtsdo.otf.ts.rf2.AttributeValueRefSetMember;
 import org.ihtsdo.otf.ts.rf2.ComplexMapRefSetMember;
 import org.ihtsdo.otf.ts.rf2.Component;
 import org.ihtsdo.otf.ts.rf2.Concept;
+import org.ihtsdo.otf.ts.rf2.Description;
 import org.ihtsdo.otf.ts.rf2.DescriptionTypeRefSetMember;
 import org.ihtsdo.otf.ts.rf2.LanguageRefSetMember;
 import org.ihtsdo.otf.ts.rf2.ModuleDependencyRefSetMember;
+import org.ihtsdo.otf.ts.rf2.Relationship;
 import org.ihtsdo.otf.ts.rf2.SimpleMapRefSetMember;
 import org.ihtsdo.otf.ts.rf2.SimpleRefSetMember;
-import org.ihtsdo.otf.ts.rf2.jpa.ConceptJpa;
 import org.ihtsdo.otf.ts.test.helpers.PfsParameterTestHelper;
 import org.junit.After;
 import org.junit.Before;
@@ -89,7 +91,6 @@ public class ContentServiceRestNormalUseTest extends ContentServiceRestTest {
    *
    * @throws Exception the exception
    */
-  // TODO DONE
   @Test
   public void testNormalUseRestContent001() throws Exception {
 
@@ -156,42 +157,111 @@ public class ContentServiceRestNormalUseTest extends ContentServiceRestTest {
 
     assertNotNull(concept_retrieved);
     assertTrue(concept_retrieved.equals(concept));
-    
-    SearchResultList results = contentService.findConceptsForQuery(snomedTerminology, snomedVersion, "ossification", new PfsParameterJpa(), authToken);
-    
-    // test paging and sorting
-    PfsParameterTestHelper.testPagingAndSorting(contentService,
-        contentService.getClass().getMethod("findConceptsForQuery", String.class,
-            String.class, String.class, PfsParameterJpa.class, String.class), new Object[] {
-            snomedTerminology, snomedVersion, "ossification", new PfsParameterJpa(), authToken
-        }, ConceptJpa.class, results);
-    
+
+    SearchResultList results =
+        contentService.findConceptsForQuery(snomedTerminology, snomedVersion,
+            "ossification", new PfsParameterJpa(), authToken);
+
+    try {
+      // test paging and sorting
+      PfsParameterTestHelper.testPagingAndSorting(
+          contentService,
+          contentService.getClass().getMethod("findConceptsForQuery",
+              String.class, String.class, String.class, PfsParameterJpa.class,
+              String.class), new Object[] {
+              snomedTerminology, snomedVersion, "ossification",
+              new PfsParameterJpa(), authToken
+          }, results);
+    } catch (Exception e) {
+      fail("Paging and sorting failed: " + e.getMessage());
+    }
+
     // TEST - filtering: single field
     PfsParameterJpa pfs = new PfsParameterJpa();
     pfs.setQueryRestriction("defaultPreferredName:incomplete");
-    results = contentService.findConceptsForQuery(snomedTerminology, snomedVersion, "ossification", pfs, authToken);
+    results =
+        contentService.findConceptsForQuery(snomedTerminology, snomedVersion,
+            "ossification", pfs, authToken);
     assertNotNull(results);
-    assertTrue(results.getCount() == 3); // returns 327877008, 93572002, 93563005 
-    
+    assertTrue(results.getCount() == 3); // returns 327877008, 93572002,
+                                         // 93563005
+
     // TEST - filtering: multiple fields
     pfs = new PfsParameterJpa();
     pfs.setQueryRestriction("(terminologyId:93436006 or defaultPreferredName:\"Incomplete ossification of arch of caudal vertebra\")");
-    results = contentService.findConceptsForQuery(snomedTerminology, snomedVersion, "ossification", pfs, authToken);
+    results =
+        contentService.findConceptsForQuery(snomedTerminology, snomedVersion,
+            "ossification", pfs, authToken);
     assertNotNull(results);
-    assertTrue(results.getCount() == 2); 
-    
+    assertTrue(results.getCount() == 2);
+
     // TEST - filtering: subfield
     pfs.setQueryRestriction("descriptions.term:bifid");
-    results = contentService.findConceptsForQuery(snomedTerminology, snomedVersion, "ossification", pfs, authToken);
+    results =
+        contentService.findConceptsForQuery(snomedTerminology, snomedVersion,
+            "ossification", pfs, authToken);
     assertNotNull(results);
     assertTrue(results.getCount() == 2); // returns 92493009, 102276005
-    
-    // TEST - filtering:  invalid restriction
+
+    // TEST - filtering: invalid restriction
     pfs.setQueryRestriction("invalid:invalid");
-    results = contentService.findConceptsForQuery(snomedTerminology, snomedVersion, "ossification", pfs, authToken);
+    results =
+        contentService.findConceptsForQuery(snomedTerminology, snomedVersion,
+            "ossification", pfs, authToken);
     assertNotNull(results);
     assertTrue(results.getCount() == 0); // no results
-  
+
+  }
+
+  /**
+   * Test get description method.
+   *
+   * @throws Exception the exception
+   */
+  @Test
+  public void testNormalUseRestContent002() throws Exception {
+
+    Description d;
+
+    /** Test SNOMEDCT */
+    d =
+        contentService.getDescription("17463016", snomedTerminology,
+            snomedVersion, authToken);
+    assertNotNull(d);
+    assertTrue(d.getTerminologyId().equals("17463016"));
+
+    /** Test ICD9CM */
+    d =
+        contentService.getDescription("D0000472", icd9Terminology, icd9Version,
+            authToken);
+    assertNotNull(d);
+    assertTrue(d.getTerminologyId().equals("D0000472"));
+
+  }
+
+  /**
+   * Test get and find methods for Relationship.
+   *
+   * @throws Exception the exception
+   */
+  @Test
+  public void testNormalUseRestContent003() throws Exception {
+    Relationship r;
+
+    /** Test SNOMEDCT */
+    r =
+        contentService.getRelationship("428054023", snomedTerminology,
+            snomedVersion, authToken);
+    assertNotNull(r);
+    assertTrue(r.getTerminologyId().equals("428054023"));
+
+    /** Test ICD9CM */
+    r =
+        contentService.getRelationship("1671", icd9Terminology, icd9Version,
+            authToken);
+    assertNotNull(r);
+    assertTrue(r.getTerminologyId().equals("1671"));
+
   }
 
   /**
@@ -200,7 +270,7 @@ public class ContentServiceRestNormalUseTest extends ContentServiceRestTest {
    * @throws Exception the exception
    */
   @Test
-  public void testNormalUseRestContent002() throws Exception {
+  public void testNormalUseRestContent004() throws Exception {
 
     // set test ids
     String snomedTestId = "122456005";
@@ -225,6 +295,8 @@ public class ContentServiceRestNormalUseTest extends ContentServiceRestTest {
       }
     }
 
+    /** NO TEST FOR ICD9CM */
+
   }
 
   /**
@@ -233,7 +305,7 @@ public class ContentServiceRestNormalUseTest extends ContentServiceRestTest {
    * @throws Exception the exception
    */
   @Test
-  public void testNormalUseRestContent003() throws Exception {
+  public void testNormalUseRestContent005() throws Exception {
 
     String snomedTestId;
 
@@ -290,7 +362,7 @@ public class ContentServiceRestNormalUseTest extends ContentServiceRestTest {
    * @throws Exception the exception
    */
   @Test
-  public void testNormalUseRestContent004() throws Exception {
+  public void testNormalUseRestContent006() throws Exception {
 
     // set test ids
     String snomedTestId = "121000119106";
@@ -323,7 +395,7 @@ public class ContentServiceRestNormalUseTest extends ContentServiceRestTest {
    * @throws Exception the exception
    */
   @Test
-  public void testNormalUseRestContent005() throws Exception {
+  public void testNormalUseRestContent007() throws Exception {
 
     // set test ids
     String snomedTestId = "900000000000550004";
@@ -354,7 +426,7 @@ public class ContentServiceRestNormalUseTest extends ContentServiceRestTest {
    * @throws Exception the exception
    */
   @Test
-  public void testNormalUseRestContent006() throws Exception {
+  public void testNormalUseRestContent008() throws Exception {
 
     // set test ids
     String snomedTestId = "513602011";
@@ -380,12 +452,12 @@ public class ContentServiceRestNormalUseTest extends ContentServiceRestTest {
   }
 
   /**
-   * Test normal use rest for module dependency refsets
+   * Test normal use rest for module dependency refsets.
    *
    * @throws Exception the exception
    */
   @Test
-  public void testNormalUseRestContent007() throws Exception {
+  public void testNormalUseRestContent009() throws Exception {
 
     // set module id
     String snomedTestId = "900000000000207008";
@@ -412,12 +484,12 @@ public class ContentServiceRestNormalUseTest extends ContentServiceRestTest {
   }
 
   /**
-   * Test normal use rest for ref set descriptors
+   * Test normal use rest for ref set descriptors.
    *
    * @throws Exception the exception
    */
   @Test
-  public void testNormalUseRestContent008() throws Exception {
+  public void testNormalUseRestContent010() throws Exception {
 
     String snomedTestId = "900000000000456007";
 
@@ -435,12 +507,12 @@ public class ContentServiceRestNormalUseTest extends ContentServiceRestTest {
   }
 
   /**
-   * Test normal use rest for simple map ref set members
+   * Test normal use rest for simple map ref set members.
    *
    * @throws Exception the exception
    */
   @Test
-  public void testNormalUseRestContent009() throws Exception {
+  public void testNormalUseRestContent011() throws Exception {
 
     String snomedTestId = "116314006";
 
@@ -467,12 +539,12 @@ public class ContentServiceRestNormalUseTest extends ContentServiceRestTest {
   }
 
   /**
-   * Test normal use rest for simple ref set members
+   * Test normal use rest for simple ref set members.
    *
    * @throws Exception the exception
    */
   @Test
-  public void testNormalUseRestContent010() throws Exception {
+  public void testNormalUseRestContent012() throws Exception {
 
     String snomedTestId = "116011005";
 
@@ -497,144 +569,108 @@ public class ContentServiceRestNormalUseTest extends ContentServiceRestTest {
 
   }
 
-  /*
-   * public void testNormalUseRestContent111001() throws Exception {
-   * 
-   * // local variables ConceptList conceptList = new ConceptListJpa(); Concept
-   * concept, newConcept; String snomedTestId = ""; String icd9TestId = "";
-   *//**
-   * Procedure 1: Get concepts for SNOMEDCT.
+  /**
+   * Test ancestor, parent, children, descendant methods
    *
-   * @param <clazz> the
-   * @param clazz the clazz
-   * @param terminologyId the terminology id
-   * @param terminology the terminology
-   * @param terminologyVersion the terminology version
-   * @return the concepts
+   * @throws Exception the exception
    */
-  /*
-   * 
-   * try { conceptList = contentService.getConcepts(snomedTestId,
-   * snomedTerminology, snomedVersion, authToken); } catch (Exception e) {
-   * fail("Get concepts threw unexpected exception"); }
-   * assertTrue(conceptList.getCount() == 1); concept =
-   * conceptList.getObjects().get(0);
-   * assertTrue(concept.getTerminologyId().equals(snomedTestId));
-   * assertTrue(concept.getTerminology().equals(snomedTerminology));
-   * assertTrue(concept.getTerminologyVersion().equals(snomedVersion));
-   * assertTrue(concept.getDefaultPreferredName().startsWith(
-   * "Lesion of skin of face"));
-   * 
-   * // check relationships both through count and objects
-   * 
-   * assertTrue(concept.getRelationships().size() == 7);
-   * 
-   * // check descriptions both through count and objects
-   * assertTrue(concept.getDescriptions().size() == 2);
-   * 
-   * // check language ref set members for (Description d :
-   * concept.getDescriptions()) { assertTrue(d.getLanguageRefSetMembers().size()
-   * == 2); }
-   * 
-   * // Get single concept for terminology/version // TEST: Returns one concept,
-   * terminology fields matche try { newConcept =
-   * contentService.getSingleConcept(snomedTestId, snomedTerminology,
-   * snomedVersion, authToken); assertTrue(concept.equals(newConcept)); } catch
-   * (Exception e) { fail("Get concepts threw unexpected exception"); }
-   *//** Procedure 2: Get concepts for ICD9CM */
-  /*
-   * 
-   * try { conceptList = contentService.getConcepts(icd9TestId, icd9Terminology,
-   * icd9Version, authToken); } catch (Exception e) {
-   * fail("Get concepts threw unexpected exception"); }
-   * assertTrue(conceptList.getCount() == 1); concept =
-   * conceptList.getObjects().get(0);
-   * assertTrue(concept.getTerminologyId().equals(icd9TestId));
-   * assertTrue(concept.getTerminology().equals(icd9Terminology));
-   * assertTrue(concept.getTerminologyVersion().equals(icd9Version));
-   * assertTrue(concept.getDefaultPreferredName().startsWith("MYCOSES"));
-   * 
-   * // check relationships both through count and objects
-   * 
-   * assertTrue(concept.getRelationships().size() == 1);
-   * 
-   * // check descriptions both through count and objects
-   * 
-   * assertTrue(concept.getDescriptions().size() == 1);
-   * 
-   * // check language ref set members for (Description d :
-   * concept.getDescriptions()) { assertTrue(d.getLanguageRefSetMembers().size()
-   * == 0); }
-   * 
-   * // Get single concept for terminology/version // TEST: Returns one concept,
-   * terminology fields matche try { newConcept =
-   * contentService.getSingleConcept(icd9TestId, icd9Terminology, icd9Version,
-   * authToken); assertTrue(concept.equals(newConcept)); } catch (Exception e) {
-   * fail("Get concepts threw unexpected exception"); }
-   *//** Procedure 3: Find concepts */
-  /*
-   * 
-   * // For test, execute findConceptsForQuery("ossification", ...) for //
-   * SNOMEDCT String query = "ossification"; PfsParameterJpa pfs = new
-   * PfsParameterJpa(); SearchResultList searchResults;
-   * 
-   * // Raw results – No pfs parameter // TEST: 10 results searchResults =
-   * contentService.findConceptsForQuery(snomedTerminology, snomedVersion,
-   * query, pfs, authToken);
-   * 
-   * assertTrue(searchResults.getCount() == 10);
-   * 
-   * // Sorted results – Pfs parameter with sortField defaultPreferredName //
-   * TEST: 10 results, sorted alphabetically
-   * pfs.setSortField("defaultPreferredName"); searchResults =
-   * contentService.findConceptsForQuery(snomedTerminology, snomedVersion,
-   * query, pfs, authToken); assertTrue(searchResults.getCount() == 10);
-   * assertTrue(PfsParameterForConceptTest.testSort(searchResults, pfs));
-   * 
-   * // test descending order pfs.setAscending(false);
-   * 
-   * searchResults = contentService.findConceptsForQuery(snomedTerminology,
-   * snomedVersion, query, pfs, authToken); assertTrue(searchResults.getCount()
-   * == 10); assertTrue(PfsParameterForConceptTest.testSort(searchResults,
-   * pfs));
-   * 
-   * // store the sorted results SearchResultList storedResults = searchResults;
-   * 
-   * // Paged, sorted results, first page – Pfs parameter with max results 5 and
-   * // sortField defaultPreferredName // TEST: 5 results, matching first 5
-   * results from previous test pfs.setSortField("defaultPreferredName");
-   * pfs.setStartIndex(0); pfs.setMaxResults(5); searchResults =
-   * contentService.findConceptsForQuery(snomedTerminology, snomedVersion,
-   * query, pfs, authToken);
-   * assertTrue(PfsParameterForConceptTest.testSort(searchResults, pfs));
-   * assertTrue(PfsParameterForConceptTest.testPaging(searchResults,
-   * storedResults, pfs));
-   * 
-   * // Paged, sorted results, second page – Pfs parameter with startIndex 6,
-   * max // results 5 and sortField defaultPreferredName // TEST: 5 results,
-   * matching second set of 5 results from previous test
-   * pfs.setSortField("defaultPreferredName"); pfs.setStartIndex(5);
-   * pfs.setMaxResults(5); searchResults =
-   * contentService.findConceptsForQuery(snomedTerminology, snomedVersion,
-   * query, pfs, authToken);
-   * 
-   * assertTrue(PfsParameterForConceptTest.testPaging(searchResults,
-   * storedResults, pfs));
-   * assertTrue(PfsParameterForConceptTest.testSort(searchResults, pfs));
-   * 
-   * // test lucene query restriction pfs = new PfsParameterJpa();
-   * pfs.setQueryRestriction("terminologyId:93563005"); searchResults =
-   * contentService.findConceptsForQuery(snomedTerminology, snomedVersion,
-   * query, pfs, authToken);
-   * 
-   * System.out.println("QR results: " + searchResults.toString());
-   * 
-   * assertTrue(searchResults.getCount() == 1);
-   * assertTrue(searchResults.getObjects().get(0).getTerminologyId()
-   * .equals("93563005"));
-   * 
-   * }
-   */
+  @Test
+  public void testNormalUseRestContent013() throws Exception {
+
+    String testId;
+
+    /** Test SNOMEDCT */
+    testId = "128117002";
+    Concept c =
+        contentService.getSingleConcept(testId, snomedTerminology,
+            snomedVersion, authToken);
+
+    PfsParameterJpa pfs = new PfsParameterJpa();
+
+    // test ancestors
+    ConceptList concepts;
+    concepts =
+        contentService.findAncestorConcepts("128117002", snomedTerminology,
+            snomedVersion, pfs, authToken);
+    assertNotNull(concepts);
+    assertTrue(concepts.getCount() == 12);
+
+    // test paging and sorting
+    try {
+      PfsParameterTestHelper.testPagingAndSorting(
+          contentService,
+          contentService.getClass().getMethod("findAncestorConcepts",
+              String.class, String.class, String.class, PfsParameterJpa.class,
+              String.class), new Object[] {
+              testId, snomedTerminology, snomedVersion, new PfsParameterJpa(),
+              authToken
+          }, concepts);
+    } catch (Exception e) {
+      e.printStackTrace();
+      fail("Paging/sorting failed for findAncestorConcepts");
+    }
+/*
+    TODO:  Parent and children concepts rely on Relationship vetting
+           Need to rewrite those queries
+           
+    concepts =
+        contentService.findParentConcepts("128117002", snomedTerminology,
+            snomedVersion, pfs, authToken);
+    assertNotNull(concepts);
+    assertTrue(concepts.getCount() == 2);
+    try {
+      // test paging and sorting
+      PfsParameterTestHelper.testPagingAndSorting(
+          contentService,
+          contentService.getClass().getMethod("findParentConcepts",
+              String.class, String.class, String.class, PfsParameterJpa.class,
+              String.class), new Object[] {
+              testId, snomedTerminology, snomedVersion, new PfsParameterJpa(),
+              authToken
+          }, concepts);
+    } catch (Exception e) {
+      e.printStackTrace();
+      fail("Paging/sorting failed for findParentConcepts");
+    }
+
+    concepts =
+        contentService.findChildConcepts("128117002", snomedTerminology,
+            snomedVersion, pfs, authToken);
+    assertNotNull(concepts);
+    assertTrue(concepts.getCount() == 4);
+    try {
+      // test paging and sorting
+      PfsParameterTestHelper.testPagingAndSorting(
+          contentService,
+          contentService.getClass().getMethod("findChildConcepts",
+              String.class, String.class, String.class, PfsParameterJpa.class,
+              String.class), new Object[] {
+              testId, snomedTerminology, snomedVersion, new PfsParameterJpa(),
+              authToken
+          }, concepts);
+    } catch (Exception e) {
+      fail("Paging/sorting failed for findChildConcepts");
+    }*/
+
+    concepts =
+        contentService.findDescendantConcepts("128117002", snomedTerminology,
+            snomedVersion, pfs, authToken);
+    assertNotNull(concepts);
+    assertTrue(concepts.getCount() == 30);
+    try {
+      // test paging and sorting
+      PfsParameterTestHelper.testPagingAndSorting(
+          contentService,
+          contentService.getClass().getMethod("findDescendantConcepts",
+              String.class, String.class, String.class, PfsParameterJpa.class,
+              String.class), new Object[] {
+              testId, snomedTerminology, snomedVersion, new PfsParameterJpa(),
+              authToken
+          }, concepts);
+    } catch (Exception e) {
+      fail("Paging/sorting failed for findDescendantConcepts");
+    }
+  }
 
   /**
    * Teardown.

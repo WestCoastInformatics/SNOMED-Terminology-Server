@@ -422,7 +422,7 @@ public class HistoryClientRest implements HistoryServiceRest {
     Client client = Client.create();
     WebResource resource =
         client.resource(config.getProperty("base.url")
-            + "/history/relationship/revisions/" + id + "/" + release);
+            + "/history/relationship/revisions/" + id + "/" + release + "/release");
 
     ClientResponse response =
         resource.accept(MediaType.APPLICATION_XML)

@@ -40,6 +40,8 @@ import org.ihtsdo.otf.ts.rf2.Concept;
 import org.ihtsdo.otf.ts.rf2.Description;
 import org.ihtsdo.otf.ts.rf2.Relationship;
 import org.ihtsdo.otf.ts.rf2.jpa.ConceptJpa;
+import org.ihtsdo.otf.ts.rf2.jpa.DescriptionJpa;
+import org.ihtsdo.otf.ts.rf2.jpa.RelationshipJpa;
 
 import com.sun.jersey.api.client.Client;
 import com.sun.jersey.api.client.ClientResponse;
@@ -1233,15 +1235,52 @@ public class ContentClientRest implements ContentServiceRest {
   @Override
   public Description getDescription(String terminologyId, String terminology,
     String version, String authToken) throws Exception {
-    // TODO Auto-generated method stub
-    return null;
+    Client client = Client.create();
+    WebResource resource =
+        client.resource(config.getProperty("base.url")
+            + "/content/description/" + terminology + "/" + version
+            + "/" + terminologyId);
+    ClientResponse response =
+        resource.accept(MediaType.APPLICATION_XML)
+            .header("Authorization", authToken).get(ClientResponse.class);
+
+    String resultString = response.getEntity(String.class);
+    if (response.getStatusInfo().getFamily() == Family.SUCCESSFUL) {
+      Logger.getLogger(getClass()).debug(resultString);
+    } else {
+      throw new Exception(response.toString());
+    }
+
+    // converting to object
+    Description d = 
+      (Description) ConfigUtility.getGraphForString(resultString, DescriptionJpa.class);
+    
+    return d;
   }
 
-  @Override
   public Relationship getRelationship(String terminologyId, String terminology,
     String version, String authToken) throws Exception {
-    // TODO Auto-generated method stub
-    return null;
+    Client client = Client.create();
+    WebResource resource =
+        client.resource(config.getProperty("base.url")
+            + "/content/relationship/" + terminology + "/" + version
+            + "/" + terminologyId);
+    ClientResponse response =
+        resource.accept(MediaType.APPLICATION_XML)
+            .header("Authorization", authToken).get(ClientResponse.class);
+
+    String resultString = response.getEntity(String.class);
+    if (response.getStatusInfo().getFamily() == Family.SUCCESSFUL) {
+      Logger.getLogger(getClass()).debug(resultString);
+    } else {
+      throw new Exception(response.toString());
+    }
+
+    // converting to object
+    Relationship d = 
+      (Relationship) ConfigUtility.getGraphForString(resultString, RelationshipJpa.class);
+    
+    return d;
   }
 
 

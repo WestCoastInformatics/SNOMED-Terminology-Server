@@ -280,16 +280,19 @@ public class HistoryServiceRestNormalUseTest extends HistoryServiceRestTest {
     // get the component
     Concept c =
         contentService
-            .getSingleConcept(testId, terminology, version, authToken);
-  /*  
-    Relationship r = contentService.getRelationship(c.getRelationships().iterator().next().getTerminologyId().toString(), terminology, version, authToken);
-    historyService.findRelationshipRevisions(r.Id().toString(), "19700101", currentDate, pfs, authToken);
+           .getSingleConcept(testId, terminology, version, authToken);
+    /*
+    System.out.println("Testing relationship retrieval");
+    Relationship r = contentService.getRelationship("2456164027", terminology, version, authToken);
+    assertNotNull(r);
     
+    r = historyService.findRelationshipReleaseRevision(r.getId().toString(), "20040131", authToken);
+    System.out.println(r);
     historyService.findRelationshipsModifiedSinceDate(terminology,  "19700101", pfs, authToken);
- */   // test modified since date method
+    // test modified since date method
     results = historyService.findConceptsModifiedSinceDate(terminology, "19700101", pfs, authToken);
     assertTrue(results.getTotalCount() == 10293);
-    
+    */
     // test modified since date method
     //results = historyService.findConceptsModifiedSinceDate(terminology, "20080131", pfs, authToken);
     //assertTrue(results.getTotalCount() == 2549);

@@ -606,6 +606,15 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
         childrenConcepts.sortBy(comparator);
       }
 
+      // ascending/descending
+      if (pfs.isAscending() == false) {
+        List<Concept> temp = new ArrayList<>();
+        for (int i = childrenConcepts.getCount()-1; i >= 0; i--) {
+          temp.add(childrenConcepts.getObjects().get(i));
+        }
+        childrenConcepts.setObjects(temp);
+      }
+      
       // paging
       if (pfs.getStartIndex() != -1 && pfs.getMaxResults() != -1) {
 
@@ -614,6 +623,8 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
             Math.min(pfs.getStartIndex() + pfs.getMaxResults(),
                 childrenConcepts.getTotalCount())));
       }
+
+   
     }
 
     return childrenConcepts;
@@ -665,11 +676,21 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
     parentConcepts.setTotalCount(parentConcepts.getCount());
 
     // if paging/filtering/sorting required
+    // NOTE: This cannot be done through the query mechanism
     if (pfs != null) {
 
       // filtering -- not supported
       if (pfs.getQueryRestriction() != null) {
         throw new Exception("Query restriction is not supported on this call.");
+      }
+
+      // ascending/descending
+      if (pfs.isAscending() == false) {
+        List<Concept> temp = new ArrayList<>();
+        for (int i = parentConcepts.getCount()-1; i >= 0; i--) {
+          temp.add(parentConcepts.getObjects().get(i));
+        }
+        parentConcepts.setObjects(temp);
       }
 
       // sorting
@@ -686,6 +707,7 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
             Math.min(pfs.getStartIndex() + pfs.getMaxResults(),
                 parentConcepts.getTotalCount())));
       }
+
     }
 
     return parentConcepts;
@@ -2836,14 +2858,13 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
       return null;
     }
   }
-  
 
   /*
    * (non-Javadoc)
    * 
    * @see org.ihtsdo.otf.ts.services.ContentService#
-   * getDescriptionTypeRefSetMembersForDescription(java.lang.String, java.lang.String,
-   * java.lang.String)
+   * getDescriptionTypeRefSetMembersForDescription(java.lang.String,
+   * java.lang.String, java.lang.String)
    */
   @SuppressWarnings("unchecked")
   @Override
@@ -2859,7 +2880,8 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
             + "and c.terminology = :terminology and a.concept = c");
 
     try {
-      DescriptionTypeRefSetMemberList list = new DescriptionTypeRefSetMemberListJpa();
+      DescriptionTypeRefSetMemberList list =
+          new DescriptionTypeRefSetMemberListJpa();
 
       query.setParameter("terminologyId", terminologyId);
       query.setParameter("terminology", terminology);
@@ -3886,7 +3908,13 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
     PfsParameter pfs) {
     String localQueryStr = queryStr;
     if (pfs != null && pfs.getSortField() != null) {
-      localQueryStr += " order by a." + pfs.getSortField();
+      localQueryStr +=
+          " order by a." + pfs.getSortField() + " "
+              + (pfs.isAscending() == true ? "asc" : "desc");
+    }
+    // special case for descending order with no sort field
+    if (pfs != null && pfs.getSortField() == null && pfs.isAscending() == false) {
+      localQueryStr += "order by 1 desc";
     }
     javax.persistence.Query query = manager.createQuery(localQueryStr);
     if (pfs != null && pfs.getStartIndex() > -1 && pfs.getMaxResults() > -1) {

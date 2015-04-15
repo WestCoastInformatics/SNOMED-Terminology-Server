@@ -71,6 +71,17 @@ public class RootServiceRestImpl {
     } catch (Exception e1) {
       // do nothing
     }
+    
+    // throw the local exception as a web application exception
+    if (e instanceof LocalException) {
+      throw new WebApplicationException(Response.status(500)
+          .entity(e.getMessage()).build());
+    }
+
+    // throw the web application exception as-is, e.g. for 401 errors
+    if (e instanceof WebApplicationException) {
+      throw (WebApplicationException) e;
+    }
 
     throw new WebApplicationException(Response
         .status(500)
