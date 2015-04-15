@@ -107,7 +107,8 @@ public class HistoryServiceRestImpl extends RootServiceRestImpl implements
     @ApiParam(value = "Concept terminology , e.g. SNOMEDCT", required = true) @PathParam("terminology") String terminology,
     @ApiParam(value = "Date in the format YYYYMMDD , e.g. 20140731 or \"null\"", required = true) @PathParam("date") String date,
     @ApiParam(value = "PFS Parameter, e.g. '{ \"startIndex\":\"1\", \"maxResults\":\"5\" }'", required = false) PfsParameterJpa pfs,
-    @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken) throws Exception {
+    @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken)
+    throws Exception {
 
     Logger.getLogger(getClass()).info(
         "RESTful call (History): /concept/" + terminology + "/" + date);
@@ -163,7 +164,8 @@ public class HistoryServiceRestImpl extends RootServiceRestImpl implements
     @ApiParam(value = "Date in the format YYYYMMDD , e.g. 20140731 or \"null\"", required = true) @PathParam("startDate") String startDate,
     @ApiParam(value = "Date in the format YYYYMMDD , e.g. 20140731 or \"null\"", required = true) @PathParam("endDate") String endDate,
     @ApiParam(value = "PFS Parameter, e.g. '{ \"startIndex\":\"1\", \"maxResults\":\"5\" }'", required = false) PfsParameterJpa pfs,
-    @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken) throws Exception {
+    @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken)
+    throws Exception {
 
     Logger.getLogger(getClass()).info(
         "RESTful call (History): /concept/revisions/" + id + "/" + startDate
@@ -179,8 +181,14 @@ public class HistoryServiceRestImpl extends RootServiceRestImpl implements
               ConfigUtility.DATE_FORMAT.parse(startDate),
               ConfigUtility.DATE_FORMAT.parse(endDate), pfs);
 
-      // explicitly do not want to use graph resolution handler.
       historyService.close();
+
+      // Resolve to empty
+      for (Concept concept : cl.getObjects()) {
+        if (concept != null) {
+          historyService.getGraphResolutionHandler().resolveEmpty(concept);
+        }
+      }
       return cl;
     } catch (Exception e) {
       handleException(e, "trying to find the concept revisions");
@@ -197,10 +205,12 @@ public class HistoryServiceRestImpl extends RootServiceRestImpl implements
   public Concept findConceptReleaseRevision(
     @ApiParam(value = "Concept id, e.g. 2", required = true) @PathParam("id") String id,
     @ApiParam(value = "Release date in the format YYYYMMDD , e.g. 20140731", required = true) @PathParam("release") String release,
-    @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken) throws Exception {
+    @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken)
+    throws Exception {
 
     Logger.getLogger(getClass()).info(
-        "RESTful call (History): /concept/revisions/" + id + "/" + release);
+        "RESTful call (History): /concept/revisions/" + id + "/" + release
+            + "/release");
 
     try {
       authenticate(securityService, authToken,
@@ -211,8 +221,10 @@ public class HistoryServiceRestImpl extends RootServiceRestImpl implements
           historyService.findConceptReleaseRevision(Long.valueOf(id),
               ConfigUtility.DATE_FORMAT.parse(release));
 
-      // explicitly do not want to use graph resolution handler.
       historyService.close();
+
+      // explicitly resolve to just the concept element
+      historyService.getGraphResolutionHandler().resolveEmpty(concept);
       return concept;
     } catch (Exception e) {
       handleException(e, "trying to find the concept release revision");
@@ -238,7 +250,8 @@ public class HistoryServiceRestImpl extends RootServiceRestImpl implements
     @ApiParam(value = "Description terminology , e.g. SNOMEDCT", required = true) @PathParam("terminology") String terminology,
     @ApiParam(value = "Date in the format YYYYMMDD , e.g. 20140731 or \"null\"", required = true) @PathParam("date") String date,
     @ApiParam(value = "PFS Parameter, e.g. '{ \"startIndex\":\"1\", \"maxResults\":\"5\" }'", required = false) PfsParameterJpa pfs,
-    @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken) throws Exception {
+    @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken)
+    throws Exception {
 
     Logger.getLogger(getClass()).info(
         "RESTful call (History): /description/" + terminology + "/" + date);
@@ -289,7 +302,8 @@ public class HistoryServiceRestImpl extends RootServiceRestImpl implements
     @ApiParam(value = "Date in the format YYYYMMDD, e.g. 20140731 or \"null\"", required = true) @PathParam("startDate") String startDate,
     @ApiParam(value = "Date in the format YYYYMMDD, e.g. 20140731 or \"null\"", required = true) @PathParam("endDate") String endDate,
     @ApiParam(value = "PFS Parameter, e.g. '{ \"startIndex\":\"1\", \"maxResults\":\"5\" }'", required = false) PfsParameterJpa pfs,
-    @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken) throws Exception {
+    @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken)
+    throws Exception {
 
     Logger.getLogger(getClass()).info(
         "RESTful call (History): /description/revisions/" + id + "/"
@@ -300,14 +314,20 @@ public class HistoryServiceRestImpl extends RootServiceRestImpl implements
           "find the description revisions", UserRole.VIEWER);
 
       HistoryService historyService = new HistoryServiceJpa();
-      DescriptionList cl =
+      DescriptionList dl =
           historyService.findDescriptionRevisions(Long.valueOf(id),
               ConfigUtility.DATE_FORMAT.parse(startDate),
               ConfigUtility.DATE_FORMAT.parse(endDate), pfs);
 
-      // explicitly do not want to use graph resolution handler.
       historyService.close();
-      return cl;
+
+      // Resolve to empty
+      for (Description description : dl.getObjects()) {
+        if (description != null) {
+          historyService.getGraphResolutionHandler().resolveEmpty(description);
+        }
+      }
+      return dl;
     } catch (Exception e) {
       handleException(e, "trying to find the release revisions");
       return null;
@@ -323,7 +343,8 @@ public class HistoryServiceRestImpl extends RootServiceRestImpl implements
   public Description findDescriptionReleaseRevision(
     @ApiParam(value = "Concept id , e.g. 2", required = true) @PathParam("id") String id,
     @ApiParam(value = "Release date in the format YYYYMMDD , e.g. latest", required = true) @PathParam("release") String release,
-    @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken) throws Exception {
+    @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken)
+    throws Exception {
 
     Logger.getLogger(getClass()).info(
         "RESTful call (History): /description/revisions/" + id + "/" + release);
@@ -337,8 +358,11 @@ public class HistoryServiceRestImpl extends RootServiceRestImpl implements
           historyService.findDescriptionReleaseRevision(Long.valueOf(id),
               ConfigUtility.DATE_FORMAT.parse(release));
 
-      // explicitly do not want to use graph resolution handler.
+
       historyService.close();
+
+      // explicitly resolve to just the description element
+      historyService.getGraphResolutionHandler().resolveEmpty(description);
       return description;
     } catch (Exception e) {
       handleException(e, "find the description release revision");
@@ -364,7 +388,8 @@ public class HistoryServiceRestImpl extends RootServiceRestImpl implements
     @ApiParam(value = "Relationship terminology , e.g. SNOMEDCT", required = true) @PathParam("terminology") String terminology,
     @ApiParam(value = "Date in the format YYYYMMDD, e.g. 20140731 or \"null\"", required = true) @PathParam("date") String date,
     @ApiParam(value = "PFS Parameter, e.g. '{ \"startIndex\":\"1\", \"maxResults\":\"5\" }'", required = false) PfsParameterJpa pfs,
-    @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken) throws Exception {
+    @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken)
+    throws Exception {
 
     Logger.getLogger(getClass()).info(
         "RESTful call (History): /relationship/" + terminology + "/" + date);
@@ -415,7 +440,8 @@ public class HistoryServiceRestImpl extends RootServiceRestImpl implements
     @ApiParam(value = "Date in the format YYYYMMDD, e.g. 20140731 or \"null\"", required = true) @PathParam("startDate") String startDate,
     @ApiParam(value = "Date in the format YYYYMMDD, e.g. 20140731 or \"null\"", required = true) @PathParam("endDate") String endDate,
     @ApiParam(value = "PFS Parameter, e.g. '{ \"startIndex\":\"1\", \"maxResults\":\"5\" }'", required = false) PfsParameterJpa pfs,
-    @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken) throws Exception {
+    @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken)
+    throws Exception {
 
     Logger.getLogger(getClass()).info(
         "RESTful call (History): /relationship/revisions/" + id + "/"
@@ -449,7 +475,8 @@ public class HistoryServiceRestImpl extends RootServiceRestImpl implements
   public Relationship findRelationshipReleaseRevision(
     @ApiParam(value = "Concept id, e.g. 2", required = true) @PathParam("id") String id,
     @ApiParam(value = "Release date in the format YYYYMMDD , e.g. latest", required = true) @PathParam("release") String release,
-    @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken) throws Exception {
+    @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken)
+    throws Exception {
 
     Logger.getLogger(getClass())
         .info(
@@ -492,7 +519,8 @@ public class HistoryServiceRestImpl extends RootServiceRestImpl implements
     @ApiParam(value = "LanguageRefSetMember terminology , e.g. SNOMEDCT", required = true) @PathParam("terminology") String terminology,
     @ApiParam(value = "Date in the format YYYYMMDD, e.g. 20140731 or \"null\"", required = true) @PathParam("date") String date,
     @ApiParam(value = "PFS Parameter, e.g. '{ \"startIndex\":\"1\", \"maxResults\":\"5\" }'", required = false) PfsParameterJpa pfs,
-    @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken) throws Exception {
+    @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken)
+    throws Exception {
 
     Logger.getLogger(getClass()).info(
         "RESTful call (History): /language/" + terminology + "/" + date);
@@ -544,7 +572,8 @@ public class HistoryServiceRestImpl extends RootServiceRestImpl implements
     @ApiParam(value = "Date in the format YYYYMMDD, e.g. 20140731 or \"null\"", required = true) @PathParam("startDate") String startDate,
     @ApiParam(value = "Date in the format YYYYMMDD, e.g. 20140731 or \"null\"", required = true) @PathParam("endDate") String endDate,
     @ApiParam(value = "PFS Parameter, e.g. '{ \"startIndex\":\"1\", \"maxResults\":\"5\" }'", required = false) PfsParameterJpa pfs,
-    @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken) throws Exception {
+    @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken)
+    throws Exception {
 
     Logger.getLogger(getClass()).info(
         "RESTful call (History): /language/revisions/" + id + "/" + startDate
@@ -586,7 +615,8 @@ public class HistoryServiceRestImpl extends RootServiceRestImpl implements
   public LanguageRefSetMember findLanguageRefSetMemberReleaseRevision(
     @ApiParam(value = "Concept id, e.g. 2", required = true) @PathParam("id") String id,
     @ApiParam(value = "Release date in the format YYYYMMDD , e.g. latest", required = true) @PathParam("release") String release,
-    @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken) throws Exception {
+    @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken)
+    throws Exception {
 
     Logger.getLogger(getClass()).info(
         "RESTful call (History): /language/revisions/" + id + "/" + release);
@@ -1979,7 +2009,8 @@ public class HistoryServiceRestImpl extends RootServiceRestImpl implements
     @ApiParam(value = "Release version, e.g. 20150131", required = true) @PathParam("releaseVersion") String releaseVersion,
     @ApiParam(value = "Terminology, e.g. SNOMEDCT", required = true) @PathParam("terminology") String terminology,
     @ApiParam(value = "Terminology version, e.g. latest", required = true) @PathParam("version") String version,
-    @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken) throws Exception {
+    @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken)
+    throws Exception {
     Logger.getLogger(getClass()).info(
         "RESTful call (History): /release/startEditingCycle/" + releaseVersion
             + "/" + terminology + "/" + version);

@@ -37,8 +37,6 @@ public class RootServiceRestImpl {
       // do nothing
     }
 
-    e.printStackTrace();
-
     // throw the local exception as a web application exception
     if (e instanceof LocalException) {
       throw new WebApplicationException(Response.status(500)

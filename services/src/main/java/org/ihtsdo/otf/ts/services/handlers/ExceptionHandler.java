@@ -109,7 +109,7 @@ public class ExceptionHandler {
             "Sending mail is disabled.");
       }
     } catch (Exception ex) {
-      ex.printStackTrace();
+      // ex.printStackTrace();
       Logger.getLogger(ExceptionHandler.class).error(
           "Unable to handle exception");
     }

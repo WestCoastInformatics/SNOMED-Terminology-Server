@@ -134,6 +134,12 @@
     <dependency>
       <groupId>com.wordnik</groupId>
       <artifactId>swagger-jersey-jaxrs_2.10</artifactId>
+      <exclusions>
+        <exclusion>
+          <groupId>javassist</groupId>
+          <artifactId>javassist</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
     <dependency>
       <groupId>com.sun.mail</groupId>
