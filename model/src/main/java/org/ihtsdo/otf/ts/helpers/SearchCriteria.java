@@ -152,7 +152,7 @@ public interface SearchCriteria {
   public void setFindByRelationshipTypeId(String findByRelationshipTypeId);
 
   /**
-   * Returns the source id of relationships for which matches among source ids
+   * Returns the destination id of relationships for which matches among source ids
    * will be included.
    *
    * @return the find by relationship destination id

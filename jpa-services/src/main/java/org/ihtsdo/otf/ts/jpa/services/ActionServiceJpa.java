@@ -242,19 +242,19 @@ public class ActionServiceJpa extends ContentServiceJpa implements
     String SNOMED_ROOT_CONCEPT = "138875005";
     classifier.setRootId(Integer.valueOf(getSingleConcept(SNOMED_ROOT_CONCEPT,
         config.getProject().getTerminology(),
-        config.getProject().getTerminologyVersion()).getObjectId()));
+        config.getProject().getTerminologyVersion()).getId().toString()));
 
     // Set the isa id
     String ISA_SCTID = "116680003";
     classifier.setIsaRelId(Integer.valueOf(getSingleConcept(ISA_SCTID,
         config.getProject().getTerminology(),
-        config.getProject().getTerminologyVersion()).getObjectId()));
+        config.getProject().getTerminologyVersion()).getId().toString()));
 
     // Set attribure root
     String ATTRIBUTE_ROOT_CONCEPT = "410662002";
     classifier.setRoleRootId(Integer.valueOf(getSingleConcept(
         ATTRIBUTE_ROOT_CONCEPT, config.getProject().getTerminology(),
-        config.getProject().getTerminologyVersion()).getObjectId()));
+        config.getProject().getTerminologyVersion()).getId().toString()));
 
     // Load concepts and relationships
     classifier.loadConcepts();

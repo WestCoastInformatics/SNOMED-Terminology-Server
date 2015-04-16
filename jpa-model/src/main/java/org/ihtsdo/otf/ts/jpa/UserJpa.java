@@ -22,8 +22,6 @@ import org.hibernate.search.annotations.Store;
 import org.ihtsdo.otf.ts.User;
 import org.ihtsdo.otf.ts.UserRole;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-
 /**
  * JPA enabled implementation of {@link User}.
  */
@@ -31,7 +29,6 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 @Table(name = "users")
 @Audited
 @XmlRootElement(name = "user")
-@JsonIgnoreProperties(ignoreUnknown = true)
 public class UserJpa implements User {
 
   /** The id. */
@@ -65,25 +62,6 @@ public class UserJpa implements User {
   /**
    * Instantiates a new user jpa.
    *
-   * @param id the id
-   * @param userName the user name
-   * @param name the name
-   * @param email the email
-   * @param applicationRole the application role
-   */
-  public UserJpa(long id, String userName, String name, String email,
-      UserRole applicationRole) {
-    super();
-    this.id = id;
-    this.userName = userName;
-    this.name = name;
-    this.email = email;
-    this.applicationRole = applicationRole;
-  }
-
-  /**
-   * Instantiates a new user jpa.
-   *
    * @param user the user
    */
   public UserJpa(User user) {
@@ -105,22 +83,6 @@ public class UserJpa implements User {
     return id;
   }
 
-  /**
-   * Returns the id in string form.
-   *
-   * @return the id in string form
-   */
-  @XmlID
-  @Override
-  public String getObjectId() {
-    return (id == null ? "" : id.toString());
-  }
-
-  @XmlIDREF
-  @Override
-  public void setObjectId(String objectId) {
-    this.id = Long.parseLong(objectId);
-  }
 
   /*
    * (non-Javadoc)
