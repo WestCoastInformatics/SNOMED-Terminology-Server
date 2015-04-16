@@ -4,23 +4,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 import org.apache.log4j.Logger;
-import org.ihtsdo.otf.ts.helpers.ConfigUtility;
 import org.ihtsdo.otf.ts.jpa.services.ContentServiceJpa;
 import org.ihtsdo.otf.ts.jpa.services.handlers.DefaultGraphResolutionHandler;
 import org.ihtsdo.otf.ts.jpa.services.helper.TerminologyUtility;
@@ -81,17 +65,8 @@ public class Handler002Test {
    */
   @Before
   public void setup() {    
-  
     try {
-		ConfigUtility.getConfigProperties();
-	} catch (Exception e) {
-		// TODO Auto-generated catch block
-		e.printStackTrace();
-	}
-    try {
-		handlerService =
-		         ConfigUtility.newStandardHandlerInstanceWithConfiguration("graph.resolution.handler",
-		                 "DEFAULT", GraphResolutionHandler.class);
+		handlerService = new DefaultGraphResolutionHandler();
 	} catch (Exception e) {
 		// TODO Auto-generated catch block
 		e.printStackTrace();
@@ -108,8 +83,8 @@ public class Handler002Test {
 	 */
 	@SuppressWarnings("static-access")
   @Test
-	public void testHandlerNormalUse001() throws Exception {
-		Logger.getLogger(getClass()).info("TEST testHandlerNormalUse001");
+	public void testHandlerNormalUse002() throws Exception {
+		Logger.getLogger(getClass()).info("TEST testHandlerNormalUse002");
 
 		/*Open a content service
 		Retrieve concept 102276005 (SNOMEDCT) from the content service.
@@ -333,12 +308,12 @@ public class Handler002Test {
    * @throws Exception the exception
    */
   /**
-   * Test handler degenerate use001.
+   * Test handler degenerate use002.
    *
    * @throws Exception the exception
    */
   @Test
-	public void testHandlerDegenerateUse001() throws Exception {
+	public void testHandlerDegenerateUse002() throws Exception {
 		// Call resolve((Concept)null)
 		// TEST: exception
 		try {
@@ -401,7 +376,7 @@ public class Handler002Test {
    * @throws Exception the exception
    */
   @Test
-  public void testHandlerEdgeCases001() throws Exception {
+  public void testHandlerEdgeCases002() throws Exception {
 	  //Call computePreferredName(new ConceptJpa())
 	  //TEST: no exceptions
 	  handlerService.resolve(new ConceptJpa(), TerminologyUtility.getHierarchicalIsaRels(

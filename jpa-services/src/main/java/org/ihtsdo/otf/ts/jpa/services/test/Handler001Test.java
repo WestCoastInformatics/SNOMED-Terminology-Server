@@ -7,7 +7,6 @@ import java.util.HashSet;
 import java.util.Set;
 
 import org.apache.log4j.Logger;
-import org.ihtsdo.otf.ts.helpers.ConfigUtility;
 import org.ihtsdo.otf.ts.jpa.services.ContentServiceJpa;
 import org.ihtsdo.otf.ts.jpa.services.handlers.ClamlComputePreferredNameHandler;
 import org.ihtsdo.otf.ts.rf2.Concept;
@@ -33,8 +32,6 @@ public class Handler001Test {
   /** The handler service. */
   private ComputePreferredNameHandler handlerService;
   
-  
-
 
   /**
    * Setup class.
@@ -50,17 +47,8 @@ public class Handler001Test {
   @Before
   public void setup() {
    
-  
     try {
-		ConfigUtility.getConfigProperties();
-	} catch (Exception e) {
-		// TODO Auto-generated catch block
-		e.printStackTrace();
-	}
-    try {
-		handlerService =
-		         ConfigUtility.newStandardHandlerInstanceWithConfiguration("compute.preferred.name.handler",
-		             "ICD9CM", ComputePreferredNameHandler.class);
+		handlerService = new ClamlComputePreferredNameHandler();
 	} catch (Exception e) {
 		// TODO Auto-generated catch block
 		e.printStackTrace();

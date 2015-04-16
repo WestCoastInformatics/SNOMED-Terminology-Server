@@ -4,7 +4,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 
 import org.apache.log4j.Logger;
-import org.ihtsdo.otf.ts.helpers.ConfigUtility;
 import org.ihtsdo.otf.ts.jpa.services.ContentServiceJpa;
 import org.ihtsdo.otf.ts.jpa.services.handlers.DefaultIdentifierAssignmentHandler;
 import org.ihtsdo.otf.ts.rf2.Concept;
@@ -44,19 +43,9 @@ public class Handler003Test {
    */
   @Before
   public void setup() {
-   
-  
+
     try {
-		ConfigUtility.getConfigProperties();
-	} catch (Exception e) {
-		// TODO Auto-generated catch block
-		e.printStackTrace();
-	}
-    try {
-    	// TODO: this should use "DEFAULT" for handlerName?
-		handlerService = new DefaultIdentifierAssignmentHandler();
-		         /*ConfigUtility.newStandardHandlerInstanceWithConfiguration("identifier.assignment.handler",
-		             "ICD9CM", IdentifierAssignmentHandler.class);*/
+    	handlerService = new DefaultIdentifierAssignmentHandler();		         
 	} catch (Exception e) {
 		// TODO Auto-generated catch block
 		e.printStackTrace();

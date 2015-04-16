@@ -7,7 +7,6 @@ import java.util.Properties;
 import java.util.UUID;
 
 import org.apache.log4j.Logger;
-import org.ihtsdo.otf.ts.helpers.ConfigUtility;
 import org.ihtsdo.otf.ts.jpa.services.ContentServiceJpa;
 import org.ihtsdo.otf.ts.jpa.services.handlers.SnomedReleaseIdentifierAssignmentHandler;
 import org.ihtsdo.otf.ts.rf2.AssociationReferenceConceptRefSetMember;

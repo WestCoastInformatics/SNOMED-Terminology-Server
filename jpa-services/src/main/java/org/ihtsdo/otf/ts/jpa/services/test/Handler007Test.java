@@ -7,7 +7,6 @@ import java.util.HashSet;
 import java.util.Set;
 
 import org.apache.log4j.Logger;
-import org.ihtsdo.otf.ts.helpers.ConfigUtility;
 import org.ihtsdo.otf.ts.jpa.services.ContentServiceJpa;
 import org.ihtsdo.otf.ts.jpa.services.handlers.Rf2ComputePreferredNameHandler;
 import org.ihtsdo.otf.ts.rf2.Concept;
@@ -45,17 +44,10 @@ public class Handler007Test {
    */
   @Before
   public void setup() {    
-  
+
     try {
-		ConfigUtility.getConfigProperties();
-	} catch (Exception e) {
-		// TODO Auto-generated catch block
-		e.printStackTrace();
-	}
-    try {
-		handlerService =
-		         ConfigUtility.newStandardHandlerInstanceWithConfiguration("compute.preferred.name.handler",
-		                 "SNOMEDCT", ComputePreferredNameHandler.class);
+		handlerService = new Rf2ComputePreferredNameHandler();
+		         
 	} catch (Exception e) {
 		// TODO Auto-generated catch block
 		e.printStackTrace();
