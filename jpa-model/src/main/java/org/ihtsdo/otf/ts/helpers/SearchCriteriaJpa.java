@@ -79,16 +79,6 @@ public class SearchCriteriaJpa implements SearchCriteria {
     findSelf = searchCriteria.getFindSelf();
   }
 
-  /**
-   * ID for XML serialization.
-   *
-   * @return the object id
-   */
-  @XmlID
-  public String getObjectId() {
-    return (id == null ? "" : id.toString());
-  }
-
   /*
    * (non-Javadoc)
    * 

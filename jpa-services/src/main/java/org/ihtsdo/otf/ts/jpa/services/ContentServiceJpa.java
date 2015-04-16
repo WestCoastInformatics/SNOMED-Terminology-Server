@@ -250,6 +250,11 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
           "Identifier assignment handler did not properly initialize, serious error.");
     }
 
+    if (pnHandlerMap == null) {
+      throw new Exception(
+          "Preferred name handler did not properly initialize, serious error.");
+    }
+
     if (conceptFieldNames == null) {
       throw new Exception(
           "Concept indexsed field names did not properly initialize, serious error.");

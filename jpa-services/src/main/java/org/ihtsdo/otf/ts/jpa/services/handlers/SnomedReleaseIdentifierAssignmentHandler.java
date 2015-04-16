@@ -4,13 +4,26 @@
 package org.ihtsdo.otf.ts.jpa.services.handlers;
 
 import java.util.Properties;
+import java.util.UUID;
 
 import org.apache.log4j.Logger;
+import org.ihtsdo.otf.ts.rf2.AssociationReferenceRefSetMember;
+import org.ihtsdo.otf.ts.rf2.AttributeValueRefSetMember;
+import org.ihtsdo.otf.ts.rf2.ComplexMapRefSetMember;
+import org.ihtsdo.otf.ts.rf2.Component;
 import org.ihtsdo.otf.ts.rf2.Concept;
 import org.ihtsdo.otf.ts.rf2.Description;
+import org.ihtsdo.otf.ts.rf2.DescriptionTypeRefSetMember;
+import org.ihtsdo.otf.ts.rf2.LanguageRefSetMember;
+import org.ihtsdo.otf.ts.rf2.ModuleDependencyRefSetMember;
+import org.ihtsdo.otf.ts.rf2.RefsetDescriptorRefSetMember;
 import org.ihtsdo.otf.ts.rf2.Relationship;
+import org.ihtsdo.otf.ts.rf2.SimpleMapRefSetMember;
+import org.ihtsdo.otf.ts.rf2.SimpleRefSetMember;
+import org.ihtsdo.otf.ts.rf2.TransitiveRelationship;
 import org.ihtsdo.otf.ts.services.handlers.IdentifierAssignmentHandler;
 
+// TODO: Auto-generated Javadoc
 /**
  * Snomed RF2 release implementation of {@link IdentifierAssignmentHandler}.
  * NOTE: if identifiers need to be stable across daily builds, you could simply
@@ -18,8 +31,8 @@ import org.ihtsdo.otf.ts.services.handlers.IdentifierAssignmentHandler;
  * by, say, extending RootServiceJpa. (although some complexities arise with
  * dual independent review).
  */
-public class SnomedReleaseIdentifierAssignmentHandler extends
-    SnomedUuidHashIdentifierAssignmentHandler {
+public class SnomedReleaseIdentifierAssignmentHandler implements
+    IdentifierAssignmentHandler {
 
   /** The concept sequence. */
   private long conceptSequence;
@@ -55,7 +68,7 @@ public class SnomedReleaseIdentifierAssignmentHandler extends
     this.conceptSequence = Long.valueOf(p.getProperty("concept.max"));
     this.descriptionSequence = Long.valueOf(p.getProperty("description.max"));
     this.relationshipSequence =
-        Long.valueOf(p.getProperty("relationships.max"));
+        Long.valueOf(p.getProperty("relationship.max"));
     this.namespaceId = p.getProperty("namespace.id");
     this.isExtension = (namespaceId == null || namespaceId.isEmpty());
   }
@@ -239,7 +252,7 @@ public class SnomedReleaseIdentifierAssignmentHandler extends
     };
 
     /**
-     * For a given number generates a Verhoeff digit
+     * For a given number generates a Verhoeff digit.
      *
      * @param num the num
      * @return the string
@@ -296,7 +309,7 @@ public class SnomedReleaseIdentifierAssignmentHandler extends
     }
 
     /**
-     * Reverses an int array
+     * Reverses an int array.
      *
      * @param myArray the my array
      * @return the int[]
@@ -312,4 +325,134 @@ public class SnomedReleaseIdentifierAssignmentHandler extends
     }
 
   }
+
+
+	/* (non-Javadoc)
+	 * @see org.ihtsdo.otf.ts.jpa.services.handlers.SnomedUuidHashIdentifierAssignmentHandler#getTerminologyId(org.ihtsdo.otf.ts.rf2.AssociationReferenceRefSetMember)
+	 */
+	@Override
+	public String getTerminologyId(
+			AssociationReferenceRefSetMember<? extends Component> member)
+			throws Exception {
+		if (member == null)
+			throw new Exception("Cannot pass a null association reference refset member.");
+		return UUID.randomUUID().toString();
+	}
+
+	/* (non-Javadoc)
+	 * @see org.ihtsdo.otf.ts.jpa.services.handlers.SnomedUuidHashIdentifierAssignmentHandler#getTerminologyId(org.ihtsdo.otf.ts.rf2.AttributeValueRefSetMember)
+	 */
+	@Override
+	public String getTerminologyId(
+			AttributeValueRefSetMember<? extends Component> member)
+			throws Exception {
+		if (member == null)
+				throw new Exception("Cannot pass a null attribute value refset member.");
+		return UUID.randomUUID().toString();
+	}
+
+	/* (non-Javadoc)
+	 * @see org.ihtsdo.otf.ts.jpa.services.handlers.SnomedUuidHashIdentifierAssignmentHandler#getTerminologyId(org.ihtsdo.otf.ts.rf2.ComplexMapRefSetMember)
+	 */
+	@Override
+	public String getTerminologyId(ComplexMapRefSetMember member)
+			throws Exception {
+		if (member == null)
+			throw new Exception("Cannot pass a null complex map refset member.");
+		return UUID.randomUUID().toString();
+	}
+
+	/* (non-Javadoc)
+	 * @see org.ihtsdo.otf.ts.jpa.services.handlers.SnomedUuidHashIdentifierAssignmentHandler#getTerminologyId(org.ihtsdo.otf.ts.rf2.DescriptionTypeRefSetMember)
+	 */
+	@Override
+	public String getTerminologyId(DescriptionTypeRefSetMember member)
+			throws Exception {
+		if (member == null)
+			throw new Exception("Cannot pass a null description type refset member.");		
+		return UUID.randomUUID().toString();
+	}
+
+	/* (non-Javadoc)
+	 * @see org.ihtsdo.otf.ts.jpa.services.handlers.SnomedUuidHashIdentifierAssignmentHandler#getTerminologyId(org.ihtsdo.otf.ts.rf2.LanguageRefSetMember)
+	 */
+	@Override
+	public String getTerminologyId(LanguageRefSetMember member)
+			throws Exception {
+		if (member == null)
+			throw new Exception("Cannot pass a null language refset member.");
+		return UUID.randomUUID().toString();
+	}
+
+	/* (non-Javadoc)
+	 * @see org.ihtsdo.otf.ts.jpa.services.handlers.SnomedUuidHashIdentifierAssignmentHandler#getTerminologyId(org.ihtsdo.otf.ts.rf2.ModuleDependencyRefSetMember)
+	 */
+	@Override
+	public String getTerminologyId(ModuleDependencyRefSetMember member)
+			throws Exception {
+		if (member == null)
+			throw new Exception("Cannot pass a null module dependency refset member.");
+		return UUID.randomUUID().toString();
+	}
+
+	/* (non-Javadoc)
+	 * @see org.ihtsdo.otf.ts.jpa.services.handlers.SnomedUuidHashIdentifierAssignmentHandler#getTerminologyId(org.ihtsdo.otf.ts.rf2.RefsetDescriptorRefSetMember)
+	 */
+	@Override
+	public String getTerminologyId(RefsetDescriptorRefSetMember member)
+			throws Exception {
+		if (member == null)
+			throw new Exception("Cannot pass a null refset descriptor refset member.");
+		return UUID.randomUUID().toString();
+	}
+
+	/* (non-Javadoc)
+	 * @see org.ihtsdo.otf.ts.jpa.services.handlers.SnomedUuidHashIdentifierAssignmentHandler#getTerminologyId(org.ihtsdo.otf.ts.rf2.SimpleMapRefSetMember)
+	 */
+	@Override
+	public String getTerminologyId(SimpleMapRefSetMember member)
+			throws Exception {
+
+		if (member == null)
+			throw new Exception("Cannot pass a null simple map refset member.");
+		return UUID.randomUUID().toString();
+	}
+
+	/* (non-Javadoc)
+	 * @see org.ihtsdo.otf.ts.jpa.services.handlers.SnomedUuidHashIdentifierAssignmentHandler#getTerminologyId(org.ihtsdo.otf.ts.rf2.SimpleRefSetMember)
+	 */
+	@Override
+	public String getTerminologyId(SimpleRefSetMember member) throws Exception {
+		if (member == null)
+			throw new Exception("Cannot pass a null simple refset member.");
+		return UUID.randomUUID().toString();
+	}
+
+	/* (non-Javadoc)
+	 * @see org.ihtsdo.otf.ts.jpa.services.handlers.SnomedUuidHashIdentifierAssignmentHandler#getTerminologyId(org.ihtsdo.otf.ts.rf2.TransitiveRelationship)
+	 */
+	@Override
+	public String getTerminologyId(TransitiveRelationship relationship)
+			throws Exception {
+		if (relationship == null)
+			throw new Exception("Cannot pass a null transitive relationship.");
+
+		return UUID.randomUUID().toString();
+	}
+
+	/* (non-Javadoc)
+	 * @see org.ihtsdo.otf.ts.jpa.services.handlers.SnomedUuidHashIdentifierAssignmentHandler#allowIdChangeOnUpdate()
+	 */
+	@Override
+	public boolean allowIdChangeOnUpdate() {
+		return true;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.ihtsdo.otf.ts.jpa.services.handlers.SnomedUuidHashIdentifierAssignmentHandler#allowConceptIdChangeOnUpdate()
+	 */
+	@Override
+	public boolean allowConceptIdChangeOnUpdate() {
+		return true;
+	}
 }

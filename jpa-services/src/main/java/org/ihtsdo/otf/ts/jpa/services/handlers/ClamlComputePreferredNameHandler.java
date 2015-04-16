@@ -13,7 +13,7 @@ import org.ihtsdo.otf.ts.rf2.LanguageRefSetMember;
 import org.ihtsdo.otf.ts.services.handlers.ComputePreferredNameHandler;
 
 /**
- * An RF2-based implementation of {@link ComputePreferredNameHandler}.
+ * A Claml-based implementation of {@link ComputePreferredNameHandler}.
  */
 public class ClamlComputePreferredNameHandler implements
     ComputePreferredNameHandler {
@@ -67,10 +67,10 @@ public class ClamlComputePreferredNameHandler implements
   @Override
   public String computePreferredName(Set<Description> descriptions)
     throws Exception {
-    String first = "";
+    String first = null;
     for (Description description : descriptions) {
       // Use first description encountered if no preferred is found
-      if (first.equals("")) {
+      if (first == null) {
         first = description.getTerm();
       }
       if (isPreferredName(description)) {
@@ -89,6 +89,8 @@ public class ClamlComputePreferredNameHandler implements
    */
   @Override
   public boolean isPreferredName(Description description) throws Exception {
+	if (description.getTypeId() == null)
+		return false;
     return description.getTypeId().equals(dpnType) && description.isActive();
   }
 

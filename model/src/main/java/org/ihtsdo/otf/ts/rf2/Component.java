@@ -25,13 +25,6 @@ public interface Component {
   public void setId(Long id);
 
   /**
-   * Returns the id as a string. This method is used for handling the identifier
-   * for XML transport.
-   * @return the id
-   */
-  public String getObjectId();
-
-  /**
    * Returns the terminology.
    * 
    * @return the terminology
