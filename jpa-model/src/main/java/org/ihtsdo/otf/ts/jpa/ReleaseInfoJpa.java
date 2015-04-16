@@ -1,3 +1,6 @@
+/*
+ * Copyright 2015 West Coast Informatics, LLC
+ */
 package org.ihtsdo.otf.ts.jpa;
 
 import java.util.Date;
@@ -101,16 +104,6 @@ public class ReleaseInfoJpa implements ReleaseInfo {
     published = releaseInfo.isPublished();
     terminology = releaseInfo.getTerminology();
     terminologyVersion = releaseInfo.getTerminologyVersion();
-  }
-
-  /**
-   * ID for XML serialization.
-   *
-   * @return the object id
-   */
-  @XmlID
-  public String getObjectId() {
-    return (id == null ? "" : id.toString());
   }
 
   /*

@@ -260,12 +260,12 @@
         <version>10.0.1</version>
       </dependency>
 
-      <!-- Classifier -->
+      <!-- Classifier 
       <dependency>
         <groupId>au.csiro</groupId>
         <artifactId>snorocket-snapi</artifactId>
         <version>${snorocket.snapi.version}</version>
-      </dependency>
+      </dependency>-->
 
     </dependencies>
   </dependencyManagement>

@@ -1,3 +1,6 @@
+/*
+ * Copyright 2015 West Coast Informatics, LLC
+ */
 package org.ihtsdo.otf.ts.jpa.services.helper;
 
 import java.util.HashMap;
@@ -27,7 +30,6 @@ public class SnomedMetadataServiceJpaHelper extends ContentServiceJpa implements
    */
   public SnomedMetadataServiceJpaHelper() throws Exception {
     super();
-
   }
 
   /** The Constant isaRelationshipType. */
@@ -61,14 +63,14 @@ public class SnomedMetadataServiceJpaHelper extends ContentServiceJpa implements
    * , java.lang.String)
    */
   @Override
-  public Map<String, String> getModules(String terminology,
-    String version) throws Exception {
+  public Map<String, String> getModules(String terminology, String version)
+    throws Exception {
     Map<String, String> map = new HashMap<>();
 
     // want all descendants, do not use pfs
     Set<Concept> descendants =
-        getDescendantConcepts("900000000000443000", terminology,
-            version, isaRelationshipType);
+        getDescendantConcepts("900000000000443000", terminology, version,
+            isaRelationshipType);
 
     for (Concept descendant : descendants) {
       if (descendant.isActive()) {
@@ -94,8 +96,8 @@ public class SnomedMetadataServiceJpaHelper extends ContentServiceJpa implements
     // want all descendants, do not use pfs
     // descendants of of 900000000000457003 | Reference set attribute |
     Set<Concept> descendants =
-        getDescendantConcepts("900000000000457003", terminology,
-            version, isaRelationshipType);
+        getDescendantConcepts("900000000000457003", terminology, version,
+            isaRelationshipType);
 
     for (Concept descendant : descendants) {
       if (descendant.isActive()) {
@@ -121,8 +123,8 @@ public class SnomedMetadataServiceJpaHelper extends ContentServiceJpa implements
     // want all descendants, do not use pfs
     // descendants of 900000000000459000 | attribute type |
     Set<Concept> descendants =
-        getDescendantConcepts("900000000000459000", terminology,
-            version, isaRelationshipType);
+        getDescendantConcepts("900000000000459000", terminology, version,
+            isaRelationshipType);
 
     for (Concept descendant : descendants) {
       if (descendant.isActive()) {
@@ -148,8 +150,8 @@ public class SnomedMetadataServiceJpaHelper extends ContentServiceJpa implements
     // want all descendants, do not use pfs
     // descendants of 900000000000539002 | Description format |
     Set<Concept> descendants =
-        getDescendantConcepts("900000000000539002", terminology,
-            version, isaRelationshipType);
+        getDescendantConcepts("900000000000539002", terminology, version,
+            isaRelationshipType);
 
     for (Concept descendant : descendants) {
       if (descendant.isActive()) {
@@ -174,8 +176,8 @@ public class SnomedMetadataServiceJpaHelper extends ContentServiceJpa implements
 
     // want all descendants, do not use pfs
     Set<Concept> descendants =
-        getDescendantConcepts("900000000000480006", terminology,
-            version, isaRelationshipType);
+        getDescendantConcepts("900000000000480006", terminology, version,
+            isaRelationshipType);
 
     for (Concept descendant : descendants) {
       if (descendant.isActive()) {
@@ -227,8 +229,7 @@ public class SnomedMetadataServiceJpaHelper extends ContentServiceJpa implements
 
     // want all descendants, do not use pfs
     Set<Concept> descendants =
-        getDescendantConcepts("900000000000506000", terminology,
-            version,
+        getDescendantConcepts("900000000000506000", terminology, version,
             isaRelationshipType);
 
     for (Concept descendant : descendants) {
@@ -607,8 +608,7 @@ public class SnomedMetadataServiceJpaHelper extends ContentServiceJpa implements
 
     // want all descendants, do not use pfs
     Set<Concept> descendants =
-        getDescendantConcepts("900000000000450001", terminology,
-            version,
+        getDescendantConcepts("900000000000450001", terminology, version,
             isaRelationshipType);
 
     for (Concept descendant : descendants) {
@@ -711,8 +711,7 @@ public class SnomedMetadataServiceJpaHelper extends ContentServiceJpa implements
    */
   @SuppressWarnings("static-method")
   private Set<Concept> getDescendantConcepts(String terminologyId,
-    String terminology, String version, String typeId)
-    throws Exception {
+    String terminology, String version, String typeId) throws Exception {
     ContentService contentService = new ContentServiceJpa();
     ConceptList list =
         contentService.findDescendantConcepts(contentService.getSingleConcept(

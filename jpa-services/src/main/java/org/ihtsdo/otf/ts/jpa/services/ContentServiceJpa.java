@@ -1,3 +1,6 @@
+/*
+ * Copyright 2015 West Coast Informatics, LLC
+ */
 package org.ihtsdo.otf.ts.jpa.services;
 
 import java.lang.reflect.Field;
@@ -107,6 +110,12 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
 
   /** The config properties. */
   private static Properties config = null;
+
+  /** The assign identifiers flag. */
+  protected boolean assignIdentifiersFlag = false;
+
+  /** The last modified flag. */
+  protected boolean lastModifiedFlag = false;
 
   /** The listener. */
   private static List<WorkflowListener> listeners = null;
@@ -247,12 +256,6 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
     }
 
   }
-
-  /** The last modified flag. */
-  protected boolean lastModifiedFlag = false;
-
-  /** The assign identifiers flag. */
-  protected boolean assignIdentifiersFlag = false;
 
   /*
    * (non-Javadoc)
@@ -696,7 +699,6 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
    * org.ihtsdo.otf.mapping.services.ContentService#addConcept(org.ihtsdo.otf
    * .mapping.rf2.Concept)
    */
-  @SuppressWarnings("null")
   @Override
   public Concept addConcept(Concept concept) throws Exception {
     Logger.getLogger(getClass()).debug(
@@ -705,8 +707,16 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
     IdentifierAssignmentHandler idHandler = null;
     if (assignIdentifiersFlag) {
       idHandler = idHandlerMap.get(concept.getTerminology());
+      if (idHandler == null) {
+        throw new Exception("Unable to find id handler for "
+            + concept.getTerminology());
+      }
       String id = idHandler.getTerminologyId(concept);
       concept.setTerminologyId(id);
+    }
+    if (assignIdentifiersFlag && idHandler == null) {
+      throw new Exception("Unable to find id handler for "
+          + concept.getTerminology());
     }
     // Process Cascade.ALL data structures
     Date date = new Date();
@@ -871,7 +881,6 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
    * org.ihtsdo.otf.mapping.services.ContentService#addDescription(org.ihtsdo
    * .otf.mapping.rf2.Description)
    */
-  @SuppressWarnings("null")
   @Override
   public Description addDescription(Description description) throws Exception {
     Logger.getLogger(getClass()).debug(
@@ -880,7 +889,15 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
     IdentifierAssignmentHandler idHandler = null;
     if (assignIdentifiersFlag) {
       idHandler = idHandlerMap.get(description.getTerminology());
+      if (idHandler == null) {
+        throw new Exception("Unable to find id handler for "
+            + description.getTerminology());
+      }
       description.setTerminologyId(idHandler.getTerminologyId(description));
+    }
+    if (assignIdentifiersFlag && idHandler == null) {
+      throw new Exception("Unable to find id handler for "
+          + description.getTerminology());
     }
 
     // Process Cascade.ALL data structures
@@ -2662,8 +2679,10 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
         "Content Service - get refset descriptor refset member for refset "
             + terminologyId + "/" + terminology + "/" + version);
     javax.persistence.Query query =
-        manager
-            .createQuery("select c from RefsetDescriptorRefSetMemberJpa c where referencedComponentId = :terminologyId and terminologyVersion = :version and terminology = :terminology order by attributeOrder");
+        manager.createQuery("select a from RefsetDescriptorRefSetMemberJpa a, "
+            + " ConceptJpa c where c.terminologyId = :terminologyId "
+            + "and c.terminologyVersion = :version "
+            + "and c.terminology = :terminology and a.concept = c");
 
     try {
       query.setParameter("terminologyId", terminologyId);
@@ -4075,6 +4094,17 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
   /*
    * (non-Javadoc)
    * 
+   * @see
+   * org.ihtsdo.otf.ts.services.ContentService#setAssignIdentifiersFlag(boolean)
+   */
+  @Override
+  public void setAssignIdentifiersFlag(boolean assignIdentifiersFlag) {
+    this.assignIdentifiersFlag = assignIdentifiersFlag;
+  }
+
+  /*
+   * (non-Javadoc)
+   * 
    * @see org.ihtsdo.otf.ts.services.ContentService#isLastModifiedFlag()
    */
   @Override
@@ -4090,17 +4120,6 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
   @Override
   public void setLastModifiedFlag(boolean lastModifiedFlag) {
     this.lastModifiedFlag = lastModifiedFlag;
-  }
-
-  /*
-   * (non-Javadoc)
-   * 
-   * @see
-   * org.ihtsdo.otf.ts.services.ContentService#setAssignIdentifiersFlag(boolean)
-   */
-  @Override
-  public void setAssignIdentifiersFlag(boolean assignIdentifiersFlag) {
-    this.assignIdentifiersFlag = assignIdentifiersFlag;
   }
 
   /*

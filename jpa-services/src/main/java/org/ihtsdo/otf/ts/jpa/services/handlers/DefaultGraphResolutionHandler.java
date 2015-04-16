@@ -1,5 +1,9 @@
+/*
+ * Copyright 2015 West Coast Informatics, LLC
+ */
 package org.ihtsdo.otf.ts.jpa.services.handlers;
 
+import java.util.HashSet;
 import java.util.Properties;
 import java.util.Set;
 
@@ -59,6 +63,19 @@ public class DefaultGraphResolutionHandler implements GraphResolutionHandler {
     }
   }
 
+  /*
+   * (non-Javadoc)
+   * 
+   * @see
+   * org.ihtsdo.otf.ts.services.handlers.GraphResolutionHandler#resolveEmpty
+   * (org.ihtsdo.otf.ts.rf2.Concept)
+   */
+  @Override
+  public void resolveEmpty(Concept concept) {
+    concept.setDescriptions(new HashSet<Description>());
+    concept.setRelationships(new HashSet<Relationship>());
+  }
+
   /**
    * Resolve descriptions.
    *
@@ -83,6 +100,14 @@ public class DefaultGraphResolutionHandler implements GraphResolutionHandler {
     } else if (description == null){
     	throw new Exception("Cannot resolve a null description.");
     }
+  }
+
+  /* (non-Javadoc)
+   * @see org.ihtsdo.otf.ts.services.handlers.GraphResolutionHandler#resolveEmpty(org.ihtsdo.otf.ts.rf2.Description)
+   */
+  @Override
+  public void resolveEmpty(Description description) {
+    description.setLanguageRefSetMembers(new HashSet<LanguageRefSetMember>());
   }
 
   /**

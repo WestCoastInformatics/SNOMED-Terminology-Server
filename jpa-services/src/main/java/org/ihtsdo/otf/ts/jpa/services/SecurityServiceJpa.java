@@ -1,3 +1,6 @@
+/*
+ * Copyright 2015 West Coast Informatics, LLC
+ */
 package org.ihtsdo.otf.ts.jpa.services;
 
 import java.util.Collections;
@@ -95,6 +98,7 @@ public class SecurityServiceJpa extends RootServiceJpa implements
 
     // if user was found, update to match settings
     if (userFound != null) {
+      Logger.getLogger(getClass()).info("Update user = " + authUser.getUserName());
       userFound.setEmail(authUser.getEmail());
       userFound.setName(authUser.getName());
       userFound.setUserName(authUser.getUserName());
@@ -103,12 +107,14 @@ public class SecurityServiceJpa extends RootServiceJpa implements
     }
     // if User not found, create one for our use
     else {
+      Logger.getLogger(getClass()).info("Add user = " + authUser.getUserName());
       User newUser = new UserJpa();
       newUser.setEmail(authUser.getEmail());
       newUser.setName(authUser.getName());
       newUser.setUserName(authUser.getUserName());
       newUser.setApplicationRole(UserRole.VIEWER);
       addUser(newUser);
+      clear();
     }
 
     // Generate application-managed token
@@ -186,7 +192,16 @@ public class SecurityServiceJpa extends RootServiceJpa implements
     }
     String parsedToken = authToken.replace("\"", "");
     String username = getUsernameForToken(parsedToken);
-    return getUser(username.toLowerCase()).getApplicationRole();
+    // check for null username
+    if (username == null) {
+      throw new LocalException("Unable to find user for the authoriztaion token");
+    }
+    User user = getUser(username.toLowerCase());
+    if (user == null) {
+      return UserRole.VIEWER;
+      //throw new LocalException("Unable to obtain user information for username = " + username);
+    }
+    return user.getApplicationRole();
   }
 
   /* (non-Javadoc)

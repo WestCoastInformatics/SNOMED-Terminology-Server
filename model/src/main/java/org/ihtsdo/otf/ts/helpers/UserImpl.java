@@ -1,3 +1,6 @@
+/*
+ * Copyright 2015 West Coast Informatics, LLC
+ */
 package org.ihtsdo.otf.ts.helpers;
 
 import org.ihtsdo.otf.ts.User;
@@ -108,19 +111,6 @@ public class UserImpl implements User {
   @Override
   public Long getId() {
     return null;
-  }
-
-  /* (non-Javadoc)
-   * @see org.ihtsdo.otf.ts.User#getObjectId()
-   */
-  @Override
-  public String getObjectId() {
-    return "";
-  }
-
-  @Override
-  public void setObjectId(String objectId) {
-    // do nothing
   }
 
   /*

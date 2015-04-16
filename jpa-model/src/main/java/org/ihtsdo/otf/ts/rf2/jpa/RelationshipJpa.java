@@ -1,3 +1,6 @@
+/*
+ * Copyright 2015 West Coast Informatics, LLC
+ */
 package org.ihtsdo.otf.ts.rf2.jpa;
 
 import javax.persistence.Column;
@@ -10,7 +13,6 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
 import org.hibernate.envers.Audited;
-import org.hibernate.search.annotations.ContainedIn;
 import org.ihtsdo.otf.ts.rf2.Concept;
 import org.ihtsdo.otf.ts.rf2.Relationship;
 
@@ -33,7 +35,6 @@ public class RelationshipJpa extends AbstractComponent implements Relationship {
 
   /** The source concept. */
   @ManyToOne(targetEntity = ConceptJpa.class, optional = false)
-  @ContainedIn
   private Concept sourceConcept;
 
   /** The destination concept. */

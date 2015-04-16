@@ -1,3 +1,6 @@
+/*
+ * Copyright 2015 West Coast Informatics, LLC
+ */
 package org.ihtsdo.otf.ts.jpa.client;
 
 import java.util.Properties;
@@ -149,7 +152,7 @@ public class HistoryClientRest implements HistoryServiceRest {
     Client client = Client.create();
     WebResource resource =
         client.resource(config.getProperty("base.url")
-            + "/history/concept/revisions/" + id + "/" + release);
+            + "/history/concept/revisions/" + id + "/" + release + "/release");
 
     ClientResponse response =
         resource.accept(MediaType.APPLICATION_XML)

@@ -1,3 +1,6 @@
+/*
+ * Copyright 2015 West Coast Informatics, LLC
+ */
 package org.ihtsdo.otf.ts.helpers;
 
 import java.io.BufferedReader;
@@ -48,6 +51,9 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.xml.sax.SAXException;
 
+import com.fasterxml.jackson.databind.AnnotationIntrospector;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.module.jaxb.JaxbAnnotationIntrospector;
 import com.sun.jersey.api.client.Client;
 import com.sun.jersey.api.client.ClientResponse;
 import com.sun.jersey.api.client.WebResource;
@@ -231,6 +237,26 @@ public class ConfigUtility {
   }
 
   /**
+   * Returns the graph for json.
+   *
+   * @param json the json
+   * @param graphClass the graph class
+   * @return the graph for json
+   * @throws Exception the exception
+   */
+  public static Object getGraphForJson(String json, Class<?> graphClass)
+    throws Exception {
+    InputStream in =
+        new ByteArrayInputStream(json.getBytes(StandardCharsets.UTF_8));
+    ObjectMapper mapper = new ObjectMapper();
+    AnnotationIntrospector introspector =
+        new JaxbAnnotationIntrospector(mapper.getTypeFactory());
+    mapper.setAnnotationIntrospector(introspector);
+    return mapper.readValue(in, graphClass);
+
+  }
+
+  /**
    * Returns the graph for file.
    *
    * @param file the file
@@ -289,6 +315,21 @@ public class ConfigUtility {
     Marshaller jaxbMarshaller = jaxbContext.createMarshaller();
     jaxbMarshaller.marshal(object, writer);
     return writer.toString();
+  }
+
+  /**
+   * Returns the json for graph.
+   *
+   * @param object the object
+   * @return the json for graph
+   * @throws Exception the exception
+   */
+  public static String getJsonForGraph(Object object) throws Exception {
+    ObjectMapper mapper = new ObjectMapper();
+    AnnotationIntrospector introspector =
+        new JaxbAnnotationIntrospector(mapper.getTypeFactory());
+    mapper.setAnnotationIntrospector(introspector);
+    return mapper.writeValueAsString(object);
   }
 
   /**

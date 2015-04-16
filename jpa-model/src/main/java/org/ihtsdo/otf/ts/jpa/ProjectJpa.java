@@ -1,3 +1,6 @@
+/*
+ * Copyright 2015 West Coast Informatics, LLC
+ */
 package org.ihtsdo.otf.ts.jpa;
 
 import java.util.Date;
@@ -32,8 +35,6 @@ import org.hibernate.search.annotations.Store;
 import org.ihtsdo.otf.ts.Project;
 import org.ihtsdo.otf.ts.User;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-
 /**
  * JPA enabled implementation of {@link Project}.
  */
@@ -44,7 +45,6 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 @Audited
 @Indexed
 @XmlRootElement(name = "project")
-@JsonIgnoreProperties(ignoreUnknown = true)
 public class ProjectJpa implements Project {
 
   /** The id. */
@@ -180,26 +180,6 @@ public class ProjectJpa implements Project {
   @Override
   public void setId(Long id) {
     this.id = id;
-  }
-
-  /*
-   * (non-Javadoc)
-   * 
-   * @see org.ihtsdo.otf.ts.Project#getObjectId()
-   */
-  @XmlID
-  @Override
-  public String getObjectId() {
-    return (id == null ? "" : id.toString());
-  }
-
-  /**
-   * Sets the object id.
-   *
-   * @param objectId the object id
-   */
-  public void setObjectId(String objectId) {
-    // do nothing
   }
 
   /*

@@ -1,3 +1,6 @@
+/*
+ * Copyright 2015 West Coast Informatics, LLC
+ */
 package org.ihtsdo.otf.ts;
 
 import java.util.Date;
@@ -21,13 +24,6 @@ public interface Project {
    * @param id the id
    */
   public void setId(Long id);
-
-  /**
-   * Returns the id in string form.
-   * 
-   * @return the string object id
-   */
-  public String getObjectId();
 
   /**
    * Returns the name.

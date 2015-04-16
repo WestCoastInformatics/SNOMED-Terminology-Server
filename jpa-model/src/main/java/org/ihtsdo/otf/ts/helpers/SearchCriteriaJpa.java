@@ -1,3 +1,6 @@
+/*
+ * Copyright 2015 West Coast Informatics, LLC
+ */
 package org.ihtsdo.otf.ts.helpers;
 
 import javax.persistence.GeneratedValue;
@@ -74,16 +77,6 @@ public class SearchCriteriaJpa implements SearchCriteria {
     findInactiveOnly = searchCriteria.getFindInactiveOnly();
     findPrimitiveOnly = searchCriteria.getFindPrimitiveOnly();
     findSelf = searchCriteria.getFindSelf();
-  }
-
-  /**
-   * ID for XML serialization.
-   *
-   * @return the object id
-   */
-  @XmlID
-  public String getObjectId() {
-    return (id == null ? "" : id.toString());
   }
 
   /*

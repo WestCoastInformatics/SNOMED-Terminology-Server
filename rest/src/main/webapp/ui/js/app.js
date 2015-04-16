@@ -161,7 +161,8 @@ tsApp
         	  console.log(name + " = " + data);
             $scope.userName = name;
             $scope.authToken = data;
-
+            $scope.password = "";
+            
             // set request header
             // authorization
             $http.defaults.headers.common.Authorization = $scope.authToken;
@@ -241,11 +242,14 @@ tsApp
               // .debug(terminologyObj);
               $scope.terminologies.push(terminologyObj);
 
+              if (terminologyObj.name === 'SNOMEDCT') {
+                  console.debug('SNOMEDCT found');
+                  $scope.setTerminology(terminologyObj);
+              }
             }
 
             // select the first
             // terminology
-            $scope.setTerminology($scope.terminologies[0]);
             $scope.glassPane--;
 
           }).error(function(data, status, headers, config) {

@@ -1,3 +1,6 @@
+/*
+ * Copyright 2015 West Coast Informatics, LLC
+ */
 package org.ihtsdo.otf.ts.services.handlers;
 
 import java.io.PrintWriter;
@@ -106,7 +109,7 @@ public class ExceptionHandler {
             "Sending mail is disabled.");
       }
     } catch (Exception ex) {
-      ex.printStackTrace();
+      // ex.printStackTrace();
       Logger.getLogger(ExceptionHandler.class).error(
           "Unable to handle exception");
     }

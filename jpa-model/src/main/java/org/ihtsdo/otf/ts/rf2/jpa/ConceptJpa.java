@@ -1,3 +1,6 @@
+/*
+ * Copyright 2015 West Coast Informatics, LLC
+ */
 package org.ihtsdo.otf.ts.rf2.jpa;
 
 import java.util.HashSet;
@@ -75,16 +78,11 @@ public class ConceptJpa extends AbstractComponent implements Concept {
 
   /** The relationships. */
   @OneToMany(mappedBy = "sourceConcept", cascade = CascadeType.ALL, orphanRemoval = true, targetEntity = RelationshipJpa.class)
-  @IndexedEmbedded(targetElement = RelationshipJpa.class)
   private Set<Relationship> relationships = null;
 
   /** The child count. */
   @Transient
   private int childCount = -1;
-
-  /** The inverse relationships. */
-  @OneToMany(mappedBy = "destinationConcept", targetEntity = RelationshipJpa.class)
-  private Set<Relationship> inverseRelationships = null;
 
   /** The simple RefSet members. */
   @OneToMany(mappedBy = "concept", targetEntity = SimpleRefSetMemberJpa.class)

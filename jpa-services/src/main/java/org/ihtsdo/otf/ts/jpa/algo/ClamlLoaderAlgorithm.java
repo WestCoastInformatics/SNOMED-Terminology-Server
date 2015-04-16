@@ -1,3 +1,6 @@
+/*
+ * Copyright 2015 West Coast Informatics, LLC
+ */
 package org.ihtsdo.otf.ts.jpa.algo;
 
 import java.io.BufferedInputStream;
@@ -208,7 +211,6 @@ public class ClamlLoaderAlgorithm extends HistoryServiceJpa implements
       Logger.getLogger(getClass()).info("done ...");
 
     } catch (Exception e) {
-      e.printStackTrace();
       throw new Exception("Conversion of Claml to RF2 objects failed", e);
     } finally {
       try {

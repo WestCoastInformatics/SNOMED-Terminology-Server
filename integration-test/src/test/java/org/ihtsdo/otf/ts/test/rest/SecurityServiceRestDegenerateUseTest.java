@@ -1,3 +1,6 @@
+/*
+ * Copyright 2015 West Coast Informatics, LLC
+ */
 package org.ihtsdo.otf.ts.test.rest;
 
 import static org.junit.Assert.fail;
@@ -118,7 +121,6 @@ public class SecurityServiceRestDegenerateUseTest extends
     for (Field field : UserJpa.class.getFields()) {
 
       // construct the user
-      user.setObjectId(null);
       user.setName(properties.getProperty("bad.user"));
       user.setEmail("no email");
       user.setUserName(properties.getProperty("bad.user"));
@@ -199,7 +201,6 @@ public class SecurityServiceRestDegenerateUseTest extends
     user = service.addUser((UserJpa) user, authToken);
     try {
       // set the id to null and update
-      user.setObjectId(null);
       service.updateUser((UserJpa) user, authToken);
 
       fail("Updating user with null hibernate id did not throw expected exception");

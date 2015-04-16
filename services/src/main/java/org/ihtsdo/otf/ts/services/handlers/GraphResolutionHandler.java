@@ -1,3 +1,6 @@
+/*
+ * Copyright 2015 West Coast Informatics, LLC
+ */
 package org.ihtsdo.otf.ts.services.handlers;
 
 import java.util.Set;
@@ -10,11 +13,10 @@ import org.ihtsdo.otf.ts.rf2.DescriptionRefSetMember;
 import org.ihtsdo.otf.ts.rf2.Relationship;
 
 /**
- * Generically represents an algorithm for reading objects
- * to a certain depth before sending them across the wire.  It also
- * handles wiring objects together that have been sent in from across
- * the wire.  Thus the "depth" of the graph is controlled by the imlementation
- * of this algortihm
+ * Generically represents an algorithm for reading objects to a certain depth
+ * before sending them across the wire. It also handles wiring objects together
+ * that have been sent in from across the wire. Thus the "depth" of the graph is
+ * controlled by the imlementation of this algortihm
  */
 public interface GraphResolutionHandler extends Configurable {
 
@@ -26,7 +28,15 @@ public interface GraphResolutionHandler extends Configurable {
  * @throws Exception 
    */
   public void resolve(Concept concept, Set<String> isaRelTypeIds) throws Exception;
-  
+
+  /**
+   * Resolve a concept to simply the concept element and none of the graph,
+   * ready for JAXB serialization.
+   *
+   * @param concept the concept
+   */
+  public void resolveEmpty(Concept concept);
+
   /**
    * Resolve descriptions.
    * 
@@ -34,14 +44,22 @@ public interface GraphResolutionHandler extends Configurable {
  * @throws Exception 
    */
   public void resolve(Description description) throws Exception;
-  
+
+  /**
+   * Resolve a description to simply the concept element and none of the graph,
+   * ready for JAXB serialization.
+   *
+   * @param description the description
+   */
+  public void resolveEmpty(Description description);
+
   /**
    * Resolve relationships.
    *
    * @param relationship the relationship
    */
   public void resolve(Relationship relationship) throws Exception;
-  
+
   /**
    * Resolve description refset members.
    *

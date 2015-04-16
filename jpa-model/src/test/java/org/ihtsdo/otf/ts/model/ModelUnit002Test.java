@@ -1,3 +1,6 @@
+/*
+ * Copyright 2015 West Coast Informatics, LLC
+ */
 package org.ihtsdo.otf.ts.model;
 
 import static org.junit.Assert.assertTrue;
@@ -49,7 +52,6 @@ public class ModelUnit002Test {
   public void testModelGetSet002() throws Exception {
     Logger.getLogger(getClass()).debug("TEST testModelGetSet002");
     GetterSetterTester tester = new GetterSetterTester(object);
-    tester.exclude("objectId");
     tester.test();
   }
 

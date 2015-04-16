@@ -1,3 +1,6 @@
+/*
+ * Copyright 2015 West Coast Informatics, LLC
+ */
 package org.ihtsdo.otf.ts.helpers;
 
 import org.apache.log4j.Logger;
@@ -32,7 +35,14 @@ public class XmlSerializationTester extends ProxyTester {
     Object obj2 =
         ConfigUtility
             .getGraphForString(xml, obj.getClass());
-    return obj.equals(obj2);
+
+    String json = ConfigUtility.getJsonForGraph(obj);
+    System.out.println(json);
+    Object obj3 =
+        ConfigUtility
+            .getGraphForJson(json, obj.getClass());
+    
+    return obj.equals(obj2) && obj.equals(obj3);
   }
 
 }

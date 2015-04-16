@@ -1,5 +1,5 @@
 @echo off
-REM
+REM Copyright 2015 West Coast Informatics, LLC
 REM This script is used to load terminology server data for the development
 REM environment.  This data can be found in the config/data folder of the
 REM distribution.
