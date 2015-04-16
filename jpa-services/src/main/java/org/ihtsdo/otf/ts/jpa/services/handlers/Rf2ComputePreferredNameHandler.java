@@ -78,10 +78,10 @@ public class Rf2ComputePreferredNameHandler implements
   @Override
   public String computePreferredName(Set<Description> descriptions)
     throws Exception {
-    String first = "";
+    String first = null;
     for (Description description : descriptions) {
       // Use first description encountered if no preferred is found
-      if (first.equals("")) {
+      if (first == null) {
         first = description.getTerm();
       }
       if (isPreferredName(description)) {
