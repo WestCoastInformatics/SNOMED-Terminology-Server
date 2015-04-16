@@ -25,8 +25,9 @@ public interface GraphResolutionHandler extends Configurable {
    *
    * @param concept the concept
    * @param isaRelTypeIds the isa rel type ids
+ * @throws Exception 
    */
-  public void resolve(Concept concept, Set<String> isaRelTypeIds);
+  public void resolve(Concept concept, Set<String> isaRelTypeIds) throws Exception;
 
   /**
    * Resolve a concept to simply the concept element and none of the graph,
@@ -40,8 +41,9 @@ public interface GraphResolutionHandler extends Configurable {
    * Resolve descriptions.
    * 
    * @param description the description
+ * @throws Exception 
    */
-  public void resolve(Description description);
+  public void resolve(Description description) throws Exception;
 
   /**
    * Resolve a description to simply the concept element and none of the graph,
@@ -56,19 +58,19 @@ public interface GraphResolutionHandler extends Configurable {
    *
    * @param relationship the relationship
    */
-  public void resolve(Relationship relationship);
+  public void resolve(Relationship relationship) throws Exception;
 
   /**
    * Resolve description refset members.
    *
    * @param member the member
    */
-  public void resolve(DescriptionRefSetMember member);
+  public void resolve(DescriptionRefSetMember member) throws Exception;  
 
   /**
    * Resolve concept refset members.
    *
    * @param member the member
    */
-  public void resolve(ConceptRefSetMember member);
+  public void resolve(ConceptRefSetMember member) throws Exception;  
 }
