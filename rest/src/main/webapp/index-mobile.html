@@ -8,8 +8,9 @@
 <!-- Favicon -->
 <link rel="icon" type="image/png" href="images/favicon.png" />
 
-<!-- Bootstrap core CSS  -->
+<!-- CSS  -->
 <link href="ui/components/bootstrap/dist/css/bootstrap.css" rel="stylesheet">
+<link href="ui/css/tsMobileApp.css" rel="stylesheet">
 
 <!-- Angular core  -->
 <script type="text/javascript" src="./ui/components/angular/angular.js"></script>
@@ -20,10 +21,8 @@
 <script type="text/javascript"
   src="ui/components/angular-bootstrap/ui-bootstrap-tpls.js"></script>
 
-
 <!-- Terminology server Angular application -->
 <script src="ui/js/app.js"></script>
-<link href="ui/css/tsApp.css" rel="stylesheet">
 </head>
 <body>
 
@@ -33,7 +32,7 @@
     <noscript>
       <style type="text/css">
 .container {
-	display: none;
+  display: none;
 }
 </style>
       <div class="alert alert-danger">You must have Javascript enabled to
@@ -45,23 +44,35 @@
 
     <nav style="background: #00008A url('images/background.jpg');"
       class="navbar navbar-default navbar-fixed-top" role="navigation">
+      <!-- Brand and toggle get grouped for better mobile display -->
       <div class="container-fluid">
-        <!-- Brand and toggle get grouped for better mobile display -->
-        <div>
-          <a href="http://www.westcoastinformatics.com"> <img
-            style="background-color: white; border: 3px solid white; border-radius: 5px; margin-left: 58px; margin-top: 14px;"
-            class="pull-left" src="images/logo.jpg"> <b
-            class="navbar-brand" style="color: white; margin-top: 60px;"></a>
-          &nbsp;UMLS Terminology Server Demo and <a href="swagger.html"
-            style="color: white; text-decoration: underline" target="_blank">API
-            Documentation</a> </b>
-
+        <div class="row">
+          <div class="pull-left" style="display: inline" >
+            <a href="http://www.westcoastinformatics.com"> 
+            <img
+              class="hidden-xs" height="72px"
+              style="background-color: white; padding: 5px; margin: 5px; border-radius: 5px;"
+              src="images/logo65x72.jpg">
+            <img
+              class="visible-xs" height="40px"
+              style="background-color: white; padding: 3px; margin: 3px; border-radius: 3px;"
+              src="images/logo36x40.jpg"></a>
+          </div>
+          <div >
+            <b
+              style="color: white;">
+              SNOMED/RF2 Terminology Server Demo and <a
+              href="swagger.html"
+              style="color: white; text-decoration: underline" target="_blank">API
+                Documentation</a>
+            </b>
+          </div>
         </div>
       </div>
     </nav>
 
 
-    <div class="ts-container" style="margin-top: 50px">
+    <div class="ts-container" >
 
       <!-- Error Messages -->
       <div id="errorMsg" class="border-error alert-error"
@@ -137,7 +148,7 @@
             <td><select ng-model="terminology"
               ng-change="setTerminology(terminology)"
               ng-options="terminology as terminology.name + ', ' + terminology.version
-					for terminology in terminologies"></select>
+          for terminology in terminologies"></select>
             </td>
           <tr>
             <td style="width: 15%;">Enter search terms</td>
@@ -178,8 +189,8 @@
                 <tbody>
                   <tr
                     ng-repeat="
-								searchResult in
-								searchResults"
+                searchResult in
+                searchResults"
                     ng-class="searchResult.rowClass"
                     ng-click="getConcept(terminology.name, terminology.version, searchResult.terminologyId)">
                     <td>{{searchResult.terminologyId}}</a></td>
@@ -282,11 +293,11 @@
 
               <div component object="component" type="{{componentType}}"></div>
               <!-- 
-						<div component object="concept" type="Concept"></div>
-						<div component ng-repeat="description in concept.description"
-							object="description" type="Description"></div>
-						<div component ng-repeat="relationship in concept.relationship"
-							object="relationship" type="Relationship"></div>
+            <div component object="concept" type="Concept"></div>
+            <div component ng-repeat="description in concept.description"
+              object="description" type="Description"></div>
+            <div component ng-repeat="relationship in concept.relationship"
+              object="relationship" type="Relationship"></div>
  -->
             </div>
           </div>
