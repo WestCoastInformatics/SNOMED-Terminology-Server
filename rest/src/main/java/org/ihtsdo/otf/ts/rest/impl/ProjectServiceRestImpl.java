@@ -153,6 +153,13 @@ public class ProjectServiceRestImpl extends RootServiceRestImpl implements
     }
   }
 
+  /*
+   * (non-Javadoc)
+   * 
+   * @see
+   * org.ihtsdo.otf.ts.rest.ProjectServiceRest#removeProject(java.lang.Long,
+   * java.lang.String)
+   */
   @Override
   @DELETE
   @Path("/remove/id/{id}")
@@ -227,7 +234,7 @@ public class ProjectServiceRestImpl extends RootServiceRestImpl implements
   @Override
   @GET
   @Path("/id/{id}")
-  @ApiOperation(value = "Get project for id", notes = "Gets the project for the specified id.", response = ConceptList.class)
+  @ApiOperation(value = "Get project for id", notes = "Gets the project for the specified id.", response = Project.class)
   public Project getProject(
     @ApiParam(value = "Project internal id, e.g. 2", required = true) @PathParam("id") Long id,
     @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken) {
@@ -256,7 +263,7 @@ public class ProjectServiceRestImpl extends RootServiceRestImpl implements
   @Override
   @GET
   @Path("/projects")
-  @ApiOperation(value = "Get all projects", notes = "Gets all projects.", response = ConceptList.class)
+  @ApiOperation(value = "Get all projects", notes = "Gets all projects.", response = ProjectList.class)
   public ProjectList getProjects(
     @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken) {
     Logger.getLogger(getClass()).info("RESTful call (Content): /projects");
