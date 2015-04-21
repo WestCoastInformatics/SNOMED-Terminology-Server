@@ -101,7 +101,7 @@ public class ContentServiceRestImpl extends RootServiceRestImpl implements
   @Override
   @GET
   @Path("/concepts/{terminology}/{version}/{terminologyId}")
-  @ApiOperation(value = "Get concept(s) by id, terminology, and version", notes = "Gets all concepts matching the specified parameters.", response = Concept.class)
+  @ApiOperation(value = "Get concept(s) by id, terminology, and version", notes = "Gets all concepts matching the specified parameters.", response = ConceptList.class)
   public ConceptList getConcepts(
     @ApiParam(value = "Concept terminology id, e.g. 102751005", required = true) @PathParam("terminologyId") String terminologyId,
     @ApiParam(value = "Concept terminology name, e.g. SNOMEDCT", required = true) @PathParam("terminology") String terminology,
@@ -199,7 +199,7 @@ public class ContentServiceRestImpl extends RootServiceRestImpl implements
   @Override
   @POST
   @Path("/concepts/{terminology}/{version}/query/{query}")
-  @ApiOperation(value = "Find concepts matching a search query.", notes = "Gets a list of search results that match the lucene query.", response = String.class)
+  @ApiOperation(value = "Find concepts matching a search query.", notes = "Gets a list of search results that match the lucene query.", response = SearchResultList.class)
   public SearchResultList findConceptsForQuery(
     @ApiParam(value = "Terminology, e.g. SNOMEDCT", required = true) @PathParam("terminology") String terminology,
     @ApiParam(value = "Terminology version, e.g. latest", required = true) @PathParam("version") String version,
@@ -763,6 +763,13 @@ public class ContentServiceRestImpl extends RootServiceRestImpl implements
     }
   }
 
+  /*
+   * (non-Javadoc)
+   * 
+   * @see
+   * org.ihtsdo.otf.ts.rest.ContentServiceRest#getRefsetDescriptorRefSetMembers
+   * (java.lang.String, java.lang.String, java.lang.String, java.lang.String)
+   */
   @Override
   @GET
   @Path("/refsetDescriptorMember/refSet/{terminology}/{version}/{refSetId}")
@@ -1529,7 +1536,8 @@ public class ContentServiceRestImpl extends RootServiceRestImpl implements
         throw new Exception("Specified input directory does not exist");
       }
 
-      // Get the release versions (need to look in complex map too for October releases)
+      // Get the release versions (need to look in complex map too for October
+      // releases)
       Logger.getLogger(getClass()).info("  Get release versions");
       Rf2FileSorter sorter = new Rf2FileSorter();
       File conceptsFile =
@@ -1550,7 +1558,8 @@ public class ContentServiceRestImpl extends RootServiceRestImpl implements
       }
       reader.close();
       File complexMapFile =
-          sorter.findFile(new File(inputDir, "Refset/Map"), "der2_iissscRefset_ComplexMap");
+          sorter.findFile(new File(inputDir, "Refset/Map"),
+              "der2_iissscRefset_ComplexMap");
       reader = new BufferedReader(new FileReader(complexMapFile));
       while ((line = reader.readLine()) != null) {
         final String fields[] = line.split("\t");
@@ -1564,7 +1573,8 @@ public class ContentServiceRestImpl extends RootServiceRestImpl implements
         }
       }
       File extendedMapFile =
-          sorter.findFile(new File(inputDir, "Refset/Map"), "der2_iisssccRefset_ExtendedMap");
+          sorter.findFile(new File(inputDir, "Refset/Map"),
+              "der2_iisssccRefset_ExtendedMap");
       reader = new BufferedReader(new FileReader(extendedMapFile));
       while ((line = reader.readLine()) != null) {
         final String fields[] = line.split("\t");
@@ -1578,7 +1588,6 @@ public class ContentServiceRestImpl extends RootServiceRestImpl implements
         }
       }
 
-      
       reader.close();
       List<String> releases = new ArrayList<>(releaseSet);
       Collections.sort(releases);
@@ -1620,7 +1629,7 @@ public class ContentServiceRestImpl extends RootServiceRestImpl implements
       TerminologyUtility.getInferredType(terminology, version);
       algorithm.close();
       algorithm = null;
-      
+
       // Load deltas
       for (String release : releases) {
         if (release.equals(releases.get(0))) {
@@ -1761,8 +1770,12 @@ public class ContentServiceRestImpl extends RootServiceRestImpl implements
     }
   }
 
-  /* (non-Javadoc)
-   * @see org.ihtsdo.otf.ts.rest.ContentServiceRest#computeTransitiveClosure(java.lang.String, java.lang.String, java.lang.String)
+  /*
+   * (non-Javadoc)
+   * 
+   * @see
+   * org.ihtsdo.otf.ts.rest.ContentServiceRest#computeTransitiveClosure(java
+   * .lang.String, java.lang.String, java.lang.String)
    */
   @Override
   @POST
