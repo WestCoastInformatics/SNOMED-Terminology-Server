@@ -609,9 +609,9 @@ public class ContentServiceRestNormalUseTest extends ContentServiceRestTest {
       e.printStackTrace();
       fail("Paging/sorting failed for findAncestorConcepts");
     }
-/*
-    TODO:  Parent and children concepts rely on Relationship vetting
-           Need to rewrite those queries
+
+    //TODO:  Parent and children concepts rely on Relationship vetting
+    //       Need to rewrite those queries
            
     concepts =
         contentService.findParentConcepts("128117002", snomedTerminology,
@@ -650,7 +650,7 @@ public class ContentServiceRestNormalUseTest extends ContentServiceRestTest {
           }, concepts);
     } catch (Exception e) {
       fail("Paging/sorting failed for findChildConcepts");
-    }*/
+    }
 
     concepts =
         contentService.findDescendantConcepts("128117002", snomedTerminology,

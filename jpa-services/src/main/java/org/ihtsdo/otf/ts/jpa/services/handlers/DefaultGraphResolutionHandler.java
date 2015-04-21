@@ -29,7 +29,8 @@ public class DefaultGraphResolutionHandler implements GraphResolutionHandler {
    * ihtsdo.otf.ts.rf2.Concept, java.lang.String)
    */
   @Override
-  public void resolve(Concept concept, Set<String> isaRelTypeIds) throws Exception {
+  public void resolve(Concept concept, Set<String> isaRelTypeIds)
+    throws Exception {
     if (concept != null) {
       boolean nullId = concept.getId() == null;
       // Make sure to read descriptions and relationships (prevents
@@ -58,8 +59,8 @@ public class DefaultGraphResolutionHandler implements GraphResolutionHandler {
       // to make a callback
       // e.g. concept.setSimpleRefSetMemberCount(3);
 
-    } else if (concept == null){
-    	throw new Exception("Cannot resolve a null concept.");
+    } else if (concept == null) {
+      throw new Exception("Cannot resolve a null concept.");
     }
   }
 
@@ -72,8 +73,10 @@ public class DefaultGraphResolutionHandler implements GraphResolutionHandler {
    */
   @Override
   public void resolveEmpty(Concept concept) {
-    concept.setDescriptions(new HashSet<Description>());
-    concept.setRelationships(new HashSet<Relationship>());
+    if (concept != null) {
+      concept.setDescriptions(new HashSet<Description>());
+      concept.setRelationships(new HashSet<Relationship>());
+    }
   }
 
   /**
@@ -93,22 +96,24 @@ public class DefaultGraphResolutionHandler implements GraphResolutionHandler {
         }
         member.setDescription(description);
       }
-      // TODO: consider having fields for counts of other data structures so a
-      // user knows whether
-      // to make a callback
-      // e.g. description.setAttributeValueRefsetMemberCount(1);
-    } else if (description == null){
-    	throw new Exception("Cannot resolve a null description.");
+    } else if (description == null) {
+      throw new Exception("Cannot resolve a null description.");
     }
   }
 
-  /* (non-Javadoc)
-   * @see org.ihtsdo.otf.ts.services.handlers.GraphResolutionHandler#resolveEmpty(org.ihtsdo.otf.ts.rf2.Description)
+  /*
+   * (non-Javadoc)
+   * 
+   * @see
+   * org.ihtsdo.otf.ts.services.handlers.GraphResolutionHandler#resolveEmpty
+   * (org.ihtsdo.otf.ts.rf2.Description)
    */
   @Override
   public void resolveEmpty(Description description) {
-    description.setLanguageRefSetMembers(new HashSet<LanguageRefSetMember>());
-  }
+    if (description != null) {
+      description.setLanguageRefSetMembers(new HashSet<LanguageRefSetMember>());
+    }
+    }
 
   /**
    * Resolve relationships.
@@ -117,11 +122,12 @@ public class DefaultGraphResolutionHandler implements GraphResolutionHandler {
    */
   @Override
   public void resolve(Relationship relationship) throws Exception {
-    if (relationship != null && relationship.getSourceConcept() != null && relationship.getDestinationConcept() != null) {
+    if (relationship != null && relationship.getSourceConcept() != null
+        && relationship.getDestinationConcept() != null) {
       relationship.getSourceConcept().getDefaultPreferredName();
       relationship.getDestinationConcept().getDefaultPreferredName();
     } else if (relationship == null) {
-    	throw new Exception("Cannot resolve a null relationship.");
+      throw new Exception("Cannot resolve a null relationship.");
     }
   }
 
@@ -134,8 +140,8 @@ public class DefaultGraphResolutionHandler implements GraphResolutionHandler {
   public void resolve(DescriptionRefSetMember member) throws Exception {
     if (member != null && member.getDescription() != null) {
       member.getDescription().getTypeId();
-    } else if (member == null){
-    	throw new Exception("Cannot resolve a null description refset member.");
+    } else if (member == null) {
+      throw new Exception("Cannot resolve a null description refset member.");
     }
   }
 
@@ -148,8 +154,8 @@ public class DefaultGraphResolutionHandler implements GraphResolutionHandler {
   public void resolve(ConceptRefSetMember member) throws Exception {
     if (member != null && member.getConcept() != null) {
       member.getConcept().getDefaultPreferredName();
-    } else if (member == null){
-    	throw new Exception("Cannot resolve a null concept refset member.");
+    } else if (member == null) {
+      throw new Exception("Cannot resolve a null concept refset member.");
     }
   }
 

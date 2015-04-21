@@ -1557,13 +1557,13 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
         "Content Service - find association reference refset members "
             + refsetId + "/" + terminology + "/" + version);
     javax.persistence.Query query =
-        applyPfsToQuery("select a from AssociationReferenceRefSetMemberJpa a "
+        applyPfsToQuery("select a from AbstractAssociationReferenceRefSetMemberJpa a "
             + "where refSetId = :refsetId "
             + "and terminologyVersion = :version "
             + "and terminology = :terminology", pfs);
     javax.persistence.Query ctQuery =
         manager
-            .createQuery("select count(a) from AssociationReferenceRefSetMemberJpa a "
+            .createQuery("select count(a) from AbstractAssociationReferenceRefSetMemberJpa a "
                 + "where refSetId = :refsetId "
                 + "and terminologyVersion = :version "
                 + "and terminology = :terminology");
@@ -2700,19 +2700,20 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
    * java.lang.String)
    */
   @Override
-  public RefsetDescriptorRefSetMemberList getRefsetDescriptorRefSetMembers(
-    String terminologyId, String terminology, String version) {
+  // TODO Verify refactoring was successful (... forRefset)
+  public RefsetDescriptorRefSetMemberList getRefsetDescriptorRefSetMembersForRefset(
+    String refsetId, String terminology, String version) {
     Logger.getLogger(getClass()).debug(
         "Content Service - get refset descriptor refset member for refset "
-            + terminologyId + "/" + terminology + "/" + version);
+            + refsetId + "/" + terminology + "/" + version);
     javax.persistence.Query query =
         manager.createQuery("select a from RefsetDescriptorRefSetMemberJpa a, "
-            + " ConceptJpa c where c.terminologyId = :terminologyId "
+            + " ConceptJpa c where c.terminologyId = :refsetId "
             + "and c.terminologyVersion = :version "
             + "and c.terminology = :terminology and a.concept = c");
 
     try {
-      query.setParameter("terminologyId", terminologyId);
+      query.setParameter("refsetId", refsetId);
       query.setParameter("terminology", terminology);
       query.setParameter("version", version);
       @SuppressWarnings("unchecked")
@@ -3104,7 +3105,10 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
             + terminologyId + "/" + terminology + "/" + version);
     javax.persistence.Query query =
         manager
-            .createQuery("select c from ModuleDependencyRefSetMemberJpa c where moduleId = :terminologyId and terminologyVersion = :version and terminology = :terminology order by sourceEffectiveTime");
+            .createQuery("select c from ModuleDependencyRefSetMemberJpa c "
+                + "where moduleId = :terminologyId "
+                + "and terminologyVersion = :version "
+                + "and terminology = :terminology order by sourceEffectiveTime");
     try {
       query.setParameter("terminologyId", terminologyId);
       query.setParameter("terminology", terminology);

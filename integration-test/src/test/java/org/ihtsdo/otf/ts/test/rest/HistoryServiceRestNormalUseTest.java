@@ -15,22 +15,33 @@ import static org.junit.Assert.fail;
 import java.util.Date;
 
 import org.ihtsdo.otf.ts.ReleaseInfo;
+import org.ihtsdo.otf.ts.helpers.AssociationReferenceRefSetMemberList;
+import org.ihtsdo.otf.ts.helpers.AttributeValueRefSetMemberList;
+import org.ihtsdo.otf.ts.helpers.ComplexMapRefSetMemberList;
 import org.ihtsdo.otf.ts.helpers.ConceptList;
+import org.ihtsdo.otf.ts.helpers.DescriptionList;
+import org.ihtsdo.otf.ts.helpers.DescriptionTypeRefSetMemberList;
+import org.ihtsdo.otf.ts.helpers.LanguageRefSetMemberList;
+import org.ihtsdo.otf.ts.helpers.ModuleDependencyRefSetMemberList;
 import org.ihtsdo.otf.ts.helpers.PfsParameterJpa;
+import org.ihtsdo.otf.ts.helpers.RefsetDescriptorRefSetMemberList;
+import org.ihtsdo.otf.ts.helpers.RelationshipList;
 import org.ihtsdo.otf.ts.helpers.ReleaseInfoList;
+import org.ihtsdo.otf.ts.helpers.SimpleMapRefSetMemberList;
+import org.ihtsdo.otf.ts.helpers.SimpleRefSetMemberList;
 import org.ihtsdo.otf.ts.jpa.ReleaseInfoJpa;
+import org.ihtsdo.otf.ts.rf2.AssociationReferenceRefSetMember;
+import org.ihtsdo.otf.ts.rf2.AttributeValueRefSetMember;
+import org.ihtsdo.otf.ts.rf2.ComplexMapRefSetMember;
 import org.ihtsdo.otf.ts.rf2.Concept;
+import org.ihtsdo.otf.ts.rf2.Description;
 import org.ihtsdo.otf.ts.rf2.DescriptionTypeRefSetMember;
+import org.ihtsdo.otf.ts.rf2.LanguageRefSetMember;
+import org.ihtsdo.otf.ts.rf2.ModuleDependencyRefSetMember;
+import org.ihtsdo.otf.ts.rf2.RefsetDescriptorRefSetMember;
 import org.ihtsdo.otf.ts.rf2.Relationship;
-import org.ihtsdo.otf.ts.rf2.jpa.AbstractAssociationReferenceRefSetMemberJpa;
-import org.ihtsdo.otf.ts.rf2.jpa.AbstractAttributeValueRefSetMemberJpa;
-import org.ihtsdo.otf.ts.rf2.jpa.ComplexMapRefSetMemberJpa;
-import org.ihtsdo.otf.ts.rf2.jpa.LanguageRefSetMemberJpa;
-import org.ihtsdo.otf.ts.rf2.jpa.ModuleDependencyRefSetMemberJpa;
-import org.ihtsdo.otf.ts.rf2.jpa.RefsetDescriptorRefSetMemberJpa;
-import org.ihtsdo.otf.ts.rf2.jpa.RelationshipJpa;
-import org.ihtsdo.otf.ts.rf2.jpa.SimpleMapRefSetMemberJpa;
-import org.ihtsdo.otf.ts.rf2.jpa.SimpleRefSetMemberJpa;
+import org.ihtsdo.otf.ts.rf2.SimpleMapRefSetMember;
+import org.ihtsdo.otf.ts.rf2.SimpleRefSetMember;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -45,33 +56,12 @@ public class HistoryServiceRestNormalUseTest extends HistoryServiceRestTest {
    * calls without declarations in each test method.
    */
 
-  /** Set true to run tests, set false to get result numbers */
-  private static boolean testFlag = false;
-
-  /**
-   * The date for which to test revisions, in YYYYMMDD format For tests to
-   * function properly, object must have revision at this date.
-   */
-  private static String testDate;
-
-  /** The expected total count of all revisions for an object class */
-  private static int objectsCt;
-
-  /**
-   * The expected total count of all revisions on or after the test date for an
-   * object class
-   */
-  private static int objectsAfterTestDateCt;
-
-  /** The expected number of revisions for the test object */
-  private static int testObjectRevisionsCt;
-
   /** The terminology id for which to retrieve a test object */
   private static String testId;
 
   /** The test date/name for the release info routines */
   private static String currentDate;
-  
+
   /** The minimum pfs parameter object */
   private static PfsParameterJpa pfs;
 
@@ -93,7 +83,7 @@ public class HistoryServiceRestNormalUseTest extends HistoryServiceRestTest {
 
     // authentication -- use admin for this test
     authToken = securityService.authenticate(adminUser, adminPassword);
-    
+
     // default paging
     pfs = new PfsParameterJpa();
     pfs.setStartIndex(0);
@@ -110,9 +100,6 @@ public class HistoryServiceRestNormalUseTest extends HistoryServiceRestTest {
     ReleaseInfo releaseInfo = null;
     ReleaseInfo releaseInfo2 = null;
     ReleaseInfoList releaseInfoList = null;
-
-    // test SNOMEDCT -- override global terminology
-    // String terminology = "SNOMEDCT";
 
     // getReleaseHistory(String, String)
     // should be 36 release infos for SNOMEDCT
@@ -182,12 +169,14 @@ public class HistoryServiceRestNormalUseTest extends HistoryServiceRestTest {
       fail("addRelease info failed");
     }
 
+    // wait to ensure object successfully added
+    Thread.sleep(1000);
+
     // getReleaseInfo(String, String, String)
     releaseInfo2 = null;
     try {
       releaseInfo2 =
-          historyService
-              .getReleaseInfo(terminology, currentDate, authToken);
+          historyService.getReleaseInfo(terminology, currentDate, authToken);
       assertNotNull(releaseInfo2);
       assertTrue(releaseInfo2.getName().equals(currentDate));
     } catch (Exception e) {
@@ -267,43 +256,61 @@ public class HistoryServiceRestNormalUseTest extends HistoryServiceRestTest {
   @Test
   public void testNormalUseRestHistory003() throws Exception {
 
-    /** Expected values */
-    objectsCt = 10293;
-    objectsAfterTestDateCt = 0;
-    testDate = "20130731"; // revision for object must exist
-    testId = "321087001";
-    testObjectRevisionsCt = 5;
-    
-    ConceptList results;
+    objectNames.remove("Concept");
 
+    // The test id for this concept
+    testId = "321087001";
+
+    ConceptList results;
 
     // get the component
     Concept c =
         contentService
-           .getSingleConcept(testId, terminology, version, authToken);
-    /*
-    System.out.println("Testing relationship retrieval");
-    Relationship r = contentService.getRelationship("2456164027", terminology, version, authToken);
-    assertNotNull(r);
-    
-    r = historyService.findRelationshipReleaseRevision(r.getId().toString(), "20040131", authToken);
-    System.out.println(r);
-    historyService.findRelationshipsModifiedSinceDate(terminology,  "19700101", pfs, authToken);
-    // test modified since date method
-    results = historyService.findConceptsModifiedSinceDate(terminology, "19700101", pfs, authToken);
+            .getSingleConcept(testId, terminology, version, authToken);
+
+    // test all concepts modified over all time
+    results =
+        historyService.findConceptsModifiedSinceDate(terminology, "19700101",
+            pfs, authToken);
     assertTrue(results.getTotalCount() == 10293);
-    */
-    // test modified since date method
-    //results = historyService.findConceptsModifiedSinceDate(terminology, "20080131", pfs, authToken);
-    //assertTrue(results.getTotalCount() == 2549);
-    
-    Concept c2 = historyService.findConceptReleaseRevision(c.getId().toString(), "20020131", authToken);
-    
-    // test revisions method
-    results = historyService.findConceptRevisions(c.getId().toString(), "19700101", currentDate, pfs, authToken);
-    assertTrue(results.getTotalCount() == 10293);
-   
-    
+
+    // test all concepts modified after lower bound date
+    results =
+        historyService.findConceptsModifiedSinceDate(terminology, "20080131",
+            pfs, authToken);
+    assertTrue(results.getTotalCount() == 2652);
+
+    // set pfs to no max results -- find methods currently do not return total
+    // count correctly
+    pfs.setMaxResults(-1);
+
+    // test revisions method -- range: all time
+    results =
+        historyService.findConceptRevisions(c.getId().toString(), "19700101",
+            currentDate, pfs, authToken);
+    assertTrue(results.getTotalCount() == 12);
+
+    // test revisions method lower bound
+    results =
+        historyService.findConceptRevisions(c.getId().toString(), "20060131",
+            currentDate, pfs, authToken);
+    assertTrue(results.getTotalCount() == 3);
+
+    // test revisions method upper bound
+    results =
+        historyService.findConceptRevisions(c.getId().toString(), "19700101",
+            "20040131", pfs, authToken);
+    assertTrue(results.getTotalCount() == 9);
+
+    // test retrieve release revision at specific release time
+    // - time should match
+    // - definition status id should match
+    c =
+        historyService.findConceptReleaseRevision(c.getId().toString(),
+            "20060131", authToken);
+    assertTrue(dtFormat.format(c.getEffectiveTime()).equals("20060131"));
+    assertTrue(c.getDefinitionStatusId().equals("900000000000073002"));
+
   }
 
   /**
@@ -313,34 +320,60 @@ public class HistoryServiceRestNormalUseTest extends HistoryServiceRestTest {
   @Test
   public void testNormalUseRestHistory004() throws Exception {
 
-    /** Expected values */
-    testDate = "20130731";
-    testId = "id here";
-    objectsCt = 10293;
-    objectsAfterTestDateCt = 0;
-    testObjectRevisionsCt = 0;
+    objectNames.remove("Description");
 
-    
-   
-  }
+    // The test id for this description
+    testId = "387512014";
 
-  /**
-   * Test language ref set methods
-   * @throws Exception
-   */
-  @Test
-  public void testNormalUseRestHistory005() throws Exception {
-    /** The object to test */
-    Class<?> testClass = LanguageRefSetMemberJpa.class;
+    DescriptionList results;
 
-    /** Expected values */
-    testDate = "20130731";
-    testId = "id here";
-    objectsCt = 10293;
-    objectsAfterTestDateCt = 0;
-    testObjectRevisionsCt = 0;
+    // get the component
+    Description c =
+        contentService.getDescription(testId, terminology, version, authToken);
 
-    // testComponent(testClass);
+    // test all descriptions modified over all time
+    results =
+        historyService.findDescriptionsModifiedSinceDate(terminology,
+            "19700101", pfs, authToken);
+    assertTrue(results.getTotalCount() == 34105);
+
+    // test all descriptions modified after lower bound date
+    results =
+        historyService.findDescriptionsModifiedSinceDate(terminology,
+            "20080131", pfs, authToken);
+    assertTrue(results.getTotalCount() == 6884);
+
+    // set pfs to no max results -- find methods currently do not return total
+    // count correctly
+    pfs.setMaxResults(-1);
+
+    // test revisions method -- range: all time
+    results =
+        historyService.findDescriptionRevisions(c.getId().toString(),
+            "19700101", currentDate, pfs, authToken);
+    assertTrue(results.getTotalCount() == 5);
+
+    // test revisions method lower bound
+    results =
+        historyService.findDescriptionRevisions(c.getId().toString(),
+            "20030731", currentDate, pfs, authToken);
+    assertTrue(results.getTotalCount() == 4);
+
+    // test revisions method upper bound
+    results =
+        historyService.findDescriptionRevisions(c.getId().toString(),
+            "19700731", "20030731", pfs, authToken);
+    assertTrue(results.getTotalCount() == 4);
+
+    // test retrieve release revision at specific release time
+    // - time should match
+    // - should be unpublished (previous version at same time published)
+    c =
+        historyService.findDescriptionReleaseRevision(c.getId().toString(),
+            "20030731", authToken);
+    assertTrue(dtFormat.format(c.getEffectiveTime()).equals("20030731"));
+    assertTrue(c.isPublished() == false);
+
   }
 
   /**
@@ -348,18 +381,132 @@ public class HistoryServiceRestNormalUseTest extends HistoryServiceRestTest {
    * @throws Exception
    */
   @Test
+  public void testNormalUseRestHistory005() throws Exception {
+
+    objectNames.remove("Relationship");
+
+    // The test id for this component
+    testId = "501314023";
+
+    RelationshipList results;
+
+    // get the component
+    Relationship c =
+        contentService.getRelationship(testId, terminology, version, authToken);
+
+    // test all relationships modified over all time
+    results =
+        historyService.findRelationshipsModifiedSinceDate(terminology,
+            "19700101", pfs, authToken);
+    assertTrue(results.getTotalCount() == 79098);
+
+    // test all relationships modified after lower bound date
+    results =
+        historyService.findRelationshipsModifiedSinceDate(terminology,
+            "20080131", pfs, authToken);
+    assertTrue(results.getTotalCount() == 45453);
+
+    // set pfs to no max results -- find methods currently do not return total
+    // count correctly
+    pfs.setMaxResults(-1);
+
+    // test revisions method -- range: all time
+    results =
+        historyService.findRelationshipRevisions(c.getId().toString(),
+            "19700101", currentDate, pfs, authToken);
+    assertTrue(results.getTotalCount() == 13);
+
+    // test revisions method lower bound
+    results =
+        historyService.findRelationshipRevisions(c.getId().toString(),
+            "20030731", currentDate, pfs, authToken);
+    assertTrue(results.getTotalCount() == 10);
+
+    // test revisions method upper bound
+    results =
+        historyService.findRelationshipRevisions(c.getId().toString(),
+            "19700731", "20030731", pfs, authToken);
+    assertTrue(results.getTotalCount() == 4);
+
+    // test retrieve release revision at specific release time
+    // - time should match
+    // - should be unpublished (previous version at same time published)
+    c =
+        historyService.findRelationshipReleaseRevision(c.getId().toString(),
+            "20020131", authToken);
+    assertTrue(dtFormat.format(c.getEffectiveTime()).equals("20020131"));
+    assertTrue(c.isPublished() == false);
+  }
+
+  /**
+   * Test language ref set methods
+   * @throws Exception
+   */
+  @Test
   public void testNormalUseRestHistory006() throws Exception {
-    /** The object to test */
-    Class<?> testClass = RelationshipJpa.class;
 
-    /** Expected values */
-    testDate = "20130731";
-    testId = "id here";
-    objectsCt = 10293;
-    objectsAfterTestDateCt = 0;
-    testObjectRevisionsCt = 0;
+    objectNames.remove("LanguageRefSetMember");
 
-    // testComponent(testClass);
+    // The test id for this component
+    testId = "e76075bd-3748-589f-b987-2ada691921ef";
+
+    LanguageRefSetMemberList results;
+
+    // get the component
+    LanguageRefSetMember c = null;
+    LanguageRefSetMemberList list =
+        contentService.getLanguageRefSetMembersForDescription("456353019",
+            terminology, version, authToken);
+    for (LanguageRefSetMember a : list.getObjects()) {
+      if (a.getTerminologyId().equals(testId)) {
+        c = a;
+      }
+    }
+    if (c == null)
+      fail("Could not retrieve language ref set member");
+
+    // test all descriptions modified over all time
+    results =
+        historyService.findLanguageRefSetMembersModifiedSinceDate(terminology,
+            "19700101", pfs, authToken);
+    assertTrue(results.getTotalCount() == 66653);
+
+    // test all descriptions modified after lower bound date
+    results =
+        historyService.findLanguageRefSetMembersModifiedSinceDate(terminology,
+            "20080131", pfs, authToken);
+    assertTrue(results.getTotalCount() == 8763);
+
+    // set pfs to no max results -- find methods currently do not return total
+    // count correctly
+    pfs.setMaxResults(-1);
+
+    // test revisions method -- range: all time
+    results =
+        historyService.findLanguageRefSetMemberRevisions(c.getId().toString(),
+            "19700101", currentDate, pfs, authToken);
+    assertTrue(results.getTotalCount() == 5);
+
+    // test revisions method lower bound
+    results =
+        historyService.findLanguageRefSetMemberRevisions(c.getId().toString(),
+            "20040731", currentDate, pfs, authToken);
+    assertTrue(results.getTotalCount() == 4);
+
+    // test revisions method upper bound
+    results =
+        historyService.findLanguageRefSetMemberRevisions(c.getId().toString(),
+            "19700731", "20040731", pfs, authToken);
+    assertTrue(results.getTotalCount() == 2);
+
+    // test retrieve release revision at specific release time
+    // - time should match
+    // - should be unpublished (previous version at same time published)
+    c =
+        historyService.findLanguageRefSetMemberReleaseRevision(c.getId()
+            .toString(), "20080731", authToken);
+    assertTrue(dtFormat.format(c.getEffectiveTime()).equals("20080731"));
+    assertTrue(c.isPublished() == false);
   }
 
   /**
@@ -368,17 +515,70 @@ public class HistoryServiceRestNormalUseTest extends HistoryServiceRestTest {
    */
   @Test
   public void testNormalUseRestHistory007() throws Exception {
-    /** The object to test */
-    Class<?> testClass = AbstractAssociationReferenceRefSetMemberJpa.class;
 
-    /** Expected values */
-    testDate = "20130731";
-    testId = "id here";
-    objectsCt = 10293;
-    objectsAfterTestDateCt = 0;
-    testObjectRevisionsCt = 0;
+    objectNames.remove("AssociationReferenceRefSetMember");
 
-    // testComponent(testClass);
+    // The test id for this association reference ref set member
+    testId = "cf39de4d-bbb9-59c3-b049-82a6c31ce87a";
+
+    AssociationReferenceRefSetMemberList results;
+
+    // no direct REST call to get reference ref set member
+    // instead call by refset id and cycle until test id matched
+    AssociationReferenceRefSetMemberList list =
+        contentService.getAssociationReferenceRefSetMembersForConcept(
+            "398901001", terminology, version, authToken);
+    AssociationReferenceRefSetMember<?> c = null;
+    for (AssociationReferenceRefSetMember<?> a : list.getObjects()) {
+      if (a.getTerminologyId().equals(testId)) {
+        c = a;
+      }
+    }
+    if (c == null)
+      fail("Could not retrieve association reference ref set member");
+
+    // test all relationships modified over all time
+    results =
+        historyService.findAssociationReferenceRefSetMembersModifiedSinceDate(
+            terminology, "19700101", pfs, authToken);
+    assertTrue(results.getTotalCount() == 435);
+
+    // test all relationships modified after lower bound date
+    results =
+        historyService.findAssociationReferenceRefSetMembersModifiedSinceDate(
+            terminology, "20080131", pfs, authToken);
+    assertTrue(results.getTotalCount() == 134);
+
+    // set pfs to no max results -- find methods currently do not return total
+    // count correctly
+    pfs.setMaxResults(-1);
+
+    // test revisions method -- range: all time
+    results =
+        historyService.findAssociationReferenceRefSetMemberRevisions(c.getId()
+            .toString(), "19700101", currentDate, pfs, authToken);
+    assertTrue(results.getTotalCount() == 2);
+
+    // test revisions method lower bound
+    results =
+        historyService.findAssociationReferenceRefSetMemberRevisions(c.getId()
+            .toString(), "20080731", currentDate, pfs, authToken);
+    assertTrue(results.getTotalCount() == 1);
+
+    // test revisions method upper bound
+    results =
+        historyService.findAssociationReferenceRefSetMemberRevisions(c.getId()
+            .toString(), "19700731", "20080730", pfs, authToken);
+    assertTrue(results.getTotalCount() == 1);
+
+    // test retrieve release revision at specific release time
+    // - time should match
+    // - no other test, no examples of multiple revisions at same efffective
+    // time
+    c =
+        historyService.findAssociationReferenceRefSetMemberReleaseRevision(c
+            .getId().toString(), "20080731", authToken);
+    assertTrue(dtFormat.format(c.getEffectiveTime()).equals("20080731"));
   }
 
   /**
@@ -387,17 +587,67 @@ public class HistoryServiceRestNormalUseTest extends HistoryServiceRestTest {
    */
   @Test
   public void testNormalUseRestHistory008() throws Exception {
-    /** The object to test */
-    Class<?> testClass = AbstractAttributeValueRefSetMemberJpa.class;
 
-    /** Expected values */
-    testDate = "20130731";
-    testId = "id here";
-    objectsCt = 10293;
-    objectsAfterTestDateCt = 0;
-    testObjectRevisionsCt = 0;
+    objectNames.remove("AttributeValueRefSetMember");
 
-    // testComponent(testClass);
+    // The test id for this component
+    testId = "de184ffc-03f3-5dae-9f2b-6c46020ede8a";
+
+    AttributeValueRefSetMemberList results;
+
+    // get the component
+    AttributeValueRefSetMember<?> c = null;
+    AttributeValueRefSetMemberList list =
+        contentService.getAttributeValueRefSetMembersForDescription("89332015",
+            terminology, version, authToken);
+    for (AttributeValueRefSetMember<?> a : list.getObjects()) {
+      if (a.getTerminologyId().equals(testId)) {
+        c = a;
+      }
+    }
+    if (c == null)
+      fail("Could not retrieve attribute value ref set member");
+
+    // test all attribute value ref set members modified over all time
+    results =
+        historyService.findAttributeValueRefSetMembersModifiedSinceDate(
+            terminology, "19700101", pfs, authToken);
+    assertTrue(results.getTotalCount() == 1994);
+
+    // test all attribute value ref set members modified after lower bound date
+    results =
+        historyService.findAttributeValueRefSetMembersModifiedSinceDate(
+            terminology, "20080131", pfs, authToken);
+    assertTrue(results.getTotalCount() == 557);
+
+    // set pfs to no max results -- find methods currently do not return total
+    // count correctly
+    pfs.setMaxResults(-1);
+
+    // test revisions method -- range: all time
+    results =
+        historyService.findAttributeValueRefSetMemberRevisions(c.getId()
+            .toString(), "19700101", currentDate, pfs, authToken);
+    assertTrue(results.getTotalCount() == 4);
+
+    // test revisions method lower bound
+    results =
+        historyService.findAttributeValueRefSetMemberRevisions(c.getId()
+            .toString(), "20050131", currentDate, pfs, authToken);
+    assertTrue(results.getTotalCount() == 3);
+
+    // test revisions method upper bound
+    results =
+        historyService.findAttributeValueRefSetMemberRevisions(c.getId()
+            .toString(), "19700731", "20050131", pfs, authToken);
+    assertTrue(results.getTotalCount() == 2);
+
+    // test retrieve release revision at specific release time
+    // - time should match
+    c =
+        historyService.findAttributeValueRefSetMemberReleaseRevision(c.getId()
+            .toString(), "20050131", authToken);
+    assertTrue(dtFormat.format(c.getEffectiveTime()).equals("20050131"));
   }
 
   /**
@@ -406,17 +656,66 @@ public class HistoryServiceRestNormalUseTest extends HistoryServiceRestTest {
    */
   @Test
   public void testNormalUseRestHistory009() throws Exception {
-    /** The object to test */
-    Class<?> testClass = ComplexMapRefSetMemberJpa.class;
 
-    /** Expected values */
-    testDate = "20130731";
-    testId = "id here";
-    objectsCt = 10293;
-    objectsAfterTestDateCt = 0;
-    testObjectRevisionsCt = 0;
+    objectNames.remove("ComplexMapRefSetMember");
 
-    // testComponent(testClass);
+    // The test id for this component
+    testId = "055c30ae-b018-5b82-bd3d-74ff9451de15";
+
+    ComplexMapRefSetMemberList results;
+
+    // get the component
+    ComplexMapRefSetMember c = null;
+    ComplexMapRefSetMemberList list =
+        contentService.getComplexMapRefSetMembersForConcept("297249002",
+            terminology, version, authToken);
+    for (ComplexMapRefSetMember a : list.getObjects()) {
+      if (a.getTerminologyId().equals(testId))
+        c = a;
+    }
+    if (c == null)
+      fail("Could not retrieve complex map ref set member");
+
+    // test all complex map ref set members modified over all time
+    results =
+        historyService.findComplexMapRefSetMembersModifiedSinceDate(
+            terminology, "19700101", pfs, authToken);
+    assertTrue(results.getTotalCount() == 8731);
+
+    // test all complex map ref set members modified after lower bound date
+    results =
+        historyService.findComplexMapRefSetMembersModifiedSinceDate(
+            terminology, "20080131", pfs, authToken);
+    assertTrue(results.getTotalCount() == 5021);
+
+    // set pfs to no max results -- find methods currently do not return total
+    // count correctly
+    pfs.setMaxResults(-1);
+
+    // test revisions method -- range: all time
+    results =
+        historyService.findComplexMapRefSetMemberRevisions(
+            c.getId().toString(), "19700101", currentDate, pfs, authToken);
+    assertTrue(results.getTotalCount() == 5);
+
+    // test revisions method lower bound
+    results =
+        historyService.findComplexMapRefSetMemberRevisions(
+            c.getId().toString(), "20060731", currentDate, pfs, authToken);
+    assertTrue(results.getTotalCount() == 3);
+
+    // test revisions method upper bound
+    results =
+        historyService.findComplexMapRefSetMemberRevisions(
+            c.getId().toString(), "19700731", "20060731", pfs, authToken);
+    assertTrue(results.getTotalCount() == 3);
+
+    // test retrieve release revision at specific release time
+    // - time should match
+    c =
+        historyService.findComplexMapRefSetMemberReleaseRevision(c.getId()
+            .toString(), "20060731", authToken);
+    assertTrue(dtFormat.format(c.getEffectiveTime()).equals("20060731"));
   }
 
   /**
@@ -425,17 +724,66 @@ public class HistoryServiceRestNormalUseTest extends HistoryServiceRestTest {
    */
   @Test
   public void testNormalUseRestHistory010() throws Exception {
-    /** The object to test */
-    Class<?> testClass = DescriptionTypeRefSetMember.class;
 
-    /** Expected values */
-    testDate = "20130731";
-    testId = "id here";
-    objectsCt = 10293;
-    objectsAfterTestDateCt = 0;
-    testObjectRevisionsCt = 0;
+    objectNames.remove("DescriptionTypeRefSetMember");
 
-    // testComponent(testClass);
+    // The test id for this component
+    testId = "807f775b-1d66-5069-b58e-a37ace985dcf";
+
+    DescriptionTypeRefSetMemberList results;
+
+    // get the component
+    DescriptionTypeRefSetMember c = null;
+    DescriptionTypeRefSetMemberList list =
+        contentService.getDescriptionTypeRefSetMembersForConcept(
+            "900000000000550004", terminology, version, authToken);
+    for (DescriptionTypeRefSetMember a : list.getObjects()) {
+      if (a.getTerminologyId().equals(testId))
+        c = a;
+    }
+    if (c == null)
+      fail("Could not retrieve description type ref set member");
+
+    // test all description type ref set members modified over all time
+    results =
+        historyService.findDescriptionTypeRefSetMembersModifiedSinceDate(
+            terminology, "19700101", pfs, authToken);
+    assertTrue(results.getTotalCount() == 3);
+
+    // test all description type ref set members modified after lower bound date
+    results =
+        historyService.findDescriptionTypeRefSetMembersModifiedSinceDate(
+            terminology, "20080131", pfs, authToken);
+    assertTrue(results.getTotalCount() == 1);
+
+    // set pfs to no max results -- find methods currently do not return total
+    // count correctly
+    pfs.setMaxResults(-1);
+
+    // test revisions method -- range: all time
+    results =
+        historyService.findDescriptionTypeRefSetMemberRevisions(c.getId()
+            .toString(), "19700101", currentDate, pfs, authToken);
+    assertTrue(results.getTotalCount() == 2);
+
+    // test revisions method lower bound
+    results =
+        historyService.findDescriptionTypeRefSetMemberRevisions(c.getId()
+            .toString(), "20140131", currentDate, pfs, authToken);
+    assertTrue(results.getTotalCount() == 1);
+
+    // test revisions method upper bound
+    results =
+        historyService.findDescriptionTypeRefSetMemberRevisions(c.getId()
+            .toString(), "19700731", "20140130", pfs, authToken);
+    assertTrue(results.getTotalCount() == 1);
+
+    // test retrieve release revision at specific release time
+    // - time should match
+    c =
+        historyService.findDescriptionTypeRefSetMemberReleaseRevision(c.getId()
+            .toString(), "20140131", authToken);
+    assertTrue(dtFormat.format(c.getEffectiveTime()).equals("20140131"));
   }
 
   /**
@@ -444,17 +792,67 @@ public class HistoryServiceRestNormalUseTest extends HistoryServiceRestTest {
    */
   @Test
   public void testNormalUseRestHistory011() throws Exception {
-    /** The object to test */
-    Class<?> testClass = ModuleDependencyRefSetMemberJpa.class;
 
-    /** Expected values */
-    testDate = "20130731";
-    testId = "id here";
-    objectsCt = 10293;
-    objectsAfterTestDateCt = 0;
-    testObjectRevisionsCt = 0;
+    objectNames.remove("ModuleDependencyRefSetMember");
 
-    // testComponent(testClass);
+    // The test id for this component
+    testId = "1244116f-fdb5-5645-afcc-5281288409da";
+
+    ModuleDependencyRefSetMemberList results;
+
+    // get the component
+    ModuleDependencyRefSetMember c = null;
+    ModuleDependencyRefSetMemberList list =
+        contentService.getModuleDependencyRefSetMembersForModule(
+            "900000000000207008", terminology, version, authToken);
+    for (ModuleDependencyRefSetMember a : list.getObjects()) {
+      if (a.getTerminologyId().equals(testId))
+        c = a;
+    }
+    if (c == null)
+      fail("Could not retrieve module dependency ref set member");
+
+    // test all module dependency ref set members modified over all time
+    results =
+        historyService.findModuleDependencyRefSetMembersModifiedSinceDate(
+            terminology, "19700101", pfs, authToken);
+    assertTrue(results.getTotalCount() == 3);
+
+    // test all module dependency ref set members modified after lower bound
+    // date
+    results =
+        historyService.findModuleDependencyRefSetMembersModifiedSinceDate(
+            terminology, "20080131", pfs, authToken);
+    assertTrue(results.getTotalCount() == 3);
+
+    // set pfs to no max results -- find methods currently do not return total
+    // count correctly
+    pfs.setMaxResults(-1);
+
+    // test revisions method -- range: all time
+    results =
+        historyService.findModuleDependencyRefSetMemberRevisions(c.getId()
+            .toString(), "19700101", currentDate, pfs, authToken);
+    assertTrue(results.getTotalCount() == 26);
+
+    // test revisions method lower bound
+    results =
+        historyService.findModuleDependencyRefSetMemberRevisions(c.getId()
+            .toString(), "20140131", currentDate, pfs, authToken);
+    assertTrue(results.getTotalCount() == 2);
+
+    // test revisions method upper bound
+    results =
+        historyService.findModuleDependencyRefSetMemberRevisions(c.getId()
+            .toString(), "19700731", "20140131", pfs, authToken);
+    assertTrue(results.getTotalCount() == 25);
+
+    // test retrieve release revision at specific release time
+    // - time should match
+    c =
+        historyService.findModuleDependencyRefSetMemberReleaseRevision(c
+            .getId().toString(), "20140131", authToken);
+    assertTrue(dtFormat.format(c.getEffectiveTime()).equals("20140131"));
   }
 
   /**
@@ -463,17 +861,67 @@ public class HistoryServiceRestNormalUseTest extends HistoryServiceRestTest {
    */
   @Test
   public void testNormalUseRestHistory012() throws Exception {
-    /** The object to test */
-    Class<?> testClass = RefsetDescriptorRefSetMemberJpa.class;
 
-    /** Expected values */
-    testDate = "20130731";
-    testId = "id here";
-    objectsCt = 10293;
-    objectsAfterTestDateCt = 0;
-    testObjectRevisionsCt = 0;
+    objectNames.remove("RefsetDescriptorRefSetMember");
 
-    // testComponent(testClass);
+    // The test id for this component
+    testId = "e8f00a4a-0a0c-5f92-a801-354f23625f17";
+
+    RefsetDescriptorRefSetMemberList results;
+
+    // get the component
+    RefsetDescriptorRefSetMember c = null;
+    RefsetDescriptorRefSetMemberList list =
+        contentService.getRefsetDescriptorRefSetMembers("900000000000456007",
+            terminology, version, authToken);
+    for (RefsetDescriptorRefSetMember a : list.getObjects()) {
+      if (a.getTerminologyId().equals(testId))
+        c = a;
+    }
+    if (c == null)
+      fail("Could not retrieve refset descriptor ref set member");
+
+    // test all refset descriptor ref set members modified over all time
+    results =
+        historyService.findRefsetDescriptorRefSetMembersModifiedSinceDate(
+            terminology, "19700101", pfs, authToken);
+    assertTrue(results.getTotalCount() == 68);
+
+    // test all refset descriptor ref set members modified after lower bound
+    // date
+    results =
+        historyService.findRefsetDescriptorRefSetMembersModifiedSinceDate(
+            terminology, "20080131", pfs, authToken);
+    assertTrue(results.getTotalCount() == 22);
+
+    // set pfs to no max results -- find methods currently do not return total
+    // count correctly
+    pfs.setMaxResults(-1);
+
+    // test revisions method -- range: all time
+    results =
+        historyService.findRefsetDescriptorRefSetMemberRevisions(c.getId()
+            .toString(), "19700101", currentDate, pfs, authToken);
+    assertTrue(results.getTotalCount() == 1);
+
+    // test revisions method lower bound
+    results =
+        historyService.findRefsetDescriptorRefSetMemberRevisions(c.getId()
+            .toString(), "20020131", currentDate, pfs, authToken);
+    assertTrue(results.getTotalCount() == 1);
+
+    // test revisions method upper bound
+    results =
+        historyService.findRefsetDescriptorRefSetMemberRevisions(c.getId()
+            .toString(), "19700731", "20020131", pfs, authToken);
+    assertTrue(results.getTotalCount() == 1);
+
+    // test retrieve release revision at specific release time
+    // - time should match
+    c =
+        historyService.findRefsetDescriptorRefSetMemberReleaseRevision(c
+            .getId().toString(), "20020131", authToken);
+    assertTrue(dtFormat.format(c.getEffectiveTime()).equals("20020131"));
   }
 
   /**
@@ -482,17 +930,67 @@ public class HistoryServiceRestNormalUseTest extends HistoryServiceRestTest {
    */
   @Test
   public void testNormalUseRestHistory013() throws Exception {
-    /** The object to test */
-    Class<?> testClass = SimpleMapRefSetMemberJpa.class;
 
-    /** Expected values */
-    testDate = "20130731";
-    testId = "id here";
-    objectsCt = 10293;
-    objectsAfterTestDateCt = 0;
-    testObjectRevisionsCt = 0;
+    objectNames.remove("SimpleMapRefSetMember");
 
-    // testComponent(testClass);
+    // The test id for this component
+    testId = "f8dbedb7-12a7-5e33-bbc8-3d1252c77820";
+
+    SimpleMapRefSetMemberList results;
+
+    // get the component
+    SimpleMapRefSetMember c = null;
+    SimpleMapRefSetMemberList list =
+        contentService.getSimpleMapRefSetMembersForConcept("244476009",
+            terminology, version, authToken);
+    for (SimpleMapRefSetMember a : list.getObjects()) {
+      if (a.getTerminologyId().equals(testId))
+        c = a;
+    }
+    if (c == null)
+      fail("Could not retrieve complex map ref set member");
+
+    // test all simple map ref set members modified over all time
+    results =
+        historyService.findSimpleMapRefSetMembersModifiedSinceDate(terminology,
+            "19700101", pfs, authToken);
+    assertTrue(results.getTotalCount() == 22060);
+
+    // test all simple map ref set members modified after lower bound date
+    results =
+        historyService.findSimpleMapRefSetMembersModifiedSinceDate(terminology,
+            "20080131", pfs, authToken);
+    assertTrue(results.getTotalCount() == 1956);
+
+    // set pfs to no max results -- find methods currently do not return total
+    // count correctly
+    pfs.setMaxResults(-1);
+
+    // test revisions method -- range: all time
+    results =
+        historyService.findSimpleMapRefSetMemberRevisions(c.getId().toString(),
+            "19700101", currentDate, pfs, authToken);
+    assertTrue(results.getTotalCount() == 5);
+
+    // test revisions method lower bound
+    results =
+        historyService.findSimpleMapRefSetMemberRevisions(c.getId().toString(),
+            "20050131", currentDate, pfs, authToken);
+    assertTrue(results.getTotalCount() == 3);
+
+    // test revisions method upper bound
+    results =
+        historyService.findSimpleMapRefSetMemberRevisions(c.getId().toString(),
+            "19700731", "20050131", pfs, authToken);
+    assertTrue(results.getTotalCount() == 3);
+
+    // test retrieve release revision at specific release time
+    // - time should match
+    c =
+        historyService.findSimpleMapRefSetMemberReleaseRevision(c.getId()
+            .toString(), "20050131", authToken);
+    assertTrue(dtFormat.format(c.getEffectiveTime()).equals("20050131"));
+
   }
 
   /**
@@ -501,17 +999,67 @@ public class HistoryServiceRestNormalUseTest extends HistoryServiceRestTest {
    */
   @Test
   public void testNormalUseRestHistory014() throws Exception {
-    /** The object to test */
-    Class<?> testClass = SimpleRefSetMemberJpa.class;
 
-    /** Expected values */
-    testDate = "20130731";
-    testId = "id here";
-    objectsCt = 10293;
-    objectsAfterTestDateCt = 0;
-    testObjectRevisionsCt = 0;
+    objectNames.remove("SimpleRefSetMember");
 
-    // testComponent(testClass);
+    // The test id for this component
+    testId = "c0a26c19-e051-5cfa-86c5-a625ca44e690";
+
+    SimpleRefSetMemberList results;
+
+    // get the component
+    SimpleRefSetMember c = null;
+    SimpleRefSetMemberList list =
+        contentService.getSimpleRefSetMembersForConcept("333536009",
+            terminology, version, authToken);
+    for (SimpleRefSetMember a : list.getObjects()) {
+      if (a.getTerminologyId().equals(testId))
+        c = a;
+    }
+    if (c == null)
+      fail("Could not retrieve simple ref set member");
+
+    // test all simple ref set members modified over all time
+    results =
+        historyService.findSimpleRefSetMembersModifiedSinceDate(terminology,
+            "19700101", pfs, authToken);
+    assertTrue(results.getTotalCount() == 35);
+
+    // test all simple ref set members modified after lower bound date
+    results =
+        historyService.findSimpleRefSetMembersModifiedSinceDate(terminology,
+            "20080131", pfs, authToken);
+    assertTrue(results.getTotalCount() == 14);
+
+    // set pfs to no max results -- find methods currently do not return total
+    // count correctly
+    pfs.setMaxResults(-1);
+
+    // test revisions method -- range: all time
+    results =
+        historyService.findSimpleRefSetMemberRevisions(c.getId().toString(),
+            "19700101", currentDate, pfs, authToken);
+    assertTrue(results.getTotalCount() == 4);
+
+    // test revisions method lower bound
+    results =
+        historyService.findSimpleRefSetMemberRevisions(c.getId().toString(),
+            "20060131", currentDate, pfs, authToken);
+    assertTrue(results.getTotalCount() == 3);
+
+    // test revisions method upper bound
+    results =
+        historyService.findSimpleRefSetMemberRevisions(c.getId().toString(),
+            "19700731", "20060131", pfs, authToken);
+    assertTrue(results.getTotalCount() == 2);
+
+    // test retrieve release revision at specific release time
+    // - time should match
+    c =
+        historyService.findSimpleRefSetMemberReleaseRevision(c.getId()
+            .toString(), "20060131", authToken);
+    assertTrue(dtFormat.format(c.getEffectiveTime()).equals("20060131"));
+
   }
 
   /**
@@ -524,23 +1072,20 @@ public class HistoryServiceRestNormalUseTest extends HistoryServiceRestTest {
   public void teardown() throws Exception {
 
     ReleaseInfo releaseInfo = null;
-
-    // test for release info created in test 001
+    
+    // cleanup test 001 -- added release info
     releaseInfo =
         historyService.getReleaseInfo(terminology, currentDate, authToken);
     if (releaseInfo != null) {
       historyService.removeReleaseInfo(releaseInfo.getId(), authToken);
     }
-    /*
-     * // test for release info created in test 002 String releaseVersion =
-     * dtFormat.format(new Date()); releaseInfo =
-     * historyService.getReleaseInfo(terminology, releaseVersion, authToken); if
-     * (releaseInfo != null) {
-     * historyService.removeReleaseInfo(releaseInfo.getId(), authToken); }
-     */
+    
+    // cleanup test 002
+    
 
     // logout
     securityService.logout(authToken);
+    
   }
 
 }

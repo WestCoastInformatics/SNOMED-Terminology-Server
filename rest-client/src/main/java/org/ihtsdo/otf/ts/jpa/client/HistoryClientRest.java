@@ -9,6 +9,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response.Status.Family;
 
 import org.apache.log4j.Logger;
+import org.ihtsdo.otf.ts.rf2.jpa.AbstractAssociationReferenceRefSetMemberJpa;
 import org.ihtsdo.otf.ts.ReleaseInfo;
 import org.ihtsdo.otf.ts.helpers.AssociationReferenceRefSetMemberList;
 import org.ihtsdo.otf.ts.helpers.AssociationReferenceRefSetMemberListJpa;
@@ -301,7 +302,7 @@ public class HistoryClientRest implements HistoryServiceRest {
     Client client = Client.create();
     WebResource resource =
         client.resource(config.getProperty("base.url")
-            + "/history/description/revisions/" + id + "/" + release);
+            + "/history/description/revisions/" + id + "/" + release + "/release");
 
     ClientResponse response =
         resource.accept(MediaType.APPLICATION_XML)
@@ -543,7 +544,7 @@ public class HistoryClientRest implements HistoryServiceRest {
     Client client = Client.create();
     WebResource resource =
         client.resource(config.getProperty("base.url")
-            + "/history/language/revisions/" + id + "/" + release);
+            + "/history/language/revisions/" + id + "/" + release + "/release");
 
     ClientResponse response =
         resource.accept(MediaType.APPLICATION_XML)
@@ -665,7 +666,7 @@ public class HistoryClientRest implements HistoryServiceRest {
     Client client = Client.create();
     WebResource resource =
         client.resource(config.getProperty("base.url")
-            + "/history/associationReference/revisions/" + id + "/" + release);
+            + "/history/associationReference/revisions/" + id + "/" + release + "/release");
 
     ClientResponse response =
         resource.accept(MediaType.APPLICATION_XML)
@@ -682,7 +683,7 @@ public class HistoryClientRest implements HistoryServiceRest {
     // converting to object
     AssociationReferenceRefSetMember member =
         (AssociationReferenceRefSetMember<?>) ConfigUtility.getGraphForString(resultString,
-            AssociationReferenceRefSetMember.class);
+            AbstractAssociationReferenceRefSetMemberJpa.class);
 
     return member;
   }
@@ -787,7 +788,7 @@ public class HistoryClientRest implements HistoryServiceRest {
     Client client = Client.create();
     WebResource resource =
         client.resource(config.getProperty("base.url")
-            + "/history/attributeValue/revisions/" + id + "/" + release);
+            + "/history/attributeValue/revisions/" + id + "/" + release + "/release");
 
     ClientResponse response =
         resource.accept(MediaType.APPLICATION_XML)
@@ -909,7 +910,7 @@ public class HistoryClientRest implements HistoryServiceRest {
     Client client = Client.create();
     WebResource resource =
         client.resource(config.getProperty("base.url")
-            + "/history/complexMap/revisions/" + id + "/" + release);
+            + "/history/complexMap/revisions/" + id + "/" + release + "/release");
 
     ClientResponse response =
         resource.accept(MediaType.APPLICATION_XML)
@@ -1031,7 +1032,7 @@ public class HistoryClientRest implements HistoryServiceRest {
     Client client = Client.create();
     WebResource resource =
         client.resource(config.getProperty("base.url")
-            + "/history/descriptionType/revisions/" + id + "/" + release);
+            + "/history/descriptionType/revisions/" + id + "/" + release + "/release");
 
     ClientResponse response =
         resource.accept(MediaType.APPLICATION_XML)
@@ -1153,7 +1154,7 @@ public class HistoryClientRest implements HistoryServiceRest {
     Client client = Client.create();
     WebResource resource =
         client.resource(config.getProperty("base.url")
-            + "/history/moduleDependency/revisions/" + id + "/" + release);
+            + "/history/moduleDependency/revisions/" + id + "/" + release + "/release");
 
     ClientResponse response =
         resource.accept(MediaType.APPLICATION_XML)
@@ -1275,7 +1276,7 @@ public class HistoryClientRest implements HistoryServiceRest {
     Client client = Client.create();
     WebResource resource =
         client.resource(config.getProperty("base.url")
-            + "/history/refsetDescriptor/revisions/" + id + "/" + release);
+            + "/history/refsetDescriptor/revisions/" + id + "/" + release + "/release");
 
     ClientResponse response =
         resource.accept(MediaType.APPLICATION_XML)
@@ -1398,7 +1399,7 @@ public class HistoryClientRest implements HistoryServiceRest {
     Client client = Client.create();
     WebResource resource =
         client.resource(config.getProperty("base.url")
-            + "/history/simpleMap/revisions/" + id + "/" + release);
+            + "/history/simpleMap/revisions/" + id + "/" + release + "/release");
 
     ClientResponse response =
         resource.accept(MediaType.APPLICATION_XML)
@@ -1521,7 +1522,7 @@ public class HistoryClientRest implements HistoryServiceRest {
     Client client = Client.create();
     WebResource resource =
         client.resource(config.getProperty("base.url")
-            + "/history/simple/revisions/" + id + "/" + release);
+            + "/history/simple/revisions/" + id + "/" + release + "/release");
 
     ClientResponse response =
         resource.accept(MediaType.APPLICATION_XML)

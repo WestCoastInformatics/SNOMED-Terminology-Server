@@ -784,7 +784,7 @@ public class ContentServiceRestImpl extends RootServiceRestImpl implements
 
       ContentService contentService = new ContentServiceJpa();
       RefsetDescriptorRefSetMemberList result =
-          contentService.getRefsetDescriptorRefSetMembers(refSetId,
+          contentService.getRefsetDescriptorRefSetMembersForRefset(refSetId,
               terminology, version);
       contentService.close();
       return result;

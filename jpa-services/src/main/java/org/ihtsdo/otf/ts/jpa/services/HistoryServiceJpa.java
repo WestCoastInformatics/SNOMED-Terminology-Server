@@ -1084,6 +1084,7 @@ public class HistoryServiceJpa extends ContentServiceJpa implements
       query.setParameter("terminology", terminology);
       return (ReleaseInfo) query.getSingleResult();
     } catch (NoResultException e) {
+      Logger.getLogger(getClass()).error("No release info found for name/terminology " + name + "/" + terminology);
       return null;
     }
   }
@@ -1433,7 +1434,7 @@ public class HistoryServiceJpa extends ContentServiceJpa implements
 
         // search by id
         .add(AuditEntity.id().eq(id));
-    
+
     if (startDate != null) {
       // search by lower bound on last modified
       query.add(AuditEntity.property("lastModified").ge(startDate));
@@ -1457,9 +1458,6 @@ public class HistoryServiceJpa extends ContentServiceJpa implements
               pfs.getMaxResults());
     }
 
-    // TODO -- Remove, added to check class casting exception
-    query.getResultList();
-
     // execute query
     List<T> revisions = query.getResultList();
     return revisions;
@@ -1481,10 +1479,10 @@ public class HistoryServiceJpa extends ContentServiceJpa implements
 
     AuditReader reader = AuditReaderFactory.get(manager);
     AuditQuery query = reader.createQuery()
-        
+
     // all revisions, returned as objects, not finding deleted entries
         .forRevisionsOfEntity(clazz, false, false)
-        
+
         .addProjection(AuditEntity.revisionNumber().max())
 
         // search by id
@@ -1492,14 +1490,16 @@ public class HistoryServiceJpa extends ContentServiceJpa implements
 
         // search by lower bound on last modified
         .add(AuditEntity.property("effectiveTime").eq(release));
-    
-    
 
     // execute query
     @SuppressWarnings("unchecked")
     List<Long> revisions = query.getResultList();
     if (revisions.size() > 0) {
-      return reader.find(clazz, id, revisions.get(0));
+      if (revisions.get(0) != null) {
+        return reader.find(clazz, id, revisions.get(0));
+      } else {
+        return null;
+      }
     } else {
       return null;
     }

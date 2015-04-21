@@ -810,7 +810,7 @@ public interface ContentService extends RootService {
    * @param version the version
    * @return the refset descriptor ref set members for refset
    */
-  public RefsetDescriptorRefSetMemberList getRefsetDescriptorRefSetMembers(
+  public RefsetDescriptorRefSetMemberList getRefsetDescriptorRefSetMembersForRefset(
     String terminologyId, String terminology, String version);
 
   /**
