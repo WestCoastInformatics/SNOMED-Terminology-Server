@@ -112,11 +112,11 @@ public class ContentServiceRestImpl extends RootServiceRestImpl implements
         "RESTful call (Content): /concept/" + terminology + "/" + version + "/"
             + terminologyId);
 
+    ContentService contentService = new ContentServiceJpa();
     try {
       authenticate(securityService, authToken, "retrieve the concept",
           UserRole.VIEWER);
 
-      ContentService contentService = new ContentServiceJpa();
       ConceptList cl =
           contentService.getConcepts(terminologyId, terminology, version);
 
@@ -126,12 +126,12 @@ public class ContentServiceRestImpl extends RootServiceRestImpl implements
               concept,
               TerminologyUtility.getHierarchicalIsaRels(
                   concept.getTerminology(), concept.getTerminologyVersion()));
-
         }
       }
       contentService.close();
       return cl;
     } catch (Exception e) {
+      contentService.close();
       handleException(e, "trying to retrieve a concept");
       return null;
     } finally {
@@ -162,11 +162,11 @@ public class ContentServiceRestImpl extends RootServiceRestImpl implements
         "RESTful call (Content): /concept/" + terminology + "/" + version + "/"
             + terminologyId);
 
+    ContentService contentService = new ContentServiceJpa();
     try {
       authenticate(securityService, authToken, "retrieve the concept",
           UserRole.VIEWER);
 
-      ContentService contentService = new ContentServiceJpa();
       Concept concept =
           contentService.getSingleConcept(terminologyId, terminology, version);
 
@@ -180,6 +180,7 @@ public class ContentServiceRestImpl extends RootServiceRestImpl implements
       contentService.close();
       return concept;
     } catch (Exception e) {
+      contentService.close();
       handleException(e, "trying to retrieve a concept");
       return null;
     } finally {
@@ -211,17 +212,18 @@ public class ContentServiceRestImpl extends RootServiceRestImpl implements
         "RESTful call (Content): /concept/" + terminology + "/" + version
             + "/query/" + query + " with PFS parameter "
             + (pfs == null ? "empty" : pfs.toString()));
+    ContentService contentService = new ContentServiceJpa();
     try {
       authenticate(securityService, authToken, "find concepts by query",
           UserRole.VIEWER);
 
-      ContentService contentService = new ContentServiceJpa();
       SearchResultList sr =
           contentService.findConceptsForQuery(terminology, version, query, pfs);
       contentService.close();
       return sr;
 
     } catch (Exception e) {
+      contentService.close();
       handleException(e, "trying to find the concepts by query");
       return null;
     } finally {
@@ -253,11 +255,11 @@ public class ContentServiceRestImpl extends RootServiceRestImpl implements
         "RESTful call (Content): /concept/" + terminology + "/" + version + "/"
             + terminologyId + "/children");
 
+    ContentService contentService = new ContentServiceJpa();
     try {
       authenticate(securityService, authToken, "retrieve the child concepts",
           UserRole.VIEWER);
 
-      ContentService contentService = new ContentServiceJpa();
       Concept concept =
           contentService.getSingleConcept(terminologyId, terminology, version);
       ConceptList list = contentService.findChildConcepts(concept, pfs);
@@ -270,6 +272,7 @@ public class ContentServiceRestImpl extends RootServiceRestImpl implements
       contentService.close();
       return list;
     } catch (Exception e) {
+      contentService.close();
       handleException(e, "trying to retrieve child concepts");
       return null;
     } finally {
@@ -301,11 +304,11 @@ public class ContentServiceRestImpl extends RootServiceRestImpl implements
         "RESTful call (Content): /concept/" + terminology + "/" + version + "/"
             + terminologyId + "/parents");
 
+    ContentService contentService = new ContentServiceJpa();
     try {
       authenticate(securityService, authToken, "retrieve the parent concepts",
           UserRole.VIEWER);
 
-      ContentService contentService = new ContentServiceJpa();
       Concept concept =
           contentService.getSingleConcept(terminologyId, terminology, version);
       ConceptList list = contentService.findParentConcepts(concept, pfs);
@@ -318,6 +321,7 @@ public class ContentServiceRestImpl extends RootServiceRestImpl implements
       contentService.close();
       return list;
     } catch (Exception e) {
+      contentService.close();
       handleException(e, "trying to retrieve parent concepts");
       return null;
     }
@@ -347,11 +351,11 @@ public class ContentServiceRestImpl extends RootServiceRestImpl implements
         "RESTful call (Content): /concept/" + terminology + "/" + version + "/"
             + terminologyId + "/descendants");
 
+    ContentService contentService = new ContentServiceJpa();
     try {
       authenticate(securityService, authToken,
           "retrieve the descendant concepts", UserRole.VIEWER);
 
-      ContentService contentService = new ContentServiceJpa();
       Concept concept =
           contentService.getSingleConcept(terminologyId, terminology, version);
       ConceptList list = contentService.findDescendantConcepts(concept, pfs);
@@ -364,6 +368,7 @@ public class ContentServiceRestImpl extends RootServiceRestImpl implements
       contentService.close();
       return list;
     } catch (Exception e) {
+      contentService.close();
       handleException(e, "trying to retrieve descendant concepts");
       return null;
     } finally {
@@ -395,11 +400,11 @@ public class ContentServiceRestImpl extends RootServiceRestImpl implements
         "RESTful call (Content): /concept/" + terminology + "/" + version + "/"
             + terminologyId + "/ancestors");
 
+    ContentService contentService = new ContentServiceJpa();
     try {
       authenticate(securityService, authToken,
           "retrieve the ancestor concepts", UserRole.VIEWER);
 
-      ContentService contentService = new ContentServiceJpa();
       Concept concept =
           contentService.getSingleConcept(terminologyId, terminology, version);
       ConceptList list = contentService.findAncestorConcepts(concept, pfs);
@@ -412,6 +417,7 @@ public class ContentServiceRestImpl extends RootServiceRestImpl implements
       contentService.close();
       return list;
     } catch (Exception e) {
+      contentService.close();
       handleException(e, "trying to retrieve ancestor concepts");
       return null;
     } finally {
@@ -441,11 +447,11 @@ public class ContentServiceRestImpl extends RootServiceRestImpl implements
         "RESTful call (Content): /description/" + terminology + "/" + version
             + "/" + terminologyId);
 
+    ContentService contentService = new ContentServiceJpa();
     try {
       authenticate(securityService, authToken, "retrieve the description",
           UserRole.VIEWER);
 
-      ContentService contentService = new ContentServiceJpa();
       Description description =
           contentService.getDescription(terminologyId, terminology, version);
 
@@ -456,6 +462,7 @@ public class ContentServiceRestImpl extends RootServiceRestImpl implements
       contentService.close();
       return description;
     } catch (Exception e) {
+      contentService.close();
       handleException(e, "trying to retrieve a description");
       return null;
     } finally {
@@ -488,17 +495,18 @@ public class ContentServiceRestImpl extends RootServiceRestImpl implements
         "RESTful call (Content): /associationReferenceMember/refSet/"
             + terminology + "/" + version + "/" + refSetId);
 
+    ContentService contentService = new ContentServiceJpa();
     try {
       authenticate(securityService, authToken,
           "retrieve association reference refset members", UserRole.VIEWER);
 
-      ContentService contentService = new ContentServiceJpa();
       AssociationReferenceRefSetMemberList result =
           contentService.findAssociationReferenceRefSetMembers(refSetId,
               terminology, version, pfs);
       contentService.close();
       return result;
     } catch (Exception e) {
+      contentService.close();
       handleException(e,
           "trying to retrieve association reference refset members");
       return null;
@@ -532,17 +540,18 @@ public class ContentServiceRestImpl extends RootServiceRestImpl implements
         "RESTful call (Content): /attributeValueMember/refSet/" + terminology
             + "/" + version + "/" + refSetId);
 
+    ContentService contentService = new ContentServiceJpa();
     try {
       authenticate(securityService, authToken,
           "retrieve attribute value refset members", UserRole.VIEWER);
 
-      ContentService contentService = new ContentServiceJpa();
       AttributeValueRefSetMemberList result =
           contentService.findAttributeValueRefSetMembers(refSetId, terminology,
               version, pfs);
       contentService.close();
       return result;
     } catch (Exception e) {
+      contentService.close();
       handleException(e, "trying to retrieve attribute value refset members");
       return null;
     } finally {
@@ -575,17 +584,18 @@ public class ContentServiceRestImpl extends RootServiceRestImpl implements
         "RESTful call (Content): /complexMapMember/refSet/" + terminology + "/"
             + version + "/" + refSetId);
 
+    ContentService contentService = new ContentServiceJpa();
     try {
       authenticate(securityService, authToken,
           "retrieve complex map refset members", UserRole.VIEWER);
 
-      ContentService contentService = new ContentServiceJpa();
       ComplexMapRefSetMemberList result =
           contentService.findComplexMapRefSetMembers(refSetId, terminology,
               version, pfs);
       contentService.close();
       return result;
     } catch (Exception e) {
+      contentService.close();
       handleException(e, "trying to retrieve complex map refset members");
       return null;
     } finally {
@@ -617,17 +627,18 @@ public class ContentServiceRestImpl extends RootServiceRestImpl implements
         "RESTful call (Content): /descriptionTypeMember/refSet/" + terminology
             + "/" + version + "/" + refSetId);
 
+    ContentService contentService = new ContentServiceJpa();
     try {
       authenticate(securityService, authToken,
           "retrieve description type refset members", UserRole.VIEWER);
 
-      ContentService contentService = new ContentServiceJpa();
       DescriptionTypeRefSetMemberList result =
           contentService.findDescriptionTypeRefSetMembers(refSetId,
               terminology, version, pfs);
       contentService.close();
       return result;
     } catch (Exception e) {
+      contentService.close();
       handleException(e, "trying to retrieve description type refset members");
       return null;
     } finally {
@@ -659,17 +670,18 @@ public class ContentServiceRestImpl extends RootServiceRestImpl implements
         "RESTful call (Content): /languageMember/refSet/" + terminology + "/"
             + version + "/" + refSetId);
 
+    ContentService contentService = new ContentServiceJpa();
     try {
       authenticate(securityService, authToken,
           "retrieve language refset members", UserRole.VIEWER);
 
-      ContentService contentService = new ContentServiceJpa();
       LanguageRefSetMemberList result =
           contentService.findLanguageRefSetMembers(refSetId, terminology,
               version, pfs);
       contentService.close();
       return result;
     } catch (Exception e) {
+      contentService.close();
       handleException(e, "trying to retrieve language refset members");
       return null;
     } finally {
@@ -699,17 +711,18 @@ public class ContentServiceRestImpl extends RootServiceRestImpl implements
         "RESTful call (Content): /moduleDependencyMember/module/" + terminology
             + "/" + version + "/" + moduleId);
 
+    ContentService contentService = new ContentServiceJpa();
     try {
       authenticate(securityService, authToken,
           "retrieve module dependency refset members", UserRole.VIEWER);
 
-      ContentService contentService = new ContentServiceJpa();
       ModuleDependencyRefSetMemberList result =
           contentService.getModuleDependencyRefSetMembersForModule(moduleId,
               terminology, version);
       contentService.close();
       return result;
     } catch (Exception e) {
+      contentService.close();
       handleException(e, "trying to retrieve module dependency refset members");
       return null;
     } finally {
@@ -739,17 +752,18 @@ public class ContentServiceRestImpl extends RootServiceRestImpl implements
         "RESTful call (Content): /refsetDescriptorMember/refSet/" + terminology
             + "/" + version + "/" + refSetId);
 
+    ContentService contentService = new ContentServiceJpa();
     try {
       authenticate(securityService, authToken,
           "retrieve refset descriptor refset members", UserRole.VIEWER);
 
-      ContentService contentService = new ContentServiceJpa();
       RefsetDescriptorRefSetMemberList result =
           contentService.getRefsetDescriptorRefSetMembers(refSetId,
               terminology, version);
       contentService.close();
       return result;
     } catch (Exception e) {
+      contentService.close();
       handleException(e, "trying to retrieve refset descriptor refset members");
       return null;
     } finally {
@@ -781,17 +795,17 @@ public class ContentServiceRestImpl extends RootServiceRestImpl implements
         "RESTful call (Content): /simpleMapMember/refSet/" + terminology + "/"
             + version + "/" + refSetId);
 
+    ContentService contentService = new ContentServiceJpa();
     try {
       authenticate(securityService, authToken,
           "retrieve simple map refset members", UserRole.VIEWER);
-
-      ContentService contentService = new ContentServiceJpa();
       SimpleMapRefSetMemberList result =
           contentService.findSimpleMapRefSetMembers(refSetId, terminology,
               version, pfs);
       contentService.close();
       return result;
     } catch (Exception e) {
+      contentService.close();
       handleException(e, "trying to retrieve simple map refset members");
       return null;
     } finally {
@@ -823,17 +837,18 @@ public class ContentServiceRestImpl extends RootServiceRestImpl implements
         "RESTful call (Content): /simpleMember/refSet/" + terminology + "/"
             + version + "/" + refSetId);
 
+    ContentService contentService = new ContentServiceJpa();
     try {
       authenticate(securityService, authToken,
           "retrieve simple refset members", UserRole.VIEWER);
 
-      ContentService contentService = new ContentServiceJpa();
       SimpleRefSetMemberList result =
           contentService.findSimpleRefSetMembers(refSetId, terminology,
               version, pfs);
       contentService.close();
       return result;
     } catch (Exception e) {
+      contentService.close();
       handleException(e, "trying to retrieve simple refset members");
       return null;
     } finally {
@@ -863,18 +878,18 @@ public class ContentServiceRestImpl extends RootServiceRestImpl implements
         "RESTful call (Content): /associationReferenceMember/CONCEPT/"
             + terminology + "/" + version + "/" + terminologyId);
 
+    ContentService contentService = new ContentServiceJpa();
     try {
       authenticate(securityService, authToken,
           "retrieve association reference concept refset members",
           UserRole.VIEWER);
-
-      ContentService contentService = new ContentServiceJpa();
       AssociationReferenceRefSetMemberList result =
           contentService.getAssociationReferenceRefSetMembersForConcept(
               terminologyId, terminology, version);
       contentService.close();
       return result;
     } catch (Exception e) {
+      contentService.close();
       handleException(e,
           "trying to retrieve association reference concept refset members");
       return null;
@@ -905,18 +920,18 @@ public class ContentServiceRestImpl extends RootServiceRestImpl implements
         "RESTful call (Content): /associationReferenceMember/description"
             + terminology + "/" + version + "/" + terminologyId);
 
+    ContentService contentService = new ContentServiceJpa();
     try {
       authenticate(securityService, authToken,
           "retrieve association reference description refset members",
           UserRole.VIEWER);
-
-      ContentService contentService = new ContentServiceJpa();
       AssociationReferenceRefSetMemberList result =
           contentService.getAssociationReferenceRefSetMembersForDescription(
               terminologyId, terminology, version);
       contentService.close();
       return result;
     } catch (Exception e) {
+      contentService.close();
       handleException(e,
           "trying to retrieve association reference description refset members");
       return null;
@@ -947,17 +962,17 @@ public class ContentServiceRestImpl extends RootServiceRestImpl implements
         "RESTful call (Content): /attributeValueMember/concept/" + terminology
             + "/" + version + "/" + terminologyId);
 
+    ContentService contentService = new ContentServiceJpa();
     try {
       authenticate(securityService, authToken,
           "retrieve attribute value concept refset members", UserRole.VIEWER);
-
-      ContentService contentService = new ContentServiceJpa();
       AttributeValueRefSetMemberList result =
           contentService.getAttributeValueRefSetMembersForConcept(
               terminologyId, terminology, version);
       contentService.close();
       return result;
     } catch (Exception e) {
+      contentService.close();
       handleException(e,
           "trying to retrieve attribute value concept refset members");
       return null;
@@ -988,18 +1003,18 @@ public class ContentServiceRestImpl extends RootServiceRestImpl implements
         "RESTful call (Content): /attributeValueMember/description/"
             + terminology + "/" + version + "/" + terminologyId);
 
+    ContentService contentService = new ContentServiceJpa();
     try {
       authenticate(securityService, authToken,
           "retrieve attribute value description refset members",
           UserRole.VIEWER);
-
-      ContentService contentService = new ContentServiceJpa();
       AttributeValueRefSetMemberList result =
           contentService.getAttributeValueRefSetMembersForDescription(
               terminologyId, terminology, version);
       contentService.close();
       return result;
     } catch (Exception e) {
+      contentService.close();
       handleException(e,
           "trying to retrieve attribute value description refset members");
       return null;
@@ -1030,17 +1045,17 @@ public class ContentServiceRestImpl extends RootServiceRestImpl implements
         "RESTful call (Content): /complexMapMember/concept/" + terminology
             + "/" + version + "/" + terminologyId);
 
+    ContentService contentService = new ContentServiceJpa();
     try {
       authenticate(securityService, authToken,
           "retrieve complex map refset members", UserRole.VIEWER);
-
-      ContentService contentService = new ContentServiceJpa();
       ComplexMapRefSetMemberList result =
           contentService.getComplexMapRefSetMembersForConcept(terminologyId,
               terminology, version);
       contentService.close();
       return result;
     } catch (Exception e) {
+      contentService.close();
       handleException(e, "trying to retrieve complex map refset members");
       return null;
     } finally {
@@ -1070,17 +1085,17 @@ public class ContentServiceRestImpl extends RootServiceRestImpl implements
         "RESTful call (Content): /languageMember/description/" + terminology
             + "/" + version + "/" + terminologyId);
 
+    ContentService contentService = new ContentServiceJpa();
     try {
       authenticate(securityService, authToken,
           "retrieve language refset members", UserRole.VIEWER);
-
-      ContentService contentService = new ContentServiceJpa();
       LanguageRefSetMemberList result =
           contentService.getLanguageRefSetMembersForDescription(terminologyId,
               terminology, version);
       contentService.close();
       return result;
     } catch (Exception e) {
+      contentService.close();
       handleException(e, "trying to retrieve language refset members");
       return null;
     } finally {
@@ -1110,17 +1125,17 @@ public class ContentServiceRestImpl extends RootServiceRestImpl implements
         "RESTful call (Content): /simpleMapMember/concept/" + terminology + "/"
             + version + "/" + terminologyId);
 
+    ContentService contentService = new ContentServiceJpa();
     try {
       authenticate(securityService, authToken,
           "retrieve simple map refset members", UserRole.VIEWER);
-
-      ContentService contentService = new ContentServiceJpa();
       SimpleMapRefSetMemberList result =
           contentService.getSimpleMapRefSetMembersForConcept(terminologyId,
               terminology, version);
       contentService.close();
       return result;
     } catch (Exception e) {
+      contentService.close();
       handleException(e, "trying to retrieve simple map refset members");
       return null;
     } finally {
@@ -1150,17 +1165,17 @@ public class ContentServiceRestImpl extends RootServiceRestImpl implements
         "RESTful call (Content): /simpleMember/concept/" + terminology + "/"
             + version + "/" + terminologyId);
 
+    ContentService contentService = new ContentServiceJpa();
     try {
       authenticate(securityService, authToken,
           "retrieve simple refset members", UserRole.VIEWER);
-
-      ContentService contentService = new ContentServiceJpa();
       SimpleRefSetMemberList result =
           contentService.getSimpleRefSetMembersForConcept(terminologyId,
               terminology, version);
       contentService.close();
       return result;
     } catch (Exception e) {
+      contentService.close();
       handleException(e, "trying to retrieve simple refset members");
       return null;
     } finally {
@@ -1190,17 +1205,18 @@ public class ContentServiceRestImpl extends RootServiceRestImpl implements
         "RESTful call (Content): /relationship/inverse/" + terminology + "/"
             + version + "/" + terminologyId);
 
+    ContentService contentService = new ContentServiceJpa();
     try {
       authenticate(securityService, authToken,
           "retrieve inverse relationships", UserRole.VIEWER);
 
-      ContentService contentService = new ContentServiceJpa();
       RelationshipList result =
           contentService.getInverseRelationshipsForConcept(terminologyId,
               terminology, version);
       contentService.close();
       return result;
     } catch (Exception e) {
+      contentService.close();
       handleException(e, "trying to retrieve inverse relationships");
       return null;
     } finally {
@@ -1765,13 +1781,12 @@ public class ContentServiceRestImpl extends RootServiceRestImpl implements
     // Track system level information
     long startTimeOrig = System.nanoTime();
 
+    ContentService contentService = new ContentServiceJpa();
     try {
       authenticate(securityService, authToken, "start editing cycle",
           UserRole.ADMINISTRATOR);
 
-      ContentService contentService = new ContentServiceJpa();
       contentService.clearConcepts(terminology, version);
-      contentService.close();
 
       // Final logging messages
       Logger.getLogger(getClass()).info(
@@ -1780,6 +1795,7 @@ public class ContentServiceRestImpl extends RootServiceRestImpl implements
 
     } catch (Exception e) {
       handleException(e, "trying to load terminology from ClaML file");
+      contentService.close();
     } finally {
       securityService.close();
     }

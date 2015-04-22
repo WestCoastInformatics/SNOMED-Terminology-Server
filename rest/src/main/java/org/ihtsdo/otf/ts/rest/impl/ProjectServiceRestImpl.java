@@ -78,12 +78,10 @@ public class ProjectServiceRestImpl extends RootServiceRestImpl implements
     Logger.getLogger(getClass()).info(
         "RESTful call PUT (Project): /add " + project);
 
+    ProjectService projectService = new ProjectServiceJpa();
     try {
       authenticate(securityService, authToken, "add project",
           UserRole.ADMINISTRATOR);
-
-      // Create service and configure transaction scope
-      ProjectService projectService = new ProjectServiceJpa();
 
       // check to see if project already exists
       for (Project p : projectService.getProjects().getObjects()) {
@@ -100,8 +98,11 @@ public class ProjectServiceRestImpl extends RootServiceRestImpl implements
       projectService.close();
       return newProject;
     } catch (Exception e) {
+      projectService.close();
       handleException(e, "trying to add a project");
       return null;
+    } finally {
+      securityService.close();
     }
 
   }
@@ -124,12 +125,12 @@ public class ProjectServiceRestImpl extends RootServiceRestImpl implements
     Logger.getLogger(getClass()).info(
         "RESTful call PUT (Project): /update " + project);
 
+    // Create service and configure transaction scope
+    ProjectService projectService = new ProjectServiceJpa();
     try {
       authenticate(securityService, authToken, "update project",
           UserRole.ADMINISTRATOR);
 
-      // Create service and configure transaction scope
-      ProjectService projectService = new ProjectServiceJpa();
 
       // check to see if project already exists
       boolean found = false;
@@ -149,8 +150,12 @@ public class ProjectServiceRestImpl extends RootServiceRestImpl implements
       projectService.close();
 
     } catch (Exception e) {
+      projectService.close();
       handleException(e, "trying to update a project");
+    } finally {
+      securityService.close();
     }
+
   }
 
   /*
@@ -171,18 +176,22 @@ public class ProjectServiceRestImpl extends RootServiceRestImpl implements
     Logger.getLogger(getClass()).info(
         "RESTful call DELETE (Project): /remove/id/" + id);
 
+    ProjectService projectService = new ProjectServiceJpa();
     try {
       authenticate(securityService, authToken, "remove project",
           UserRole.ADMINISTRATOR);
 
       // Create service and configure transaction scope
-      ProjectService projectService = new ProjectServiceJpa();
       projectService.removeProject(id);
       projectService.close();
 
     } catch (Exception e) {
+      projectService.close();
       handleException(e, "trying to remove a project");
+    } finally {
+      securityService.close();
     }
+
   }
 
   /*
@@ -199,15 +208,15 @@ public class ProjectServiceRestImpl extends RootServiceRestImpl implements
   public ConceptList findConceptsInScope(
     @ApiParam(value = "Project internal id, e.g. 2", required = true) @PathParam("id") Long id,
     @ApiParam(value = "PFS Parameter, e.g. '{ \"startIndex\":\"1\", \"maxResults\":\"5\" }'", required = false) PfsParameterJpa pfs,
-    @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken) {
+    @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken) throws Exception {
 
     Logger.getLogger(getClass()).info("RESTful call (Project): scope/id/" + id);
 
+    ProjectService projectService = new ProjectServiceJpa();
     try {
       authenticate(securityService, authToken, "get project scope",
           UserRole.VIEWER);
 
-      ProjectService projectService = new ProjectServiceJpa();
       ConceptList list =
           projectService
               .findConceptsInScope(projectService.getProject(id), pfs);
@@ -220,9 +229,13 @@ public class ProjectServiceRestImpl extends RootServiceRestImpl implements
       projectService.close();
       return list2;
     } catch (Exception e) {
+      projectService.close();
       handleException(e, "trying to retrieve scope concepts for project " + id);
       return null;
+    } finally {
+      securityService.close();
     }
+
   }
 
   /*
@@ -237,21 +250,25 @@ public class ProjectServiceRestImpl extends RootServiceRestImpl implements
   @ApiOperation(value = "Get project for id", notes = "Gets the project for the specified id.", response = Project.class)
   public Project getProject(
     @ApiParam(value = "Project internal id, e.g. 2", required = true) @PathParam("id") Long id,
-    @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken) {
+    @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken) throws Exception {
     Logger.getLogger(getClass()).info("RESTful call (Project): /id/" + id);
 
+    ProjectService projectService = new ProjectServiceJpa();
     try {
       authenticate(securityService, authToken, "retrieve the project",
           UserRole.VIEWER);
 
-      ProjectService projectService = new ProjectServiceJpa();
       Project project = projectService.getProject(id);
       projectService.close();
       return project;
     } catch (Exception e) {
+      projectService.close();
       handleException(e, "trying to retrieve a project");
       return null;
+    } finally {
+      securityService.close();
     }
+
   }
 
   /*
@@ -265,14 +282,15 @@ public class ProjectServiceRestImpl extends RootServiceRestImpl implements
   @Path("/projects")
   @ApiOperation(value = "Get all projects", notes = "Gets all projects.", response = ProjectList.class)
   public ProjectList getProjects(
-    @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken) {
+    @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken)
+    throws Exception {
     Logger.getLogger(getClass()).info("RESTful call (Project): /projects");
 
+    ProjectService projectService = new ProjectServiceJpa();
     try {
       authenticate(securityService, authToken, "retrieve projects",
           UserRole.VIEWER);
 
-      ProjectService projectService = new ProjectServiceJpa();
       ProjectList projects = projectService.getProjects();
       for (Project project : projects.getObjects()) {
         project.getScopeConcepts().size();
@@ -282,9 +300,13 @@ public class ProjectServiceRestImpl extends RootServiceRestImpl implements
       projectService.close();
       return projects;
     } catch (Exception e) {
+      projectService.close();
       handleException(e, "trying to retrieve the projects");
       return null;
+    } finally {
+      securityService.close();
     }
+
   }
 
 }

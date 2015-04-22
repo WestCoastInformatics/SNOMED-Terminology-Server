@@ -97,11 +97,11 @@ public class HistoryServiceRestImpl extends RootServiceRestImpl implements
     Logger.getLogger(getClass()).info(
         "RESTful call (History): /concept/" + terminology + "/" + date);
 
+    HistoryService historyService = new HistoryServiceJpa();
     try {
       authenticate(securityService, authToken,
           "find the concepts modified since date", UserRole.VIEWER);
 
-      HistoryService historyService = new HistoryServiceJpa();
       ConceptList cl =
           historyService.findConceptsModifiedSinceDate(terminology, (date
               .equals("null") ? null : ConfigUtility.DATE_FORMAT.parse(date)),
@@ -121,6 +121,7 @@ public class HistoryServiceRestImpl extends RootServiceRestImpl implements
       historyService.close();
       return cl;
     } catch (Exception e) {
+      historyService.close();
       handleException(e, "trying to find concepts modified since date");
       return null;
     } finally {
@@ -155,11 +156,11 @@ public class HistoryServiceRestImpl extends RootServiceRestImpl implements
         "RESTful call (History): /concept/revisions/" + id + "/" + startDate
             + "/" + endDate + "/all");
 
+    HistoryService historyService = new HistoryServiceJpa();
     try {
       authenticate(securityService, authToken, "find the concept revisions",
           UserRole.VIEWER);
 
-      HistoryService historyService = new HistoryServiceJpa();
       ConceptList cl =
           historyService.findConceptRevisions(Long.valueOf(id),
               ConfigUtility.DATE_FORMAT.parse(startDate),
@@ -175,6 +176,7 @@ public class HistoryServiceRestImpl extends RootServiceRestImpl implements
       }
       return cl;
     } catch (Exception e) {
+      historyService.close();
       handleException(e, "trying to find the concept revisions");
       return null;
     } finally {
@@ -196,11 +198,11 @@ public class HistoryServiceRestImpl extends RootServiceRestImpl implements
         "RESTful call (History): /concept/revisions/" + id + "/" + release
             + "/release");
 
+    HistoryService historyService = new HistoryServiceJpa();
     try {
       authenticate(securityService, authToken,
           "find the concept release revision", UserRole.VIEWER);
 
-      HistoryService historyService = new HistoryServiceJpa();
       Concept concept =
           historyService.findConceptReleaseRevision(Long.valueOf(id),
               ConfigUtility.DATE_FORMAT.parse(release));
@@ -211,6 +213,7 @@ public class HistoryServiceRestImpl extends RootServiceRestImpl implements
       historyService.getGraphResolutionHandler().resolveEmpty(concept);
       return concept;
     } catch (Exception e) {
+      historyService.close();
       handleException(e, "trying to find the concept release revision");
       return null;
     } finally {
@@ -240,11 +243,11 @@ public class HistoryServiceRestImpl extends RootServiceRestImpl implements
     Logger.getLogger(getClass()).info(
         "RESTful call (History): /description/" + terminology + "/" + date);
 
+    HistoryService historyService = new HistoryServiceJpa();
     try {
       authenticate(securityService, authToken,
           "find the descriptions modified since date", UserRole.VIEWER);
 
-      HistoryService historyService = new HistoryServiceJpa();
       DescriptionList cl =
           historyService.findDescriptionsModifiedSinceDate(terminology,
               ConfigUtility.DATE_FORMAT.parse(date), pfs);
@@ -259,6 +262,7 @@ public class HistoryServiceRestImpl extends RootServiceRestImpl implements
       historyService.close();
       return cl;
     } catch (Exception e) {
+      historyService.close();
       handleException(e, "trying to find descriptions modified since date");
       return null;
     } finally {
@@ -293,11 +297,11 @@ public class HistoryServiceRestImpl extends RootServiceRestImpl implements
         "RESTful call (History): /description/revisions/" + id + "/"
             + startDate + "/" + endDate + "/all");
 
+    HistoryService historyService = new HistoryServiceJpa();
     try {
       authenticate(securityService, authToken,
           "find the description revisions", UserRole.VIEWER);
 
-      HistoryService historyService = new HistoryServiceJpa();
       DescriptionList dl =
           historyService.findDescriptionRevisions(Long.valueOf(id),
               ConfigUtility.DATE_FORMAT.parse(startDate),
@@ -313,6 +317,7 @@ public class HistoryServiceRestImpl extends RootServiceRestImpl implements
       }
       return dl;
     } catch (Exception e) {
+      historyService.close();
       handleException(e, "trying to find the release revisions");
       return null;
     } finally {
@@ -333,22 +338,21 @@ public class HistoryServiceRestImpl extends RootServiceRestImpl implements
     Logger.getLogger(getClass()).info(
         "RESTful call (History): /description/revisions/" + id + "/" + release);
 
+    HistoryService historyService = new HistoryServiceJpa();
     try {
       authenticate(securityService, authToken,
           "find the description release revision", UserRole.VIEWER);
 
-      HistoryService historyService = new HistoryServiceJpa();
       Description description =
           historyService.findDescriptionReleaseRevision(Long.valueOf(id),
               ConfigUtility.DATE_FORMAT.parse(release));
 
 
-      historyService.close();
-
       // explicitly resolve to just the description element
       historyService.getGraphResolutionHandler().resolveEmpty(description);
       return description;
     } catch (Exception e) {
+      historyService.close();
       handleException(e, "find the description release revision");
       return null;
     } finally {
@@ -378,11 +382,11 @@ public class HistoryServiceRestImpl extends RootServiceRestImpl implements
     Logger.getLogger(getClass()).info(
         "RESTful call (History): /relationship/" + terminology + "/" + date);
 
+    HistoryService historyService = new HistoryServiceJpa();
     try {
       authenticate(securityService, authToken,
           "find the relationships modified since date", UserRole.VIEWER);
 
-      HistoryService historyService = new HistoryServiceJpa();
       RelationshipList cl =
           historyService.findRelationshipsModifiedSinceDate(terminology,
               ConfigUtility.DATE_FORMAT.parse(date), pfs);
@@ -397,6 +401,7 @@ public class HistoryServiceRestImpl extends RootServiceRestImpl implements
       historyService.close();
       return cl;
     } catch (Exception e) {
+      historyService.close();
       handleException(e, "trying to find relationships modified since date");
       return null;
     } finally {
@@ -431,11 +436,11 @@ public class HistoryServiceRestImpl extends RootServiceRestImpl implements
         "RESTful call (History): /relationship/revisions/" + id + "/"
             + startDate + "/" + endDate + "/all");
 
+    HistoryService historyService = new HistoryServiceJpa();
     try {
       authenticate(securityService, authToken, "find relationship revisions",
           UserRole.VIEWER);
 
-      HistoryService historyService = new HistoryServiceJpa();
       RelationshipList cl =
           historyService.findRelationshipRevisions(Long.valueOf(id),
               ConfigUtility.DATE_FORMAT.parse(startDate),
@@ -445,6 +450,7 @@ public class HistoryServiceRestImpl extends RootServiceRestImpl implements
       historyService.close();
       return cl;
     } catch (Exception e) {
+      historyService.close();
       handleException(e, "trying to find relationship revisions");
       return null;
     } finally {
@@ -467,11 +473,11 @@ public class HistoryServiceRestImpl extends RootServiceRestImpl implements
             "RESTful call (History): /relationship/revisions/" + id + "/"
                 + release);
 
+    HistoryService historyService = new HistoryServiceJpa();
     try {
       authenticate(securityService, authToken,
           "find relationship release revision", UserRole.VIEWER);
 
-      HistoryService historyService = new HistoryServiceJpa();
       Relationship rel =
           historyService.findRelationshipReleaseRevision(Long.valueOf(id),
               ConfigUtility.DATE_FORMAT.parse(release));
@@ -480,6 +486,7 @@ public class HistoryServiceRestImpl extends RootServiceRestImpl implements
       historyService.close();
       return rel;
     } catch (Exception e) {
+      historyService.close();
       handleException(e, "trying to find relationship release revision");
       return null;
     } finally {
@@ -509,11 +516,11 @@ public class HistoryServiceRestImpl extends RootServiceRestImpl implements
     Logger.getLogger(getClass()).info(
         "RESTful call (History): /language/" + terminology + "/" + date);
 
+    HistoryService historyService = new HistoryServiceJpa();
     try {
       authenticate(securityService, authToken,
           "find language refset members modified since date", UserRole.VIEWER);
 
-      HistoryService historyService = new HistoryServiceJpa();
       LanguageRefSetMemberList cl =
           historyService.findLanguageRefSetMembersModifiedSinceDate(
               terminology, ConfigUtility.DATE_FORMAT.parse(date), pfs);
@@ -528,6 +535,7 @@ public class HistoryServiceRestImpl extends RootServiceRestImpl implements
       historyService.close();
       return cl;
     } catch (Exception e) {
+      historyService.close();
       handleException(e,
           "trying to find language refset members modified since date");
       return null;
@@ -563,11 +571,11 @@ public class HistoryServiceRestImpl extends RootServiceRestImpl implements
         "RESTful call (History): /language/revisions/" + id + "/" + startDate
             + "/" + endDate + "/all");
 
+    HistoryService historyService = new HistoryServiceJpa();
     try {
       authenticate(securityService, authToken,
           "find language refset member revisions", UserRole.VIEWER);
 
-      HistoryService historyService = new HistoryServiceJpa();
       LanguageRefSetMemberList cl =
           historyService.findLanguageRefSetMemberRevisions(Long.valueOf(id),
               ConfigUtility.DATE_FORMAT.parse(startDate),
@@ -577,6 +585,7 @@ public class HistoryServiceRestImpl extends RootServiceRestImpl implements
       historyService.close();
       return cl;
     } catch (Exception e) {
+      historyService.close();
       handleException(e, "find language refset member revisions");
       return null;
     } finally {
@@ -605,11 +614,11 @@ public class HistoryServiceRestImpl extends RootServiceRestImpl implements
     Logger.getLogger(getClass()).info(
         "RESTful call (History): /language/revisions/" + id + "/" + release);
 
+    HistoryService historyService = new HistoryServiceJpa();
     try {
       authenticate(securityService, authToken,
           "find language refset member release revision", UserRole.VIEWER);
 
-      HistoryService historyService = new HistoryServiceJpa();
       LanguageRefSetMember member =
           historyService.findLanguageRefSetMemberReleaseRevision(
               Long.valueOf(id), ConfigUtility.DATE_FORMAT.parse(release));
@@ -618,6 +627,7 @@ public class HistoryServiceRestImpl extends RootServiceRestImpl implements
       historyService.close();
       return member;
     } catch (Exception e) {
+      historyService.close();
       handleException(e, "find language refset member release revision");
       return null;
     } finally {
@@ -648,11 +658,11 @@ public class HistoryServiceRestImpl extends RootServiceRestImpl implements
         "RESTful call (History): /concept/" + terminology + "/" + date
             + "/deep");
 
+    HistoryService historyService = new HistoryServiceJpa();
     try {
       authenticate(securityService, authToken,
           "find deep modified concepts since date", UserRole.VIEWER);
 
-      HistoryService historyService = new HistoryServiceJpa();
       ConceptList cl =
           historyService.findConceptsDeepModifiedSinceDate(terminology, (date
               .equals("null") ? null : ConfigUtility.DATE_FORMAT.parse(date)),
@@ -661,6 +671,7 @@ public class HistoryServiceRestImpl extends RootServiceRestImpl implements
       historyService.close();
       return cl;
     } catch (Exception e) {
+      historyService.close();
       handleException(e, "trying to find concepts deep modified since date");
       return null;
     } finally {
@@ -686,16 +697,17 @@ public class HistoryServiceRestImpl extends RootServiceRestImpl implements
     Logger.getLogger(getClass()).info(
         "RESTful call (History): /release/history/");
 
+    HistoryService historyService = new HistoryServiceJpa();
     try {
       authenticate(securityService, authToken, "get release history",
           UserRole.VIEWER);
 
-      HistoryService historyService = new HistoryServiceJpa();
       ReleaseInfoList result = historyService.getReleaseHistory(terminology);
       historyService.close();
       return result;
 
     } catch (Exception e) {
+      historyService.close();
       handleException(e, "trying to get release history");
       return null;
     } finally {
@@ -721,16 +733,17 @@ public class HistoryServiceRestImpl extends RootServiceRestImpl implements
     Logger.getLogger(getClass()).info(
         "RESTful call (History): /release/current/");
 
+    HistoryService historyService = new HistoryServiceJpa();
     try {
       authenticate(securityService, authToken, "get current release info",
           UserRole.VIEWER);
 
-      HistoryService historyService = new HistoryServiceJpa();
       ReleaseInfo result = historyService.getCurrentReleaseInfo(terminology);
       historyService.close();
       return result;
 
     } catch (Exception e) {
+      historyService.close();
       handleException(e, "trying to get current release info");
       return null;
     } finally {
@@ -756,16 +769,17 @@ public class HistoryServiceRestImpl extends RootServiceRestImpl implements
     Logger.getLogger(getClass()).info(
         "RESTful call (History): /release/previous/");
 
+    HistoryService historyService = new HistoryServiceJpa();
     try {
       authenticate(securityService, authToken, "get previous release info",
           UserRole.VIEWER);
 
-      HistoryService historyService = new HistoryServiceJpa();
       ReleaseInfo result = historyService.getPreviousReleaseInfo(terminology);
       historyService.close();
       return result;
 
     } catch (Exception e) {
+      historyService.close();
       handleException(e, "trying to get previous release info");
       return null;
     } finally {
@@ -784,16 +798,16 @@ public class HistoryServiceRestImpl extends RootServiceRestImpl implements
     Logger.getLogger(getClass()).info(
         "RESTful call (History): /release/planned/");
 
+    HistoryService historyService = new HistoryServiceJpa();
     try {
       authenticate(securityService, authToken, "get planned release info",
           UserRole.VIEWER);
 
-      HistoryService historyService = new HistoryServiceJpa();
       ReleaseInfo result = historyService.getPlannedReleaseInfo(terminology);
-      historyService.close();
       return result;
 
     } catch (Exception e) {
+      historyService.close();
       handleException(e, "trying to get planned release info");
       return null;
     } finally {
@@ -820,16 +834,16 @@ public class HistoryServiceRestImpl extends RootServiceRestImpl implements
     Logger.getLogger(getClass()).info(
         "RESTful call (History): /release/" + name);
 
+    HistoryService historyService = new HistoryServiceJpa();
     try {
       authenticate(securityService, authToken, "get release info for " + name,
           UserRole.VIEWER);
 
-      HistoryService historyService = new HistoryServiceJpa();
       ReleaseInfo result = historyService.getReleaseInfo(terminology, name);
-      historyService.close();
       return result;
 
     } catch (Exception e) {
+      historyService.close();
       handleException(e, "trying to get release info for " + name);
       return null;
     } finally {
@@ -855,11 +869,11 @@ public class HistoryServiceRestImpl extends RootServiceRestImpl implements
     Logger.getLogger(getClass()).info(
         "RESTful call (History): /release/add " + releaseInfo.getName());
 
+    HistoryService historyService = new HistoryServiceJpa();
     try {
       authenticate(securityService, authToken, "add release info",
           UserRole.ADMINISTRATOR);
 
-      HistoryService historyService = new HistoryServiceJpa();
       releaseInfo.setLastModifiedBy(securityService
           .getUsernameForToken(authToken));
       ReleaseInfo result = historyService.addReleaseInfo(releaseInfo);
@@ -867,6 +881,7 @@ public class HistoryServiceRestImpl extends RootServiceRestImpl implements
       return result;
 
     } catch (Exception e) {
+      historyService.close();
       handleException(e, "trying to add release info");
       return null;
     } finally {
@@ -892,16 +907,17 @@ public class HistoryServiceRestImpl extends RootServiceRestImpl implements
     Logger.getLogger(getClass()).info(
         "RESTful call (History): /release/update " + releaseInfo.getName());
 
+    HistoryService historyService = new HistoryServiceJpa();
     try {
       authenticate(securityService, authToken, "update release info",
           UserRole.ADMINISTRATOR);
 
-      HistoryService historyService = new HistoryServiceJpa();
       releaseInfo.setLastModifiedBy(securityService
           .getUsernameForToken(authToken));
       historyService.updateReleaseInfo(releaseInfo);
       historyService.close();
     } catch (Exception e) {
+      historyService.close();
       handleException(e, "trying to update release info");
     } finally {
       securityService.close();
@@ -926,14 +942,15 @@ public class HistoryServiceRestImpl extends RootServiceRestImpl implements
     Logger.getLogger(getClass()).info(
         "RESTful call (History): /release/remove/" + id);
 
+    HistoryService historyService = new HistoryServiceJpa();
     try {
       authenticate(securityService, authToken, "remove release info",
           UserRole.ADMINISTRATOR);
 
-      HistoryService historyService = new HistoryServiceJpa();
       historyService.removeReleaseInfo(id);
       historyService.close();
     } catch (Exception e) {
+      historyService.close();
       handleException(e, "trying to remove release info");
     } finally {
       securityService.close();
@@ -960,15 +977,17 @@ public class HistoryServiceRestImpl extends RootServiceRestImpl implements
     Logger.getLogger(getClass()).info(
         "RESTful call (History): /release/startEditingCycle/" + releaseVersion
             + "/" + terminology + "/" + version);
+    StartEditingCycleAlgorithm algorithm =
+        new StartEditingCycleAlgorithm(releaseVersion, terminology, version);
     try {
       authenticate(securityService, authToken, "start editing cycle",
           UserRole.ADMINISTRATOR);
       // Perform operations
-      StartEditingCycleAlgorithm algorithm =
-          new StartEditingCycleAlgorithm(releaseVersion, terminology, version);
       algorithm.setUser(securityService.getUsernameForToken(authToken));
       algorithm.compute();
+      algorithm.close();
     } catch (Exception e) {
+      algorithm.close();
       handleException(e, "start editing cycle");
     } finally {
       securityService.close();
@@ -1015,7 +1034,9 @@ public class HistoryServiceRestImpl extends RootServiceRestImpl implements
               statusSet, saveIdentifiers);
       try {
         algorithm.compute();
+        algorithm.close();
       } catch (LocalException e) {
+        algorithm.close();
         // validation failure
         ValidationResult result = algorithm.getValidationResult();
         Logger.getLogger(getClass()).info("  VALIDATION FAILED");
@@ -1059,17 +1080,18 @@ public class HistoryServiceRestImpl extends RootServiceRestImpl implements
         "RESTful call (History): /release/perform/" + terminology + "/"
             + releaseVersion + "/" + moduleId);
 
+    ReleaseRf2PerformAlgorithm algorithm =
+        new ReleaseRf2PerformAlgorithm(releaseVersion, terminology,
+            outputDir, moduleId);
     try {
       authenticate(securityService, authToken, "perform release",
           UserRole.ADMINISTRATOR);
       // Perform operations
-      ReleaseRf2PerformAlgorithm algorithm =
-          new ReleaseRf2PerformAlgorithm(releaseVersion, terminology,
-              outputDir, moduleId);
       algorithm.compute();
       algorithm.close();
 
     } catch (Exception e) {
+      algorithm.close();
       handleException(e, "start editing cycle");
     } finally {
       securityService.close();
@@ -1095,16 +1117,17 @@ public class HistoryServiceRestImpl extends RootServiceRestImpl implements
     Logger.getLogger(getClass()).info(
         "RESTful call (History): /release/finish/" + terminology);
 
+    ReleaseRf2FinishAlgorithm algorithm =
+        new ReleaseRf2FinishAlgorithm(releaseVersion, terminology);
     try {
       authenticate(securityService, authToken, "perform release",
           UserRole.ADMINISTRATOR);
       // Perform operations
-      ReleaseRf2FinishAlgorithm algorithm =
-          new ReleaseRf2FinishAlgorithm(releaseVersion, terminology);
       algorithm.compute();
       algorithm.close();
 
     } catch (Exception e) {
+      algorithm.close();
       handleException(e, "start editing cycle");
     } finally {
       securityService.close();
