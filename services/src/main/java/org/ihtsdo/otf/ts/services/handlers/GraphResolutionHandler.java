@@ -57,6 +57,7 @@ public interface GraphResolutionHandler extends Configurable {
    * Resolve relationships.
    *
    * @param relationship the relationship
+   * @throws Exception 
    */
   public void resolve(Relationship relationship) throws Exception;
 
@@ -64,6 +65,7 @@ public interface GraphResolutionHandler extends Configurable {
    * Resolve description refset members.
    *
    * @param member the member
+   * @throws Exception 
    */
   public void resolve(DescriptionRefSetMember member) throws Exception;  
 
@@ -71,6 +73,7 @@ public interface GraphResolutionHandler extends Configurable {
    * Resolve concept refset members.
    *
    * @param member the member
+   * @throws Exception 
    */
   public void resolve(ConceptRefSetMember member) throws Exception;  
 }

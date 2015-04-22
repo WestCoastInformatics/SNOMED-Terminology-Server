@@ -40,8 +40,10 @@ public class UserImpl implements User {
     email = user.getEmail();
     applicationRole = user.getApplicationRole();
   }
-  
-  /* (non-Javadoc)
+
+  /*
+   * (non-Javadoc)
+   * 
    * @see org.ihtsdo.otf.ts.User#getUserName()
    */
   @Override
@@ -49,7 +51,9 @@ public class UserImpl implements User {
     return userName;
   }
 
-  /* (non-Javadoc)
+  /*
+   * (non-Javadoc)
+   * 
    * @see org.ihtsdo.otf.ts.User#setUserName(java.lang.String)
    */
   @Override
@@ -57,7 +61,9 @@ public class UserImpl implements User {
     this.userName = username;
   }
 
-  /* (non-Javadoc)
+  /*
+   * (non-Javadoc)
+   * 
    * @see org.ihtsdo.otf.ts.User#getName()
    */
   @Override
@@ -65,7 +71,9 @@ public class UserImpl implements User {
     return name;
   }
 
-  /* (non-Javadoc)
+  /*
+   * (non-Javadoc)
+   * 
    * @see org.ihtsdo.otf.ts.User#setName(java.lang.String)
    */
   @Override
@@ -73,7 +81,9 @@ public class UserImpl implements User {
     this.name = name;
   }
 
-  /* (non-Javadoc)
+  /*
+   * (non-Javadoc)
+   * 
    * @see org.ihtsdo.otf.ts.User#getEmail()
    */
   @Override
@@ -81,7 +91,9 @@ public class UserImpl implements User {
     return email;
   }
 
-  /* (non-Javadoc)
+  /*
+   * (non-Javadoc)
+   * 
    * @see org.ihtsdo.otf.ts.User#setEmail(java.lang.String)
    */
   @Override
@@ -89,7 +101,9 @@ public class UserImpl implements User {
     this.email = email;
   }
 
-  /* (non-Javadoc)
+  /*
+   * (non-Javadoc)
+   * 
    * @see org.ihtsdo.otf.ts.User#getApplicationRole()
    */
   @Override
@@ -97,7 +111,9 @@ public class UserImpl implements User {
     return applicationRole;
   }
 
-  /* (non-Javadoc)
+  /*
+   * (non-Javadoc)
+   * 
    * @see org.ihtsdo.otf.ts.User#setApplicationRole(org.ihtsdo.otf.ts.UserRole)
    */
   @Override
@@ -105,12 +121,24 @@ public class UserImpl implements User {
     this.applicationRole = role;
   }
 
-  /* (non-Javadoc)
+  /*
+   * (non-Javadoc)
+   * 
    * @see org.ihtsdo.otf.ts.User#getId()
    */
   @Override
   public Long getId() {
     return null;
+  }
+
+  /**
+   * Sets the id.
+   *
+   * @param id the id
+   */
+  @Override
+  public void setId(Long id) {
+    // n/a
   }
 
   /*

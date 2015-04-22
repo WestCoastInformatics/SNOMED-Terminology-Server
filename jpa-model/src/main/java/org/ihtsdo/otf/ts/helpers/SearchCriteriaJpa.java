@@ -5,7 +5,6 @@ package org.ihtsdo.otf.ts.helpers;
 
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
-import javax.xml.bind.annotation.XmlID;
 import javax.xml.bind.annotation.XmlRootElement;
 
 /**

@@ -82,7 +82,7 @@ public class SecurityServiceJpa extends RootServiceJpa implements
     // Call the security service
     //
     User authUser = handler.authenticate(username, password);
-    
+
     if (authUser == null)
       return null;
 
@@ -98,7 +98,8 @@ public class SecurityServiceJpa extends RootServiceJpa implements
 
     // if user was found, update to match settings
     if (userFound != null) {
-      Logger.getLogger(getClass()).info("Update user = " + authUser.getUserName());
+      Logger.getLogger(getClass()).info(
+          "Update user = " + authUser.getUserName());
       userFound.setEmail(authUser.getEmail());
       userFound.setName(authUser.getName());
       userFound.setUserName(authUser.getUserName());
@@ -194,18 +195,25 @@ public class SecurityServiceJpa extends RootServiceJpa implements
     String username = getUsernameForToken(parsedToken);
     // check for null username
     if (username == null) {
-      throw new LocalException("Unable to find user for the authoriztaion token");
+      throw new LocalException(
+          "Unable to find user for the authoriztaion token");
     }
     User user = getUser(username.toLowerCase());
     if (user == null) {
       return UserRole.VIEWER;
-      //throw new LocalException("Unable to obtain user information for username = " + username);
+      // throw new
+      // LocalException("Unable to obtain user information for username = " +
+      // username);
     }
     return user.getApplicationRole();
   }
 
-  /* (non-Javadoc)
-   * @see org.ihtsdo.otf.ts.services.SecurityService#getProjectRoleForToken(java.lang.String, java.lang.Long)
+  /*
+   * (non-Javadoc)
+   * 
+   * @see
+   * org.ihtsdo.otf.ts.services.SecurityService#getProjectRoleForToken(java.
+   * lang.String, java.lang.Long)
    */
   @Override
   public UserRole getProjectRoleForToken(String authToken, Long projectId)
@@ -217,15 +225,14 @@ public class SecurityServiceJpa extends RootServiceJpa implements
     if (projectId == null) {
       throw new Exception("Unexpected null project id");
     }
-    
+
     String username = getUsernameForToken(authToken);
     ProjectService service = new ProjectServiceJpa();
-    UserRole result =
-        service.getUserRoleForProject(username, projectId);
+    UserRole result = service.getUserRoleForProject(username, projectId);
     service.close();
     return result;
-  }  
-  
+  }
+
   /*
    * (non-Javadoc)
    * 
@@ -265,6 +272,7 @@ public class SecurityServiceJpa extends RootServiceJpa implements
    */
   @Override
   public User addUser(User user) {
+    Logger.getLogger(getClass()).debug("Security Service - add user " + user);
     if (getTransactionPerOperation()) {
       tx = manager.getTransaction();
       tx.begin();
@@ -276,11 +284,14 @@ public class SecurityServiceJpa extends RootServiceJpa implements
     return user;
   }
 
-  /* (non-Javadoc)
+  /*
+   * (non-Javadoc)
+   * 
    * @see org.ihtsdo.otf.ts.services.SecurityService#removeUser(java.lang.Long)
    */
   @Override
   public void removeUser(Long id) {
+    Logger.getLogger(getClass()).debug("Security Service - remove user " + id);
     tx = manager.getTransaction();
     // retrieve this user
     User mu = manager.find(UserJpa.class, id);
@@ -312,6 +323,8 @@ public class SecurityServiceJpa extends RootServiceJpa implements
    */
   @Override
   public void updateUser(User user) {
+    Logger.getLogger(getClass())
+        .debug("Security Service - update user " + user);
     if (getTransactionPerOperation()) {
       tx = manager.getTransaction();
       tx.begin();
@@ -338,7 +351,5 @@ public class SecurityServiceJpa extends RootServiceJpa implements
     mapUserList.setTotalCount(m.size());
     return mapUserList;
   }
-
-
 
 }

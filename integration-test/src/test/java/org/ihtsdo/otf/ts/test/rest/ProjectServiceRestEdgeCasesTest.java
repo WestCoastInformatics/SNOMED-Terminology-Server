@@ -22,13 +22,11 @@ import org.junit.Test;
  */
 public class ProjectServiceRestEdgeCasesTest extends ProjectServiceRestTest {
 
-
-  /**  The viewer auth token. */
+  /** The viewer auth token. */
   private static String viewerAuthToken;
-  
-  /**  The admin auth token. */
-  private static String adminAuthToken;
 
+  /** The admin auth token. */
+  private static String adminAuthToken;
 
   /**
    * Create test fixtures per test.
@@ -50,54 +48,51 @@ public class ProjectServiceRestEdgeCasesTest extends ProjectServiceRestTest {
    *
    * @throws Exception the exception
    */
+  @SuppressWarnings("static-method")
   @Test
   public void testEdgeCasesRestProject001() throws Exception {
-	    
-	  
-		// Get all projects and choose the first one.
-		ProjectList projectList = projectService.getProjects(adminAuthToken);
-		Assert.assertTrue(projectList.getCount() > 0);
-		ProjectJpa project = (ProjectJpa) projectList.getObjects().get(0);
-		
 
-	    /*Call "update" without any changes
-	        TEST: get that project back from the server and it should be equals*/
-		projectService.updateProject(project, adminAuthToken);
-		ProjectJpa returnedProject = (ProjectJpa)projectService.getProject(project.getId(), adminAuthToken);
-		Assert.assertEquals(returnedProject, project);
-		
-		// Here, add new project from scratch
-	    ProjectJpa project2 = new ProjectJpa();
-	    Set<String> values = new HashSet<>();
-	    values.add("PUBLISHED");
-	    project2.setActionWorkflowStatusValues(values);
-	    User user = securityService.getUser(adminUser, adminAuthToken);
-	    project2.addAdministrator(user);
-	    project2.addAuthor(user);
-	    project2.addLead(user);
-	    project2.addScopeConcept("12345");
-	    project2.addScopeExcludesConcept("12345");
-	    project2.setDescription("Sample");
-	    project2.setModuleId("12345");
-	    project2.setName("Sample");
-	    project2.setTerminology("SNOMEDCT");
-	    project2.setTerminologyVersion("latest");
+    // Get all projects and choose the first one.
+    ProjectList projectList = projectService.getProjects(adminAuthToken);
+    Assert.assertTrue(projectList.getCount() > 0);
+    ProjectJpa project = (ProjectJpa) projectList.getObjects().get(0);
 
-	    project2 =
-	        (ProjectJpa) projectService.addProject(project2, adminAuthToken);
-		
-		
-		// Call remove project with the id of the new project.
-		projectService.removeProject(project2.getId(), adminAuthToken);
-		
-		// Call remove project again with the same id
-		//   TEST: no exception, simply doesn't do anything.
-		projectService.removeProject(project2.getId(), adminAuthToken);
-		
+    /*
+     * Call "update" without any changes TEST: get that project back from the
+     * server and it should be equals
+     */
+    projectService.updateProject(project, adminAuthToken);
+    ProjectJpa returnedProject =
+        (ProjectJpa) projectService.getProject(project.getId(), adminAuthToken);
+    Assert.assertEquals(returnedProject, project);
+
+    // Here, add new project from scratch
+    ProjectJpa project2 = new ProjectJpa();
+    Set<String> values = new HashSet<>();
+    values.add("PUBLISHED");
+    project2.setActionWorkflowStatusValues(values);
+    User user = securityService.getUser(adminUser, adminAuthToken);
+    project2.addAdministrator(user);
+    project2.addAuthor(user);
+    project2.addLead(user);
+    project2.addScopeConcept("12345");
+    project2.addScopeExcludesConcept("12345");
+    project2.setDescription("Sample");
+    project2.setModuleId("12345");
+    project2.setName("Sample");
+    project2.setTerminology("SNOMEDCT");
+    project2.setTerminologyVersion("latest");
+
+    project2 = (ProjectJpa) projectService.addProject(project2, adminAuthToken);
+
+    // Call remove project with the id of the new project.
+    projectService.removeProject(project2.getId(), adminAuthToken);
+
+    // Call remove project again with the same id
+    // TEST: no exception, simply doesn't do anything.
+    projectService.removeProject(project2.getId(), adminAuthToken);
+
   }
-
-
-
 
   /**
    * Teardown.

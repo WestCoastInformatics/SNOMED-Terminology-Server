@@ -34,6 +34,7 @@ import org.junit.Test;
 public class SecurityServiceRestDegenerateUseTest extends
     SecurityServiceRestTest {
 
+  /**  The auth token. */
   String authToken = null;
 
   /**
@@ -41,7 +42,6 @@ public class SecurityServiceRestDegenerateUseTest extends
    *
    * @throws Exception the exception
    */
-  @SuppressWarnings("static-method")
   @Before
   public void setup() throws Exception {
 
@@ -201,6 +201,7 @@ public class SecurityServiceRestDegenerateUseTest extends
     user = service.addUser((UserJpa) user, authToken);
     try {
       // set the id to null and update
+      user.setId(null);
       service.updateUser((UserJpa) user, authToken);
 
       fail("Updating user with null hibernate id did not throw expected exception");
