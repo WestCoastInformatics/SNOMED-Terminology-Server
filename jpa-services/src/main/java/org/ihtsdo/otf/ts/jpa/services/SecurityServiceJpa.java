@@ -273,14 +273,22 @@ public class SecurityServiceJpa extends RootServiceJpa implements
   @Override
   public User addUser(User user) {
     Logger.getLogger(getClass()).debug("Security Service - add user " + user);
-    if (getTransactionPerOperation()) {
-      tx = manager.getTransaction();
-      tx.begin();
-      manager.persist(user);
-      tx.commit();
-    } else {
-      manager.persist(user);
+    try {
+      if (getTransactionPerOperation()) {
+        tx = manager.getTransaction();
+        tx.begin();
+        manager.persist(user);
+        tx.commit();
+      } else {
+        manager.persist(user);
+      }
+    } catch (Exception e) {
+      if (tx.isActive()) {
+        tx.rollback();
+      }
+      throw e;
     }
+
     return user;
   }
 
@@ -295,21 +303,28 @@ public class SecurityServiceJpa extends RootServiceJpa implements
     tx = manager.getTransaction();
     // retrieve this user
     User mu = manager.find(UserJpa.class, id);
-    if (getTransactionPerOperation()) {
-      tx.begin();
-      if (manager.contains(mu)) {
-        manager.remove(mu);
-      } else {
-        manager.remove(manager.merge(mu));
-      }
-      tx.commit();
+    try {
+      if (getTransactionPerOperation()) {
+        tx.begin();
+        if (manager.contains(mu)) {
+          manager.remove(mu);
+        } else {
+          manager.remove(manager.merge(mu));
+        }
+        tx.commit();
 
-    } else {
-      if (manager.contains(mu)) {
-        manager.remove(mu);
       } else {
-        manager.remove(manager.merge(mu));
+        if (manager.contains(mu)) {
+          manager.remove(mu);
+        } else {
+          manager.remove(manager.merge(mu));
+        }
       }
+    } catch (Exception e) {
+      if (tx.isActive()) {
+        tx.rollback();
+      }
+      throw e;
     }
 
   }
@@ -325,13 +340,20 @@ public class SecurityServiceJpa extends RootServiceJpa implements
   public void updateUser(User user) {
     Logger.getLogger(getClass())
         .debug("Security Service - update user " + user);
-    if (getTransactionPerOperation()) {
-      tx = manager.getTransaction();
-      tx.begin();
-      manager.merge(user);
-      tx.commit();
-    } else {
-      manager.merge(user);
+    try {
+      if (getTransactionPerOperation()) {
+        tx = manager.getTransaction();
+        tx.begin();
+        manager.merge(user);
+        tx.commit();
+      } else {
+        manager.merge(user);
+      }
+    } catch (Exception e) {
+      if (tx.isActive()) {
+        tx.rollback();
+      }
+      throw e;
     }
   }
 

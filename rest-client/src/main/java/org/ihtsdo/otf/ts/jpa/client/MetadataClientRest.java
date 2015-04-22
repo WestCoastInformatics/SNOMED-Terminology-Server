@@ -41,6 +41,8 @@ public class MetadataClientRest implements MetadataServiceRest {
   @Override
   public KeyValuePairLists getAllMetadata(String terminology, String version,
     String authToken) throws Exception {
+    Logger.getLogger(getClass()).debug(
+        "Metadata Client - get all metadata " + terminology + ", " + version);
     Client client = Client.create();
     WebResource resource =
         client.resource(config.getProperty("base.url")
@@ -72,6 +74,7 @@ public class MetadataClientRest implements MetadataServiceRest {
   @Override
   public KeyValuePairList getAllTerminologiesLatestVersions(String authToken)
     throws Exception {
+    Logger.getLogger(getClass()).debug("Metadata Client - get all terminologies latest vesrions");
     Client client = Client.create();
     WebResource resource =
         client.resource(config.getProperty("base.url")
@@ -104,6 +107,7 @@ public class MetadataClientRest implements MetadataServiceRest {
   @Override
   public KeyValuePairLists getAllTerminologiesVersions(String authToken)
     throws Exception {
+    Logger.getLogger(getClass()).debug("Metadata Client - get all terminologies vesrions");
     Client client = Client.create();
     WebResource resource =
         client.resource(config.getProperty("base.url")

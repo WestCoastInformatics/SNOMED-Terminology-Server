@@ -10,6 +10,10 @@ import org.ihtsdo.otf.ts.UserRole;
  * Local implementation of {@link User}.
  */
 public class UserImpl implements User {
+
+  /** The id. */
+  private Long id;
+
   /** The user name. */
   private String userName;
 
@@ -128,7 +132,7 @@ public class UserImpl implements User {
    */
   @Override
   public Long getId() {
-    return null;
+    return id;
   }
 
   /**
@@ -138,7 +142,7 @@ public class UserImpl implements User {
    */
   @Override
   public void setId(Long id) {
-    // n/a
+    this.id = id;
   }
 
   /*

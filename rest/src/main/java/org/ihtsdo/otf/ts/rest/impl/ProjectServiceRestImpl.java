@@ -64,7 +64,7 @@ public class ProjectServiceRestImpl extends RootServiceRestImpl implements
    * (non-Javadoc)
    * 
    * @see
-   * org.ihtsdo.otf.ts.rest.ContentServiceRest#addProject(org.ihtsdo.otf.ts.
+   * org.ihtsdo.otf.ts.rest.ProjectServiceRest#addProject(org.ihtsdo.otf.ts.
    * jpa.ProjectJpa, java.lang.String)
    */
   @Override
@@ -76,7 +76,7 @@ public class ProjectServiceRestImpl extends RootServiceRestImpl implements
     @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken)
     throws Exception {
     Logger.getLogger(getClass()).info(
-        "RESTful call PUT (ContentChange): /add " + project);
+        "RESTful call PUT (Project): /add " + project);
 
     try {
       authenticate(securityService, authToken, "add project",
@@ -122,7 +122,7 @@ public class ProjectServiceRestImpl extends RootServiceRestImpl implements
     @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken)
     throws Exception {
     Logger.getLogger(getClass()).info(
-        "RESTful call PUT (ContentChange): /update " + project);
+        "RESTful call PUT (Project): /update " + project);
 
     try {
       authenticate(securityService, authToken, "update project",
@@ -163,13 +163,13 @@ public class ProjectServiceRestImpl extends RootServiceRestImpl implements
   @Override
   @DELETE
   @Path("/remove/id/{id}")
-  @ApiOperation(value = "Delete project", notes = "Deletes the project with the specified id.")
+  @ApiOperation(value = "Remove project", notes = "Removes the project with the specified id.")
   public void removeProject(
     @ApiParam(value = "Project id, e.g. 3", required = true) @PathParam("id") Long id,
     @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken)
     throws Exception {
     Logger.getLogger(getClass()).info(
-        "RESTful call PUT (ContentChange): /remove/id/" + id);
+        "RESTful call DELETE (Project): /remove/id/" + id);
 
     try {
       authenticate(securityService, authToken, "remove project",
@@ -189,8 +189,8 @@ public class ProjectServiceRestImpl extends RootServiceRestImpl implements
    * (non-Javadoc)
    * 
    * @see
-   * org.ihtsdo.otf.ts.rest.ContentServiceRest#getConceptsInScope(java.lang.
-   * Long, java.lang.String)
+   * org.ihtsdo.otf.ts.rest.ProjectServiceRest#findConceptsInScope(java.lang
+   * .Long, org.ihtsdo.otf.ts.helpers.PfsParameterJpa, java.lang.String)
    */
   @Override
   @POST
@@ -201,7 +201,7 @@ public class ProjectServiceRestImpl extends RootServiceRestImpl implements
     @ApiParam(value = "PFS Parameter, e.g. '{ \"startIndex\":\"1\", \"maxResults\":\"5\" }'", required = false) PfsParameterJpa pfs,
     @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken) {
 
-    Logger.getLogger(getClass()).info("RESTful call (Content): scope/id/" + id);
+    Logger.getLogger(getClass()).info("RESTful call (Project): scope/id/" + id);
 
     try {
       authenticate(securityService, authToken, "get project scope",
@@ -228,7 +228,7 @@ public class ProjectServiceRestImpl extends RootServiceRestImpl implements
   /*
    * (non-Javadoc)
    * 
-   * @see org.ihtsdo.otf.ts.rest.ContentServiceRest#getProject(java.lang.Long,
+   * @see org.ihtsdo.otf.ts.rest.ProjectServiceRest#getProject(java.lang.Long,
    * java.lang.String)
    */
   @Override
@@ -238,7 +238,7 @@ public class ProjectServiceRestImpl extends RootServiceRestImpl implements
   public Project getProject(
     @ApiParam(value = "Project internal id, e.g. 2", required = true) @PathParam("id") Long id,
     @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken) {
-    Logger.getLogger(getClass()).info("RESTful call (Content): /id/" + id);
+    Logger.getLogger(getClass()).info("RESTful call (Project): /id/" + id);
 
     try {
       authenticate(securityService, authToken, "retrieve the project",
@@ -258,7 +258,7 @@ public class ProjectServiceRestImpl extends RootServiceRestImpl implements
    * (non-Javadoc)
    * 
    * @see
-   * org.ihtsdo.otf.ts.rest.ContentServiceRest#getProjects(java.lang.String)
+   * org.ihtsdo.otf.ts.rest.ProjectServiceRest#getProjects(java.lang.String)
    */
   @Override
   @GET
@@ -266,7 +266,7 @@ public class ProjectServiceRestImpl extends RootServiceRestImpl implements
   @ApiOperation(value = "Get all projects", notes = "Gets all projects.", response = ProjectList.class)
   public ProjectList getProjects(
     @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken) {
-    Logger.getLogger(getClass()).info("RESTful call (Content): /projects");
+    Logger.getLogger(getClass()).info("RESTful call (Project): /projects");
 
     try {
       authenticate(securityService, authToken, "retrieve projects",

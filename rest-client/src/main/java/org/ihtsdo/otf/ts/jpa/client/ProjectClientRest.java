@@ -50,6 +50,8 @@ public class ProjectClientRest implements ProjectServiceRest {
   @Override
   public Project addProject(ProjectJpa project, String authToken)
     throws Exception {
+    Logger.getLogger(getClass()).debug(
+        "Project Client - add project " + project.getName());
     Client client = Client.create();
     WebResource resource =
         client.resource(config.getProperty("base.url") + "/project/add");
@@ -89,6 +91,8 @@ public class ProjectClientRest implements ProjectServiceRest {
   @Override
   public void updateProject(ProjectJpa project, String authToken)
     throws Exception {
+    Logger.getLogger(getClass()).debug(
+        "Project Client - update project " + project.getName());
     Client client = Client.create();
     WebResource resource =
         client.resource(config.getProperty("base.url") + "/project/update");
@@ -119,13 +123,14 @@ public class ProjectClientRest implements ProjectServiceRest {
    */
   @Override
   public void removeProject(Long id, String authToken) throws Exception {
+    Logger.getLogger(getClass()).debug("Project Client - remove project " + id);
     Client client = Client.create();
     WebResource resource =
         client.resource(config.getProperty("base.url") + "/project/remove/id/"
             + id);
-    
+
     if (id == null)
-    	return;
+      return;
 
     ClientResponse response =
         resource.accept(MediaType.APPLICATION_XML)
@@ -150,6 +155,8 @@ public class ProjectClientRest implements ProjectServiceRest {
   @Override
   public ConceptList findConceptsInScope(Long projectId, PfsParameterJpa pfs,
     String authToken) throws Exception {
+    Logger.getLogger(getClass()).debug(
+        "Project Client - find concepts in scope " + projectId + ", " + pfs);
     Client client = Client.create();
     WebResource resource =
         client.resource(config.getProperty("base.url") + "/project/scope/id/"
@@ -186,6 +193,7 @@ public class ProjectClientRest implements ProjectServiceRest {
    */
   @Override
   public Project getProject(Long id, String authToken) throws Exception {
+    Logger.getLogger(getClass()).debug("Project Client - get project" + id);
     Client client = Client.create();
     WebResource resource =
         client.resource(config.getProperty("base.url") + "/project/id/" + id);
@@ -215,6 +223,7 @@ public class ProjectClientRest implements ProjectServiceRest {
    */
   @Override
   public ProjectList getProjects(String authToken) throws Exception {
+    Logger.getLogger(getClass()).debug("Project Client - get projects");
     Client client = Client.create();
     WebResource resource =
         client.resource(config.getProperty("base.url") + "/project/projects");

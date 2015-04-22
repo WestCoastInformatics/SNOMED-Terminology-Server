@@ -13,6 +13,7 @@ import java.util.Comparator;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.apache.log4j.Logger;
 import org.ihtsdo.otf.ts.Project;
 import org.ihtsdo.otf.ts.User;
 import org.ihtsdo.otf.ts.helpers.ConceptList;
@@ -55,11 +56,11 @@ public class ProjectServiceRestNormalUseTest extends ProjectServiceRestTest {
    *
    * @throws Exception the exception
    */
-  @SuppressWarnings("static-method")
   @Test
   public void testNormalUseRestProject001() throws Exception {
 
     // Add a project
+    Logger.getLogger(getClass()).info("  Add project");
     ProjectJpa project = new ProjectJpa();
     Set<String> values = new HashSet<>();
     values.add("PUBLISHED");
@@ -83,6 +84,7 @@ public class ProjectServiceRestNormalUseTest extends ProjectServiceRestTest {
     Assert.assertEquals(project, project2);
 
     // Update that newly added project
+    Logger.getLogger(getClass()).info("  Update project");
     project2.setName("Sample 2");
     projectService.updateProject(project2, adminAuthToken);
     Project project3 =
@@ -92,6 +94,7 @@ public class ProjectServiceRestNormalUseTest extends ProjectServiceRestTest {
     Assert.assertEquals(project2, project3);
 
     // Remove the project
+    Logger.getLogger(getClass()).info("  Remove project");
     projectService.removeProject(project2.getId(), adminAuthToken);
 
     // TEST: verify that it is removed (call should return null)
@@ -108,10 +111,10 @@ public class ProjectServiceRestNormalUseTest extends ProjectServiceRestTest {
    *
    * @throws Exception the exception
    */
-  @SuppressWarnings("static-method")
   @Test
   public void testNormalUseRestProject002() throws Exception {
     // Add a project
+    Logger.getLogger(getClass()).info("  Add project");
     ProjectJpa project = new ProjectJpa();
     Set<String> values = new HashSet<>();
     values.add("PUBLISHED");
@@ -131,22 +134,26 @@ public class ProjectServiceRestNormalUseTest extends ProjectServiceRestTest {
     project = (ProjectJpa) projectService.addProject(project, adminAuthToken);
 
     // Add a second project
+    Logger.getLogger(getClass()).info("  Add second project");
     project2.setName("Sample 2");
     project2.setDescription("Sample 2");
     project2 = (ProjectJpa) projectService.addProject(project2, adminAuthToken);
 
     // Get the projects
+    Logger.getLogger(getClass()).info("  Get the projects");
     ProjectList projectList = projectService.getProjects(adminAuthToken);
     int projectCount = projectList.getCount();
     Assert.assertTrue(projectList.contains(project));
     Assert.assertTrue(projectList.contains(project2));
 
     // remove first project
+    Logger.getLogger(getClass()).info("  Remove first project");
     projectService.removeProject(project.getId(), adminAuthToken);
     projectList = projectService.getProjects(adminAuthToken);
     Assert.assertEquals(projectCount - 1, projectList.getCount());
 
     // remove second project
+    Logger.getLogger(getClass()).info("  Remove second project");
     projectService.removeProject(project2.getId(), adminAuthToken);
     projectList = projectService.getProjects(adminAuthToken);
     Assert.assertEquals(projectCount - 2, projectList.getCount());
@@ -158,10 +165,10 @@ public class ProjectServiceRestNormalUseTest extends ProjectServiceRestTest {
    *
    * @throws Exception the exception
    */
-  @SuppressWarnings("static-method")
   @Test
   public void testNormalUseRestProject003() throws Exception {
     // Get the projects
+    Logger.getLogger(getClass()).info("  Get projects");
     ProjectList projectList = projectService.getProjects(viewerAuthToken);
     Assert.assertEquals(1, projectList.getCount());
     Assert.assertEquals("Sample Project", projectList.getObjects().get(0)
@@ -173,6 +180,7 @@ public class ProjectServiceRestNormalUseTest extends ProjectServiceRestTest {
     Assert.assertEquals("138875005", scopeConcepts.toArray()[0]);
 
     // Call findConceptsInScope() pfs gets first 10
+    Logger.getLogger(getClass()).info("  find concepts in scope (first 10)");
     PfsParameterJpa pfs = new PfsParameterJpa();
     pfs.setStartIndex(0);
     pfs.setMaxResults(10);

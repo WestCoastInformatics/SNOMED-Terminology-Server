@@ -65,13 +65,16 @@ public class HistoryClientRest implements HistoryServiceRest {
   @Override
   public ConceptList findConceptsModifiedSinceDate(String terminology,
     String date, PfsParameterJpa pfs, String authToken) throws Exception {
+    Logger.getLogger(getClass()).debug(
+        "History Client - find concepts modified since date " + terminology
+            + ", " + date + ", " + pfs);
     Client client = Client.create();
     WebResource resource =
         client.resource(config.getProperty("base.url") + "/history/concept/"
             + terminology + "/" + date);
     String pfsString =
-        ConfigUtility.getStringForGraph(pfs == null
-        ? new PfsParameterJpa() : pfs);
+        ConfigUtility.getStringForGraph(pfs == null ? new PfsParameterJpa()
+            : pfs);
     Logger.getLogger(this.getClass()).debug(pfsString);
     ClientResponse response =
         resource.accept(MediaType.APPLICATION_XML)
@@ -107,6 +110,9 @@ public class HistoryClientRest implements HistoryServiceRest {
   @Override
   public ConceptList findConceptRevisions(String id, String startDate,
     String endDate, PfsParameterJpa pfs, String authToken) throws Exception {
+    Logger.getLogger(getClass()).debug(
+        "History Client - find concept revisions " + id + ", " + startDate
+            + ", " + endDate + ", " + pfs);
     Client client = Client.create();
     WebResource resource =
         client.resource(config.getProperty("base.url")
@@ -114,8 +120,8 @@ public class HistoryClientRest implements HistoryServiceRest {
             + endDate + "/all");
 
     String pfsString =
-        ConfigUtility.getStringForGraph(pfs == null
-        ? new PfsParameterJpa() : pfs);
+        ConfigUtility.getStringForGraph(pfs == null ? new PfsParameterJpa()
+            : pfs);
     Logger.getLogger(this.getClass()).debug(pfsString);
     ClientResponse response =
         resource.accept(MediaType.APPLICATION_XML)
@@ -185,13 +191,16 @@ public class HistoryClientRest implements HistoryServiceRest {
   @Override
   public DescriptionList findDescriptionsModifiedSinceDate(String terminology,
     String date, PfsParameterJpa pfs, String authToken) throws Exception {
+    Logger.getLogger(getClass()).debug(
+        "History Client - find descriptions modified since date " + terminology
+            + ", " + date + ", " + pfs);
     Client client = Client.create();
     WebResource resource =
         client.resource(config.getProperty("base.url")
             + "/history/description/" + terminology + "/" + date);
     String pfsString =
-        ConfigUtility.getStringForGraph(pfs == null
-        ? new PfsParameterJpa() : pfs);
+        ConfigUtility.getStringForGraph(pfs == null ? new PfsParameterJpa()
+            : pfs);
     Logger.getLogger(this.getClass()).debug(pfsString);
     ClientResponse response =
         resource.accept(MediaType.APPLICATION_XML)
@@ -227,14 +236,17 @@ public class HistoryClientRest implements HistoryServiceRest {
   public DescriptionList findDescriptionRevisions(String id, String startDate,
     String endDate, PfsParameterJpa pfs, String authToken) throws Exception {
     Client client = Client.create();
+    Logger.getLogger(getClass()).debug(
+        "History Client - find description revisions " + id + ", " + startDate
+            + ", " + endDate + ", " + pfs);
     WebResource resource =
         client.resource(config.getProperty("base.url")
             + "/history/description/revisions/" + id + "/" + startDate + "/"
             + endDate + "/all");
 
     String pfsString =
-        ConfigUtility.getStringForGraph(pfs == null
-        ? new PfsParameterJpa() : pfs);
+        ConfigUtility.getStringForGraph(pfs == null ? new PfsParameterJpa()
+            : pfs);
     Logger.getLogger(this.getClass()).debug(pfsString);
     ClientResponse response =
         resource.accept(MediaType.APPLICATION_XML)
@@ -305,13 +317,16 @@ public class HistoryClientRest implements HistoryServiceRest {
   public RelationshipList findRelationshipsModifiedSinceDate(
     String terminology, String date, PfsParameterJpa pfs, String authToken)
     throws Exception {
+    Logger.getLogger(getClass()).debug(
+        "History Client - find relationships modified since date "
+            + terminology + ", " + date + ", " + pfs);
     Client client = Client.create();
     WebResource resource =
         client.resource(config.getProperty("base.url")
             + "/history/relationship/" + terminology + "/" + date);
     String pfsString =
-        ConfigUtility.getStringForGraph(pfs == null
-        ? new PfsParameterJpa() : pfs);
+        ConfigUtility.getStringForGraph(pfs == null ? new PfsParameterJpa()
+            : pfs);
     Logger.getLogger(this.getClass()).debug(pfsString);
     ClientResponse response =
         resource.accept(MediaType.APPLICATION_XML)
@@ -347,6 +362,9 @@ public class HistoryClientRest implements HistoryServiceRest {
   public RelationshipList findRelationshipRevisions(String id,
     String startDate, String endDate, PfsParameterJpa pfs, String authToken)
     throws Exception {
+    Logger.getLogger(getClass()).debug(
+        "History Client - find relationship revisions " + id + ", " + startDate
+            + ", " + endDate + ", " + pfs);
     Client client = Client.create();
     WebResource resource =
         client.resource(config.getProperty("base.url")
@@ -354,8 +372,8 @@ public class HistoryClientRest implements HistoryServiceRest {
             + endDate + "/all");
 
     String pfsString =
-        ConfigUtility.getStringForGraph(pfs == null
-        ? new PfsParameterJpa() : pfs);
+        ConfigUtility.getStringForGraph(pfs == null ? new PfsParameterJpa()
+            : pfs);
     Logger.getLogger(this.getClass()).debug(pfsString);
     ClientResponse response =
         resource.accept(MediaType.APPLICATION_XML)
@@ -426,13 +444,17 @@ public class HistoryClientRest implements HistoryServiceRest {
   public LanguageRefSetMemberList findLanguageRefSetMembersModifiedSinceDate(
     String terminology, String date, PfsParameterJpa pfs, String authToken)
     throws Exception {
+    Logger.getLogger(getClass()).debug(
+        "History Client - find language members modified since date "
+            + terminology + ", " + date + ", " + pfs);
+
     Client client = Client.create();
     WebResource resource =
         client.resource(config.getProperty("base.url") + "/history/language/"
             + terminology + "/" + date);
     String pfsString =
-        ConfigUtility.getStringForGraph(pfs == null
-        ? new PfsParameterJpa() : pfs);
+        ConfigUtility.getStringForGraph(pfs == null ? new PfsParameterJpa()
+            : pfs);
     Logger.getLogger(this.getClass()).debug(pfsString);
     ClientResponse response =
         resource.accept(MediaType.APPLICATION_XML)
@@ -468,6 +490,9 @@ public class HistoryClientRest implements HistoryServiceRest {
   public LanguageRefSetMemberList findLanguageRefSetMemberRevisions(String id,
     String startDate, String endDate, PfsParameterJpa pfs, String authToken)
     throws Exception {
+    Logger.getLogger(getClass()).debug(
+        "History Client - find language member revisions " + id + ", "
+            + startDate + ", " + endDate + ", " + pfs);
     Client client = Client.create();
     WebResource resource =
         client.resource(config.getProperty("base.url")
@@ -475,8 +500,8 @@ public class HistoryClientRest implements HistoryServiceRest {
             + endDate + "/all");
 
     String pfsString =
-        ConfigUtility.getStringForGraph(pfs == null
-        ? new PfsParameterJpa() : pfs);
+        ConfigUtility.getStringForGraph(pfs == null ? new PfsParameterJpa()
+            : pfs);
     Logger.getLogger(this.getClass()).debug(pfsString);
     ClientResponse response =
         resource.accept(MediaType.APPLICATION_XML)
@@ -546,13 +571,16 @@ public class HistoryClientRest implements HistoryServiceRest {
   @Override
   public ConceptList findConceptsDeepModifiedSinceDate(String terminology,
     String date, PfsParameterJpa pfs, String authToken) throws Exception {
+    Logger.getLogger(getClass()).debug(
+        "History Client - find concepts deep modified since date "
+            + terminology + ", " + date + ", " + pfs);
     Client client = Client.create();
     WebResource resource =
         client.resource(config.getProperty("base.url") + "/history/concept/"
             + terminology + "/" + date + "/deep");
     String pfsString =
-        ConfigUtility.getStringForGraph(pfs == null
-        ? new PfsParameterJpa() : pfs);
+        ConfigUtility.getStringForGraph(pfs == null ? new PfsParameterJpa()
+            : pfs);
     Logger.getLogger(this.getClass()).debug(pfsString);
     ClientResponse response =
         resource.accept(MediaType.APPLICATION_XML)
@@ -586,6 +614,8 @@ public class HistoryClientRest implements HistoryServiceRest {
   @Override
   public ReleaseInfoList getReleaseHistory(String terminology, String authToken)
     throws Exception {
+    Logger.getLogger(getClass()).debug(
+        "History Client - get release history " + terminology);
     Client client = Client.create();
     WebResource resource =
         client.resource(config.getProperty("base.url") + "/history/releases/"
@@ -625,6 +655,8 @@ public class HistoryClientRest implements HistoryServiceRest {
   @Override
   public ReleaseInfo getCurrentReleaseInfo(String terminology, String authToken)
     throws Exception {
+    Logger.getLogger(getClass()).debug(
+        "History Client - get current release info " + terminology);
     Client client = Client.create();
     WebResource resource =
         client.resource(config.getProperty("base.url") + "/history/release/"
@@ -664,6 +696,8 @@ public class HistoryClientRest implements HistoryServiceRest {
   @Override
   public ReleaseInfo getPreviousReleaseInfo(String terminology, String authToken)
     throws Exception {
+    Logger.getLogger(getClass()).debug(
+        "History Client - get previous release info " + terminology);
     Client client = Client.create();
     WebResource resource =
         client.resource(config.getProperty("base.url") + "/history/release/"
@@ -703,6 +737,8 @@ public class HistoryClientRest implements HistoryServiceRest {
   @Override
   public ReleaseInfo getPlannedReleaseInfo(String terminology, String authToken)
     throws Exception {
+    Logger.getLogger(getClass()).debug(
+        "History Client - get planned release info " + terminology);
     Client client = Client.create();
     WebResource resource =
         client.resource(config.getProperty("base.url") + "/history/release/"
@@ -742,6 +778,8 @@ public class HistoryClientRest implements HistoryServiceRest {
   @Override
   public ReleaseInfo getReleaseInfo(String terminology, String name,
     String authToken) throws Exception {
+    Logger.getLogger(getClass()).debug(
+        "History Client - get release info " + terminology + ", " + name);
     Client client = Client.create();
     WebResource resource =
         client.resource(config.getProperty("base.url") + "/history/release/"
@@ -777,6 +815,8 @@ public class HistoryClientRest implements HistoryServiceRest {
   @Override
   public ReleaseInfo addReleaseInfo(ReleaseInfoJpa releaseInfo, String authToken)
     throws Exception {
+    Logger.getLogger(getClass()).debug(
+        "History Client - add release info " + releaseInfo);
     Client client = Client.create();
     WebResource resource =
         client
@@ -817,13 +857,15 @@ public class HistoryClientRest implements HistoryServiceRest {
   @Override
   public void updateReleaseInfo(ReleaseInfoJpa releaseInfo, String authToken)
     throws Exception {
+    Logger.getLogger(getClass()).debug(
+        "History Client - update release info " + releaseInfo);
     Client client = Client.create();
     WebResource resource =
         client.resource(config.getProperty("base.url")
             + "/history/release/update");
     String riString =
         ConfigUtility.getStringForGraph(releaseInfo == null
-        ? new ReleaseInfoJpa() : releaseInfo);
+            ? new ReleaseInfoJpa() : releaseInfo);
     Logger.getLogger(this.getClass()).debug(riString);
     ClientResponse response =
         resource.accept(MediaType.APPLICATION_XML)
@@ -848,6 +890,8 @@ public class HistoryClientRest implements HistoryServiceRest {
    */
   @Override
   public void removeReleaseInfo(Long id, String authToken) throws Exception {
+    Logger.getLogger(getClass()).debug(
+        "History Client - remove release info " + id);
     Client client = Client.create();
     WebResource resource =
         client.resource(config.getProperty("base.url")
@@ -875,6 +919,9 @@ public class HistoryClientRest implements HistoryServiceRest {
   @Override
   public void startEditingCycle(String releaseVersion, String terminology,
     String version, String authToken) throws Exception {
+    Logger.getLogger(getClass()).debug(
+        "History Client - start editing cycle " + releaseVersion + ", "
+            + terminology + ", " + version);
     Client client = Client.create();
     WebResource resource =
         client.resource(config.getProperty("base.url")
@@ -895,6 +942,9 @@ public class HistoryClientRest implements HistoryServiceRest {
   public void beginRf2Release(String releaseVersion, String terminology,
     boolean validate, String workflowStatusValues, boolean saveIdentifiers,
     String authToken) throws Exception {
+    Logger.getLogger(getClass()).debug(
+        "History Client - begin rf2 release " + releaseVersion + ", "
+            + terminology);
     // TODO Auto-generated method stub
 
   }
@@ -902,6 +952,9 @@ public class HistoryClientRest implements HistoryServiceRest {
   @Override
   public void processRf2Release(String releaseVersion, String terminology,
     String outputDir, String moduleId, String authToken) throws Exception {
+    Logger.getLogger(getClass()).debug(
+        "History Client - process rf2 release " + releaseVersion + ", "
+            + terminology);
     // TODO Auto-generated method stub
 
   }
@@ -909,6 +962,9 @@ public class HistoryClientRest implements HistoryServiceRest {
   @Override
   public void finishRf2Release(String releaseVersion, String terminology,
     String authToken) throws Exception {
+    Logger.getLogger(getClass()).debug(
+        "History Client - finish rf2 release " + releaseVersion + ", "
+            + terminology);
     // TODO Auto-generated method stub
 
   }
