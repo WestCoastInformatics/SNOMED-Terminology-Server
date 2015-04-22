@@ -181,6 +181,24 @@ public class ProjectJpa implements Project {
     this.id = id;
   }
 
+  /**
+   * Returns the object id. For JAXB.
+   *
+   * @return the object id
+   */
+  public String getObjectId() {
+    return id == null ? "" : id.toString();
+  }
+  
+  /**
+   * Sets the object id. For JAXB.
+   *
+   * @param id the object id
+   */
+  public void setObjectId(String id) {
+    this.id = Long.parseLong(id);
+  }
+  
   /*
    * (non-Javadoc)
    * 

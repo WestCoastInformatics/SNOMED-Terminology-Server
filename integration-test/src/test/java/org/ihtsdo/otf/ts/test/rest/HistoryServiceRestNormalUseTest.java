@@ -44,7 +44,7 @@ import org.junit.Test;
  * Implementation of the "History Service REST Normal Use" Test Cases.
  */
 public class HistoryServiceRestNormalUseTest extends HistoryServiceRestTest {
-  
+
   /** Set true to run tests, set false to get result numbers */
   private static boolean testFlag = false;
 
@@ -65,7 +65,6 @@ public class HistoryServiceRestNormalUseTest extends HistoryServiceRestTest {
 
   /** The terminology id for which to retrieve a test object */
   private static String testId;
-
 
   /**
    * Create test fixtures per test.
@@ -242,7 +241,7 @@ public class HistoryServiceRestNormalUseTest extends HistoryServiceRestTest {
     /** Expected values */
     objectsCt = 10293;
     objectsAfterTestDateCt = 0;
-    testDate = "20130731";  // revision for object must exist
+    testDate = "20130731"; // revision for object must exist
     testId = "10200004";
     testObjectRevisionsCt = 9;
 
@@ -307,7 +306,7 @@ public class HistoryServiceRestNormalUseTest extends HistoryServiceRestTest {
 
     // testComponent(testClass);
   }
-  
+
   /**
    * Test association reference ref set methods
    * @throws Exception
@@ -326,7 +325,7 @@ public class HistoryServiceRestNormalUseTest extends HistoryServiceRestTest {
 
     // testComponent(testClass);
   }
-  
+
   /**
    * Test attribute value ref set methods
    * @throws Exception
@@ -345,7 +344,7 @@ public class HistoryServiceRestNormalUseTest extends HistoryServiceRestTest {
 
     // testComponent(testClass);
   }
-  
+
   /**
    * Test complex map ref set methods
    * @throws Exception
@@ -364,7 +363,7 @@ public class HistoryServiceRestNormalUseTest extends HistoryServiceRestTest {
 
     // testComponent(testClass);
   }
-  
+
   /**
    * Test description type ref set methods
    * @throws Exception
@@ -383,7 +382,7 @@ public class HistoryServiceRestNormalUseTest extends HistoryServiceRestTest {
 
     // testComponent(testClass);
   }
-  
+
   /**
    * Test module dependency ref set methods
    * @throws Exception
@@ -402,7 +401,7 @@ public class HistoryServiceRestNormalUseTest extends HistoryServiceRestTest {
 
     // testComponent(testClass);
   }
-  
+
   /**
    * Test refset descriptor ref set methods
    * @throws Exception
@@ -421,7 +420,7 @@ public class HistoryServiceRestNormalUseTest extends HistoryServiceRestTest {
 
     // testComponent(testClass);
   }
-  
+
   /**
    * Test simple map ref set member methods
    * @throws Exception
@@ -440,7 +439,7 @@ public class HistoryServiceRestNormalUseTest extends HistoryServiceRestTest {
 
     // testComponent(testClass);
   }
-  
+
   /**
    * Test simple ref set member methods
    * @throws Exception

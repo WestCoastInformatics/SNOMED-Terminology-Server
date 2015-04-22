@@ -176,7 +176,7 @@ public class ProjectServiceRestDegenerateUseTest extends ProjectServiceRestTest 
     project.addAuthor(user);
 
     // add the project
-    project = (ProjectJpa)projectService.addProject(project, adminAuthToken);
+    project = (ProjectJpa) projectService.addProject(project, adminAuthToken);
 
     // attempt to delete the user
     try {

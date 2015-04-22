@@ -52,7 +52,8 @@ public class SecurityServiceRestDegenerateUseTest extends
   public void testDegenerateUseRestSecurity001() throws Exception {
 
     // PROCEDURE 1
-    Logger.getLogger(getClass()).info("  PROCEDURE 1: test degenerate authenticate calls.");
+    Logger.getLogger(getClass()).info(
+        "  PROCEDURE 1: test degenerate authenticate calls.");
     Method method =
         service.getClass().getMethod("authenticate", new Class<?>[] {
             String.class, String.class

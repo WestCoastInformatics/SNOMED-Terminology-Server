@@ -291,8 +291,10 @@ public class HistoryServiceRestDegenerateUseTest extends HistoryServiceRestTest 
     // terminology does not have invalid value
     DegenerateUseMethodTestHelper.testDegenerateArguments(historyService,
         method, parameters, new ExpectedFailure[] {
-        ExpectedFailure.STRING_INVALID_EXCEPTION_NULL_NO_RESULTS, ExpectedFailure.STRING_INVALID_EXCEPTION_NULL_SUCCESS, ExpectedFailure.EXCEPTION, ExpectedFailure.EXCEPTION}
-    );
+            ExpectedFailure.STRING_INVALID_EXCEPTION_NULL_NO_RESULTS,
+            ExpectedFailure.STRING_INVALID_EXCEPTION_NULL_SUCCESS,
+            ExpectedFailure.EXCEPTION, ExpectedFailure.EXCEPTION
+        });
   }
 
   /**

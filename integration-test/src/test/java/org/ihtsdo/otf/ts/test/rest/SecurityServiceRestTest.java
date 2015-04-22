@@ -7,12 +7,9 @@ import java.util.Properties;
 
 import org.ihtsdo.otf.ts.helpers.ConfigUtility;
 import org.ihtsdo.otf.ts.jpa.client.SecurityClientRest;
-import org.ihtsdo.otf.ts.jpa.services.SecurityServiceJpa;
-import org.ihtsdo.otf.ts.services.SecurityService;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Ignore;
-
 
 /**
  * The Class SecurityServiceRestTest.
@@ -27,20 +24,20 @@ public class SecurityServiceRestTest {
 
   /** The viewer user password. */
   protected static String viewerUserName;
-  
-  /**  The viewer user password. */
+
+  /** The viewer user password. */
   protected static String viewerUserPassword;
 
   /** The admin user password. */
   protected static String adminUserName;
-  
-  /**  The admin user password. */
+
+  /** The admin user password. */
   protected static String adminUserPassword;
 
   /** The bad user password. */
   protected static String badUserName;
-  
-  /**  The bad user password. */
+
+  /** The bad user password. */
   protected static String badUserPassword;
 
   /**
@@ -50,10 +47,10 @@ public class SecurityServiceRestTest {
    */
   @BeforeClass
   public static void setupClass() throws Exception {
-    
+
     // get the properties
     properties = ConfigUtility.getConfigProperties();
-    
+
     // instantiate the service
     service = new SecurityClientRest(properties);
 
@@ -97,11 +94,13 @@ public class SecurityServiceRestTest {
           "Test prerequisite:  A non-existent (bad) user must be specified in config properties file");
     }
 
-    SecurityService securityService = new SecurityServiceJpa();
-    if (securityService.getUser(badUserName) != null) {
+    String authToken = service.authenticate(adminUserName, adminUserPassword);
+    if (service.getUser(badUserName, authToken) != null) {
       throw new Exception(
           "Test prerequisite:  The bad user specified in config properties file should not exist in database");
     }
+    service.logout(authToken);
+
   }
 
   /**

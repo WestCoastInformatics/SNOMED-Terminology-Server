@@ -15,7 +15,7 @@ import org.junit.Test;
 public class MetadataServiceRestDegenerateUseTest extends
     MetadataServiceRestTest {
 
-  /**  The auth token. */
+  /** The auth token. */
   private static String authToken;
 
   /**
@@ -75,7 +75,7 @@ public class MetadataServiceRestDegenerateUseTest extends
   @SuppressWarnings("static-method")
   @Test
   public void testDegenerateUseRestMetadata003() throws Exception {
-    
+
     // test bad authorization
     try {
       metadataService.getAllMetadata("SNOMEDCT", "latest", "InvalidAuthToken");
@@ -83,24 +83,24 @@ public class MetadataServiceRestDegenerateUseTest extends
     } catch (Exception e) {
       // do nothing
     }
-    
+
     // test bad terminology version
     try {
-      metadataService.getAllMetadata("SNOMEDCT",  "InvalidVersion",  authToken);
+      metadataService.getAllMetadata("SNOMEDCT", "InvalidVersion", authToken);
       fail("Getting metadata for existing terminology with invalid version did not throw expected exception");
     } catch (Exception e) {
       // do nothing
     }
-    
+
     // test bad terminology
     try {
-      metadataService.getAllMetadata("InvalidTerminology",  "InvalidVersion",  authToken);
+      metadataService.getAllMetadata("InvalidTerminology", "InvalidVersion",
+          authToken);
       fail("Getting metadata for non-existent terminology with invalid version did not throw expected exception");
     } catch (Exception e) {
       // do nothing
     }
-    
-    
+
   }
 
   /**
@@ -111,7 +111,7 @@ public class MetadataServiceRestDegenerateUseTest extends
   @Test
   public void testDegenerateUseRestMetadata004() throws Exception {
 
-     // n/a - this method was removed
+    // n/a - this method was removed
   }
 
   /**

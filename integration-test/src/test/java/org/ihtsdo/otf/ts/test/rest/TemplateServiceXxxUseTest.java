@@ -13,8 +13,8 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 /**
- * TODO: edit the description
- * Implementation of the "Template Service REST XXX Use" Test Cases.
+ * TODO: edit the description Implementation of the
+ * "Template Service REST XXX Use" Test Cases.
  */
 public class TemplateServiceXxxUseTest {
 
@@ -45,8 +45,8 @@ public class TemplateServiceXxxUseTest {
   }
 
   /**
-   * TODO: edit this comment to match the test case
-   * Test Xxx use of the yyy of {@link SecurityServiceRest}.
+   * TODO: edit this comment to match the test case Test Xxx use of the yyy of
+   * {@link SecurityServiceRest}.
    * 
    * @throws Exception the exception
    */
@@ -55,7 +55,7 @@ public class TemplateServiceXxxUseTest {
   public void testXxxUseRestTemplate001() throws Exception {
 
     // TODO: implement the test case
-    
+
   }
 
   // TODO: have additional methods like the one above as needed

@@ -75,7 +75,6 @@ public class SecurityServiceRestNormalUseTest extends SecurityServiceRestTest {
 
     // add the user and verify that hibernate id has been set
     user = service.addUser((UserJpa) user, adminAuthToken);
-    Long userId = user.getId();
     assertTrue(user != null);
 
     // PROCEDURE 2: get a user
@@ -144,7 +143,7 @@ public class SecurityServiceRestNormalUseTest extends SecurityServiceRestTest {
         && !viewerUserNameAuthToken.isEmpty());
     user = service.getUser(viewerUserName, adminAuthToken);
     assertTrue(user.getEmail().equals(userEmail));
- 
+
   }
 
   /**

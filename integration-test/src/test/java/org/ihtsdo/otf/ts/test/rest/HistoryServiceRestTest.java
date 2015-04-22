@@ -132,10 +132,11 @@ public class HistoryServiceRestTest {
   @AfterClass
   public static void teardownClass() throws Exception {
     if (objectNames == null) {
-      Logger.getLogger(HistoryServiceRestTest.class).info(
-          "List of objects found was not initialized; cannot determine if all objects were tested");
-    }
-    else if (objectNames.isEmpty() == false) {
+      Logger
+          .getLogger(HistoryServiceRestTest.class)
+          .info(
+              "List of objects found was not initialized; cannot determine if all objects were tested");
+    } else if (objectNames.isEmpty() == false) {
       Logger.getLogger(HistoryServiceRestTest.class).info(
           "Find methods were not tested for: ");
       for (String objectName : objectNames) {
@@ -147,13 +148,11 @@ public class HistoryServiceRestTest {
     }
   }
 
-  
   protected String getClassShortName(Class<?> clazz) {
 
     return clazz.getName().substring(clazz.getName().lastIndexOf(".") + 1)
         .replace("Jpa", "");
 
   }
-  
-  
+
 }

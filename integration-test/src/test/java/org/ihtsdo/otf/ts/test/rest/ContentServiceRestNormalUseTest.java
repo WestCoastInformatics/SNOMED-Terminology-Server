@@ -27,25 +27,25 @@ import org.junit.Test;
  */
 public class ContentServiceRestNormalUseTest extends ContentServiceRestTest {
 
-  /**  The auth token. */
+  /** The auth token. */
   private static String authToken;
 
-  /**  The snomed test id. */
+  /** The snomed test id. */
   private String snomedTestId;
-  
-  /**  The snomed terminology. */
+
+  /** The snomed terminology. */
   private String snomedTerminology;
-  
-  /**  The snomed version. */
+
+  /** The snomed version. */
   private String snomedVersion;
 
-  /**  The icd9 test id. */
+  /** The icd9 test id. */
   private String icd9TestId;
-  
-  /**  The icd9 terminology. */
+
+  /** The icd9 terminology. */
   private String icd9Terminology;
-  
-  /**  The icd9 version. */
+
+  /** The icd9 version. */
   private String icd9Version;
 
   /**
@@ -352,7 +352,6 @@ public class ContentServiceRestNormalUseTest extends ContentServiceRestTest {
     assertTrue(description.getConcept().getId().equals(concept.getId()));
 
   }
-
 
   /**
    * Teardown.
