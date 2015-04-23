@@ -522,10 +522,6 @@ public class HistoryServiceRestNormalUseTest extends HistoryServiceRestTest {
       e.printStackTrace();
     }
 
-    for (int i = 0; i < Math.min(results.getCount(), 10); i++) {
-      System.out.println(results.getObjects().get(i).toString());
-    }
-
     return results;
   }
 

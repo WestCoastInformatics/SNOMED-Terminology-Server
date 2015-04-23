@@ -57,6 +57,14 @@ public class RelationshipJpa extends AbstractComponent implements Relationship {
   @Column(nullable = true)
   private Integer relationshipGroup;
 
+  /**  The inferred. */
+  @Column(nullable = false)
+  private boolean inferred = false;
+  
+  /**  The stated. */
+  @Column(nullable = false)
+  private boolean stated = false;
+
   /**
    * Relationship.
    */
@@ -364,6 +372,40 @@ public class RelationshipJpa extends AbstractComponent implements Relationship {
     this.relationshipGroup = relationshipGroup;
   }
 
+  
+
+  /* (non-Javadoc)
+   * @see org.ihtsdo.otf.ts.rf2.Relationship#isStated()
+   */
+  @Override
+  public boolean isStated() {
+    return stated;
+  }
+
+  /* (non-Javadoc)
+   * @see org.ihtsdo.otf.ts.rf2.Relationship#setStated(boolean)
+   */
+  @Override
+  public void setStated(boolean stated) {
+    this.stated = stated;
+  }
+
+  /* (non-Javadoc)
+   * @see org.ihtsdo.otf.ts.rf2.Relationship#isInferred()
+   */
+  @Override
+  public boolean isInferred() {
+    return inferred;
+  }
+
+  /* (non-Javadoc)
+   * @see org.ihtsdo.otf.ts.rf2.Relationship#setInferred(boolean)
+   */
+  @Override
+  public void setInferred(boolean inferred) {
+    this.inferred = inferred;
+  }  
+  
   /*
    * (non-Javadoc)
    * 
@@ -382,7 +424,7 @@ public class RelationshipJpa extends AbstractComponent implements Relationship {
   }
 
   /*
-   * (non-Javadoc)
+   * CUSTOM: to use source/destination "terminology id"
    * 
    * @see org.ihtsdo.otf.ts.rf2.jpa.AbstractComponent#hashCode()
    */
@@ -415,8 +457,8 @@ public class RelationshipJpa extends AbstractComponent implements Relationship {
     return result;
   }
 
-  /*
-   * (non-Javadoc)
+  /**
+   * CUSTOM: to use source/destination "terminology id"
    * 
    * @see org.ihtsdo.otf.ts.rf2.jpa.AbstractComponent#equals(java.lang.Object)
    */
@@ -471,5 +513,6 @@ public class RelationshipJpa extends AbstractComponent implements Relationship {
       return false;
     return true;
   }
+
 
 }

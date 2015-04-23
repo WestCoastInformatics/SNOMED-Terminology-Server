@@ -105,4 +105,33 @@ public interface Relationship extends Component {
    * @param relationshipGroup the relationship group
    */
   public void setRelationshipGroup(Integer relationshipGroup);
+
+  /**
+   * Indicates whether or not stated is the case.
+   *
+   * @return <code>true</code> if so, <code>false</code> otherwise
+   */
+  public boolean isStated();
+  
+  /**
+   * Sets the stated.
+   *
+   * @param stated the stated
+   */
+  public void setStated(boolean stated);
+  
+  /**
+   * Indicates whether or not inferred is the case.
+   *
+   * @return <code>true</code> if so, <code>false</code> otherwise
+   */
+  public boolean isInferred();
+  
+  /**
+   * Sets the inferred.
+   *
+   * @param inferred the inferred
+   */
+  public void setInferred(boolean inferred);
+
 }

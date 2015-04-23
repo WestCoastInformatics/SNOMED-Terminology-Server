@@ -232,8 +232,6 @@ public class ContentServiceRestNormalUseTest extends ContentServiceRestTest {
         contentService.findConceptsForQuery(snomedTerminology, snomedVersion,
             query, pfs, authToken);
 
-    System.out.println("QR results: " + searchResults.toString());
-
     assertTrue(searchResults.getCount() == 1);
     assertTrue(searchResults.getObjects().get(0).getTerminologyId()
         .equals("93563005"));

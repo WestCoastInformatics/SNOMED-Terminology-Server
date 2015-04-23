@@ -931,6 +931,9 @@ public class ClamlLoaderAlgorithm extends HistoryServiceJpa implements
                   .parse(effectiveTime));
               relationship.setActive(true);
               relationship.setPublished(true);
+              // No classifier for ClaML, so use as both stated/inferred
+              relationship.setStated(true);
+              relationship.setInferred(true);
               relationship.setLastModified(new Date());
               relationship.setLastModifiedBy("loader");
 

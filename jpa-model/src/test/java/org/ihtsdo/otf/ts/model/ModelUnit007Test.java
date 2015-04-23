@@ -230,6 +230,7 @@ public class ModelUnit007Test {
     tester.include("terminologyId");
     tester.include("terminology");
     tester.include("terminologyVersion");
+    tester.include("fullyDefined");
 
     tester.include("definitionStatusId");
     tester.include("anonymous");

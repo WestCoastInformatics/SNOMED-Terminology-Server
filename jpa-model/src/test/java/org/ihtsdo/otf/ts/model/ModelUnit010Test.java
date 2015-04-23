@@ -192,6 +192,8 @@ public class ModelUnit010Test {
     tester.include("terminologyId");
     tester.include("terminology");
     tester.include("terminologyVersion");
+    tester.include("inferred");
+    tester.include("stated");
 
     tester.include("typeId");
     tester.include("characteristicTypeId");
