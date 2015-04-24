@@ -155,8 +155,14 @@ public class HistoryServiceRestTest {
   
   protected String getClassShortName(Class<?> clazz) {
 
-    return clazz.getName().substring(clazz.getName().lastIndexOf(".") + 1)
+    String shortName = clazz.getName().substring(clazz.getName().lastIndexOf(".") + 1)
         .replace("Jpa", "");
+    
+    // special cases:  Concept/Description Ref Set Members
+    shortName = shortName.replace("ConceptRefSetMember", "RefSetMember");
+    shortName = shortName.replace("DescriptionRefSetMember", "RefSetMember");
+    
+    return shortName;
 
   }
   

@@ -11,6 +11,7 @@ import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
@@ -564,76 +565,65 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
   @Override
   public ConceptList findChildConcepts(Concept concept, PfsParameter pfs)
     throws Exception {
+    
+    if (pfs != null && pfs.getQueryRestriction() != null) {
+      throw new IllegalArgumentException(
+          "Query restriction is not implemented for this call: "
+              + pfs.getQueryRestriction());
+    }
+    
     ConceptList childrenConcepts = new ConceptListJpa();
 
-    // construct query
-    javax.persistence.Query query =
-        manager.createQuery("select r from RelationshipJpa r, ConceptJpa c"
-            + " where r.destinationConcept = c"
-            + " and c.terminology = :terminology "
-            + " and c.terminologyId = :terminologyId"
-            + " and c.terminologyVersion = :version");
+    // object retrieval query
+    String queryStr =
+        "select distinct a from ConceptJpa c1, ConceptJpa a, RelationshipJpa r"
+            + " where r.destinationConcept = c1" 
+            + " and r.sourceConcept = a"
+            + " and r.typeId in ( :hierRelTypes )" 
+            + " and r.active = 1"
+            + " and c1.terminologyId = :terminologyId"
+            + " and c1.terminology = :terminology"
+            + " and c1.terminologyVersion = :version";
+    javax.persistence.Query query = applyPfsToQuery(queryStr, pfs);
+
+    // count query
+    javax.persistence.Query ctQuery =
+        manager
+            .createQuery("select count(distinct c1) from ConceptJpa c1, RelationshipJpa r"
+                + " where r.destinationConcept = c1"
+                + " and r.typeId in ( :hierRelTypes )"
+                + " and r.active = 1"
+                + " and c1.terminologyId = :terminologyId"
+                + " and c1.terminology = :terminology"
+                + " and c1.terminologyVersion = :version");
+
+    // construct list of hierarchical rel types for this terminology and version
+    String hierRelTypes = "";
+    Iterator<String> iter =
+        TerminologyUtility.getHierarchicalIsaRels(concept.getTerminology(),
+            concept.getTerminologyVersion()).iterator();
+    while (iter.hasNext()) {
+      hierRelTypes += iter.next();
+      if (iter.hasNext())
+        hierRelTypes += ",";
+    }
+
+    // set count query parameters
+    ctQuery.setParameter("terminologyId", concept.getTerminologyId());
+    ctQuery.setParameter("terminology", concept.getTerminology());
+    ctQuery.setParameter("version", concept.getTerminologyVersion());
+    ctQuery.setParameter("hierRelTypes", hierRelTypes);
+    childrenConcepts.setTotalCount(((Long) ctQuery.getSingleResult())
+        .intValue());
+
+    // set object query parameters
     query.setParameter("terminologyId", concept.getTerminologyId());
     query.setParameter("terminology", concept.getTerminology());
     query.setParameter("version", concept.getTerminologyVersion());
-
-    // execute query
-    List<Relationship> relationships = query.getResultList();
-
-    // cycle over this concepts relationships
-    for (Relationship r : relationships) {
-
-      // if active hierarchical relationship
-      // It's a set so don't worry about stated vs. inferred
-      if (r.isActive() && TerminologyUtility.isHierarchicalIsaRelationship(r)) {
-
-        // add to children list if not already present (want unique results)
-        if (!childrenConcepts.contains(r.getSourceConcept())) {
-          childrenConcepts.addObject(r.getSourceConcept());
-        }
-      }
-    }
-
-    // set total count
-    childrenConcepts.setTotalCount(childrenConcepts.getCount());
-
-    // if paging/filtering/sorting required
-    if (pfs != null) {
-
-      // filtering -- not supported
-      if (pfs.getQueryRestriction() != null) {
-        throw new Exception("Query restriction is not supported on this call.");
-      }
-
-      // sorting
-      Comparator<Concept> comparator = getPfsComparator(Concept.class, pfs);
-      if (comparator != null) {
-        childrenConcepts.sortBy(comparator);
-      }
-
-      // ascending/descending
-      if (pfs.isAscending() == false) {
-        List<Concept> temp = new ArrayList<>();
-        for (int i = childrenConcepts.getCount()-1; i >= 0; i--) {
-          temp.add(childrenConcepts.getObjects().get(i));
-        }
-        childrenConcepts.setObjects(temp);
-      }
-      
-      // paging
-      if (pfs.getStartIndex() != -1 && pfs.getMaxResults() != -1) {
-
-        childrenConcepts.setObjects(childrenConcepts.getObjects().subList(
-            Math.min(pfs.getStartIndex(), childrenConcepts.getTotalCount()),
-            Math.min(pfs.getStartIndex() + pfs.getMaxResults(),
-                childrenConcepts.getTotalCount())));
-      }
-
-   
-    }
+    query.setParameter("hierRelTypes", hierRelTypes);
+    childrenConcepts.setObjects(query.getResultList());
 
     return childrenConcepts;
-
   }
 
   /*
@@ -649,71 +639,59 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
     throws Exception {
     ConceptList parentConcepts = new ConceptListJpa();
 
-    // construct query
-    javax.persistence.Query query =
-        manager.createQuery("select r from RelationshipJpa r, ConceptJpa c"
-            + " where r.sourceConcept = c"
-            + " and c.terminology = :terminology "
-            + " and c.terminologyId = :terminologyId"
-            + " and c.terminologyVersion = :version");
+    if (pfs != null && pfs.getQueryRestriction() != null) {
+      throw new IllegalArgumentException(
+          "Query restriction is not implemented for this call: "
+              + pfs.getQueryRestriction());
+    }
+    
+    // object retrieval query
+    String queryStr =
+        "select distinct a from ConceptJpa c1, ConceptJpa a, RelationshipJpa r"
+            + " where r.destinationConcept = a" 
+            + " and r.sourceConcept = c1"
+            + " and r.typeId in ( :hierRelTypes )" 
+            + " and r.active = 1"
+            + " and c1.terminologyId = :terminologyId"
+            + " and c1.terminology = :terminology"
+            + " and c1.terminologyVersion = :version";
+    javax.persistence.Query query = applyPfsToQuery(queryStr, pfs);
+
+    // count query
+    javax.persistence.Query ctQuery =
+        manager
+            .createQuery("select count(distinct c1) from ConceptJpa c1, RelationshipJpa r"
+                + " where r.destinationConcept = c1"
+                + " and r.typeId in ( :hierRelTypes )"
+                + " and r.active = 1"
+                + " and c1.terminologyId = :terminologyId"
+                + " and c1.terminology = :terminology"
+                + " and c1.terminologyVersion = :version");
+
+    // construct list of hierarchical rel types for this terminology and version
+    String hierRelTypes = "";
+    Iterator<String> iter =
+        TerminologyUtility.getHierarchicalIsaRels(concept.getTerminology(),
+            concept.getTerminologyVersion()).iterator();
+    while (iter.hasNext()) {
+      hierRelTypes += iter.next();
+      if (iter.hasNext())
+        hierRelTypes += ",";
+    }
+
+    // set count query parameters
+    ctQuery.setParameter("terminologyId", concept.getTerminologyId());
+    ctQuery.setParameter("terminology", concept.getTerminology());
+    ctQuery.setParameter("version", concept.getTerminologyVersion());
+    ctQuery.setParameter("hierRelTypes", hierRelTypes);
+    parentConcepts.setTotalCount(((Long) ctQuery.getSingleResult()).intValue());
+
+    // set object query parameters
     query.setParameter("terminologyId", concept.getTerminologyId());
     query.setParameter("terminology", concept.getTerminology());
     query.setParameter("version", concept.getTerminologyVersion());
-
-    // execute query
-    List<Relationship> relationships = query.getResultList();
-
-    // cycle over this concepts relationships
-    for (Relationship r : relationships) {
-
-      // if active hierarchical relationship
-      // It's a set so don't worry about stated vs. inferred
-      if (r.isActive() && TerminologyUtility.isHierarchicalIsaRelationship(r)) {
-
-        // add to parent list if not already present (want unique results)
-        if (!parentConcepts.contains(r.getDestinationConcept())) {
-          parentConcepts.addObject(r.getDestinationConcept());
-        }
-      }
-    }
-
-    // set total count
-    parentConcepts.setTotalCount(parentConcepts.getCount());
-
-    // if paging/filtering/sorting required
-    // NOTE: This cannot be done through the query mechanism
-    if (pfs != null) {
-
-      // filtering -- not supported
-      if (pfs.getQueryRestriction() != null) {
-        throw new Exception("Query restriction is not supported on this call.");
-      }
-
-      // ascending/descending
-      if (pfs.isAscending() == false) {
-        List<Concept> temp = new ArrayList<>();
-        for (int i = parentConcepts.getCount()-1; i >= 0; i--) {
-          temp.add(parentConcepts.getObjects().get(i));
-        }
-        parentConcepts.setObjects(temp);
-      }
-
-      // sorting
-      Comparator<Concept> comparator = getPfsComparator(Concept.class, pfs);
-      if (comparator != null) {
-        parentConcepts.sortBy(comparator);
-      }
-
-      // paging
-      if (pfs.getStartIndex() != -1 && pfs.getMaxResults() != -1) {
-
-        parentConcepts.setObjects(parentConcepts.getObjects().subList(
-            Math.min(pfs.getStartIndex(), parentConcepts.getTotalCount()),
-            Math.min(pfs.getStartIndex() + pfs.getMaxResults(),
-                parentConcepts.getTotalCount())));
-      }
-
-    }
+    query.setParameter("hierRelTypes", hierRelTypes);
+    parentConcepts.setObjects(query.getResultList());
 
     return parentConcepts;
 
@@ -1557,10 +1535,11 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
         "Content Service - find association reference refset members "
             + refsetId + "/" + terminology + "/" + version);
     javax.persistence.Query query =
-        applyPfsToQuery("select a from AbstractAssociationReferenceRefSetMemberJpa a "
-            + "where refSetId = :refsetId "
-            + "and terminologyVersion = :version "
-            + "and terminology = :terminology", pfs);
+        applyPfsToQuery(
+            "select a from AbstractAssociationReferenceRefSetMemberJpa a "
+                + "where refSetId = :refsetId "
+                + "and terminologyVersion = :version "
+                + "and terminology = :terminology", pfs);
     javax.persistence.Query ctQuery =
         manager
             .createQuery("select count(a) from AbstractAssociationReferenceRefSetMemberJpa a "
@@ -2700,7 +2679,6 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
    * java.lang.String)
    */
   @Override
-  // TODO Verify refactoring was successful (... forRefset)
   public RefsetDescriptorRefSetMemberList getRefsetDescriptorRefSetMembersForRefset(
     String refsetId, String terminology, String version) {
     Logger.getLogger(getClass()).debug(
@@ -3104,11 +3082,10 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
         "Content Service - get module dependency refset member for module "
             + terminologyId + "/" + terminology + "/" + version);
     javax.persistence.Query query =
-        manager
-            .createQuery("select c from ModuleDependencyRefSetMemberJpa c "
-                + "where moduleId = :terminologyId "
-                + "and terminologyVersion = :version "
-                + "and terminology = :terminology order by sourceEffectiveTime");
+        manager.createQuery("select c from ModuleDependencyRefSetMemberJpa c "
+            + "where moduleId = :terminologyId "
+            + "and terminologyVersion = :version "
+            + "and terminology = :terminology order by sourceEffectiveTime");
     try {
       query.setParameter("terminologyId", terminologyId);
       query.setParameter("terminology", terminology);
@@ -3914,10 +3891,16 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
    * @param queryStr the query str
    * @param pfs the pfs
    * @return the javax.persistence. query
+   * @throws LocalException 
    */
   protected javax.persistence.Query applyPfsToQuery(String queryStr,
-    PfsParameter pfs) {
+    PfsParameter pfs) throws LocalException {
     String localQueryStr = queryStr;
+    
+    if (pfs != null && pfs.getQueryRestriction() != null) {
+      throw new LocalException("Query restrictions not currently supported for HQL/SQL queries");
+    }
+    
     if (pfs != null && pfs.getSortField() != null) {
       localQueryStr +=
           " order by a." + pfs.getSortField() + " "
@@ -3931,6 +3914,8 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
     if (pfs != null && pfs.getStartIndex() > -1 && pfs.getMaxResults() > -1) {
       query.setFirstResult(pfs.getStartIndex());
       query.setMaxResults(pfs.getMaxResults());
+    } else if (pfs != null && (pfs.getStartIndex() < -1 || pfs.getMaxResults() < -1)) {
+      throw new LocalException("Invalid paging parameters");
     }
     return query;
   }

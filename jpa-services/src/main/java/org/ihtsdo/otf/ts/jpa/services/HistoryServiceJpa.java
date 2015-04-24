@@ -40,6 +40,7 @@ import org.ihtsdo.otf.ts.helpers.DescriptionTypeRefSetMemberList;
 import org.ihtsdo.otf.ts.helpers.DescriptionTypeRefSetMemberListJpa;
 import org.ihtsdo.otf.ts.helpers.LanguageRefSetMemberList;
 import org.ihtsdo.otf.ts.helpers.LanguageRefSetMemberListJpa;
+import org.ihtsdo.otf.ts.helpers.LocalException;
 import org.ihtsdo.otf.ts.helpers.ModuleDependencyRefSetMemberList;
 import org.ihtsdo.otf.ts.helpers.ModuleDependencyRefSetMemberListJpa;
 import org.ihtsdo.otf.ts.helpers.PfsParameter;
@@ -136,7 +137,7 @@ public class HistoryServiceJpa extends ContentServiceJpa implements
    */
   @Override
   public ConceptList findConceptRevisions(Long id, Date startDate,
-    Date endDate, PfsParameter pfs) {
+    Date endDate, PfsParameter pfs) throws Exception {
     Logger.getLogger(getClass()).debug(
         "History Service - find concept revisions " + id + "," + startDate
             + ", " + endDate);
@@ -205,7 +206,7 @@ public class HistoryServiceJpa extends ContentServiceJpa implements
    */
   @Override
   public DescriptionList findDescriptionRevisions(Long id, Date startDate,
-    Date endDate, PfsParameter pfs) {
+    Date endDate, PfsParameter pfs) throws Exception {
     Logger.getLogger(getClass()).debug(
         "History Service - find description revisions " + id + "," + startDate
             + ", " + endDate);
@@ -273,7 +274,7 @@ public class HistoryServiceJpa extends ContentServiceJpa implements
    */
   @Override
   public RelationshipList findRelationshipRevisions(Long id, Date startDate,
-    Date endDate, PfsParameter pfs) {
+    Date endDate, PfsParameter pfs) throws Exception {
     Logger.getLogger(getClass()).debug(
         "History Service - find relationship revisions " + id + "," + startDate
             + ", " + endDate);
@@ -341,7 +342,7 @@ public class HistoryServiceJpa extends ContentServiceJpa implements
    */
   @Override
   public LanguageRefSetMemberList findLanguageRefSetMemberRevisions(Long id,
-    Date startDate, Date endDate, PfsParameter pfs) {
+    Date startDate, Date endDate, PfsParameter pfs) throws Exception {
     Logger.getLogger(getClass()).debug(
         "History Service - find language revsest revisions" + id + ","
             + startDate + ", " + endDate);
@@ -418,7 +419,7 @@ public class HistoryServiceJpa extends ContentServiceJpa implements
   })
   @Override
   public AssociationReferenceRefSetMemberList findAssociationReferenceRefSetMemberRevisions(
-    Long id, Date startDate, Date endDate, PfsParameter pfs) {
+    Long id, Date startDate, Date endDate, PfsParameter pfs) throws Exception {
     Logger.getLogger(getClass()).debug(
         "History Service - find abstractAssociationReferenceRefSetMember revisions "
             + id + "," + startDate + ", " + endDate);
@@ -501,7 +502,7 @@ public class HistoryServiceJpa extends ContentServiceJpa implements
   })
   @Override
   public AttributeValueRefSetMemberList findAttributeValueRefSetMemberRevisions(
-    Long id, Date startDate, Date endDate, PfsParameter pfs) {
+    Long id, Date startDate, Date endDate, PfsParameter pfs) throws Exception {
     Logger.getLogger(getClass()).debug(
         "History Service - find attributeValueRefSetMember revisions " + id
             + "," + startDate + ", " + endDate);
@@ -573,7 +574,7 @@ public class HistoryServiceJpa extends ContentServiceJpa implements
    */
   @Override
   public ComplexMapRefSetMemberList findComplexMapRefSetMemberRevisions(
-    Long id, Date startDate, Date endDate, PfsParameter pfs) {
+    Long id, Date startDate, Date endDate, PfsParameter pfs) throws Exception {
     Logger.getLogger(getClass()).debug(
         "History Service - find complexMapRefSetMember revisions " + id + ","
             + startDate + ", " + endDate);
@@ -643,7 +644,7 @@ public class HistoryServiceJpa extends ContentServiceJpa implements
    */
   @Override
   public DescriptionTypeRefSetMemberList findDescriptionTypeRefSetMemberRevisions(
-    Long id, Date startDate, Date endDate, PfsParameter pfs) {
+    Long id, Date startDate, Date endDate, PfsParameter pfs) throws Exception {
     Logger.getLogger(getClass()).debug(
         "History Service - find descriptionTypeRefSetMember revisions " + id
             + "," + startDate + ", " + endDate);
@@ -714,7 +715,7 @@ public class HistoryServiceJpa extends ContentServiceJpa implements
    */
   @Override
   public ModuleDependencyRefSetMemberList findModuleDependencyRefSetMemberRevisions(
-    Long id, Date startDate, Date endDate, PfsParameter pfs) {
+    Long id, Date startDate, Date endDate, PfsParameter pfs) throws Exception {
     Logger.getLogger(getClass()).debug(
         "History Service - find moduleDependencyRefSetMember revisions " + id
             + "," + startDate + ", " + endDate);
@@ -785,7 +786,7 @@ public class HistoryServiceJpa extends ContentServiceJpa implements
    */
   @Override
   public RefsetDescriptorRefSetMemberList findRefsetDescriptorRefSetMemberRevisions(
-    Long id, Date startDate, Date endDate, PfsParameter pfs) {
+    Long id, Date startDate, Date endDate, PfsParameter pfs) throws Exception {
     Logger.getLogger(getClass()).debug(
         "History Service - find refsetDescriptorRefSetMember revisions " + id
             + "," + startDate + ", " + endDate);
@@ -856,7 +857,7 @@ public class HistoryServiceJpa extends ContentServiceJpa implements
    */
   @Override
   public SimpleMapRefSetMemberList findSimpleMapRefSetMemberRevisions(Long id,
-    Date startDate, Date endDate, PfsParameter pfs) {
+    Date startDate, Date endDate, PfsParameter pfs) throws Exception {
     Logger.getLogger(getClass()).debug(
         "History Service - find simpleMapRefSetMember revisions " + id + ","
             + startDate + ", " + endDate);
@@ -924,7 +925,7 @@ public class HistoryServiceJpa extends ContentServiceJpa implements
    */
   @Override
   public SimpleRefSetMemberList findSimpleRefSetMemberRevisions(Long id,
-    Date startDate, Date endDate, PfsParameter pfs) {
+    Date startDate, Date endDate, PfsParameter pfs) throws Exception {
     Logger.getLogger(getClass()).debug(
         "History Service - find simpleRefSetMember revisions " + id + ","
             + startDate + ", " + endDate);
@@ -1171,6 +1172,8 @@ public class HistoryServiceJpa extends ContentServiceJpa implements
             .getDescription().getConcept());
       }
     }
+
+    // TODO Fully implement this, decide paging strategy
     return null;
   }
 
@@ -1351,9 +1354,16 @@ public class HistoryServiceJpa extends ContentServiceJpa implements
       ftquery.setFirstResult(pfs.getStartIndex());
       ftquery.setMaxResults(pfs.getMaxResults());
     }
+    
+
 
     if (pfs != null && pfs.getSortField() != null
         && !pfs.getSortField().isEmpty()) {
+      
+      // check that sort field is valid
+      if (clazz.getField(pfs.getSortField()) == null)
+          throw new LocalException("Cannot sort on field: " + pfs.getSortField());
+      
       ftquery.setSort(new Sort(new SortField(pfs.getSortField(), Type.STRING,
           !pfs.isAscending())));
     }
@@ -1422,9 +1432,10 @@ public class HistoryServiceJpa extends ContentServiceJpa implements
    * @param endDate the end date
    * @param pfs the pfs parameter
    * @return the list
+   * @throws LocalException 
    */
   private <T> List<T> findRevisions(Long id, Class<T> clazz, Date startDate,
-    Date endDate, PfsParameter pfs) {
+    Date endDate, PfsParameter pfs) throws Exception {
 
     AuditReader reader = AuditReaderFactory.get(manager);
     AuditQuery query = reader.createQuery()
@@ -1452,10 +1463,16 @@ public class HistoryServiceJpa extends ContentServiceJpa implements
       query = query.addOrder(AuditEntity.property("lastModified").asc());
     }
 
-    if (pfs != null && pfs.getStartIndex() != -1 && pfs.getMaxResults() != -1) {
+    if (pfs != null && pfs.getStartIndex() > -1 && pfs.getMaxResults() > -1) {
       query =
           query.setFirstResult(pfs.getStartIndex()).setMaxResults(
               pfs.getMaxResults());
+    } else if (pfs != null && (pfs.getStartIndex() < -1 || pfs.getMaxResults() < -1)) {
+      throw new LocalException("Invalid paging parameters");
+    }
+    
+    if (pfs != null && pfs.getQueryRestriction() != null) {
+      throw new LocalException("Query restriction not supported");
     }
 
     // execute query

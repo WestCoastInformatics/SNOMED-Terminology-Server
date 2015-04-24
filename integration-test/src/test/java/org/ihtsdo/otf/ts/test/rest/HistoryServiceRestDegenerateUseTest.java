@@ -6,33 +6,34 @@
  */
 package org.ihtsdo.otf.ts.test.rest;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
-
 import java.lang.reflect.Method;
-import java.util.Date;
 
-import org.ihtsdo.otf.ts.ReleaseInfo;
+import org.ihtsdo.otf.ts.helpers.LocalException;
+import org.ihtsdo.otf.ts.helpers.PfsParameter;
 import org.ihtsdo.otf.ts.helpers.PfsParameterJpa;
-import org.ihtsdo.otf.ts.helpers.ReleaseInfoList;
-import org.ihtsdo.otf.ts.jpa.ReleaseInfoJpa;
-import org.ihtsdo.otf.ts.rf2.jpa.ConceptJpa;
-import org.ihtsdo.otf.ts.rf2.jpa.DescriptionJpa;
-import org.ihtsdo.otf.ts.rf2.jpa.LanguageRefSetMemberJpa;
-import org.ihtsdo.otf.ts.rf2.jpa.RelationshipJpa;
+import org.ihtsdo.otf.ts.jpa.services.ContentServiceJpa;
+import org.ihtsdo.otf.ts.rf2.Component;
+import org.ihtsdo.otf.ts.rf2.jpa.AbstractAssociationReferenceRefSetMemberJpa;
+import org.ihtsdo.otf.ts.rf2.jpa.AbstractAttributeValueRefSetMemberJpa;
+import org.ihtsdo.otf.ts.services.ContentService;
 import org.ihtsdo.otf.ts.test.helpers.DegenerateUseMethodTestHelper;
 import org.ihtsdo.otf.ts.test.helpers.DegenerateUseMethodTestHelper.ExpectedFailure;
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 
 /**
  * Implementation of the "History Service REST Degenerate Use" Test Cases.
  */
 public class HistoryServiceRestDegenerateUseTest extends HistoryServiceRestTest {
+
+  // override content service, will instantiate as jpa-level accessor
+  ContentService contentService;
+
+  Object[] validParameters;
+  
+  PfsParameter pfs;
 
   /**
    * Create test fixtures per test.
@@ -46,150 +47,121 @@ public class HistoryServiceRestDegenerateUseTest extends HistoryServiceRestTest 
     // ensure terminology correctly set
     terminology = "SNOMEDCT";
     version = "latest";
+    
+    // default paging (prevent large data results)
+    pfs = new PfsParameterJpa();
+    pfs.setMaxResults(1);
+    pfs.setStartIndex(0);
 
     // authentication -- use admin for this test
     authToken = securityService.authenticate(adminUser, adminPassword);
+
+    // use jpa-level content service to retrieve items for validity testing
+    // i.e. quick retrieval of hibernate ids
+    contentService = new ContentServiceJpa();
   }
 
   /**
    * Test release info methods
+   * 
    * @throws Exception
    */
   @Test
   public void testDegenerateUseRestHistory001() throws Exception {
 
-    ReleaseInfo releaseInfo = null;
-    ReleaseInfo releaseInfo2 = null;
-    ReleaseInfoList releaseInfoList = null;
-
-    // getReleaseHistory(String, String)
-
-    try {
-      releaseInfoList =
-          historyService.getReleaseHistory(terminology, authToken);
-      assertNotNull(releaseInfoList);
-    } catch (Exception e) {
-      fail("getReleaseHistory for " + terminology + ", " + authToken
-          + " failed");
-    }
+    // parameters identical for first four tests
+    validParameters = new Object[] {
+        terminology, authToken
+    };
 
     // getCurrentReleaseInfo(String, String)
-    try {
-      releaseInfo =
-          historyService.getCurrentReleaseInfo(terminology, authToken);
-      assertNotNull(releaseInfo);
-    } catch (Exception e) {
-      fail("getCurrentReleaseInfo for " + terminology + ", " + authToken
-          + " failed)");
-    }
+    DegenerateUseMethodTestHelper.testDegenerateArguments(
+        historyService,
+        historyService.getClass().getMethod("getCurrentReleaseInfo",
+            getParameterTypes(validParameters)), validParameters,
+
+        // Terminology field will return null (succeed) with null terminology
+        // but will fail with empty string
+        new ExpectedFailure[] {
+            ExpectedFailure.STRING_INVALID_EXCEPTION_NULL_SUCCESS,
+            ExpectedFailure.EXCEPTION
+        });
 
     // getPlannedReleaseInfo(String, String)
-    try {
-      releaseInfo =
-          historyService.getPlannedReleaseInfo(terminology, authToken);
-      assertNotNull(releaseInfo);
-    } catch (Exception e) {
-      fail("getPlannedReleaseInfo for " + terminology + ", " + authToken
-          + " failed)");
-    }
+    DegenerateUseMethodTestHelper.testDegenerateArguments(
+        historyService,
+        historyService.getClass().getMethod("getPlannedReleaseInfo",
+            getParameterTypes(validParameters)), validParameters,
+
+        // Empty string will throw exception, null terminology 
+        // will return null (succeed)
+        new ExpectedFailure[] {
+            ExpectedFailure.STRING_INVALID_EXCEPTION_NULL_SUCCESS,
+            ExpectedFailure.EXCEPTION
+        });
 
     // getPreviousReleaseInfo(String, String)
-    // this invocation should return null
-    try {
-      releaseInfo =
-          historyService.getPreviousReleaseInfo(terminology, authToken);
-      assertNull(releaseInfo);
-    } catch (Exception e) {
-      fail("getPreviousReleaseInfo for " + terminology + ", " + authToken
-          + " failed)");
-    }
+    DegenerateUseMethodTestHelper.testDegenerateArguments(
+        historyService,
+        historyService.getClass().getMethod("getPreviousReleaseInfo",
+            getParameterTypes(validParameters)), validParameters,
 
-    // addReleaseInfo(ReleaseInfoJpa, String)
-    releaseInfo = new ReleaseInfoJpa();
-    releaseInfo.setDescription("test description");
-    releaseInfo.setEffectiveTime(new Date());
-    releaseInfo.setName("testName");
-    releaseInfo.setPlanned(false);
-    releaseInfo.setPublished(true);
-    releaseInfo.setTerminology(terminology);
-    releaseInfo.setTerminologyVersion(dtFormat.format(new Date()));
+        // String fields will fail on empty strings, return no results on null
+        // (correct behavior)
+        new ExpectedFailure[] {
+            ExpectedFailure.STRING_INVALID_EXCEPTION_NULL_SUCCESS,
+            ExpectedFailure.EXCEPTION
+        });
 
-    try {
-      releaseInfo =
-          historyService
-              .addReleaseInfo((ReleaseInfoJpa) releaseInfo, authToken);
-      assertNotNull(releaseInfo);
-      assertNotNull(releaseInfo.getId());
-    } catch (Exception e) {
-      fail("addRelease info failed");
-    }
+    // getReleaseHistory(String, String)
+    DegenerateUseMethodTestHelper.testDegenerateArguments(
+        historyService,
+        historyService.getClass().getMethod("getReleaseHistory",
+            getParameterTypes(validParameters)), validParameters,
+
+        // String fields will fail on empty strings, return no results on null
+        // (correct behavior)
+        new ExpectedFailure[] {
+            ExpectedFailure.STRING_INVALID_EXCEPTION_NULL_SUCCESS,
+            ExpectedFailure.EXCEPTION
+        });
 
     // getReleaseInfo(String, String, String)
-    try {
-      releaseInfo2 =
-          historyService.getReleaseInfo(terminology, "testName", authToken);
-      assertNotNull(releaseInfo2);
-      assertTrue(releaseInfo2.getName().equals("testName"));
-    } catch (Exception e) {
-      e.printStackTrace();
-      fail("getReleaseInfo failed");
-    }
+    validParameters = new Object[] {
+        terminology, "20080731", authToken
+    };
 
-    // updateReleaseInfo(ReleaseInfoJpa, String)
-    // only need to test one field, GetterSetterTest covers others
-    try {
-      releaseInfo2.setName("newTestName");
-      historyService
-          .updateReleaseInfo((ReleaseInfoJpa) releaseInfo2, authToken);
-      releaseInfo2 =
-          historyService.getReleaseInfo(terminology, "newTestName", authToken);
-      assertFalse(releaseInfo.getName().equals(releaseInfo2.getName()));
-    } catch (Exception e) {
-      e.printStackTrace();
-      fail("updateReleaseInfo failed");
-    }
+    DegenerateUseMethodTestHelper.testDegenerateArguments(
+        historyService,
+        historyService.getClass().getMethod("getReleaseInfo",
+            getParameterTypes(validParameters)), validParameters,
 
-    // re-try getCurrent/PreviousReleaseInfo
-    try {
-      releaseInfo =
-          historyService.getCurrentReleaseInfo(terminology, authToken);
-      releaseInfo2 =
-          historyService.getPreviousReleaseInfo(terminology, authToken);
+        // String fields will fail on empty strings, return no results on null
+        // (correct behavior)
+        new ExpectedFailure[] {
+            ExpectedFailure.STRING_INVALID_EXCEPTION_NULL_SUCCESS,
+            ExpectedFailure.STRING_INVALID_EXCEPTION_NULL_SUCCESS,
+            ExpectedFailure.EXCEPTION
+        });
 
-      assertNotNull(releaseInfo);
-      assertNotNull(releaseInfo2);
-      assertFalse(releaseInfo.equals(releaseInfo2));
-      assertTrue(releaseInfo2.getEffectiveTime().compareTo(
-          releaseInfo.getEffectiveTime()) < 0);
-    } catch (Exception e) {
-      fail("Second get current/previous release info failed");
-    }
-
-    // removeReleaseInfo(Long, String)
-    try {
-      releaseInfo =
-          historyService.getReleaseInfo(terminology, "newTestName", authToken);
-      assertNotNull(releaseInfo);
-      assertNotNull(releaseInfo.getId());
-      historyService.removeReleaseInfo(releaseInfo.getId(), authToken);
-      releaseInfo =
-          historyService.getReleaseInfo(terminology, "newTestName", authToken);
-      assertNull(releaseInfo);
-    } catch (Exception e) {
-      fail("Remove release info failed");
-    }
   }
 
   /**
-   * Editing cycle methods
-   * @throws Exception
+   * Test add/update/remove releaseInfo use rest history0011.
+   * 
+   * NOTE: ReleaseInfo methods should be in test 001. Due to minor issue with
+   * JDBC connection pools, normal use tests currently placed in test 002
+   * (editing cycle methods), which are skipped as authoring-related elements
+   * are not functional. THerefore, they are not tested there, nor here.
+   *
+   * @throws Exception the exception
    */
+
   @Test
+  @Ignore
   public void testDegenerateUseRestHistory002() throws Exception {
 
-    String releaseVersion = dtFormat.format(new Date());
-    historyService.startEditingCycle(releaseVersion, terminology, version,
-        authToken);
+    // intentionally left blank, see note above
   }
 
   /**
@@ -198,7 +170,40 @@ public class HistoryServiceRestDegenerateUseTest extends HistoryServiceRestTest 
    */
   @Test
   public void testDegenerateUseRestHistory003() throws Exception {
-    testDegenerateUse(ConceptJpa.class);
+
+    objectNames.remove("Concept");
+
+    // The test id for this concept
+    String testId = "321087001";
+    String revision = "20080131";
+    
+    
+    
+    Component component =
+        contentService.getSingleConcept(testId, terminology, version);
+  
+    testDegenerateUse(component, revision);
+    
+    // concept also has deep modified routine
+    Method method =
+        historyService.getClass().getMethod(
+            "findConceptsDeepModifiedSinceDate",
+            new Class<?>[] {
+                String.class, String.class, PfsParameterJpa.class, String.class
+            });
+
+    Object[] parameters = new Object[] {
+        terminology, "20080131", pfs, authToken
+    };
+    
+    // note that null terminology returns a null object (success)
+    DegenerateUseMethodTestHelper.testDegenerateArguments(historyService, method, parameters, new ExpectedFailure[] {
+        ExpectedFailure.STRING_INVALID_EXCEPTION_NULL_SUCCESS,
+        ExpectedFailure.EXCEPTION,
+        ExpectedFailure.EXCEPTION, ExpectedFailure.EXCEPTION
+    });
+    
+
   }
 
   /**
@@ -207,16 +212,17 @@ public class HistoryServiceRestDegenerateUseTest extends HistoryServiceRestTest 
    */
   @Test
   public void testDegenerateUseRestHistory004() throws Exception {
-    testDegenerateUse(DescriptionJpa.class);
-  }
 
-  /**
-   * Test language ref set methods
-   * @throws Exception
-   */
-  @Test
-  public void testDegenerateUseRestHistory005() throws Exception {
-    testDegenerateUse(LanguageRefSetMemberJpa.class);
+    objectNames.remove("Description");
+
+    // The test id for this description
+    String testId = "387512014";
+    String revision = "20030731";
+
+    Component component =
+        contentService.getDescription(testId, terminology, version);
+    testDegenerateUse(component, revision);
+
   }
 
   /**
@@ -224,8 +230,187 @@ public class HistoryServiceRestDegenerateUseTest extends HistoryServiceRestTest 
    * @throws Exception
    */
   @Test
+  public void testDegenerateUseRestHistory005() throws Exception {
+
+    objectNames.remove("Relationship");
+
+    // The test id for this component
+    String testId = "501314023";
+    String revision = "20020131";
+
+    Component component =
+        contentService.getRelationship(testId, terminology, version);
+    testDegenerateUse(component, revision);
+
+  }
+
+  /**
+   * Test language ref set methods
+   * @throws Exception
+   */
+  @Test
   public void testDegenerateUseRestHistory006() throws Exception {
-    testDegenerateUse(RelationshipJpa.class);
+
+    objectNames.remove("LanguageRefSetMember");
+
+    // The test id for this component
+    String testId = "e76075bd-3748-589f-b987-2ada691921ef";
+    String revision = "20080731";
+
+    Component component =
+        contentService.getLanguageRefSetMember(testId, terminology, version);
+    testDegenerateUse(component, revision);
+  }
+
+  /**
+   * Test association reference ref set methods
+   * @throws Exception
+   */
+  @Test
+  public void testDegenerateUseRestHistory007() throws Exception {
+
+    objectNames.remove("AssociationReferenceRefSetMember");
+
+    // The test id for this association reference ref set member
+    String testId = "cf39de4d-bbb9-59c3-b049-82a6c31ce87a";
+    String revision = "20080731";
+
+    // need cast to abstract form (two types of association reference ref set member)
+    Component component = (AbstractAssociationReferenceRefSetMemberJpa<?>)
+        contentService.getAssociationReferenceRefSetMember(testId, terminology,
+            version);
+    testDegenerateUse(component, revision);
+  }
+
+  /**
+   * Test attribute value ref set methods
+   * @throws Exception
+   */
+  @Test
+  public void testDegenerateUseRestHistory008() throws Exception {
+
+    objectNames.remove("AttributeValueRefSetMember");
+
+    // The test id for this component
+    String testId = "de184ffc-03f3-5dae-9f2b-6c46020ede8a";
+    String revision = "20050131";
+
+    // need cast to abstract form (two types of attribute value ref set member)
+    Component component = (AbstractAttributeValueRefSetMemberJpa<?>)
+        contentService.getAttributeValueRefSetMember(testId, terminology,
+            version);
+    testDegenerateUse(component, revision);
+  }
+
+  /**
+   * Test complex map ref set methods
+   * @throws Exception
+   */
+  @Test
+  public void testDegenerateUseRestHistory009() throws Exception {
+
+    objectNames.remove("ComplexMapRefSetMember");
+
+    // The test id for this component
+    String testId = "055c30ae-b018-5b82-bd3d-74ff9451de15";
+    String revision = "20060731";
+
+    Component component =
+        contentService.getComplexMapRefSetMember(testId, terminology, version);
+    testDegenerateUse(component, revision);
+  }
+
+  /**
+   * Test description type ref set methods
+   * @throws Exception
+   */
+  @Test
+  public void testDegenerateUseRestHistory010() throws Exception {
+
+    objectNames.remove("DescriptionTypeRefSetMember");
+
+    // The test id for this component
+    String testId = "807f775b-1d66-5069-b58e-a37ace985dcf";
+    String revision = "20140131";
+
+    Component component =
+        contentService.getDescriptionTypeRefSetMember(testId, terminology,
+            version);
+    testDegenerateUse(component, revision);
+  }
+
+  /**
+   * Test module dependency ref set methods
+   * @throws Exception
+   */
+  @Test
+  public void testDegenerateUseRestHistory011() throws Exception {
+
+    objectNames.remove("ModuleDependencyRefSetMember");
+
+    // The test id for this component
+    String testId = "1244116f-fdb5-5645-afcc-5281288409da";
+    String revision = "20140131";
+
+    Component component =
+        contentService.getModuleDependencyRefSetMember(testId, terminology,
+            version);
+    testDegenerateUse(component, revision);
+  }
+
+  /**
+   * Test refset descriptor ref set methods
+   * @throws Exception
+   */
+  @Test
+  public void testDegenerateUseRestHistory012() throws Exception {
+
+    objectNames.remove("RefsetDescriptorRefSetMember");
+
+    // The test id for this component
+    String testId = "576ed8c3-1227-5489-b782-760a3b729b94";
+    String revision = "20020131";
+
+    Component component =
+        contentService.getRefsetDescriptorRefSetMember(testId, terminology,
+            version);
+    testDegenerateUse(component, revision);
+  }
+
+  /**
+   * Test simple map ref set member methods
+   * @throws Exception
+   */
+  @Test
+  public void testDegenerateUseRestHistory013() throws Exception {
+
+    objectNames.remove("SimpleMapRefSetMember");
+
+    // The test id for this component
+    String testId = "f8dbedb7-12a7-5e33-bbc8-3d1252c77820";
+    String revision = "20050131";
+
+    Component component =
+        contentService.getSimpleMapRefSetMember(testId, terminology, version);
+    testDegenerateUse(component, revision);
+  }
+
+  /**
+   * Test simple ref set member methods
+   * @throws Exception
+   */
+  @Test
+  public void testDegenerateUseRestHistory014() throws Exception {
+
+    objectNames.remove("SimpleRefSetMember");
+
+    // The test id for this component
+    String testId = "c0a26c19-e051-5cfa-86c5-a625ca44e690";
+    String revision = "20060131";
+
+    Component component =
+        contentService.getSimpleRefSetMember(testId, terminology, version);
+    testDegenerateUse(component, revision);
   }
 
   /**
@@ -237,22 +422,6 @@ public class HistoryServiceRestDegenerateUseTest extends HistoryServiceRestTest 
   @After
   public void teardown() throws Exception {
 
-    ReleaseInfo releaseInfo;
-
-    // test for release info created in test 001
-    releaseInfo =
-        historyService.getReleaseInfo(terminology, "newTestName", authToken);
-    if (releaseInfo != null) {
-      historyService.removeReleaseInfo(releaseInfo.getId(), authToken);
-    }
-
-    // test for release info created in test 002
-    String releaseVersion = dtFormat.format(new Date());
-    releaseInfo =
-        historyService.getReleaseInfo(terminology, releaseVersion, authToken);
-    if (releaseInfo != null)
-      historyService.removeReleaseInfo(releaseInfo.getId(), authToken);
-
     // logout
     securityService.logout(authToken);
   }
@@ -260,12 +429,19 @@ public class HistoryServiceRestDegenerateUseTest extends HistoryServiceRestTest 
   /**
    * Test degenerate use.
    *
-   * @param clazz the clazz
+   * @param component the component used for id retrieval
+   * @param revision an existing revision date of the component
    * @throws Exception the exception
    */
-  private void testDegenerateUse(Class<?> clazz) throws Exception {
+  private void testDegenerateUse(Component component, String revision)
+    throws Exception {
+
+    // get the class name
+    Class<? extends Component> clazz = component.getClass();
 
     testDegenerateUseModifiedSinceDateMethod(clazz);
+    testDegenerateUseRevisionsMethod(clazz, component);
+    testDegenerateUseReleaseRevisionMethod(clazz, component, revision);
   }
 
   /**
@@ -285,46 +461,86 @@ public class HistoryServiceRestDegenerateUseTest extends HistoryServiceRestTest 
             });
 
     Object[] parameters = new Object[] {
-        "SNOMEDCT", "19700101", new PfsParameterJpa(), authToken
+        terminology, "19700101", pfs, authToken
     };
 
-    // terminology does not have invalid value
+    // blank and null terminologies will both throw exceptions
     DegenerateUseMethodTestHelper.testDegenerateArguments(historyService,
         method, parameters, new ExpectedFailure[] {
-        ExpectedFailure.STRING_INVALID_EXCEPTION_NULL_NO_RESULTS, ExpectedFailure.STRING_INVALID_EXCEPTION_NULL_SUCCESS, ExpectedFailure.EXCEPTION, ExpectedFailure.EXCEPTION}
-    );
+            ExpectedFailure.STRING_INVALID_EXCEPTION_NULL_NO_RESULTS,
+            ExpectedFailure.EXCEPTION,
+            ExpectedFailure.EXCEPTION, ExpectedFailure.EXCEPTION
+        });
   }
 
   /**
    * Test revisions method for degenerate use.
    *
    * @param clazz the clazz
-   * @throws SecurityException
-   * @throws NoSuchMethodException
-   * @throws IllegalArgumentException
-   * @throws IllegalAccessException
+   * @throws Exception
+   * @throws LocalException
    */
-  private void testDegenerateUseRevisionsMethod(Class<?> clazz)
-    throws NoSuchMethodException, SecurityException, IllegalAccessException,
-    IllegalArgumentException {
+  private void testDegenerateUseRevisionsMethod(Class<?> clazz,
+    Component component) throws LocalException, Exception {
+
+    Method method =
+        historyService.getClass().getMethod(
+            "find" + getClassShortName(clazz) + "Revisions",
+            new Class<?>[] {
+                String.class, String.class, String.class,
+                PfsParameterJpa.class, String.class
+            });
+
+    Object[] parameters =
+        new Object[] {
+            component.getId().toString(), "19700101", "20150131", pfs,
+            authToken
+        };
+
+    // terminology does not have invalid value
+    DegenerateUseMethodTestHelper.testDegenerateArguments(historyService,
+        method, parameters);
 
   }
 
   /**
-   * Test release revisions method for degenerate use.
+   * Test release revision method for degenerate use.
    *
    * @param clazz the clazz
+   * @throws Exception
+   * @throws LocalException
    */
-  private void testDegenerateUseReleaseRevisionsMethod(Class<?> clazz) {
+  private void testDegenerateUseReleaseRevisionMethod(Class<?> clazz,
+    Component component, String revision) throws LocalException, Exception {
+    Method method =
+        historyService.getClass().getMethod(
+            "find" + getClassShortName(clazz) + "ReleaseRevision",
+            new Class<?>[] {
+                String.class, String.class, String.class
+            });
 
+    Object[] parameters = new Object[] {
+        component.getId().toString(), revision, authToken
+    };
+
+    // terminology does not have invalid value
+    DegenerateUseMethodTestHelper.testDegenerateArguments(historyService,
+        method, parameters);
   }
 
   /**
-   * Test deep copy modified since date method for degenerate use.
+   * Returns the parameter types.
    *
-   * @param clazz the clazz
+   * @param parameters the parameters
+   * @return the parameter types
    */
-  private void testDegenerateUseDeepCopyModifiedSinceDateMethod(Class<?> clazz) {
+  @SuppressWarnings("static-method")
+  public Class<?>[] getParameterTypes(Object[] parameters) {
+    Class<?>[] types = new Class<?>[parameters.length];
+    for (int i = 0; i < parameters.length; i++) {
+      types[i] = parameters[i].getClass();
+    }
+    return types;
   }
 
 }

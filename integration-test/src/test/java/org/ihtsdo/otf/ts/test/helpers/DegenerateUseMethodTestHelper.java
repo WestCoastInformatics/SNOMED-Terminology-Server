@@ -175,6 +175,7 @@ public class DegenerateUseMethodTestHelper {
     try {
       method.invoke(obj, validParameters);
     } catch (Exception e) {
+      e.printStackTrace();
       throw new Exception(
           "Could not validate method with valid parameters, testing halted");
     }
@@ -283,7 +284,7 @@ public class DegenerateUseMethodTestHelper {
 
         // test bad query restriction (bad lucene syntax)
         pfs = new PfsParameterJpa((PfsParameter) validParameters[i]);
-        pfs.setQueryRestriction("BAD_SYNTAX*:*!~bad");
+        pfs.setQueryRestriction("-");
         parameters.set(i, pfs);
 
         invoke(obj, method, parameters.toArray(), pfs, expectedFailure);
@@ -323,9 +324,21 @@ public class DegenerateUseMethodTestHelper {
         // switch on expected failure type -- NOTE: exception types are handled
         // below, SKIP handled above
         switch (expectedFailure) {
-
+          case EXCEPTION:
+            throw new Exception("Test did not throw expected exception");
+          case LONG_INVALID_NO_RESULTS_NULL_EXCEPTION:
+            // check that result returned is null
+            if (parameter == null) {
+              throw new Exception("Test did not throw expected exception");
+            } else {
+              if (!isEmptyObject(result)) {
+                throw new Exception(
+                    "Test expecting no results returned objects");
+              }
+            }
+            break;
           case NONE:
-            // do nothing, expect success
+            // do nothing
             break;
           case NO_RESULTS:
             // check that no results returned
@@ -333,113 +346,69 @@ public class DegenerateUseMethodTestHelper {
               throw new Exception("Test expecting no results returned objects");
             }
             break;
-          case LONG_INVALID_NO_RESULTS_NULL_EXCEPTION:
-            // check that result returned is null
-            if (result != null) {
-              throw new Exception("Test expecting null result returned object");
+          case SKIP:
+            // empty code for completeness (skip tested above)
+            break;
+          case STRING_INVALID_EXCEPTION_NULL_EXCEPTION:
+            throw new Exception("Expected exception not thrown");
+          case STRING_INVALID_EXCEPTION_NULL_NO_RESULTS:
+            if (parameter == null && !isEmptyObject(result)) {
+              throw new Exception(
+                  "Null parameter expecting no results returned objects");
+            } else if (parameter != null) {
+              throw new Exception(
+                  "Invalid parameter did not throw expected exception");
+            }
+            break;
+          case STRING_INVALID_EXCEPTION_NULL_SUCCESS:
+            if (parameter != null) {
+              throw new Exception(
+                  "Invalid parameter did not throw expected exception");
+            }
+            break;
+          case STRING_INVALID_NO_RESULTS_NULL_EXCEPTION:
+            if (parameter == null) {
+              throw new Exception(
+                  "Null parameter did not throw expected exception");
+            } else if (!isEmptyObject(result)) {
+              throw new Exception(
+                  "Invalid parameter expecting no results returned objects");
             }
             break;
           case STRING_INVALID_NO_RESULTS_NULL_NO_RESULTS:
-            // if parameter is string or null
-            if (parameter == null || parameter.getClass().equals(String.class)) {
-
-              // check assumption: empty string
-              if (((String) parameter).isEmpty() == false) {
-                throw new Exception(
-                    "Empty string test used non-empty string as parameter");
-              }
-
-              // check no results
-              if (!isEmptyObject(result)) {
-                throw new Exception(
-                    "Test expecting no results returned objects");
-              }
-            }
-
-            // if parameter non-null and is not string
-            else {
+            if (parameter == null && !isEmptyObject(result)) {
               throw new Exception(
-                  "Test of String parameter used non-String object");
+                  "Null parameter expecting no results returned objects");
+            } else if (parameter != null && !isEmptyObject(result)) {
+              throw new Exception(
+                  "Invalid parameter expecting no results returned objects");
             }
-
             break;
           case STRING_INVALID_NO_RESULTS_NULL_SUCCESS:
-
-            // if parameter is null, do nothing
-            if (parameter == null) {
-              // do nothing
-            }
-
-            // if parameter is non-null and a string
-            else if (parameter.getClass().equals(String.class)) {
-
-              // check assumption: empty string
-              if (((String) parameter).isEmpty() == false) {
-                throw new Exception(
-                    "Empty string test used non-empty string as parameter");
-              }
-
-              // check no results
-              if (!isEmptyObject(result)) {
-                throw new Exception(
-                    "Test expecting no results returned objects");
-              }
-            }
-
-            // if parameter non-null but is not string
-            else {
+            if (parameter != null && !isEmptyObject(result)) {
               throw new Exception(
-                  "Test of String parameter used non-String object");
+                  "Invalid parameter expecting no results returned objects");
             }
+            break;
+          case STRING_INVALID_SUCCESS_NULL_EXCEPTION:
+            if (parameter == null) {
+              throw new Exception(
+                  "Null parameter did not throw expected exception");
+            }
+            break;
           case STRING_INVALID_SUCCESS_NULL_NO_RESULTS:
-            // if parameter null
-            if (parameter == null) {
-
-              // check no results
-              if (!isEmptyObject(result)) {
-                throw new Exception(
-                    "Test expecting no results returned objects");
-              }
-            }
-
-            // if parameter non-null but is not string
-            else if (!parameter.getClass().equals(String.class)) {
+            if (parameter == null && !isEmptyObject(result)) {
               throw new Exception(
-                  "Test of String parameter used non-String object");
+                  "Null parameter expecting no results returned objects");
             }
-
-            // otherwise, empty string succeeds,
-            else {
-              // check assumption: empty string
-              if (((String) parameter).isEmpty() == false) {
-                throw new Exception(
-                    "Empty string test used non-empty string as parameter");
-              }
-            }
-
             break;
           case STRING_INVALID_SUCCESS_NULL_SUCCESS:
-            if (parameter == null) {
-              // do nothing
-            } else {
-              // check assumption: empty string
-              if (((String) parameter).isEmpty() == false) {
-                throw new Exception(
-                    "Empty string test used non-empty string as parameter");
-
-                // do nothing
-              }
-
-            }
+            // do nothing
             break;
           default:
-            throw new Exception(
-                "Unexpected failure type detected, could not validate results");
+            break;
 
         }
-
-        Logger.getLogger(DegenerateUseMethodTestHelper.class).info(
-            "  Successful call expected");
 
       } catch (IllegalAccessException | IllegalArgumentException e) {
         throw new Exception("Failed to correctly invoke method");
@@ -447,101 +416,55 @@ public class DegenerateUseMethodTestHelper {
 
         switch (expectedFailure) {
           case EXCEPTION:
-            // do nothing, expected exception
+            // do nothing
             break;
-
           case LONG_INVALID_NO_RESULTS_NULL_EXCEPTION:
-            if (parameter == null) {
-              // do nothing, expected exception
-            } else if (parameter.getClass().equals(Long.class)) {
-              throw new Exception(
-                  "Invalid long value threw exception when expecting no results");
+            if (parameter != null) {
+              throw new Exception("Parameter threw unexpected exception");
             }
-
             break;
+          case NONE:
+            throw new Exception("Parameter threw unexpected exception");
 
+          case NO_RESULTS:
+            throw new Exception("Parameter threw unexpected exception");
+
+          case SKIP:
+            // do nothing
+            break;
           case STRING_INVALID_EXCEPTION_NULL_EXCEPTION:
-            if (parameter == null) {
-              // do nothing, expected exception
-            }
-
-            else if (parameter.getClass().equals(String.class)) {
-              // check assumption: empty string
-              if (((String) parameter).isEmpty() == false) {
-                throw new Exception(
-                    "Empty string test used non-empty string as parameter");
-              }
-
-              // do nothing
-            } else {
-              throw new Exception(
-                  "Test expecting String value given non-String parameter");
-            }
-
+            // do nothing
             break;
           case STRING_INVALID_EXCEPTION_NULL_NO_RESULTS:
             if (parameter == null) {
-              throw new Exception(
-                  "Testing string parameter with null value threw an unexpected exception");
-
-            } else if (parameter.getClass().equals(String.class)) {
-              // check assumption: empty string
-              if (((String) parameter).isEmpty() == false) {
-                throw new Exception(
-                    "Empty string test used non-empty string as parameter");
-              }
-
-              // do nothing
-            } else {
-              throw new Exception(
-                  "Test expecting String value given non-String parameter");
+              throw new Exception("Parameter threw unexpected exception");
             }
             break;
           case STRING_INVALID_EXCEPTION_NULL_SUCCESS:
             if (parameter == null) {
-              throw new Exception(
-                  "Testing string parameter with null value threw an unexpected exception");
-
-            } else if (parameter.getClass().equals(String.class)) {
-              // check assumption: empty string
-              if (((String) parameter).isEmpty() == false) {
-                throw new Exception(
-                    "Empty string test used non-empty string as parameter");
-              }
-
-              // do nothing
-            } else {
-              throw new Exception(
-                  "Test expecting String value given non-String parameter");
+              throw new Exception("Parameter threw unexpected exception");
             }
             break;
           case STRING_INVALID_NO_RESULTS_NULL_EXCEPTION:
-            if (parameter == null) {
-              // do nothing, expected exception
-
-            } else if (parameter.getClass().equals(String.class)) {
-              throw new Exception(
-                  "Test expecting no results for empty string threw unexpected exception");
-            } else {
-              throw new Exception(
-                  "Test expecting String value given non-String parameter");
+            if (parameter != null) {
+              throw new Exception("Parameter threw unexpected exception");
             }
             break;
+          case STRING_INVALID_NO_RESULTS_NULL_NO_RESULTS:
+            throw new Exception("Parameter threw unexpected exception");
+          case STRING_INVALID_NO_RESULTS_NULL_SUCCESS:
+            throw new Exception("Parameter threw unexpected exception");
           case STRING_INVALID_SUCCESS_NULL_EXCEPTION:
-            if (parameter == null) {
-              // do nothing, expected exception
-
-            } else if (parameter.getClass().equals(String.class)) {
-              throw new Exception(
-                  "Test expecting success for empty string threw unexpected exception");
-            } else {
-              throw new Exception(
-                  "Test expecting String value given non-String parameter");
+            if (parameter != null) {
+              throw new Exception("Parameter threw unexpected exception");
             }
-            break;
+          case STRING_INVALID_SUCCESS_NULL_NO_RESULTS:
+            throw new Exception("Parameter threw unexpected exception");
+          case STRING_INVALID_SUCCESS_NULL_SUCCESS:
+            throw new Exception("Parameter threw unexpected exception");
           default:
-            throw new Exception("Call failed (not expected) with value "
-                + (parameter == null ? "null" : parameter.toString()));
+            throw new Exception("Parameter threw unexpected exception");
+
         }
 
       } catch (LocalException e) {

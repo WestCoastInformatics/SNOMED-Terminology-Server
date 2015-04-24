@@ -8,8 +8,6 @@ import org.ihtsdo.otf.ts.helpers.PfsParameter;
 import org.ihtsdo.otf.ts.helpers.PfsParameterJpa;
 import org.ihtsdo.otf.ts.helpers.ResultList;
 import org.ihtsdo.otf.ts.helpers.SearchResult;
-import org.ihtsdo.otf.ts.helpers.SearchResultJpa;
-import org.ihtsdo.otf.ts.helpers.SearchResultList;
 import org.ihtsdo.otf.ts.rf2.Component;
 
 /**

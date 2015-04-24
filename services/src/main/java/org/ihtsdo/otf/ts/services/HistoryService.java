@@ -33,8 +33,11 @@ import org.ihtsdo.otf.ts.rf2.Relationship;
 import org.ihtsdo.otf.ts.rf2.SimpleMapRefSetMember;
 import org.ihtsdo.otf.ts.rf2.SimpleRefSetMember;
 
+// TODO: Auto-generated Javadoc
 /**
  * Generically represents a service for asking questions about content history.
+ *
+ * @author ${author}
  */
 public interface HistoryService extends ContentService {
 
@@ -284,9 +287,10 @@ public interface HistoryService extends ContentService {
    * @param endDate the end date
    * @param pfs the pfs
    * @return the association reference ref set member list
+   * @throws Exception the exception
    */
   public AssociationReferenceRefSetMemberList findAssociationReferenceRefSetMemberRevisions(
-    Long id, Date startDate, Date endDate, PfsParameter pfs);
+    Long id, Date startDate, Date endDate, PfsParameter pfs) throws Exception;
 
   /**
    * Find abstract association reference ref set member release revision.
@@ -319,9 +323,10 @@ public interface HistoryService extends ContentService {
    * @param endDate the end date
    * @param pfs the pfs
    * @return the attribute value ref set member list
+   * @throws Exception the exception
    */
   public AttributeValueRefSetMemberList findAttributeValueRefSetMemberRevisions(
-    Long id, Date startDate, Date endDate, PfsParameter pfs);
+    Long id, Date startDate, Date endDate, PfsParameter pfs) throws Exception;
 
   /**
    * Find attribute value ref set member release revision.
@@ -354,9 +359,10 @@ public interface HistoryService extends ContentService {
    * @param endDate the end date
    * @param pfs the pfs
    * @return the complex map ref set member list
+   * @throws Exception the exception
    */
   public ComplexMapRefSetMemberList findComplexMapRefSetMemberRevisions(Long id,
-    Date startDate, Date endDate, PfsParameter pfs);
+    Date startDate, Date endDate, PfsParameter pfs) throws Exception;
 
   /**
    * Find complex map ref set member release revision.
@@ -389,9 +395,10 @@ public interface HistoryService extends ContentService {
    * @param endDate the end date
    * @param pfs the pfs
    * @return the description type ref set member list
+   * @throws Exception the exception
    */
   public DescriptionTypeRefSetMemberList findDescriptionTypeRefSetMemberRevisions(
-    Long id, Date startDate, Date endDate, PfsParameter pfs);
+    Long id, Date startDate, Date endDate, PfsParameter pfs) throws Exception;
 
   /**
    * Find description type ref set member release revision.
@@ -424,9 +431,10 @@ public interface HistoryService extends ContentService {
    * @param endDate the end date
    * @param pfs the pfs
    * @return the module dependency ref set member list
+   * @throws Exception the exception
    */
   public ModuleDependencyRefSetMemberList findModuleDependencyRefSetMemberRevisions(
-    Long id, Date startDate, Date endDate, PfsParameter pfs);
+    Long id, Date startDate, Date endDate, PfsParameter pfs) throws Exception;
 
   /**
    * Find module dependency ref set member release revision.
@@ -459,9 +467,10 @@ public interface HistoryService extends ContentService {
    * @param endDate the end date
    * @param pfs the pfs
    * @return the refset descriptor ref set member list
+   * @throws Exception the exception
    */
   public RefsetDescriptorRefSetMemberList findRefsetDescriptorRefSetMemberRevisions(
-    Long id, Date startDate, Date endDate, PfsParameter pfs);
+    Long id, Date startDate, Date endDate, PfsParameter pfs) throws Exception;
 
   /**
    * Find refset descriptor ref set member release revision.
@@ -494,9 +503,10 @@ public interface HistoryService extends ContentService {
    * @param endDate the end date
    * @param pfs the pfs
    * @return the simple map ref set member list
+   * @throws Exception the exception
    */
   public SimpleMapRefSetMemberList findSimpleMapRefSetMemberRevisions(Long id,
-    Date startDate, Date endDate, PfsParameter pfs);
+    Date startDate, Date endDate, PfsParameter pfs) throws Exception;
 
   /**
    * Find simple map ref set member release revision.
@@ -529,9 +539,10 @@ public interface HistoryService extends ContentService {
    * @param endDate the end date
    * @param pfs the pfs
    * @return the simple ref set member list
+   * @throws Exception the exception
    */
   public SimpleRefSetMemberList findSimpleRefSetMemberRevisions(Long id,
-    Date startDate, Date endDate, PfsParameter pfs);
+    Date startDate, Date endDate, PfsParameter pfs) throws Exception;
 
   /**
    * Find simple ref set member release revision.

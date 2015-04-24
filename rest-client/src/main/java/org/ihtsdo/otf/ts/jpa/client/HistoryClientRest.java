@@ -9,7 +9,6 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response.Status.Family;
 
 import org.apache.log4j.Logger;
-import org.ihtsdo.otf.ts.rf2.jpa.AbstractAssociationReferenceRefSetMemberJpa;
 import org.ihtsdo.otf.ts.ReleaseInfo;
 import org.ihtsdo.otf.ts.helpers.AssociationReferenceRefSetMemberList;
 import org.ihtsdo.otf.ts.helpers.AssociationReferenceRefSetMemberListJpa;
@@ -53,6 +52,8 @@ import org.ihtsdo.otf.ts.rf2.RefsetDescriptorRefSetMember;
 import org.ihtsdo.otf.ts.rf2.Relationship;
 import org.ihtsdo.otf.ts.rf2.SimpleMapRefSetMember;
 import org.ihtsdo.otf.ts.rf2.SimpleRefSetMember;
+import org.ihtsdo.otf.ts.rf2.jpa.AbstractAssociationReferenceRefSetMemberJpa;
+import org.ihtsdo.otf.ts.rf2.jpa.AbstractAttributeValueRefSetMemberJpa;
 import org.ihtsdo.otf.ts.rf2.jpa.ComplexMapRefSetMemberJpa;
 import org.ihtsdo.otf.ts.rf2.jpa.ConceptJpa;
 import org.ihtsdo.otf.ts.rf2.jpa.DescriptionJpa;
@@ -109,7 +110,9 @@ public class HistoryClientRest implements HistoryServiceRest {
             .header("Authorization", authToken)
             .header("Content-type", MediaType.APPLICATION_XML)
             .post(ClientResponse.class, pfsString);
-
+    if (response.getStatus() == 204) {
+      return null;
+    }
     String resultString = response.getEntity(String.class);
 
     if (response.getStatusInfo().getFamily() == Family.SUCCESSFUL) {
@@ -153,7 +156,9 @@ public class HistoryClientRest implements HistoryServiceRest {
             .header("Authorization", authToken)
             .header("Content-type", MediaType.APPLICATION_XML)
             .post(ClientResponse.class, pfsString);
-
+    if (response.getStatus() == 204) {
+      return null;
+    }
     String resultString = response.getEntity(String.class);
     if (response.getStatusInfo().getFamily() == Family.SUCCESSFUL) {
       Logger.getLogger(this.getClass()).debug(
@@ -188,7 +193,9 @@ public class HistoryClientRest implements HistoryServiceRest {
     ClientResponse response =
         resource.accept(MediaType.APPLICATION_XML)
             .header("Authorization", authToken).get(ClientResponse.class);
-
+    if (response.getStatus() == 204) {
+      return null;
+    }
     String resultString = response.getEntity(String.class);
     if (response.getStatusInfo().getFamily() == Family.SUCCESSFUL) {
       Logger.getLogger(this.getClass()).debug(
@@ -229,7 +236,9 @@ public class HistoryClientRest implements HistoryServiceRest {
             .header("Authorization", authToken)
             .header("Content-type", MediaType.APPLICATION_XML)
             .post(ClientResponse.class, pfsString);
-
+    if (response.getStatus() == 204) {
+      return null;
+    }
     String resultString = response.getEntity(String.class);
     if (response.getStatusInfo().getFamily() == Family.SUCCESSFUL) {
       Logger.getLogger(this.getClass()).debug(
@@ -272,7 +281,9 @@ public class HistoryClientRest implements HistoryServiceRest {
             .header("Authorization", authToken)
             .header("Content-type", MediaType.APPLICATION_XML)
             .post(ClientResponse.class, pfsString);
-
+    if (response.getStatus() == 204) {
+      return null;
+    }
     String resultString = response.getEntity(String.class);
     if (response.getStatusInfo().getFamily() == Family.SUCCESSFUL) {
       Logger.getLogger(this.getClass()).debug(
@@ -307,7 +318,9 @@ public class HistoryClientRest implements HistoryServiceRest {
     ClientResponse response =
         resource.accept(MediaType.APPLICATION_XML)
             .header("Authorization", authToken).get(ClientResponse.class);
-
+    if (response.getStatus() == 204) {
+      return null;
+    }
     String resultString = response.getEntity(String.class);
     if (response.getStatusInfo().getFamily() == Family.SUCCESSFUL) {
       Logger.getLogger(this.getClass()).debug(
@@ -349,7 +362,9 @@ public class HistoryClientRest implements HistoryServiceRest {
             .header("Authorization", authToken)
             .header("Content-type", MediaType.APPLICATION_XML)
             .post(ClientResponse.class, pfsString);
-
+    if (response.getStatus() == 204) {
+      return null;
+    }
     String resultString = response.getEntity(String.class);
     if (response.getStatusInfo().getFamily() == Family.SUCCESSFUL) {
       Logger.getLogger(this.getClass()).debug(
@@ -393,7 +408,9 @@ public class HistoryClientRest implements HistoryServiceRest {
             .header("Authorization", authToken)
             .header("Content-type", MediaType.APPLICATION_XML)
             .post(ClientResponse.class, pfsString);
-
+    if (response.getStatus() == 204) {
+      return null;
+    }
     String resultString = response.getEntity(String.class);
     if (response.getStatusInfo().getFamily() == Family.SUCCESSFUL) {
       Logger.getLogger(this.getClass()).debug(
@@ -428,7 +445,9 @@ public class HistoryClientRest implements HistoryServiceRest {
     ClientResponse response =
         resource.accept(MediaType.APPLICATION_XML)
             .header("Authorization", authToken).get(ClientResponse.class);
-
+    if (response.getStatus() == 204) {
+      return null;
+    }
     String resultString = response.getEntity(String.class);
     if (response.getStatusInfo().getFamily() == Family.SUCCESSFUL) {
       Logger.getLogger(this.getClass()).debug(
@@ -470,7 +489,9 @@ public class HistoryClientRest implements HistoryServiceRest {
             .header("Authorization", authToken)
             .header("Content-type", MediaType.APPLICATION_XML)
             .post(ClientResponse.class, pfsString);
-
+    if (response.getStatus() == 204) {
+      return null;
+    }
     String resultString = response.getEntity(String.class);
     if (response.getStatusInfo().getFamily() == Family.SUCCESSFUL) {
       Logger.getLogger(this.getClass()).debug(
@@ -514,7 +535,9 @@ public class HistoryClientRest implements HistoryServiceRest {
             .header("Authorization", authToken)
             .header("Content-type", MediaType.APPLICATION_XML)
             .post(ClientResponse.class, pfsString);
-
+    if (response.getStatus() == 204) {
+      return null;
+    }
     String resultString = response.getEntity(String.class);
     if (response.getStatusInfo().getFamily() == Family.SUCCESSFUL) {
       Logger.getLogger(this.getClass()).debug(
@@ -549,7 +572,9 @@ public class HistoryClientRest implements HistoryServiceRest {
     ClientResponse response =
         resource.accept(MediaType.APPLICATION_XML)
             .header("Authorization", authToken).get(ClientResponse.class);
-
+    if (response.getStatus() == 204) {
+      return null;
+    }
     String resultString = response.getEntity(String.class);
     if (response.getStatusInfo().getFamily() == Family.SUCCESSFUL) {
       Logger.getLogger(this.getClass()).debug(
@@ -592,7 +617,9 @@ public class HistoryClientRest implements HistoryServiceRest {
             .header("Authorization", authToken)
             .header("Content-type", MediaType.APPLICATION_XML)
             .post(ClientResponse.class, pfsString);
-
+    if (response.getStatus() == 204) {
+      return null;
+    }
     String resultString = response.getEntity(String.class);
     if (response.getStatusInfo().getFamily() == Family.SUCCESSFUL) {
       Logger.getLogger(this.getClass()).debug(
@@ -636,7 +663,9 @@ public class HistoryClientRest implements HistoryServiceRest {
             .header("Authorization", authToken)
             .header("Content-type", MediaType.APPLICATION_XML)
             .post(ClientResponse.class, pfsString);
-
+    if (response.getStatus() == 204) {
+      return null;
+    }
     String resultString = response.getEntity(String.class);
     if (response.getStatusInfo().getFamily() == Family.SUCCESSFUL) {
       Logger.getLogger(this.getClass()).debug(
@@ -661,7 +690,7 @@ public class HistoryClientRest implements HistoryServiceRest {
    * java.lang.String)
    */
   @Override
-  public AssociationReferenceRefSetMember findAssociationReferenceRefSetMemberReleaseRevision(
+  public AssociationReferenceRefSetMember<?> findAssociationReferenceRefSetMemberReleaseRevision(
     String id, String release, String authToken) throws Exception {
     Client client = Client.create();
     WebResource resource =
@@ -671,7 +700,9 @@ public class HistoryClientRest implements HistoryServiceRest {
     ClientResponse response =
         resource.accept(MediaType.APPLICATION_XML)
             .header("Authorization", authToken).get(ClientResponse.class);
-
+    if (response.getStatus() == 204) {
+      return null;
+    }
     String resultString = response.getEntity(String.class);
     if (response.getStatusInfo().getFamily() == Family.SUCCESSFUL) {
       Logger.getLogger(this.getClass()).debug(
@@ -681,7 +712,7 @@ public class HistoryClientRest implements HistoryServiceRest {
     }
 
     // converting to object
-    AssociationReferenceRefSetMember member =
+    AssociationReferenceRefSetMember<?> member =
         (AssociationReferenceRefSetMember<?>) ConfigUtility.getGraphForString(resultString,
             AbstractAssociationReferenceRefSetMemberJpa.class);
 
@@ -714,7 +745,9 @@ public class HistoryClientRest implements HistoryServiceRest {
             .header("Authorization", authToken)
             .header("Content-type", MediaType.APPLICATION_XML)
             .post(ClientResponse.class, pfsString);
-
+    if (response.getStatus() == 204) {
+      return null;
+    }
     String resultString = response.getEntity(String.class);
     if (response.getStatusInfo().getFamily() == Family.SUCCESSFUL) {
       Logger.getLogger(this.getClass()).debug(
@@ -758,7 +791,9 @@ public class HistoryClientRest implements HistoryServiceRest {
             .header("Authorization", authToken)
             .header("Content-type", MediaType.APPLICATION_XML)
             .post(ClientResponse.class, pfsString);
-
+    if (response.getStatus() == 204) {
+      return null;
+    }
     String resultString = response.getEntity(String.class);
     if (response.getStatusInfo().getFamily() == Family.SUCCESSFUL) {
       Logger.getLogger(this.getClass()).debug(
@@ -783,7 +818,7 @@ public class HistoryClientRest implements HistoryServiceRest {
    * java.lang.String)
    */
   @Override
-  public AttributeValueRefSetMember findAttributeValueRefSetMemberReleaseRevision(
+  public AttributeValueRefSetMember<?> findAttributeValueRefSetMemberReleaseRevision(
     String id, String release, String authToken) throws Exception {
     Client client = Client.create();
     WebResource resource =
@@ -793,7 +828,9 @@ public class HistoryClientRest implements HistoryServiceRest {
     ClientResponse response =
         resource.accept(MediaType.APPLICATION_XML)
             .header("Authorization", authToken).get(ClientResponse.class);
-
+    if (response.getStatus() == 204) {
+      return null;
+    }
     String resultString = response.getEntity(String.class);
     if (response.getStatusInfo().getFamily() == Family.SUCCESSFUL) {
       Logger.getLogger(this.getClass()).debug(
@@ -805,7 +842,7 @@ public class HistoryClientRest implements HistoryServiceRest {
     // converting to object
     AttributeValueRefSetMember<?> member =
         (AttributeValueRefSetMember<?>) ConfigUtility.getGraphForString(resultString,
-            AttributeValueRefSetMember.class);
+            AbstractAttributeValueRefSetMemberJpa.class);
 
     return member;
   }
@@ -836,7 +873,9 @@ public class HistoryClientRest implements HistoryServiceRest {
             .header("Authorization", authToken)
             .header("Content-type", MediaType.APPLICATION_XML)
             .post(ClientResponse.class, pfsString);
-
+    if (response.getStatus() == 204) {
+      return null;
+    }
     String resultString = response.getEntity(String.class);
     if (response.getStatusInfo().getFamily() == Family.SUCCESSFUL) {
       Logger.getLogger(this.getClass()).debug(
@@ -880,7 +919,9 @@ public class HistoryClientRest implements HistoryServiceRest {
             .header("Authorization", authToken)
             .header("Content-type", MediaType.APPLICATION_XML)
             .post(ClientResponse.class, pfsString);
-
+    if (response.getStatus() == 204) {
+      return null;
+    }
     String resultString = response.getEntity(String.class);
     if (response.getStatusInfo().getFamily() == Family.SUCCESSFUL) {
       Logger.getLogger(this.getClass()).debug(
@@ -915,7 +956,9 @@ public class HistoryClientRest implements HistoryServiceRest {
     ClientResponse response =
         resource.accept(MediaType.APPLICATION_XML)
             .header("Authorization", authToken).get(ClientResponse.class);
-
+    if (response.getStatus() == 204) {
+      return null;
+    }
     String resultString = response.getEntity(String.class);
     if (response.getStatusInfo().getFamily() == Family.SUCCESSFUL) {
       Logger.getLogger(this.getClass()).debug(
@@ -958,7 +1001,9 @@ public class HistoryClientRest implements HistoryServiceRest {
             .header("Authorization", authToken)
             .header("Content-type", MediaType.APPLICATION_XML)
             .post(ClientResponse.class, pfsString);
-
+    if (response.getStatus() == 204) {
+      return null;
+    }
     String resultString = response.getEntity(String.class);
     if (response.getStatusInfo().getFamily() == Family.SUCCESSFUL) {
       Logger.getLogger(this.getClass()).debug(
@@ -1002,7 +1047,9 @@ public class HistoryClientRest implements HistoryServiceRest {
             .header("Authorization", authToken)
             .header("Content-type", MediaType.APPLICATION_XML)
             .post(ClientResponse.class, pfsString);
-
+    if (response.getStatus() == 204) {
+      return null;
+    }
     String resultString = response.getEntity(String.class);
     if (response.getStatusInfo().getFamily() == Family.SUCCESSFUL) {
       Logger.getLogger(this.getClass()).debug(
@@ -1037,7 +1084,9 @@ public class HistoryClientRest implements HistoryServiceRest {
     ClientResponse response =
         resource.accept(MediaType.APPLICATION_XML)
             .header("Authorization", authToken).get(ClientResponse.class);
-
+    if (response.getStatus() == 204) {
+      return null;
+    }
     String resultString = response.getEntity(String.class);
     if (response.getStatusInfo().getFamily() == Family.SUCCESSFUL) {
       Logger.getLogger(this.getClass()).debug(
@@ -1080,7 +1129,9 @@ public class HistoryClientRest implements HistoryServiceRest {
             .header("Authorization", authToken)
             .header("Content-type", MediaType.APPLICATION_XML)
             .post(ClientResponse.class, pfsString);
-
+    if (response.getStatus() == 204) {
+      return null;
+    }
     String resultString = response.getEntity(String.class);
     if (response.getStatusInfo().getFamily() == Family.SUCCESSFUL) {
       Logger.getLogger(this.getClass()).debug(
@@ -1124,7 +1175,9 @@ public class HistoryClientRest implements HistoryServiceRest {
             .header("Authorization", authToken)
             .header("Content-type", MediaType.APPLICATION_XML)
             .post(ClientResponse.class, pfsString);
-
+    if (response.getStatus() == 204) {
+      return null;
+    }
     String resultString = response.getEntity(String.class);
     if (response.getStatusInfo().getFamily() == Family.SUCCESSFUL) {
       Logger.getLogger(this.getClass()).debug(
@@ -1159,7 +1212,9 @@ public class HistoryClientRest implements HistoryServiceRest {
     ClientResponse response =
         resource.accept(MediaType.APPLICATION_XML)
             .header("Authorization", authToken).get(ClientResponse.class);
-
+    if (response.getStatus() == 204) {
+      return null;
+    }
     String resultString = response.getEntity(String.class);
     if (response.getStatusInfo().getFamily() == Family.SUCCESSFUL) {
       Logger.getLogger(this.getClass()).debug(
@@ -1202,7 +1257,9 @@ public class HistoryClientRest implements HistoryServiceRest {
             .header("Authorization", authToken)
             .header("Content-type", MediaType.APPLICATION_XML)
             .post(ClientResponse.class, pfsString);
-
+    if (response.getStatus() == 204) {
+      return null;
+    }
     String resultString = response.getEntity(String.class);
     if (response.getStatusInfo().getFamily() == Family.SUCCESSFUL) {
       Logger.getLogger(this.getClass()).debug(
@@ -1246,7 +1303,9 @@ public class HistoryClientRest implements HistoryServiceRest {
             .header("Authorization", authToken)
             .header("Content-type", MediaType.APPLICATION_XML)
             .post(ClientResponse.class, pfsString);
-
+    if (response.getStatus() == 204) {
+      return null;
+    }
     String resultString = response.getEntity(String.class);
     if (response.getStatusInfo().getFamily() == Family.SUCCESSFUL) {
       Logger.getLogger(this.getClass()).debug(
@@ -1281,7 +1340,9 @@ public class HistoryClientRest implements HistoryServiceRest {
     ClientResponse response =
         resource.accept(MediaType.APPLICATION_XML)
             .header("Authorization", authToken).get(ClientResponse.class);
-
+    if (response.getStatus() == 204) {
+      return null;
+    }
     String resultString = response.getEntity(String.class);
     if (response.getStatusInfo().getFamily() == Family.SUCCESSFUL) {
       Logger.getLogger(this.getClass()).debug(
@@ -1325,7 +1386,9 @@ public class HistoryClientRest implements HistoryServiceRest {
             .header("Authorization", authToken)
             .header("Content-type", MediaType.APPLICATION_XML)
             .post(ClientResponse.class, pfsString);
-
+    if (response.getStatus() == 204) {
+      return null;
+    }
     String resultString = response.getEntity(String.class);
     if (response.getStatusInfo().getFamily() == Family.SUCCESSFUL) {
       Logger.getLogger(this.getClass()).debug(
@@ -1369,7 +1432,9 @@ public class HistoryClientRest implements HistoryServiceRest {
             .header("Authorization", authToken)
             .header("Content-type", MediaType.APPLICATION_XML)
             .post(ClientResponse.class, pfsString);
-
+    if (response.getStatus() == 204) {
+      return null;
+    }
     String resultString = response.getEntity(String.class);
     if (response.getStatusInfo().getFamily() == Family.SUCCESSFUL) {
       Logger.getLogger(this.getClass()).debug(
@@ -1404,7 +1469,9 @@ public class HistoryClientRest implements HistoryServiceRest {
     ClientResponse response =
         resource.accept(MediaType.APPLICATION_XML)
             .header("Authorization", authToken).get(ClientResponse.class);
-
+    if (response.getStatus() == 204) {
+      return null;
+    }
     String resultString = response.getEntity(String.class);
     if (response.getStatusInfo().getFamily() == Family.SUCCESSFUL) {
       Logger.getLogger(this.getClass()).debug(
@@ -1448,7 +1515,9 @@ public class HistoryClientRest implements HistoryServiceRest {
             .header("Authorization", authToken)
             .header("Content-type", MediaType.APPLICATION_XML)
             .post(ClientResponse.class, pfsString);
-
+    if (response.getStatus() == 204) {
+      return null;
+    }
     String resultString = response.getEntity(String.class);
     if (response.getStatusInfo().getFamily() == Family.SUCCESSFUL) {
       Logger.getLogger(this.getClass()).debug(
@@ -1492,7 +1561,9 @@ public class HistoryClientRest implements HistoryServiceRest {
             .header("Authorization", authToken)
             .header("Content-type", MediaType.APPLICATION_XML)
             .post(ClientResponse.class, pfsString);
-
+    if (response.getStatus() == 204) {
+      return null;
+    }
     String resultString = response.getEntity(String.class);
     if (response.getStatusInfo().getFamily() == Family.SUCCESSFUL) {
       Logger.getLogger(this.getClass()).debug(
@@ -1527,7 +1598,9 @@ public class HistoryClientRest implements HistoryServiceRest {
     ClientResponse response =
         resource.accept(MediaType.APPLICATION_XML)
             .header("Authorization", authToken).get(ClientResponse.class);
-
+    if (response.getStatus() == 204) {
+      return null;
+    }
     String resultString = response.getEntity(String.class);
     if (response.getStatusInfo().getFamily() == Family.SUCCESSFUL) {
       Logger.getLogger(this.getClass()).debug(
@@ -1571,7 +1644,9 @@ public class HistoryClientRest implements HistoryServiceRest {
             .header("Authorization", authToken)
             .header("Content-type", MediaType.APPLICATION_XML)
             .post(ClientResponse.class, pfsString);
-
+    if (response.getStatus() == 204) {
+      return null;
+    }
     String resultString = response.getEntity(String.class);
     if (response.getStatusInfo().getFamily() == Family.SUCCESSFUL) {
       Logger.getLogger(this.getClass()).debug(
@@ -1802,7 +1877,9 @@ public class HistoryClientRest implements HistoryServiceRest {
             .header("Authorization", authToken)
             .header("Content-type", MediaType.APPLICATION_XML)
             .put(ClientResponse.class, riString);
-
+    if (response.getStatus() == 204) {
+      return null;
+    }
     String resultString = response.getEntity(String.class);
     if (response.getStatusInfo().getFamily() == Family.SUCCESSFUL) {
       Logger.getLogger(this.getClass()).debug(

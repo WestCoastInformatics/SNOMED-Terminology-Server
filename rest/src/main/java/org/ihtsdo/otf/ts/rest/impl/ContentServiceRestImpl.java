@@ -263,10 +263,7 @@ public class ContentServiceRestImpl extends RootServiceRestImpl implements
           contentService.getSingleConcept(terminologyId, terminology, version);
       ConceptList list = contentService.findChildConcepts(concept, pfs);
       for (Concept c : list.getObjects()) {
-        contentService.getGraphResolutionHandler().resolve(
-            c,
-            TerminologyUtility.getHierarchicalIsaRels(c.getTerminology(),
-                c.getTerminologyVersion()));
+        contentService.getGraphResolutionHandler().resolveEmpty(c);
       }
       contentService.close();
       return list;
@@ -311,10 +308,7 @@ public class ContentServiceRestImpl extends RootServiceRestImpl implements
           contentService.getSingleConcept(terminologyId, terminology, version);
       ConceptList list = contentService.findParentConcepts(concept, pfs);
       for (Concept c : list.getObjects()) {
-        contentService.getGraphResolutionHandler().resolve(
-            c,
-            TerminologyUtility.getHierarchicalIsaRels(c.getTerminology(),
-                c.getTerminologyVersion()));
+        contentService.getGraphResolutionHandler().resolveEmpty(c);
       }
       contentService.close();
       return list;

@@ -22,7 +22,6 @@ import org.ihtsdo.otf.ts.helpers.LanguageRefSetMemberList;
 import org.ihtsdo.otf.ts.helpers.ModuleDependencyRefSetMemberList;
 import org.ihtsdo.otf.ts.helpers.PfsParameterJpa;
 import org.ihtsdo.otf.ts.helpers.RefsetDescriptorRefSetMemberList;
-import org.ihtsdo.otf.ts.helpers.ResultList;
 import org.ihtsdo.otf.ts.helpers.SearchResultList;
 import org.ihtsdo.otf.ts.helpers.SimpleMapRefSetMemberList;
 import org.ihtsdo.otf.ts.helpers.SimpleRefSetMemberList;
@@ -294,6 +293,9 @@ public class ContentServiceRestNormalUseTest extends ContentServiceRestTest {
         fail("Erroneous result retrieved");
       }
     }
+    
+    // cannot test description method, no test data
+    
 
     /** NO TEST FOR ICD9CM */
 
@@ -491,7 +493,7 @@ public class ContentServiceRestNormalUseTest extends ContentServiceRestTest {
   @Test
   public void testNormalUseRestContent010() throws Exception {
 
-    String snomedTestId = "900000000000456007";
+    String snomedTestId = "447562003";
 
     /** Test SNOMED */
     RefsetDescriptorRefSetMemberList results =
@@ -500,7 +502,7 @@ public class ContentServiceRestNormalUseTest extends ContentServiceRestTest {
 
     // assert count
     assertNotNull(results);
-    assertTrue(results.getCount() == 68);
+    assertTrue(results.getCount() == 8);
 
     /** NO TEST FOR ICD9 */
 
@@ -577,18 +579,57 @@ public class ContentServiceRestNormalUseTest extends ContentServiceRestTest {
   @Test
   public void testNormalUseRestContent013() throws Exception {
 
-    String testId;
-
     /** Test SNOMEDCT */
-    testId = "128117002";
-    Concept c =
-        contentService.getSingleConcept(testId, snomedTerminology,
-            snomedVersion, authToken);
+    String testId = "128117002";
 
     PfsParameterJpa pfs = new PfsParameterJpa();
-
-    // test ancestors
+    
     ConceptList concepts;
+    
+    // test parents
+    concepts =
+        contentService.findParentConcepts("128117002", snomedTerminology,
+            snomedVersion, pfs, authToken);
+    assertNotNull(concepts);
+    assertTrue(concepts.getCount() == 2);
+    try {
+      // test paging and sorting
+      PfsParameterTestHelper.testPagingAndSorting(
+          contentService,
+          contentService.getClass().getMethod("findParentConcepts",
+              String.class, String.class, String.class, PfsParameterJpa.class,
+              String.class), new Object[] {
+              testId, snomedTerminology, snomedVersion, new PfsParameterJpa(),
+              authToken
+          }, concepts);
+    } catch (Exception e) {
+      e.printStackTrace();
+      fail("Paging/sorting failed for findParentConcepts");
+    }
+    
+
+    // test children
+    concepts =
+        contentService.findChildConcepts("128117002", snomedTerminology,
+            snomedVersion, pfs, authToken);
+    assertNotNull(concepts);
+    assertTrue(concepts.getCount() == 4);
+    try {
+      // test paging and sorting
+      PfsParameterTestHelper.testPagingAndSorting(
+          contentService,
+          contentService.getClass().getMethod("findChildConcepts",
+              String.class, String.class, String.class, PfsParameterJpa.class,
+              String.class), new Object[] {
+              testId, snomedTerminology, snomedVersion, new PfsParameterJpa(),
+              authToken
+          }, concepts);
+    } catch (Exception e) {
+      fail("Paging/sorting failed for findChildConcepts");
+    }
+ 
+    
+    // test ancestors
     concepts =
         contentService.findAncestorConcepts("128117002", snomedTerminology,
             snomedVersion, pfs, authToken);
@@ -610,47 +651,6 @@ public class ContentServiceRestNormalUseTest extends ContentServiceRestTest {
       fail("Paging/sorting failed for findAncestorConcepts");
     }
 
-    //TODO:  Parent and children concepts rely on Relationship vetting
-    //       Need to rewrite those queries
-           
-    concepts =
-        contentService.findParentConcepts("128117002", snomedTerminology,
-            snomedVersion, pfs, authToken);
-    assertNotNull(concepts);
-    assertTrue(concepts.getCount() == 2);
-    try {
-      // test paging and sorting
-      PfsParameterTestHelper.testPagingAndSorting(
-          contentService,
-          contentService.getClass().getMethod("findParentConcepts",
-              String.class, String.class, String.class, PfsParameterJpa.class,
-              String.class), new Object[] {
-              testId, snomedTerminology, snomedVersion, new PfsParameterJpa(),
-              authToken
-          }, concepts);
-    } catch (Exception e) {
-      e.printStackTrace();
-      fail("Paging/sorting failed for findParentConcepts");
-    }
-
-    concepts =
-        contentService.findChildConcepts("128117002", snomedTerminology,
-            snomedVersion, pfs, authToken);
-    assertNotNull(concepts);
-    assertTrue(concepts.getCount() == 4);
-    try {
-      // test paging and sorting
-      PfsParameterTestHelper.testPagingAndSorting(
-          contentService,
-          contentService.getClass().getMethod("findChildConcepts",
-              String.class, String.class, String.class, PfsParameterJpa.class,
-              String.class), new Object[] {
-              testId, snomedTerminology, snomedVersion, new PfsParameterJpa(),
-              authToken
-          }, concepts);
-    } catch (Exception e) {
-      fail("Paging/sorting failed for findChildConcepts");
-    }
 
     concepts =
         contentService.findDescendantConcepts("128117002", snomedTerminology,

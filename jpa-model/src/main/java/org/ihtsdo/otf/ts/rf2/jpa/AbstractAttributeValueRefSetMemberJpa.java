@@ -10,6 +10,7 @@ import javax.persistence.Entity;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.Table;
+import javax.xml.bind.annotation.XmlSeeAlso;
 
 import org.hibernate.envers.Audited;
 import org.ihtsdo.otf.ts.rf2.AttributeValueRefSetMember;
@@ -24,6 +25,10 @@ import org.ihtsdo.otf.ts.rf2.Component;
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @DiscriminatorColumn(name = "type", discriminatorType = DiscriminatorType.STRING, length = 50)
 @Audited
+@XmlSeeAlso({
+  AttributeValueDescriptionRefSetMemberJpa.class,
+  AttributeValueConceptRefSetMemberJpa.class
+})
 public abstract class AbstractAttributeValueRefSetMemberJpa<T extends Component>
     extends AbstractRefSetMemberJpa<T> implements AttributeValueRefSetMember<T> {
 

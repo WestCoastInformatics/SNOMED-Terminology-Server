@@ -11,7 +11,6 @@ import static org.junit.Assert.assertTrue;
 import org.ihtsdo.otf.ts.helpers.PfsParameterJpa;
 import org.ihtsdo.otf.ts.rf2.Concept;
 import org.ihtsdo.otf.ts.rf2.Description;
-import org.ihtsdo.otf.ts.rf2.LanguageRefSetMember;
 import org.ihtsdo.otf.ts.rf2.Relationship;
 import org.ihtsdo.otf.ts.test.helpers.DegenerateUseMethodTestHelper;
 import org.ihtsdo.otf.ts.test.helpers.DegenerateUseMethodTestHelper.ExpectedFailure;
@@ -31,13 +30,10 @@ public class ContentServiceRestDegenerateUseTest extends ContentServiceRestTest 
   private String testId;
 
   /** The test terminology. */
-  private String testTerminology;
+  private String terminology;
 
   /** The test version. */
-  private String testVersion;
-
-  /** The concept used in testing. */
-  private Concept concept;
+  private String version;
 
   /** The valid parameters used for reflection testing. */
   private Object[] validParameters;
@@ -55,14 +51,8 @@ public class ContentServiceRestDegenerateUseTest extends ContentServiceRestTest 
     authToken = securityService.authenticate(testUser, testPassword);
 
     // set terminology and version
-    testTerminology = "SNOMEDCT";
-    testVersion = "latest";
-    testId = "121000119106";
-
-    // get test concept
-    concept =
-        contentService.getSingleConcept(testId, testTerminology, testVersion,
-            authToken);
+    terminology = "SNOMEDCT";
+    version = "latest";
 
   }
 
@@ -74,11 +64,11 @@ public class ContentServiceRestDegenerateUseTest extends ContentServiceRestTest 
   @Test
   public void testDegenerateUseRestContent001() throws Exception {
 
-    /** Concept methods */
+    testId = "121000119106";
 
     // get concepts
     validParameters = new Object[] {
-        testId, testTerminology, testVersion, authToken
+        testId, terminology, version, authToken
     };
 
     DegenerateUseMethodTestHelper.testDegenerateArguments(
@@ -97,7 +87,7 @@ public class ContentServiceRestDegenerateUseTest extends ContentServiceRestTest 
 
     // get single concept
     validParameters = new Object[] {
-        testId, testTerminology, testVersion, authToken
+        testId, terminology, version, authToken
     };
     DegenerateUseMethodTestHelper.testDegenerateArguments(
         contentService,
@@ -111,30 +101,17 @@ public class ContentServiceRestDegenerateUseTest extends ContentServiceRestTest 
             ExpectedFailure.EXCEPTION, ExpectedFailure.EXCEPTION
         });
 
-    // get concept by id
-    validParameters = new Object[] {
-        concept.getId(), authToken
-    };
-
-    // all fields expect Exception
-    DegenerateUseMethodTestHelper.testDegenerateArguments(
-        contentService,
-        contentService.getClass().getMethod("getConcept",
-            getParameterTypes(validParameters)), validParameters);
-
     // find concepts
-    validParameters =
-        new Object[] {
-            testTerminology, testVersion, "ossification",
-            new PfsParameterJpa(), authToken
-        };
+    validParameters = new Object[] {
+        terminology, version, "ossification", new PfsParameterJpa(), authToken
+    };
 
     DegenerateUseMethodTestHelper.testDegenerateArguments(
         contentService,
         contentService.getClass().getMethod("findConceptsForQuery",
             getParameterTypes(validParameters)), validParameters,
         // terminology id, terminology, terminology version all return no
-        // results
+        // results for null value
         new ExpectedFailure[] {
             ExpectedFailure.STRING_INVALID_EXCEPTION_NULL_NO_RESULTS,
             ExpectedFailure.STRING_INVALID_EXCEPTION_NULL_NO_RESULTS,
@@ -145,7 +122,7 @@ public class ContentServiceRestDegenerateUseTest extends ContentServiceRestTest 
     // test for invalid values manually
     try {
       // unparseable terminology
-      contentService.findConceptsForQuery("&%$#*", testVersion, "ossification",
+      contentService.findConceptsForQuery("&%$#*", version, "ossification",
           null, authToken);
     } catch (Exception e) {
       assertTrue(e.getClass().equals(IllegalArgumentException.class));
@@ -153,20 +130,346 @@ public class ContentServiceRestDegenerateUseTest extends ContentServiceRestTest 
 
     try {
       // unparseable version
-      contentService.findConceptsForQuery(testTerminology, "&%$#*",
-          "ossification", null, authToken);
+      contentService.findConceptsForQuery(terminology, "&%$#*", "ossification",
+          null, authToken);
     } catch (Exception e) {
       assertTrue(e.getClass().equals(IllegalArgumentException.class));
     }
 
     try {
       // unparseable searchString
-      contentService.findConceptsForQuery(testTerminology, testVersion,
-          "&%$#*", null, authToken);
+      contentService.findConceptsForQuery(terminology, version, "&%$#*", null,
+          authToken);
     } catch (Exception e) {
       assertTrue(e.getClass().equals(IllegalArgumentException.class));
     }
 
+  }
+
+  /**
+   * Test description services
+   *
+   * @throws Exception the exception
+   */
+  @Test
+  public void testDegenerateUseRestContent002() throws Exception {
+
+    testId = "121000119106";
+
+    // get a description for testing
+    Concept concept =
+        contentService
+            .getSingleConcept(testId, terminology, version, authToken);
+    Description description = concept.getDescriptions().iterator().next();
+
+    // get description
+    validParameters = new Object[] {
+        description.getTerminologyId(), terminology, version, authToken
+    };
+
+    DegenerateUseMethodTestHelper.testDegenerateArguments(
+        contentService,
+        contentService.getClass().getMethod("getDescription",
+            getParameterTypes(validParameters)), validParameters);
+  }
+
+  /**
+   * Test relationship services
+   *
+   * @throws Exception the exception
+   */
+  @Test
+  public void testDegenerateUseRestContent003() throws Exception {
+    testId = "121000119106";
+
+    // get a relationship for testing
+    Concept concept =
+        contentService
+            .getSingleConcept(testId, terminology, version, authToken);
+    Relationship relationship = concept.getRelationships().iterator().next();
+
+    // get relationship
+    validParameters = new Object[] {
+        relationship.getTerminologyId(), terminology, version, authToken
+    };
+
+    DegenerateUseMethodTestHelper.testDegenerateArguments(
+        contentService,
+        contentService.getClass().getMethod("getRelationship",
+            getParameterTypes(validParameters)), validParameters);
+  }
+
+  /**
+   * Test normal use rest for Association Reference Ref Set Members.
+   *
+   * @throws Exception the exception
+   */
+  @Test
+  public void testNormalUseRestContent004() throws Exception {
+
+    // test id of concept with component to be tested
+    String testId = "122456005";
+
+    // set parameters
+    validParameters = new Object[] {
+        testId, terminology, version, authToken
+    };
+
+    // test method
+    DegenerateUseMethodTestHelper.testDegenerateArguments(
+        contentService,
+        contentService.getClass().getMethod(
+            "getAssociationReferenceRefSetMembersForConcept",
+            getParameterTypes(validParameters)), validParameters,
+        new ExpectedFailure[] {
+            ExpectedFailure.STRING_INVALID_EXCEPTION_NULL_NO_RESULTS,
+            ExpectedFailure.STRING_INVALID_EXCEPTION_NULL_NO_RESULTS,
+            ExpectedFailure.STRING_INVALID_EXCEPTION_NULL_NO_RESULTS,
+            ExpectedFailure.EXCEPTION
+        });
+
+    // cannot test description method, no test data for valid call
+  }
+
+  /**
+   * Test Get and Find methods for attribute value ref set members.
+   *
+   * @throws Exception the exception
+   */
+  @Test
+  public void testNormalUseRestContent005() throws Exception {
+
+    // set test id for Attribute Value for Concept
+    String testId = "105592009";
+
+    // set parameters
+    validParameters = new Object[] {
+        testId, terminology, version, authToken
+    };
+
+    // test method
+    DegenerateUseMethodTestHelper.testDegenerateArguments(
+        contentService,
+        contentService.getClass().getMethod(
+            "getAttributeValueRefSetMembersForConcept",
+            getParameterTypes(validParameters)), validParameters,
+        new ExpectedFailure[] {
+            ExpectedFailure.STRING_INVALID_EXCEPTION_NULL_NO_RESULTS,
+            ExpectedFailure.STRING_INVALID_EXCEPTION_NULL_NO_RESULTS,
+            ExpectedFailure.STRING_INVALID_EXCEPTION_NULL_NO_RESULTS,
+            ExpectedFailure.EXCEPTION
+        });
+
+    // cannot test attribute value for description, no valid test data for
+    // comparison
+
+  }
+
+  /**
+   * Test Get and Find methods for complex map ref set members.
+   *
+   * @throws Exception the exception
+   */
+  @Test
+  public void testNormalUseRestContent006() throws Exception {
+
+    // set test ids
+    String testId = "121000119106";
+
+    // set parameters
+    validParameters = new Object[] {
+        testId, terminology, version, authToken
+    };
+
+    // test method
+    DegenerateUseMethodTestHelper.testDegenerateArguments(
+        contentService,
+        contentService.getClass().getMethod(
+            "getComplexMapRefSetMembersForConcept",
+            getParameterTypes(validParameters)), validParameters,
+        new ExpectedFailure[] {
+            ExpectedFailure.STRING_INVALID_EXCEPTION_NULL_NO_RESULTS,
+            ExpectedFailure.STRING_INVALID_EXCEPTION_NULL_NO_RESULTS,
+            ExpectedFailure.STRING_INVALID_EXCEPTION_NULL_NO_RESULTS,
+            ExpectedFailure.EXCEPTION
+        });
+  }
+
+  /**
+   * Test Get and Find methods for description type ref set members.
+   *
+   * @throws Exception the exception
+   */
+  @Test
+  public void testNormalUseRestContent007() throws Exception {
+
+    // set test ids
+    String testId = "900000000000550004";
+
+    // set parameters
+    validParameters = new Object[] {
+        testId, terminology, version, authToken
+    };
+
+    // test method
+    DegenerateUseMethodTestHelper.testDegenerateArguments(
+        contentService,
+        contentService.getClass().getMethod(
+            "getDescriptionTypeRefSetMembersForConcept",
+            getParameterTypes(validParameters)), validParameters,
+        new ExpectedFailure[] {
+            ExpectedFailure.STRING_INVALID_EXCEPTION_NULL_NO_RESULTS,
+            ExpectedFailure.STRING_INVALID_EXCEPTION_NULL_NO_RESULTS,
+            ExpectedFailure.STRING_INVALID_EXCEPTION_NULL_NO_RESULTS,
+            ExpectedFailure.EXCEPTION
+        });
+  }
+
+  /**
+   * Test normal use rest for language ref set members.
+   *
+   * @throws Exception the exception
+   */
+  @Test
+  public void testNormalUseRestContent008() throws Exception {
+
+    // set test ids
+    String testId = "513602011";
+
+    // set parameters
+    validParameters = new Object[] {
+        testId, terminology, version, authToken
+    };
+
+    // test method
+    DegenerateUseMethodTestHelper.testDegenerateArguments(
+        contentService,
+        contentService.getClass().getMethod(
+            "getLanguageRefSetMembersForDescription",
+            getParameterTypes(validParameters)), validParameters,
+            new ExpectedFailure[] {
+          ExpectedFailure.STRING_INVALID_EXCEPTION_NULL_NO_RESULTS,
+          ExpectedFailure.STRING_INVALID_EXCEPTION_NULL_NO_RESULTS,
+          ExpectedFailure.STRING_INVALID_EXCEPTION_NULL_NO_RESULTS,
+          ExpectedFailure.EXCEPTION
+      });
+  }
+
+  /**
+   * Test normal use rest for module dependency refsets.
+   *
+   * @throws Exception the exception
+   */
+  @Test
+  public void testNormalUseRestContent009() throws Exception {
+
+    // set module id
+    String testId = "900000000000207008";
+
+    // set parameters
+    validParameters = new Object[] {
+        testId, terminology, version, authToken
+    };
+
+    // test method
+    DegenerateUseMethodTestHelper.testDegenerateArguments(
+        contentService,
+        contentService.getClass().getMethod(
+            "getModuleDependencyRefSetMembersForModule",
+            getParameterTypes(validParameters)), validParameters,
+        new ExpectedFailure[] {
+            ExpectedFailure.STRING_INVALID_EXCEPTION_NULL_NO_RESULTS,
+            ExpectedFailure.STRING_INVALID_EXCEPTION_NULL_NO_RESULTS,
+            ExpectedFailure.STRING_INVALID_EXCEPTION_NULL_NO_RESULTS,
+            ExpectedFailure.EXCEPTION
+        });
+  }
+
+  /**
+   * Test normal use rest for ref set descriptors.
+   *
+   * @throws Exception the exception
+   */
+  @Test
+  public void testNormalUseRestContent010() throws Exception {
+
+    String testId = "447562003";
+
+    // / set parameters
+    validParameters = new Object[] {
+        testId, terminology, version, authToken
+    };
+
+    // test method
+    DegenerateUseMethodTestHelper.testDegenerateArguments(
+        contentService,
+        contentService.getClass().getMethod("getRefsetDescriptorRefSetMembers",
+            getParameterTypes(validParameters)), validParameters,
+        new ExpectedFailure[] {
+            ExpectedFailure.STRING_INVALID_EXCEPTION_NULL_NO_RESULTS,
+            ExpectedFailure.STRING_INVALID_EXCEPTION_NULL_NO_RESULTS,
+            ExpectedFailure.STRING_INVALID_EXCEPTION_NULL_NO_RESULTS,
+            ExpectedFailure.EXCEPTION
+        });
+
+  }
+
+  /**
+   * Test normal use rest for simple map ref set members.
+   *
+   * @throws Exception the exception
+   */
+  @Test
+  public void testNormalUseRestContent011() throws Exception {
+
+    String testId = "116314006";
+
+    // set parameters
+    validParameters = new Object[] {
+        testId, terminology, version, authToken
+    };
+
+    // test method
+    DegenerateUseMethodTestHelper.testDegenerateArguments(
+        contentService,
+        contentService.getClass().getMethod(
+            "getSimpleMapRefSetMembersForConcept",
+            getParameterTypes(validParameters)), validParameters,
+        new ExpectedFailure[] {
+            ExpectedFailure.STRING_INVALID_EXCEPTION_NULL_NO_RESULTS,
+            ExpectedFailure.STRING_INVALID_EXCEPTION_NULL_NO_RESULTS,
+            ExpectedFailure.STRING_INVALID_EXCEPTION_NULL_NO_RESULTS,
+            ExpectedFailure.EXCEPTION
+        });
+
+  }
+
+  /**
+   * Test normal use rest for simple ref set members.
+   *
+   * @throws Exception the exception
+   */
+  @Test
+  public void testNormalUseRestContent012() throws Exception {
+
+    String testId = "116011005";
+
+    // set parameters
+    validParameters = new Object[] {
+        testId, terminology, version, authToken
+    };
+
+    // test method
+    DegenerateUseMethodTestHelper.testDegenerateArguments(
+        contentService,
+        contentService.getClass().getMethod("getSimpleRefSetMembersForConcept",
+            getParameterTypes(validParameters)), validParameters,
+        new ExpectedFailure[] {
+            ExpectedFailure.STRING_INVALID_EXCEPTION_NULL_NO_RESULTS,
+            ExpectedFailure.STRING_INVALID_EXCEPTION_NULL_NO_RESULTS,
+            ExpectedFailure.STRING_INVALID_EXCEPTION_NULL_NO_RESULTS,
+            ExpectedFailure.EXCEPTION
+        });
   }
 
   /**
@@ -175,145 +478,39 @@ public class ContentServiceRestDegenerateUseTest extends ContentServiceRestTest 
    * @throws Exception the exception
    */
   @Test
-  public void testDegenerateUseRestContent002() throws Exception {
-    // get child concepts
+  public void testDegenerateUseRestContent013() throws Exception {
+    
+    testId = "128117002";
+
+    // parameters are same for all four calls
     validParameters = new Object[] {
-        testId, testTerminology, testVersion, new PfsParameterJpa(), authToken
+        testId, terminology, version, new PfsParameterJpa(), authToken
     };
+
+    // get child concepts
     DegenerateUseMethodTestHelper.testDegenerateArguments(
         contentService,
-        contentService.getClass().getMethod("getChildConcepts",
+        contentService.getClass().getMethod("findChildConcepts",
+            getParameterTypes(validParameters)), validParameters);
+
+    // get parent concepts
+    DegenerateUseMethodTestHelper.testDegenerateArguments(
+        contentService,
+        contentService.getClass().getMethod("findParentConcepts",
             getParameterTypes(validParameters)), validParameters);
 
     // get descendant concepts
-    validParameters = new Object[] {
-        testId, testTerminology, testVersion, new PfsParameterJpa(), authToken
-    };
     DegenerateUseMethodTestHelper.testDegenerateArguments(
         contentService,
-        contentService.getClass().getMethod("getDescendantConcepts",
+        contentService.getClass().getMethod("findDescendantConcepts",
             getParameterTypes(validParameters)), validParameters);
 
     // get ancestor concepts
-    validParameters = new Object[] {
-        testId, testTerminology, testVersion, new PfsParameterJpa(), authToken
-    };
     DegenerateUseMethodTestHelper.testDegenerateArguments(
         contentService,
-        contentService.getClass().getMethod("getAncestorConcepts",
+        contentService.getClass().getMethod("findAncestorConcepts",
             getParameterTypes(validParameters)), validParameters);
 
-  }
-
-  /**
-   * Test description services
-   *
-   * @throws Exception the exception
-   */
-  @Test
-  public void testDegenerateUseRestContent003() throws Exception {
-
-    Description description = concept.getDescriptions().iterator().next();
-
-    // get description
-    validParameters = new Object[] {
-        description.getTerminologyId(), testTerminology, testVersion, authToken
-    };
-
-    DegenerateUseMethodTestHelper.testDegenerateArguments(
-        contentService,
-        contentService.getClass().getMethod("getDescription",
-            getParameterTypes(validParameters)), validParameters);
-
-    // get description
-    validParameters = new Object[] {
-        description.getId(), authToken
-    };
-
-    DegenerateUseMethodTestHelper.testDegenerateArguments(
-        contentService,
-        contentService.getClass().getMethod("getDescription",
-            getParameterTypes(validParameters)), validParameters);
-  }
-
-  /**
-   * Test relationship services
-   *
-   * @throws Exception the exception
-   */
-  @Test
-  public void testDegenerateUseRestContent004() throws Exception {
-
-    Relationship relationship = concept.getRelationships().iterator().next();
-
-    // get relationship
-    validParameters =
-        new Object[] {
-            relationship.getTerminologyId(), testTerminology, testVersion,
-            authToken
-        };
-
-    DegenerateUseMethodTestHelper.testDegenerateArguments(
-        contentService,
-        contentService.getClass().getMethod("getRelationship",
-            getParameterTypes(validParameters)), validParameters);
-
-    // get relationship
-    validParameters = new Object[] {
-        relationship.getId(), authToken
-    };
-
-    DegenerateUseMethodTestHelper.testDegenerateArguments(
-        contentService,
-        contentService.getClass().getMethod("getRelationship",
-            getParameterTypes(validParameters)), validParameters);
-  }
-
-  /**
-   * Test description services
-   *
-   * @throws Exception the exception
-   */
-  @Test
-  public void testDegenerateUseRestContent005() throws Exception {
-
-    Description description = concept.getDescriptions().iterator().next();
-    LanguageRefSetMember language =
-        description.getLanguageRefSetMembers().iterator().next();
-
-    // get language
-    validParameters = new Object[] {
-        language.getTerminologyId(), testTerminology, testVersion, authToken
-    };
-
-    DegenerateUseMethodTestHelper.testDegenerateArguments(
-        contentService,
-        contentService.getClass().getMethod("getLanguageRefSetMember",
-            getParameterTypes(validParameters)), validParameters);
-
-    // get language
-    validParameters = new Object[] {
-        language.getId(), authToken
-    };
-
-    DegenerateUseMethodTestHelper.testDegenerateArguments(
-        contentService,
-        contentService.getClass().getMethod("getLanguageRefSetMember",
-            getParameterTypes(validParameters)), validParameters);
-  }
-
-  /**
-   * Test retrieval of SNOMEDCT refsetMembers NOTE: Ref Set Member id hardcoded,
-   * as concept's set is @XmlTransient
-   */
-  /**
-   * Test relationship services
-   *
-   * @throws Exception the exception
-   */
-  @Test
-  public void testDegenerateUseRestContent006() throws Exception {
-//
   }
 
   /**
