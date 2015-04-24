@@ -19,12 +19,12 @@ import org.junit.Test;
  */
 public class SecurityServiceRestRoleCheckTest extends SecurityServiceRestTest {
 
-  /**  The admin user auth token. */
+  /** The admin user auth token. */
   private static String viewerUserAuthToken;
-  
-  /**  The admin user auth token. */
+
+  /** The admin user auth token. */
   private static String adminUserAuthToken;
-  
+
   /**
    * Create test fixtures per test.
    *
@@ -33,10 +33,11 @@ public class SecurityServiceRestRoleCheckTest extends SecurityServiceRestTest {
   @SuppressWarnings("static-method")
   @Before
   public void setup() throws Exception {
-    
+
     // ensure useres are logged in prior to tests
-    adminUserAuthToken = service.authenticate(adminUserName,  adminUserPassword);
-    viewerUserAuthToken = service.authenticate(viewerUserName, viewerUserPassword);
+    adminUserAuthToken = service.authenticate(adminUserName, adminUserPassword);
+    viewerUserAuthToken =
+        service.authenticate(viewerUserName, viewerUserPassword);
   }
 
   //
@@ -51,27 +52,28 @@ public class SecurityServiceRestRoleCheckTest extends SecurityServiceRestTest {
    */
   @Test
   public void testRoleCheckRestSecurity002() throws Exception {
-    
-    Logger.getLogger(getClass()).info("Testing role requirements for user management services...");
-    
+
+    Logger.getLogger(getClass()).info(
+        "Testing role requirements for user management services...");
+
     // create test user
     UserJpa testUser = new UserJpa();
     testUser.setUserName(properties.getProperty("bad.user"));
     testUser.setEmail("no email");
     testUser.setName("Test User");
     testUser.setApplicationRole(UserRole.VIEWER);
-    
+
     // test add
     try {
-    service.addUser(testUser, viewerUserAuthToken);
-    fail("Viewer was able to add a user");
+      service.addUser(testUser, viewerUserAuthToken);
+      fail("Viewer was able to add a user");
     } catch (Exception e) {
       // do nothing
     }
-    
+
     // must add user to test update/delete
     testUser = (UserJpa) service.addUser(testUser, adminUserAuthToken);
-    
+
     // test get
     try {
       if (service.getUser(testUser.getId(), viewerUserAuthToken) == null)
@@ -79,7 +81,7 @@ public class SecurityServiceRestRoleCheckTest extends SecurityServiceRestTest {
     } catch (Exception e) {
       fail("Unexpected error for viewer retrieving user");
     }
-    
+
     // test update
     try {
       service.updateUser(testUser, viewerUserAuthToken);
@@ -87,7 +89,7 @@ public class SecurityServiceRestRoleCheckTest extends SecurityServiceRestTest {
     } catch (Exception e) {
       // do nothing
     }
-   
+
     // test delete
     try {
       service.removeUser(testUser.getId(), viewerUserAuthToken);
@@ -95,10 +97,10 @@ public class SecurityServiceRestRoleCheckTest extends SecurityServiceRestTest {
     } catch (Exception e) {
       // do nothing
     }
-    
+
     // remove the user as admin
     service.removeUser(testUser.getId(), adminUserAuthToken);
-    
+
     Logger.getLogger(getClass()).info("  Done!");
   }
 

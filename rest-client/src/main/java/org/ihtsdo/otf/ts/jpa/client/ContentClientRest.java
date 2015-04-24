@@ -74,6 +74,9 @@ public class ContentClientRest implements ContentServiceRest {
   @Override
   public ConceptList getConcepts(String terminologyId, String terminology,
     String version, String authToken) throws Exception {
+    Logger.getLogger(getClass()).debug(
+        "Content Client - get concepts " + terminologyId + ", " + terminology
+            + ", " + version);
     Client client = Client.create();
     WebResource resource =
         client.resource(config.getProperty("base.url") + "/content/concepts/"
@@ -106,6 +109,9 @@ public class ContentClientRest implements ContentServiceRest {
   @Override
   public Concept getSingleConcept(String terminologyId, String terminology,
     String version, String authToken) throws Exception {
+    Logger.getLogger(getClass()).debug(
+        "Content Client - get single concept " + terminologyId + ", "
+            + terminology + ", " + version);
     Client client = Client.create();
     WebResource resource =
         client.resource(config.getProperty("base.url") + "/content/concept/"
@@ -139,6 +145,10 @@ public class ContentClientRest implements ContentServiceRest {
   public SearchResultList findConceptsForQuery(String terminology,
     String version, String searchString, PfsParameterJpa pfs, String authToken)
     throws Exception {
+    Logger.getLogger(getClass()).debug(
+        "Content Client - find concepts " + terminology + ", " + version + ", "
+            + searchString + ", " + pfs);
+
     Client client = Client.create();
     WebResource resource =
         client.resource(config.getProperty("base.url") + "/content/concepts/"
@@ -179,6 +189,9 @@ public class ContentClientRest implements ContentServiceRest {
   public ConceptList findDescendantConcepts(String terminologyId,
     String terminology, String version, PfsParameterJpa pfs, String authToken)
     throws Exception {
+    Logger.getLogger(getClass()).debug(
+        "Content Client - find descendant concepts " + terminology + ", "
+            + version + ", " + pfs);
     Client client = Client.create();
     WebResource resource =
         client.resource(config.getProperty("base.url") + "/content/concepts/"
@@ -220,6 +233,9 @@ public class ContentClientRest implements ContentServiceRest {
   public ConceptList findChildConcepts(String terminologyId,
     String terminology, String version, PfsParameterJpa pfs, String authToken)
     throws Exception {
+    Logger.getLogger(getClass()).debug(
+        "Content Client - find child concepts " + terminology + ", " + version
+            + ", " + pfs);
     Client client = Client.create();
     WebResource resource =
         client.resource(config.getProperty("base.url") + "/content/concepts/"
@@ -263,6 +279,9 @@ public class ContentClientRest implements ContentServiceRest {
   public ConceptList findParentConcepts(String terminologyId,
     String terminology, String version, PfsParameterJpa pfs, String authToken)
     throws Exception {
+    Logger.getLogger(getClass()).debug(
+        "Content Client - find parent concepts " + terminology + ", " + version
+            + ", " + pfs);
     Client client = Client.create();
     WebResource resource =
         client.resource(config.getProperty("base.url") + "/content/concepts/"
@@ -303,6 +322,9 @@ public class ContentClientRest implements ContentServiceRest {
   public ConceptList findAncestorConcepts(String terminologyId,
     String terminology, String version, PfsParameterJpa pfs, String authToken)
     throws Exception {
+    Logger.getLogger(getClass()).debug(
+        "Content Client - find ancestor concepts " + terminology + ", "
+            + version + ", " + pfs);
     Client client = Client.create();
     WebResource resource =
         client.resource(config.getProperty("base.url") + "/content/concepts/"
@@ -335,12 +357,54 @@ public class ContentClientRest implements ContentServiceRest {
    * (non-Javadoc)
    * 
    * @see
+<<<<<<< HEAD
+=======
+   * org.ihtsdo.otf.ts.rest.ContentServiceRest#getDescription(java.lang.String,
+   * java.lang.String, java.lang.String, java.lang.String)
+   */
+  @Override
+  public Description getDescription(String terminologyId, String terminology,
+    String version, String authToken) throws Exception {
+    Logger.getLogger(getClass()).debug(
+        "Content Client - get description " + terminologyId + ", "
+            + terminology + ", " + version);
+    Client client = Client.create();
+    WebResource resource =
+        client.resource(config.getProperty("base.url")
+            + "/content/description/" + terminology + "/" + version + "/"
+            + terminologyId);
+    ClientResponse response =
+        resource.accept(MediaType.APPLICATION_XML)
+            .header("Authorization", authToken).get(ClientResponse.class);
+
+    String resultString = response.getEntity(String.class);
+    if (response.getStatusInfo().getFamily() == Family.SUCCESSFUL) {
+      Logger.getLogger(getClass()).debug(resultString);
+    } else {
+      throw new Exception(response.toString());
+    }
+
+    // converting to object
+    DescriptionJpa description =
+        (DescriptionJpa) ConfigUtility.getGraphForString(resultString,
+            DescriptionJpa.class);
+    return description;
+  }
+
+  /*
+   * (non-Javadoc)
+   * 
+   * @see
+>>>>>>> 7050b6374e3c69f40d335f0d0a6222a6ae1c7816
    * org.ihtsdo.otf.ts.rest.ContentChangeServiceRest#luceneReindex(java.lang
    * .String, java.lang.String)
    */
   @Override
   public void luceneReindex(String indexedObjects, String authToken)
     throws Exception {
+    Logger.getLogger(getClass()).debug(
+        "Content Client - lucene reindex " + indexedObjects);
+
     Client client = Client.create();
 
     WebResource resource =
@@ -370,6 +434,9 @@ public class ContentClientRest implements ContentServiceRest {
   @Override
   public void loadTerminologyRf2Snapshot(String terminology, String version,
     String inputDir, String authToken) throws Exception {
+    Logger.getLogger(getClass()).debug(
+        "Content Client - load terminology rf2 snapshot " + terminology + ", "
+            + version);
 
     Client client = Client.create();
     WebResource resource =
@@ -399,6 +466,9 @@ public class ContentClientRest implements ContentServiceRest {
   @Override
   public void loadTerminologyRf2Full(String terminology, String version,
     String inputDir, String authToken) throws Exception {
+    Logger.getLogger(getClass()).debug(
+        "Content Client - load terminology rf2 full " + terminology + ", "
+            + version);
 
     Client client = Client.create();
     WebResource resource =
@@ -428,6 +498,8 @@ public class ContentClientRest implements ContentServiceRest {
   @Override
   public void loadTerminologyRf2Delta(String terminology, String inputDir,
     String authToken) throws Exception {
+    Logger.getLogger(getClass()).debug(
+        "Content Client - load terminology rf2 delta " + terminology);
 
     Client client = Client.create();
     WebResource resource =
@@ -457,6 +529,9 @@ public class ContentClientRest implements ContentServiceRest {
   @Override
   public void loadTerminologyClaml(String terminology, String version,
     String inputFile, String authToken) throws Exception {
+    Logger.getLogger(getClass()).debug(
+        "Content Client - load terminology ClaML " + terminology + ", "
+            + version);
 
     Client client = Client.create();
     WebResource resource =
@@ -485,6 +560,8 @@ public class ContentClientRest implements ContentServiceRest {
   @Override
   public void computeTransitiveClosure(String terminology, String version,
     String authToken) throws Exception {
+    Logger.getLogger(getClass()).debug(
+        "Content Client - compute transitive closure");
     Client client = Client.create();
     WebResource resource =
         client.resource(config.getProperty("base.url")
@@ -514,6 +591,8 @@ public class ContentClientRest implements ContentServiceRest {
   @Override
   public void removeTerminology(String terminology, String version,
     String authToken) throws Exception {
+    Logger.getLogger(getClass()).debug(
+        "Content Client - remove terminology " + terminology + ", " + version);
     Client client = Client.create();
     WebResource resource =
         client.resource(config.getProperty("base.url") + "/terminology/remove/"
@@ -544,6 +623,9 @@ public class ContentClientRest implements ContentServiceRest {
   public AssociationReferenceRefSetMemberList findAssociationReferenceRefSetMembers(
     String refSetId, String terminology, String version, PfsParameterJpa pfs,
     String authToken) throws Exception {
+    Logger.getLogger(getClass()).debug(
+        "Content Client - find association reference members by refset "
+            + refSetId + ", " + terminology + ", " + version + ", " + pfs);
     Client client = Client.create();
     WebResource resource =
         client.resource(config.getProperty("base.url")
@@ -586,6 +668,9 @@ public class ContentClientRest implements ContentServiceRest {
   public AttributeValueRefSetMemberList findAttributeValueRefSetMembers(
     String refSetId, String terminology, String version, PfsParameterJpa pfs,
     String authToken) throws Exception {
+    Logger.getLogger(getClass()).debug(
+        "Content Client - find attribute value members by refset " + refSetId
+            + ", " + terminology + ", " + version + ", " + pfs);
     Client client = Client.create();
     WebResource resource =
         client.resource(config.getProperty("base.url")
@@ -627,6 +712,9 @@ public class ContentClientRest implements ContentServiceRest {
   public ComplexMapRefSetMemberList findComplexMapRefSetMembers(
     String refSetId, String terminology, String version, PfsParameterJpa pfs,
     String authToken) throws Exception {
+    Logger.getLogger(getClass()).debug(
+        "Content Client - find complex map members by refset " + refSetId
+            + ", " + terminology + ", " + version + ", " + pfs);
     Client client = Client.create();
     WebResource resource =
         client.resource(config.getProperty("base.url")
@@ -668,6 +756,9 @@ public class ContentClientRest implements ContentServiceRest {
   public DescriptionTypeRefSetMemberList findDescriptionTypeRefSetMembers(
     String refSetId, String terminology, String version, PfsParameterJpa pfs,
     String authToken) throws Exception {
+    Logger.getLogger(getClass()).debug(
+        "Content Client - find description type members by refset " + refSetId
+            + ", " + terminology + ", " + version + ", " + pfs);
     Client client = Client.create();
     WebResource resource =
         client.resource(config.getProperty("base.url")
@@ -709,6 +800,9 @@ public class ContentClientRest implements ContentServiceRest {
   public LanguageRefSetMemberList findLanguageRefSetMembers(String refSetId,
     String terminology, String version, PfsParameterJpa pfs, String authToken)
     throws Exception {
+    Logger.getLogger(getClass()).debug(
+        "Content Client - find language members by refset " + refSetId + ", "
+            + terminology + ", " + version + ", " + pfs);
     Client client = Client.create();
     WebResource resource =
         client.resource(config.getProperty("base.url")
@@ -749,6 +843,9 @@ public class ContentClientRest implements ContentServiceRest {
   public ModuleDependencyRefSetMemberList getModuleDependencyRefSetMembersForModule(
     String moduleId, String terminology, String version, String authToken)
     throws Exception {
+    Logger.getLogger(getClass()).debug(
+        "Content Client - find module dependency members by module" + moduleId
+            + ", " + terminology + ", " + version);
     Client client = Client.create();
     WebResource resource =
         client.resource(config.getProperty("base.url")
@@ -783,6 +880,9 @@ public class ContentClientRest implements ContentServiceRest {
   public RefsetDescriptorRefSetMemberList getRefsetDescriptorRefSetMembers(
     String refSetId, String terminology, String version, String authToken)
     throws Exception {
+    Logger.getLogger(getClass()).debug(
+        "Content Client - get refset descriptor members by refset " + refSetId
+            + ", " + terminology + ", " + version);
     Client client = Client.create();
     WebResource resource =
         client.resource(config.getProperty("base.url")
@@ -818,6 +918,9 @@ public class ContentClientRest implements ContentServiceRest {
   public SimpleMapRefSetMemberList findSimpleMapRefSetMembers(String refSetId,
     String terminology, String version, PfsParameterJpa pfs, String authToken)
     throws Exception {
+    Logger.getLogger(getClass()).debug(
+        "Content Client - find simple map members by refset " + refSetId + ", "
+            + terminology + ", " + version + ", " + pfs);
     Client client = Client.create();
     WebResource resource =
         client.resource(config.getProperty("base.url")
@@ -859,6 +962,9 @@ public class ContentClientRest implements ContentServiceRest {
   public SimpleRefSetMemberList findSimpleRefSetMembers(String refSetId,
     String terminology, String version, PfsParameterJpa pfs, String authToken)
     throws Exception {
+    Logger.getLogger(getClass()).debug(
+        "Content Client - find simple members by refset " + refSetId + ", "
+            + terminology + ", " + version + ", " + pfs);
     Client client = Client.create();
     WebResource resource =
         client.resource(config.getProperty("base.url")
@@ -899,6 +1005,9 @@ public class ContentClientRest implements ContentServiceRest {
   public AssociationReferenceRefSetMemberList getAssociationReferenceRefSetMembersForConcept(
     String terminologyId, String terminology, String version, String authToken)
     throws Exception {
+    Logger.getLogger(getClass()).debug(
+        "Content Client - get association reference members by concept "
+            + terminologyId + ", " + terminology + ", " + version);
     Client client = Client.create();
     WebResource resource =
         client.resource(config.getProperty("base.url")
@@ -934,6 +1043,9 @@ public class ContentClientRest implements ContentServiceRest {
   public AssociationReferenceRefSetMemberList getAssociationReferenceRefSetMembersForDescription(
     String terminologyId, String terminology, String version, String authToken)
     throws Exception {
+    Logger.getLogger(getClass()).debug(
+        "Content Client - get association reference members by description "
+            + terminologyId + ", " + terminology + ", " + version);
     Client client = Client.create();
     WebResource resource =
         client.resource(config.getProperty("base.url")
@@ -969,6 +1081,9 @@ public class ContentClientRest implements ContentServiceRest {
   public AttributeValueRefSetMemberList getAttributeValueRefSetMembersForConcept(
     String terminologyId, String terminology, String version, String authToken)
     throws Exception {
+    Logger.getLogger(getClass()).debug(
+        "Content Client - get attribute value members by concept "
+            + terminologyId + ", " + terminology + ", " + version);
     Client client = Client.create();
     WebResource resource =
         client.resource(config.getProperty("base.url")
@@ -1003,6 +1118,9 @@ public class ContentClientRest implements ContentServiceRest {
   public AttributeValueRefSetMemberList getAttributeValueRefSetMembersForDescription(
     String terminologyId, String terminology, String version, String authToken)
     throws Exception {
+    Logger.getLogger(getClass()).debug(
+        "Content Client - get attribute value members by description "
+            + terminologyId + ", " + terminology + ", " + version);
     Client client = Client.create();
     WebResource resource =
         client.resource(config.getProperty("base.url")
@@ -1038,6 +1156,9 @@ public class ContentClientRest implements ContentServiceRest {
   public ComplexMapRefSetMemberList getComplexMapRefSetMembersForConcept(
     String terminologyId, String terminology, String version, String authToken)
     throws Exception {
+    Logger.getLogger(getClass()).debug(
+        "Content Client - get complex map members by concept " + terminologyId
+            + ", " + terminology + ", " + version);
     Client client = Client.create();
     WebResource resource =
         client.resource(config.getProperty("base.url")
@@ -1107,6 +1228,9 @@ public class ContentClientRest implements ContentServiceRest {
   public LanguageRefSetMemberList getLanguageRefSetMembersForDescription(
     String terminologyId, String terminology, String version, String authToken)
     throws Exception {
+    Logger.getLogger(getClass()).debug(
+        "Content Client - get language members by description " + terminologyId
+            + ", " + terminology + ", " + version);
     Client client = Client.create();
     WebResource resource =
         client.resource(config.getProperty("base.url")
@@ -1141,6 +1265,9 @@ public class ContentClientRest implements ContentServiceRest {
   public SimpleMapRefSetMemberList getSimpleMapRefSetMembersForConcept(
     String terminologyId, String terminology, String version, String authToken)
     throws Exception {
+    Logger.getLogger(getClass()).debug(
+        "Content Client - get simple map members by concept " + terminologyId
+            + ", " + terminology + ", " + version);
     Client client = Client.create();
     WebResource resource =
         client.resource(config.getProperty("base.url")
@@ -1175,6 +1302,9 @@ public class ContentClientRest implements ContentServiceRest {
   public SimpleRefSetMemberList getSimpleRefSetMembersForConcept(
     String terminologyId, String terminology, String version, String authToken)
     throws Exception {
+    Logger.getLogger(getClass()).debug(
+        "Content Client - get simple members by concept " + terminologyId
+            + ", " + terminology + ", " + version);
     Client client = Client.create();
     WebResource resource =
         client.resource(config.getProperty("base.url")
@@ -1209,6 +1339,9 @@ public class ContentClientRest implements ContentServiceRest {
   public RelationshipList getInverseRelationshipsForConcept(
     String terminologyId, String terminology, String version, String authToken)
     throws Exception {
+    Logger.getLogger(getClass()).debug(
+        "Content Client - get inverse relationships by concept "
+            + terminologyId + ", " + terminology + ", " + version);
     Client client = Client.create();
     WebResource resource =
         client.resource(config.getProperty("base.url")

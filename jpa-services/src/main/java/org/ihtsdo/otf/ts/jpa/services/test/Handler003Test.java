@@ -1,3 +1,6 @@
+/*
+ *    Copyright 2015 West Coast Informatics, LLC
+ */
 package org.ihtsdo.otf.ts.jpa.services.test;
 
 import static org.junit.Assert.assertEquals;
@@ -25,8 +28,6 @@ import org.junit.Test;
  */
 public class Handler003Test {
 
-
-
   /** The handler service. */
   private IdentifierAssignmentHandler handlerService;
 
@@ -45,56 +46,52 @@ public class Handler003Test {
   public void setup() {
 
     try {
-    	handlerService = new DefaultIdentifierAssignmentHandler();		         
-	} catch (Exception e) {
-		// TODO Auto-generated catch block
-		e.printStackTrace();
-	}
+      handlerService = new DefaultIdentifierAssignmentHandler();
+    } catch (Exception e) {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+    }
   }
 
-
-
-  /**	/**
-	 * Test normal use of the handler object.
-	 *
-	 * @throws Exception
-	 *             the exception
-	 */
-	@SuppressWarnings("static-access")
-  @Test
-	public void testHandlerNormalUse003() throws Exception {
-		Logger.getLogger(getClass()).info("TEST testHandlerNormalUse003");
-
-		//Retrieve concept 728.1 (ICD9CM) from the content service.
-		ContentService contentService = new ContentServiceJpa();
-	    Concept icdConcept =
-	        contentService.getSingleConcept("728.1", "ICD9CM", "2013");
-	    
-	    //call getTerminologyId(concept)
-	    //TEST: result should match the known terminology id for the concept
-	    String id = handlerService.getTerminologyId(icdConcept);	    
-		Logger.getLogger(getClass()).info(id);
-	    assertEquals(id, icdConcept.getTerminologyId());
-	    
-	    //call getTerminologyId(description)
-	    //TEST: result should match the known terminology id for the description
-	    Description d = icdConcept.getDescriptions().iterator().next();
-	    id = handlerService.getTerminologyId(d);	    
-		Logger.getLogger(getClass()).info(id);
-	    assertEquals(id, d.getTerminologyId());	
-	    
-	    //call getTerminologyId(relationship)
-	    //TEST: result should match the known terminology id for the relationship
-	    Relationship r = icdConcept.getRelationships().iterator().next();
-	    id = handlerService.getTerminologyId(r);	    
-		Logger.getLogger(getClass()).info(id);
-	    assertEquals(id, r.getTerminologyId());		    
-	    
-	    
-  }
-	
-  /* Test degenerate use of the handler object.
+  /**
+   * /** Test normal use of the handler object.
    *
+   * @throws Exception the exception
+   */
+  @Test
+  public void testHandlerNormalUse003() throws Exception {
+    Logger.getLogger(getClass()).info("TEST testHandlerNormalUse003");
+
+    // Retrieve concept 728.1 (ICD9CM) from the content service.
+    ContentService contentService = new ContentServiceJpa();
+    Concept icdConcept =
+        contentService.getSingleConcept("728.1", "ICD9CM", "2013");
+
+    // call getTerminologyId(concept)
+    // TEST: result should match the known terminology id for the concept
+    String id = handlerService.getTerminologyId(icdConcept);
+    Logger.getLogger(getClass()).info(id);
+    assertEquals(id, icdConcept.getTerminologyId());
+
+    // call getTerminologyId(description)
+    // TEST: result should match the known terminology id for the description
+    Description d = icdConcept.getDescriptions().iterator().next();
+    id = handlerService.getTerminologyId(d);
+    Logger.getLogger(getClass()).info(id);
+    assertEquals(id, d.getTerminologyId());
+
+    // call getTerminologyId(relationship)
+    // TEST: result should match the known terminology id for the relationship
+    Relationship r = icdConcept.getRelationships().iterator().next();
+    id = handlerService.getTerminologyId(r);
+    Logger.getLogger(getClass()).info(id);
+    assertEquals(id, r.getTerminologyId());
+
+  }
+
+  /*
+   * Test degenerate use of the handler object.
+   * 
    * @throws Exception the exception
    */
   /**
@@ -103,34 +100,34 @@ public class Handler003Test {
    * @throws Exception the exception
    */
   @Test
-	public void testHandlerDegenerateUse003() throws Exception {
-		// Call getTerminologyId(null)
-		// TEST: exception
-		try {
-			handlerService.getTerminologyId((Concept) null);
-			fail("Calling getTerminologyId((Concept)null) should have thrown an exception.");
-		} catch (Exception e) {
-			// do nothing
-		}
-		
-		// Call getTerminologyId(null)
-		// TEST: exception
-		try {
-			handlerService.getTerminologyId((Description) null);
-			fail("Calling getTerminologyId((Description)null) should have thrown an exception.");
-		} catch (Exception e) {
-			// do nothing
-		}
-		
-		// Call getTerminologyId(null)
-		// TEST: exception
-		try {
-			handlerService.getTerminologyId((Relationship) null);
-			fail("Calling getTerminologyId((Relationship)null) should have thrown an exception.");
-		} catch (Exception e) {
-			// do nothing
-		}	
-	}
+  public void testHandlerDegenerateUse003() throws Exception {
+    // Call getTerminologyId(null)
+    // TEST: exception
+    try {
+      handlerService.getTerminologyId((Concept) null);
+      fail("Calling getTerminologyId((Concept)null) should have thrown an exception.");
+    } catch (Exception e) {
+      // do nothing
+    }
+
+    // Call getTerminologyId(null)
+    // TEST: exception
+    try {
+      handlerService.getTerminologyId((Description) null);
+      fail("Calling getTerminologyId((Description)null) should have thrown an exception.");
+    } catch (Exception e) {
+      // do nothing
+    }
+
+    // Call getTerminologyId(null)
+    // TEST: exception
+    try {
+      handlerService.getTerminologyId((Relationship) null);
+      fail("Calling getTerminologyId((Relationship)null) should have thrown an exception.");
+    } catch (Exception e) {
+      // do nothing
+    }
+  }
 
   /**
    * Test edge cases of the handler object.
@@ -139,17 +136,17 @@ public class Handler003Test {
    */
   @Test
   public void testHandlerEdgeCases003() throws Exception {
-	  //Call getTerminologyId(new ConceptJpa())
-	  //TEST: returns null
-	  assertEquals(handlerService.getTerminologyId(new ConceptJpa()), null);
+    // Call getTerminologyId(new ConceptJpa())
+    // TEST: returns null
+    assertEquals(handlerService.getTerminologyId(new ConceptJpa()), null);
 
-	  //Call getTerminologyId(new DescriptionJpa())
-	  //TEST: returns null
-	  assertEquals(handlerService.getTerminologyId(new DescriptionJpa()), null);
-	  
-	  //Call getTerminologyId(new RelationshipJpa())
-	  //TEST: returns null
-	  assertEquals(handlerService.getTerminologyId(new RelationshipJpa()), null);
+    // Call getTerminologyId(new DescriptionJpa())
+    // TEST: returns null
+    assertEquals(handlerService.getTerminologyId(new DescriptionJpa()), null);
+
+    // Call getTerminologyId(new RelationshipJpa())
+    // TEST: returns null
+    assertEquals(handlerService.getTerminologyId(new RelationshipJpa()), null);
   }
 
   /**

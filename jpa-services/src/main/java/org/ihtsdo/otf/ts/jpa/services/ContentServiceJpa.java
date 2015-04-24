@@ -704,6 +704,7 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
    * org.ihtsdo.otf.mapping.services.ContentService#addConcept(org.ihtsdo.otf
    * .mapping.rf2.Concept)
    */
+  @SuppressWarnings("null")
   @Override
   public Concept addConcept(Concept concept) throws Exception {
     Logger.getLogger(getClass()).debug(
@@ -886,6 +887,7 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
    * org.ihtsdo.otf.mapping.services.ContentService#addDescription(org.ihtsdo
    * .otf.mapping.rf2.Description)
    */
+  @SuppressWarnings("null")
   @Override
   public Description addDescription(Description description) throws Exception {
     Logger.getLogger(getClass()).debug(
@@ -4193,7 +4195,7 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
     for (EntityType<?> type : manager.getMetamodel().getEntities()) {
       String jpaTable = type.getName();
       // Skip audit trail tables
-      if (jpaTable.endsWith("_AUD")) {
+      if (jpaTable.toUpperCase().indexOf("_AUD") != -1) {
         continue;
       }
       if (!AbstractComponent.class.isAssignableFrom(type.getBindableJavaType())) {

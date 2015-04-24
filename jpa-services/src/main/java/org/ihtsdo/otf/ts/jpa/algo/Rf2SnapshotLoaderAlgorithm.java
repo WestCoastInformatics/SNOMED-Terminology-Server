@@ -578,6 +578,10 @@ public class Rf2SnapshotLoaderAlgorithm extends HistoryServiceJpa implements
         relationship.setRelationshipGroup(Integer.valueOf(fields[6])); // relationshipGroup
         relationship.setTypeId(fields[7]); // typeId
         relationship.setCharacteristicTypeId(fields[8].intern()); // characteristicTypeId
+        // This is SNOMED specific
+        relationship.setStated(fields[8].equals("900000000000010007"));
+        relationship.setInferred(fields[8].equals("900000000000011006"));
+
         relationship.setTerminology(terminology);
         relationship.setTerminologyVersion(terminologyVersion);
         relationship.setModifierId(fields[9].intern());

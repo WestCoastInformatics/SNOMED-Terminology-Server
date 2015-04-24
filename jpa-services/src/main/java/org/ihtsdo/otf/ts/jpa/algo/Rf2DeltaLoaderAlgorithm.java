@@ -63,6 +63,7 @@ import org.ihtsdo.otf.ts.services.helpers.PushBackReader;
 public class Rf2DeltaLoaderAlgorithm extends HistoryServiceJpa implements
     Algorithm {
 
+  
   /** The commit count. */
   private final static int commitCt = 2000;
 
@@ -596,6 +597,8 @@ public class Rf2DeltaLoaderAlgorithm extends HistoryServiceJpa implements
         newConcept.setActive(fields[2].equals("1"));
         newConcept.setModuleId(fields[3].intern());
         newConcept.setDefinitionStatusId(fields[4].intern());
+        // This is SNOMED specific
+        newConcept.setFullyDefined(fields[4].equals("900000000000073002"));
         newConcept.setTerminology(terminology);
         newConcept.setTerminologyVersion(terminologyVersion);
         newConcept.setDefaultPreferredName(initPrefName);
@@ -2085,6 +2088,10 @@ public class Rf2DeltaLoaderAlgorithm extends HistoryServiceJpa implements
         newRelationship.setRelationshipGroup(Integer.valueOf(fields[6])); // relationshipGroup
         newRelationship.setTypeId(fields[7]); // typeId
         newRelationship.setCharacteristicTypeId(fields[8]); // characteristicTypeId
+        // This is SNOMED specific
+        newRelationship.setStated(fields[8].equals("900000000000010007"));
+        newRelationship.setInferred(fields[8].equals("900000000000011006"));
+
         newRelationship.setTerminology(terminology);
         newRelationship.setTerminologyVersion(terminologyVersion);
         newRelationship.setModifierId(fields[9]);

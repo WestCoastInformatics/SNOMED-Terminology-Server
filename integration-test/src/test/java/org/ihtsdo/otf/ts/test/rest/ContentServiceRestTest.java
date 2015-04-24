@@ -27,17 +27,17 @@ public class ContentServiceRestTest {
 
   /** The service. */
   protected static ContentClientRest contentService;
-  
-  /**  The security service. */
+
+  /** The security service. */
   protected static SecurityClientRest securityService;
 
-  /**  The properties. */
+  /** The properties. */
   protected static Properties properties;
-  
-  /**  The test password. */
+
+  /** The test password. */
   protected static String testUser;
-  
-  /**  The test password. */
+
+  /** The test password. */
   protected static String testPassword;
 
   /**
@@ -47,56 +47,58 @@ public class ContentServiceRestTest {
    */
   @BeforeClass
   public static void setupClass() throws Exception {
-    
+
     // instantiate properties
     properties = ConfigUtility.getConfigProperties();
-    
+
     // instantiate required services
     contentService = new ContentClientRest(properties);
     securityService = new SecurityClientRest(properties);
-    
+
     /**
-     * Test prerequisites
-     * Terminology SNOMEDCT exists in database
-     * Terminology ICD9CM exists in database
-     * The run.config.ts has "viewer.user" and "viewer.password" specified
+     * Test prerequisites Terminology SNOMEDCT exists in database Terminology
+     * ICD9CM exists in database The run.config.ts has "viewer.user" and
+     * "viewer.password" specified
      */
-    
+
     // test run.config.ts has viewer user
     testUser = properties.getProperty("viewer.user");
     testPassword = properties.getProperty("viewer.password");
-    
+
     if (testUser == null || testUser.isEmpty()) {
       throw new Exception("Test prerequisite: viewer.user must be specified");
     }
     if (testPassword == null || testPassword.isEmpty()) {
-      throw new Exception("Test prerequisite: viewer.password must be specified");
+      throw new Exception(
+          "Test prerequisite: viewer.password must be specified");
     }
-    
+
     // test that some terminology objects exist for both SNOMEDCT and ICD9CM
     ContentService contentService = new ContentServiceJpa();
     PfsParameter pfs = new PfsParameterJpa();
     pfs.setMaxResults(1); // only need to retrieve one concept
     ConceptList conceptList;
-    
+
     // check SNOMEDCT
     conceptList = contentService.getConcepts("SNOMEDCT", "latest", pfs);
     if (conceptList.getCount() == 0)
       throw new Exception("Could not retrieve any concepts for SNOMEDCT");
     if (conceptList.getTotalCount() != 10293) {
-      throw new Exception("Content service requires SNOMEDCT loaded from the config project data.");
+      throw new Exception(
+          "Content service requires SNOMEDCT loaded from the config project data.");
     }
-    
+
     // check ICD9CM
     conceptList = contentService.getConcepts("ICD9CM", "2013", pfs);
     if (conceptList.getCount() == 0) {
       throw new Exception("Could not retrieve any concepts for ICD9CM");
     }
     if (conceptList.getTotalCount() != 17770) {
-      throw new Exception("Content service requires ICD9CM loaded from config project data.");
+      throw new Exception(
+          "Content service requires ICD9CM loaded from config project data.");
     }
     contentService.close();
-    
+
   }
 
   /**
@@ -110,7 +112,6 @@ public class ContentServiceRestTest {
     /**
      * Prerequisites
      */
-
 
   }
 

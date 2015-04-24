@@ -71,6 +71,10 @@ public class ConceptJpa extends AbstractComponent implements Concept {
   @Column(nullable = false)
   private boolean anonymous = false;
 
+  /** The fully defined flag. */
+  @Column(nullable = false)
+  private boolean fullyDefined = false;
+
   /** The descriptions. */
   @OneToMany(mappedBy = "concept", cascade = CascadeType.ALL, orphanRemoval = true, targetEntity = DescriptionJpa.class)
   @IndexedEmbedded(targetElement = DescriptionJpa.class)
@@ -249,6 +253,26 @@ public class ConceptJpa extends AbstractComponent implements Concept {
   @Override
   public void setAnonymous(boolean anonymous) {
     this.anonymous = anonymous;
+  }
+
+  /*
+   * (non-Javadoc)
+   * 
+   * @see org.ihtsdo.otf.ts.rf2.Concept#isFullyDefined()
+   */
+  @Override
+  public boolean isFullyDefined() {
+    return fullyDefined;
+  }
+
+  /*
+   * (non-Javadoc)
+   * 
+   * @see org.ihtsdo.otf.ts.rf2.Concept#setFullyDefined(boolean)
+   */
+  @Override
+  public void setFullyDefined(boolean fullyDefined) {
+    this.fullyDefined = fullyDefined;
   }
 
   /*

@@ -59,7 +59,6 @@ public class MetadataServiceRestNormalUseTest extends MetadataServiceRestTest {
         .getKeyValuePairLists()) {
       for (KeyValuePair keyValuePair : keyValuePairList.getKeyValuePairList()) {
 
-        System.out.println(keyValuePair.toString());
         // test versions
         switch (keyValuePair.getKey()) {
           case "SNOMEDCT":
@@ -101,7 +100,6 @@ public class MetadataServiceRestNormalUseTest extends MetadataServiceRestTest {
 
     // cycle over each pair in list
     for (KeyValuePair keyValuePair : keyValuePairList.getKeyValuePairList()) {
-      System.out.println(keyValuePair.toString());
       // test versions
       switch (keyValuePair.getKey()) {
         case "SNOMEDCT":
@@ -200,11 +198,6 @@ public class MetadataServiceRestNormalUseTest extends MetadataServiceRestTest {
           MetadataKeys.Characteristic_Types))
         charTypes = keyValuePairList;
     }
-
-    Logger.getLogger(getClass()).info(
-        "Retrieved relationship types and characteristic types for testing");
-    System.out.println(relTypes);
-    System.out.println(charTypes);
 
     // cycle over all retrieved metadata
     for (KeyValuePairList keyValuePairList : keyValuePairLists

@@ -25,6 +25,21 @@ public interface Concept extends Component {
   public void setAnonymous(boolean anonymous);
 
   /**
+   * Indicates whether or not fully defined is the case.
+   *
+   * @return <code>true</code> if so, <code>false</code> otherwise
+   */
+  public boolean isFullyDefined();
+
+  /**
+   * Sets the fully defined.
+   *
+   * @param fullyDefined the fully defined
+   */
+  public void setFullyDefined(boolean fullyDefined);
+
+
+  /**
    * Returns the workflow status.
    * 
    * @return the workflow status
@@ -283,4 +298,5 @@ public interface Concept extends Component {
    */
   public void removeAssociationReferenceRefSetMember(
     AssociationReferenceConceptRefSetMember associationReferenceRefSetMember);
+
 }

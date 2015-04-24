@@ -75,7 +75,6 @@ public class MetadataServiceRestImpl extends RootServiceRestImpl implements
             + version);
 
     String user = "";
-    MetadataService metadataService = new MetadataServiceJpa();
     try {
       user = securityService.getUsernameForToken(authToken);
 
@@ -89,7 +88,6 @@ public class MetadataServiceRestImpl extends RootServiceRestImpl implements
       return getMetadataHelper(terminology, version);
 
     } catch (Exception e) {
-      metadataService.close();
       handleException(e, "trying to retrieve the metadata", user);
       return null;
     } finally {
@@ -109,46 +107,52 @@ public class MetadataServiceRestImpl extends RootServiceRestImpl implements
   private KeyValuePairLists getMetadataHelper(String terminology, String version)
     throws Exception {
     MetadataService metadataService = new MetadataServiceJpa();
-    // verify terminology and version pair exist
-    if (metadataService.getTerminologies().contains(terminology)) {
+    try {
+      // verify terminology and version pair exist
+      if (metadataService.getTerminologies().contains(terminology)) {
 
-      // if this version does not exist for terminology, throw 204 (No Content)
-      if (!metadataService.getVersions(terminology).contains(version)) {
-        throw new WebApplicationException(Response
-            .status(204)
-            .entity(
-                "No version " + version + " is loaded for terminology "
-                    + terminology).build());
+        // if this version does not exist for terminology, throw 204 (No
+        // Content)
+        if (!metadataService.getVersions(terminology).contains(version)) {
+          throw new WebApplicationException(Response
+              .status(204)
+              .entity(
+                  "No version " + version + " is loaded for terminology "
+                      + terminology).build());
+        } else {
+          // do nothing
+        }
       } else {
-        // do nothing
+        // terminology does not exist, throw 204 (No Content)
+        throw new WebApplicationException(Response.status(204)
+            .entity("No terminology " + terminology + " is loaded").build());
       }
-    } else {
-      // terminology does not exist, throw 204 (No Content)
-      throw new WebApplicationException(Response.status(204)
-          .entity("No terminology " + terminology + " is loaded").build());
-    }
 
-    // call jpa service and get complex map return type
-    Map<String, Map<String, String>> mapOfMaps =
-        metadataService.getAllMetadata(terminology, version);
+      // call jpa service and get complex map return type
+      Map<String, Map<String, String>> mapOfMaps =
+          metadataService.getAllMetadata(terminology, version);
 
-    // convert complex map to KeyValuePair objects for easy transformation to
-    // XML/JSON
-    KeyValuePairLists keyValuePairLists = new KeyValuePairLists();
-    for (Map.Entry<String, Map<String, String>> entry : mapOfMaps.entrySet()) {
-      String metadataType = entry.getKey();
-      Map<String, String> metadataPairs = entry.getValue();
-      KeyValuePairList keyValuePairList = new KeyValuePairList();
-      keyValuePairList.setName(metadataType);
-      for (Map.Entry<String, String> pairEntry : metadataPairs.entrySet()) {
-        KeyValuePair keyValuePair =
-            new KeyValuePair(pairEntry.getKey().toString(),
-                pairEntry.getValue());
-        keyValuePairList.addKeyValuePair(keyValuePair);
+      // convert complex map to KeyValuePair objects for easy transformation to
+      // XML/JSON
+      KeyValuePairLists keyValuePairLists = new KeyValuePairLists();
+      for (Map.Entry<String, Map<String, String>> entry : mapOfMaps.entrySet()) {
+        String metadataType = entry.getKey();
+        Map<String, String> metadataPairs = entry.getValue();
+        KeyValuePairList keyValuePairList = new KeyValuePairList();
+        keyValuePairList.setName(metadataType);
+        for (Map.Entry<String, String> pairEntry : metadataPairs.entrySet()) {
+          KeyValuePair keyValuePair =
+              new KeyValuePair(pairEntry.getKey().toString(),
+                  pairEntry.getValue());
+          keyValuePairList.addKeyValuePair(keyValuePair);
+        }
+        keyValuePairLists.addKeyValuePairList(keyValuePairList);
       }
-      keyValuePairLists.addKeyValuePairList(keyValuePairList);
+      return keyValuePairLists;
+    } catch (Exception e) {
+      metadataService.close();
+      throw e;
     }
-    return keyValuePairLists;
   }
 
   /*
@@ -170,7 +174,6 @@ public class MetadataServiceRestImpl extends RootServiceRestImpl implements
 
     String user = "";
     MetadataService metadataService = new MetadataServiceJpa();
-
     try {
       // authorize call
       user = securityService.getUsernameForToken(authToken);

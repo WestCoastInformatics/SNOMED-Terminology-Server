@@ -71,17 +71,42 @@ public class UserJpa implements User {
     this.applicationRole = user.getApplicationRole();
   }
 
-  /**
-   * Return the id.
-   *
-   * @return the id
+  /* (non-Javadoc)
+   * @see org.ihtsdo.otf.ts.User#getId()
    */
   @Override
   public Long getId() {
     return id;
   }
 
+  /* (non-Javadoc)
+   * @see org.ihtsdo.otf.ts.User#setId(java.lang.Long)
+   */
+  @Override
+  public void setId(Long id) {
+    this.id = id;
+  }
 
+  /**
+   * Returns the object id. Needed for JAXB id
+   *
+   * @return the object id
+   */
+  @XmlID
+  public String getObjectId() {
+    return id == null ? "" : id.toString();
+  }
+
+  /**
+   * Sets the object id.
+   *
+   * @param id the object id
+   */
+  public void setObjectId(String id) {
+    if (id != null) {
+      this.id = Long.parseLong(id);
+    }
+  }
   /*
    * (non-Javadoc)
    * 

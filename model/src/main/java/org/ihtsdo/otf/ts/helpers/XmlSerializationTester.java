@@ -31,13 +31,11 @@ public class XmlSerializationTester extends ProxyTester {
         "Test xml serialization - " + clazz.getName());
     Object obj = createObject(1);
     String xml = ConfigUtility.getStringForGraph(obj);
-    System.out.println(xml);
     Object obj2 =
         ConfigUtility
             .getGraphForString(xml, obj.getClass());
 
     String json = ConfigUtility.getJsonForGraph(obj);
-    System.out.println(json);
     Object obj3 =
         ConfigUtility
             .getGraphForJson(json, obj.getClass());

@@ -10,9 +10,7 @@ import org.apache.log4j.Logger;
 import org.ihtsdo.otf.ts.User;
 import org.ihtsdo.otf.ts.UserRole;
 import org.ihtsdo.otf.ts.jpa.UserJpa;
-import org.ihtsdo.otf.ts.jpa.services.SecurityServiceJpa;
 import org.ihtsdo.otf.ts.rest.SecurityServiceRest;
-import org.ihtsdo.otf.ts.services.SecurityService;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -44,7 +42,7 @@ public class SecurityServiceRestNormalUseTest extends SecurityServiceRestTest {
     if (authToken == null || authToken.isEmpty()) {
       fail("Failed to authenticate viewer user");
     }
-    
+
     authToken = service.authenticate(adminUserName, adminUserPassword);
     if (authToken == null || authToken.isEmpty()) {
       fail("Failed to authenticate admin user");
@@ -66,11 +64,8 @@ public class SecurityServiceRestNormalUseTest extends SecurityServiceRestTest {
     // authorize the user
     adminAuthToken = service.authenticate(adminUserName, adminUserPassword);
 
-    /**
-     * Procedure 1: add a user
-     */
-    Logger.getLogger(getClass()).info(
-        "  Procedure 1");
+    // PROCEDURE 1: add a user
+    Logger.getLogger(getClass()).info("  Procedure 1: add a user");
 
     user = new UserJpa();
     user.setApplicationRole(UserRole.VIEWER);
@@ -82,43 +77,29 @@ public class SecurityServiceRestNormalUseTest extends SecurityServiceRestTest {
     user = service.addUser((UserJpa) user, adminAuthToken);
     assertTrue(user != null);
 
-    /**
-     * Procedure 2: get a user
-     */
-    Logger.getLogger(getClass()).info(
-        "  Procedure 2");
+    // PROCEDURE 2: get a user
+    Logger.getLogger(getClass()).info("  Procedure 2: get a user");
 
     user = service.getUser(user.getId(), adminAuthToken);
     assertTrue(user != null);
 
-    /**
-     * Procedure 3: update a user
-     */
-    Logger.getLogger(getClass()).info(
-        "  Procedure 3");
-
-    System.out.println(user.toString());
+    // PROCEDURE 3: update a user
+    Logger.getLogger(getClass()).info("  Procedure 3: update a user");
     user.setEmail("new email");
     service.updateUser((UserJpa) user, adminAuthToken);
     user = service.getUser(badUserName, adminAuthToken);
-    System.out.println(user.toString());
     assertTrue(user.getEmail().equals("new email"));
 
-    /**
-     * Procedure 4: remove a user
-     */
-    Logger.getLogger(getClass()).info(
-        "  Procedure 4");
+    // PROCEDURE 4: remove a user
+    Logger.getLogger(getClass()).info("  Procedure 4: remove a user");
 
     service.removeUser(user.getId(), adminAuthToken);
     user = service.getUser(badUserName, adminAuthToken);
     assertTrue(user == null);
 
-    /**
-     * Procedure 5: authenticate a user that does not exist
-     */
+    // PROCEDURE 5: authenticate a user that does not exist
     Logger.getLogger(getClass()).info(
-        "  Procedure 5");
+        "  Procedure 5: authenticate a user that does not exist");
 
     // get the existing test user if it exists
     user = service.getUser(viewerUserName, adminAuthToken);
@@ -142,12 +123,12 @@ public class SecurityServiceRestNormalUseTest extends SecurityServiceRestTest {
     user = service.getUser(viewerUserName, adminAuthToken);
     assertTrue(user != null && user.getUserName().equals(viewerUserName));
 
-    /**
-     * Procedure 6: Authenticate a user that exists in database with changed
-     * details
-     */
-    Logger.getLogger(getClass()).info(
-        "  Procedure 6");
+    // PROCEDURE 6: Authenticate a user that exists in database with changed
+    // details
+    Logger
+        .getLogger(getClass())
+        .info(
+            "  Procedure 6: authenticate a user that exists in database with changed details");
 
     // save the email, modify it, re-retrieve, and verify change persisted
     String userEmail = user.getEmail();
@@ -184,15 +165,9 @@ public class SecurityServiceRestNormalUseTest extends SecurityServiceRestTest {
    *
    * @throws Exception the exception
    */
-  @SuppressWarnings("static-method")
   @After
   public void teardown() throws Exception {
-    
-    // ensure the bad user has been removed
-    SecurityService securityService = new SecurityServiceJpa();
-    if (securityService.getUser(badUserName) != null) {
-      securityService.removeUser(securityService.getUser(badUserName).getId());
-    }
+    // n/a
   }
 
 }

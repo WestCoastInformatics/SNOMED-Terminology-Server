@@ -50,6 +50,10 @@
     </dependency>
     <dependency>
       <groupId>org.hibernate</groupId>
+      <artifactId>hibernate-c3p0</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.hibernate</groupId>
       <artifactId>hibernate-envers</artifactId>
     </dependency>
     <dependency>
@@ -85,10 +89,8 @@
       <artifactId>jackson-module-jaxb-annotations</artifactId>
     </dependency>
 
-<!--     <dependency>
-      <groupId>au.csiro</groupId>
-      <artifactId>snorocket-snapi</artifactId>
-    </dependency> -->
+    <!-- <dependency> <groupId>au.csiro</groupId> <artifactId>snorocket-snapi</artifactId> 
+      </dependency> -->
 
     <!-- Unit tests -->
     <dependency>

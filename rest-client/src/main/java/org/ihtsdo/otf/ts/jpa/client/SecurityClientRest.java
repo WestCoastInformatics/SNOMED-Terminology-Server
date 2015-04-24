@@ -46,6 +46,7 @@ public class SecurityClientRest implements SecurityServiceRest {
    */
   @Override
   public String authenticate(String username, String password) throws Exception {
+    Logger.getLogger(getClass()).debug("Security Client - authenticate " + username);
     Client client = Client.create();
     WebResource resource =
         client.resource(config.getProperty("base.url")
@@ -69,6 +70,7 @@ public class SecurityClientRest implements SecurityServiceRest {
    */
   @Override
   public boolean logout(String authToken) throws Exception {
+    Logger.getLogger(getClass()).debug("Security Client - logout " + authToken);
     Client client = Client.create();
     WebResource resource =
         client.resource(config.getProperty("base.url") + "/security/logout/"
@@ -94,6 +96,7 @@ public class SecurityClientRest implements SecurityServiceRest {
    */
   @Override
   public User getUser(Long id, String authToken) throws Exception {
+    Logger.getLogger(getClass()).debug("Security Client - get user " + id);
     Client client = Client.create();
     WebResource resource =
         client.resource(config.getProperty("base.url") + "/security/user/id/"
@@ -126,6 +129,7 @@ public class SecurityClientRest implements SecurityServiceRest {
    */
   @Override
   public User getUser(String username, String authToken) throws Exception {
+    Logger.getLogger(getClass()).debug("Security Client - get user " + username);
     Client client = Client.create();
     WebResource resource =
         client.resource(config.getProperty("base.url") + "/security/user/name/"
@@ -157,6 +161,7 @@ public class SecurityClientRest implements SecurityServiceRest {
    */
   @Override
   public UserList getUsers(String authToken) throws Exception {
+    Logger.getLogger(getClass()).debug("Security Client - get users");
     Client client = Client.create();
     WebResource resource =
         client
@@ -188,6 +193,7 @@ public class SecurityClientRest implements SecurityServiceRest {
    */
   @Override
   public User addUser(UserJpa user, String authToken) throws Exception {
+    Logger.getLogger(getClass()).debug("Security Client - add user " + user.getUserName());
     Client client = Client.create();
     WebResource resource =
         client.resource(config.getProperty("base.url") + "/security/user/add");
@@ -223,6 +229,7 @@ public class SecurityClientRest implements SecurityServiceRest {
    */
   @Override
   public void removeUser(Long id, String authToken) throws Exception {
+    Logger.getLogger(getClass()).debug("Security Client - remove user " + id);
     Client client = Client.create();
     WebResource resource =
         client.resource(config.getProperty("base.url")
@@ -247,6 +254,7 @@ public class SecurityClientRest implements SecurityServiceRest {
    */
   @Override
   public void updateUser(UserJpa user, String authToken) throws Exception {
+    Logger.getLogger(getClass()).debug("Security Client - update user " + user.getUserName());
     Client client = Client.create();
     WebResource resource =
         client.resource(config.getProperty("base.url")
