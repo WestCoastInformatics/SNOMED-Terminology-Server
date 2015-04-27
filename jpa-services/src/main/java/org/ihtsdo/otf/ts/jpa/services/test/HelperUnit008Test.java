@@ -71,33 +71,6 @@ public class HelperUnit008Test {
     assertEquals(object.getScaledPercent(80, 100), 90);
   }
 
-<<<<<<< HEAD
-  /**
-	 * Test normal use of the helper object.
-	 *
-	 * @throws Exception
-	 *             the exception
-	 */
-	@Test
-	public void testHelperNormalUse008() throws Exception {
-		Logger.getLogger(getClass()).info("TEST testHelperNormalUse008");
-		note = "500 of 1000 completed";
-		percent = 50;
-		progress = 500;
-		source = new Object();
-
-		object = new ProgressEvent(source, percent, progress, note);
-		assertEquals(object.getNote(), note);
-		assertEquals(object.getPercent(), percent);
-		assertEquals(object.getProgress(), progress);
-		assertEquals(object.getSource(), source);
-		assertEquals(object.getScaledPercent(50, 100), 75);
-		assertEquals(object.getScaledPercent(80, 100), 90);
-	}
-	
-  /**
-   * Test degenerate use of the object.
-=======
   /*
    * Test degenerate use of the helper object.
    * 
@@ -105,7 +78,6 @@ public class HelperUnit008Test {
    */
   /**
    * Test helper degenerate use008.
->>>>>>> 7050b6374e3c69f40d335f0d0a6222a6ae1c7816
    *
    * @throws Exception the exception
    */

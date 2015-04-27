@@ -42,7 +42,6 @@ import org.ihtsdo.otf.ts.rf2.RefsetDescriptorRefSetMember;
 import org.ihtsdo.otf.ts.rf2.Relationship;
 import org.ihtsdo.otf.ts.rf2.SimpleMapRefSetMember;
 import org.ihtsdo.otf.ts.rf2.SimpleRefSetMember;
-import org.ihtsdo.otf.ts.test.helpers.PfsParameterTestHelper;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Ignore;

@@ -357,8 +357,6 @@ public class ContentClientRest implements ContentServiceRest {
    * (non-Javadoc)
    * 
    * @see
-<<<<<<< HEAD
-=======
    * org.ihtsdo.otf.ts.rest.ContentServiceRest#getDescription(java.lang.String,
    * java.lang.String, java.lang.String, java.lang.String)
    */
@@ -1363,32 +1361,6 @@ public class ContentClientRest implements ContentServiceRest {
         (RelationshipListJpa) ConfigUtility.getGraphForString(resultString,
             RelationshipListJpa.class);
     return list;
-  }
-
-  @Override
-  public Description getDescription(String terminologyId, String terminology,
-    String version, String authToken) throws Exception {
-    Client client = Client.create();
-    WebResource resource =
-        client.resource(config.getProperty("base.url")
-            + "/content/description/" + terminology + "/" + version
-            + "/" + terminologyId);
-    ClientResponse response =
-        resource.accept(MediaType.APPLICATION_XML)
-            .header("Authorization", authToken).get(ClientResponse.class);
-
-    String resultString = response.getEntity(String.class);
-    if (response.getStatusInfo().getFamily() == Family.SUCCESSFUL) {
-      Logger.getLogger(getClass()).debug(resultString);
-    } else {
-      throw new Exception(response.toString());
-    }
-
-    // converting to object
-    Description d = 
-      (Description) ConfigUtility.getGraphForString(resultString, DescriptionJpa.class);
-    
-    return d;
   }
 
   public Relationship getRelationship(String terminologyId, String terminology,

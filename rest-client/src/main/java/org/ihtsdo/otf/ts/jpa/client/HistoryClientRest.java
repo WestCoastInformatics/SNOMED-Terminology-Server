@@ -2034,9 +2034,7 @@ public class HistoryClientRest implements HistoryServiceRest {
     Logger.getLogger(getClass()).debug(
         "History Client - begin rf2 release " + releaseVersion + ", "
             + terminology);
-    // TODO Auto-generated method stub
-
-  }
+   }
 
   @Override
   public void processRf2Release(String releaseVersion, String terminology,
@@ -2044,7 +2042,6 @@ public class HistoryClientRest implements HistoryServiceRest {
     Logger.getLogger(getClass()).debug(
         "History Client - process rf2 release " + releaseVersion + ", "
             + terminology);
-    // TODO Auto-generated method stub
 
   }
 
@@ -2054,8 +2051,6 @@ public class HistoryClientRest implements HistoryServiceRest {
     Logger.getLogger(getClass()).debug(
         "History Client - finish rf2 release " + releaseVersion + ", "
             + terminology);
-    // TODO Auto-generated method stub
-
   }
 
 }

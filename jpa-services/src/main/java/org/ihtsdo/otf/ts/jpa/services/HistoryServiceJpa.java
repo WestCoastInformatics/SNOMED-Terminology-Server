@@ -1173,7 +1173,7 @@ public class HistoryServiceJpa extends ContentServiceJpa implements
       }
     }
 
-    // TODO Fully implement this, decide paging strategy
+    // TODO Fully implement this method, decide paging strategy
     return null;
   }
 
@@ -1434,6 +1434,7 @@ public class HistoryServiceJpa extends ContentServiceJpa implements
    * @return the list
    * @throws LocalException 
    */
+  @SuppressWarnings("unchecked")
   private <T> List<T> findRevisions(Long id, Class<T> clazz, Date startDate,
     Date endDate, PfsParameter pfs) throws Exception {
 
