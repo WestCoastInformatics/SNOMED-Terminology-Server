@@ -70,7 +70,6 @@ public class Handler002Test {
     try {
       handlerService = new DefaultGraphResolutionHandler();
     } catch (Exception e) {
-      // TODO Auto-generated catch block
       e.printStackTrace();
     }
   }

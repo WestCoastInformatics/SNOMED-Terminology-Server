@@ -50,7 +50,6 @@ public class Handler001Test {
     try {
       handlerService = new ClamlComputePreferredNameHandler();
     } catch (Exception e) {
-      // TODO Auto-generated catch block
       e.printStackTrace();
     }
   }

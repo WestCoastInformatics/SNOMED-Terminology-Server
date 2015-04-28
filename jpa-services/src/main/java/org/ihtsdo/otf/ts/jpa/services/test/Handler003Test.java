@@ -48,7 +48,6 @@ public class Handler003Test {
     try {
       handlerService = new DefaultIdentifierAssignmentHandler();
     } catch (Exception e) {
-      // TODO Auto-generated catch block
       e.printStackTrace();
     }
   }

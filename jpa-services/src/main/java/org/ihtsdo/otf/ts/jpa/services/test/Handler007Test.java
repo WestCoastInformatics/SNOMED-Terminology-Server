@@ -51,7 +51,6 @@ public class Handler007Test {
       handlerService = new Rf2ComputePreferredNameHandler();
 
     } catch (Exception e) {
-      // TODO Auto-generated catch block
       e.printStackTrace();
     }
   }
