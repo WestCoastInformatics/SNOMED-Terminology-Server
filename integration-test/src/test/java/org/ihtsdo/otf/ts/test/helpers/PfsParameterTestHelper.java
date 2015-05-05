@@ -59,23 +59,26 @@ public class PfsParameterTestHelper {
 
     // Get the initial pfs parameter
     PfsParameter localPfs = (PfsParameter) parameters[pfsPosition];
+    
+    // if start index not supplied, set to 0
+    if (localPfs.getStartIndex() == -1)
+      localPfs.setStartIndex(0);   
 
-    // force initial call to ascending with default sort field, with no paging
-    // parameters
+    // force initial call to ascending with default sort field, with
+    // paging parameters unmodified from supplied PFS object
     localPfs.setAscending(true);
     localPfs.setSortField(null);
-    localPfs.setStartIndex(-1);
-    localPfs.setMaxResults(-1);
 
     // Set local parameters
     Object[] localParameters = parameters;
     localParameters[pfsPosition] = localPfs;
 
     // set page size to 1 for page testing
+    int initStartIndex = localPfs.getStartIndex();
     localPfs.setMaxResults(1);
 
     // test paging
-    for (int startIndex = 0; startIndex < fullResults.getTotalCount(); startIndex++) {
+    for (int startIndex = localPfs.getStartIndex(); startIndex < initStartIndex + fullResults.getCount(); startIndex++) {
 
       localPfs.setStartIndex(startIndex);
       localParameters[pfsPosition] = localPfs;
@@ -101,8 +104,6 @@ public class PfsParameterTestHelper {
     // call ascending sort on this field
     localPfs.setAscending(true);
     localPfs.setSortField("terminologyId");
-    localPfs.setStartIndex(-1);
-    localPfs.setMaxResults(-1);
     localParameters[pfsPosition] = localPfs;
 
     ResultList<?> results =
@@ -127,8 +128,6 @@ public class PfsParameterTestHelper {
     // check descending sort
     localPfs.setAscending(false);
     localPfs.setSortField("terminologyId");
-    localPfs.setStartIndex(-1);
-    localPfs.setMaxResults(-1);
     localParameters[pfsPosition] = localPfs;
     
     results = (ResultList<?>) method.invoke(service, localParameters);

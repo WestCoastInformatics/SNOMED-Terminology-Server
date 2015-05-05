@@ -13,6 +13,7 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import java.util.Date;
+import java.util.Set;
 
 import org.ihtsdo.otf.ts.ReleaseInfo;
 import org.ihtsdo.otf.ts.helpers.AssociationReferenceRefSetMemberList;
@@ -33,6 +34,7 @@ import org.ihtsdo.otf.ts.jpa.ReleaseInfoJpa;
 import org.ihtsdo.otf.ts.rf2.AssociationReferenceRefSetMember;
 import org.ihtsdo.otf.ts.rf2.AttributeValueRefSetMember;
 import org.ihtsdo.otf.ts.rf2.ComplexMapRefSetMember;
+import org.ihtsdo.otf.ts.rf2.Component;
 import org.ihtsdo.otf.ts.rf2.Concept;
 import org.ihtsdo.otf.ts.rf2.Description;
 import org.ihtsdo.otf.ts.rf2.DescriptionTypeRefSetMember;
@@ -44,7 +46,6 @@ import org.ihtsdo.otf.ts.rf2.SimpleMapRefSetMember;
 import org.ihtsdo.otf.ts.rf2.SimpleRefSetMember;
 import org.junit.After;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 
 /**
@@ -163,7 +164,6 @@ public class HistoryServiceRestNormalUseTest extends HistoryServiceRestTest {
    */
 
   @Test
-  @Ignore
   public void testNormalUseRestHistory002() throws Exception {
 
     ReleaseInfo releaseInfo, releaseInfo2;
@@ -185,7 +185,9 @@ public class HistoryServiceRestNormalUseTest extends HistoryServiceRestTest {
       assertNotNull(releaseInfo);
       assertNotNull(releaseInfo.getId());
     } catch (Exception e) {
+      e.printStackTrace();
       fail("addRelease info failed");
+      
     }
 
     // wait to ensure object successfully added
@@ -291,7 +293,10 @@ public class HistoryServiceRestNormalUseTest extends HistoryServiceRestTest {
             pfs, authToken);
     assertTrue(results.getTotalCount() == 2652);
 
-    // set pfs to no max results -- find methods currently do not return total
+    // test paging filtering sorting based on truncated set
+
+    // set pfs to no max results -- find revisions methods currently do not
+    // return total
     // count correctly
     pfs.setMaxResults(-1);
 
@@ -322,7 +327,38 @@ public class HistoryServiceRestNormalUseTest extends HistoryServiceRestTest {
     assertTrue(dtFormat.format(c.getEffectiveTime()).equals("20060131"));
     assertTrue(c.getDefinitionStatusId().equals("900000000000073002"));
 
-    // NOTE:  Not currently testing DeepModified method, not fully implemented
+    // NOTE: Concept has findDeepModified method, tested independently here
+    // Only testing paging, as date restriction is tested individually
+    // for each of the calls used by this routine
+
+    results =
+        historyService.findConceptsDeepModifiedSinceDate(terminology,
+            "19700101", null, authToken);
+
+    assertTrue(results.getCount() == 10293);
+
+    // test paging
+    pfs.setMaxResults(10);
+    pfs.setStartIndex(0);
+    ConceptList pagedResults = historyService.findConceptsDeepModifiedSinceDate(terminology, "19700101", pfs, authToken);
+
+    assertTrue(results.getObjects().subList(0, 10).equals(pagedResults.getObjects()));
+    
+    pfs.setMaxResults(10);
+    pfs.setStartIndex(100);
+    pagedResults = historyService.findConceptsDeepModifiedSinceDate(terminology, "19700101", pfs, authToken);
+
+    assertTrue(results.getObjects().subList(100, 110).equals(pagedResults.getObjects()));
+    
+    // test with date -- arbitrary
+    // number validated through independent sql queries
+    String testDate = "20130731";
+    pfs.setMaxResults(-1);
+    pfs.setStartIndex(-1);
+    results = historyService.findConceptsDeepModifiedSinceDate(terminology, testDate, pfs, authToken);
+  
+    assertTrue(results.getCount() == 3096);
+    
   }
 
   /**
@@ -355,8 +391,7 @@ public class HistoryServiceRestNormalUseTest extends HistoryServiceRestTest {
             "20080131", pfs, authToken);
     assertTrue(results.getTotalCount() == 6884);
 
-    // set pfs to no max results -- find methods currently do not return total
-    // count correctly
+    // set pfs to no max results
     pfs.setMaxResults(-1);
 
     // test revisions method -- range: all time
@@ -418,8 +453,8 @@ public class HistoryServiceRestNormalUseTest extends HistoryServiceRestTest {
             "20080131", pfs, authToken);
     assertTrue(results.getTotalCount() == 45453);
 
-    // set pfs to no max results -- find methods currently do not return total
-    // count correctly
+    // set pfs to no max results
+
     pfs.setMaxResults(-1);
 
     // test revisions method -- range: all time
@@ -1083,7 +1118,7 @@ public class HistoryServiceRestNormalUseTest extends HistoryServiceRestTest {
   @After
   public void teardown() throws Exception {
 
-    // NOTE:  When contents of test 002 are enabled
+    // NOTE: When contents of test 002 are enabled
     // this teardown class must remove release info
     // objects created by testing addReleaseInfo
     // and startEditingCycle

@@ -4,6 +4,7 @@
 package org.ihtsdo.otf.ts.jpa.services;
 
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -565,22 +566,20 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
   @Override
   public ConceptList findChildConcepts(Concept concept, PfsParameter pfs)
     throws Exception {
-    
+
     if (pfs != null && pfs.getQueryRestriction() != null) {
       throw new IllegalArgumentException(
           "Query restriction is not implemented for this call: "
               + pfs.getQueryRestriction());
     }
-    
+
     ConceptList childrenConcepts = new ConceptListJpa();
 
     // object retrieval query
     String queryStr =
         "select distinct a from ConceptJpa c1, ConceptJpa a, RelationshipJpa r"
-            + " where r.destinationConcept = c1" 
-            + " and r.sourceConcept = a"
-            + " and r.typeId in ( :hierRelTypes )" 
-            + " and r.active = 1"
+            + " where r.destinationConcept = c1" + " and r.sourceConcept = a"
+            + " and r.typeId in ( :hierRelTypes )" + " and r.active = 1"
             + " and c1.terminologyId = :terminologyId"
             + " and c1.terminology = :terminology"
             + " and c1.terminologyVersion = :version";
@@ -644,14 +643,12 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
           "Query restriction is not implemented for this call: "
               + pfs.getQueryRestriction());
     }
-    
+
     // object retrieval query
     String queryStr =
         "select distinct a from ConceptJpa c1, ConceptJpa a, RelationshipJpa r"
-            + " where r.destinationConcept = a" 
-            + " and r.sourceConcept = c1"
-            + " and r.typeId in ( :hierRelTypes )" 
-            + " and r.active = 1"
+            + " where r.destinationConcept = a" + " and r.sourceConcept = c1"
+            + " and r.typeId in ( :hierRelTypes )" + " and r.active = 1"
             + " and c1.terminologyId = :terminologyId"
             + " and c1.terminology = :terminology"
             + " and c1.terminologyVersion = :version";
@@ -3826,7 +3823,9 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
    * @return the pfs comparator
    * @throws Exception the exception
    */
-  @SuppressWarnings("static-method")
+  @SuppressWarnings({
+      "static-method", "unchecked", "rawtypes"
+  })
   protected <T> Comparator<T> getPfsComparator(Class<T> clazz, PfsParameter pfs)
     throws Exception {
     if (pfs != null
@@ -3838,50 +3837,48 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
       // allow the field to access the Concept values
       sortField.setAccessible(true);
 
+      // retrieve corresponding get method for sort field
+      // must be of form 'sortField -> getSortField'
+      // method must not take parameters
+      final Method method =
+          clazz.getMethod("get"
+              + pfs.getSortField().substring(0, 1).toUpperCase()
+              + pfs.getSortField().substring(1));
+
+      final Class<? extends Comparable> returnType =
+          (Class<? extends Comparable>) method.getReturnType();
+
       if (pfs.isAscending()) {
         // make comparator
         return new Comparator<T>() {
           @Override
           public int compare(T o1, T o2) {
             try {
-              // handle dates explicitly
-              if (o2 instanceof Date) {
-                return ((Date) sortField.get(o1)).compareTo((Date) sortField
-                    .get(o2));
-              } else {
-                // otherwise, sort based on conversion to string
-                return (sortField.get(o1).toString()).compareTo(sortField.get(
-                    o2).toString());
-              }
-            } catch (IllegalAccessException e) {
-              // on exception, return equality
+
+              return (returnType.cast(method.invoke(o1, new Object[] {}))
+                  .compareTo(returnType.cast(method.invoke(o2, new Object[] {}))));
+            } catch (Exception e) {
+              // on exception return equality
               return 0;
             }
           }
         };
       } else {
-        // make comparator
+     // make comparator
         return new Comparator<T>() {
           @Override
           public int compare(T o2, T o1) {
             try {
-              // handle dates explicitly
-              if (o2 instanceof Date) {
-                return ((Date) sortField.get(o1)).compareTo((Date) sortField
-                    .get(o2));
-              } else {
-                // otherwise, sort based on conversion to string
-                return (sortField.get(o1).toString()).compareTo(sortField.get(
-                    o2).toString());
-              }
-            } catch (IllegalAccessException e) {
-              // on exception, return equality
+
+              return (returnType.cast(method.invoke(o1, new Object[] {}))
+                  .compareTo(returnType.cast(method.invoke(o2, new Object[] {}))));
+            } catch (Exception e) {
+              // on exception return equality
               return 0;
             }
           }
         };
       }
-
     } else {
       return null;
     }
@@ -3893,16 +3890,17 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
    * @param queryStr the query str
    * @param pfs the pfs
    * @return the javax.persistence. query
-   * @throws LocalException 
+   * @throws LocalException
    */
   protected javax.persistence.Query applyPfsToQuery(String queryStr,
     PfsParameter pfs) throws LocalException {
     String localQueryStr = queryStr;
-    
+
     if (pfs != null && pfs.getQueryRestriction() != null) {
-      throw new LocalException("Query restrictions not currently supported for HQL/SQL queries");
+      throw new LocalException(
+          "Query restrictions not currently supported for HQL/SQL queries");
     }
-    
+
     if (pfs != null && pfs.getSortField() != null) {
       localQueryStr +=
           " order by a." + pfs.getSortField() + " "
@@ -3916,7 +3914,8 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
     if (pfs != null && pfs.getStartIndex() > -1 && pfs.getMaxResults() > -1) {
       query.setFirstResult(pfs.getStartIndex());
       query.setMaxResults(pfs.getMaxResults());
-    } else if (pfs != null && (pfs.getStartIndex() < -1 || pfs.getMaxResults() < -1)) {
+    } else if (pfs != null
+        && (pfs.getStartIndex() < -1 || pfs.getMaxResults() < -1)) {
       throw new LocalException("Invalid paging parameters");
     }
     return query;

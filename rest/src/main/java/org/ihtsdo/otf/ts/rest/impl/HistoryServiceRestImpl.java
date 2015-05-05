@@ -124,7 +124,6 @@ public class HistoryServiceRestImpl extends RootServiceRestImpl implements
               pfs);
 
       // Lazy initialization errors happen without this
-
       for (Concept concept : cl.getObjects()) {
         if (concept != null) {
           historyService.getGraphResolutionHandler().resolve(
@@ -1721,6 +1720,17 @@ public class HistoryServiceRestImpl extends RootServiceRestImpl implements
           historyService.findConceptsDeepModifiedSinceDate(terminology, (date
               .equals("null") ? null : ConfigUtility.DATE_FORMAT.parse(date)),
               pfs);
+      
+      // resolve descriptions and relationships
+      // lazy instantiation errors happenw ithout this
+      for (Concept concept : cl.getObjects()) {
+        if (concept != null) {
+          historyService.getGraphResolutionHandler().resolve(
+              concept,
+              TerminologyUtility.getHierarchicalIsaRels(
+                  concept.getTerminology(), concept.getTerminologyVersion()));
+        }
+      }
 
       historyService.close();
       return cl;

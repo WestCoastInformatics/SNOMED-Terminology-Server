@@ -157,10 +157,14 @@ public class ContentServiceRestNormalUseTest extends ContentServiceRestTest {
     assertNotNull(concept_retrieved);
     assertTrue(concept_retrieved.equals(concept));
 
+    
+    // TEST:  Find concepts for query
     SearchResultList results =
         contentService.findConceptsForQuery(snomedTerminology, snomedVersion,
             "ossification", new PfsParameterJpa(), authToken);
 
+    assertTrue(results.getCount() == 11);
+    
     try {
       // test paging and sorting
       PfsParameterTestHelper.testPagingAndSorting(

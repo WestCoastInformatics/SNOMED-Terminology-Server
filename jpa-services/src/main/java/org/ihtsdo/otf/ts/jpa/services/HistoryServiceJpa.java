@@ -4,6 +4,8 @@
 package org.ihtsdo.otf.ts.jpa.services;
 
 import java.text.ParseException;
+import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
@@ -55,6 +57,7 @@ import org.ihtsdo.otf.ts.helpers.SimpleMapRefSetMemberListJpa;
 import org.ihtsdo.otf.ts.helpers.SimpleRefSetMemberList;
 import org.ihtsdo.otf.ts.helpers.SimpleRefSetMemberListJpa;
 import org.ihtsdo.otf.ts.jpa.ReleaseInfoJpa;
+import org.ihtsdo.otf.ts.jpa.services.handlers.DefaultGraphResolutionHandler;
 import org.ihtsdo.otf.ts.rf2.AssociationReferenceConceptRefSetMember;
 import org.ihtsdo.otf.ts.rf2.AssociationReferenceDescriptionRefSetMember;
 import org.ihtsdo.otf.ts.rf2.AssociationReferenceRefSetMember;
@@ -1085,7 +1088,9 @@ public class HistoryServiceJpa extends ContentServiceJpa implements
       query.setParameter("terminology", terminology);
       return (ReleaseInfo) query.getSingleResult();
     } catch (NoResultException e) {
-      Logger.getLogger(getClass()).error("No release info found for name/terminology " + name + "/" + terminology);
+      Logger.getLogger(getClass()).error(
+          "No release info found for name/terminology " + name + "/"
+              + terminology);
       return null;
     }
   }
@@ -1100,55 +1105,62 @@ public class HistoryServiceJpa extends ContentServiceJpa implements
   @Override
   public ConceptList findConceptsDeepModifiedSinceDate(String terminology,
     Date date, PfsParameter pfs) throws Exception {
+    
+    // query restriction not supported
+    if (pfs.getQueryRestriction() != null) {
+      throw new Exception("Query restriction not supported when searching for concepts deep modified since date.");
+    }
+    
     // Load each object type by date and see if it changed. Look back up to the
     // concept level where appropriate
     Set<Concept> results = new HashSet<>();
 
+    // Note:  all calls must execute non-paged requests to ensure proper paging and sorting
     ConceptList concepts =
-        findConceptsModifiedSinceDate(terminology, date, pfs);
+        findConceptsModifiedSinceDate(terminology, date, null);
     for (Concept concept : concepts.getObjects()) {
       results.add(concept);
     }
 
     DescriptionList descriptions =
-        findDescriptionsModifiedSinceDate(terminology, date, pfs);
+        findDescriptionsModifiedSinceDate(terminology, date, null);
     for (Description description : descriptions.getObjects()) {
       results.add(description.getConcept());
     }
 
     RelationshipList rels =
-        findRelationshipsModifiedSinceDate(terminology, date, pfs);
+        findRelationshipsModifiedSinceDate(terminology, date, null);
     for (Relationship rel : rels.getObjects()) {
       results.add(rel.getSourceConcept());
     }
 
     LanguageRefSetMemberList members =
-        findLanguageRefSetMembersModifiedSinceDate(terminology, date, pfs);
+        findLanguageRefSetMembersModifiedSinceDate(terminology, date, null);
     for (LanguageRefSetMember member : members.getObjects()) {
       results.add(member.getDescription().getConcept());
     }
 
     SimpleRefSetMemberList members2 =
-        findSimpleRefSetMembersModifiedSinceDate(terminology, date, pfs);
+        findSimpleRefSetMembersModifiedSinceDate(terminology, date, null);
     for (SimpleRefSetMember member : members2.getObjects()) {
       results.add(member.getConcept());
     }
 
     SimpleMapRefSetMemberList members3 =
-        findSimpleMapRefSetMembersModifiedSinceDate(terminology, date, pfs);
+        findSimpleMapRefSetMembersModifiedSinceDate(terminology, date, null);
     for (SimpleMapRefSetMember member : members3.getObjects()) {
       results.add(member.getConcept());
     }
 
     ComplexMapRefSetMemberList members4 =
-        findComplexMapRefSetMembersModifiedSinceDate(terminology, date, pfs);
+        findComplexMapRefSetMembersModifiedSinceDate(terminology, date, null);
     for (ComplexMapRefSetMember member : members4.getObjects()) {
       results.add(member.getConcept());
     }
 
     AssociationReferenceRefSetMemberList members5 =
         this.findAssociationReferenceRefSetMembersModifiedSinceDate(
-            terminology, date, pfs);
+            terminology, date, null);
     for (AssociationReferenceRefSetMember<?> member : members5.getObjects()) {
       if (member instanceof AssociationReferenceConceptRefSetMember) {
         results.add(((AssociationReferenceConceptRefSetMember) member)
@@ -1162,7 +1174,7 @@ public class HistoryServiceJpa extends ContentServiceJpa implements
 
     AttributeValueRefSetMemberList members6 =
         this.findAttributeValueRefSetMembersModifiedSinceDate(terminology,
-            date, pfs);
+            date, null);
     for (AttributeValueRefSetMember<?> member : members6.getObjects()) {
       if (member instanceof AttributeValueConceptRefSetMember) {
         results.add(((AttributeValueConceptRefSetMember) member).getConcept());
@@ -1172,10 +1184,52 @@ public class HistoryServiceJpa extends ContentServiceJpa implements
             .getDescription().getConcept());
       }
     }
+    
+    // construct empty concept list
+    concepts = new ConceptListJpa();
+    
+    // set the total count
+    concepts.setTotalCount(results.size());
+    
+    // add all the set elements
+    concepts.setObjects(new ArrayList<Concept>(results));
 
-    // TODO Fully implement this method, decide paging strategy
-    return null;
-  }
+    // get the sorting comparator (based on sort field, asc/desc)
+    Comparator<Concept> comparator = this.getPfsComparator(Concept.class, pfs);
+ 
+    // if comparator not null, sort
+    if (comparator != null) {
+      concepts.sortBy(comparator);
+    }
+    
+    // calculate from and to indexes
+    int fromIndex = (pfs.getStartIndex() == -1 ? 0 : pfs.getStartIndex());
+    int toIndex = (pfs.getMaxResults() == -1 ? concepts.getCount() : fromIndex + pfs.getMaxResults());
+    
+    // ensure from index is not below 0
+    if (fromIndex < 0)
+      fromIndex = 0;
+    
+    // if from index after count, return empty list
+    if (fromIndex >= concepts.getCount()) 
+      return new ConceptListJpa();
+    
+    // if to index after count, set to count
+    if (toIndex > concepts.getCount())
+      toIndex = concepts.getCount();
+    
+    // if from index <= to index, return empty list
+    if (fromIndex >= toIndex) {
+      return new ConceptListJpa();
+    }
+    
+    // after from/to checking, apply paging
+    concepts.setObjects(concepts.getObjects().subList(fromIndex, toIndex));
+    
+    // return the paged, sorted list
+    return concepts;
+      
+    }
 
   /*
    * (non-Javadoc)
@@ -1354,16 +1408,14 @@ public class HistoryServiceJpa extends ContentServiceJpa implements
       ftquery.setFirstResult(pfs.getStartIndex());
       ftquery.setMaxResults(pfs.getMaxResults());
     }
-    
-
 
     if (pfs != null && pfs.getSortField() != null
         && !pfs.getSortField().isEmpty()) {
-      
+
       // check that sort field is valid
       if (clazz.getField(pfs.getSortField()) == null)
-          throw new LocalException("Cannot sort on field: " + pfs.getSortField());
-      
+        throw new LocalException("Cannot sort on field: " + pfs.getSortField());
+
       ftquery.setSort(new Sort(new SortField(pfs.getSortField(), Type.STRING,
           !pfs.isAscending())));
     }
@@ -1432,7 +1484,7 @@ public class HistoryServiceJpa extends ContentServiceJpa implements
    * @param endDate the end date
    * @param pfs the pfs parameter
    * @return the list
-   * @throws LocalException 
+   * @throws LocalException
    */
   @SuppressWarnings("unchecked")
   private <T> List<T> findRevisions(Long id, Class<T> clazz, Date startDate,
@@ -1468,10 +1520,11 @@ public class HistoryServiceJpa extends ContentServiceJpa implements
       query =
           query.setFirstResult(pfs.getStartIndex()).setMaxResults(
               pfs.getMaxResults());
-    } else if (pfs != null && (pfs.getStartIndex() < -1 || pfs.getMaxResults() < -1)) {
+    } else if (pfs != null
+        && (pfs.getStartIndex() < -1 || pfs.getMaxResults() < -1)) {
       throw new LocalException("Invalid paging parameters");
     }
-    
+
     if (pfs != null && pfs.getQueryRestriction() != null) {
       throw new LocalException("Query restriction not supported");
     }

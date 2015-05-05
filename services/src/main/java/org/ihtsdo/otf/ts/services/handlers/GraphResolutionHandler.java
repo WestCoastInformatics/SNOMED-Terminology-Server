@@ -16,7 +16,7 @@ import org.ihtsdo.otf.ts.rf2.Relationship;
  * Generically represents an algorithm for reading objects to a certain depth
  * before sending them across the wire. It also handles wiring objects together
  * that have been sent in from across the wire. Thus the "depth" of the graph is
- * controlled by the imlementation of this algortihm
+ * controlled by the implementation of this algorithm
  */
 public interface GraphResolutionHandler extends Configurable {
 

@@ -30,6 +30,8 @@ public class RootServiceJpa implements RootService {
       config = ConfigUtility.getConfigProperties();
       factory = Persistence.createEntityManagerFactory("TermServiceDS", config);
     } catch (Exception e) {
+      Logger.getLogger(RootServiceJpa.class).info(
+          "Failed to set root service factory, serious problem.");
       e.printStackTrace();
       factory = null;
     }
