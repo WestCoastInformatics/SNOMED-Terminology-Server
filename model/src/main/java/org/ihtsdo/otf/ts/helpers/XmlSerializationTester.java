@@ -39,7 +39,6 @@ public class XmlSerializationTester extends ProxyTester {
     Object obj3 =
         ConfigUtility
             .getGraphForJson(json, obj.getClass());
-    
     return obj.equals(obj2) && obj.equals(obj3);
   }
 

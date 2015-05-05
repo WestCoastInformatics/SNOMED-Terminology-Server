@@ -20,7 +20,7 @@ import org.ihtsdo.otf.ts.rf2.Concept;
 @Entity
 @Audited
 @DiscriminatorValue("Concept")
-@XmlRootElement(name = "attributeValueConcept")
+@XmlRootElement(name = "conceptAttributeValue")
 public class AttributeValueConceptRefSetMemberJpa extends
     AbstractAttributeValueRefSetMemberJpa<Concept> implements
     AttributeValueConceptRefSetMember {
@@ -187,7 +187,7 @@ public class AttributeValueConceptRefSetMemberJpa extends
   }
 
   /**
-   * Sets the concept terminology id.
+   * Sets the concept terminology id. For JAXB.
    *
    * @param conceptId the concept terminology id
    */
@@ -212,7 +212,7 @@ public class AttributeValueConceptRefSetMemberJpa extends
   }
 
   /**
-   * Sets the concept preferred name.
+   * Sets the concept preferred name. For JAXB.
    *
    * @param defaultPreferredName the concept preferred name
    */
