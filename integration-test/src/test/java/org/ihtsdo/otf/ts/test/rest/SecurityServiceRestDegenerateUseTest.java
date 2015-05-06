@@ -143,10 +143,7 @@ public class SecurityServiceRestDegenerateUseTest extends
 
     // invalid Long value should return null
     DegenerateUseMethodTestHelper.testDegenerateArguments(service, method,
-        parameters, new ExpectedFailure[] {
-            ExpectedFailure.LONG_INVALID_NO_RESULTS_NULL_EXCEPTION,
-            ExpectedFailure.EXCEPTION
-        });
+        parameters);
 
     // Get user with invalid name (does not exist in database)
     // TEST: Should return null
@@ -269,7 +266,10 @@ public class SecurityServiceRestDegenerateUseTest extends
    */
   @After
   public void teardown() throws Exception {
-    // n/a
+    // remove the bad user if it exists
+    User user = service.getUser(badUserName, authToken);
+    if (user != null)
+      service.removeUser(user.getId(), authToken);
   }
 
 }

@@ -15,73 +15,65 @@ import org.ihtsdo.otf.ts.helpers.PfsParameter;
 import org.ihtsdo.otf.ts.helpers.PfsParameterJpa;
 import org.ihtsdo.otf.ts.helpers.ResultList;
 
+// TODO: Auto-generated Javadoc
 /**
  * Testing class for degenerate use test helper.
+ *
+ * @author ${author}
  */
 public class DegenerateUseMethodTestHelper {
 
   /**
    * The Enum ExpectedFailure.
+   *
+   * @author ${author}
    */
   public enum ExpectedFailure {
 
     /** Use where exception expected. */
     EXCEPTION,
 
-    /** Use to skip testing a parameter */
+    /**  Use to skip testing a parameter. */
     SKIP,
 
-    /** Use this if no failure is expected */
+    /**  Use this if no failure is expected. */
     NONE,
 
     /** Use to test successful call, but erroneous empty result list. */
     NO_RESULTS,
 
-    /**
-     * Use when invalid long value produces null instead of throwing exception;
-     * null still throws exception
-     */
+    /** Use when invalid long value produces empty list object instead of throwing exception; null still throws exception. */
     LONG_INVALID_NO_RESULTS_NULL_EXCEPTION,
+    
+    /**  Use when invalid long value produces null instead of throwing exception; null parameter throws exception. */
+    LONG_INVALID_NULL_RESULT_NULL_EXCEPTION, 
 
-    /**
-     * Use when empty string throws exception and null throws exception
-     * (identical to EXCEPTION)
-     */
+    /** Use when empty string throws exception and null throws exception (identical to EXCEPTION). */
     STRING_INVALID_EXCEPTION_NULL_EXCEPTION,
 
-    /**
-     * Use when empty string throws exceptions and null returns erroneous no
-     * results
-     */
+    /** Use when empty string throws exceptions and null returns erroneous no results. */
     STRING_INVALID_EXCEPTION_NULL_NO_RESULTS,
 
-    /** Use when empty string throws exception and null succeeds */
+    /**  Use when empty string throws exception and null succeeds. */
     STRING_INVALID_EXCEPTION_NULL_SUCCESS,
 
-    /**
-     * Use when empty string returns erroneous no results and null throws
-     * exception
-     */
+    /** Use when empty string returns erroneous no results and null throws exception. */
     STRING_INVALID_NO_RESULTS_NULL_EXCEPTION,
 
-    /**
-     * Use when empty string returns erroneous no results and null returns
-     * erroneous null results
-     */
+    /** Use when empty string returns erroneous no results and null returns erroneous null results. */
     STRING_INVALID_NO_RESULTS_NULL_NO_RESULTS,
 
-    /** Use when empty string returns erroneous no results and null succeeds */
+    /**  Use when empty string returns erroneous no results and null succeeds. */
     STRING_INVALID_NO_RESULTS_NULL_SUCCESS,
 
-    /** Use when empty string succeeds and null throws exception */
+    /**  Use when empty string succeeds and null throws exception. */
     STRING_INVALID_SUCCESS_NULL_EXCEPTION,
 
-    /** Use when empty string succeeds and null returns erroneous null results */
+    /**  Use when empty string succeeds and null returns erroneous null results. */
     STRING_INVALID_SUCCESS_NULL_NO_RESULTS,
 
-    /** Use when empty string succeeds and null string succeeds */
-    STRING_INVALID_SUCCESS_NULL_SUCCESS,
-
+    /**  Use when empty string succeeds and null string succeeds. */
+    STRING_INVALID_SUCCESS_NULL_SUCCESS
   }
 
   /**
@@ -147,7 +139,6 @@ public class DegenerateUseMethodTestHelper {
    * @param expectedFailures the expected failures
    * @throws Exception the exception
    */
-  @SuppressWarnings("null")
   public static void testDegenerateArguments(Object obj, Method method,
     Object[] validParameters, Object[] invalidParameters,
     ExpectedFailure[] expectedFailures) throws Exception {
@@ -298,7 +289,6 @@ public class DegenerateUseMethodTestHelper {
    * @param expectedFailure the expected failure
    * @throws Exception the exception
    */
-  @SuppressWarnings("null")
   private static void invoke(Object obj, Method method, Object[] parameters,
     Object parameter, ExpectedFailure expectedFailure) throws Exception {
 
@@ -321,6 +311,12 @@ public class DegenerateUseMethodTestHelper {
         switch (expectedFailure) {
           case EXCEPTION:
             throw new Exception("Test did not throw expected exception");
+          case LONG_INVALID_NULL_RESULT_NULL_EXCEPTION:
+            // check that result returned is null
+            if (result != null) {
+              throw new Exception("Test expecting null result returned non-null result");
+            }
+            break;
           case LONG_INVALID_NO_RESULTS_NULL_EXCEPTION:
             // check that result returned is null
             if (parameter == null) {
@@ -470,7 +466,7 @@ public class DegenerateUseMethodTestHelper {
 
   /**
    * helper function to take an object and determine if it is non-null, but
-   * empty
+   * empty.
    *
    * @param o the o
    * @return <code>true</code> if so, <code>false</code> otherwise

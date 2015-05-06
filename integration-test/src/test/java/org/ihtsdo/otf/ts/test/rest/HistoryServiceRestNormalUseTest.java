@@ -1122,6 +1122,10 @@ public class HistoryServiceRestNormalUseTest extends HistoryServiceRestTest {
     // this teardown class must remove release info
     // objects created by testing addReleaseInfo
     // and startEditingCycle
+    ReleaseInfo releaseInfo = historyService.getReleaseInfo(terminology, currentDate, authToken);
+    if (releaseInfo != null) {
+      historyService.removeReleaseInfo(releaseInfo.getId(), authToken);
+    }
 
     // logout
     securityService.logout(authToken);
