@@ -21,7 +21,7 @@ import org.ihtsdo.otf.ts.rf2.Description;
 @Entity
 @Audited
 @DiscriminatorValue("Description")
-@XmlRootElement(name = "assocRefDescription")
+@XmlRootElement(name = "descriptionAssociationRef")
 public class AssociationReferenceDescriptionRefSetMemberJpa extends
     AbstractAssociationReferenceRefSetMemberJpa<Description> implements
     AssociationReferenceDescriptionRefSetMember {

@@ -26,13 +26,13 @@ import org.ihtsdo.otf.ts.rf2.Component;
 @DiscriminatorColumn(name = "type", discriminatorType = DiscriminatorType.STRING, length = 50)
 @Audited
 @XmlSeeAlso({
-  AttributeValueDescriptionRefSetMemberJpa.class,
-  AttributeValueConceptRefSetMemberJpa.class
+    AttributeValueDescriptionRefSetMemberJpa.class,
+    AttributeValueConceptRefSetMemberJpa.class,
 })
 public abstract class AbstractAttributeValueRefSetMemberJpa<T extends Component>
     extends AbstractRefSetMemberJpa<T> implements AttributeValueRefSetMember<T> {
 
-  /** The value id */
+  /** The value id. */
   @Column(nullable = false)
   private String valueId;
 
@@ -55,22 +55,33 @@ public abstract class AbstractAttributeValueRefSetMemberJpa<T extends Component>
     valueId = member.getValueId();
   }
 
-  /**
-   * {@inheritDoc}
+  /*
+   * (non-Javadoc)
+   * 
+   * @see org.ihtsdo.otf.ts.rf2.AttributeValueRefSetMember#getValueId()
    */
   @Override
   public String getValueId() {
     return this.valueId;
   }
 
-  /**
-   * {@inheritDoc}
+  /*
+   * (non-Javadoc)
+   * 
+   * @see
+   * org.ihtsdo.otf.ts.rf2.AttributeValueRefSetMember#setValueId(java.lang.String
+   * )
    */
   @Override
   public void setValueId(String valueId) {
     this.valueId = valueId;
   }
 
+  /*
+   * (non-Javadoc)
+   * 
+   * @see org.ihtsdo.otf.ts.rf2.jpa.AbstractRefSetMemberJpa#hashCode()
+   */
   @Override
   public int hashCode() {
     final int prime = 31;
@@ -79,6 +90,12 @@ public abstract class AbstractAttributeValueRefSetMemberJpa<T extends Component>
     return result;
   }
 
+  /*
+   * (non-Javadoc)
+   * 
+   * @see
+   * org.ihtsdo.otf.ts.rf2.jpa.AbstractRefSetMemberJpa#equals(java.lang.Object)
+   */
   @Override
   public boolean equals(Object obj) {
     if (this == obj)

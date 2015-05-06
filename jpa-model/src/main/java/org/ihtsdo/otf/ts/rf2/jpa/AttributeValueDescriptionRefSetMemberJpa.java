@@ -21,7 +21,7 @@ import org.ihtsdo.otf.ts.rf2.Description;
 @Entity
 @Audited
 @DiscriminatorValue("Description")
-@XmlRootElement(name = "attributeValueConcept")
+@XmlRootElement(name = "descriptionAttributeValue")
 public class AttributeValueDescriptionRefSetMemberJpa extends
     AbstractAttributeValueRefSetMemberJpa<Description> implements
     AttributeValueDescriptionRefSetMember {
@@ -113,6 +113,7 @@ public class AttributeValueDescriptionRefSetMemberJpa extends
    */
   @SuppressWarnings("unused")
   private void setDescriptionTerminologyId(String descriptionId) {
+    System.out.println("setDescriptionTermId - " + descriptionId);
     if (description == null) {
       description = new DescriptionJpa();
     }

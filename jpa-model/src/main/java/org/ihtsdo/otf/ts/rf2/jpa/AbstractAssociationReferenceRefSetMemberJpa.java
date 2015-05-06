@@ -26,8 +26,8 @@ import org.ihtsdo.otf.ts.rf2.Component;
 @DiscriminatorColumn(name = "type", discriminatorType = DiscriminatorType.STRING, length = 50)
 @Audited
 @XmlSeeAlso({
-  AssociationReferenceDescriptionRefSetMemberJpa.class,
-  AssociationReferenceConceptRefSetMemberJpa.class
+    AssociationReferenceDescriptionRefSetMemberJpa.class,
+    AssociationReferenceConceptRefSetMemberJpa.class,
 })
 public abstract class AbstractAssociationReferenceRefSetMemberJpa<T extends Component>
     extends AbstractRefSetMemberJpa<T> implements
@@ -36,11 +36,6 @@ public abstract class AbstractAssociationReferenceRefSetMemberJpa<T extends Comp
   /** The target component id */
   @Column(nullable = false)
   private String targetComponentId;
-
-  @Override
-  public String getTargetComponentId() {
-    return this.targetComponentId;
-  }
 
   /**
    * Instantiates an empty {@link AbstractAssociationReferenceRefSetMemberJpa}.
@@ -65,9 +60,22 @@ public abstract class AbstractAssociationReferenceRefSetMemberJpa<T extends Comp
    * (non-Javadoc)
    * 
    * @see
+   * org.ihtsdo.otf.ts.rf2.AssociationReferenceRefSetMember#getTargetComponentId
+   * ()
+   */
+  @Override
+  public String getTargetComponentId() {
+    return this.targetComponentId;
+  }
+
+  /*
+   * (non-Javadoc)
+   * 
+   * @see
    * org.ihtsdo.otf.ts.rf2.AssociationReferenceRefSetMember#setTargetComponentId
    * (java.lang.String)
    */
+
   @Override
   public void setTargetComponentId(String targetComponentId) {
     this.targetComponentId = targetComponentId;
