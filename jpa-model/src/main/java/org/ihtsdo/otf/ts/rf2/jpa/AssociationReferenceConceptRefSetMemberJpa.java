@@ -20,7 +20,7 @@ import org.ihtsdo.otf.ts.rf2.Concept;
 @Entity
 @Audited
 @DiscriminatorValue("Concept")
-@XmlRootElement(name = "assocRefConcept")
+@XmlRootElement(name = "conceptAssociationRef")
 public class AssociationReferenceConceptRefSetMemberJpa extends
     AbstractAssociationReferenceRefSetMemberJpa<Concept> implements
     AssociationReferenceConceptRefSetMember {
@@ -53,8 +53,8 @@ public class AssociationReferenceConceptRefSetMemberJpa extends
    * 
    * @see org.ihtsdo.otf.ts.rf2.ConceptRefSetMember#getConcept()
    */
-  @XmlTransient
   @Override
+  @XmlTransient
   public Concept getConcept() {
     return this.concept;
   }
@@ -64,8 +64,8 @@ public class AssociationReferenceConceptRefSetMemberJpa extends
    * 
    * @see org.ihtsdo.otf.ts.rf2.RefSetMember#getComponent()
    */
-  @XmlTransient
   @Override
+  @XmlTransient
   public Concept getComponent() {
     return getConcept();
   }
