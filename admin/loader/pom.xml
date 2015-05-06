@@ -99,6 +99,33 @@
       </build>
     </profile>
 
+    <!-- Load RF2 sample, specify -Drun.config=...  -->
+    <profile>
+      <id>RF2-sample</id>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.ihtsdo.otf.term-server</groupId>
+            <artifactId>term-server-admin-mojo</artifactId>
+            <version>${project.version}</version>
+            <executions>
+              <execution>
+                <id>sample-rf2-snapshot</id>
+                <phase>package</phase>
+                <goals>
+                  <goal>sample-rf2-snapshot</goal>
+                </goals>
+                <configuration>
+                  <inputDir>${input.dir}</inputDir>
+                  <server>${server}</server>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+    
     <!-- Load RF2 delta, specify -Drun.config=... -Dterminology=... -->
     <profile>
       <id>RF2-delta</id>
