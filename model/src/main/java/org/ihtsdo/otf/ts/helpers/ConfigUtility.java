@@ -476,7 +476,6 @@ public class ConfigUtility {
    * @return the sorted {@link File}
    * @throws IOException Signals that an I/O exception has occurred.
    */
-  @SuppressWarnings("null")
   public static File mergeSortedFiles(File files1, File files2,
     Comparator<String> comp, File dir, String headerLine) throws IOException {
     if (files1 == null) {

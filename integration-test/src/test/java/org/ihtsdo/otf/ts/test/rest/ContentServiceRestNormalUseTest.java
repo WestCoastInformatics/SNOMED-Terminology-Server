@@ -298,7 +298,8 @@ public class ContentServiceRestNormalUseTest extends ContentServiceRestTest {
 
     Set<Description> descriptions;
     Concept concept;
-    Description description, description2;
+    Description description;
+    Description description2;
 
     /**
      * Test retrieval of SNOMEDCT descriptions

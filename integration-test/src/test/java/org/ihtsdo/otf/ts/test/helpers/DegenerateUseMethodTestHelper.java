@@ -147,7 +147,6 @@ public class DegenerateUseMethodTestHelper {
    * @param expectedFailures the expected failures
    * @throws Exception the exception
    */
-  @SuppressWarnings("null")
   public static void testDegenerateArguments(Object obj, Method method,
     Object[] validParameters, Object[] invalidParameters,
     ExpectedFailure[] expectedFailures) throws Exception {
@@ -297,7 +296,6 @@ public class DegenerateUseMethodTestHelper {
    * @param expectedFailure the expected failure
    * @throws Exception the exception
    */
-  @SuppressWarnings("null")
   private static void invoke(Object obj, Method method, Object[] parameters,
     Object parameter, ExpectedFailure expectedFailure) throws Exception {
 
