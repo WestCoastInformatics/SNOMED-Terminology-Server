@@ -155,10 +155,6 @@ public class HistoryServiceRestNormalUseTest extends HistoryServiceRestTest {
   /**
    * Test add/update/remove releaseInfo use rest history0011.
    * 
-   * NOTE: ReleaseInfo methods should be in test 001. Due to minor issue with
-   * JDBC connection pools, currently placed in test 002 (editing cycle
-   * methods), which are skipped as authoring-related elements are not
-   * functional and therefore not tested
    *
    * @throws Exception the exception
    */

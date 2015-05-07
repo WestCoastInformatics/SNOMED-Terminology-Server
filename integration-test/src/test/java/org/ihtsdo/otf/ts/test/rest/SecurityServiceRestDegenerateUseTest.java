@@ -143,7 +143,10 @@ public class SecurityServiceRestDegenerateUseTest extends
 
     // invalid Long value should return null
     DegenerateUseMethodTestHelper.testDegenerateArguments(service, method,
-        parameters);
+        parameters, new ExpectedFailure[] {
+            ExpectedFailure.LONG_INVALID_NULL_RESULT_NULL_EXCEPTION,
+            ExpectedFailure.EXCEPTION
+        });
 
     // Get user with invalid name (does not exist in database)
     // TEST: Should return null

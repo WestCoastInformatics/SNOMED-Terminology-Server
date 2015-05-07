@@ -414,6 +414,11 @@ public class DegenerateUseMethodTestHelper {
               throw new Exception("Parameter threw unexpected exception");
             }
             break;
+          case LONG_INVALID_NULL_RESULT_NULL_EXCEPTION:
+            if (parameter != null) {
+              throw new Exception("Parameter threw unexpected exception");
+            }
+            break;
           case NONE:
             throw new Exception("Parameter threw unexpected exception");
 

@@ -46,6 +46,7 @@ import org.ihtsdo.otf.ts.helpers.LocalException;
 import org.ihtsdo.otf.ts.helpers.ModuleDependencyRefSetMemberList;
 import org.ihtsdo.otf.ts.helpers.ModuleDependencyRefSetMemberListJpa;
 import org.ihtsdo.otf.ts.helpers.PfsParameter;
+import org.ihtsdo.otf.ts.helpers.PfsParameterJpa;
 import org.ihtsdo.otf.ts.helpers.RefsetDescriptorRefSetMemberList;
 import org.ihtsdo.otf.ts.helpers.RefsetDescriptorRefSetMemberListJpa;
 import org.ihtsdo.otf.ts.helpers.RelationshipList;
@@ -57,7 +58,6 @@ import org.ihtsdo.otf.ts.helpers.SimpleMapRefSetMemberListJpa;
 import org.ihtsdo.otf.ts.helpers.SimpleRefSetMemberList;
 import org.ihtsdo.otf.ts.helpers.SimpleRefSetMemberListJpa;
 import org.ihtsdo.otf.ts.jpa.ReleaseInfoJpa;
-import org.ihtsdo.otf.ts.jpa.services.handlers.DefaultGraphResolutionHandler;
 import org.ihtsdo.otf.ts.rf2.AssociationReferenceConceptRefSetMember;
 import org.ihtsdo.otf.ts.rf2.AssociationReferenceDescriptionRefSetMember;
 import org.ihtsdo.otf.ts.rf2.AssociationReferenceRefSetMember;
@@ -449,7 +449,7 @@ public class HistoryServiceJpa extends ContentServiceJpa implements
    */
   @SuppressWarnings("unchecked")
   @Override
-  public AssociationReferenceRefSetMember<?> findAssociationReferenceRefSetMemberReleaseRevision(
+  public AssociationReferenceRefSetMember<? extends Component> findAssociationReferenceRefSetMemberReleaseRevision(
     Long id, Date release) throws Exception {
     Logger
         .getLogger(getClass())
@@ -1106,9 +1106,23 @@ public class HistoryServiceJpa extends ContentServiceJpa implements
   public ConceptList findConceptsDeepModifiedSinceDate(String terminology,
     Date date, PfsParameter pfs) throws Exception {
     
-    // query restriction not supported
-    if (pfs.getQueryRestriction() != null) {
-      throw new Exception("Query restriction not supported when searching for concepts deep modified since date.");
+  
+    // check pfs for validity -- note this is required because of manual paging
+  // other methods are checked in applyPfsToQuery methods
+    if (pfs == null)
+      pfs = new PfsParameterJpa();
+    else {
+      // query restriction not supported    
+      if (pfs.getQueryRestriction() != null) 
+        throw new Exception("Query restriction not supported when searching for concepts deep modified since date.");
+      
+        // pfs start index and max results must be valid
+      if (pfs.getStartIndex() < -1)
+        throw new Exception("Pfs Parameter start index must be -1 (unused) or greater than or equal to zero");
+      if (pfs.getMaxResults() < -1)
+        throw new Exception("Pfs Parameter max results must be -1 (unused) or greater than zero");
+      
+      // sort field validity is checked via comparator construction
     }
     
     // Load each object type by date and see if it changed. Look back up to the

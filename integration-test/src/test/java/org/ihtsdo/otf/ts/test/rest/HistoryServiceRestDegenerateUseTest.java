@@ -147,7 +147,7 @@ public class HistoryServiceRestDegenerateUseTest extends HistoryServiceRestTest 
   }
 
   /**
-   * Test add/update/remove releaseInfo use rest history0011.
+   * Test add/update/remove releaseInfo use rest history002.
    * 
    * NOTE: ReleaseInfo methods should be in test 001. Due to minor issue with
    * JDBC connection pools, normal use tests currently placed in test 002
