@@ -90,8 +90,8 @@ public class Rf2SnapshotSamplerAlgorithm extends HistoryServiceJpa implements
       // load relationships
       Logger.getLogger(getClass()).info("  Load relationships");
       List<Relationship> list = loadRelationships();
-      Map<String, List<String>> chdParMap = new HashMap<>();
-      Map<String, List<String>> otherMap = new HashMap<>();
+      Map<String, Set<String>> chdParMap = new HashMap<>();
+      Map<String, Set<String>> otherMap = new HashMap<>();
       for (Relationship rel : list) {
         // active inferred isa
         if (rel.getTypeId().equals("116680003")
@@ -99,7 +99,7 @@ public class Rf2SnapshotSamplerAlgorithm extends HistoryServiceJpa implements
             && rel.isActive()) {
           if (!chdParMap.containsKey(rel.getSourceConcept().getTerminologyId())) {
             chdParMap.put(rel.getSourceConcept().getTerminologyId(),
-                new ArrayList<String>());
+                new HashSet<String>());
           }
           chdParMap.get(rel.getSourceConcept().getTerminologyId()).add(
               rel.getDestinationConcept().getTerminologyId());
@@ -108,16 +108,16 @@ public class Rf2SnapshotSamplerAlgorithm extends HistoryServiceJpa implements
         else if (rel.isActive() && !rel.getTypeId().equals("116680003")) {
           if (!otherMap.containsKey(rel.getSourceConcept().getTerminologyId())) {
             otherMap.put(rel.getSourceConcept().getTerminologyId(),
-                new ArrayList<String>());
+                new HashSet<String>());
           }
           otherMap.get(rel.getSourceConcept().getTerminologyId()).add(
               rel.getDestinationConcept().getTerminologyId());
         }
       }
-      list = null;
+
       Logger.getLogger(getClass()).info(
-          "    parChd count = " + chdParMap.size());
-      Logger.getLogger(getClass()).info("    parChd = " + chdParMap);
+          "    chdPar count = " + chdParMap.size());
+      Logger.getLogger(getClass()).info("    chdPar = " + chdParMap);
       Logger.getLogger(getClass()).info("    other count = " + otherMap.size());
       Logger.getLogger(getClass()).info("    other = " + otherMap);
 
@@ -706,11 +706,12 @@ public class Rf2SnapshotSamplerAlgorithm extends HistoryServiceJpa implements
       // Split line
       final String fields[] = line.split("\t");
       // Skip header and keep only active entries
-      if (!fields[0].equals("id") && fields[1].equals("1")) {
+      if (!fields[0].equals("id") && fields[2].equals("1")) {
 
         // Configure relationship
         final Relationship relationship = new RelationshipJpa();
         relationship.setTerminologyId(fields[0]);
+        relationship.setActive(fields[2].equals("1"));
         relationship.setModuleId(fields[3].intern()); // moduleId
         relationship.setTypeId(fields[7]); // typeId
         relationship.setCharacteristicTypeId(fields[8].intern()); // characteristicTypeId
