@@ -19,7 +19,9 @@ import org.ihtsdo.otf.ts.services.ContentService;
 import org.ihtsdo.otf.ts.test.helpers.DegenerateUseMethodTestHelper;
 import org.ihtsdo.otf.ts.test.helpers.DegenerateUseMethodTestHelper.ExpectedFailure;
 import org.junit.After;
+import org.junit.AfterClass;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;
 
@@ -28,8 +30,6 @@ import org.junit.Test;
  */
 public class HistoryServiceRestDegenerateUseTest extends HistoryServiceRestTest {
 
-  // override content service, will instantiate as jpa-level accessor
-  ContentService contentService;
 
   Object[] validParameters;
   
@@ -52,13 +52,8 @@ public class HistoryServiceRestDegenerateUseTest extends HistoryServiceRestTest 
     pfs = new PfsParameterJpa();
     pfs.setMaxResults(1);
     pfs.setStartIndex(0);
-
-    // authentication -- use admin for this test
+    
     authToken = securityService.authenticate(adminUser, adminPassword);
-
-    // use jpa-level content service to retrieve items for validity testing
-    // i.e. quick retrieval of hibernate ids
-    contentService = new ContentServiceJpa();
   }
 
   /**
@@ -176,12 +171,12 @@ public class HistoryServiceRestDegenerateUseTest extends HistoryServiceRestTest 
     // The test id for this concept
     String testId = "321087001";
     String revision = "20080131";
-    
-    
-    
+
+    ContentService contentService = new ContentServiceJpa();
     Component component =
         contentService.getSingleConcept(testId, terminology, version);
-  
+    contentService.close();
+    
     testDegenerateUse(component, revision);
     
     // concept also has deep modified routine
@@ -218,9 +213,10 @@ public class HistoryServiceRestDegenerateUseTest extends HistoryServiceRestTest 
     // The test id for this description
     String testId = "387512014";
     String revision = "20030731";
-
+    ContentService contentService = new ContentServiceJpa();
     Component component =
         contentService.getDescription(testId, terminology, version);
+    contentService.close();
     testDegenerateUse(component, revision);
 
   }
@@ -238,8 +234,10 @@ public class HistoryServiceRestDegenerateUseTest extends HistoryServiceRestTest 
     String testId = "501314023";
     String revision = "20020131";
 
+    ContentService contentService = new ContentServiceJpa();
     Component component =
         contentService.getRelationship(testId, terminology, version);
+    contentService.close();
     testDegenerateUse(component, revision);
 
   }
@@ -256,9 +254,10 @@ public class HistoryServiceRestDegenerateUseTest extends HistoryServiceRestTest 
     // The test id for this component
     String testId = "e76075bd-3748-589f-b987-2ada691921ef";
     String revision = "20080731";
-
+    ContentService contentService = new ContentServiceJpa();
     Component component =
         contentService.getLanguageRefSetMember(testId, terminology, version);
+    contentService.close();
     testDegenerateUse(component, revision);
   }
 
@@ -276,9 +275,11 @@ public class HistoryServiceRestDegenerateUseTest extends HistoryServiceRestTest 
     String revision = "20080731";
 
     // need cast to abstract form (two types of association reference ref set member)
+    ContentService contentService = new ContentServiceJpa();
     Component component = (AbstractAssociationReferenceRefSetMemberJpa<?>)
         contentService.getAssociationReferenceRefSetMember(testId, terminology,
             version);
+    contentService.close();
     testDegenerateUse(component, revision);
   }
 
@@ -296,9 +297,11 @@ public class HistoryServiceRestDegenerateUseTest extends HistoryServiceRestTest 
     String revision = "20050131";
 
     // need cast to abstract form (two types of attribute value ref set member)
+    ContentService contentService = new ContentServiceJpa();
     Component component = (AbstractAttributeValueRefSetMemberJpa<?>)
         contentService.getAttributeValueRefSetMember(testId, terminology,
             version);
+    contentService.close();
     testDegenerateUse(component, revision);
   }
 
@@ -315,8 +318,10 @@ public class HistoryServiceRestDegenerateUseTest extends HistoryServiceRestTest 
     String testId = "055c30ae-b018-5b82-bd3d-74ff9451de15";
     String revision = "20060731";
 
+    ContentService contentService = new ContentServiceJpa();
     Component component =
         contentService.getComplexMapRefSetMember(testId, terminology, version);
+    contentService.close();
     testDegenerateUse(component, revision);
   }
 
@@ -333,9 +338,11 @@ public class HistoryServiceRestDegenerateUseTest extends HistoryServiceRestTest 
     String testId = "807f775b-1d66-5069-b58e-a37ace985dcf";
     String revision = "20140131";
 
+    ContentService contentService = new ContentServiceJpa();
     Component component =
         contentService.getDescriptionTypeRefSetMember(testId, terminology,
             version);
+    contentService.close();
     testDegenerateUse(component, revision);
   }
 
@@ -352,9 +359,11 @@ public class HistoryServiceRestDegenerateUseTest extends HistoryServiceRestTest 
     String testId = "1244116f-fdb5-5645-afcc-5281288409da";
     String revision = "20140131";
 
+    ContentService contentService = new ContentServiceJpa();
     Component component =
         contentService.getModuleDependencyRefSetMember(testId, terminology,
             version);
+    contentService.close();
     testDegenerateUse(component, revision);
   }
 
@@ -371,9 +380,11 @@ public class HistoryServiceRestDegenerateUseTest extends HistoryServiceRestTest 
     String testId = "576ed8c3-1227-5489-b782-760a3b729b94";
     String revision = "20020131";
 
+    ContentService contentService = new ContentServiceJpa();
     Component component =
         contentService.getRefsetDescriptorRefSetMember(testId, terminology,
             version);
+    contentService.close();
     testDegenerateUse(component, revision);
   }
 
@@ -390,8 +401,10 @@ public class HistoryServiceRestDegenerateUseTest extends HistoryServiceRestTest 
     String testId = "f8dbedb7-12a7-5e33-bbc8-3d1252c77820";
     String revision = "20050131";
 
+    ContentService contentService = new ContentServiceJpa();
     Component component =
         contentService.getSimpleMapRefSetMember(testId, terminology, version);
+    contentService.close();
     testDegenerateUse(component, revision);
   }
 
@@ -408,8 +421,10 @@ public class HistoryServiceRestDegenerateUseTest extends HistoryServiceRestTest 
     String testId = "c0a26c19-e051-5cfa-86c5-a625ca44e690";
     String revision = "20060131";
 
+    ContentService contentService = new ContentServiceJpa();
     Component component =
         contentService.getSimpleRefSetMember(testId, terminology, version);
+    contentService.close();
     testDegenerateUse(component, revision);
   }
 
@@ -422,8 +437,7 @@ public class HistoryServiceRestDegenerateUseTest extends HistoryServiceRestTest 
   @After
   public void teardown() throws Exception {
 
-    // logout
-    securityService.logout(authToken);
+  
   }
 
   /**

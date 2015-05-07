@@ -313,15 +313,10 @@ public class ContentServiceRestNormalUseTest extends ContentServiceRestTest {
   @Test
   public void testNormalUseRestContent005() throws Exception {
 
-    Set<Description> descriptions;
-    Concept concept;
-    Description description;
-    Description description2;
-
     /** Test SNOMED */
 
     // set test id for Attribute Value for Concept
-    snomedTestId = "105592009";
+    String snomedTestId = "105592009";
 
     AttributeValueRefSetMemberList results =
         contentService.getAttributeValueRefSetMembersForConcept(snomedTestId,

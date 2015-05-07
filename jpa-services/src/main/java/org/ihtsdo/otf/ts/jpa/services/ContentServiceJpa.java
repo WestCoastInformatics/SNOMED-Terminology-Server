@@ -4,7 +4,6 @@
 package org.ihtsdo.otf.ts.jpa.services;
 
 import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.math.BigDecimal;
 import java.util.ArrayList;

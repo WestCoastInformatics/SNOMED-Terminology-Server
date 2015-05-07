@@ -113,7 +113,6 @@ public class AttributeValueDescriptionRefSetMemberJpa extends
    */
   @SuppressWarnings("unused")
   private void setDescriptionTerminologyId(String descriptionId) {
-    System.out.println("setDescriptionTermId - " + descriptionId);
     if (description == null) {
       description = new DescriptionJpa();
     }

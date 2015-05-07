@@ -35,6 +35,7 @@ public class RootServiceJpa implements RootService {
       e.printStackTrace();
       factory = null;
     }
+    
   }
 
   /** The manager. */
