@@ -21,6 +21,9 @@ import org.ihtsdo.otf.ts.helpers.ConfigUtility;
  */
 public class Rf2FileCopier {
 
+  /** The active only. */
+  private boolean activeOnly;
+
   /**
    * Instantiates an empty {@link Rf2FileCopier}.
    *
@@ -49,12 +52,12 @@ public class Rf2FileCopier {
     if (!outputDir.mkdirs()) {
       throw new Exception("Problem making output dir: " + outputDir);
     }
-    new File(outputDir,"Terminology").mkdirs();
-    new File(outputDir,"Refset").mkdirs();
-    new File(outputDir,"Refset/Content").mkdirs();
-    new File(outputDir,"Refset/Language").mkdirs();
-    new File(outputDir,"Refset/Map").mkdirs();
-    new File(outputDir,"Refset/Metadata").mkdirs();
+    new File(outputDir, "Terminology").mkdirs();
+    new File(outputDir, "Refset").mkdirs();
+    new File(outputDir, "Refset/Content").mkdirs();
+    new File(outputDir, "Refset/Language").mkdirs();
+    new File(outputDir, "Refset/Map").mkdirs();
+    new File(outputDir, "Refset/Metadata").mkdirs();
 
     // Check preconditions
     if (!inputDir.exists()) {
@@ -113,14 +116,19 @@ public class Rf2FileCopier {
       String line;
       int index = keyMap.get(key);
       while ((line = in.readLine()) != null) {
-        final String[] tokens = line.split("\t");
+        final String[] fields = line.split("\t");
+
+        // If active only, skip inactive entries
+        if (activeOnly && fields[1].equals("0")) {
+          continue;
+        }
         // write headers
         if (line.startsWith("id\t")) {
           out.println(line);
         }
         // write matching rf2
-        if (concepts.contains(tokens[index])
-            || descriptions.contains(tokens[index])) {
+        if (concepts.contains(fields[index])
+            || descriptions.contains(fields[index])) {
           out.println(line);
         }
       }
@@ -153,6 +161,24 @@ public class Rf2FileCopier {
     Logger.getLogger(getClass()).info(
         "      " + prefix + " = " + file.toString() + " " + file.exists());
     return file;
+  }
+
+  /**
+   * Indicates whether or not active only is the case.
+   *
+   * @return <code>true</code> if so, <code>false</code> otherwise
+   */
+  public boolean isActiveOnly() {
+    return activeOnly;
+  }
+
+  /**
+   * Sets the active only.
+   *
+   * @param activeOnly the active only
+   */
+  public void setActiveOnly(boolean activeOnly) {
+    this.activeOnly = activeOnly;
   }
 
 }

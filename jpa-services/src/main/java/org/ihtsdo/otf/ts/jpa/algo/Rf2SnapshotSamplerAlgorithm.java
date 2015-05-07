@@ -114,6 +114,7 @@ public class Rf2SnapshotSamplerAlgorithm extends HistoryServiceJpa implements
               rel.getDestinationConcept().getTerminologyId());
         }
       }
+      list = null;
       Logger.getLogger(getClass()).info(
           "    parChd count = " + chdParMap.size());
       Logger.getLogger(getClass()).info("    parChd = " + chdParMap);
@@ -129,7 +130,7 @@ public class Rf2SnapshotSamplerAlgorithm extends HistoryServiceJpa implements
 
       // 2. Find other related concepts
       Logger.getLogger(getClass()).info("  Add distance 1 related concepts");
-      for (String concept : concepts) {
+      for (String concept : new HashSet<>(concepts)) {
         if (otherMap.get(concept) != null) {
           Logger.getLogger(getClass()).info(
               "    add concepts = " + otherMap.get(concept));
@@ -704,30 +705,16 @@ public class Rf2SnapshotSamplerAlgorithm extends HistoryServiceJpa implements
 
       // Split line
       final String fields[] = line.split("\t");
-      // Skip header
-      if (!fields[0].equals("id")) {
+      // Skip header and keep only active entries
+      if (!fields[0].equals("id") && fields[1].equals("1")) {
 
         // Configure relationship
         final Relationship relationship = new RelationshipJpa();
         relationship.setTerminologyId(fields[0]);
-        relationship.setEffectiveTime(ConfigUtility.DATE_FORMAT
-            .parse(fields[1]));
-        relationship
-            .setLastModified(ConfigUtility.DATE_FORMAT.parse(fields[1]));
-        relationship.setActive(fields[2].equals("1")); // active
         relationship.setModuleId(fields[3].intern()); // moduleId
-
-        relationship.setRelationshipGroup(Integer.valueOf(fields[6])); // relationshipGroup
         relationship.setTypeId(fields[7]); // typeId
         relationship.setCharacteristicTypeId(fields[8].intern()); // characteristicTypeId
-        // This is SNOMED specific
-        relationship.setStated(fields[8].equals("900000000000010007"));
-        relationship.setInferred(fields[8].equals("900000000000011006"));
-
-        // relationship.setTerminology(terminology);
-        // relationship.setTerminologyVersion(terminologyVersion);
         relationship.setModifierId(fields[9].intern());
-        relationship.setPublished(true);
         // get concepts from cache, they just need to have ids
         final Concept sourceConcept = new ConceptJpa();
         sourceConcept.setTerminologyId(fields[4]);
