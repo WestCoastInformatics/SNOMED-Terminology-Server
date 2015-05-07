@@ -313,7 +313,10 @@ public class ContentServiceRestNormalUseTest extends ContentServiceRestTest {
   @Test
   public void testNormalUseRestContent005() throws Exception {
 
-    String snomedTestId;
+    Set<Description> descriptions;
+    Concept concept;
+    Description description;
+    Description description2;
 
     /** Test SNOMED */
 

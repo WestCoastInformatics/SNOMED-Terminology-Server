@@ -31,10 +31,12 @@
     <terminology></terminology>
     <!-- The terminology version -->
     <version>latest</version>
-    <!-- The input directory for RF2 loads -->
+    <!-- The input directory  -->
     <input.dir></input.dir>
-    <!-- The input file for ClaML loads -->
+    <!-- The input file -->
     <input.file></input.file>
+    <!-- The output dir -->
+    <output.dir></output.dir>
     <!-- Whether to run against server (default false) -->
     <server>false</server>
   </properties>
@@ -99,6 +101,35 @@
       </build>
     </profile>
 
+    <!-- Load RF2 sample, specify -Drun.config=...  -->
+    <profile>
+      <id>RF2-sample</id>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.ihtsdo.otf.term-server</groupId>
+            <artifactId>term-server-admin-mojo</artifactId>
+            <version>${project.version}</version>
+            <executions>
+              <execution>
+                <id>sample-rf2-snapshot</id>
+                <phase>package</phase>
+                <goals>
+                  <goal>sample-rf2-snapshot</goal>
+                </goals>
+                <configuration>
+                  <inputDir>${input.dir}</inputDir>
+                  <inputFile>${input.file}</inputFile>
+                  <outputDir>${output.dir}</outputDir>
+                  <server>${server}</server>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+    
     <!-- Load RF2 delta, specify -Drun.config=... -Dterminology=... -->
     <profile>
       <id>RF2-delta</id>
