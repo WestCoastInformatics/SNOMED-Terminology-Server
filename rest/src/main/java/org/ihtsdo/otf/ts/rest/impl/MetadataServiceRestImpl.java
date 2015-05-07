@@ -150,8 +150,9 @@ public class MetadataServiceRestImpl extends RootServiceRestImpl implements
       }
       return keyValuePairLists;
     } catch (Exception e) {
-      metadataService.close();
       throw e;
+    } finally {
+      metadataService.close();
     }
   }
 
@@ -193,14 +194,13 @@ public class MetadataServiceRestImpl extends RootServiceRestImpl implements
         keyValuePairList.addKeyValuePair(new KeyValuePair(termVersionPair
             .getKey(), termVersionPair.getValue()));
       }
-      metadataService.close();
       return keyValuePairList;
     } catch (Exception e) {
-      metadataService.close();
       handleException(e,
           "trying to retrieve the latest versions of all terminologies", user);
       return null;
     } finally {
+      metadataService.close();
       securityService.close();
     }
   }
@@ -250,14 +250,13 @@ public class MetadataServiceRestImpl extends RootServiceRestImpl implements
         keyValuePairList.setName(terminology);
         keyValuePairLists.addKeyValuePairList(keyValuePairList);
       }
-      metadataService.close();
       return keyValuePairLists;
     } catch (Exception e) {
-      metadataService.close();
       handleException(e,
           "trying to retrieve the versions of all terminologies", user);
       return null;
     } finally {
+      metadataService.close();
       securityService.close();
     }
   }

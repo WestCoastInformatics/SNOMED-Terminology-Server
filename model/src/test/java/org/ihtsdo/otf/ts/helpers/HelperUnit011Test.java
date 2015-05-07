@@ -53,7 +53,7 @@ public class HelperUnit011Test {
     map1.put("1", "a");
     assertTrue(map1.getMap().get("1").getSet().size() == 1);
     assertTrue(map1.getMap().get("1").getSet().contains("a"));
-    map1.put("1", "b");    
+    map1.put("1", "b");
     assertTrue(map1.getMap().get("1").getSet().size() == 2);
     assertTrue(map1.getMap().get("1").getSet().contains("a"));
     assertTrue(map1.getMap().get("1").getSet().contains("b"));
@@ -63,14 +63,14 @@ public class HelperUnit011Test {
     map2.put("1", "b");
     assertTrue(map1.equals(map2));
     assertTrue(map1.hashCode() == map2.hashCode());
-    assertTrue(map1.toString().equals(map2.toString()));        
-    
+    assertTrue(map1.toString().equals(map2.toString()));
+
     KeyValuesMap map3 = new KeyValuesMap(map1);
     assertTrue(map1.equals(map3));
     assertTrue(map1.hashCode() == map3.hashCode());
-    assertTrue(map1.toString().equals(map3.toString()));        
+    assertTrue(map1.toString().equals(map3.toString()));
 
-    //XmlSerializationTester tester4 = new XmlSerializationTester(map1);
+    // XmlSerializationTester tester4 = new XmlSerializationTester(map1);
     // TODO: assertTrue(tester4.testXmlSerialization());
 
     map1.toString();
@@ -81,9 +81,7 @@ public class HelperUnit011Test {
    *
    * @throws Exception the exception
    */
-  @SuppressWarnings({
-      "static-method", "unused"
-  })
+  @SuppressWarnings("static-method")
   @Test
   public void testHelperDegenerateUse011() throws Exception {
     try {
@@ -103,16 +101,15 @@ public class HelperUnit011Test {
   @Test
   public void testHelperEdgeCases011() throws Exception {
     KeyValuesMap map1 = new KeyValuesMap();
-    map1.put("1",null);
-    map1.put("1",null);
+    map1.put("1", null);
+    map1.put("1", null);
     KeyValuesMap map2 = new KeyValuesMap();
-    map2.put("1",null);
-    map2.put("1",null);
+    map2.put("1", null);
+    map2.put("1", null);
     assertTrue(map1.equals(map2));
     assertTrue(map1.hashCode() == map2.hashCode());
     assertTrue(map1.toString().equals(map2.toString()));
 
-    
     map1 = new KeyValuesMap();
     map1.put(null, "1");
     map1.put(null, "2");

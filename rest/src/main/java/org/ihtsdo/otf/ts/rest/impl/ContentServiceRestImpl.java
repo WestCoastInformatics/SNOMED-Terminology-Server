@@ -129,13 +129,12 @@ public class ContentServiceRestImpl extends RootServiceRestImpl implements
                   concept.getTerminology(), concept.getTerminologyVersion()));
         }
       }
-      contentService.close();
       return cl;
     } catch (Exception e) {
-      contentService.close();
       handleException(e, "trying to retrieve a concept");
       return null;
     } finally {
+      contentService.close();
       securityService.close();
     }
 
@@ -178,13 +177,12 @@ public class ContentServiceRestImpl extends RootServiceRestImpl implements
                 concept.getTerminologyVersion()));
       }
 
-      contentService.close();
       return concept;
     } catch (Exception e) {
-      contentService.close();
       handleException(e, "trying to retrieve a concept");
       return null;
     } finally {
+      contentService.close();
       securityService.close();
     }
 
@@ -220,14 +218,13 @@ public class ContentServiceRestImpl extends RootServiceRestImpl implements
 
       SearchResultList sr =
           contentService.findConceptsForQuery(terminology, version, query, pfs);
-      contentService.close();
       return sr;
 
     } catch (Exception e) {
-      contentService.close();
       handleException(e, "trying to find the concepts by query");
       return null;
     } finally {
+      contentService.close();
       securityService.close();
     }
   }
@@ -267,13 +264,12 @@ public class ContentServiceRestImpl extends RootServiceRestImpl implements
       for (Concept c : list.getObjects()) {
         contentService.getGraphResolutionHandler().resolveEmpty(c);
       }
-      contentService.close();
       return list;
     } catch (Exception e) {
-      contentService.close();
       handleException(e, "trying to retrieve child concepts");
       return null;
     } finally {
+      contentService.close();
       securityService.close();
     }
   }
@@ -313,12 +309,12 @@ public class ContentServiceRestImpl extends RootServiceRestImpl implements
       for (Concept c : list.getObjects()) {
         contentService.getGraphResolutionHandler().resolveEmpty(c);
       }
-      contentService.close();
       return list;
     } catch (Exception e) {
-      contentService.close();
       handleException(e, "trying to retrieve parent concepts");
       return null;
+    } finally {
+      contentService.close();
     }
   }
 
@@ -360,13 +356,12 @@ public class ContentServiceRestImpl extends RootServiceRestImpl implements
             TerminologyUtility.getHierarchicalIsaRels(c.getTerminology(),
                 c.getTerminologyVersion()));
       }
-      contentService.close();
       return list;
     } catch (Exception e) {
-      contentService.close();
       handleException(e, "trying to retrieve descendant concepts");
       return null;
     } finally {
+      contentService.close();
       securityService.close();
     }
   }
@@ -409,13 +404,12 @@ public class ContentServiceRestImpl extends RootServiceRestImpl implements
             TerminologyUtility.getHierarchicalIsaRels(c.getTerminology(),
                 c.getTerminologyVersion()));
       }
-      contentService.close();
       return list;
     } catch (Exception e) {
-      contentService.close();
       handleException(e, "trying to retrieve ancestor concepts");
       return null;
     } finally {
+      contentService.close();
       securityService.close();
     }
   }
@@ -454,18 +448,17 @@ public class ContentServiceRestImpl extends RootServiceRestImpl implements
         contentService.getGraphResolutionHandler().resolve(description);
       }
 
-      contentService.close();
       return description;
     } catch (Exception e) {
-      contentService.close();
       handleException(e, "trying to retrieve a description");
       return null;
     } finally {
+      contentService.close();
       securityService.close();
     }
 
   }
-  
+
   /*
    * (non-Javadoc)
    * 
@@ -488,11 +481,11 @@ public class ContentServiceRestImpl extends RootServiceRestImpl implements
         "RESTful call (Content): /relationship/" + terminology + "/" + version
             + "/" + terminologyId);
 
+    ContentService contentService = new ContentServiceJpa();
     try {
       authenticate(securityService, authToken, "retrieve the relationship",
           UserRole.VIEWER);
 
-      ContentService contentService = new ContentServiceJpa();
       Relationship relationship =
           contentService.getRelationship(terminologyId, terminology, version);
 
@@ -500,12 +493,12 @@ public class ContentServiceRestImpl extends RootServiceRestImpl implements
         contentService.getGraphResolutionHandler().resolve(relationship);
       }
 
-      contentService.close();
       return relationship;
     } catch (Exception e) {
       handleException(e, "trying to retrieve a relationship");
       return null;
     } finally {
+      contentService.close();
       securityService.close();
     }
 
@@ -543,14 +536,13 @@ public class ContentServiceRestImpl extends RootServiceRestImpl implements
       AssociationReferenceRefSetMemberList result =
           contentService.findAssociationReferenceRefSetMembers(refSetId,
               terminology, version, pfs);
-      contentService.close();
       return result;
     } catch (Exception e) {
-      contentService.close();
       handleException(e,
           "trying to retrieve association reference refset members");
       return null;
     } finally {
+      contentService.close();
       securityService.close();
     }
 
@@ -588,13 +580,12 @@ public class ContentServiceRestImpl extends RootServiceRestImpl implements
       AttributeValueRefSetMemberList result =
           contentService.findAttributeValueRefSetMembers(refSetId, terminology,
               version, pfs);
-      contentService.close();
       return result;
     } catch (Exception e) {
-      contentService.close();
       handleException(e, "trying to retrieve attribute value refset members");
       return null;
     } finally {
+      contentService.close();
       securityService.close();
     }
 
@@ -632,13 +623,12 @@ public class ContentServiceRestImpl extends RootServiceRestImpl implements
       ComplexMapRefSetMemberList result =
           contentService.findComplexMapRefSetMembers(refSetId, terminology,
               version, pfs);
-      contentService.close();
       return result;
     } catch (Exception e) {
-      contentService.close();
       handleException(e, "trying to retrieve complex map refset members");
       return null;
     } finally {
+      contentService.close();
       securityService.close();
     }
   }
@@ -675,14 +665,13 @@ public class ContentServiceRestImpl extends RootServiceRestImpl implements
       DescriptionTypeRefSetMemberList result =
           contentService.findDescriptionTypeRefSetMembers(refSetId,
               terminology, version, pfs);
-      contentService.close();
       return result;
     } catch (Exception e) {
-      contentService.close();
       handleException(e, "trying to retrieve description type refset members");
       return null;
     } finally {
       securityService.close();
+      contentService.close();
     }
   }
 
@@ -718,13 +707,12 @@ public class ContentServiceRestImpl extends RootServiceRestImpl implements
       LanguageRefSetMemberList result =
           contentService.findLanguageRefSetMembers(refSetId, terminology,
               version, pfs);
-      contentService.close();
       return result;
     } catch (Exception e) {
-      contentService.close();
       handleException(e, "trying to retrieve language refset members");
       return null;
     } finally {
+      contentService.close();
       securityService.close();
     }
   }
@@ -759,13 +747,12 @@ public class ContentServiceRestImpl extends RootServiceRestImpl implements
       ModuleDependencyRefSetMemberList result =
           contentService.getModuleDependencyRefSetMembersForModule(moduleId,
               terminology, version);
-      contentService.close();
       return result;
     } catch (Exception e) {
-      contentService.close();
       handleException(e, "trying to retrieve module dependency refset members");
       return null;
     } finally {
+      contentService.close();
       securityService.close();
     }
   }
@@ -800,13 +787,12 @@ public class ContentServiceRestImpl extends RootServiceRestImpl implements
       RefsetDescriptorRefSetMemberList result =
           contentService.getRefsetDescriptorRefSetMembersForRefset(refSetId,
               terminology, version);
-      contentService.close();
       return result;
     } catch (Exception e) {
-      contentService.close();
       handleException(e, "trying to retrieve refset descriptor refset members");
       return null;
     } finally {
+      contentService.close();
       securityService.close();
     }
   }
@@ -842,13 +828,12 @@ public class ContentServiceRestImpl extends RootServiceRestImpl implements
       SimpleMapRefSetMemberList result =
           contentService.findSimpleMapRefSetMembers(refSetId, terminology,
               version, pfs);
-      contentService.close();
       return result;
     } catch (Exception e) {
-      contentService.close();
       handleException(e, "trying to retrieve simple map refset members");
       return null;
     } finally {
+      contentService.close();
       securityService.close();
     }
   }
@@ -885,13 +870,12 @@ public class ContentServiceRestImpl extends RootServiceRestImpl implements
       SimpleRefSetMemberList result =
           contentService.findSimpleRefSetMembers(refSetId, terminology,
               version, pfs);
-      contentService.close();
       return result;
     } catch (Exception e) {
-      contentService.close();
       handleException(e, "trying to retrieve simple refset members");
       return null;
     } finally {
+      contentService.close();
       securityService.close();
     }
   }
@@ -926,14 +910,13 @@ public class ContentServiceRestImpl extends RootServiceRestImpl implements
       AssociationReferenceRefSetMemberList result =
           contentService.getAssociationReferenceRefSetMembersForConcept(
               terminologyId, terminology, version);
-      contentService.close();
       return result;
     } catch (Exception e) {
-      contentService.close();
       handleException(e,
           "trying to retrieve association reference concept refset members");
       return null;
     } finally {
+      contentService.close();
       securityService.close();
     }
   }
@@ -968,14 +951,13 @@ public class ContentServiceRestImpl extends RootServiceRestImpl implements
       AssociationReferenceRefSetMemberList result =
           contentService.getAssociationReferenceRefSetMembersForDescription(
               terminologyId, terminology, version);
-      contentService.close();
       return result;
     } catch (Exception e) {
-      contentService.close();
       handleException(e,
           "trying to retrieve association reference description refset members");
       return null;
     } finally {
+      contentService.close();
       securityService.close();
     }
   }
@@ -1009,14 +991,13 @@ public class ContentServiceRestImpl extends RootServiceRestImpl implements
       AttributeValueRefSetMemberList result =
           contentService.getAttributeValueRefSetMembersForConcept(
               terminologyId, terminology, version);
-      contentService.close();
       return result;
     } catch (Exception e) {
-      contentService.close();
       handleException(e,
           "trying to retrieve attribute value concept refset members");
       return null;
     } finally {
+      contentService.close();
       securityService.close();
     }
   }
@@ -1051,14 +1032,13 @@ public class ContentServiceRestImpl extends RootServiceRestImpl implements
       AttributeValueRefSetMemberList result =
           contentService.getAttributeValueRefSetMembersForDescription(
               terminologyId, terminology, version);
-      contentService.close();
       return result;
     } catch (Exception e) {
-      contentService.close();
       handleException(e,
           "trying to retrieve attribute value description refset members");
       return null;
     } finally {
+      contentService.close();
       securityService.close();
     }
   }
@@ -1092,17 +1072,16 @@ public class ContentServiceRestImpl extends RootServiceRestImpl implements
       ComplexMapRefSetMemberList result =
           contentService.getComplexMapRefSetMembersForConcept(terminologyId,
               terminology, version);
-      contentService.close();
       return result;
     } catch (Exception e) {
-      contentService.close();
       handleException(e, "trying to retrieve complex map refset members");
       return null;
     } finally {
+      contentService.close();
       securityService.close();
     }
   }
-  
+
   @Override
   @GET
   @Path("/descriptionTypeMember/concept/{terminology}/{version}/{terminologyId}")
@@ -1118,24 +1097,23 @@ public class ContentServiceRestImpl extends RootServiceRestImpl implements
         "RESTful call (Content): /descriptionTypeMember/concept/" + terminology
             + "/" + version + "/" + terminologyId);
 
+    ContentService contentService = new ContentServiceJpa();
     try {
       authenticate(securityService, authToken,
           "retrieve description type refset members", UserRole.VIEWER);
 
-      ContentService contentService = new ContentServiceJpa();
       DescriptionTypeRefSetMemberList result =
-          contentService.getDescriptionTypeRefSetMembersForConcept(terminologyId,
-              terminology, version);
-      contentService.close();
+          contentService.getDescriptionTypeRefSetMembersForConcept(
+              terminologyId, terminology, version);
       return result;
     } catch (Exception e) {
       handleException(e, "trying to retrieve description type refset members");
       return null;
     } finally {
+      contentService.close();
       securityService.close();
     }
   }
-
 
   /*
    * (non-Javadoc)
@@ -1166,13 +1144,12 @@ public class ContentServiceRestImpl extends RootServiceRestImpl implements
       LanguageRefSetMemberList result =
           contentService.getLanguageRefSetMembersForDescription(terminologyId,
               terminology, version);
-      contentService.close();
       return result;
     } catch (Exception e) {
-      contentService.close();
       handleException(e, "trying to retrieve language refset members");
       return null;
     } finally {
+      contentService.close();
       securityService.close();
     }
   }
@@ -1206,13 +1183,12 @@ public class ContentServiceRestImpl extends RootServiceRestImpl implements
       SimpleMapRefSetMemberList result =
           contentService.getSimpleMapRefSetMembersForConcept(terminologyId,
               terminology, version);
-      contentService.close();
       return result;
     } catch (Exception e) {
-      contentService.close();
       handleException(e, "trying to retrieve simple map refset members");
       return null;
     } finally {
+      contentService.close();
       securityService.close();
     }
   }
@@ -1246,14 +1222,13 @@ public class ContentServiceRestImpl extends RootServiceRestImpl implements
       SimpleRefSetMemberList result =
           contentService.getSimpleRefSetMembersForConcept(terminologyId,
               terminology, version);
-      contentService.close();
       return result;
     } catch (Exception e) {
-      contentService.close();
-      handleException(e, "trying to retrieve simple refset members");
+       handleException(e, "trying to retrieve simple refset members");
       return null;
     } finally {
-      securityService.close();
+      contentService.close();
+     securityService.close();
     }
   }
 
@@ -1287,13 +1262,12 @@ public class ContentServiceRestImpl extends RootServiceRestImpl implements
       RelationshipList result =
           contentService.getInverseRelationshipsForConcept(terminologyId,
               terminology, version);
-      contentService.close();
       return result;
     } catch (Exception e) {
-      contentService.close();
       handleException(e, "trying to retrieve inverse relationships");
       return null;
     } finally {
+      contentService.close();
       securityService.close();
     }
   }
@@ -1323,12 +1297,12 @@ public class ContentServiceRestImpl extends RootServiceRestImpl implements
     // Track system level information
     long startTimeOrig = System.nanoTime();
 
+    LuceneReindexAlgorithm algo = new LuceneReindexAlgorithm();
     try {
 
       authenticate(securityService, authToken, "reindex",
           UserRole.ADMINISTRATOR);
 
-      LuceneReindexAlgorithm algo = new LuceneReindexAlgorithm();
 
       algo.setIndexedObjects(indexedObjects);
 
@@ -1340,10 +1314,9 @@ public class ContentServiceRestImpl extends RootServiceRestImpl implements
       Logger.getLogger(getClass()).info("done ...");
 
     } catch (Exception e) {
-      Logger.getLogger(getClass()).info("ERROR:");
-      e.printStackTrace();
-      // handleException(e, "trying to reindex");
+      handleException(e, "trying to reindex");
     } finally {
+      algo.close();
       securityService.close();
     }
 
@@ -1377,26 +1350,25 @@ public class ContentServiceRestImpl extends RootServiceRestImpl implements
     // Track system level information
     long startTimeOrig = System.nanoTime();
 
+    ClamlLoaderAlgorithm clamlAlgorithm = new ClamlLoaderAlgorithm();
+    TransitiveClosureAlgorithm transitiveClosureAlgorithm = new TransitiveClosureAlgorithm();
     try {
       authenticate(securityService, authToken, "start editing cycle",
           UserRole.ADMINISTRATOR);
 
       // Load snapshot
       Logger.getLogger(getClass()).info("Load ClaML data from " + inputFile);
-      ClamlLoaderAlgorithm algorithm = new ClamlLoaderAlgorithm();
-      algorithm.setTerminology(terminology);
-      algorithm.setTerminologyVersion(version);
-      algorithm.setInputFile(inputFile);
-      algorithm.compute();
+      clamlAlgorithm.setTerminology(terminology);
+      clamlAlgorithm.setTerminologyVersion(version);
+      clamlAlgorithm.setInputFile(inputFile);
+      clamlAlgorithm.compute();
 
       // Let service begin its own transaction
       Logger.getLogger(getClass()).info("Start computing transtive closure");
-      TransitiveClosureAlgorithm algo = new TransitiveClosureAlgorithm();
-      algo.setTerminology(terminology);
-      algo.setTerminologyVersion(version);
-      algo.reset();
-      algo.compute();
-      algo.close();
+      transitiveClosureAlgorithm.setTerminology(terminology);
+      transitiveClosureAlgorithm.setTerminologyVersion(version);
+      transitiveClosureAlgorithm.reset();
+      transitiveClosureAlgorithm.compute();
 
       // Final logging messages
       Logger.getLogger(getClass()).info(
@@ -1406,6 +1378,8 @@ public class ContentServiceRestImpl extends RootServiceRestImpl implements
     } catch (Exception e) {
       handleException(e, "trying to load terminology from ClaML file");
     } finally {
+      clamlAlgorithm.close();
+      transitiveClosureAlgorithm.close();
       securityService.close();
     }
   }
@@ -1805,6 +1779,7 @@ public class ContentServiceRestImpl extends RootServiceRestImpl implements
     // Track system level information
     long startTimeOrig = System.nanoTime();
 
+    TransitiveClosureAlgorithm algo = new TransitiveClosureAlgorithm();
     try {
       authenticate(securityService, authToken, "compute transitive closure",
           UserRole.ADMINISTRATOR);
@@ -1812,12 +1787,10 @@ public class ContentServiceRestImpl extends RootServiceRestImpl implements
       // Compute transitive closure
       Logger.getLogger(getClass()).info(
           "  Compute transitive closure from  " + terminology + "/" + version);
-      TransitiveClosureAlgorithm algo = new TransitiveClosureAlgorithm();
       algo.setTerminology(terminology);
       algo.setTerminologyVersion(version);
       algo.reset();
       algo.compute();
-      algo.close();
 
       // Final logging messages
       Logger.getLogger(getClass()).info(
@@ -1827,6 +1800,7 @@ public class ContentServiceRestImpl extends RootServiceRestImpl implements
     } catch (Exception e) {
       handleException(e, "trying to compute transitive closure");
     } finally {
+      algo.close();
       securityService.close();
     }
   }
@@ -1869,8 +1843,8 @@ public class ContentServiceRestImpl extends RootServiceRestImpl implements
 
     } catch (Exception e) {
       handleException(e, "trying to load terminology from ClaML file");
-      contentService.close();
     } finally {
+      contentService.close();
       securityService.close();
     }
   }

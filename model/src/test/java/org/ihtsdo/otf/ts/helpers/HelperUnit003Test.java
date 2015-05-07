@@ -73,9 +73,7 @@ public class HelperUnit003Test {
    *
    * @throws Exception the exception
    */
-  @SuppressWarnings({
-      "static-method", "unused"
-  })
+  @SuppressWarnings("static-method")
   @Test
   public void testHelperDegenerateUse003() throws Exception {
     try {
@@ -99,11 +97,11 @@ public class HelperUnit003Test {
     pair.setKey(null);
     pair.setValue(null);
     KeyValuePair pair2 = new KeyValuePair(null, null);
-    
-    // verify tostring behavior    
+
+    // verify tostring behavior
     pair.toString();
     pair2.toString();
-    
+
     // assert equality
     assertTrue(pair.equals(pair2));
     assertTrue(pair.hashCode() == pair2.hashCode());

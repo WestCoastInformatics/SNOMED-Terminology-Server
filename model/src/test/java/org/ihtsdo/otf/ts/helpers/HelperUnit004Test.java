@@ -56,8 +56,8 @@ public class HelperUnit004Test {
     tester2.include("name");
 
     // Test equals
-    KeyValuePair pair1 =new KeyValuePair("1", "1");
-    KeyValuePair pair2 =new KeyValuePair("1", "1");
+    KeyValuePair pair1 = new KeyValuePair("1", "1");
+    KeyValuePair pair2 = new KeyValuePair("1", "1");
     KeyValuePairList list1 = new KeyValuePairList();
     list1.setName("list");
     list1.addKeyValuePair(pair1);
@@ -81,8 +81,7 @@ public class HelperUnit004Test {
     kvpList.add(pair2);
     list1.setKeyValuePairList(kvpList);
     assertTrue(list1.getKeyValuePairList().equals(kvpList));
-    
-    
+
     CopyConstructorTester tester3 = new CopyConstructorTester(list2);
     assertTrue(tester3.testCopyConstructor(KeyValuePairList.class));
 
@@ -97,9 +96,7 @@ public class HelperUnit004Test {
    *
    * @throws Exception the exception
    */
-  @SuppressWarnings({
-      "static-method", "unused"
-  })
+  @SuppressWarnings("static-method")
   @Test
   public void testHelperDegenerateUse004() throws Exception {
     try {

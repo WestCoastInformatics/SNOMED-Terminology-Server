@@ -219,7 +219,6 @@ public class HistoryServiceRestImpl extends RootServiceRestImpl implements
           historyService.findConceptReleaseRevision(Long.valueOf(id),
               ConfigUtility.DATE_FORMAT.parse(release));
 
-      historyService.close();
 
       // explicitly resolve to just the concept element
       historyService.getGraphResolutionHandler().resolveEmpty(concept);
@@ -229,6 +228,7 @@ public class HistoryServiceRestImpl extends RootServiceRestImpl implements
       handleException(e, "trying to find the concept release revision");
       return null;
     } finally {
+      historyService.close();
       securityService.close();
     }
   }
@@ -271,13 +271,12 @@ public class HistoryServiceRestImpl extends RootServiceRestImpl implements
         }
       }
 
-      historyService.close();
       return cl;
     } catch (Exception e) {
-      historyService.close();
       handleException(e, "trying to find descriptions modified since date");
       return null;
     } finally {
+      historyService.close();
       securityService.close();
     }
 
@@ -319,7 +318,6 @@ public class HistoryServiceRestImpl extends RootServiceRestImpl implements
               ConfigUtility.DATE_FORMAT.parse(startDate),
               ConfigUtility.DATE_FORMAT.parse(endDate), pfs);
 
-      historyService.close();
 
       // Resolve to empty
       for (Description description : dl.getObjects()) {
@@ -329,10 +327,10 @@ public class HistoryServiceRestImpl extends RootServiceRestImpl implements
       }
       return dl;
     } catch (Exception e) {
-      historyService.close();
       handleException(e, "trying to find the release revisions");
       return null;
     } finally {
+      historyService.close();
       securityService.close();
     }
   }
@@ -364,10 +362,10 @@ public class HistoryServiceRestImpl extends RootServiceRestImpl implements
       historyService.getGraphResolutionHandler().resolveEmpty(description);
       return description;
     } catch (Exception e) {
-      historyService.close();
       handleException(e, "find the description release revision");
       return null;
     } finally {
+      historyService.close();
       securityService.close();
     }
   }
@@ -410,13 +408,12 @@ public class HistoryServiceRestImpl extends RootServiceRestImpl implements
         }
       }
 
-      historyService.close();
       return cl;
     } catch (Exception e) {
-      historyService.close();
       handleException(e, "trying to find relationships modified since date");
       return null;
     } finally {
+      historyService.close();
       securityService.close();
     }
 
@@ -459,13 +456,12 @@ public class HistoryServiceRestImpl extends RootServiceRestImpl implements
               ConfigUtility.DATE_FORMAT.parse(endDate), pfs);
 
       // explicitly do not want to use graph resolution handler.
-      historyService.close();
       return cl;
     } catch (Exception e) {
-      historyService.close();
       handleException(e, "trying to find relationship revisions");
       return null;
     } finally {
+      historyService.close();
       securityService.close();
     }
   }
@@ -495,13 +491,12 @@ public class HistoryServiceRestImpl extends RootServiceRestImpl implements
               ConfigUtility.DATE_FORMAT.parse(release));
 
       // explicitly do not want to use graph resolution handler.
-      historyService.close();
       return rel;
-    } catch (Exception e) {
-      historyService.close();
+    } catch (Exception e)  {
       handleException(e, "trying to find relationship release revision");
       return null;
     } finally {
+      historyService.close();
       securityService.close();
     }
   }
@@ -544,14 +539,13 @@ public class HistoryServiceRestImpl extends RootServiceRestImpl implements
         }
       }
 
-      historyService.close();
       return cl;
     } catch (Exception e) {
-      historyService.close();
       handleException(e,
           "trying to find language refset members modified since date");
       return null;
     } finally {
+      historyService.close();
       securityService.close();
     }
 
@@ -594,13 +588,12 @@ public class HistoryServiceRestImpl extends RootServiceRestImpl implements
               ConfigUtility.DATE_FORMAT.parse(endDate), pfs);
 
       // explicitly do not want to use graph resolution handler.
-      historyService.close();
       return cl;
     } catch (Exception e) {
-      historyService.close();
       handleException(e, "find language refset member revisions");
       return null;
     } finally {
+      historyService.close();
       securityService.close();
     }
   }
@@ -636,13 +629,12 @@ public class HistoryServiceRestImpl extends RootServiceRestImpl implements
               Long.valueOf(id), ConfigUtility.DATE_FORMAT.parse(release));
 
       // explicitly do not want to use graph resolution handler.
-      historyService.close();
       return member;
     } catch (Exception e) {
-      historyService.close();
       handleException(e, "find language refset member release revision");
       return null;
     } finally {
+      historyService.close();
       securityService.close();
     }
   }
@@ -668,11 +660,11 @@ public class HistoryServiceRestImpl extends RootServiceRestImpl implements
     Logger.getLogger(getClass()).info(
         "RESTful call (History): /association reference/" + terminology + "/" + date);
 
+    HistoryService historyService = new HistoryServiceJpa();
     try {
       authenticate(securityService, authToken,
           "find association reference refset members modified since date", UserRole.VIEWER);
 
-      HistoryService historyService = new HistoryServiceJpa();
       AssociationReferenceRefSetMemberList cl =
           historyService.findAssociationReferenceRefSetMembersModifiedSinceDate(
               terminology, ConfigUtility.DATE_FORMAT.parse(date), pfs);
@@ -683,6 +675,7 @@ public class HistoryServiceRestImpl extends RootServiceRestImpl implements
           "trying to find association reference refset members modified since date");
       return null;
     } finally {
+      historyService.close();
       securityService.close();
     }
 
@@ -713,23 +706,23 @@ public class HistoryServiceRestImpl extends RootServiceRestImpl implements
         "RESTful call (History): /association reference/revisions/" + id + "/" + startDate
             + "/" + endDate + "/all");
 
+    HistoryService historyService = new HistoryServiceJpa();
     try {
       authenticate(securityService, authToken,
           "find association reference refset member revisions", UserRole.VIEWER);
 
-      HistoryService historyService = new HistoryServiceJpa();
       AssociationReferenceRefSetMemberList cl =
           historyService.findAssociationReferenceRefSetMemberRevisions(Long.valueOf(id),
               ConfigUtility.DATE_FORMAT.parse(startDate),
               ConfigUtility.DATE_FORMAT.parse(endDate), pfs);
 
       // explicitly do not want to use graph resolution handler.
-      historyService.close();
       return cl;
     } catch (Exception e) {
       handleException(e, "find association reference refset member revisions");
       return null;
     } finally {
+      historyService.close();
       securityService.close();
     }
   }
@@ -754,22 +747,22 @@ public class HistoryServiceRestImpl extends RootServiceRestImpl implements
     Logger.getLogger(getClass()).info(
         "RESTful call (History): /association reference/revisions/" + id + "/" + release);
 
+    HistoryService historyService = new HistoryServiceJpa();
     try {
       authenticate(securityService, authToken,
           "find association reference refset member release revision", UserRole.VIEWER);
 
-      HistoryService historyService = new HistoryServiceJpa();
       AssociationReferenceRefSetMember<?> member =
           historyService.findAssociationReferenceRefSetMemberReleaseRevision(
               Long.valueOf(id), ConfigUtility.DATE_FORMAT.parse(release));
 
       // explicitly do not want to use graph resolution handler.
-      historyService.close();
       return member;
     } catch (Exception e) {
       handleException(e, "find association reference refset member release revision");
       return null;
     } finally {
+      historyService.close();
       securityService.close();
     }
   }
@@ -796,22 +789,22 @@ public class HistoryServiceRestImpl extends RootServiceRestImpl implements
     Logger.getLogger(getClass()).info(
         "RESTful call (History): /attribute value/" + terminology + "/" + date);
 
+    HistoryService historyService = new HistoryServiceJpa();
     try {
       authenticate(securityService, authToken,
           "find attribute value refset members modified since date", UserRole.VIEWER);
 
-      HistoryService historyService = new HistoryServiceJpa();
       AttributeValueRefSetMemberList cl =
           historyService.findAttributeValueRefSetMembersModifiedSinceDate(
               terminology, ConfigUtility.DATE_FORMAT.parse(date), pfs);
 
-      historyService.close();
       return cl;
     } catch (Exception e) {
       handleException(e,
           "trying to find attribute value refset members modified since date");
       return null;
     } finally {
+      historyService.close();
       securityService.close();
     }
 
@@ -842,23 +835,23 @@ public class HistoryServiceRestImpl extends RootServiceRestImpl implements
         "RESTful call (History): /attribute value/revisions/" + id + "/" + startDate
             + "/" + endDate + "/all");
 
+    HistoryService historyService = new HistoryServiceJpa();
     try {
       authenticate(securityService, authToken,
           "find attribute value refset member revisions", UserRole.VIEWER);
 
-      HistoryService historyService = new HistoryServiceJpa();
       AttributeValueRefSetMemberList cl =
           historyService.findAttributeValueRefSetMemberRevisions(Long.valueOf(id),
               ConfigUtility.DATE_FORMAT.parse(startDate),
               ConfigUtility.DATE_FORMAT.parse(endDate), pfs);
 
       // explicitly do not want to use graph resolution handler.
-      historyService.close();
       return cl;
     } catch (Exception e) {
       handleException(e, "find attribute value refset member revisions");
       return null;
     } finally {
+      historyService.close();
       securityService.close();
     }
   }
@@ -883,22 +876,22 @@ public class HistoryServiceRestImpl extends RootServiceRestImpl implements
     Logger.getLogger(getClass()).info(
         "RESTful call (History): /attribute value/revisions/" + id + "/" + release);
 
+    HistoryService historyService = new HistoryServiceJpa();
     try {
       authenticate(securityService, authToken,
           "find attribute value refset member release revision", UserRole.VIEWER);
 
-      HistoryService historyService = new HistoryServiceJpa();
       AttributeValueRefSetMember<?> member =
           historyService.findAttributeValueRefSetMemberReleaseRevision(
               Long.valueOf(id), ConfigUtility.DATE_FORMAT.parse(release));
 
       // explicitly do not want to use graph resolution handler.
-      historyService.close();
       return member;
     } catch (Exception e) {
       handleException(e, "find attribute value refset member release revision");
       return null;
     } finally {
+      historyService.close();
       securityService.close();
     }
   }
@@ -925,22 +918,22 @@ public class HistoryServiceRestImpl extends RootServiceRestImpl implements
     Logger.getLogger(getClass()).info(
         "RESTful call (History): /complex map/" + terminology + "/" + date);
 
+    HistoryService historyService = new HistoryServiceJpa();
     try {
       authenticate(securityService, authToken,
           "find complex map refset members modified since date", UserRole.VIEWER);
 
-      HistoryService historyService = new HistoryServiceJpa();
       ComplexMapRefSetMemberList cl =
           historyService.findComplexMapRefSetMembersModifiedSinceDate(
               terminology, ConfigUtility.DATE_FORMAT.parse(date), pfs);
 
-      historyService.close();
       return cl;
     } catch (Exception e) {
       handleException(e,
           "trying to find complex map refset members modified since date");
       return null;
     } finally {
+      historyService.close();
       securityService.close();
     }
 
@@ -970,24 +963,23 @@ public class HistoryServiceRestImpl extends RootServiceRestImpl implements
     Logger.getLogger(getClass()).info(
         "RESTful call (History): /complex map/revisions/" + id + "/" + startDate
             + "/" + endDate + "/all");
-
+    HistoryService historyService = new HistoryServiceJpa();
     try {
       authenticate(securityService, authToken,
           "find complex map refset member revisions", UserRole.VIEWER);
 
-      HistoryService historyService = new HistoryServiceJpa();
       ComplexMapRefSetMemberList cl =
           historyService.findComplexMapRefSetMemberRevisions(Long.valueOf(id),
               ConfigUtility.DATE_FORMAT.parse(startDate),
               ConfigUtility.DATE_FORMAT.parse(endDate), pfs);
 
       // explicitly do not want to use graph resolution handler.
-      historyService.close();
       return cl;
     } catch (Exception e) {
       handleException(e, "find complex map refset member revisions");
       return null;
     } finally {
+      historyService.close();
       securityService.close();
     }
   }
@@ -1012,22 +1004,22 @@ public class HistoryServiceRestImpl extends RootServiceRestImpl implements
     Logger.getLogger(getClass()).info(
         "RESTful call (History): /complex map/revisions/" + id + "/" + release);
 
+    HistoryService historyService = new HistoryServiceJpa();
     try {
       authenticate(securityService, authToken,
           "find complex map refset member release revision", UserRole.VIEWER);
 
-      HistoryService historyService = new HistoryServiceJpa();
       ComplexMapRefSetMember member =
           historyService.findComplexMapRefSetMemberReleaseRevision(
               Long.valueOf(id), ConfigUtility.DATE_FORMAT.parse(release));
 
       // explicitly do not want to use graph resolution handler.
-      historyService.close();
       return member;
     } catch (Exception e) {
       handleException(e, "find complex map refset member release revision");
       return null;
     } finally {
+      historyService.close();
       securityService.close();
     }
   }
@@ -1055,22 +1047,22 @@ public class HistoryServiceRestImpl extends RootServiceRestImpl implements
     Logger.getLogger(getClass()).info(
         "RESTful call (History): /description type/" + terminology + "/" + date);
 
+    HistoryService historyService = new HistoryServiceJpa();
     try {
       authenticate(securityService, authToken,
           "find description type refset members modified since date", UserRole.VIEWER);
 
-      HistoryService historyService = new HistoryServiceJpa();
       DescriptionTypeRefSetMemberList cl =
           historyService.findDescriptionTypeRefSetMembersModifiedSinceDate(
               terminology, ConfigUtility.DATE_FORMAT.parse(date), pfs);
 
-      historyService.close();
       return cl;
     } catch (Exception e) {
       handleException(e,
           "trying to find description type refset members modified since date");
       return null;
     } finally {
+      historyService.close();
       securityService.close();
     }
 
@@ -1101,23 +1093,23 @@ public class HistoryServiceRestImpl extends RootServiceRestImpl implements
         "RESTful call (History): /description type/revisions/" + id + "/" + startDate
             + "/" + endDate + "/all");
 
+    HistoryService historyService = new HistoryServiceJpa();
     try {
       authenticate(securityService, authToken,
           "find description type refset member revisions", UserRole.VIEWER);
 
-      HistoryService historyService = new HistoryServiceJpa();
       DescriptionTypeRefSetMemberList cl =
           historyService.findDescriptionTypeRefSetMemberRevisions(Long.valueOf(id),
               ConfigUtility.DATE_FORMAT.parse(startDate),
               ConfigUtility.DATE_FORMAT.parse(endDate), pfs);
 
       // explicitly do not want to use graph resolution handler.
-      historyService.close();
       return cl;
     } catch (Exception e) {
       handleException(e, "find description type refset member revisions");
       return null;
     } finally {
+      historyService.close();
       securityService.close();
     }
   }
@@ -1142,22 +1134,22 @@ public class HistoryServiceRestImpl extends RootServiceRestImpl implements
     Logger.getLogger(getClass()).info(
         "RESTful call (History): /description type/revisions/" + id + "/" + release);
 
+    HistoryService historyService = new HistoryServiceJpa();
     try {
       authenticate(securityService, authToken,
           "find description type refset member release revision", UserRole.VIEWER);
 
-      HistoryService historyService = new HistoryServiceJpa();
       DescriptionTypeRefSetMember member =
           historyService.findDescriptionTypeRefSetMemberReleaseRevision(
               Long.valueOf(id), ConfigUtility.DATE_FORMAT.parse(release));
 
       // explicitly do not want to use graph resolution handler.
-      historyService.close();
       return member;
     } catch (Exception e) {
       handleException(e, "find description type refset member release revision");
       return null;
     } finally {
+      historyService.close();
       securityService.close();
     }
   }
@@ -1185,22 +1177,22 @@ public class HistoryServiceRestImpl extends RootServiceRestImpl implements
     Logger.getLogger(getClass()).info(
         "RESTful call (History): /module dependency/" + terminology + "/" + date);
 
+    HistoryService historyService = new HistoryServiceJpa();
     try {
       authenticate(securityService, authToken,
           "find module dependency refset members modified since date", UserRole.VIEWER);
 
-      HistoryService historyService = new HistoryServiceJpa();
       ModuleDependencyRefSetMemberList cl =
           historyService.findModuleDependencyRefSetMembersModifiedSinceDate(
               terminology, ConfigUtility.DATE_FORMAT.parse(date), pfs);
 
-      historyService.close();
       return cl;
     } catch (Exception e) {
       handleException(e,
           "trying to find module dependency refset members modified since date");
       return null;
     } finally {
+      historyService.close();
       securityService.close();
     }
 
@@ -1231,23 +1223,23 @@ public class HistoryServiceRestImpl extends RootServiceRestImpl implements
         "RESTful call (History): /module dependency/revisions/" + id + "/" + startDate
             + "/" + endDate + "/all");
 
+    HistoryService historyService = new HistoryServiceJpa();
     try {
       authenticate(securityService, authToken,
           "find module dependency refset member revisions", UserRole.VIEWER);
 
-      HistoryService historyService = new HistoryServiceJpa();
       ModuleDependencyRefSetMemberList cl =
           historyService.findModuleDependencyRefSetMemberRevisions(Long.valueOf(id),
               ConfigUtility.DATE_FORMAT.parse(startDate),
               ConfigUtility.DATE_FORMAT.parse(endDate), pfs);
 
       // explicitly do not want to use graph resolution handler.
-      historyService.close();
       return cl;
     } catch (Exception e) {
       handleException(e, "find module dependency refset member revisions");
       return null;
     } finally {
+      historyService.close();
       securityService.close();
     }
   }
@@ -1272,22 +1264,22 @@ public class HistoryServiceRestImpl extends RootServiceRestImpl implements
     Logger.getLogger(getClass()).info(
         "RESTful call (History): /module dependency/revisions/" + id + "/" + release);
 
+    HistoryService historyService = new HistoryServiceJpa();
     try {
       authenticate(securityService, authToken,
           "find module dependency refset member release revision", UserRole.VIEWER);
 
-      HistoryService historyService = new HistoryServiceJpa();
       ModuleDependencyRefSetMember member =
           historyService.findModuleDependencyRefSetMemberReleaseRevision(
               Long.valueOf(id), ConfigUtility.DATE_FORMAT.parse(release));
 
       // explicitly do not want to use graph resolution handler.
-      historyService.close();
       return member;
     } catch (Exception e) {
       handleException(e, "find module dependency refset member release revision");
       return null;
     } finally {
+      historyService.close();
       securityService.close();
     }
   }
@@ -1315,22 +1307,22 @@ public class HistoryServiceRestImpl extends RootServiceRestImpl implements
     Logger.getLogger(getClass()).info(
         "RESTful call (History): /refset descriptor/" + terminology + "/" + date);
 
+    HistoryService historyService = new HistoryServiceJpa();
     try {
       authenticate(securityService, authToken,
           "find refset descriptor refset members modified since date", UserRole.VIEWER);
 
-      HistoryService historyService = new HistoryServiceJpa();
       RefsetDescriptorRefSetMemberList cl =
           historyService.findRefsetDescriptorRefSetMembersModifiedSinceDate(
               terminology, ConfigUtility.DATE_FORMAT.parse(date), pfs);
 
-      historyService.close();
       return cl;
     } catch (Exception e) {
       handleException(e,
           "trying to find refset descriptor refset members modified since date");
       return null;
     } finally {
+      historyService.close();
       securityService.close();
     }
 
@@ -1361,23 +1353,23 @@ public class HistoryServiceRestImpl extends RootServiceRestImpl implements
         "RESTful call (History): /refset descriptor/revisions/" + id + "/" + startDate
             + "/" + endDate + "/all");
 
+    HistoryService historyService = new HistoryServiceJpa();
     try {
       authenticate(securityService, authToken,
           "find refset descriptor refset member revisions", UserRole.VIEWER);
 
-      HistoryService historyService = new HistoryServiceJpa();
       RefsetDescriptorRefSetMemberList cl =
           historyService.findRefsetDescriptorRefSetMemberRevisions(Long.valueOf(id),
               ConfigUtility.DATE_FORMAT.parse(startDate),
               ConfigUtility.DATE_FORMAT.parse(endDate), pfs);
 
       // explicitly do not want to use graph resolution handler.
-      historyService.close();
       return cl;
     } catch (Exception e) {
       handleException(e, "find refset descriptor refset member revisions");
       return null;
     } finally {
+      historyService.close();
       securityService.close();
     }
   }
@@ -1402,22 +1394,22 @@ public class HistoryServiceRestImpl extends RootServiceRestImpl implements
     Logger.getLogger(getClass()).info(
         "RESTful call (History): /refset descriptor/revisions/" + id + "/" + release);
 
+    HistoryService historyService = new HistoryServiceJpa();
     try {
       authenticate(securityService, authToken,
           "find refset descriptor refset member release revision", UserRole.VIEWER);
 
-      HistoryService historyService = new HistoryServiceJpa();
       RefsetDescriptorRefSetMember member =
           historyService.findRefsetDescriptorRefSetMemberReleaseRevision(
               Long.valueOf(id), ConfigUtility.DATE_FORMAT.parse(release));
 
       // explicitly do not want to use graph resolution handler.
-      historyService.close();
       return member;
     } catch (Exception e) {
       handleException(e, "find refset descriptor refset member release revision");
       return null;
     } finally {
+      historyService.close();
       securityService.close();
     }
   }
@@ -1447,22 +1439,22 @@ public class HistoryServiceRestImpl extends RootServiceRestImpl implements
     Logger.getLogger(getClass()).info(
         "RESTful call (History): /simple map/" + terminology + "/" + date);
 
+    HistoryService historyService = new HistoryServiceJpa();
     try {
       authenticate(securityService, authToken,
           "find simple map refset members modified since date", UserRole.VIEWER);
 
-      HistoryService historyService = new HistoryServiceJpa();
       SimpleMapRefSetMemberList cl =
           historyService.findSimpleMapRefSetMembersModifiedSinceDate(
               terminology, ConfigUtility.DATE_FORMAT.parse(date), pfs);
 
-      historyService.close();
       return cl;
     } catch (Exception e) {
       handleException(e,
           "trying to find simple map refset members modified since date");
       return null;
     } finally {
+      historyService.close();
       securityService.close();
     }
 
@@ -1492,24 +1484,23 @@ public class HistoryServiceRestImpl extends RootServiceRestImpl implements
     Logger.getLogger(getClass()).info(
         "RESTful call (History): /simple map/revisions/" + id + "/" + startDate
             + "/" + endDate + "/all");
-
+    HistoryService historyService = new HistoryServiceJpa();
     try {
       authenticate(securityService, authToken,
           "find simple map refset member revisions", UserRole.VIEWER);
 
-      HistoryService historyService = new HistoryServiceJpa();
       SimpleMapRefSetMemberList cl =
           historyService.findSimpleMapRefSetMemberRevisions(Long.valueOf(id),
               ConfigUtility.DATE_FORMAT.parse(startDate),
               ConfigUtility.DATE_FORMAT.parse(endDate), pfs);
 
       // explicitly do not want to use graph resolution handler.
-      historyService.close();
       return cl;
     } catch (Exception e) {
       handleException(e, "find simple map refset member revisions");
       return null;
     } finally {
+      historyService.close();
       securityService.close();
     }
   }
@@ -1534,22 +1525,22 @@ public class HistoryServiceRestImpl extends RootServiceRestImpl implements
     Logger.getLogger(getClass()).info(
         "RESTful call (History): /simple map/revisions/" + id + "/" + release);
 
+    HistoryService historyService = new HistoryServiceJpa();
     try {
       authenticate(securityService, authToken,
           "find simple map refset member release revision", UserRole.VIEWER);
 
-      HistoryService historyService = new HistoryServiceJpa();
       SimpleMapRefSetMember member =
           historyService.findSimpleMapRefSetMemberReleaseRevision(
               Long.valueOf(id), ConfigUtility.DATE_FORMAT.parse(release));
 
       // explicitly do not want to use graph resolution handler.
-      historyService.close();
       return member;
     } catch (Exception e) {
       handleException(e, "find simple map refset member release revision");
       return null;
     } finally {
+      historyService.close();
       securityService.close();
     }
   }
@@ -1577,22 +1568,22 @@ public class HistoryServiceRestImpl extends RootServiceRestImpl implements
     Logger.getLogger(getClass()).info(
         "RESTful call (History): /simple/" + terminology + "/" + date);
 
+    HistoryService historyService = new HistoryServiceJpa();
     try {
       authenticate(securityService, authToken,
           "find simple refset members modified since date", UserRole.VIEWER);
 
-      HistoryService historyService = new HistoryServiceJpa();
       SimpleRefSetMemberList cl =
           historyService.findSimpleRefSetMembersModifiedSinceDate(
               terminology, ConfigUtility.DATE_FORMAT.parse(date), pfs);
 
-      historyService.close();
       return cl;
     } catch (Exception e) {
       handleException(e,
           "trying to find simple refset members modified since date");
       return null;
     } finally {
+      historyService.close();
       securityService.close();
     }
 
@@ -1622,24 +1613,23 @@ public class HistoryServiceRestImpl extends RootServiceRestImpl implements
     Logger.getLogger(getClass()).info(
         "RESTful call (History): /simple/revisions/" + id + "/" + startDate
             + "/" + endDate + "/all");
-
+    HistoryService historyService = new HistoryServiceJpa();
     try {
       authenticate(securityService, authToken,
           "find simple refset member revisions", UserRole.VIEWER);
 
-      HistoryService historyService = new HistoryServiceJpa();
       SimpleRefSetMemberList cl =
           historyService.findSimpleRefSetMemberRevisions(Long.valueOf(id),
               ConfigUtility.DATE_FORMAT.parse(startDate),
               ConfigUtility.DATE_FORMAT.parse(endDate), pfs);
 
       // explicitly do not want to use graph resolution handler.
-      historyService.close();
       return cl;
     } catch (Exception e) {
       handleException(e, "find simple refset member revisions");
       return null;
     } finally {
+      historyService.close();
       securityService.close();
     }
   }
@@ -1664,22 +1654,22 @@ public class HistoryServiceRestImpl extends RootServiceRestImpl implements
     Logger.getLogger(getClass()).info(
         "RESTful call (History): /simple/revisions/" + id + "/" + release);
 
+    HistoryService historyService = new HistoryServiceJpa();
     try {
       authenticate(securityService, authToken,
           "find simple refset member release revision", UserRole.VIEWER);
 
-      HistoryService historyService = new HistoryServiceJpa();
       SimpleRefSetMember member =
           historyService.findSimpleRefSetMemberReleaseRevision(
               Long.valueOf(id), ConfigUtility.DATE_FORMAT.parse(release));
 
       // explicitly do not want to use graph resolution handler.
-      historyService.close();
       return member;
     } catch (Exception e) {
       handleException(e, "find simple refset member release revision");
       return null;
     } finally {
+      historyService.close();
       securityService.close();
     }
   }
@@ -1728,13 +1718,12 @@ public class HistoryServiceRestImpl extends RootServiceRestImpl implements
         }
       }
 
-      historyService.close();
       return cl;
     } catch (Exception e) {
-      historyService.close();
       handleException(e, "trying to find concepts deep modified since date");
       return null;
     } finally {
+      historyService.close();
       securityService.close();
     }
   }
@@ -1763,14 +1752,13 @@ public class HistoryServiceRestImpl extends RootServiceRestImpl implements
           UserRole.VIEWER);
 
       ReleaseInfoList result = historyService.getReleaseHistory(terminology);
-      historyService.close();
       return result;
 
     } catch (Exception e) {
-      historyService.close();
       handleException(e, "trying to get release history");
       return null;
     } finally {
+      historyService.close();
       securityService.close();
     }
   }
@@ -1799,14 +1787,13 @@ public class HistoryServiceRestImpl extends RootServiceRestImpl implements
           UserRole.VIEWER);
 
       ReleaseInfo result = historyService.getCurrentReleaseInfo(terminology);
-      historyService.close();
       return result;
 
     } catch (Exception e) {
-      historyService.close();
       handleException(e, "trying to get current release info");
       return null;
     } finally {
+      historyService.close();
       securityService.close();
     }
   }
@@ -1835,14 +1822,13 @@ public class HistoryServiceRestImpl extends RootServiceRestImpl implements
           UserRole.VIEWER);
 
       ReleaseInfo result = historyService.getPreviousReleaseInfo(terminology);
-      historyService.close();
       return result;
 
     } catch (Exception e) {
-      historyService.close();
       handleException(e, "trying to get previous release info");
       return null;
     } finally {
+      historyService.close();
       securityService.close();
     }
   }
@@ -1867,10 +1853,10 @@ public class HistoryServiceRestImpl extends RootServiceRestImpl implements
       return result;
 
     } catch (Exception e) {
-      historyService.close();
       handleException(e, "trying to get planned release info");
       return null;
     } finally {
+      historyService.close();
       securityService.close();
     }
   }
@@ -1903,10 +1889,10 @@ public class HistoryServiceRestImpl extends RootServiceRestImpl implements
       return result;
 
     } catch (Exception e) {
-      historyService.close();
       handleException(e, "trying to get release info for " + name);
       return null;
     } finally {
+      historyService.close();
       securityService.close();
     }
   }
@@ -1937,14 +1923,13 @@ public class HistoryServiceRestImpl extends RootServiceRestImpl implements
       releaseInfo.setLastModifiedBy(securityService
           .getUsernameForToken(authToken));
       ReleaseInfo result = historyService.addReleaseInfo(releaseInfo);
-      historyService.close();
       return result;
 
     } catch (Exception e) {
-      historyService.close();
       handleException(e, "trying to add release info");
       return null;
     } finally {
+      historyService.close();
       securityService.close();
     }
   }
@@ -1975,11 +1960,11 @@ public class HistoryServiceRestImpl extends RootServiceRestImpl implements
       releaseInfo.setLastModifiedBy(securityService
           .getUsernameForToken(authToken));
       historyService.updateReleaseInfo(releaseInfo);
-      historyService.close();
     } catch (Exception e) {
       historyService.close();
       handleException(e, "trying to update release info");
     } finally {
+      historyService.close();
       securityService.close();
     }
   }
@@ -2008,11 +1993,11 @@ public class HistoryServiceRestImpl extends RootServiceRestImpl implements
           UserRole.ADMINISTRATOR);
 
       historyService.removeReleaseInfo(id);
-      historyService.close();
     } catch (Exception e) {
       historyService.close();
       handleException(e, "trying to remove release info");
     } finally {
+      historyService.close();
       securityService.close();
     }
   }
@@ -2045,11 +2030,11 @@ public class HistoryServiceRestImpl extends RootServiceRestImpl implements
       // Perform operations
       algorithm.setUser(securityService.getUsernameForToken(authToken));
       algorithm.compute();
-      algorithm.close();
     } catch (Exception e) {
       algorithm.close();
       handleException(e, "start editing cycle");
     } finally {
+      algorithm.close();
       securityService.close();
     }
   }

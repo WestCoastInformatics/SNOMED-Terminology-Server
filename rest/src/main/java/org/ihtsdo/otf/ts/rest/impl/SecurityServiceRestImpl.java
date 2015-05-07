@@ -76,13 +76,13 @@ public class SecurityServiceRestImpl extends RootServiceRestImpl implements
         throw new LocalException("Unable to authenticate user");
       return authToken;
     } catch (LocalException e) {
-      securityService.close();
       throw new WebApplicationException(Response.status(401)
           .entity(e.getMessage()).build());
     } catch (Exception e) {
-      securityService.close();
       handleException(e, "trying to authenticate a user");
       return null;
+    } finally {
+      securityService.close();
     }
 
   }
@@ -105,16 +105,15 @@ public class SecurityServiceRestImpl extends RootServiceRestImpl implements
     SecurityService securityService = new SecurityServiceJpa();
     try {
       securityService.logout(authToken);
-      securityService.close();
       return true;
     } catch (LocalException e) {
-      securityService.close();
       throw new WebApplicationException(Response.status(401)
           .entity(e.getMessage()).build());
     } catch (Exception e) {
-      securityService.close();
       handleException(e, "trying to authenticate a user");
       return false;
+    } finally {
+      securityService.close();
     }
 
   }
@@ -133,18 +132,19 @@ public class SecurityServiceRestImpl extends RootServiceRestImpl implements
     @ApiParam(value = "User internal id, e.g. 2", required = true) @PathParam("id") Long id,
     @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken)
     throws Exception {
-    Logger.getLogger(getClass()).info("RESTful call (Security): /user/id/" + id);
+    Logger.getLogger(getClass())
+        .info("RESTful call (Security): /user/id/" + id);
     SecurityService securityService = new SecurityServiceJpa();
     try {
       authenticate(securityService, authToken, "retrieve the user",
           UserRole.VIEWER);
       User user = securityService.getUser(id);
-      securityService.close();
       return user;
     } catch (Exception e) {
-      securityService.close();
       handleException(e, "trying to retrieve a user");
       return null;
+    } finally {
+      securityService.close();
     }
   }
 
@@ -169,12 +169,12 @@ public class SecurityServiceRestImpl extends RootServiceRestImpl implements
       authenticate(securityService, authToken, "retrieve the user by username",
           UserRole.VIEWER);
       User user = securityService.getUser(username);
-      securityService.close();
       return user;
     } catch (Exception e) {
-      securityService.close();
       handleException(e, "trying to retrieve a user by username");
       return null;
+    } finally {
+      securityService.close();
     }
   }
 
@@ -196,12 +196,12 @@ public class SecurityServiceRestImpl extends RootServiceRestImpl implements
       authenticate(securityService, authToken, "retrieve all users",
           UserRole.VIEWER);
       UserList list = securityService.getUsers();
-      securityService.close();
       return list;
     } catch (Exception e) {
-      securityService.close();
       handleException(e, "trying to retrieve all users");
       return null;
+    } finally {
+      securityService.close();
     }
   }
 
@@ -231,12 +231,12 @@ public class SecurityServiceRestImpl extends RootServiceRestImpl implements
 
       // Create service and configure transaction scope
       User newUser = securityService.addUser(user);
-      securityService.close();
       return newUser;
     } catch (Exception e) {
-      securityService.close();
       handleException(e, "trying to add a user");
       return null;
+    } finally {
+      securityService.close();
     }
   }
 
@@ -264,10 +264,10 @@ public class SecurityServiceRestImpl extends RootServiceRestImpl implements
 
       // Remove user
       securityService.removeUser(id);
-      securityService.close();
     } catch (Exception e) {
-      securityService.close();
       handleException(e, "trying to remove a user");
+    } finally {
+      securityService.close();
     }
   }
 
@@ -293,10 +293,10 @@ public class SecurityServiceRestImpl extends RootServiceRestImpl implements
       authenticate(securityService, authToken, "update concept",
           UserRole.ADMINISTRATOR);
       securityService.updateUser(user);
-      securityService.close();
     } catch (Exception e) {
-      securityService.close();
       handleException(e, "trying to update a concept");
+    } finally {
+      securityService.close();
     }
   }
 
