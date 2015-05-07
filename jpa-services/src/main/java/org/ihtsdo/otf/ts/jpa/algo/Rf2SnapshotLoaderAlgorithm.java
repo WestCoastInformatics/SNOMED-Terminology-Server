@@ -605,8 +605,6 @@ public class Rf2SnapshotLoaderAlgorithm extends HistoryServiceJpa implements
           }
 
         } else {
-          // TODO: these may need to continue to not be exceptions
-          // to support loads of full SNOMED
           if (sourceConcept == null) {
             throw new Exception(
                 "Relationship " + relationship.getTerminologyId()
@@ -618,7 +616,6 @@ public class Rf2SnapshotLoaderAlgorithm extends HistoryServiceJpa implements
                     + " references non-existent destination concept "
                     + fields[5]);
           }
-
         }
 
         if (prevConcept == null) {

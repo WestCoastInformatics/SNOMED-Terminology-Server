@@ -33,11 +33,8 @@ import org.ihtsdo.otf.ts.rf2.Relationship;
 import org.ihtsdo.otf.ts.rf2.SimpleMapRefSetMember;
 import org.ihtsdo.otf.ts.rf2.SimpleRefSetMember;
 
-// TODO: Auto-generated Javadoc
 /**
  * Generically represents a service for asking questions about content history.
- *
- * @author ${author}
  */
 public interface HistoryService extends ContentService {
 

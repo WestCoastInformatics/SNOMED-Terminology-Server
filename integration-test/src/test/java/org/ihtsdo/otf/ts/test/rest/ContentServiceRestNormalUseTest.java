@@ -42,11 +42,8 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-// TODO: Auto-generated Javadoc
 /**
  * Implementation of the "Content Service REST Normal Use" Test Cases.
- *
- * @author ${author}
  */
 public class ContentServiceRestNormalUseTest extends ContentServiceRestTest {
 
@@ -157,14 +154,13 @@ public class ContentServiceRestNormalUseTest extends ContentServiceRestTest {
     assertNotNull(concept_retrieved);
     assertTrue(concept_retrieved.equals(concept));
 
-    
-    // TEST:  Find concepts for query
+    // TEST: Find concepts for query
     SearchResultList results =
         contentService.findConceptsForQuery(snomedTerminology, snomedVersion,
             "ossification", new PfsParameterJpa(), authToken);
 
     assertTrue(results.getCount() == 11);
-    
+
     try {
       // test paging and sorting
       PfsParameterTestHelper.testPagingAndSorting(
@@ -297,9 +293,8 @@ public class ContentServiceRestNormalUseTest extends ContentServiceRestTest {
         fail("Erroneous result retrieved");
       }
     }
-    
+
     // cannot test description method, no test data
-    
 
     /** NO TEST FOR ICD9CM */
 
@@ -585,9 +580,9 @@ public class ContentServiceRestNormalUseTest extends ContentServiceRestTest {
     String testId = "128117002";
 
     PfsParameterJpa pfs = new PfsParameterJpa();
-    
+
     ConceptList concepts;
-    
+
     // test parents
     concepts =
         contentService.findParentConcepts("128117002", snomedTerminology,
@@ -608,7 +603,6 @@ public class ContentServiceRestNormalUseTest extends ContentServiceRestTest {
       e.printStackTrace();
       fail("Paging/sorting failed for findParentConcepts");
     }
-    
 
     // test children
     concepts =
@@ -629,8 +623,7 @@ public class ContentServiceRestNormalUseTest extends ContentServiceRestTest {
     } catch (Exception e) {
       fail("Paging/sorting failed for findChildConcepts");
     }
- 
-    
+
     // test ancestors
     concepts =
         contentService.findAncestorConcepts("128117002", snomedTerminology,
@@ -652,7 +645,6 @@ public class ContentServiceRestNormalUseTest extends ContentServiceRestTest {
       e.printStackTrace();
       fail("Paging/sorting failed for findAncestorConcepts");
     }
-
 
     concepts =
         contentService.findDescendantConcepts("128117002", snomedTerminology,

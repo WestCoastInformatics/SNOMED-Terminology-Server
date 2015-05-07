@@ -23,7 +23,6 @@ import org.ihtsdo.otf.ts.rf2.Concept;
 import org.ihtsdo.otf.ts.rf2.Description;
 import org.ihtsdo.otf.ts.rf2.Relationship;
 
-// TODO: Auto-generated Javadoc
 /**
  * Represents a content available via a REST service.
  *

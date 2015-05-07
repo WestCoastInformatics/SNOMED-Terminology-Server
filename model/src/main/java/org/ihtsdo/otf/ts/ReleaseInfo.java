@@ -5,7 +5,6 @@ package org.ihtsdo.otf.ts;
 
 import java.util.Date;
 
-// TODO: Auto-generated Javadoc
 /**
  * Represents information about a release.
  */

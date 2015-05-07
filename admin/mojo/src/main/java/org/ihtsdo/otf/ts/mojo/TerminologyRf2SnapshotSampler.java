@@ -141,7 +141,7 @@ public class TerminologyRf2SnapshotSampler extends AbstractMojo {
 
       // Copy Files
       Rf2FileCopier copier = new Rf2FileCopier();
-      // TODO: consider parameterizing this
+      // Parameterize this!
       copier.setActiveOnly(false);
       copier.copyFiles(inputDirFile, new File(outputDir),
           algorithm.getOutputConcepts(), algorithm.getOutputDescriptions());

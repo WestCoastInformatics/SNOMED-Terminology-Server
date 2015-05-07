@@ -23,7 +23,6 @@ import org.ihtsdo.otf.ts.rf2.SimpleRefSetMember;
 import org.ihtsdo.otf.ts.rf2.TransitiveRelationship;
 import org.ihtsdo.otf.ts.services.handlers.IdentifierAssignmentHandler;
 
-// TODO: Auto-generated Javadoc
 /**
  * Snomed RF2 release implementation of {@link IdentifierAssignmentHandler}.
  * NOTE: if identifiers need to be stable across daily builds, you could simply

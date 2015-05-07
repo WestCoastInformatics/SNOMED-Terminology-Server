@@ -54,11 +54,6 @@ public class DefaultGraphResolutionHandler implements GraphResolutionHandler {
 
       }
 
-      // TODO: consider having fields for counts of other data structures so a
-      // user knows whether
-      // to make a callback
-      // e.g. concept.setSimpleRefSetMemberCount(3);
-
     } else if (concept == null) {
       throw new Exception("Cannot resolve a null concept.");
     }
