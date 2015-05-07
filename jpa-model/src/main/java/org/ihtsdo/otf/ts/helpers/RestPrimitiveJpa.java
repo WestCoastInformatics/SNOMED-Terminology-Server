@@ -90,7 +90,9 @@ public class RestPrimitiveJpa implements RestPrimitive {
 
   }
 
-  /* (non-Javadoc)
+  /*
+   * (non-Javadoc)
+   * 
    * @see java.lang.Object#hashCode()
    */
   @Override
@@ -102,7 +104,9 @@ public class RestPrimitiveJpa implements RestPrimitive {
     return result;
   }
 
-  /* (non-Javadoc)
+  /*
+   * (non-Javadoc)
+   * 
    * @see java.lang.Object#equals(java.lang.Object)
    */
   @Override

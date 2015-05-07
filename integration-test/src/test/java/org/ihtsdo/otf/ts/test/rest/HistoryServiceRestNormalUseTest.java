@@ -181,7 +181,7 @@ public class HistoryServiceRestNormalUseTest extends HistoryServiceRestTest {
     } catch (Exception e) {
       e.printStackTrace();
       fail("addRelease info failed");
-      
+
     }
 
     // wait to ensure object successfully added
@@ -334,25 +334,33 @@ public class HistoryServiceRestNormalUseTest extends HistoryServiceRestTest {
     // test paging
     pfs.setMaxResults(10);
     pfs.setStartIndex(0);
-    ConceptList pagedResults = historyService.findConceptsDeepModifiedSinceDate(terminology, "19700101", pfs, authToken);
+    ConceptList pagedResults =
+        historyService.findConceptsDeepModifiedSinceDate(terminology,
+            "19700101", pfs, authToken);
 
-    assertTrue(results.getObjects().subList(0, 10).equals(pagedResults.getObjects()));
-    
+    assertTrue(results.getObjects().subList(0, 10)
+        .equals(pagedResults.getObjects()));
+
     pfs.setMaxResults(10);
     pfs.setStartIndex(100);
-    pagedResults = historyService.findConceptsDeepModifiedSinceDate(terminology, "19700101", pfs, authToken);
+    pagedResults =
+        historyService.findConceptsDeepModifiedSinceDate(terminology,
+            "19700101", pfs, authToken);
 
-    assertTrue(results.getObjects().subList(100, 110).equals(pagedResults.getObjects()));
-    
+    assertTrue(results.getObjects().subList(100, 110)
+        .equals(pagedResults.getObjects()));
+
     // test with date -- arbitrary
     // number validated through independent sql queries
     String testDate = "20130731";
     pfs.setMaxResults(-1);
     pfs.setStartIndex(-1);
-    results = historyService.findConceptsDeepModifiedSinceDate(terminology, testDate, pfs, authToken);
-  
+    results =
+        historyService.findConceptsDeepModifiedSinceDate(terminology, testDate,
+            pfs, authToken);
+
     assertTrue(results.getCount() == 3096);
-    
+
   }
 
   /**
@@ -1116,7 +1124,8 @@ public class HistoryServiceRestNormalUseTest extends HistoryServiceRestTest {
     // this teardown class must remove release info
     // objects created by testing addReleaseInfo
     // and startEditingCycle
-    ReleaseInfo releaseInfo = historyService.getReleaseInfo(terminology, currentDate, authToken);
+    ReleaseInfo releaseInfo =
+        historyService.getReleaseInfo(terminology, currentDate, authToken);
     if (releaseInfo != null) {
       historyService.removeReleaseInfo(releaseInfo.getId(), authToken);
     }

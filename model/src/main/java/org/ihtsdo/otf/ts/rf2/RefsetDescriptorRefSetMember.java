@@ -14,35 +14,35 @@ public interface RefsetDescriptorRefSetMember extends ConceptRefSetMember {
    * @return the attribute description
    */
   public String getAttributeDescription();
-  
+
   /**
    * Sets the attribute description.
    *
    * @param attributeDescription the attribute description
    */
   public void setAttributeDescription(String attributeDescription);
-  
+
   /**
    * Returns the attribute type.
    *
    * @return the attribute type
    */
   public String getAttributeType();
-  
+
   /**
    * Sets the attribute type.
    *
    * @param attributeType the attribute type
    */
   public void setAttributeType(String attributeType);
-  
+
   /**
    * Returns the attribute order.
    *
    * @return the attribute order
    */
   public int getAttributeOrder();
-  
+
   /**
    * Sets the attribute order.
    *

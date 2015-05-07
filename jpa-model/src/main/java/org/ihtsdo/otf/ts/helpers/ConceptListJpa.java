@@ -29,5 +29,4 @@ public class ConceptListJpa extends AbstractResultList<Concept> implements
     return super.getObjects();
   }
 
-
 }

@@ -131,9 +131,11 @@ public class IndexedFieldTester extends ProxyTester {
         for (org.hibernate.search.annotations.Field f : m.getAnnotation(
             org.hibernate.search.annotations.Fields.class).value()) {
           if (f.name().equals("")) {
-            nameAnalyzedPairs.put(fieldName.toLowerCase(), f.analyze().equals(Analyze.YES));
+            nameAnalyzedPairs.put(fieldName.toLowerCase(),
+                f.analyze().equals(Analyze.YES));
           } else {
-            nameAnalyzedPairs.put(f.name().toLowerCase(), f.analyze().equals(Analyze.YES));
+            nameAnalyzedPairs.put(f.name().toLowerCase(),
+                f.analyze().equals(Analyze.YES));
           }
         }
       }

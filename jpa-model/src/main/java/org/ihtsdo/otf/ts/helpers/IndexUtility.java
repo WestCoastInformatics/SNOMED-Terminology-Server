@@ -114,7 +114,7 @@ public class IndexUtility {
 
     return fieldNames;
   }
-  
+
   /**
    * Helper function to get a field name from a method and annotation.
    *

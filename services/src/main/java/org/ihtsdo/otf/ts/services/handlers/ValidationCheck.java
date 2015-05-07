@@ -19,5 +19,5 @@ public interface ValidationCheck extends Configurable {
    * @return the validation result
    */
   public ValidationResult validate(Concept c);
-  
+
 }

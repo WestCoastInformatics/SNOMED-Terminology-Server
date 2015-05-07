@@ -606,15 +606,14 @@ public class Rf2SnapshotLoaderAlgorithm extends HistoryServiceJpa implements
 
         } else {
           if (sourceConcept == null) {
-            throw new Exception(
-                "Relationship " + relationship.getTerminologyId()
-                    + " -existent source concept " + fields[4]);
+            throw new Exception("Relationship "
+                + relationship.getTerminologyId()
+                + " -existent source concept " + fields[4]);
           }
           if (destinationConcept == null) {
-            throw new Exception(
-                "Relationship" + relationship.getTerminologyId()
-                    + " references non-existent destination concept "
-                    + fields[5]);
+            throw new Exception("Relationship"
+                + relationship.getTerminologyId()
+                + " references non-existent destination concept " + fields[5]);
           }
         }
 

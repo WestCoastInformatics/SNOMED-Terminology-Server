@@ -15,10 +15,13 @@ import org.ihtsdo.otf.ts.rf2.jpa.DescriptionTypeRefSetMemberJpa;
  * JAXB enabled implementation of {@link DescriptionTypeRefSetMemberList}.
  */
 @XmlRootElement(name = "descriptionTypeRefSetMemberList")
-public class DescriptionTypeRefSetMemberListJpa extends AbstractResultList<DescriptionTypeRefSetMember> implements
-DescriptionTypeRefSetMemberList {
+public class DescriptionTypeRefSetMemberListJpa extends
+    AbstractResultList<DescriptionTypeRefSetMember> implements
+    DescriptionTypeRefSetMemberList {
 
-  /* (non-Javadoc)
+  /*
+   * (non-Javadoc)
+   * 
    * @see org.ihtsdo.otf.ts.helpers.AbstractResultList#getObjects()
    */
   @Override

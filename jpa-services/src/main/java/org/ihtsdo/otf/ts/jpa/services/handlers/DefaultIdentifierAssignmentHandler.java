@@ -100,7 +100,8 @@ public class DefaultIdentifierAssignmentHandler implements
    * org.ihtsdo.otf.ts.rf2.AttributeValueRefSetMember)
    */
   @Override
-  public String getTerminologyId(AttributeValueRefSetMember<? extends Component> member) {
+  public String getTerminologyId(
+    AttributeValueRefSetMember<? extends Component> member) {
     // no assignment
     return member.getTerminologyId();
   }
@@ -208,9 +209,12 @@ public class DefaultIdentifierAssignmentHandler implements
     // no assignment
     return relationship.getTerminologyId();
   }
-  
-  /* (non-Javadoc)
-   * @see org.ihtsdo.otf.ts.services.handlers.IdentifierAssignmentHandler#allowIdChangeOnUpdate()
+
+  /*
+   * (non-Javadoc)
+   * 
+   * @see org.ihtsdo.otf.ts.services.handlers.IdentifierAssignmentHandler#
+   * allowIdChangeOnUpdate()
    */
   @Override
   public boolean allowIdChangeOnUpdate() {

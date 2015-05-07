@@ -16,21 +16,21 @@ public interface ModuleDependencyRefSetMember extends ConceptRefSetMember {
    * @return the source effective time
    */
   public Date getSourceEffectiveTime();
-  
+
   /**
    * Sets the source effective time.
    *
    * @param sourceEffectiveTime the source effective time
    */
   public void setSourceEffectiveTime(Date sourceEffectiveTime);
-  
+
   /**
    * Returns the target effective time.
    *
    * @return the target effective time
    */
   public Date getTargetEffectiveTime();
-  
+
   /**
    * Sets the target effective time.
    *

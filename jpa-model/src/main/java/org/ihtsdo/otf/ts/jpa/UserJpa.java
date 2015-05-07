@@ -72,7 +72,9 @@ public class UserJpa implements User {
     this.applicationRole = user.getApplicationRole();
   }
 
-  /* (non-Javadoc)
+  /*
+   * (non-Javadoc)
+   * 
    * @see org.ihtsdo.otf.ts.User#getId()
    */
   @Override
@@ -80,7 +82,9 @@ public class UserJpa implements User {
     return id;
   }
 
-  /* (non-Javadoc)
+  /*
+   * (non-Javadoc)
+   * 
    * @see org.ihtsdo.otf.ts.User#setId(java.lang.Long)
    */
   @Override
@@ -108,6 +112,7 @@ public class UserJpa implements User {
       this.id = Long.parseLong(id);
     }
   }
+
   /*
    * (non-Javadoc)
    * 

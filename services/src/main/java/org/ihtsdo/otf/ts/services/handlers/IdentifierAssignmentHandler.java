@@ -69,7 +69,17 @@ public interface IdentifierAssignmentHandler extends Configurable {
    * @return the string
    * @throws Exception the exception
    */
-  public String getTerminologyId(AttributeValueRefSetMember<? extends Component> member)
+  public String getTerminologyId(
+    AttributeValueRefSetMember<? extends Component> member) throws Exception;
+
+  /**
+   * Returns the terminology id.
+   *
+   * @param member the member
+   * @return the string
+   * @throws Exception the exception
+   */
+  public String getTerminologyId(ComplexMapRefSetMember member)
     throws Exception;
 
   /**
@@ -79,16 +89,8 @@ public interface IdentifierAssignmentHandler extends Configurable {
    * @return the string
    * @throws Exception the exception
    */
-  public String getTerminologyId(ComplexMapRefSetMember member) throws Exception;
-
-  /**
-   * Returns the terminology id.
-   *
-   * @param member the member
-   * @return the string
-   * @throws Exception the exception
-   */
-  public String getTerminologyId(DescriptionTypeRefSetMember member) throws Exception;
+  public String getTerminologyId(DescriptionTypeRefSetMember member)
+    throws Exception;
 
   /**
    * Returns the terminology id.
@@ -106,7 +108,8 @@ public interface IdentifierAssignmentHandler extends Configurable {
    * @return the string
    * @throws Exception the exception
    */
-  public String getTerminologyId(ModuleDependencyRefSetMember member) throws Exception;
+  public String getTerminologyId(ModuleDependencyRefSetMember member)
+    throws Exception;
 
   /**
    * Returns the terminology id.
@@ -115,7 +118,8 @@ public interface IdentifierAssignmentHandler extends Configurable {
    * @return the string
    * @throws Exception the exception
    */
-  public String getTerminologyId(RefsetDescriptorRefSetMember member) throws Exception;
+  public String getTerminologyId(RefsetDescriptorRefSetMember member)
+    throws Exception;
 
   /**
    * Returns the terminology id.
@@ -142,28 +146,28 @@ public interface IdentifierAssignmentHandler extends Configurable {
    * @return the string
    * @throws Exception the exception
    */
-  public String getTerminologyId(TransitiveRelationship relationship) throws Exception;
+  public String getTerminologyId(TransitiveRelationship relationship)
+    throws Exception;
 
   /**
-   * Indicates whether this algorithm allows identifiers to change
-   * on an update.  That is a computation of the id before and after
-   * should produce the same identifier.  For example UUID-hash based
-   * ID assignment should not change - otherwise it means identity fields
-   * are changing - which means that this is actually a different object.
+   * Indicates whether this algorithm allows identifiers to change on an update.
+   * That is a computation of the id before and after should produce the same
+   * identifier. For example UUID-hash based ID assignment should not change -
+   * otherwise it means identity fields are changing - which means that this is
+   * actually a different object.
    *
    * @return true, if successful
    */
   public boolean allowIdChangeOnUpdate();
-  
+
   /**
-   * Indicates whether this algorithm allows identifiers to change
-   * on an update of a concept.  Concept identifier assignment can be tricky
-   * and in some cases the identifier should be allowed to change.  In particular
-   * if hashing-based IDs are used the concept id assignment must be based on its contents.
+   * Indicates whether this algorithm allows identifiers to change on an update
+   * of a concept. Concept identifier assignment can be tricky and in some cases
+   * the identifier should be allowed to change. In particular if hashing-based
+   * IDs are used the concept id assignment must be based on its contents.
    *
    * @return true, if successful
    */
   public boolean allowConceptIdChangeOnUpdate();
-  
-  
+
 }

@@ -325,7 +325,8 @@ public class HistoryClientRest implements HistoryServiceRest {
     Client client = Client.create();
     WebResource resource =
         client.resource(config.getProperty("base.url")
-            + "/history/description/revisions/" + id + "/" + release + "/release");
+            + "/history/description/revisions/" + id + "/" + release
+            + "/release");
 
     ClientResponse response =
         resource.accept(MediaType.APPLICATION_XML)
@@ -458,7 +459,8 @@ public class HistoryClientRest implements HistoryServiceRest {
     Client client = Client.create();
     WebResource resource =
         client.resource(config.getProperty("base.url")
-            + "/history/relationship/revisions/" + id + "/" + release + "/release");
+            + "/history/relationship/revisions/" + id + "/" + release
+            + "/release");
 
     ClientResponse response =
         resource.accept(MediaType.APPLICATION_XML)
@@ -615,7 +617,6 @@ public class HistoryClientRest implements HistoryServiceRest {
 
     return member;
   }
-  
 
   /*
    * (non-Javadoc)
@@ -631,57 +632,11 @@ public class HistoryClientRest implements HistoryServiceRest {
     throws Exception {
     Client client = Client.create();
     WebResource resource =
-        client.resource(config.getProperty("base.url") + "/history/associationReference/"
-            + terminology + "/" + date);
-    String pfsString =
-        ConfigUtility.getStringForGraph(pfs == null
-        ? new PfsParameterJpa() : pfs);
-    Logger.getLogger(this.getClass()).debug(pfsString);
-    ClientResponse response =
-        resource.accept(MediaType.APPLICATION_XML)
-            .header("Authorization", authToken)
-            .header("Content-type", MediaType.APPLICATION_XML)
-            .post(ClientResponse.class, pfsString);
-    if (response.getStatus() == 204) {
-      return null;
-    }
-    String resultString = response.getEntity(String.class);
-    if (response.getStatusInfo().getFamily() == Family.SUCCESSFUL) {
-      Logger.getLogger(this.getClass()).debug(
-          resultString.substring(0, Math.min(resultString.length(), 3999)));
-    } else {
-      throw new Exception(response.toString());
-    }
-
-    // converting to object
-    AssociationReferenceRefSetMemberListJpa list =
-        (AssociationReferenceRefSetMemberListJpa) ConfigUtility.getGraphForString(
-            resultString, AssociationReferenceRefSetMemberListJpa.class);
-
-    return list;
-  }
-
-  /*
-   * (non-Javadoc)
-   * 
-   * @see
-   * org.ihtsdo.otf.ts.rest.HistoryServiceRest#findAssociationReferenceRefSetMemberRevisions
-   * (java.lang.String, java.lang.String, java.lang.String,
-   * org.ihtsdo.otf.ts.helpers.PfsParameterJpa, java.lang.String)
-   */
-  @Override
-  public AssociationReferenceRefSetMemberList findAssociationReferenceRefSetMemberRevisions(String id,
-    String startDate, String endDate, PfsParameterJpa pfs, String authToken)
-    throws Exception {
-    Client client = Client.create();
-    WebResource resource =
         client.resource(config.getProperty("base.url")
-            + "/history/associationReference/revisions/" + id + "/" + startDate + "/"
-            + endDate + "/all");
-
+            + "/history/associationReference/" + terminology + "/" + date);
     String pfsString =
-        ConfigUtility.getStringForGraph(pfs == null
-        ? new PfsParameterJpa() : pfs);
+        ConfigUtility.getStringForGraph(pfs == null ? new PfsParameterJpa()
+            : pfs);
     Logger.getLogger(this.getClass()).debug(pfsString);
     ClientResponse response =
         resource.accept(MediaType.APPLICATION_XML)
@@ -701,8 +656,9 @@ public class HistoryClientRest implements HistoryServiceRest {
 
     // converting to object
     AssociationReferenceRefSetMemberListJpa list =
-        (AssociationReferenceRefSetMemberListJpa) ConfigUtility.getGraphForString(
-            resultString, AssociationReferenceRefSetMemberListJpa.class);
+        (AssociationReferenceRefSetMemberListJpa) ConfigUtility
+            .getGraphForString(resultString,
+                AssociationReferenceRefSetMemberListJpa.class);
 
     return list;
   }
@@ -711,8 +667,55 @@ public class HistoryClientRest implements HistoryServiceRest {
    * (non-Javadoc)
    * 
    * @see org.ihtsdo.otf.ts.rest.HistoryServiceRest#
-   * findAssociationReferenceRefSetMemberReleaseRevision(java.lang.String, java.lang.String,
-   * java.lang.String)
+   * findAssociationReferenceRefSetMemberRevisions (java.lang.String,
+   * java.lang.String, java.lang.String,
+   * org.ihtsdo.otf.ts.helpers.PfsParameterJpa, java.lang.String)
+   */
+  @Override
+  public AssociationReferenceRefSetMemberList findAssociationReferenceRefSetMemberRevisions(
+    String id, String startDate, String endDate, PfsParameterJpa pfs,
+    String authToken) throws Exception {
+    Client client = Client.create();
+    WebResource resource =
+        client.resource(config.getProperty("base.url")
+            + "/history/associationReference/revisions/" + id + "/" + startDate
+            + "/" + endDate + "/all");
+
+    String pfsString =
+        ConfigUtility.getStringForGraph(pfs == null ? new PfsParameterJpa()
+            : pfs);
+    Logger.getLogger(this.getClass()).debug(pfsString);
+    ClientResponse response =
+        resource.accept(MediaType.APPLICATION_XML)
+            .header("Authorization", authToken)
+            .header("Content-type", MediaType.APPLICATION_XML)
+            .post(ClientResponse.class, pfsString);
+    if (response.getStatus() == 204) {
+      return null;
+    }
+    String resultString = response.getEntity(String.class);
+    if (response.getStatusInfo().getFamily() == Family.SUCCESSFUL) {
+      Logger.getLogger(this.getClass()).debug(
+          resultString.substring(0, Math.min(resultString.length(), 3999)));
+    } else {
+      throw new Exception(response.toString());
+    }
+
+    // converting to object
+    AssociationReferenceRefSetMemberListJpa list =
+        (AssociationReferenceRefSetMemberListJpa) ConfigUtility
+            .getGraphForString(resultString,
+                AssociationReferenceRefSetMemberListJpa.class);
+
+    return list;
+  }
+
+  /*
+   * (non-Javadoc)
+   * 
+   * @see org.ihtsdo.otf.ts.rest.HistoryServiceRest#
+   * findAssociationReferenceRefSetMemberReleaseRevision(java.lang.String,
+   * java.lang.String, java.lang.String)
    */
   @Override
   public AssociationReferenceRefSetMember<?> findAssociationReferenceRefSetMemberReleaseRevision(
@@ -720,7 +723,8 @@ public class HistoryClientRest implements HistoryServiceRest {
     Client client = Client.create();
     WebResource resource =
         client.resource(config.getProperty("base.url")
-            + "/history/associationReference/revisions/" + id + "/" + release + "/release");
+            + "/history/associationReference/revisions/" + id + "/" + release
+            + "/release");
 
     ClientResponse response =
         resource.accept(MediaType.APPLICATION_XML)
@@ -738,12 +742,11 @@ public class HistoryClientRest implements HistoryServiceRest {
 
     // converting to object
     AssociationReferenceRefSetMember<?> member =
-        (AssociationReferenceRefSetMember<?>) ConfigUtility.getGraphForString(resultString,
-            AbstractAssociationReferenceRefSetMemberJpa.class);
+        (AssociationReferenceRefSetMember<?>) ConfigUtility.getGraphForString(
+            resultString, AbstractAssociationReferenceRefSetMemberJpa.class);
 
     return member;
   }
-  
 
   /*
    * (non-Javadoc)
@@ -759,57 +762,11 @@ public class HistoryClientRest implements HistoryServiceRest {
     throws Exception {
     Client client = Client.create();
     WebResource resource =
-        client.resource(config.getProperty("base.url") + "/history/attributeValue/"
-            + terminology + "/" + date);
-    String pfsString =
-        ConfigUtility.getStringForGraph(pfs == null
-        ? new PfsParameterJpa() : pfs);
-    Logger.getLogger(this.getClass()).debug(pfsString);
-    ClientResponse response =
-        resource.accept(MediaType.APPLICATION_XML)
-            .header("Authorization", authToken)
-            .header("Content-type", MediaType.APPLICATION_XML)
-            .post(ClientResponse.class, pfsString);
-    if (response.getStatus() == 204) {
-      return null;
-    }
-    String resultString = response.getEntity(String.class);
-    if (response.getStatusInfo().getFamily() == Family.SUCCESSFUL) {
-      Logger.getLogger(this.getClass()).debug(
-          resultString.substring(0, Math.min(resultString.length(), 3999)));
-    } else {
-      throw new Exception(response.toString());
-    }
-
-    // converting to object
-    AttributeValueRefSetMemberListJpa list =
-        (AttributeValueRefSetMemberListJpa) ConfigUtility.getGraphForString(
-            resultString, AttributeValueRefSetMemberListJpa.class);
-
-    return list;
-  }
-
-  /*
-   * (non-Javadoc)
-   * 
-   * @see
-   * org.ihtsdo.otf.ts.rest.HistoryServiceRest#findAttributeValueRefSetMemberRevisions
-   * (java.lang.String, java.lang.String, java.lang.String,
-   * org.ihtsdo.otf.ts.helpers.PfsParameterJpa, java.lang.String)
-   */
-  @Override
-  public AttributeValueRefSetMemberList findAttributeValueRefSetMemberRevisions(String id,
-    String startDate, String endDate, PfsParameterJpa pfs, String authToken)
-    throws Exception {
-    Client client = Client.create();
-    WebResource resource =
         client.resource(config.getProperty("base.url")
-            + "/history/attributeValue/revisions/" + id + "/" + startDate + "/"
-            + endDate + "/all");
-
+            + "/history/attributeValue/" + terminology + "/" + date);
     String pfsString =
-        ConfigUtility.getStringForGraph(pfs == null
-        ? new PfsParameterJpa() : pfs);
+        ConfigUtility.getStringForGraph(pfs == null ? new PfsParameterJpa()
+            : pfs);
     Logger.getLogger(this.getClass()).debug(pfsString);
     ClientResponse response =
         resource.accept(MediaType.APPLICATION_XML)
@@ -839,8 +796,54 @@ public class HistoryClientRest implements HistoryServiceRest {
    * (non-Javadoc)
    * 
    * @see org.ihtsdo.otf.ts.rest.HistoryServiceRest#
-   * findAttributeValueRefSetMemberReleaseRevision(java.lang.String, java.lang.String,
-   * java.lang.String)
+   * findAttributeValueRefSetMemberRevisions (java.lang.String,
+   * java.lang.String, java.lang.String,
+   * org.ihtsdo.otf.ts.helpers.PfsParameterJpa, java.lang.String)
+   */
+  @Override
+  public AttributeValueRefSetMemberList findAttributeValueRefSetMemberRevisions(
+    String id, String startDate, String endDate, PfsParameterJpa pfs,
+    String authToken) throws Exception {
+    Client client = Client.create();
+    WebResource resource =
+        client.resource(config.getProperty("base.url")
+            + "/history/attributeValue/revisions/" + id + "/" + startDate + "/"
+            + endDate + "/all");
+
+    String pfsString =
+        ConfigUtility.getStringForGraph(pfs == null ? new PfsParameterJpa()
+            : pfs);
+    Logger.getLogger(this.getClass()).debug(pfsString);
+    ClientResponse response =
+        resource.accept(MediaType.APPLICATION_XML)
+            .header("Authorization", authToken)
+            .header("Content-type", MediaType.APPLICATION_XML)
+            .post(ClientResponse.class, pfsString);
+    if (response.getStatus() == 204) {
+      return null;
+    }
+    String resultString = response.getEntity(String.class);
+    if (response.getStatusInfo().getFamily() == Family.SUCCESSFUL) {
+      Logger.getLogger(this.getClass()).debug(
+          resultString.substring(0, Math.min(resultString.length(), 3999)));
+    } else {
+      throw new Exception(response.toString());
+    }
+
+    // converting to object
+    AttributeValueRefSetMemberListJpa list =
+        (AttributeValueRefSetMemberListJpa) ConfigUtility.getGraphForString(
+            resultString, AttributeValueRefSetMemberListJpa.class);
+
+    return list;
+  }
+
+  /*
+   * (non-Javadoc)
+   * 
+   * @see org.ihtsdo.otf.ts.rest.HistoryServiceRest#
+   * findAttributeValueRefSetMemberReleaseRevision(java.lang.String,
+   * java.lang.String, java.lang.String)
    */
   @Override
   public AttributeValueRefSetMember<?> findAttributeValueRefSetMemberReleaseRevision(
@@ -848,7 +851,8 @@ public class HistoryClientRest implements HistoryServiceRest {
     Client client = Client.create();
     WebResource resource =
         client.resource(config.getProperty("base.url")
-            + "/history/attributeValue/revisions/" + id + "/" + release + "/release");
+            + "/history/attributeValue/revisions/" + id + "/" + release
+            + "/release");
 
     ClientResponse response =
         resource.accept(MediaType.APPLICATION_XML)
@@ -866,12 +870,11 @@ public class HistoryClientRest implements HistoryServiceRest {
 
     // converting to object
     AttributeValueRefSetMember<?> member =
-        (AttributeValueRefSetMember<?>) ConfigUtility.getGraphForString(resultString,
-            AbstractAttributeValueRefSetMemberJpa.class);
+        (AttributeValueRefSetMember<?>) ConfigUtility.getGraphForString(
+            resultString, AbstractAttributeValueRefSetMemberJpa.class);
 
     return member;
   }
-  
 
   /*
    * (non-Javadoc)
@@ -890,8 +893,8 @@ public class HistoryClientRest implements HistoryServiceRest {
         client.resource(config.getProperty("base.url") + "/history/complexMap/"
             + terminology + "/" + date);
     String pfsString =
-        ConfigUtility.getStringForGraph(pfs == null
-        ? new PfsParameterJpa() : pfs);
+        ConfigUtility.getStringForGraph(pfs == null ? new PfsParameterJpa()
+            : pfs);
     Logger.getLogger(this.getClass()).debug(pfsString);
     ClientResponse response =
         resource.accept(MediaType.APPLICATION_XML)
@@ -926,9 +929,9 @@ public class HistoryClientRest implements HistoryServiceRest {
    * org.ihtsdo.otf.ts.helpers.PfsParameterJpa, java.lang.String)
    */
   @Override
-  public ComplexMapRefSetMemberList findComplexMapRefSetMemberRevisions(String id,
-    String startDate, String endDate, PfsParameterJpa pfs, String authToken)
-    throws Exception {
+  public ComplexMapRefSetMemberList findComplexMapRefSetMemberRevisions(
+    String id, String startDate, String endDate, PfsParameterJpa pfs,
+    String authToken) throws Exception {
     Client client = Client.create();
     WebResource resource =
         client.resource(config.getProperty("base.url")
@@ -936,8 +939,8 @@ public class HistoryClientRest implements HistoryServiceRest {
             + endDate + "/all");
 
     String pfsString =
-        ConfigUtility.getStringForGraph(pfs == null
-        ? new PfsParameterJpa() : pfs);
+        ConfigUtility.getStringForGraph(pfs == null ? new PfsParameterJpa()
+            : pfs);
     Logger.getLogger(this.getClass()).debug(pfsString);
     ClientResponse response =
         resource.accept(MediaType.APPLICATION_XML)
@@ -967,8 +970,8 @@ public class HistoryClientRest implements HistoryServiceRest {
    * (non-Javadoc)
    * 
    * @see org.ihtsdo.otf.ts.rest.HistoryServiceRest#
-   * findComplexMapRefSetMemberReleaseRevision(java.lang.String, java.lang.String,
-   * java.lang.String)
+   * findComplexMapRefSetMemberReleaseRevision(java.lang.String,
+   * java.lang.String, java.lang.String)
    */
   @Override
   public ComplexMapRefSetMember findComplexMapRefSetMemberReleaseRevision(
@@ -976,7 +979,8 @@ public class HistoryClientRest implements HistoryServiceRest {
     Client client = Client.create();
     WebResource resource =
         client.resource(config.getProperty("base.url")
-            + "/history/complexMap/revisions/" + id + "/" + release + "/release");
+            + "/history/complexMap/revisions/" + id + "/" + release
+            + "/release");
 
     ClientResponse response =
         resource.accept(MediaType.APPLICATION_XML)
@@ -994,12 +998,11 @@ public class HistoryClientRest implements HistoryServiceRest {
 
     // converting to object
     ComplexMapRefSetMemberJpa member =
-        (ComplexMapRefSetMemberJpa) ConfigUtility.getGraphForString(resultString,
-            ComplexMapRefSetMemberJpa.class);
+        (ComplexMapRefSetMemberJpa) ConfigUtility.getGraphForString(
+            resultString, ComplexMapRefSetMemberJpa.class);
 
     return member;
   }
-  
 
   /*
    * (non-Javadoc)
@@ -1015,57 +1018,11 @@ public class HistoryClientRest implements HistoryServiceRest {
     throws Exception {
     Client client = Client.create();
     WebResource resource =
-        client.resource(config.getProperty("base.url") + "/history/descriptionType/"
-            + terminology + "/" + date);
-    String pfsString =
-        ConfigUtility.getStringForGraph(pfs == null
-        ? new PfsParameterJpa() : pfs);
-    Logger.getLogger(this.getClass()).debug(pfsString);
-    ClientResponse response =
-        resource.accept(MediaType.APPLICATION_XML)
-            .header("Authorization", authToken)
-            .header("Content-type", MediaType.APPLICATION_XML)
-            .post(ClientResponse.class, pfsString);
-    if (response.getStatus() == 204) {
-      return null;
-    }
-    String resultString = response.getEntity(String.class);
-    if (response.getStatusInfo().getFamily() == Family.SUCCESSFUL) {
-      Logger.getLogger(this.getClass()).debug(
-          resultString.substring(0, Math.min(resultString.length(), 3999)));
-    } else {
-      throw new Exception(response.toString());
-    }
-
-    // converting to object
-    DescriptionTypeRefSetMemberListJpa list =
-        (DescriptionTypeRefSetMemberListJpa) ConfigUtility.getGraphForString(
-            resultString, DescriptionTypeRefSetMemberListJpa.class);
-
-    return list;
-  }
-
-  /*
-   * (non-Javadoc)
-   * 
-   * @see
-   * org.ihtsdo.otf.ts.rest.HistoryServiceRest#findDescriptionTypeRefSetMemberRevisions
-   * (java.lang.String, java.lang.String, java.lang.String,
-   * org.ihtsdo.otf.ts.helpers.PfsParameterJpa, java.lang.String)
-   */
-  @Override
-  public DescriptionTypeRefSetMemberList findDescriptionTypeRefSetMemberRevisions(String id,
-    String startDate, String endDate, PfsParameterJpa pfs, String authToken)
-    throws Exception {
-    Client client = Client.create();
-    WebResource resource =
         client.resource(config.getProperty("base.url")
-            + "/history/descriptionType/revisions/" + id + "/" + startDate + "/"
-            + endDate + "/all");
-
+            + "/history/descriptionType/" + terminology + "/" + date);
     String pfsString =
-        ConfigUtility.getStringForGraph(pfs == null
-        ? new PfsParameterJpa() : pfs);
+        ConfigUtility.getStringForGraph(pfs == null ? new PfsParameterJpa()
+            : pfs);
     Logger.getLogger(this.getClass()).debug(pfsString);
     ClientResponse response =
         resource.accept(MediaType.APPLICATION_XML)
@@ -1095,8 +1052,54 @@ public class HistoryClientRest implements HistoryServiceRest {
    * (non-Javadoc)
    * 
    * @see org.ihtsdo.otf.ts.rest.HistoryServiceRest#
-   * findDescriptionTypeRefSetMemberReleaseRevision(java.lang.String, java.lang.String,
-   * java.lang.String)
+   * findDescriptionTypeRefSetMemberRevisions (java.lang.String,
+   * java.lang.String, java.lang.String,
+   * org.ihtsdo.otf.ts.helpers.PfsParameterJpa, java.lang.String)
+   */
+  @Override
+  public DescriptionTypeRefSetMemberList findDescriptionTypeRefSetMemberRevisions(
+    String id, String startDate, String endDate, PfsParameterJpa pfs,
+    String authToken) throws Exception {
+    Client client = Client.create();
+    WebResource resource =
+        client.resource(config.getProperty("base.url")
+            + "/history/descriptionType/revisions/" + id + "/" + startDate
+            + "/" + endDate + "/all");
+
+    String pfsString =
+        ConfigUtility.getStringForGraph(pfs == null ? new PfsParameterJpa()
+            : pfs);
+    Logger.getLogger(this.getClass()).debug(pfsString);
+    ClientResponse response =
+        resource.accept(MediaType.APPLICATION_XML)
+            .header("Authorization", authToken)
+            .header("Content-type", MediaType.APPLICATION_XML)
+            .post(ClientResponse.class, pfsString);
+    if (response.getStatus() == 204) {
+      return null;
+    }
+    String resultString = response.getEntity(String.class);
+    if (response.getStatusInfo().getFamily() == Family.SUCCESSFUL) {
+      Logger.getLogger(this.getClass()).debug(
+          resultString.substring(0, Math.min(resultString.length(), 3999)));
+    } else {
+      throw new Exception(response.toString());
+    }
+
+    // converting to object
+    DescriptionTypeRefSetMemberListJpa list =
+        (DescriptionTypeRefSetMemberListJpa) ConfigUtility.getGraphForString(
+            resultString, DescriptionTypeRefSetMemberListJpa.class);
+
+    return list;
+  }
+
+  /*
+   * (non-Javadoc)
+   * 
+   * @see org.ihtsdo.otf.ts.rest.HistoryServiceRest#
+   * findDescriptionTypeRefSetMemberReleaseRevision(java.lang.String,
+   * java.lang.String, java.lang.String)
    */
   @Override
   public DescriptionTypeRefSetMember findDescriptionTypeRefSetMemberReleaseRevision(
@@ -1104,7 +1107,8 @@ public class HistoryClientRest implements HistoryServiceRest {
     Client client = Client.create();
     WebResource resource =
         client.resource(config.getProperty("base.url")
-            + "/history/descriptionType/revisions/" + id + "/" + release + "/release");
+            + "/history/descriptionType/revisions/" + id + "/" + release
+            + "/release");
 
     ClientResponse response =
         resource.accept(MediaType.APPLICATION_XML)
@@ -1122,12 +1126,11 @@ public class HistoryClientRest implements HistoryServiceRest {
 
     // converting to object
     DescriptionTypeRefSetMemberJpa member =
-        (DescriptionTypeRefSetMemberJpa) ConfigUtility.getGraphForString(resultString,
-            DescriptionTypeRefSetMemberJpa.class);
+        (DescriptionTypeRefSetMemberJpa) ConfigUtility.getGraphForString(
+            resultString, DescriptionTypeRefSetMemberJpa.class);
 
     return member;
   }
-  
 
   /*
    * (non-Javadoc)
@@ -1143,57 +1146,11 @@ public class HistoryClientRest implements HistoryServiceRest {
     throws Exception {
     Client client = Client.create();
     WebResource resource =
-        client.resource(config.getProperty("base.url") + "/history/moduleDependency/"
-            + terminology + "/" + date);
-    String pfsString =
-        ConfigUtility.getStringForGraph(pfs == null
-        ? new PfsParameterJpa() : pfs);
-    Logger.getLogger(this.getClass()).debug(pfsString);
-    ClientResponse response =
-        resource.accept(MediaType.APPLICATION_XML)
-            .header("Authorization", authToken)
-            .header("Content-type", MediaType.APPLICATION_XML)
-            .post(ClientResponse.class, pfsString);
-    if (response.getStatus() == 204) {
-      return null;
-    }
-    String resultString = response.getEntity(String.class);
-    if (response.getStatusInfo().getFamily() == Family.SUCCESSFUL) {
-      Logger.getLogger(this.getClass()).debug(
-          resultString.substring(0, Math.min(resultString.length(), 3999)));
-    } else {
-      throw new Exception(response.toString());
-    }
-
-    // converting to object
-    ModuleDependencyRefSetMemberListJpa list =
-        (ModuleDependencyRefSetMemberListJpa) ConfigUtility.getGraphForString(
-            resultString, ModuleDependencyRefSetMemberListJpa.class);
-
-    return list;
-  }
-
-  /*
-   * (non-Javadoc)
-   * 
-   * @see
-   * org.ihtsdo.otf.ts.rest.HistoryServiceRest#findModuleDependencyRefSetMemberRevisions
-   * (java.lang.String, java.lang.String, java.lang.String,
-   * org.ihtsdo.otf.ts.helpers.PfsParameterJpa, java.lang.String)
-   */
-  @Override
-  public ModuleDependencyRefSetMemberList findModuleDependencyRefSetMemberRevisions(String id,
-    String startDate, String endDate, PfsParameterJpa pfs, String authToken)
-    throws Exception {
-    Client client = Client.create();
-    WebResource resource =
         client.resource(config.getProperty("base.url")
-            + "/history/moduleDependency/revisions/" + id + "/" + startDate + "/"
-            + endDate + "/all");
-
+            + "/history/moduleDependency/" + terminology + "/" + date);
     String pfsString =
-        ConfigUtility.getStringForGraph(pfs == null
-        ? new PfsParameterJpa() : pfs);
+        ConfigUtility.getStringForGraph(pfs == null ? new PfsParameterJpa()
+            : pfs);
     Logger.getLogger(this.getClass()).debug(pfsString);
     ClientResponse response =
         resource.accept(MediaType.APPLICATION_XML)
@@ -1223,8 +1180,54 @@ public class HistoryClientRest implements HistoryServiceRest {
    * (non-Javadoc)
    * 
    * @see org.ihtsdo.otf.ts.rest.HistoryServiceRest#
-   * findModuleDependencyRefSetMemberReleaseRevision(java.lang.String, java.lang.String,
-   * java.lang.String)
+   * findModuleDependencyRefSetMemberRevisions (java.lang.String,
+   * java.lang.String, java.lang.String,
+   * org.ihtsdo.otf.ts.helpers.PfsParameterJpa, java.lang.String)
+   */
+  @Override
+  public ModuleDependencyRefSetMemberList findModuleDependencyRefSetMemberRevisions(
+    String id, String startDate, String endDate, PfsParameterJpa pfs,
+    String authToken) throws Exception {
+    Client client = Client.create();
+    WebResource resource =
+        client.resource(config.getProperty("base.url")
+            + "/history/moduleDependency/revisions/" + id + "/" + startDate
+            + "/" + endDate + "/all");
+
+    String pfsString =
+        ConfigUtility.getStringForGraph(pfs == null ? new PfsParameterJpa()
+            : pfs);
+    Logger.getLogger(this.getClass()).debug(pfsString);
+    ClientResponse response =
+        resource.accept(MediaType.APPLICATION_XML)
+            .header("Authorization", authToken)
+            .header("Content-type", MediaType.APPLICATION_XML)
+            .post(ClientResponse.class, pfsString);
+    if (response.getStatus() == 204) {
+      return null;
+    }
+    String resultString = response.getEntity(String.class);
+    if (response.getStatusInfo().getFamily() == Family.SUCCESSFUL) {
+      Logger.getLogger(this.getClass()).debug(
+          resultString.substring(0, Math.min(resultString.length(), 3999)));
+    } else {
+      throw new Exception(response.toString());
+    }
+
+    // converting to object
+    ModuleDependencyRefSetMemberListJpa list =
+        (ModuleDependencyRefSetMemberListJpa) ConfigUtility.getGraphForString(
+            resultString, ModuleDependencyRefSetMemberListJpa.class);
+
+    return list;
+  }
+
+  /*
+   * (non-Javadoc)
+   * 
+   * @see org.ihtsdo.otf.ts.rest.HistoryServiceRest#
+   * findModuleDependencyRefSetMemberReleaseRevision(java.lang.String,
+   * java.lang.String, java.lang.String)
    */
   @Override
   public ModuleDependencyRefSetMember findModuleDependencyRefSetMemberReleaseRevision(
@@ -1232,7 +1235,8 @@ public class HistoryClientRest implements HistoryServiceRest {
     Client client = Client.create();
     WebResource resource =
         client.resource(config.getProperty("base.url")
-            + "/history/moduleDependency/revisions/" + id + "/" + release + "/release");
+            + "/history/moduleDependency/revisions/" + id + "/" + release
+            + "/release");
 
     ClientResponse response =
         resource.accept(MediaType.APPLICATION_XML)
@@ -1250,12 +1254,11 @@ public class HistoryClientRest implements HistoryServiceRest {
 
     // converting to object
     ModuleDependencyRefSetMemberJpa member =
-        (ModuleDependencyRefSetMemberJpa) ConfigUtility.getGraphForString(resultString,
-            ModuleDependencyRefSetMemberJpa.class);
+        (ModuleDependencyRefSetMemberJpa) ConfigUtility.getGraphForString(
+            resultString, ModuleDependencyRefSetMemberJpa.class);
 
     return member;
   }
-  
 
   /*
    * (non-Javadoc)
@@ -1271,57 +1274,11 @@ public class HistoryClientRest implements HistoryServiceRest {
     throws Exception {
     Client client = Client.create();
     WebResource resource =
-        client.resource(config.getProperty("base.url") + "/history/refsetDescriptor/"
-            + terminology + "/" + date);
-    String pfsString =
-        ConfigUtility.getStringForGraph(pfs == null
-        ? new PfsParameterJpa() : pfs);
-    Logger.getLogger(this.getClass()).debug(pfsString);
-    ClientResponse response =
-        resource.accept(MediaType.APPLICATION_XML)
-            .header("Authorization", authToken)
-            .header("Content-type", MediaType.APPLICATION_XML)
-            .post(ClientResponse.class, pfsString);
-    if (response.getStatus() == 204) {
-      return null;
-    }
-    String resultString = response.getEntity(String.class);
-    if (response.getStatusInfo().getFamily() == Family.SUCCESSFUL) {
-      Logger.getLogger(this.getClass()).debug(
-          resultString.substring(0, Math.min(resultString.length(), 3999)));
-    } else {
-      throw new Exception(response.toString());
-    }
-
-    // converting to object
-    RefsetDescriptorRefSetMemberListJpa list =
-        (RefsetDescriptorRefSetMemberListJpa) ConfigUtility.getGraphForString(
-            resultString, RefsetDescriptorRefSetMemberListJpa.class);
-
-    return list;
-  }
-
-  /*
-   * (non-Javadoc)
-   * 
-   * @see
-   * org.ihtsdo.otf.ts.rest.HistoryServiceRest#findRefsetDescriptorRefSetMemberRevisions
-   * (java.lang.String, java.lang.String, java.lang.String,
-   * org.ihtsdo.otf.ts.helpers.PfsParameterJpa, java.lang.String)
-   */
-  @Override
-  public RefsetDescriptorRefSetMemberList findRefsetDescriptorRefSetMemberRevisions(String id,
-    String startDate, String endDate, PfsParameterJpa pfs, String authToken)
-    throws Exception {
-    Client client = Client.create();
-    WebResource resource =
         client.resource(config.getProperty("base.url")
-            + "/history/refsetDescriptor/revisions/" + id + "/" + startDate + "/"
-            + endDate + "/all");
-
+            + "/history/refsetDescriptor/" + terminology + "/" + date);
     String pfsString =
-        ConfigUtility.getStringForGraph(pfs == null
-        ? new PfsParameterJpa() : pfs);
+        ConfigUtility.getStringForGraph(pfs == null ? new PfsParameterJpa()
+            : pfs);
     Logger.getLogger(this.getClass()).debug(pfsString);
     ClientResponse response =
         resource.accept(MediaType.APPLICATION_XML)
@@ -1351,8 +1308,54 @@ public class HistoryClientRest implements HistoryServiceRest {
    * (non-Javadoc)
    * 
    * @see org.ihtsdo.otf.ts.rest.HistoryServiceRest#
-   * findRefsetDescriptorRefSetMemberReleaseRevision(java.lang.String, java.lang.String,
-   * java.lang.String)
+   * findRefsetDescriptorRefSetMemberRevisions (java.lang.String,
+   * java.lang.String, java.lang.String,
+   * org.ihtsdo.otf.ts.helpers.PfsParameterJpa, java.lang.String)
+   */
+  @Override
+  public RefsetDescriptorRefSetMemberList findRefsetDescriptorRefSetMemberRevisions(
+    String id, String startDate, String endDate, PfsParameterJpa pfs,
+    String authToken) throws Exception {
+    Client client = Client.create();
+    WebResource resource =
+        client.resource(config.getProperty("base.url")
+            + "/history/refsetDescriptor/revisions/" + id + "/" + startDate
+            + "/" + endDate + "/all");
+
+    String pfsString =
+        ConfigUtility.getStringForGraph(pfs == null ? new PfsParameterJpa()
+            : pfs);
+    Logger.getLogger(this.getClass()).debug(pfsString);
+    ClientResponse response =
+        resource.accept(MediaType.APPLICATION_XML)
+            .header("Authorization", authToken)
+            .header("Content-type", MediaType.APPLICATION_XML)
+            .post(ClientResponse.class, pfsString);
+    if (response.getStatus() == 204) {
+      return null;
+    }
+    String resultString = response.getEntity(String.class);
+    if (response.getStatusInfo().getFamily() == Family.SUCCESSFUL) {
+      Logger.getLogger(this.getClass()).debug(
+          resultString.substring(0, Math.min(resultString.length(), 3999)));
+    } else {
+      throw new Exception(response.toString());
+    }
+
+    // converting to object
+    RefsetDescriptorRefSetMemberListJpa list =
+        (RefsetDescriptorRefSetMemberListJpa) ConfigUtility.getGraphForString(
+            resultString, RefsetDescriptorRefSetMemberListJpa.class);
+
+    return list;
+  }
+
+  /*
+   * (non-Javadoc)
+   * 
+   * @see org.ihtsdo.otf.ts.rest.HistoryServiceRest#
+   * findRefsetDescriptorRefSetMemberReleaseRevision(java.lang.String,
+   * java.lang.String, java.lang.String)
    */
   @Override
   public RefsetDescriptorRefSetMember findRefsetDescriptorRefSetMemberReleaseRevision(
@@ -1360,7 +1363,8 @@ public class HistoryClientRest implements HistoryServiceRest {
     Client client = Client.create();
     WebResource resource =
         client.resource(config.getProperty("base.url")
-            + "/history/refsetDescriptor/revisions/" + id + "/" + release + "/release");
+            + "/history/refsetDescriptor/revisions/" + id + "/" + release
+            + "/release");
 
     ClientResponse response =
         resource.accept(MediaType.APPLICATION_XML)
@@ -1378,13 +1382,11 @@ public class HistoryClientRest implements HistoryServiceRest {
 
     // converting to object
     RefsetDescriptorRefSetMemberJpa member =
-        (RefsetDescriptorRefSetMemberJpa) ConfigUtility.getGraphForString(resultString,
-            RefsetDescriptorRefSetMemberJpa.class);
+        (RefsetDescriptorRefSetMemberJpa) ConfigUtility.getGraphForString(
+            resultString, RefsetDescriptorRefSetMemberJpa.class);
 
     return member;
   }
-  
-  
 
   /*
    * (non-Javadoc)
@@ -1403,8 +1405,8 @@ public class HistoryClientRest implements HistoryServiceRest {
         client.resource(config.getProperty("base.url") + "/history/simpleMap/"
             + terminology + "/" + date);
     String pfsString =
-        ConfigUtility.getStringForGraph(pfs == null
-        ? new PfsParameterJpa() : pfs);
+        ConfigUtility.getStringForGraph(pfs == null ? new PfsParameterJpa()
+            : pfs);
     Logger.getLogger(this.getClass()).debug(pfsString);
     ClientResponse response =
         resource.accept(MediaType.APPLICATION_XML)
@@ -1439,9 +1441,9 @@ public class HistoryClientRest implements HistoryServiceRest {
    * org.ihtsdo.otf.ts.helpers.PfsParameterJpa, java.lang.String)
    */
   @Override
-  public SimpleMapRefSetMemberList findSimpleMapRefSetMemberRevisions(String id,
-    String startDate, String endDate, PfsParameterJpa pfs, String authToken)
-    throws Exception {
+  public SimpleMapRefSetMemberList findSimpleMapRefSetMemberRevisions(
+    String id, String startDate, String endDate, PfsParameterJpa pfs,
+    String authToken) throws Exception {
     Client client = Client.create();
     WebResource resource =
         client.resource(config.getProperty("base.url")
@@ -1449,8 +1451,8 @@ public class HistoryClientRest implements HistoryServiceRest {
             + endDate + "/all");
 
     String pfsString =
-        ConfigUtility.getStringForGraph(pfs == null
-        ? new PfsParameterJpa() : pfs);
+        ConfigUtility.getStringForGraph(pfs == null ? new PfsParameterJpa()
+            : pfs);
     Logger.getLogger(this.getClass()).debug(pfsString);
     ClientResponse response =
         resource.accept(MediaType.APPLICATION_XML)
@@ -1480,16 +1482,18 @@ public class HistoryClientRest implements HistoryServiceRest {
    * (non-Javadoc)
    * 
    * @see org.ihtsdo.otf.ts.rest.HistoryServiceRest#
-   * findSimpleMapRefSetMemberReleaseRevision(java.lang.String, java.lang.String,
-   * java.lang.String)
+   * findSimpleMapRefSetMemberReleaseRevision(java.lang.String,
+   * java.lang.String, java.lang.String)
    */
   @Override
   public SimpleMapRefSetMember findSimpleMapRefSetMemberReleaseRevision(
     String id, String release, String authToken) throws Exception {
     Client client = Client.create();
     WebResource resource =
-        client.resource(config.getProperty("base.url")
-            + "/history/simpleMap/revisions/" + id + "/" + release + "/release");
+        client
+            .resource(config.getProperty("base.url")
+                + "/history/simpleMap/revisions/" + id + "/" + release
+                + "/release");
 
     ClientResponse response =
         resource.accept(MediaType.APPLICATION_XML)
@@ -1507,13 +1511,11 @@ public class HistoryClientRest implements HistoryServiceRest {
 
     // converting to object
     SimpleMapRefSetMemberJpa member =
-        (SimpleMapRefSetMemberJpa) ConfigUtility.getGraphForString(resultString,
-            SimpleMapRefSetMemberJpa.class);
+        (SimpleMapRefSetMemberJpa) ConfigUtility.getGraphForString(
+            resultString, SimpleMapRefSetMemberJpa.class);
 
     return member;
   }
-  
-  
 
   /*
    * (non-Javadoc)
@@ -1532,8 +1534,8 @@ public class HistoryClientRest implements HistoryServiceRest {
         client.resource(config.getProperty("base.url") + "/history/simple/"
             + terminology + "/" + date);
     String pfsString =
-        ConfigUtility.getStringForGraph(pfs == null
-        ? new PfsParameterJpa() : pfs);
+        ConfigUtility.getStringForGraph(pfs == null ? new PfsParameterJpa()
+            : pfs);
     Logger.getLogger(this.getClass()).debug(pfsString);
     ClientResponse response =
         resource.accept(MediaType.APPLICATION_XML)
@@ -1578,8 +1580,8 @@ public class HistoryClientRest implements HistoryServiceRest {
             + endDate + "/all");
 
     String pfsString =
-        ConfigUtility.getStringForGraph(pfs == null
-        ? new PfsParameterJpa() : pfs);
+        ConfigUtility.getStringForGraph(pfs == null ? new PfsParameterJpa()
+            : pfs);
     Logger.getLogger(this.getClass()).debug(pfsString);
     ClientResponse response =
         resource.accept(MediaType.APPLICATION_XML)
@@ -1613,8 +1615,8 @@ public class HistoryClientRest implements HistoryServiceRest {
    * java.lang.String)
    */
   @Override
-  public SimpleRefSetMember findSimpleRefSetMemberReleaseRevision(
-    String id, String release, String authToken) throws Exception {
+  public SimpleRefSetMember findSimpleRefSetMemberReleaseRevision(String id,
+    String release, String authToken) throws Exception {
     Client client = Client.create();
     WebResource resource =
         client.resource(config.getProperty("base.url")
@@ -1641,10 +1643,7 @@ public class HistoryClientRest implements HistoryServiceRest {
 
     return member;
   }
-  
-  
-  
-  
+
   /*
    * (non-Javadoc)
    * 
@@ -1954,7 +1953,7 @@ public class HistoryClientRest implements HistoryServiceRest {
             + "/history/release/update");
     String riString =
         ConfigUtility.getStringForGraph(releaseInfo == null
-        ? new ReleaseInfoJpa() : releaseInfo);
+            ? new ReleaseInfoJpa() : releaseInfo);
     Logger.getLogger(this.getClass()).debug(riString);
     ClientResponse response =
         resource.accept(MediaType.APPLICATION_XML)
@@ -2034,7 +2033,7 @@ public class HistoryClientRest implements HistoryServiceRest {
     Logger.getLogger(getClass()).debug(
         "History Client - begin rf2 release " + releaseVersion + ", "
             + terminology);
-   }
+  }
 
   @Override
   public void processRf2Release(String releaseVersion, String terminology,

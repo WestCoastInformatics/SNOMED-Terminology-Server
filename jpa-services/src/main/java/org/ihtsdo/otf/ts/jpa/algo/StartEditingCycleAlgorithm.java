@@ -41,10 +41,9 @@ public class StartEditingCycleAlgorithm extends ContentServiceJpa implements
 
   /** The request cancel flag. */
   boolean requestCancel = false;
-  
-  /**  The user. */
-  private String user;
 
+  /** The user. */
+  private String user;
 
   /**
    * Instantiates an empty {@link StartEditingCycleAlgorithm}.
@@ -72,7 +71,6 @@ public class StartEditingCycleAlgorithm extends ContentServiceJpa implements
     // do nothing
 
   }
-  
 
   /**
    * Returns the user.
@@ -107,7 +105,9 @@ public class StartEditingCycleAlgorithm extends ContentServiceJpa implements
     HistoryService service = new HistoryServiceJpa();
     ReleaseInfo info = service.getReleaseInfo(terminology, releaseVersion);
     if (info != null) {
-      throw new Exception("Cannot start an editing cycle for an existing release: " + releaseVersion);
+      throw new Exception(
+          "Cannot start an editing cycle for an existing release: "
+              + releaseVersion);
     }
 
     Logger.getLogger(getClass()).info("  Create release info");

@@ -22,5 +22,5 @@ public interface AssociationReferenceRefSetMember<T extends Component> extends
    * @param targetComponentId the target component id
    */
   public void setTargetComponentId(String targetComponentId);
-  
+
 }

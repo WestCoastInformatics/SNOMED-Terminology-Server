@@ -40,13 +40,15 @@ public class NullableFieldTester extends ProxyTester {
     Set<String> notNullFields = getNotNullFields(clazz);
     for (String field : includes) {
       if (!notNullFields.contains(field)) {
-        Logger.getLogger(getClass()).info("  " + field + " is not defined as nullable");
+        Logger.getLogger(getClass()).info(
+            "  " + field + " is not defined as nullable");
         return false;
       }
     }
     for (String field : notNullFields) {
       if (!includes.contains(field)) {
-        Logger.getLogger(getClass()).info("  " + field + " should be in the include list as nullable");
+        Logger.getLogger(getClass()).info(
+            "  " + field + " should be in the include list as nullable");
         return false;
       }
     }

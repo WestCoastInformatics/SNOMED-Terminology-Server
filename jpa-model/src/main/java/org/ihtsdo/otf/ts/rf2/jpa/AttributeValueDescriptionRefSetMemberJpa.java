@@ -180,8 +180,8 @@ public class AttributeValueDescriptionRefSetMemberJpa extends
     result =
         prime
             * result
-            + ((description == null || description.getTerminologyId() == null) ? 0 : description.getTerminologyId()
-                .hashCode());
+            + ((description == null || description.getTerminologyId() == null)
+                ? 0 : description.getTerminologyId().hashCode());
     return result;
   }
 

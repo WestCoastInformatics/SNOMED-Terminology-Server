@@ -266,10 +266,11 @@ public class ModelUnit007Test {
     tester.include("terminologyVersion");
     tester.include("labelSort");
     tester.include("defaultPreferredNameSort");
-    
+
     assertTrue(tester.testNotAnalyzedIndexedFields());
 
   }
+
   /**
    * Teardown.
    */

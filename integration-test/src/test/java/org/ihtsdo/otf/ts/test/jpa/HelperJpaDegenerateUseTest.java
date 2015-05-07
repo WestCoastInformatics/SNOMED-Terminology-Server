@@ -224,7 +224,8 @@ public class HelperJpaDegenerateUseTest {
 
     try {
       // nonexistent file
-      FileSorter.checkSortedFile(new File("abc"), String.CASE_INSENSITIVE_ORDER);
+      FileSorter
+          .checkSortedFile(new File("abc"), String.CASE_INSENSITIVE_ORDER);
       Assert.fail("Expected exception did not occur");
     } catch (Exception e) {
       // n/a
@@ -232,19 +233,20 @@ public class HelperJpaDegenerateUseTest {
 
     try {
       // null comparator
-      FileSorter.checkSortedFile(new File("../config/dev-windows/src/main/resources/config.properties"), null);
+      FileSorter.checkSortedFile(new File(
+          "../config/dev-windows/src/main/resources/config.properties"), null);
       Assert.fail("Expected exception did not occur");
     } catch (Exception e) {
       // n/a
     }
-    
+
     try {
       // null file
       FileSorter.deleteSortedFiles(null);
       Assert.fail("Expected exception did not occur");
     } catch (Exception e) {
       // n/a
-    }    
+    }
 
     try {
       // nonexistent file
@@ -252,9 +254,8 @@ public class HelperJpaDegenerateUseTest {
       Assert.fail("Expected exception did not occur");
     } catch (Exception e) {
       // n/a
-    }    
+    }
 
-    
   }
 
   /**

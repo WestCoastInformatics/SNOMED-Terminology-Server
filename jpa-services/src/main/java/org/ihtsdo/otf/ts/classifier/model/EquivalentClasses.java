@@ -28,27 +28,27 @@ import java.util.ArrayList;
  */
 public class EquivalentClasses extends ArrayList<ConceptGroup> {
 
-	/** The Constant serialVersionUID. */
-	private static final long serialVersionUID = 1L;
+  /** The Constant serialVersionUID. */
+  private static final long serialVersionUID = 1L;
 
-	/**
-	 * Instantiates a new equiv concept.
-	 */
-	public EquivalentClasses() {
-		super();
-	}
+  /**
+   * Instantiates a new equiv concept.
+   */
+  public EquivalentClasses() {
+    super();
+  }
 
-	/**
-	 * Counts total concepts in EquivalentClasses.
-	 *
-	 * @return <code><b>int</b></code> - total concepts
-	 */
-	public int count() {
-		int count = 0;
-		int max = this.size();
-		for (int i = 0; i < max; i++) {
-			count += this.get(i).size();
-		}
-		return count;
-	}
+  /**
+   * Counts total concepts in EquivalentClasses.
+   *
+   * @return <code><b>int</b></code> - total concepts
+   */
+  public int count() {
+    int count = 0;
+    int max = this.size();
+    for (int i = 0; i < max; i++) {
+      count += this.get(i).size();
+    }
+    return count;
+  }
 }

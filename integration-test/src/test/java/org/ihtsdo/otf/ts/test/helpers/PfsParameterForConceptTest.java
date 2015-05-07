@@ -70,7 +70,6 @@ public class PfsParameterForConceptTest {
 
     Comparator comparator = null;
 
-  
     switch (field.getType().getSimpleName()) {
       case "int":
         comparator = new Comparator<Integer>() {
@@ -106,10 +105,10 @@ public class PfsParameterForConceptTest {
     for (Concept c : concepts) {
 
       thisValue = field.get(c);
-      
+
       // if not the first value
       if (prevValue != null) {
-        
+
         // test ascending case
         if (pfs.isAscending() && (comparator.compare(thisValue, prevValue) < 0)) {
           return false;
@@ -140,7 +139,8 @@ public class PfsParameterForConceptTest {
     SearchResultList fullResults, PfsParameter pfs) {
     // check results size, must be less than or equal to page size
 
-    int page = (int) (Math.floor(pfs.getStartIndex() / pfs.getMaxResults()) + 1);
+    int page =
+        (int) (Math.floor(pfs.getStartIndex() / pfs.getMaxResults()) + 1);
     int pageSize = pfs.getMaxResults();
     if (results.getCount() > pageSize)
       return false;

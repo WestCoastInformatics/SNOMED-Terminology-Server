@@ -15,10 +15,13 @@ import org.ihtsdo.otf.ts.rf2.jpa.RefsetDescriptorRefSetMemberJpa;
  * JAXB enabled implementation of {@link RefsetDescriptorRefSetMemberList}.
  */
 @XmlRootElement(name = "refsetDescriptorRefSetMemberList")
-public class RefsetDescriptorRefSetMemberListJpa extends AbstractResultList<RefsetDescriptorRefSetMember> implements
-RefsetDescriptorRefSetMemberList {
+public class RefsetDescriptorRefSetMemberListJpa extends
+    AbstractResultList<RefsetDescriptorRefSetMember> implements
+    RefsetDescriptorRefSetMemberList {
 
-  /* (non-Javadoc)
+  /*
+   * (non-Javadoc)
+   * 
    * @see org.ihtsdo.otf.ts.helpers.AbstractResultList#getObjects()
    */
   @Override

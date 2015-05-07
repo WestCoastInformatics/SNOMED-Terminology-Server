@@ -75,8 +75,11 @@ public class Rf2ComputePreferredNameHandler implements
     return concept.getDefaultPreferredName();
   }
 
-  /* (non-Javadoc)
-   * @see org.ihtsdo.otf.ts.services.handlers.ComputePreferredNameHandler#computePreferredName(java.util.Set)
+  /*
+   * (non-Javadoc)
+   * 
+   * @see org.ihtsdo.otf.ts.services.handlers.ComputePreferredNameHandler#
+   * computePreferredName(java.util.Set)
    */
   @Override
   public String computePreferredName(Set<Description> descriptions)
@@ -106,24 +109,29 @@ public class Rf2ComputePreferredNameHandler implements
     for (LanguageRefSetMember member : description.getLanguageRefSetMembers()) {
       // Check if this language refset and description form the
       // defaultPreferredName
-      if (isPreferredName(description,member)) {
+      if (isPreferredName(description, member)) {
         return true;
       }
     }
     return false;
   }
-  
-  /* (non-Javadoc)
-   * @see org.ihtsdo.otf.ts.services.handlers.ComputePreferredNameHandler#isPreferredName(org.ihtsdo.otf.ts.rf2.Description, org.ihtsdo.otf.ts.rf2.LanguageRefSetMember)
+
+  /*
+   * (non-Javadoc)
+   * 
+   * @see
+   * org.ihtsdo.otf.ts.services.handlers.ComputePreferredNameHandler#isPreferredName
+   * (org.ihtsdo.otf.ts.rf2.Description,
+   * org.ihtsdo.otf.ts.rf2.LanguageRefSetMember)
    */
-  @Override  
+  @Override
   public boolean isPreferredName(Description description,
     LanguageRefSetMember member) throws Exception {
-      // Check if this language refset and description form the
-      // defaultPreferredName
-      return description.isActive() && description.getTypeId().equals(dpnTypeId)
-          && member.getRefSetId().equals(dpnRefSetId) && member.isActive()
-          && member.getAcceptabilityId().equals(dpnAcceptabilityId);
+    // Check if this language refset and description form the
+    // defaultPreferredName
+    return description.isActive() && description.getTypeId().equals(dpnTypeId)
+        && member.getRefSetId().equals(dpnRefSetId) && member.isActive()
+        && member.getAcceptabilityId().equals(dpnAcceptabilityId);
   }
 
 }

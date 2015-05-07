@@ -1105,31 +1105,34 @@ public class HistoryServiceJpa extends ContentServiceJpa implements
   @Override
   public ConceptList findConceptsDeepModifiedSinceDate(String terminology,
     Date date, PfsParameter pfs) throws Exception {
-    
-  
+
     // check pfs for validity -- note this is required because of manual paging
-  // other methods are checked in applyPfsToQuery methods
+    // other methods are checked in applyPfsToQuery methods
     if (pfs == null)
       pfs = new PfsParameterJpa();
     else {
-      // query restriction not supported    
-      if (pfs.getQueryRestriction() != null) 
-        throw new Exception("Query restriction not supported when searching for concepts deep modified since date.");
-      
-        // pfs start index and max results must be valid
+      // query restriction not supported
+      if (pfs.getQueryRestriction() != null)
+        throw new Exception(
+            "Query restriction not supported when searching for concepts deep modified since date.");
+
+      // pfs start index and max results must be valid
       if (pfs.getStartIndex() < -1)
-        throw new Exception("Pfs Parameter start index must be -1 (unused) or greater than or equal to zero");
+        throw new Exception(
+            "Pfs Parameter start index must be -1 (unused) or greater than or equal to zero");
       if (pfs.getMaxResults() < -1)
-        throw new Exception("Pfs Parameter max results must be -1 (unused) or greater than zero");
-      
+        throw new Exception(
+            "Pfs Parameter max results must be -1 (unused) or greater than zero");
+
       // sort field validity is checked via comparator construction
     }
-    
+
     // Load each object type by date and see if it changed. Look back up to the
     // concept level where appropriate
     Set<Concept> results = new HashSet<>();
 
-    // Note:  all calls must execute non-paged requests to ensure proper paging and sorting
+    // Note: all calls must execute non-paged requests to ensure proper paging
+    // and sorting
     ConceptList concepts =
         findConceptsModifiedSinceDate(terminology, date, null);
     for (Concept concept : concepts.getObjects()) {
@@ -1198,52 +1201,54 @@ public class HistoryServiceJpa extends ContentServiceJpa implements
             .getDescription().getConcept());
       }
     }
-    
+
     // construct empty concept list
     concepts = new ConceptListJpa();
-    
+
     // set the total count
     concepts.setTotalCount(results.size());
-    
+
     // add all the set elements
     concepts.setObjects(new ArrayList<Concept>(results));
 
     // get the sorting comparator (based on sort field, asc/desc)
     Comparator<Concept> comparator = this.getPfsComparator(Concept.class, pfs);
- 
+
     // if comparator not null, sort
     if (comparator != null) {
       concepts.sortBy(comparator);
     }
-    
+
     // calculate from and to indexes
     int fromIndex = (pfs.getStartIndex() == -1 ? 0 : pfs.getStartIndex());
-    int toIndex = (pfs.getMaxResults() == -1 ? concepts.getCount() : fromIndex + pfs.getMaxResults());
-    
+    int toIndex =
+        (pfs.getMaxResults() == -1 ? concepts.getCount() : fromIndex
+            + pfs.getMaxResults());
+
     // ensure from index is not below 0
     if (fromIndex < 0)
       fromIndex = 0;
-    
+
     // if from index after count, return empty list
-    if (fromIndex >= concepts.getCount()) 
+    if (fromIndex >= concepts.getCount())
       return new ConceptListJpa();
-    
+
     // if to index after count, set to count
     if (toIndex > concepts.getCount())
       toIndex = concepts.getCount();
-    
+
     // if from index <= to index, return empty list
     if (fromIndex >= toIndex) {
       return new ConceptListJpa();
     }
-    
+
     // after from/to checking, apply paging
     concepts.setObjects(concepts.getObjects().subList(fromIndex, toIndex));
-    
+
     // return the paged, sorted list
     return concepts;
-      
-    }
+
+  }
 
   /*
    * (non-Javadoc)

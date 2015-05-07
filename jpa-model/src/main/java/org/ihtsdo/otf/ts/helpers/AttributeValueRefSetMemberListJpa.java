@@ -20,14 +20,16 @@ import org.ihtsdo.otf.ts.rf2.jpa.AttributeValueDescriptionRefSetMemberJpa;
  */
 @XmlRootElement(name = "attributeValueRefSetMemberList")
 @XmlSeeAlso({
-  AttributeValueDescriptionRefSetMemberJpa.class,
-  AttributeValueConceptRefSetMemberJpa.class
+    AttributeValueDescriptionRefSetMemberJpa.class,
+    AttributeValueConceptRefSetMemberJpa.class
 })
-public class AttributeValueRefSetMemberListJpa extends AbstractResultList<AttributeValueRefSetMember<? extends Component>> implements
-AttributeValueRefSetMemberList {
+public class AttributeValueRefSetMemberListJpa extends
+    AbstractResultList<AttributeValueRefSetMember<? extends Component>>
+    implements AttributeValueRefSetMemberList {
 
-
-  /* (non-Javadoc)
+  /*
+   * (non-Javadoc)
+   * 
    * @see org.ihtsdo.otf.ts.helpers.AbstractResultList#getObjects()
    */
   @Override

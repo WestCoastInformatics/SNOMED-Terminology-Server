@@ -18,8 +18,9 @@ import org.ihtsdo.otf.ts.jpa.ReleaseInfoJpa;
 public class ReleaseInfoListJpa extends AbstractResultList<ReleaseInfo>
     implements ReleaseInfoList {
 
-
-  /* (non-Javadoc)
+  /*
+   * (non-Javadoc)
+   * 
    * @see org.ihtsdo.otf.ts.helpers.AbstractResultList#getObjects()
    */
   @Override
@@ -35,8 +36,8 @@ public class ReleaseInfoListJpa extends AbstractResultList<ReleaseInfo>
    */
   @Override
   public String toString() {
-    return "ReleaseInfoListJpa [releaseInfos=" + getObjects()
-        + ", getCount()=" + getCount() + "]";
+    return "ReleaseInfoListJpa [releaseInfos=" + getObjects() + ", getCount()="
+        + getCount() + "]";
   }
 
 }

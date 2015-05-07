@@ -19,7 +19,9 @@ public class LanguageRefSetMemberListJpa extends
     AbstractResultList<LanguageRefSetMember> implements
     LanguageRefSetMemberList {
 
-  /* (non-Javadoc)
+  /*
+   * (non-Javadoc)
+   * 
    * @see org.ihtsdo.otf.ts.helpers.AbstractResultList#getObjects()
    */
   @Override

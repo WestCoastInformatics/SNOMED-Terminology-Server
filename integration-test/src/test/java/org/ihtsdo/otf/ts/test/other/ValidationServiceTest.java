@@ -45,8 +45,7 @@ public class ValidationServiceTest {
   @Before
   public void setup() throws Exception {
     if (client == null) {
-      client =
-          new ValidationClientRest(ConfigUtility.getConfigProperties());
+      client = new ValidationClientRest(ConfigUtility.getConfigProperties());
       contentClient =
           new ContentClientRest(ConfigUtility.getConfigProperties());
       SecurityClientRest securityClient =
@@ -92,7 +91,7 @@ public class ValidationServiceTest {
       }
     }
     concept.removeDescription(sy);
-    Assert.assertEquals(concept.getDescriptions().size(),2);
+    Assert.assertEquals(concept.getDescriptions().size(), 2);
 
     // Validation should pass
     Logger.getLogger(getClass()).info(
@@ -110,7 +109,7 @@ public class ValidationServiceTest {
     }
     Assert.assertNotNull(pt);
     concept.removeDescription(pt);
-    Assert.assertEquals(concept.getDescriptions().size(),1);
+    Assert.assertEquals(concept.getDescriptions().size(), 1);
 
     // Validation should fail
     Logger.getLogger(getClass()).info(
@@ -130,7 +129,7 @@ public class ValidationServiceTest {
     }
     Assert.assertNotNull(fn);
     concept.removeDescription(fn);
-    Assert.assertEquals(concept.getDescriptions().size(),1);
+    Assert.assertEquals(concept.getDescriptions().size(), 1);
 
     // Validation should fail
     Logger.getLogger(getClass()).info(

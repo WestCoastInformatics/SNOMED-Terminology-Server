@@ -52,7 +52,7 @@ public interface Project {
    * @param description the description
    */
   public void setDescription(String description);
-  
+
   /**
    * Checks if the project is viewable by public roles.
    *

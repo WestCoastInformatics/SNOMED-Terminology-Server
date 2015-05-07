@@ -20,7 +20,7 @@ public class ClassificationTest {
   /** The service. */
   private static ActionService actionService;
 
-  /**  The content service. */
+  /** The content service. */
   @SuppressWarnings("unused")
   private static ContentService contentService;
 
@@ -45,8 +45,7 @@ public class ClassificationTest {
   public void testClassify() throws Exception {
     Logger.getLogger(getClass()).info("TEST Classify");
 
-
-//    String token = actionService.configureActionService(null);
+    // String token = actionService.configureActionService(null);
   }
 
   /**

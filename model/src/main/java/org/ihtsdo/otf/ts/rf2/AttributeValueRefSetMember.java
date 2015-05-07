@@ -22,5 +22,5 @@ public interface AttributeValueRefSetMember<T extends Component> extends
    * @param valueId the value id
    */
   public void setValueId(String valueId);
-  
+
 }

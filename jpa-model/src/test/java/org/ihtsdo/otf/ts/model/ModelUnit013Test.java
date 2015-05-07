@@ -170,7 +170,6 @@ public class ModelUnit013Test {
     assertTrue(xml.contains("<descriptionTerm>"));
   }
 
-
   /**
    * Test not null fields.
    *
@@ -195,7 +194,7 @@ public class ModelUnit013Test {
 
     assertTrue(tester.testNotNullFields());
   }
-  
+
   /**
    * Teardown.
    */

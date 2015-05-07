@@ -3861,7 +3861,7 @@ public class ContentServiceJpa extends RootServiceJpa implements ContentService 
           }
         };
       } else {
-     // make comparator
+        // make comparator
         return new Comparator<T>() {
           @Override
           public int compare(T o2, T o1) {

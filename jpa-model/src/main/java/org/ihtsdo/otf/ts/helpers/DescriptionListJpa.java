@@ -18,8 +18,9 @@ import org.ihtsdo.otf.ts.rf2.jpa.DescriptionJpa;
 public class DescriptionListJpa extends AbstractResultList<Description>
     implements DescriptionList {
 
-
-  /* (non-Javadoc)
+  /*
+   * (non-Javadoc)
+   * 
    * @see org.ihtsdo.otf.ts.helpers.AbstractResultList#getObjects()
    */
   @Override

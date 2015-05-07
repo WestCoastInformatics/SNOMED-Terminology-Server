@@ -169,7 +169,7 @@ public class ModelUnit014Test {
     assertTrue(xml.contains("<conceptTerminologyId>"));
     assertTrue(xml.contains("<conceptPreferredName>"));
   }
-  
+
   /**
    * Test not null fields.
    *

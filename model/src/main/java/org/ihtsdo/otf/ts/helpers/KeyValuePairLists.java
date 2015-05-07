@@ -33,8 +33,7 @@ public class KeyValuePairLists {
   public KeyValuePairLists(KeyValuePairLists lists) {
     keyValuePairLists = lists.getKeyValuePairLists();
   }
-  
-  
+
   /**
    * Returns the key value pair lists.
    * 

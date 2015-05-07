@@ -21,14 +21,14 @@ public interface RefSetMember<T extends Component> extends Component {
    * @param refSetId the reference set id
    */
   public void setRefSetId(String refSetId);
-  
+
   /**
    * Returns the component.
    *
    * @return the component
    */
   public T getComponent();
-  
+
   /**
    * Sets the component.
    *

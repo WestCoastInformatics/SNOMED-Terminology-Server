@@ -78,22 +78,24 @@ public class ReleaseInfoRemoverMojo extends AbstractMojo {
     try {
       Properties properties = ConfigUtility.getConfigProperties();
       boolean serverRunning = ConfigUtility.isServerActive();
-      getLog().info("Server status detected:  " + (!serverRunning ? "DOWN" : "UP"));
+      getLog().info(
+          "Server status detected:  " + (!serverRunning ? "DOWN" : "UP"));
       if (serverRunning && !server) {
-        throw new MojoFailureException("Mojo expects server to be down, but server is running");
+        throw new MojoFailureException(
+            "Mojo expects server to be down, but server is running");
       }
-      if (!serverRunning&& server) {
-        throw new MojoFailureException("Mojo expects server to be running, but server is down");
+      if (!serverRunning && server) {
+        throw new MojoFailureException(
+            "Mojo expects server to be running, but server is down");
       }
-      
+
       // authenticate
       SecurityService service = new SecurityServiceJpa();
       String authToken =
           service.authenticate(properties.getProperty("admin.user"),
               properties.getProperty("admin.password"));
-      service.close();      
+      service.close();
 
-      
       HistoryServiceRest historyService = null;
       if (!serverRunning) {
         getLog().info("Running directly");
@@ -102,17 +104,19 @@ public class ReleaseInfoRemoverMojo extends AbstractMojo {
         getLog().info("Running against server");
         historyService = new HistoryClientRest(properties);
       }
-      
+
       if (releaseInfoNames == null || releaseInfoNames.isEmpty()) {
-        for (ReleaseInfo releaseInfo : historyService.getReleaseHistory(terminology, authToken).getObjects()) {
+        for (ReleaseInfo releaseInfo : historyService.getReleaseHistory(
+            terminology, authToken).getObjects()) {
           getLog().info("  Removing " + releaseInfo.getName());
           historyService.removeReleaseInfo(releaseInfo.getId(), authToken);
         }
       } else {
         for (String releaseInfoValue : releaseInfoNames.split(",")) {
           getLog().info("  Removing " + releaseInfoValue);
-          historyService.removeReleaseInfo(historyService.getReleaseInfo(terminology,releaseInfoValue, authToken)
-              .getId(), authToken);
+          historyService.removeReleaseInfo(
+              historyService.getReleaseInfo(terminology, releaseInfoValue,
+                  authToken).getId(), authToken);
         }
       }
       service.close();

@@ -143,8 +143,8 @@ public class HelperJpaNormalUseTest {
         String.CASE_INSENSITIVE_ORDER));
 
     // check unsorted file
-    Assert.assertFalse(FileSorter.checkSortedFile(
-        new File("../config/dev-windows/src/main/resources/config.properties"),
+    Assert.assertFalse(FileSorter.checkSortedFile(new File(
+        "../config/dev-windows/src/main/resources/config.properties"),
         String.CASE_INSENSITIVE_ORDER));
 
     FileSorter.deleteSortedFiles(outFile);

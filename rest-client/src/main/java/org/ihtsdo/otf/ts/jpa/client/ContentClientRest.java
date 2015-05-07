@@ -392,8 +392,7 @@ public class ContentClientRest implements ContentServiceRest {
   /*
    * (non-Javadoc)
    * 
-   * @see
->>>>>>> 7050b6374e3c69f40d335f0d0a6222a6ae1c7816
+   * @see >>>>>>> 7050b6374e3c69f40d335f0d0a6222a6ae1c7816
    * org.ihtsdo.otf.ts.rest.ContentChangeServiceRest#luceneReindex(java.lang
    * .String, java.lang.String)
    */
@@ -1141,7 +1140,6 @@ public class ContentClientRest implements ContentServiceRest {
             resultString, AttributeValueRefSetMemberListJpa.class);
     return list;
   }
-  
 
   /*
    * (non-Javadoc)
@@ -1180,13 +1178,12 @@ public class ContentClientRest implements ContentServiceRest {
     return list;
   }
 
-
   /*
    * (non-Javadoc)
    * 
    * @see org.ihtsdo.otf.ts.rest.ContentServiceRest#
-   * getDescriptionTypeRefSetMembersForConcept(java.lang.String, java.lang.String,
-   * java.lang.String, java.lang.String)
+   * getDescriptionTypeRefSetMembersForConcept(java.lang.String,
+   * java.lang.String, java.lang.String, java.lang.String)
    */
   @Override
   public DescriptionTypeRefSetMemberList getDescriptionTypeRefSetMembersForConcept(
@@ -1214,7 +1211,7 @@ public class ContentClientRest implements ContentServiceRest {
             resultString, DescriptionTypeRefSetMemberListJpa.class);
     return list;
   }
-  
+
   /*
    * (non-Javadoc)
    * 
@@ -1368,8 +1365,8 @@ public class ContentClientRest implements ContentServiceRest {
     Client client = Client.create();
     WebResource resource =
         client.resource(config.getProperty("base.url")
-            + "/content/relationship/" + terminology + "/" + version
-            + "/" + terminologyId);
+            + "/content/relationship/" + terminology + "/" + version + "/"
+            + terminologyId);
     ClientResponse response =
         resource.accept(MediaType.APPLICATION_XML)
             .header("Authorization", authToken).get(ClientResponse.class);
@@ -1382,11 +1379,11 @@ public class ContentClientRest implements ContentServiceRest {
     }
 
     // converting to object
-    Relationship d = 
-      (Relationship) ConfigUtility.getGraphForString(resultString, RelationshipJpa.class);
-    
+    Relationship d =
+        (Relationship) ConfigUtility.getGraphForString(resultString,
+            RelationshipJpa.class);
+
     return d;
   }
-
 
 }

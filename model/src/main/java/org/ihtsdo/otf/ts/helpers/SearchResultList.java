@@ -3,7 +3,6 @@
  */
 package org.ihtsdo.otf.ts.helpers;
 
-
 /**
  * Represents a sortable list of {@link SearchResult} objects.
  */

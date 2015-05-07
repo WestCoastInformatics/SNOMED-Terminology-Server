@@ -108,7 +108,7 @@ public class DefaultGraphResolutionHandler implements GraphResolutionHandler {
     if (description != null) {
       description.setLanguageRefSetMembers(new HashSet<LanguageRefSetMember>());
     }
-    }
+  }
 
   /**
    * Resolve relationships.

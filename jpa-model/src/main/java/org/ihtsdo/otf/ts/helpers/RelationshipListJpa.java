@@ -18,7 +18,9 @@ import org.ihtsdo.otf.ts.rf2.jpa.RelationshipJpa;
 public class RelationshipListJpa extends AbstractResultList<Relationship>
     implements RelationshipList {
 
-  /* (non-Javadoc)
+  /*
+   * (non-Javadoc)
+   * 
    * @see org.ihtsdo.otf.ts.helpers.AbstractResultList#getObjects()
    */
   @Override
@@ -26,6 +28,5 @@ public class RelationshipListJpa extends AbstractResultList<Relationship>
   public List<Relationship> getObjects() {
     return super.getObjects();
   }
-
 
 }

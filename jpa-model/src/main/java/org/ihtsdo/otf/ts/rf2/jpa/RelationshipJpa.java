@@ -57,11 +57,11 @@ public class RelationshipJpa extends AbstractComponent implements Relationship {
   @Column(nullable = true)
   private Integer relationshipGroup;
 
-  /**  The inferred. */
+  /** The inferred. */
   @Column(nullable = false)
   private boolean inferred = false;
-  
-  /**  The stated. */
+
+  /** The stated. */
   @Column(nullable = false)
   private boolean stated = false;
 
@@ -372,9 +372,9 @@ public class RelationshipJpa extends AbstractComponent implements Relationship {
     this.relationshipGroup = relationshipGroup;
   }
 
-  
-
-  /* (non-Javadoc)
+  /*
+   * (non-Javadoc)
+   * 
    * @see org.ihtsdo.otf.ts.rf2.Relationship#isStated()
    */
   @Override
@@ -382,7 +382,9 @@ public class RelationshipJpa extends AbstractComponent implements Relationship {
     return stated;
   }
 
-  /* (non-Javadoc)
+  /*
+   * (non-Javadoc)
+   * 
    * @see org.ihtsdo.otf.ts.rf2.Relationship#setStated(boolean)
    */
   @Override
@@ -390,7 +392,9 @@ public class RelationshipJpa extends AbstractComponent implements Relationship {
     this.stated = stated;
   }
 
-  /* (non-Javadoc)
+  /*
+   * (non-Javadoc)
+   * 
    * @see org.ihtsdo.otf.ts.rf2.Relationship#isInferred()
    */
   @Override
@@ -398,14 +402,16 @@ public class RelationshipJpa extends AbstractComponent implements Relationship {
     return inferred;
   }
 
-  /* (non-Javadoc)
+  /*
+   * (non-Javadoc)
+   * 
    * @see org.ihtsdo.otf.ts.rf2.Relationship#setInferred(boolean)
    */
   @Override
   public void setInferred(boolean inferred) {
     this.inferred = inferred;
-  }  
-  
+  }
+
   /*
    * (non-Javadoc)
    * 
@@ -513,6 +519,5 @@ public class RelationshipJpa extends AbstractComponent implements Relationship {
       return false;
     return true;
   }
-
 
 }

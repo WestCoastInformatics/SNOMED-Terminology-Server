@@ -258,13 +258,13 @@ public class TransitiveRelationshipJpa extends AbstractComponent implements
     result =
         prime
             * result
-            + ((subTypeConcept == null || subTypeConcept.getTerminologyId() == null) ? 0 : subTypeConcept.getTerminologyId()
-                .hashCode());
+            + ((subTypeConcept == null || subTypeConcept.getTerminologyId() == null)
+                ? 0 : subTypeConcept.getTerminologyId().hashCode());
     result =
         prime
             * result
-            + ((superTypeConcept == null || subTypeConcept.getTerminologyId() == null) ? 0 : superTypeConcept
-                .getTerminologyId().hashCode());
+            + ((superTypeConcept == null || subTypeConcept.getTerminologyId() == null)
+                ? 0 : superTypeConcept.getTerminologyId().hashCode());
     return result;
   }
 

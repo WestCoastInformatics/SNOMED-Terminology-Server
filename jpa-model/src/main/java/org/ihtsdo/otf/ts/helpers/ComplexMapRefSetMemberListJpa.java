@@ -15,10 +15,13 @@ import org.ihtsdo.otf.ts.rf2.jpa.ComplexMapRefSetMemberJpa;
  * JAXB enabled implementation of {@link ComplexMapRefSetMemberList}.
  */
 @XmlRootElement(name = "complexMapRefSetMemberList")
-public class ComplexMapRefSetMemberListJpa extends AbstractResultList<ComplexMapRefSetMember> implements
-ComplexMapRefSetMemberList {
+public class ComplexMapRefSetMemberListJpa extends
+    AbstractResultList<ComplexMapRefSetMember> implements
+    ComplexMapRefSetMemberList {
 
-  /* (non-Javadoc)
+  /*
+   * (non-Javadoc)
+   * 
    * @see org.ihtsdo.otf.ts.helpers.AbstractResultList#getObjects()
    */
   @Override

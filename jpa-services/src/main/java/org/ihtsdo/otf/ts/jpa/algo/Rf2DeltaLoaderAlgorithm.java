@@ -63,7 +63,6 @@ import org.ihtsdo.otf.ts.services.helpers.PushBackReader;
 public class Rf2DeltaLoaderAlgorithm extends HistoryServiceJpa implements
     Algorithm {
 
-  
   /** The commit count. */
   private final static int commitCt = 2000;
 
@@ -289,7 +288,7 @@ public class Rf2DeltaLoaderAlgorithm extends HistoryServiceJpa implements
       Logger.getLogger(getClass()).info("    Loading Language Ref Sets...");
       loadLanguageRefSetMembers();
       existingLanguageRefSetMemberIds = null;
-      
+
       // Compute preferred names
       Logger.getLogger(getClass()).info(
           "  Compute preferred names for modified concepts");
@@ -336,7 +335,7 @@ public class Rf2DeltaLoaderAlgorithm extends HistoryServiceJpa implements
       // Clear relationships cache
       relationshipCache = null;
       existingRelationshipIds = null;
-      
+
       commit();
       clear();
       beginTransaction();
@@ -909,7 +908,6 @@ public class Rf2DeltaLoaderAlgorithm extends HistoryServiceJpa implements
     for (SimpleRefSetMemberJpa member : members) {
       cache.put(member.getTerminologyId(), member);
     }
-
 
     // Setup variables
     String line = "";
@@ -1712,7 +1710,8 @@ public class Rf2DeltaLoaderAlgorithm extends HistoryServiceJpa implements
     query.setParameter("terminology", terminology);
     query.setParameter("version", terminologyVersion);
     @SuppressWarnings("unchecked")
-    List<AbstractAttributeValueRefSetMemberJpa<?>> members = query.getResultList();
+    List<AbstractAttributeValueRefSetMemberJpa<?>> members =
+        query.getResultList();
     for (AbstractAttributeValueRefSetMemberJpa<?> member : members) {
       cache.put(member.getTerminologyId(), member);
     }
@@ -1866,7 +1865,8 @@ public class Rf2DeltaLoaderAlgorithm extends HistoryServiceJpa implements
     query.setParameter("terminology", terminology);
     query.setParameter("version", terminologyVersion);
     @SuppressWarnings("unchecked")
-    List<AbstractAssociationReferenceRefSetMemberJpa<?>> members = query.getResultList();
+    List<AbstractAssociationReferenceRefSetMemberJpa<?>> members =
+        query.getResultList();
     for (AbstractAssociationReferenceRefSetMemberJpa<?> member : members) {
       cache.put(member.getTerminologyId(), member);
     }

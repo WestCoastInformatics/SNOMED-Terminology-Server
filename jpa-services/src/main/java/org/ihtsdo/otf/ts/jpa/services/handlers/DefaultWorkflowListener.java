@@ -139,25 +139,36 @@ public class DefaultWorkflowListener implements WorkflowListener {
     // do nothing
   }
 
-  /* (non-Javadoc)
-   * @see org.ihtsdo.otf.ts.services.handlers.WorkflowListener#relationshipAdded(org.ihtsdo.otf.ts.rf2.Relationship)
+  /*
+   * (non-Javadoc)
+   * 
+   * @see
+   * org.ihtsdo.otf.ts.services.handlers.WorkflowListener#relationshipAdded(
+   * org.ihtsdo.otf.ts.rf2.Relationship)
    */
   @Override
   public void relationshipAdded(Relationship relationship) {
     // do nothing
   }
 
-  /* (non-Javadoc)
-   * @see org.ihtsdo.otf.ts.services.handlers.WorkflowListener#relationshipRemoved(org.ihtsdo.otf.ts.rf2.Relationship)
+  /*
+   * (non-Javadoc)
+   * 
+   * @see
+   * org.ihtsdo.otf.ts.services.handlers.WorkflowListener#relationshipRemoved
+   * (org.ihtsdo.otf.ts.rf2.Relationship)
    */
   @Override
   public void relationshipRemoved(Relationship relationship) {
     // do nothing
   }
 
-
-  /* (non-Javadoc)
-   * @see org.ihtsdo.otf.ts.services.handlers.WorkflowListener#relationshipUpdated(org.ihtsdo.otf.ts.rf2.Relationship)
+  /*
+   * (non-Javadoc)
+   * 
+   * @see
+   * org.ihtsdo.otf.ts.services.handlers.WorkflowListener#relationshipUpdated
+   * (org.ihtsdo.otf.ts.rf2.Relationship)
    */
   @Override
   public void relationshipUpdated(Relationship relationship) {
@@ -200,32 +211,48 @@ public class DefaultWorkflowListener implements WorkflowListener {
     // do nothing
   }
 
-  /* (non-Javadoc)
-   * @see org.ihtsdo.otf.ts.services.handlers.WorkflowListener#classificationStarted()
+  /*
+   * (non-Javadoc)
+   * 
+   * @see
+   * org.ihtsdo.otf.ts.services.handlers.WorkflowListener#classificationStarted
+   * ()
    */
   @Override
   public void classificationStarted() throws Exception {
     // do nothing
   }
 
-  /* (non-Javadoc)
-   * @see org.ihtsdo.otf.ts.services.handlers.WorkflowListener#classificationFinished()
+  /*
+   * (non-Javadoc)
+   * 
+   * @see
+   * org.ihtsdo.otf.ts.services.handlers.WorkflowListener#classificationFinished
+   * ()
    */
   @Override
   public void classificationFinished() throws Exception {
     // do nothing
   }
 
-  /* (non-Javadoc)
-   * @see org.ihtsdo.otf.ts.services.handlers.WorkflowListener#preClassificationStarted()
+  /*
+   * (non-Javadoc)
+   * 
+   * @see
+   * org.ihtsdo.otf.ts.services.handlers.WorkflowListener#preClassificationStarted
+   * ()
    */
   @Override
   public void preClassificationStarted() throws Exception {
     // do nothing
   }
 
-  /* (non-Javadoc)
-   * @see org.ihtsdo.otf.ts.services.handlers.WorkflowListener#preClassificationFinished()
+  /*
+   * (non-Javadoc)
+   * 
+   * @see
+   * org.ihtsdo.otf.ts.services.handlers.WorkflowListener#preClassificationFinished
+   * ()
    */
   @Override
   public void preClassificationFinished() throws Exception {
@@ -234,6 +261,6 @@ public class DefaultWorkflowListener implements WorkflowListener {
 
   @Override
   public void cancel() {
-    // do nothing    
+    // do nothing
   }
 }

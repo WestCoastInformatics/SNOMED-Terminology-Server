@@ -18,7 +18,8 @@ import org.junit.Test;
 /**
  * Unit testing for {@link DescriptionTypeRefSetMemberList}.
  */
-public class ListUnit006Test extends AbstractListUnit<DescriptionTypeRefSetMember> {
+public class ListUnit006Test extends
+    AbstractListUnit<DescriptionTypeRefSetMember> {
 
   /** The list1 test fixture . */
   private DescriptionTypeRefSetMemberList list1;

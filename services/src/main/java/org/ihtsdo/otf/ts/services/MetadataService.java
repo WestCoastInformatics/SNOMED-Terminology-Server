@@ -13,7 +13,6 @@ import org.ihtsdo.otf.ts.helpers.Configurable;
  */
 public interface MetadataService extends RootService, Configurable {
 
-  
   /**
    * An enum for the keys of the get all metadata call.
    */
@@ -60,11 +59,12 @@ public interface MetadataService extends RootService, Configurable {
     Relationship_Types,
     /** The Hierarchical_ relationship_ types. */
     Hierarchical_Relationship_Types,
-    /**  Stated relationship types. */
+    /** Stated relationship types. */
     Stated_Characteristic_Types,
-    /**  Inferred relationship types. */
+    /** Inferred relationship types. */
     Inferred_Characteristic_Types;
   }
+
   /**
    * Returns the terminologies.
    * 
@@ -316,31 +316,31 @@ public interface MetadataService extends RootService, Configurable {
    * @throws Exception if anything goes wrong
    */
   public Map<String, String> getHierarchicalRelationshipTypes(
-      String terminology, String version) throws Exception;
+    String terminology, String version) throws Exception;
 
   /**
-   * Returns the inferred characteristic types.  This will correspond
-   * to one of the characteristic type ids.
+   * Returns the inferred characteristic types. This will correspond to one of
+   * the characteristic type ids.
    *
    * @param terminology the terminology
    * @param version the version
    * @return the inferred characteristic types
    * @throws Exception the exception
    */
-  public Map<String, String> getInferredCharacteristicTypes(
-      String terminology, String version) throws Exception;
+  public Map<String, String> getInferredCharacteristicTypes(String terminology,
+    String version) throws Exception;
 
   /**
-   * Returns the inferred characteristic types.  This will correspond
-   * to one of the characteristic type ids.
+   * Returns the inferred characteristic types. This will correspond to one of
+   * the characteristic type ids.
    *
    * @param terminology the terminology
    * @param version the version
    * @return the stated characteristic types
    * @throws Exception the exception
    */
-  public Map<String, String> getStatedCharacteristicTypes(
-      String terminology, String version) throws Exception;
+  public Map<String, String> getStatedCharacteristicTypes(String terminology,
+    String version) throws Exception;
 
   /**
    * Returns the characteristic types.
@@ -350,8 +350,8 @@ public interface MetadataService extends RootService, Configurable {
    * @return the characteristic types
    * @throws Exception if anything goes wrong
    */
-  public Map<String, String> getCharacteristicTypes(
-    String terminology, String version) throws Exception;
+  public Map<String, String> getCharacteristicTypes(String terminology,
+    String version) throws Exception;
 
   /**
    * Returns the relationship modifiers.
@@ -374,5 +374,5 @@ public interface MetadataService extends RootService, Configurable {
    */
   public Map<String, String> getNonGroupingRelationshipTypes(
     String terminology, String version) throws Exception;
-  
+
 }

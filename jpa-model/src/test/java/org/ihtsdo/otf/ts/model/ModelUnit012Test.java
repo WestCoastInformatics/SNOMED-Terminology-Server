@@ -195,7 +195,7 @@ public class ModelUnit012Test {
 
     assertTrue(tester.testNotNullFields());
   }
-  
+
   /**
    * Teardown.
    */

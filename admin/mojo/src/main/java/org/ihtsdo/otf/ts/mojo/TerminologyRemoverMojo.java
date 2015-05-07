@@ -86,17 +86,20 @@ public class TerminologyRemoverMojo extends AbstractMojo {
       Properties properties = ConfigUtility.getConfigProperties();
 
       boolean serverRunning = ConfigUtility.isServerActive();
-      
-      getLog().info("Server status detected:  " + (!serverRunning ? "DOWN" : "UP"));
+
+      getLog().info(
+          "Server status detected:  " + (!serverRunning ? "DOWN" : "UP"));
 
       if (serverRunning && !server) {
-        throw new MojoFailureException("Mojo expects server to be down, but server is running");
+        throw new MojoFailureException(
+            "Mojo expects server to be down, but server is running");
       }
-      
-      if (!serverRunning&& server) {
-        throw new MojoFailureException("Mojo expects server to be running, but server is down");
+
+      if (!serverRunning && server) {
+        throw new MojoFailureException(
+            "Mojo expects server to be running, but server is down");
       }
-      
+
       // authenticate
       SecurityService service = new SecurityServiceJpa();
       String authToken =
@@ -105,15 +108,15 @@ public class TerminologyRemoverMojo extends AbstractMojo {
 
       if (!serverRunning) {
         getLog().info("Running directly");
-        
+
         getLog().info("  Remove concepts");
         ContentServiceRest contentService = new ContentServiceRestImpl();
         contentService.removeTerminology(terminology, version, authToken);
-        
+
         getLog().info("  Remove release info");
         HistoryServiceRest historyService = new HistoryServiceRestImpl();
-        for (ReleaseInfo info : historyService.getReleaseHistory(terminology, authToken)
-            .getObjects()) {
+        for (ReleaseInfo info : historyService.getReleaseHistory(terminology,
+            authToken).getObjects()) {
           // Need to open a second one to reopen security service
           HistoryServiceRest historyService2 = new HistoryServiceRestImpl();
           if (info.getTerminology().equals(terminology)
@@ -131,13 +134,13 @@ public class TerminologyRemoverMojo extends AbstractMojo {
 
         getLog().info("  Remove release info");
         HistoryClientRest historyService = new HistoryClientRest(properties);
-        for (ReleaseInfo info : historyService.getReleaseHistory(terminology, authToken)
-            .getObjects()) {
+        for (ReleaseInfo info : historyService.getReleaseHistory(terminology,
+            authToken).getObjects()) {
           if (info.getTerminology().equals(terminology)
               && info.getTerminologyVersion().equals(version)) {
             historyService.removeReleaseInfo(info.getId(), authToken);
           }
-        }      
+        }
       }
       service.close();
 

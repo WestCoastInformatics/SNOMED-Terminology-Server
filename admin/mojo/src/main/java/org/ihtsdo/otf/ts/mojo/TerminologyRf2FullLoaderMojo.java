@@ -80,8 +80,7 @@ public class TerminologyRf2FullLoaderMojo extends AbstractMojo {
       boolean serverRunning = ConfigUtility.isServerActive();
 
       getLog().info(
-          "Server status detected:  "
-              + (!serverRunning ? "DOWN" : "UP"));
+          "Server status detected:  " + (!serverRunning ? "DOWN" : "UP"));
 
       if (serverRunning && !server) {
         throw new MojoFailureException(
@@ -104,16 +103,16 @@ public class TerminologyRf2FullLoaderMojo extends AbstractMojo {
         getLog().info("Running directly");
 
         ContentServiceRestImpl contentService = new ContentServiceRestImpl();
-        contentService.loadTerminologyRf2Full(terminology, version,
-            inputDir, authToken);
+        contentService.loadTerminologyRf2Full(terminology, version, inputDir,
+            authToken);
 
       } else {
         getLog().info("Running against server");
 
         // invoke the client
         ContentClientRest client = new ContentClientRest(properties);
-        client.loadTerminologyRf2Full(terminology, version,
-            inputDir, authToken);
+        client
+            .loadTerminologyRf2Full(terminology, version, inputDir, authToken);
       }
 
     } catch (Exception e) {

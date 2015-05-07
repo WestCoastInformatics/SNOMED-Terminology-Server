@@ -18,7 +18,8 @@ import org.junit.Test;
 /**
  * Unit testing for {@link ModuleDependencyRefSetMemberList}.
  */
-public class ListUnit008Test extends AbstractListUnit<ModuleDependencyRefSetMember> {
+public class ListUnit008Test extends
+    AbstractListUnit<ModuleDependencyRefSetMember> {
 
   /** The list1 test fixture . */
   private ModuleDependencyRefSetMemberList list1;

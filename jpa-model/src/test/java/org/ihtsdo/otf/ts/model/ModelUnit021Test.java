@@ -189,7 +189,7 @@ public class ModelUnit021Test {
     tester.include("refSetId");
     assertTrue(tester.testNotNullFields());
   }
-  
+
   /**
    * Teardown.
    */

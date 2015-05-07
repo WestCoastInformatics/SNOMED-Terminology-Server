@@ -486,7 +486,7 @@ public class ContentChangeClientRest implements ContentChangeServiceRest {
 
     String memberString =
         ConfigUtility.getStringForGraph(member == null
-        ? new AssociationReferenceConceptRefSetMemberJpa() : member);
+            ? new AssociationReferenceConceptRefSetMemberJpa() : member);
     Logger.getLogger(getClass()).debug(memberString);
     ClientResponse response =
         resource.accept(MediaType.APPLICATION_XML)

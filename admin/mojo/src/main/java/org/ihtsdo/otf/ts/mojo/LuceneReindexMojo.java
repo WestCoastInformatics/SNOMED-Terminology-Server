@@ -60,17 +60,20 @@ public class LuceneReindexMojo extends AbstractMojo {
       Properties properties = ConfigUtility.getConfigProperties();
 
       boolean serverRunning = ConfigUtility.isServerActive();
-      
-      getLog().info("Server status detected:  " + (!serverRunning ? "DOWN" : "UP"));
+
+      getLog().info(
+          "Server status detected:  " + (!serverRunning ? "DOWN" : "UP"));
 
       if (serverRunning && !server) {
-        throw new MojoFailureException("Mojo expects server to be down, but server is running");
+        throw new MojoFailureException(
+            "Mojo expects server to be down, but server is running");
       }
-      
-      if (!serverRunning&& server) {
-        throw new MojoFailureException("Mojo expects server to be running, but server is down");
+
+      if (!serverRunning && server) {
+        throw new MojoFailureException(
+            "Mojo expects server to be running, but server is down");
       }
-      
+
       // authenticate
       SecurityService service = new SecurityServiceJpa();
       String authToken =
@@ -80,7 +83,7 @@ public class LuceneReindexMojo extends AbstractMojo {
 
       if (!serverRunning) {
         getLog().info("Running directly");
-        
+
         ContentServiceRestImpl contentService = new ContentServiceRestImpl();
         contentService.luceneReindex(indexedObjects, authToken);
 

@@ -100,7 +100,6 @@ public class ModelUnit024Test {
     XmlSerializationTester tester = new XmlSerializationTester(object);
     assertTrue(tester.testXmlSerialization());
   }
-  
 
   /**
    * Test not null fields.

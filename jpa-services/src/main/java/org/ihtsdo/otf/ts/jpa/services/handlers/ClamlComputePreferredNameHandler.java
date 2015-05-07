@@ -61,8 +61,11 @@ public class ClamlComputePreferredNameHandler implements
     return concept.getDefaultPreferredName();
   }
 
-  /* (non-Javadoc)
-   * @see org.ihtsdo.otf.ts.services.handlers.ComputePreferredNameHandler#computePreferredName(java.util.Set)
+  /*
+   * (non-Javadoc)
+   * 
+   * @see org.ihtsdo.otf.ts.services.handlers.ComputePreferredNameHandler#
+   * computePreferredName(java.util.Set)
    */
   @Override
   public String computePreferredName(Set<Description> descriptions)
@@ -89,13 +92,18 @@ public class ClamlComputePreferredNameHandler implements
    */
   @Override
   public boolean isPreferredName(Description description) throws Exception {
-	if (description.getTypeId() == null)
-		return false;
+    if (description.getTypeId() == null)
+      return false;
     return description.getTypeId().equals(dpnType) && description.isActive();
   }
 
-  /* (non-Javadoc)
-   * @see org.ihtsdo.otf.ts.services.handlers.ComputePreferredNameHandler#isPreferredName(org.ihtsdo.otf.ts.rf2.Description, org.ihtsdo.otf.ts.rf2.LanguageRefSetMember)
+  /*
+   * (non-Javadoc)
+   * 
+   * @see
+   * org.ihtsdo.otf.ts.services.handlers.ComputePreferredNameHandler#isPreferredName
+   * (org.ihtsdo.otf.ts.rf2.Description,
+   * org.ihtsdo.otf.ts.rf2.LanguageRefSetMember)
    */
   @Override
   public boolean isPreferredName(Description description,

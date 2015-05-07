@@ -35,7 +35,7 @@ public class RootServiceJpa implements RootService {
       e.printStackTrace();
       factory = null;
     }
-    
+
   }
 
   /** The manager. */
@@ -165,7 +165,9 @@ public class RootServiceJpa implements RootService {
     }
   }
 
-  /* (non-Javadoc)
+  /*
+   * (non-Javadoc)
+   * 
    * @see org.ihtsdo.otf.ts.services.RootService#rollback()
    */
   @Override
@@ -183,8 +185,7 @@ public class RootServiceJpa implements RootService {
       manager.clear();
     }
   }
-  
-  
+
   /*
    * (non-Javadoc)
    * 

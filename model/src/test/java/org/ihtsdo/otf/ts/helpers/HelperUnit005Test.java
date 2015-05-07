@@ -52,8 +52,8 @@ public class HelperUnit005Test {
     tester.test();
 
     // Test equals
-    KeyValuePair pair1 =new KeyValuePair("1", "1");
-    KeyValuePair pair2 =new KeyValuePair("1", "1");
+    KeyValuePair pair1 = new KeyValuePair("1", "1");
+    KeyValuePair pair2 = new KeyValuePair("1", "1");
     KeyValuePairList list1 = new KeyValuePairList();
     list1.setName("list1");
     list1.addKeyValuePair(pair1);
@@ -69,18 +69,18 @@ public class HelperUnit005Test {
     assertTrue(lists1.equals(lists2));
     assertTrue(lists1.hashCode() == lists2.hashCode());
     lists1.toString();
-    
+
     // Test not equals
     lists2.addKeyValuePairList(list1);
     assertTrue(!lists1.equals(lists2));
-    
+
     // Test get/set of list are equal
     List<KeyValuePairList> kvpLists = new ArrayList<>();
     kvpLists.add(list1);
     kvpLists.add(list2);
     lists1.setKeyValuePairLists(kvpLists);
     assertTrue(lists1.getKeyValuePairLists().equals(kvpLists));
-    
+
     CopyConstructorTester tester3 = new CopyConstructorTester(lists2);
     assertTrue(tester3.testCopyConstructor(KeyValuePairLists.class));
 
@@ -95,8 +95,7 @@ public class HelperUnit005Test {
    *
    * @throws Exception the exception
    */
-  @SuppressWarnings(
-      "static-method")
+  @SuppressWarnings("static-method")
   @Test
   public void testHelperDegenerateUse005() throws Exception {
     try {

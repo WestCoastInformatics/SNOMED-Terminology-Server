@@ -1224,11 +1224,11 @@ public class ContentServiceRestImpl extends RootServiceRestImpl implements
               terminology, version);
       return result;
     } catch (Exception e) {
-       handleException(e, "trying to retrieve simple refset members");
+      handleException(e, "trying to retrieve simple refset members");
       return null;
     } finally {
       contentService.close();
-     securityService.close();
+      securityService.close();
     }
   }
 
@@ -1303,7 +1303,6 @@ public class ContentServiceRestImpl extends RootServiceRestImpl implements
       authenticate(securityService, authToken, "reindex",
           UserRole.ADMINISTRATOR);
 
-
       algo.setIndexedObjects(indexedObjects);
 
       algo.compute();
@@ -1351,7 +1350,8 @@ public class ContentServiceRestImpl extends RootServiceRestImpl implements
     long startTimeOrig = System.nanoTime();
 
     ClamlLoaderAlgorithm clamlAlgorithm = new ClamlLoaderAlgorithm();
-    TransitiveClosureAlgorithm transitiveClosureAlgorithm = new TransitiveClosureAlgorithm();
+    TransitiveClosureAlgorithm transitiveClosureAlgorithm =
+        new TransitiveClosureAlgorithm();
     try {
       authenticate(securityService, authToken, "start editing cycle",
           UserRole.ADMINISTRATOR);

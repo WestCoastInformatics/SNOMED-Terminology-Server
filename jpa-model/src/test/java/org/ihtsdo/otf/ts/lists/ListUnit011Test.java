@@ -18,7 +18,8 @@ import org.junit.Test;
 /**
  * Unit testing for {@link RefsetDescriptorRefSetMemberList}.
  */
-public class ListUnit011Test extends AbstractListUnit<RefsetDescriptorRefSetMember> {
+public class ListUnit011Test extends
+    AbstractListUnit<RefsetDescriptorRefSetMember> {
 
   /** The list1 test fixture . */
   private RefsetDescriptorRefSetMemberList list1;

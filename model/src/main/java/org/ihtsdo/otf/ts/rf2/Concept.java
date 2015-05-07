@@ -38,7 +38,6 @@ public interface Concept extends Component {
    */
   public void setFullyDefined(boolean fullyDefined);
 
-
   /**
    * Returns the workflow status.
    * 
@@ -73,7 +72,6 @@ public interface Concept extends Component {
    * @return the descriptions
    */
   public Set<Description> getDescriptions();
-
 
   /**
    * Sets the descriptions.

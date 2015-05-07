@@ -20,7 +20,8 @@ public interface ActionServiceRest {
    * @return the sessionToken
    * @throws Exception the exception
    */
-  public String configureActionService(ProjectJpa project, String authToken) throws Exception;
+  public String configureActionService(ProjectJpa project, String authToken)
+    throws Exception;
 
   /**
    * Clear all resources for the specified session token.
@@ -30,17 +31,19 @@ public interface ActionServiceRest {
    * @throws Exception the exception
    */
   public void clear(String sessionToken, String authToken) throws Exception;
-  
+
   /**
-   * Gets the progress for any currently-running operations for the specified session token.
+   * Gets the progress for any currently-running operations for the specified
+   * session token.
    *
    * @param sessionToken the session token
    * @param authToken the auth token
    * @return the progress
    * @throws Exception the exception
    */
-  public float getProgress(String sessionToken, String authToken) throws Exception;
-  
+  public float getProgress(String sessionToken, String authToken)
+    throws Exception;
+
   /**
    * Cancels any currently-running operations for the specified session token.
    *
@@ -51,17 +54,21 @@ public interface ActionServiceRest {
   public void cancel(String sessionToken, String authToken) throws Exception;
 
   /**
-   * Prepares data structures for full classification. 
-   * This mostly involves building classifier axioms from the data. In theory, this only needs to be done once per session (assuming only add operations).
+   * Prepares data structures for full classification. This mostly involves
+   * building classifier axioms from the data. In theory, this only needs to be
+   * done once per session (assuming only add operations).
    *
    * @param sessionToken the session token
    * @param authToken the auth token
    * @throws Exception the exception
    */
-  public void prepareToClassify(String sessionToken, String authToken) throws Exception;
+  public void prepareToClassify(String sessionToken, String authToken)
+    throws Exception;
 
   /**
-   * Verifies that “prepare” successfully completed, and performs a full classification, leaving the classified ontology in memory for later retrieval.
+   * Verifies that “prepare” successfully completed, and performs a full
+   * classification, leaving the classified ontology in memory for later
+   * retrieval.
    *
    * @param sessionToken the session token
    * @param authToken the auth token
@@ -70,13 +77,18 @@ public interface ActionServiceRest {
   public void classify(String sessionToken, String authToken) throws Exception;
 
   /**
-   * Verifies that “prepare” and a full classification were performed, obtains changes since last classification run, adds needed axioms, and performs an incremental classification. Note: incremental classification is not supported if changes include retirement or removal of content – only additions are supported.
+   * Verifies that “prepare” and a full classification were performed, obtains
+   * changes since last classification run, adds needed axioms, and performs an
+   * incremental classification. Note: incremental classification is not
+   * supported if changes include retirement or removal of content – only
+   * additions are supported.
    *
    * @param sessionToken the session token
    * @param authToken the auth token
    * @throws Exception the exception
    */
-  public void incrementalClassify(String sessionToken, String authToken) throws Exception;
+  public void incrementalClassify(String sessionToken, String authToken)
+    throws Exception;
 
   /**
    * Gets the classification equivalents.
@@ -86,7 +98,8 @@ public interface ActionServiceRest {
    * @return the classification equivalents
    * @throws Exception the exception
    */
-  public KeyValuesMap getClassificationEquivalents(String sessionToken, String authToken) throws Exception;
+  public KeyValuesMap getClassificationEquivalents(String sessionToken,
+    String authToken) throws Exception;
 
   /**
    * Gets the old inferred relationships.
@@ -96,8 +109,9 @@ public interface ActionServiceRest {
    * @return the old inferred relationships
    * @throws Exception the exception
    */
-  public RelationshipList getOldInferredRelationships(String sessionToken, String authToken) throws Exception;
-  
+  public RelationshipList getOldInferredRelationships(String sessionToken,
+    String authToken) throws Exception;
+
   /**
    * Gets the new inferred relationships.
    *
@@ -106,17 +120,20 @@ public interface ActionServiceRest {
    * @return the new inferred relationships
    * @throws Exception the exception
    */
-  public RelationshipList getNewInferredRelationships(String sessionToken, String authToken) throws Exception;
+  public RelationshipList getNewInferredRelationships(String sessionToken,
+    String authToken) throws Exception;
 
   /**
-   * Retire old inferred relationships. Removes inferred relationships never inserted.
+   * Retire old inferred relationships. Removes inferred relationships never
+   * inserted.
    *
    * @param sessionToken the session token
    * @param authToken the auth token
    * @throws Exception the exception
    */
-  public void retireOldInferredRelationships(String sessionToken, String authToken) throws Exception;
-  
+  public void retireOldInferredRelationships(String sessionToken,
+    String authToken) throws Exception;
+
   /**
    * Adds the new inferred relationships.
    *
@@ -124,6 +141,7 @@ public interface ActionServiceRest {
    * @param authToken the auth token
    * @throws Exception the exception
    */
-  public void addNewInferredRelationships(String sessionToken, String authToken) throws Exception;
+  public void addNewInferredRelationships(String sessionToken, String authToken)
+    throws Exception;
 
 }

@@ -156,7 +156,7 @@ public interface ReleaseInfo {
    * @return the last modified by
    */
   public String getLastModifiedBy();
-  
+
   /**
    * Sets the last modified by.
    *

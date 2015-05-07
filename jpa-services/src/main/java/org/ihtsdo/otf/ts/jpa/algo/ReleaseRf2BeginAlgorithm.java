@@ -41,7 +41,7 @@ public class ReleaseRf2BeginAlgorithm extends ContentServiceJpa implements
   /** The release version. */
   private String releaseVersion = null;
 
-  /**  The terminology. */
+  /** The terminology. */
   private String terminology = null;
 
   /** The validate flag. */
@@ -109,7 +109,8 @@ public class ReleaseRf2BeginAlgorithm extends ContentServiceJpa implements
     //
     fireProgressEvent(1, "  Check assumptions");
     HistoryService historyService = new HistoryServiceJpa();
-    ReleaseInfo info = historyService.getReleaseInfo(terminology, releaseVersion);
+    ReleaseInfo info =
+        historyService.getReleaseInfo(terminology, releaseVersion);
     // must exist
     if (info == null) {
       throw new Exception(
@@ -122,8 +123,7 @@ public class ReleaseRf2BeginAlgorithm extends ContentServiceJpa implements
     //
     else if (info.getReleaseBeginDate() == null) {
       Date date = new Date();
-      Logger.getLogger(getClass()).info(
-          "  Set release begin date = " + date);
+      Logger.getLogger(getClass()).info("  Set release begin date = " + date);
       info.setReleaseBeginDate(date);
       historyService.updateReleaseInfo(info);
     }
@@ -131,7 +131,8 @@ public class ReleaseRf2BeginAlgorithm extends ContentServiceJpa implements
     //
     // Get all concepts that have changed
     //
-    ReleaseInfo previousInfo = historyService.getPreviousReleaseInfo(terminology);
+    ReleaseInfo previousInfo =
+        historyService.getPreviousReleaseInfo(terminology);
     Date previousDate =
         previousInfo == null ? ConfigUtility.DATE_FORMAT.parse("20140101")
             : previousInfo.getReleaseFinishDate();

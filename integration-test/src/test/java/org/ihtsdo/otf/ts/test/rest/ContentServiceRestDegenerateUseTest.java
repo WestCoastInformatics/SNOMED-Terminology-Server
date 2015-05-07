@@ -347,12 +347,12 @@ public class ContentServiceRestDegenerateUseTest extends ContentServiceRestTest 
         contentService.getClass().getMethod(
             "getLanguageRefSetMembersForDescription",
             getParameterTypes(validParameters)), validParameters,
-            new ExpectedFailure[] {
-          ExpectedFailure.STRING_INVALID_EXCEPTION_NULL_NO_RESULTS,
-          ExpectedFailure.STRING_INVALID_EXCEPTION_NULL_NO_RESULTS,
-          ExpectedFailure.STRING_INVALID_EXCEPTION_NULL_NO_RESULTS,
-          ExpectedFailure.EXCEPTION
-      });
+        new ExpectedFailure[] {
+            ExpectedFailure.STRING_INVALID_EXCEPTION_NULL_NO_RESULTS,
+            ExpectedFailure.STRING_INVALID_EXCEPTION_NULL_NO_RESULTS,
+            ExpectedFailure.STRING_INVALID_EXCEPTION_NULL_NO_RESULTS,
+            ExpectedFailure.EXCEPTION
+        });
   }
 
   /**
@@ -479,7 +479,7 @@ public class ContentServiceRestDegenerateUseTest extends ContentServiceRestTest 
    */
   @Test
   public void testDegenerateUseRestContent013() throws Exception {
-    
+
     testId = "128117002";
 
     // parameters are same for all four calls

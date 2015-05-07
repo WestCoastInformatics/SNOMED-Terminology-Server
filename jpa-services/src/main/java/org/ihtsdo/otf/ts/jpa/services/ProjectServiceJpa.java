@@ -279,10 +279,10 @@ public class ProjectServiceJpa extends RootServiceJpa implements ProjectService 
       // Get transaction and object
       tx = manager.getTransaction();
       Project project = manager.find(ProjectJpa.class, id);
-      
+
       // if project doesn't exist, return
       if (project == null)
-    	  return;
+        return;
 
       // Set modification date
       project.setLastModified(new Date());

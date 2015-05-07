@@ -32,14 +32,14 @@ public interface Classifier extends Algorithm, Configurable {
    * @return the new inferred relationships
    */
   public List<Relationship> getNewInferredRelationships();
-  
+
   /**
    * Returns the old inferred relationships.
    *
    * @return the old inferred relationships
    */
   public List<Relationship> getOldInferredRelationships();
-  
+
   /**
    * Sets the root id.
    *

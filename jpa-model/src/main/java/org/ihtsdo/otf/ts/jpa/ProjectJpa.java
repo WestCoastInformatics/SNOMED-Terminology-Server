@@ -189,7 +189,7 @@ public class ProjectJpa implements Project {
   public String getObjectId() {
     return id == null ? "" : id.toString();
   }
-  
+
   /**
    * Sets the object id. For JAXB.
    *
@@ -198,7 +198,7 @@ public class ProjectJpa implements Project {
   public void setObjectId(String id) {
     this.id = Long.parseLong(id);
   }
-  
+
   /*
    * (non-Javadoc)
    * 

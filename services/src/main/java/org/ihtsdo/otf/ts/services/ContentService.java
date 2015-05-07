@@ -160,7 +160,7 @@ public interface ContentService extends RootService {
    * @throws Exception the exception
    */
   public ConceptList findChildConcepts(Concept concept, PfsParameter pfs)
-      throws Exception;
+    throws Exception;
 
   /**
    * Find parent concepts.
@@ -171,7 +171,7 @@ public interface ContentService extends RootService {
    * @throws Exception the exception
    */
   public ConceptList findParentConcepts(Concept concept, PfsParameter pfs)
-      throws Exception;
+    throws Exception;
 
   /**
    * Returns the description.
@@ -862,7 +862,7 @@ public interface ContentService extends RootService {
    */
   public DescriptionTypeRefSetMember getDescriptionTypeRefSetMember(
     String terminologyId, String terminology, String version) throws Exception;
-  
+
   /**
    * Returns the description type ref set members for concept.
    *
@@ -874,7 +874,6 @@ public interface ContentService extends RootService {
    */
   public DescriptionTypeRefSetMemberList getDescriptionTypeRefSetMembersForConcept(
     String terminologyId, String terminology, String version) throws Exception;
- 
 
   /**
    * Returns the description type ref set members for the specified parameters.
@@ -1064,8 +1063,8 @@ public interface ContentService extends RootService {
    * @return the all simple map ref set member terminology ids
    */
   public StringList getAllSimpleMapRefSetMemberTerminologyIds(
-		    String terminology, String version);
-  
+    String terminology, String version);
+
   /**
    * Gets the all complex map ref set member terminology ids.
    *
@@ -1074,7 +1073,7 @@ public interface ContentService extends RootService {
    * @return the all complex map ref set member terminology ids
    */
   public StringList getAllComplexMapRefSetMemberTerminologyIds(
-		    String terminology, String version);
+    String terminology, String version);
 
   /**
    * Gets the all description type ref set member terminology ids.
@@ -1084,8 +1083,8 @@ public interface ContentService extends RootService {
    * @return the all description type ref set member terminology ids
    */
   public StringList getAllDescriptionTypeRefSetMemberTerminologyIds(
-		    String terminology, String version);
-  
+    String terminology, String version);
+
   /**
    * Gets the all refset descriptor ref set member terminology ids.
    *
@@ -1094,8 +1093,8 @@ public interface ContentService extends RootService {
    * @return the all refset descriptor ref set member terminology ids
    */
   public StringList getAllRefsetDescriptorRefSetMemberTerminologyIds(
-		    String terminology, String version);
-  
+    String terminology, String version);
+
   /**
    * Gets the all module dependency ref set member terminology ids.
    *
@@ -1104,8 +1103,8 @@ public interface ContentService extends RootService {
    * @return the all module dependency ref set member terminology ids
    */
   public StringList getAllModuleDependencyRefSetMemberTerminologyIds(
-		    String terminology, String version);
-  
+    String terminology, String version);
+
   /**
    * Gets the all attribute value ref set member terminology ids.
    *
@@ -1114,8 +1113,8 @@ public interface ContentService extends RootService {
    * @return the all attribute value ref set member terminology ids
    */
   public StringList getAllAttributeValueRefSetMemberTerminologyIds(
-		    String terminology, String version);
-  
+    String terminology, String version);
+
   /**
    * Gets the all association reference ref set member terminology ids.
    *
@@ -1124,8 +1123,8 @@ public interface ContentService extends RootService {
    * @return the all association reference ref set member terminology ids
    */
   public StringList getAllAssociationReferenceRefSetMemberTerminologyIds(
-		    String terminology, String version);
-  
+    String terminology, String version);
+
   /**
    * Clear transitive closure.
    *
@@ -1212,6 +1211,7 @@ public interface ContentService extends RootService {
    * @return the content stats
    * @throws Exception the exception
    */
-  public Map<String, Integer> getComponentStats(String terminology, String version) throws Exception;
+  public Map<String, Integer> getComponentStats(String terminology,
+    String version) throws Exception;
 
 }

@@ -137,7 +137,7 @@ public class ModelUnit011Test {
     tester.proxy(Concept.class, 1, c);
     assertTrue(tester.testXmlSerialization());
   }
-  
+
   /**
    * Test not null fields.
    *

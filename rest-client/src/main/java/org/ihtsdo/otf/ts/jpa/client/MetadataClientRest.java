@@ -35,8 +35,12 @@ public class MetadataClientRest implements MetadataServiceRest {
     this.config = config;
   }
 
-  /* (non-Javadoc)
-   * @see org.ihtsdo.otf.ts.rest.MetadataServiceRest#getAllMetadata(java.lang.String, java.lang.String, java.lang.String)
+  /*
+   * (non-Javadoc)
+   * 
+   * @see
+   * org.ihtsdo.otf.ts.rest.MetadataServiceRest#getAllMetadata(java.lang.String,
+   * java.lang.String, java.lang.String)
    */
   @Override
   public KeyValuePairLists getAllMetadata(String terminology, String version,
@@ -74,7 +78,8 @@ public class MetadataClientRest implements MetadataServiceRest {
   @Override
   public KeyValuePairList getAllTerminologiesLatestVersions(String authToken)
     throws Exception {
-    Logger.getLogger(getClass()).debug("Metadata Client - get all terminologies latest vesrions");
+    Logger.getLogger(getClass()).debug(
+        "Metadata Client - get all terminologies latest vesrions");
     Client client = Client.create();
     WebResource resource =
         client.resource(config.getProperty("base.url")
@@ -107,7 +112,8 @@ public class MetadataClientRest implements MetadataServiceRest {
   @Override
   public KeyValuePairLists getAllTerminologiesVersions(String authToken)
     throws Exception {
-    Logger.getLogger(getClass()).debug("Metadata Client - get all terminologies vesrions");
+    Logger.getLogger(getClass()).debug(
+        "Metadata Client - get all terminologies vesrions");
     Client client = Client.create();
     WebResource resource =
         client.resource(config.getProperty("base.url")

@@ -15,10 +15,13 @@ import org.ihtsdo.otf.ts.rf2.jpa.ModuleDependencyRefSetMemberJpa;
  * JAXB enabled implementation of {@link ModuleDependencyRefSetMemberList}.
  */
 @XmlRootElement(name = "moduleDependencyRefSetMemberList")
-public class ModuleDependencyRefSetMemberListJpa extends AbstractResultList<ModuleDependencyRefSetMember> implements
-ModuleDependencyRefSetMemberList {
+public class ModuleDependencyRefSetMemberListJpa extends
+    AbstractResultList<ModuleDependencyRefSetMember> implements
+    ModuleDependencyRefSetMemberList {
 
-  /* (non-Javadoc)
+  /*
+   * (non-Javadoc)
+   * 
    * @see org.ihtsdo.otf.ts.helpers.AbstractResultList#getObjects()
    */
   @Override

@@ -14,7 +14,7 @@ public interface User {
    * @return the id
    */
   public Long getId();
-  
+
   /**
    * Sets the id.
    *

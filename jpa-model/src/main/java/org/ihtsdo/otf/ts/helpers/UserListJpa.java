@@ -17,7 +17,9 @@ import org.ihtsdo.otf.ts.jpa.UserJpa;
 @XmlRootElement(name = "userList")
 public class UserListJpa extends AbstractResultList<User> implements UserList {
 
-  /* (non-Javadoc)
+  /*
+   * (non-Javadoc)
+   * 
    * @see org.ihtsdo.otf.ts.helpers.AbstractResultList#getObjects()
    */
   @Override

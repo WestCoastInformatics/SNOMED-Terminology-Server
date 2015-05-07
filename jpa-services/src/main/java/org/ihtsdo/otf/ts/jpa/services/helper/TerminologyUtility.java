@@ -47,10 +47,12 @@ public class TerminologyUtility {
   public static Set<String> getHierarchicalIsaRels(String terminology,
     String version) throws Exception {
     if (terminology == null) {
-      throw new Exception("Unexpected null terminology passed to getHierarchicalIsaRels.");
+      throw new Exception(
+          "Unexpected null terminology passed to getHierarchicalIsaRels.");
     }
     if (version == null) {
-      throw new Exception("Unexpected null version passed to getHierarchicalIsaRels.");
+      throw new Exception(
+          "Unexpected null version passed to getHierarchicalIsaRels.");
     }
     cacheIsaRels(terminology, version);
     return isaRelsMap.get(terminology + version);

@@ -69,7 +69,7 @@ public class RootServiceRestImpl {
     } catch (Exception e1) {
       // do nothing
     }
-    
+
     // throw the local exception as a web application exception
     if (e instanceof LocalException) {
       throw new WebApplicationException(Response.status(500)

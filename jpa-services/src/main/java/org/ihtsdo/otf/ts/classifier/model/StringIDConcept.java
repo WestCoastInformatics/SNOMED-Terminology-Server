@@ -20,8 +20,8 @@
 package org.ihtsdo.otf.ts.classifier.model;
 
 /**
- * The Class StringIDConcept.
- * Represents an extension for concept, adding stringId, definition status and module.
+ * The Class StringIDConcept. Represents an extension for concept, adding
+ * stringId, definition status and module.
  * 
  * @author Alejandro Rodriguez.
  *
@@ -29,114 +29,115 @@ package org.ihtsdo.otf.ts.classifier.model;
  */
 public class StringIDConcept extends Concept {
 
-	/** The string id. */
-	private String stringId;
-	
-	/** The module. */
-	private String module;
+  /** The string id. */
+  private String stringId;
 
-	/** The definition status id. */
-	private boolean definitionStatusId;
-	
-	/**
-	 * Instantiates a new concept string id.
-	 *
-	 * @param id the cont
-	 * @param stringId the string id
-	 * @param definitionStatusId the definition status id
-	 * @param module the module
-	 */
-	public StringIDConcept(int id, String stringId, boolean definitionStatusId, String module) {
-		super.id=id;
-		this.stringId=stringId;
-		this.definitionStatusId=definitionStatusId;
-		this.module=module;
-		
-	}
+  /** The module. */
+  private String module;
 
-	/**
-	 * Gets the string id.
-	 *
-	 * @return the string id
-	 */
-	public String getStringId() {
-		return stringId;
-	}
+  /** The definition status id. */
+  private boolean definitionStatusId;
 
-	/**
-	 * Sets the string id.
-	 *
-	 * @param stringId the new string id
-	 */
-	public void setStringId(String stringId) {
-		this.stringId = stringId;
-	}
+  /**
+   * Instantiates a new concept string id.
+   *
+   * @param id the cont
+   * @param stringId the string id
+   * @param definitionStatusId the definition status id
+   * @param module the module
+   */
+  public StringIDConcept(int id, String stringId, boolean definitionStatusId,
+      String module) {
+    super.id = id;
+    this.stringId = stringId;
+    this.definitionStatusId = definitionStatusId;
+    this.module = module;
 
-	/**
-	 * Instantiates a new concept string id.
-	 *
-	 * @param id the id
-	 * @param stringId the string id
-	 * @param isDefined the is defined
-	 */
-	public StringIDConcept(int id, String stringId, boolean isDefined) {
-		super(id, isDefined);
-		
-		this.stringId=stringId;
-	}
+  }
 
-	/**
-	 * Gets the module.
-	 *
-	 * @return the module
-	 */
-	public String getModule() {
-		return module;
-	}
+  /**
+   * Gets the string id.
+   *
+   * @return the string id
+   */
+  public String getStringId() {
+    return stringId;
+  }
 
-	/**
-	 * Sets the module.
-	 *
-	 * @param module the new module
-	 */
-	public void setModule(String module) {
-		this.module = module;
-	}
+  /**
+   * Sets the string id.
+   *
+   * @param stringId the new string id
+   */
+  public void setStringId(String stringId) {
+    this.stringId = stringId;
+  }
 
-	/**
-	 * Gets the id.
-	 *
-	 * @return the id
-	 */
-	public int getId() {
-		return id;
-	}
+  /**
+   * Instantiates a new concept string id.
+   *
+   * @param id the id
+   * @param stringId the string id
+   * @param isDefined the is defined
+   */
+  public StringIDConcept(int id, String stringId, boolean isDefined) {
+    super(id, isDefined);
 
-	/**
-	 * Sets the id.
-	 *
-	 * @param id the new id
-	 */
-	public void setId(int id) {
-		this.id = id;
-	}
+    this.stringId = stringId;
+  }
 
-	/**
-	 * Checks if is definition status id.
-	 *
-	 * @return true, if is definition status id
-	 */
-	public boolean isDefinitionStatusId() {
-		return definitionStatusId;
-	}
+  /**
+   * Gets the module.
+   *
+   * @return the module
+   */
+  public String getModule() {
+    return module;
+  }
 
-	/**
-	 * Sets the definition status id.
-	 *
-	 * @param definitionStatusId the new definition status id
-	 */
-	public void setDefinitionStatusId(boolean definitionStatusId) {
-		this.definitionStatusId = definitionStatusId;
-	}
+  /**
+   * Sets the module.
+   *
+   * @param module the new module
+   */
+  public void setModule(String module) {
+    this.module = module;
+  }
+
+  /**
+   * Gets the id.
+   *
+   * @return the id
+   */
+  public int getId() {
+    return id;
+  }
+
+  /**
+   * Sets the id.
+   *
+   * @param id the new id
+   */
+  public void setId(int id) {
+    this.id = id;
+  }
+
+  /**
+   * Checks if is definition status id.
+   *
+   * @return true, if is definition status id
+   */
+  public boolean isDefinitionStatusId() {
+    return definitionStatusId;
+  }
+
+  /**
+   * Sets the definition status id.
+   *
+   * @param definitionStatusId the new definition status id
+   */
+  public void setDefinitionStatusId(boolean definitionStatusId) {
+    this.definitionStatusId = definitionStatusId;
+  }
 
 }

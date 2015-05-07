@@ -275,10 +275,11 @@ public class ClamlMetadataServiceJpaHelper extends ContentServiceJpa implements
       throw new Exception("Case significance concept cannot be found.");
 
     // get map of descendant concepts, add isa relationship concept
-    Map<String, String> descMap = getDescendantMap(rootId, terminology, version);
-   
+    Map<String, String> descMap =
+        getDescendantMap(rootId, terminology, version);
+
     return descMap;
-  
+
   }
 
   /*
@@ -306,9 +307,10 @@ public class ClamlMetadataServiceJpaHelper extends ContentServiceJpa implements
     }
     if (rootId == null)
       throw new Exception("Relationship type concept cannot be found.");
-    
-    Map<String, String> descMap = getDescendantMap(rootId, terminology, version);
-    
+
+    Map<String, String> descMap =
+        getDescendantMap(rootId, terminology, version);
+
     return descMap;
   }
 
@@ -587,7 +589,7 @@ public class ClamlMetadataServiceJpaHelper extends ContentServiceJpa implements
     ContentService contentService = new ContentServiceJpa();
     ConceptList list = contentService.findDescendantConcepts(concept, null);
     contentService.close();
-    
+
     // convert concept list to map
     for (Concept desc : list.getObjects()) {
       // put id and preferred name

@@ -15,10 +15,13 @@ import org.ihtsdo.otf.ts.rf2.jpa.SimpleMapRefSetMemberJpa;
  * JAXB enabled implementation of {@link SimpleMapRefSetMemberList}.
  */
 @XmlRootElement(name = "simpleMapRefSetMemberList")
-public class SimpleMapRefSetMemberListJpa extends AbstractResultList<SimpleMapRefSetMember> implements
-SimpleMapRefSetMemberList {
+public class SimpleMapRefSetMemberListJpa extends
+    AbstractResultList<SimpleMapRefSetMember> implements
+    SimpleMapRefSetMemberList {
 
-  /* (non-Javadoc)
+  /*
+   * (non-Javadoc)
+   * 
    * @see org.ihtsdo.otf.ts.helpers.AbstractResultList#getObjects()
    */
   @Override

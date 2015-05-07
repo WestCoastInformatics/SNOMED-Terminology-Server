@@ -14,8 +14,6 @@ import org.ihtsdo.otf.ts.helpers.ConfigUtility;
 import org.ihtsdo.otf.ts.helpers.UserImpl;
 import org.ihtsdo.otf.ts.services.handlers.SecurityServiceHandler;
 
-
-
 /**
  * Implements a security handler that authorizes via IHTSDO authentication.
  */
@@ -41,7 +39,7 @@ public class DefaultSecurityServiceHandler implements SecurityServiceHandler {
     // password must not be null
     if (password == null)
       return null;
-    
+
     // for default security service, the password must equal the user name
     if (!username.equals(password))
       return null;
@@ -50,7 +48,7 @@ public class DefaultSecurityServiceHandler implements SecurityServiceHandler {
     if (properties == null) {
       properties = ConfigUtility.getConfigProperties();
     }
-  
+
     User user = new UserImpl();
 
     // check specified admin users list from config file

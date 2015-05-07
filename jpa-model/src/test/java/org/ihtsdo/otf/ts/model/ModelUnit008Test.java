@@ -255,7 +255,6 @@ public class ModelUnit008Test {
 
     assertTrue(tester.testNotNullFields());
   }
-  
 
   /**
    * Test field indexing.
@@ -285,11 +284,11 @@ public class ModelUnit008Test {
     tester.include("labelSort");
     tester.include("termSort");
     tester.include("typeId");
-    
+
     assertTrue(tester.testNotAnalyzedIndexedFields());
 
   }
-  
+
   /**
    * Teardown.
    */

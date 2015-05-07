@@ -76,7 +76,7 @@ public class UtsSecurityServiceHandler implements SecurityServiceHandler {
     if (!authenticated) {
       throw new LocalException("Username or password invalid.");
     }
-    
+
     /*
      * Synchronize the information sent back from ITHSDO with the User object.
      * Add a new user if there isn't one matching the username If there is, load

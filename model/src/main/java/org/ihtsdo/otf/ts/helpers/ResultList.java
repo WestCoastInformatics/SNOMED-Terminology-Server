@@ -47,7 +47,7 @@ public interface ResultList<T> {
    * @return <code>true</code> if so; <code>false</code> otherwise
    */
   public boolean contains(T element);
-  
+
   /**
    * Adds the object.
    *
@@ -74,5 +74,5 @@ public interface ResultList<T> {
    * 
    * @return the objects
    */
-  public List<T> getObjects();  
+  public List<T> getObjects();
 }

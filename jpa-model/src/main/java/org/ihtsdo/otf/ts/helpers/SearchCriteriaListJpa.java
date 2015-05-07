@@ -12,10 +12,12 @@ import javax.xml.bind.annotation.XmlRootElement;
  * JAXB enabled implementation of {@link SearchCriteriaList}.
  */
 @XmlRootElement(name = "searchCriteriaList")
-public class SearchCriteriaListJpa extends AbstractResultList<SearchCriteria> implements
-SearchCriteriaList {
+public class SearchCriteriaListJpa extends AbstractResultList<SearchCriteria>
+    implements SearchCriteriaList {
 
-  /* (non-Javadoc)
+  /*
+   * (non-Javadoc)
+   * 
    * @see org.ihtsdo.otf.ts.helpers.AbstractResultList#getObjects()
    */
   @Override
@@ -23,6 +25,5 @@ SearchCriteriaList {
   public List<SearchCriteria> getObjects() {
     return super.getObjects();
   }
-
 
 }

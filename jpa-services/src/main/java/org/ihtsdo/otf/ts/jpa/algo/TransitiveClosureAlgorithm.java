@@ -102,8 +102,8 @@ public class TransitiveClosureAlgorithm extends ContentServiceJpa implements
    * @param version the terminology version
    * @throws Exception the exception
    */
-  private void computeTransitiveClosure(String terminology,
-    String version) throws Exception {
+  private void computeTransitiveClosure(String terminology, String version)
+    throws Exception {
     //
     // Check assumptions/prerequisites
     //
@@ -128,11 +128,10 @@ public class TransitiveClosureAlgorithm extends ContentServiceJpa implements
     String inferredCharType =
         TerminologyUtility.getInferredType(terminology, version);
     Logger.getLogger(getClass()).info("    inferredType = " + inferredCharType);
-    
+
     String isaRel =
-        TerminologyUtility
-            .getHierarchicalIsaRels(terminology, version).iterator()
-            .next();
+        TerminologyUtility.getHierarchicalIsaRels(terminology, version)
+            .iterator().next();
     Logger.getLogger(getClass()).info("    isaRel = " + isaRel);
 
     // Skip non isa
@@ -146,8 +145,7 @@ public class TransitiveClosureAlgorithm extends ContentServiceJpa implements
                     + "and terminologyVersion = :version "
                     + "and typeId = :typeId and characteristicTypeId = :characteristicTypeId")
             .setParameter("terminology", terminology)
-            .setParameter("version", version)
-            .setParameter("typeId", isaRel)
+            .setParameter("version", version).setParameter("typeId", isaRel)
             .setParameter("characteristicTypeId", inferredCharType);
 
     @SuppressWarnings("unchecked")
@@ -172,11 +170,10 @@ public class TransitiveClosureAlgorithm extends ContentServiceJpa implements
 
     // Initialize concepts
     fireProgressEvent(5, "Initialize concepts");
-    Logger.getLogger(getClass()).info(
-        "  Initialize concepts ... " + new Date());
+    Logger.getLogger(getClass())
+        .info("  Initialize concepts ... " + new Date());
     Map<Long, Concept> conceptMap = new HashMap<>();
-    for (Concept concept : getAllConcepts(terminology, version)
-        .getObjects()) {
+    for (Concept concept : getAllConcepts(terminology, version).getObjects()) {
       conceptMap.put(concept.getId(), concept);
     }
     // detatch concepts
@@ -255,9 +252,10 @@ public class TransitiveClosureAlgorithm extends ContentServiceJpa implements
    * @return the descendants
    * @throws Exception the exception
    */
-  private Set<Long> getDescendants(Long par, Map<Long, Set<Long>> parChd, List<Long> ancPath)
-    throws Exception {
-    Logger.getLogger(getClass()).debug("  Get descendants for " + par + ", " + ancPath);
+  private Set<Long> getDescendants(Long par, Map<Long, Set<Long>> parChd,
+    List<Long> ancPath) throws Exception {
+    Logger.getLogger(getClass()).debug(
+        "  Get descendants for " + par + ", " + ancPath);
 
     if (requestCancel) {
       rollback();
@@ -289,8 +287,7 @@ public class TransitiveClosureAlgorithm extends ContentServiceJpa implements
         descendants.addAll(getDescendants(chd, parChd, ancPath));
         ancPath.remove(chd);
       }
-      Logger.getLogger(getClass()).debug(
-          "    descCt = " + descendants.size());
+      Logger.getLogger(getClass()).debug("    descCt = " + descendants.size());
 
       descendantsMap.put(par, descendants);
     }

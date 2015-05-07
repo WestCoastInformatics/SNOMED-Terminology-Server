@@ -44,6 +44,7 @@ public class KeyValuePair {
     this.key = key;
     this.value = value;
   }
+
   /**
    * Returns the key.
    * 
@@ -80,7 +81,9 @@ public class KeyValuePair {
     return value;
   }
 
-  /* (non-Javadoc)
+  /*
+   * (non-Javadoc)
+   * 
    * @see java.lang.Object#hashCode()
    */
   @Override
@@ -92,7 +95,9 @@ public class KeyValuePair {
     return result;
   }
 
-  /* (non-Javadoc)
+  /*
+   * (non-Javadoc)
+   * 
    * @see java.lang.Object#equals(java.lang.Object)
    */
   @Override
@@ -117,7 +122,9 @@ public class KeyValuePair {
     return true;
   }
 
-  /* (non-Javadoc)
+  /*
+   * (non-Javadoc)
+   * 
    * @see java.lang.Object#toString()
    */
   @Override

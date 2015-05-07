@@ -112,21 +112,21 @@ public interface Relationship extends Component {
    * @return <code>true</code> if so, <code>false</code> otherwise
    */
   public boolean isStated();
-  
+
   /**
    * Sets the stated.
    *
    * @param stated the stated
    */
   public void setStated(boolean stated);
-  
+
   /**
    * Indicates whether or not inferred is the case.
    *
    * @return <code>true</code> if so, <code>false</code> otherwise
    */
   public boolean isInferred();
-  
+
   /**
    * Sets the inferred.
    *

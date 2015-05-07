@@ -147,7 +147,6 @@ public interface ContentServiceRest {
    */
   public Description getDescription(String terminologyId, String terminology,
     String version, String authToken) throws Exception;
-  
 
   /**
    * Returns the relationship.
@@ -161,7 +160,6 @@ public interface ContentServiceRest {
    */
   public Relationship getRelationship(String terminologyId, String terminology,
     String version, String authToken) throws Exception;
-
 
   /**
    * Find association reference ref set members.
@@ -366,7 +364,6 @@ public interface ContentServiceRest {
     String terminologyId, String terminology, String version, String authToken)
     throws Exception;
 
-
   /**
    * Returns the description type ref set members for concept.
    *
@@ -381,7 +378,6 @@ public interface ContentServiceRest {
     String terminologyId, String terminology, String version, String authToken)
     throws Exception;
 
-  
   /**
    * Returns the language ref set members for description.
    *

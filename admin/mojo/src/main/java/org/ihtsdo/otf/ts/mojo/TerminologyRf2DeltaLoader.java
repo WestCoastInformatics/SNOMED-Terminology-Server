@@ -67,8 +67,7 @@ public class TerminologyRf2DeltaLoader extends AbstractMojo {
       boolean serverRunning = ConfigUtility.isServerActive();
 
       getLog().info(
-          "Server status detected:  "
-              + (!serverRunning ? "DOWN" : "UP"));
+          "Server status detected:  " + (!serverRunning ? "DOWN" : "UP"));
 
       if (serverRunning && !server) {
         throw new MojoFailureException(

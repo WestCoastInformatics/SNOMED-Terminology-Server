@@ -22,11 +22,11 @@ public class DescriptionTypeRefSetMemberJpa extends AbstractConceptRefSetMember
     implements DescriptionTypeRefSetMember {
 
   /** The description format. */
-  @Column (nullable = false)
+  @Column(nullable = false)
   private String descriptionFormat;
 
   /** The description length. */
-  @Column (nullable = false)
+  @Column(nullable = false)
   private int descriptionLength;
 
   /**

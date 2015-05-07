@@ -15,8 +15,9 @@ import javax.xml.bind.annotation.XmlRootElement;
 public class SearchResultListJpa extends AbstractResultList<SearchResult>
     implements SearchResultList {
 
-
-  /* (non-Javadoc)
+  /*
+   * (non-Javadoc)
+   * 
    * @see org.ihtsdo.otf.ts.helpers.AbstractResultList#getObjects()
    */
   @Override

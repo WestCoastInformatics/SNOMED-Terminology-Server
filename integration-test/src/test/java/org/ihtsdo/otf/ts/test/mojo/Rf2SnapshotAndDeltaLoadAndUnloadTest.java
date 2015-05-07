@@ -317,7 +317,7 @@ public class Rf2SnapshotAndDeltaLoadAndUnloadTest {
         .getCount());
     service.close();
     service.closeFactory();
-    
+
     // Finish by clearing the DB again
     request = new DefaultInvocationRequest();
     request.setPomFile(new File("../admin/db/pom.xml"));

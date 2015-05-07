@@ -65,7 +65,7 @@ public interface ValidationResult {
    * @param warning the warning
    */
   public void removeWarning(String warning);
-  
+
   /**
    * Removes the comment.
    *
@@ -79,7 +79,7 @@ public interface ValidationResult {
    * @param warning the warning
    */
   public void addWarning(String warning);
-  
+
   /**
    * Adds the comment.
    *
@@ -107,7 +107,7 @@ public interface ValidationResult {
    * @param warnings the warnings
    */
   public void addWarnings(Set<String> warnings);
-  
+
   /**
    * Adds the comment.
    *

@@ -29,7 +29,7 @@ public class HistoryServiceRestTest {
 
   /** The service. */
   protected static HistoryClientRest historyService;
-  
+
   /** The content service -- for retrieval of objects */
   protected static ContentClientRest contentService;
 
@@ -98,8 +98,10 @@ public class HistoryServiceRestTest {
             .replace("Revisions", ""));
       }
     }
-    Logger.getLogger(HistoryServiceRestTest.class).info(
-        "findReleaseRevisions, findModifiedSinceDate, findRevisions methods will be tested for:");
+    Logger
+        .getLogger(HistoryServiceRestTest.class)
+        .info(
+            "findReleaseRevisions, findModifiedSinceDate, findRevisions methods will be tested for:");
     for (String objectName : objectNames) {
       Logger.getLogger(HistoryServiceRestTest.class).info("  " + objectName);
     }
@@ -155,13 +157,14 @@ public class HistoryServiceRestTest {
 
   protected String getClassShortName(Class<?> clazz) {
 
-    String shortName = clazz.getName().substring(clazz.getName().lastIndexOf(".") + 1)
-        .replace("Jpa", "");
-    
-    // special cases:  Concept/Description Ref Set Members
+    String shortName =
+        clazz.getName().substring(clazz.getName().lastIndexOf(".") + 1)
+            .replace("Jpa", "");
+
+    // special cases: Concept/Description Ref Set Members
     shortName = shortName.replace("ConceptRefSetMember", "RefSetMember");
     shortName = shortName.replace("DescriptionRefSetMember", "RefSetMember");
-    
+
     return shortName;
 
   }

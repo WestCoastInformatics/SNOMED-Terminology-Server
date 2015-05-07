@@ -42,28 +42,28 @@ public interface WorkflowListener extends Configurable {
    * @throws Exception the exception
    */
   public void classificationStarted() throws Exception;
-  
+
   /**
    * Classification finished.
    *
    * @throws Exception the exception
    */
   public void classificationFinished() throws Exception;
-  
+
   /**
    * Pre classification started.
    *
    * @throws Exception the exception
    */
   public void preClassificationStarted() throws Exception;
-  
+
   /**
    * Pre classification finished.
    *
    * @throws Exception the exception
    */
   public void preClassificationFinished() throws Exception;
-  
+
   /**
    * Notification of concept added.
    *
@@ -126,7 +126,7 @@ public interface WorkflowListener extends Configurable {
    * @param relationship the relationship
    * @throws Exception the exception
    */
-  public void relationshipRemoved(Relationship  relationship) throws Exception;
+  public void relationshipRemoved(Relationship relationship) throws Exception;
 
   /**
    * Notification of relationship update.
@@ -134,7 +134,7 @@ public interface WorkflowListener extends Configurable {
    * @param relationship the relationship
    * @throws Exception the exception
    */
-  public void relationshipUpdated(Relationship  relationship) throws Exception;
+  public void relationshipUpdated(Relationship relationship) throws Exception;
 
   /**
    * Notification of refset member added.
@@ -142,7 +142,8 @@ public interface WorkflowListener extends Configurable {
    * @param member the member
    * @throws Exception the exception
    */
-  public void refSetMemberAdded(RefSetMember<? extends Component> member) throws Exception;
+  public void refSetMemberAdded(RefSetMember<? extends Component> member)
+    throws Exception;
 
   /**
    * Notification of refset member removed.
@@ -150,7 +151,8 @@ public interface WorkflowListener extends Configurable {
    * @param member the member
    * @throws Exception the exception
    */
-  public void refSetMemberRemoved(RefSetMember<? extends Component> member) throws Exception;
+  public void refSetMemberRemoved(RefSetMember<? extends Component> member)
+    throws Exception;
 
   /**
    * Notification of ref set member update.
@@ -158,7 +160,8 @@ public interface WorkflowListener extends Configurable {
    * @param member the member
    * @throws Exception the exception
    */
-  public void refSetMemberUpdated(RefSetMember<? extends Component> member) throws Exception;
+  public void refSetMemberUpdated(RefSetMember<? extends Component> member)
+    throws Exception;
 
   /**
    * Notification of a cancelled operation.

@@ -30,9 +30,8 @@ import org.junit.Test;
  */
 public class HistoryServiceRestDegenerateUseTest extends HistoryServiceRestTest {
 
-
   Object[] validParameters;
-  
+
   PfsParameter pfs;
 
   /**
@@ -47,12 +46,12 @@ public class HistoryServiceRestDegenerateUseTest extends HistoryServiceRestTest 
     // ensure terminology correctly set
     terminology = "SNOMEDCT";
     version = "latest";
-    
+
     // default paging (prevent large data results)
     pfs = new PfsParameterJpa();
     pfs.setMaxResults(1);
     pfs.setStartIndex(0);
-    
+
     authToken = securityService.authenticate(adminUser, adminPassword);
   }
 
@@ -88,7 +87,7 @@ public class HistoryServiceRestDegenerateUseTest extends HistoryServiceRestTest 
         historyService.getClass().getMethod("getPlannedReleaseInfo",
             getParameterTypes(validParameters)), validParameters,
 
-        // Empty string will throw exception, null terminology 
+        // Empty string will throw exception, null terminology
         // will return null (succeed)
         new ExpectedFailure[] {
             ExpectedFailure.STRING_INVALID_EXCEPTION_NULL_SUCCESS,
@@ -176,28 +175,27 @@ public class HistoryServiceRestDegenerateUseTest extends HistoryServiceRestTest 
     Component component =
         contentService.getSingleConcept(testId, terminology, version);
     contentService.close();
-    
+
     testDegenerateUse(component, revision);
-    
+
     // concept also has deep modified routine
     Method method =
         historyService.getClass().getMethod(
-            "findConceptsDeepModifiedSinceDate",
-            new Class<?>[] {
+            "findConceptsDeepModifiedSinceDate", new Class<?>[] {
                 String.class, String.class, PfsParameterJpa.class, String.class
             });
 
     Object[] parameters = new Object[] {
         terminology, "20080131", pfs, authToken
     };
-    
+
     // note that null terminology returns a null object (success)
-    DegenerateUseMethodTestHelper.testDegenerateArguments(historyService, method, parameters, new ExpectedFailure[] {
-        ExpectedFailure.STRING_INVALID_EXCEPTION_NULL_SUCCESS,
-        ExpectedFailure.EXCEPTION,
-        ExpectedFailure.EXCEPTION, ExpectedFailure.EXCEPTION
-    });
-    
+    DegenerateUseMethodTestHelper.testDegenerateArguments(historyService,
+        method, parameters, new ExpectedFailure[] {
+            ExpectedFailure.STRING_INVALID_EXCEPTION_NULL_SUCCESS,
+            ExpectedFailure.EXCEPTION, ExpectedFailure.EXCEPTION,
+            ExpectedFailure.EXCEPTION
+        });
 
   }
 
@@ -274,11 +272,12 @@ public class HistoryServiceRestDegenerateUseTest extends HistoryServiceRestTest 
     String testId = "cf39de4d-bbb9-59c3-b049-82a6c31ce87a";
     String revision = "20080731";
 
-    // need cast to abstract form (two types of association reference ref set member)
+    // need cast to abstract form (two types of association reference ref set
+    // member)
     ContentService contentService = new ContentServiceJpa();
-    Component component = (AbstractAssociationReferenceRefSetMemberJpa<?>)
-        contentService.getAssociationReferenceRefSetMember(testId, terminology,
-            version);
+    Component component =
+        (AbstractAssociationReferenceRefSetMemberJpa<?>) contentService
+            .getAssociationReferenceRefSetMember(testId, terminology, version);
     contentService.close();
     testDegenerateUse(component, revision);
   }
@@ -298,9 +297,9 @@ public class HistoryServiceRestDegenerateUseTest extends HistoryServiceRestTest 
 
     // need cast to abstract form (two types of attribute value ref set member)
     ContentService contentService = new ContentServiceJpa();
-    Component component = (AbstractAttributeValueRefSetMemberJpa<?>)
-        contentService.getAttributeValueRefSetMember(testId, terminology,
-            version);
+    Component component =
+        (AbstractAttributeValueRefSetMemberJpa<?>) contentService
+            .getAttributeValueRefSetMember(testId, terminology, version);
     contentService.close();
     testDegenerateUse(component, revision);
   }
@@ -437,7 +436,6 @@ public class HistoryServiceRestDegenerateUseTest extends HistoryServiceRestTest 
   @After
   public void teardown() throws Exception {
 
-  
   }
 
   /**
@@ -482,8 +480,8 @@ public class HistoryServiceRestDegenerateUseTest extends HistoryServiceRestTest 
     DegenerateUseMethodTestHelper.testDegenerateArguments(historyService,
         method, parameters, new ExpectedFailure[] {
             ExpectedFailure.STRING_INVALID_EXCEPTION_NULL_NO_RESULTS,
-            ExpectedFailure.EXCEPTION,
-            ExpectedFailure.EXCEPTION, ExpectedFailure.EXCEPTION
+            ExpectedFailure.EXCEPTION, ExpectedFailure.EXCEPTION,
+            ExpectedFailure.EXCEPTION
         });
   }
 
@@ -505,11 +503,9 @@ public class HistoryServiceRestDegenerateUseTest extends HistoryServiceRestTest 
                 PfsParameterJpa.class, String.class
             });
 
-    Object[] parameters =
-        new Object[] {
-            component.getId().toString(), "19700101", "20150131", pfs,
-            authToken
-        };
+    Object[] parameters = new Object[] {
+        component.getId().toString(), "19700101", "20150131", pfs, authToken
+    };
 
     // terminology does not have invalid value
     DegenerateUseMethodTestHelper.testDegenerateArguments(historyService,

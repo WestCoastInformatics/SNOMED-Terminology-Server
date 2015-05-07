@@ -130,7 +130,6 @@ public class ProjectServiceRestImpl extends RootServiceRestImpl implements
       authenticate(securityService, authToken, "update project",
           UserRole.ADMINISTRATOR);
 
-
       // check to see if project already exists
       boolean found = false;
       for (Project p : projectService.getProjects().getObjects()) {
@@ -205,7 +204,8 @@ public class ProjectServiceRestImpl extends RootServiceRestImpl implements
   public ConceptList findConceptsInScope(
     @ApiParam(value = "Project internal id, e.g. 2", required = true) @PathParam("id") Long id,
     @ApiParam(value = "PFS Parameter, e.g. '{ \"startIndex\":\"1\", \"maxResults\":\"5\" }'", required = false) PfsParameterJpa pfs,
-    @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken) throws Exception {
+    @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken)
+    throws Exception {
 
     Logger.getLogger(getClass()).info("RESTful call (Project): scope/id/" + id);
 
@@ -246,7 +246,8 @@ public class ProjectServiceRestImpl extends RootServiceRestImpl implements
   @ApiOperation(value = "Get project for id", notes = "Gets the project for the specified id.", response = Project.class)
   public Project getProject(
     @ApiParam(value = "Project internal id, e.g. 2", required = true) @PathParam("id") Long id,
-    @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken) throws Exception {
+    @ApiParam(value = "Authorization token, e.g. 'guest'", required = true) @HeaderParam("Authorization") String authToken)
+    throws Exception {
     Logger.getLogger(getClass()).info("RESTful call (Project): /id/" + id);
 
     ProjectService projectService = new ProjectServiceJpa();

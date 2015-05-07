@@ -71,7 +71,8 @@ public interface HistoryService extends ContentService {
    * @return the description list
    * @throws Exception the exception
    */
-  public Concept findConceptReleaseRevision(Long id, Date release) throws Exception;
+  public Concept findConceptReleaseRevision(Long id, Date release)
+    throws Exception;
 
   /**
    * Find descriptions modified since date.
@@ -106,7 +107,8 @@ public interface HistoryService extends ContentService {
    * @return the description list
    * @throws Exception the exception
    */
-  public Description findDescriptionReleaseRevision(Long id, Date release) throws Exception;
+  public Description findDescriptionReleaseRevision(Long id, Date release)
+    throws Exception;
 
   /**
    * Find relationships modified since date.
@@ -128,7 +130,8 @@ public interface HistoryService extends ContentService {
    * @return the description list
    * @throws Exception the exception
    */
-  public Relationship findRelationshipReleaseRevision(Long id, Date release) throws Exception;
+  public Relationship findRelationshipReleaseRevision(Long id, Date release)
+    throws Exception;
 
   /**
    * Finds all relationship revisions for the specified date range.
@@ -176,8 +179,8 @@ public interface HistoryService extends ContentService {
    * @return the description list
    * @throws Exception the exception
    */
-  public LanguageRefSetMember findLanguageRefSetMemberReleaseRevision(
-    Long id, Date release) throws Exception;
+  public LanguageRefSetMember findLanguageRefSetMemberReleaseRevision(Long id,
+    Date release) throws Exception;
 
   /**
    * Returns concepts changed since certain date – performs a "deep" search for
@@ -218,7 +221,8 @@ public interface HistoryService extends ContentService {
    * @return the previous release info
    * @throws Exception the exception
    */
-  public ReleaseInfo getPreviousReleaseInfo(String terminology) throws Exception;
+  public ReleaseInfo getPreviousReleaseInfo(String terminology)
+    throws Exception;
 
   /**
    * Gets the planned release info. (planned not published)
@@ -237,7 +241,8 @@ public interface HistoryService extends ContentService {
    * @return the release info
    * @throws Exception the exception
    */
-  public ReleaseInfo getReleaseInfo(String terminology, String name) throws Exception;
+  public ReleaseInfo getReleaseInfo(String terminology, String name)
+    throws Exception;
 
   /**
    * Adds the release info.
@@ -299,7 +304,7 @@ public interface HistoryService extends ContentService {
    */
   public AssociationReferenceRefSetMember<?> findAssociationReferenceRefSetMemberReleaseRevision(
     Long id, Date release) throws Exception;
-  
+
   /**
    * Find attribute value ref set members modified since date.
    *
@@ -358,8 +363,8 @@ public interface HistoryService extends ContentService {
    * @return the complex map ref set member list
    * @throws Exception the exception
    */
-  public ComplexMapRefSetMemberList findComplexMapRefSetMemberRevisions(Long id,
-    Date startDate, Date endDate, PfsParameter pfs) throws Exception;
+  public ComplexMapRefSetMemberList findComplexMapRefSetMemberRevisions(
+    Long id, Date startDate, Date endDate, PfsParameter pfs) throws Exception;
 
   /**
    * Find complex map ref set member release revision.
@@ -369,8 +374,8 @@ public interface HistoryService extends ContentService {
    * @return the complex map ref set member
    * @throws Exception the exception
    */
-  public ComplexMapRefSetMember findComplexMapRefSetMemberReleaseRevision(Long id,
-    Date release) throws Exception;
+  public ComplexMapRefSetMember findComplexMapRefSetMemberReleaseRevision(
+    Long id, Date release) throws Exception;
 
   /**
    * Find description type ref set members modified since date.
@@ -513,8 +518,8 @@ public interface HistoryService extends ContentService {
    * @return the simple map ref set member
    * @throws Exception the exception
    */
-  public SimpleMapRefSetMember findSimpleMapRefSetMemberReleaseRevision(Long id,
-    Date release) throws Exception;
+  public SimpleMapRefSetMember findSimpleMapRefSetMemberReleaseRevision(
+    Long id, Date release) throws Exception;
 
   /**
    * Find simple ref set members modified since date.
@@ -549,10 +554,7 @@ public interface HistoryService extends ContentService {
    * @return the simple ref set member
    * @throws Exception the exception
    */
-  public SimpleRefSetMember findSimpleRefSetMemberReleaseRevision(Long id, Date release)
-    throws Exception;
-
-
-
+  public SimpleRefSetMember findSimpleRefSetMemberReleaseRevision(Long id,
+    Date release) throws Exception;
 
 }

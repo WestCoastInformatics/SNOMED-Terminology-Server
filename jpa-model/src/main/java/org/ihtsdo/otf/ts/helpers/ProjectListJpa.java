@@ -18,7 +18,9 @@ import org.ihtsdo.otf.ts.jpa.ProjectJpa;
 public class ProjectListJpa extends AbstractResultList<Project> implements
     ProjectList {
 
-  /* (non-Javadoc)
+  /*
+   * (non-Javadoc)
+   * 
    * @see org.ihtsdo.otf.ts.helpers.AbstractResultList#getObjects()
    */
   @Override
@@ -26,6 +28,5 @@ public class ProjectListJpa extends AbstractResultList<Project> implements
   public List<Project> getObjects() {
     return super.getObjects();
   }
-
 
 }
