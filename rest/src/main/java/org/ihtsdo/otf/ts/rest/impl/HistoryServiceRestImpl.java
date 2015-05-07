@@ -133,13 +133,12 @@ public class HistoryServiceRestImpl extends RootServiceRestImpl implements
         }
       }
 
-      historyService.close();
       return cl;
     } catch (Exception e) {
-      historyService.close();
       handleException(e, "trying to find concepts modified since date");
       return null;
     } finally {
+      historyService.close();
       securityService.close();
     }
 
@@ -181,8 +180,6 @@ public class HistoryServiceRestImpl extends RootServiceRestImpl implements
               ConfigUtility.DATE_FORMAT.parse(startDate),
               ConfigUtility.DATE_FORMAT.parse(endDate), pfs);
 
-      historyService.close();
-
       // Resolve to empty
       for (Concept concept : cl.getObjects()) {
         if (concept != null) {
@@ -191,10 +188,10 @@ public class HistoryServiceRestImpl extends RootServiceRestImpl implements
       }
       return cl;
     } catch (Exception e) {
-      historyService.close();
       handleException(e, "trying to find the concept revisions");
       return null;
     } finally {
+      historyService.close();
       securityService.close();
     }
   }
@@ -680,7 +677,6 @@ public class HistoryServiceRestImpl extends RootServiceRestImpl implements
           historyService.findAssociationReferenceRefSetMembersModifiedSinceDate(
               terminology, ConfigUtility.DATE_FORMAT.parse(date), pfs);
 
-      historyService.close();
       return cl;
     } catch (Exception e) {
       handleException(e,
