@@ -515,6 +515,8 @@ public class Rf2SnapshotLoaderAlgorithm extends HistoryServiceJpa implements
         concept.setActive(fields[2].equals("1"));
         concept.setModuleId(fields[3].intern());
         concept.setDefinitionStatusId(fields[4]);
+        // This is SNOMED specific
+        concept.setFullyDefined(fields[4].equals("900000000000073002"));
         concept.setTerminology(terminology);
         concept.setTerminologyVersion(terminologyVersion);
         concept.setDefaultPreferredName(initPrefName);
