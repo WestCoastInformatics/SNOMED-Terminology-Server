@@ -81,7 +81,9 @@ public class HelperUnit011Test {
    *
    * @throws Exception the exception
    */
-  @SuppressWarnings("static-method")
+  @SuppressWarnings({
+      "static-method", "unused"
+  })
   @Test
   public void testHelperDegenerateUse011() throws Exception {
     try {

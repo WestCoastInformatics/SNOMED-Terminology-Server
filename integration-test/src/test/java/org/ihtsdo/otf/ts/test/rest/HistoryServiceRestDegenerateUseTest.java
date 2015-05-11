@@ -13,15 +13,11 @@ import org.ihtsdo.otf.ts.helpers.PfsParameter;
 import org.ihtsdo.otf.ts.helpers.PfsParameterJpa;
 import org.ihtsdo.otf.ts.jpa.services.ContentServiceJpa;
 import org.ihtsdo.otf.ts.rf2.Component;
-import org.ihtsdo.otf.ts.rf2.jpa.AbstractAssociationReferenceRefSetMemberJpa;
-import org.ihtsdo.otf.ts.rf2.jpa.AbstractAttributeValueRefSetMemberJpa;
 import org.ihtsdo.otf.ts.services.ContentService;
 import org.ihtsdo.otf.ts.test.helpers.DegenerateUseMethodTestHelper;
 import org.ihtsdo.otf.ts.test.helpers.DegenerateUseMethodTestHelper.ExpectedFailure;
 import org.junit.After;
-import org.junit.AfterClass;
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;
 
@@ -30,8 +26,10 @@ import org.junit.Test;
  */
 public class HistoryServiceRestDegenerateUseTest extends HistoryServiceRestTest {
 
+  /** The valid parameters. */
   Object[] validParameters;
 
+  /** The pfs. */
   PfsParameter pfs;
 
   /**
@@ -56,9 +54,9 @@ public class HistoryServiceRestDegenerateUseTest extends HistoryServiceRestTest 
   }
 
   /**
-   * Test release info methods
-   * 
-   * @throws Exception
+   * Test release info methods.
+   *
+   * @throws Exception the exception
    */
   @Test
   public void testDegenerateUseRestHistory001() throws Exception {
@@ -159,8 +157,9 @@ public class HistoryServiceRestDegenerateUseTest extends HistoryServiceRestTest 
   }
 
   /**
-   * Test concept methods
-   * @throws Exception
+   * Test concept methods.
+   *
+   * @throws Exception the exception
    */
   @Test
   public void testDegenerateUseRestHistory003() throws Exception {
@@ -200,8 +199,9 @@ public class HistoryServiceRestDegenerateUseTest extends HistoryServiceRestTest 
   }
 
   /**
-   * Test description methods
-   * @throws Exception
+   * Test description methods.
+   *
+   * @throws Exception the exception
    */
   @Test
   public void testDegenerateUseRestHistory004() throws Exception {
@@ -220,8 +220,9 @@ public class HistoryServiceRestDegenerateUseTest extends HistoryServiceRestTest 
   }
 
   /**
-   * Test relationship methods
-   * @throws Exception
+   * Test relationship methods.
+   *
+   * @throws Exception the exception
    */
   @Test
   public void testDegenerateUseRestHistory005() throws Exception {
@@ -241,8 +242,9 @@ public class HistoryServiceRestDegenerateUseTest extends HistoryServiceRestTest 
   }
 
   /**
-   * Test language ref set methods
-   * @throws Exception
+   * Test language ref set methods.
+   *
+   * @throws Exception the exception
    */
   @Test
   public void testDegenerateUseRestHistory006() throws Exception {
@@ -260,8 +262,9 @@ public class HistoryServiceRestDegenerateUseTest extends HistoryServiceRestTest 
   }
 
   /**
-   * Test association reference ref set methods
-   * @throws Exception
+   * Test association reference ref set methods.
+   *
+   * @throws Exception the exception
    */
   @Test
   public void testDegenerateUseRestHistory007() throws Exception {
@@ -276,15 +279,16 @@ public class HistoryServiceRestDegenerateUseTest extends HistoryServiceRestTest 
     // member)
     ContentService contentService = new ContentServiceJpa();
     Component component =
-        (AbstractAssociationReferenceRefSetMemberJpa<?>) contentService
-            .getAssociationReferenceRefSetMember(testId, terminology, version);
+        contentService
+        .getAssociationReferenceRefSetMember(testId, terminology, version);
     contentService.close();
     testDegenerateUse(component, revision);
   }
 
   /**
-   * Test attribute value ref set methods
-   * @throws Exception
+   * Test attribute value ref set methods.
+   *
+   * @throws Exception the exception
    */
   @Test
   public void testDegenerateUseRestHistory008() throws Exception {
@@ -298,15 +302,16 @@ public class HistoryServiceRestDegenerateUseTest extends HistoryServiceRestTest 
     // need cast to abstract form (two types of attribute value ref set member)
     ContentService contentService = new ContentServiceJpa();
     Component component =
-        (AbstractAttributeValueRefSetMemberJpa<?>) contentService
-            .getAttributeValueRefSetMember(testId, terminology, version);
+        contentService
+        .getAttributeValueRefSetMember(testId, terminology, version);
     contentService.close();
     testDegenerateUse(component, revision);
   }
 
   /**
-   * Test complex map ref set methods
-   * @throws Exception
+   * Test complex map ref set methods.
+   *
+   * @throws Exception the exception
    */
   @Test
   public void testDegenerateUseRestHistory009() throws Exception {
@@ -325,8 +330,9 @@ public class HistoryServiceRestDegenerateUseTest extends HistoryServiceRestTest 
   }
 
   /**
-   * Test description type ref set methods
-   * @throws Exception
+   * Test description type ref set methods.
+   *
+   * @throws Exception the exception
    */
   @Test
   public void testDegenerateUseRestHistory010() throws Exception {
@@ -346,8 +352,9 @@ public class HistoryServiceRestDegenerateUseTest extends HistoryServiceRestTest 
   }
 
   /**
-   * Test module dependency ref set methods
-   * @throws Exception
+   * Test module dependency ref set methods.
+   *
+   * @throws Exception the exception
    */
   @Test
   public void testDegenerateUseRestHistory011() throws Exception {
@@ -367,8 +374,9 @@ public class HistoryServiceRestDegenerateUseTest extends HistoryServiceRestTest 
   }
 
   /**
-   * Test refset descriptor ref set methods
-   * @throws Exception
+   * Test refset descriptor ref set methods.
+   *
+   * @throws Exception the exception
    */
   @Test
   public void testDegenerateUseRestHistory012() throws Exception {
@@ -388,8 +396,9 @@ public class HistoryServiceRestDegenerateUseTest extends HistoryServiceRestTest 
   }
 
   /**
-   * Test simple map ref set member methods
-   * @throws Exception
+   * Test simple map ref set member methods.
+   *
+   * @throws Exception the exception
    */
   @Test
   public void testDegenerateUseRestHistory013() throws Exception {
@@ -408,8 +417,9 @@ public class HistoryServiceRestDegenerateUseTest extends HistoryServiceRestTest 
   }
 
   /**
-   * Test simple ref set member methods
-   * @throws Exception
+   * Test simple ref set member methods.
+   *
+   * @throws Exception the exception
    */
   @Test
   public void testDegenerateUseRestHistory014() throws Exception {
@@ -435,7 +445,7 @@ public class HistoryServiceRestDegenerateUseTest extends HistoryServiceRestTest 
   @Override
   @After
   public void teardown() throws Exception {
-
+    // n/a
   }
 
   /**
@@ -489,8 +499,9 @@ public class HistoryServiceRestDegenerateUseTest extends HistoryServiceRestTest 
    * Test revisions method for degenerate use.
    *
    * @param clazz the clazz
-   * @throws Exception
-   * @throws LocalException
+   * @param component the component
+   * @throws LocalException the local exception
+   * @throws Exception the exception
    */
   private void testDegenerateUseRevisionsMethod(Class<?> clazz,
     Component component) throws LocalException, Exception {
@@ -517,8 +528,10 @@ public class HistoryServiceRestDegenerateUseTest extends HistoryServiceRestTest 
    * Test release revision method for degenerate use.
    *
    * @param clazz the clazz
-   * @throws Exception
-   * @throws LocalException
+   * @param component the component
+   * @param revision the revision
+   * @throws LocalException the local exception
+   * @throws Exception the exception
    */
   private void testDegenerateUseReleaseRevisionMethod(Class<?> clazz,
     Component component, String revision) throws LocalException, Exception {

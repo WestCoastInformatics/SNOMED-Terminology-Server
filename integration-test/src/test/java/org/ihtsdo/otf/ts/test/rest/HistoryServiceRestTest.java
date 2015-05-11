@@ -30,7 +30,7 @@ public class HistoryServiceRestTest {
   /** The service. */
   protected static HistoryClientRest historyService;
 
-  /** The content service -- for retrieval of objects */
+  /** The content service -- for retrieval of objects. */
   protected static ContentClientRest contentService;
 
   /** The security service. */
@@ -45,10 +45,10 @@ public class HistoryServiceRestTest {
   /** The test password. */
   protected static String viewerPassword;
 
-  /** The admin user */
+  /** The admin user. */
   protected static String adminUser;
 
-  /** The admin password */
+  /** The admin password. */
   protected static String adminPassword;
 
   /** The auth token. */
@@ -60,12 +60,13 @@ public class HistoryServiceRestTest {
   /** The terminology version. */
   protected static String version = null;
 
-  /** Results saved between different method hecks */
+  /** Results saved between different method hecks. */
   protected static ResultList<?> results = null;
 
-  /** Parameters, saved between different method checks */
+  /** Parameters, saved between different method checks. */
   protected static Object[] parameters;
 
+  /** The object names. */
   protected static Set<String> objectNames = null;
 
   /** The dt format. */
@@ -155,6 +156,13 @@ public class HistoryServiceRestTest {
     }
   }
 
+  /**
+   * Returns the class short name.
+   *
+   * @param clazz the clazz
+   * @return the class short name
+   */
+  @SuppressWarnings("static-method")
   protected String getClassShortName(Class<?> clazz) {
 
     String shortName =

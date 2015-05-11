@@ -107,10 +107,8 @@ public class MetadataServiceRestDegenerateUseTest extends
    * Test retrieving all metadata for latest version of a terminology
    * @throws Exception
    */
-  @SuppressWarnings("static-method")
   @Test
   public void testDegenerateUseRestMetadata004() throws Exception {
-
     // n/a - this method was removed
   }
 

@@ -1108,19 +1108,20 @@ public class HistoryServiceJpa extends ContentServiceJpa implements
 
     // check pfs for validity -- note this is required because of manual paging
     // other methods are checked in applyPfsToQuery methods
-    if (pfs == null)
-      pfs = new PfsParameterJpa();
+    PfsParameter localPfs = pfs;
+    if (localPfs == null)
+      localPfs = new PfsParameterJpa();
     else {
       // query restriction not supported
-      if (pfs.getQueryRestriction() != null)
+      if (localPfs.getQueryRestriction() != null)
         throw new Exception(
             "Query restriction not supported when searching for concepts deep modified since date.");
 
       // pfs start index and max results must be valid
-      if (pfs.getStartIndex() < -1)
+      if (localPfs.getStartIndex() < -1)
         throw new Exception(
             "Pfs Parameter start index must be -1 (unused) or greater than or equal to zero");
-      if (pfs.getMaxResults() < -1)
+      if (localPfs.getMaxResults() < -1)
         throw new Exception(
             "Pfs Parameter max results must be -1 (unused) or greater than zero");
 
@@ -1212,7 +1213,7 @@ public class HistoryServiceJpa extends ContentServiceJpa implements
     concepts.setObjects(new ArrayList<Concept>(results));
 
     // get the sorting comparator (based on sort field, asc/desc)
-    Comparator<Concept> comparator = this.getPfsComparator(Concept.class, pfs);
+    Comparator<Concept> comparator = this.getPfsComparator(Concept.class, localPfs);
 
     // if comparator not null, sort
     if (comparator != null) {
@@ -1220,10 +1221,10 @@ public class HistoryServiceJpa extends ContentServiceJpa implements
     }
 
     // calculate from and to indexes
-    int fromIndex = (pfs.getStartIndex() == -1 ? 0 : pfs.getStartIndex());
+    int fromIndex = (localPfs.getStartIndex() == -1 ? 0 : localPfs.getStartIndex());
     int toIndex =
-        (pfs.getMaxResults() == -1 ? concepts.getCount() : fromIndex
-            + pfs.getMaxResults());
+        (localPfs.getMaxResults() == -1 ? concepts.getCount() : fromIndex
+            + localPfs.getMaxResults());
 
     // ensure from index is not below 0
     if (fromIndex < 0)
@@ -1503,7 +1504,7 @@ public class HistoryServiceJpa extends ContentServiceJpa implements
    * @param endDate the end date
    * @param pfs the pfs parameter
    * @return the list
-   * @throws LocalException
+   * @throws Exception the exception
    */
   @SuppressWarnings("unchecked")
   private <T> List<T> findRevisions(Long id, Class<T> clazz, Date startDate,

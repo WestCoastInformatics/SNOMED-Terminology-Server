@@ -105,7 +105,7 @@ public class ContentServiceRestNormalUseTest extends ContentServiceRestTest {
                                           // concept
 
     // get the concept from the list
-    Concept concept = (Concept) concepts.getObjects().get(0);
+    Concept concept = concepts.getObjects().get(0);
 
     // check concept elements
     assertTrue(concept.getTerminologyId().equals(snomedTestId));
@@ -136,7 +136,7 @@ public class ContentServiceRestNormalUseTest extends ContentServiceRestTest {
                                           // concept
 
     // get the concept from the list
-    concept = (Concept) concepts.getObjects().get(0);
+    concept = concepts.getObjects().get(0);
 
     // check concept elements
     assertTrue(concept.getTerminologyId().equals(icd9TestId));

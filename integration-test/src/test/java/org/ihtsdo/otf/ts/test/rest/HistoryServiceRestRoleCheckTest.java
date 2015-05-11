@@ -37,7 +37,7 @@ public class HistoryServiceRestRoleCheckTest extends HistoryServiceRestTest {
    */
   @Test
   public void testRoleCheckRestHistory001() throws Exception {
-
+    // n/a
   }
 
   /**

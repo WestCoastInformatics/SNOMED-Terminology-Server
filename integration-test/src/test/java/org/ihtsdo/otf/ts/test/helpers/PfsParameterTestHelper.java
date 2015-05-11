@@ -26,7 +26,6 @@ public class PfsParameterTestHelper {
    * @return true, if successful
    * @throws Exception the exception
    */
-  @SuppressWarnings("unchecked")
   public static boolean testPagingAndSorting(Object service, Method method,
     Object[] parameters, ResultList<?> fullResults) throws Exception {
 

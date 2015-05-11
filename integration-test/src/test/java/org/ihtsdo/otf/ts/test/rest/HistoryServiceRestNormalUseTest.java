@@ -95,6 +95,7 @@ public class HistoryServiceRestNormalUseTest extends HistoryServiceRestTest {
    * 
    * @throws Exception
    */
+  @SuppressWarnings("static-method")
   @Test
   public void testNormalUseRestHistory001() throws Exception {
 
