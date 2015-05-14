@@ -25,8 +25,6 @@ import org.ihtsdo.otf.ts.rf2.Relationship;
 
 /**
  * Represents a content available via a REST service.
- *
- * @author ${author}
  */
 public interface ContentServiceRest {
 

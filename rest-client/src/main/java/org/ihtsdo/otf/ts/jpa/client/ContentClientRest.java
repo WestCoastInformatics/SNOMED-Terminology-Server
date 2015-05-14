@@ -438,7 +438,7 @@ public class ContentClientRest implements ContentServiceRest {
     Client client = Client.create();
     WebResource resource =
         client.resource(config.getProperty("base.url")
-            + "/terminology/load/rf2/snapshot" + terminology + "/" + version);
+            + "/terminology/load/rf2/snapshot/" + terminology + "/" + version);
     ClientResponse response =
         resource.accept(MediaType.APPLICATION_XML)
             .header("Authorization", authToken)
@@ -470,7 +470,7 @@ public class ContentClientRest implements ContentServiceRest {
     Client client = Client.create();
     WebResource resource =
         client.resource(config.getProperty("base.url")
-            + "/terminology/load/rf2/full" + terminology + "/" + version);
+            + "/terminology/load/rf2/full/" + terminology + "/" + version);
     ClientResponse response =
         resource.accept(MediaType.APPLICATION_XML)
             .header("Authorization", authToken)
@@ -501,7 +501,7 @@ public class ContentClientRest implements ContentServiceRest {
     Client client = Client.create();
     WebResource resource =
         client.resource(config.getProperty("base.url")
-            + "/terminology/load/rf2/snapshot" + terminology);
+            + "/terminology/load/rf2/delta/" + terminology);
     ClientResponse response =
         resource.accept(MediaType.APPLICATION_XML)
             .header("Authorization", authToken)
@@ -1360,6 +1360,10 @@ public class ContentClientRest implements ContentServiceRest {
     return list;
   }
 
+  /* (non-Javadoc)
+   * @see org.ihtsdo.otf.ts.rest.ContentServiceRest#getRelationship(java.lang.String, java.lang.String, java.lang.String, java.lang.String)
+   */
+  @Override
   public Relationship getRelationship(String terminologyId, String terminology,
     String version, String authToken) throws Exception {
     Client client = Client.create();
