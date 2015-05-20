@@ -55,6 +55,9 @@ public class Rf2SnapshotSamplerAlgorithm extends HistoryServiceJpa implements
   /** The readers. */
   private Rf2Readers readers;
 
+  /**  The keep inferred. */
+  private boolean keepInferred = false;
+  
   /**
    * Instantiates an empty {@link Rf2SnapshotSamplerAlgorithm}.
    * @throws Exception if anything goes wrong
@@ -302,6 +305,11 @@ public class Rf2SnapshotSamplerAlgorithm extends HistoryServiceJpa implements
 
       // Skip header
       if (!fields[0].equals("id")) {
+
+        // check keep inferred logic
+        if (!keepInferred && fields[8].equals("900000000000011006")) {
+          continue;
+        }
 
         // Configure relationship
         relationship.setTerminologyId(fields[0]);
@@ -708,6 +716,10 @@ public class Rf2SnapshotSamplerAlgorithm extends HistoryServiceJpa implements
       // Skip header and keep only active entries
       if (!fields[0].equals("id") && fields[2].equals("1")) {
 
+        // check keep inferred logic
+        if (!keepInferred && fields[8].equals("900000000000011006")) {
+          continue;
+        }
         // Configure relationship
         final Relationship relationship = new RelationshipJpa();
         relationship.setTerminologyId(fields[0]);
@@ -845,5 +857,23 @@ public class Rf2SnapshotSamplerAlgorithm extends HistoryServiceJpa implements
    */
   public void setInputConcepts(Set<String> inputConcepts) {
     this.inputConcepts = inputConcepts;
+  }
+  
+  /**
+   * Returns the keep inferred.
+   *
+   * @return the keep inferred
+   */
+  public boolean getKeepInferred() {
+    return keepInferred;
+  }
+  
+  /**
+   * Sets the keep inferred.
+   *
+   * @param keepInferred the keep inferred
+   */
+  public void setKeepInferred(boolean keepInferred) {
+    this.keepInferred = keepInferred;
   }
 }
